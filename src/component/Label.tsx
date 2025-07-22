@@ -7,6 +7,8 @@ import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, i
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
+import { useAppSelector } from '../state/hooks';
+import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -86,9 +88,14 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
-const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<SVGTextElement>) => {
-  const { position, viewBox, offset, className } = labelProps;
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox as PolarViewBox;
+const renderRadialLabel = (
+  labelProps: Props,
+  label: ReactNode,
+  attrs: SVGProps<SVGTextElement>,
+  viewBox: PolarViewBox,
+) => {
+  const { position, offset, className } = labelProps;
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
   const sign = deltaAngle >= 0 ? 1 : -1;
@@ -124,8 +131,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   );
 };
 
-const getAttrsOfPolarLabel = (props: Props) => {
-  const { viewBox, offset, position } = props;
+const getAttrsOfPolarLabel = (viewBox: PolarViewBox, offset: Props['offset'], position: Props['position']) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox as PolarViewBox;
   const midAngle = (startAngle + endAngle) / 2;
 
@@ -397,9 +403,10 @@ export function Label({ offset = 5, ...restProps }: Props) {
     labelRef,
   } = props;
 
+  const polarViewBox = useAppSelector(selectPolarViewBox);
   const viewBoxFromContext = useViewBox();
 
-  const viewBox = viewBoxFromProps || viewBoxFromContext;
+  const viewBox = viewBoxFromProps || polarViewBox || viewBoxFromContext;
 
   if (
     !viewBox ||
@@ -428,11 +435,12 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const attrs = filterProps(props, true);
 
   if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
-    return renderRadialLabel(props, label, attrs);
+    return renderRadialLabel(props, label, attrs, viewBox);
   }
 
-  // TODO handle the polar viewBox case - Pie chart works with cartesian viewBox, what about the other charts?
-  const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props, viewBox);
+  const positionAttrs = isPolarLabel
+    ? getAttrsOfPolarLabel(viewBox, props.offset, props.position)
+    : getAttrsOfCartesianLabel(props, viewBox);
 
   return (
     <Text

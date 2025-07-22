@@ -1,16 +1,25 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { ResponsiveContainer, Label, Surface } from '../../../../src';
+import {
+  ResponsiveContainer,
+  Label,
+  Line,
+  XAxis,
+  LineChart,
+  YAxis,
+  Radar,
+  RadarChart,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  CartesianGrid,
+  PolarGrid,
+} from '../../../../src';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { pageData } from '../../data';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const LabelProps: Args = {
-  viewBox: {
-    description: 'The box of viewing area, usually calculated internally.',
-    table: {
-      control: { type: 'String | number' },
-      summary: '{ x: number, y: number, width: number, height: number }',
-      category: 'General',
-    },
-  },
   formatter: {
     description: 'The formatter function of label value which has only one parameter - the value of label.',
     table: {
@@ -46,7 +55,6 @@ const LabelProps: Args = {
       category: 'General',
     },
   },
-
   children: {
     description: 'The value of label, which can be specified by this props or the props "value". (Optional)',
     table: {
@@ -55,7 +63,6 @@ const LabelProps: Args = {
       category: 'General',
     },
   },
-
   content: {
     description:
       'If set a React element, the option is the custom react element of ' +
@@ -65,7 +72,6 @@ const LabelProps: Args = {
       category: 'General',
     },
   },
-
   id: {
     description:
       'The unique id of this component, which will be used to generate ' +
@@ -78,31 +84,94 @@ const LabelProps: Args = {
 };
 
 export default {
-  argTypes: {
-    ...LabelProps,
-  },
+  argTypes: LabelProps,
   component: Label,
 };
 
-export const API = {
-  render: (args: Record<string, any>) => {
+const availablePositions = [
+  'top',
+  'left',
+  'right',
+  'bottom',
+  'inside',
+  'outside',
+  'insideLeft',
+  'insideRight',
+  'insideTop',
+  'insideBottom',
+  'insideTopLeft',
+  'insideBottomLeft',
+  'insideTopRight',
+  'insideBottomRight',
+  'insideStart',
+  'insideEnd',
+  'end',
+  'center',
+  'centerTop',
+  'centerBottom',
+  'middle',
+] as const;
+
+export const CartesianPositions = {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
-      <ResponsiveContainer width="100%" height={200}>
-        <Surface viewBox={args.viewBox} width={0} height={0}>
-          <Label {...args} />
-        </Surface>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          data={pageData}
+          margin={{
+            top: 30,
+            bottom: 30,
+            left: 100,
+            right: 100,
+          }}
+        >
+          <CartesianGrid />
+          <Line type="monotone" dataKey="uv" stroke="#111" />
+          <YAxis tick={false} />
+          <XAxis dataKey="name" tick={false} />
+          {availablePositions.map(position => (
+            <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
+          ))}
+          <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </LineChart>
       </ResponsiveContainer>
     );
   },
-  args: {
-    viewBox: {
-      x: 50,
-      y: 50,
-      width: 100,
-      height: 100,
-    },
-    value: 'Label value',
-    position: 'center',
-    offset: 5,
+  args: { ...getStoryArgsFromArgsTypesObject(LabelProps) },
+};
+
+export const PolarPositions = {
+  render: (args: Args, context: RechartsStoryContext) => {
+    return (
+      <RadarChart
+        width={800}
+        height={800}
+        data={pageData}
+        margin={{
+          top: 30,
+          bottom: 30,
+          left: 100,
+          right: 100,
+        }}
+      >
+        <Radar type="monotone" dataKey="uv" fill="rgba(0, 200, 200, 0.2)" />
+        <PolarGrid />
+        <PolarAngleAxis dataKey="name" />
+        <PolarRadiusAxis tick={false} />
+        {availablePositions.map(position => (
+          <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
+        ))}
+        <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
+      </RadarChart>
+    );
   },
+  args: { ...getStoryArgsFromArgsTypesObject(LabelProps) },
 };
