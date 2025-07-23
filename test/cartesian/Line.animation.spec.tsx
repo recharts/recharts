@@ -556,10 +556,10 @@ describe('Line animation', () => {
         const fullyVisibleLine = '100px 0px';
 
         /*
-         * The path ref has not been updated yet, so this will hide the whole line for a single tick.
-         * Looks like a bug, but it's invisible in the browser because the animation is so quick.
+         * During priming we have progressed the animation to 30% of the path,
+         * so the stroke-dasharray should be 30px visible and 70px hidden.
          */
-        expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+        expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 70px');
 
         /*
          * Now, the line should continue growing from where it left off. Previously it was 30% of the path, so 30px visible and 70px hidden.
@@ -788,10 +788,8 @@ describe('Line animation', () => {
 
         /*
          * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
-         * but unfortunately the path ref has not been updated yet, so this will hide the whole line for a single tick.
-         * Looks like a bug, but it's invisible in the browser because the animation is so quick.
          */
-        expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+        expect(getLine(container)).toHaveAttribute('stroke-dasharray', '100px 0px');
 
         await animationManager.setAnimationProgress(0.1);
         expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
