@@ -50,7 +50,7 @@ export const useErrorBarContext = () => useContext(ErrorBarContext);
 type GraphicalItemContextProps = {
   id: string | undefined;
   type: CartesianGraphicalItemType;
-  data: ChartData;
+  data: ChartData | undefined;
   xAxisId: AxisId;
   yAxisId: AxisId;
   zAxisId: AxisId;

@@ -175,7 +175,7 @@ describe('Chart dimensions', () => {
           top: 11,
           width: 74,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return clipPath ID', () => {
@@ -251,7 +251,7 @@ describe('Chart dimensions', () => {
       it('should always say that the chart is not panorama', () => {
         const { spy } = renderTestCase(useIsPanorama);
         expect(spy).toHaveBeenCalledWith(false);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -294,7 +294,7 @@ describe('Chart dimensions', () => {
           top: 11,
           width: 74,
         });
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return clipPath ID from the main chart', () => {
@@ -327,7 +327,7 @@ describe('Chart dimensions', () => {
 
       it('should always say that the chart is panorama', () => {
         const { spy } = renderTestCase(useIsPanorama);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
         /*
          * it's important that the panorama is always true, and this selector is stable,
          * because if it was oscillating between true and false,

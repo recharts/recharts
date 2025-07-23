@@ -58,7 +58,7 @@ describe('selectStackGroups', () => {
           {
             id: expect.stringMatching('bar-'),
             barSize: undefined,
-            data: null,
+            data: undefined,
             dataKey: 'uv',
             errorBars: [],
             hide: false,
@@ -72,7 +72,7 @@ describe('selectStackGroups', () => {
           {
             id: expect.stringMatching('bar-'),
             barSize: undefined,
-            data: null,
+            data: undefined,
             dataKey: 'pv',
             errorBars: [],
             hide: false,
@@ -108,7 +108,7 @@ describe('selectStackGroups', () => {
           {
             id: expect.stringMatching('bar-'),
             barSize: undefined,
-            data: null,
+            data: undefined,
             dataKey: 'uv',
             errorBars: [],
             hide: false,
@@ -122,7 +122,7 @@ describe('selectStackGroups', () => {
           {
             id: expect.stringMatching('bar-'),
             barSize: undefined,
-            data: null,
+            data: undefined,
             dataKey: 'amt',
             errorBars: [],
             hide: false,

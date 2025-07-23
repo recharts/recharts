@@ -430,22 +430,19 @@ describe('AreaChart', () => {
   });
 
   describe('<AreaChart /> - Pure Rendering', () => {
-    const pureElements = [Area];
+    const spy = vi.fn();
 
-    const spies: MockInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
     let axisSpy: MockInstance;
 
     beforeEach(() => {
-      pureElements.forEach((el, i) => {
-        spies[i] = vi.spyOn(el.prototype, 'render');
-      });
+      spy.mockClear();
       axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
     });
 
     const chart = (
       <AreaChart width={400} height={400} data={data}>
-        <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
+        <Area isAnimationActive={false} type="monotone" label dataKey="uv" dot={spy} />
         <Tooltip />
         <XAxis />
         <YAxis />
@@ -457,14 +454,14 @@ describe('AreaChart', () => {
     test('should only render Area once when the mouse enters and moves', () => {
       const { container } = render(chart);
 
-      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
+      expect(spy).toHaveBeenCalledTimes(data.length);
       expect(axisSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseEnter(container, { clientX: 30, clientY: 200 });
       fireEvent.mouseMove(container, { clientX: 200, clientY: 200 });
       fireEvent.mouseLeave(container);
 
-      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
+      expect(spy).toHaveBeenCalledTimes(data.length);
       expect(axisSpy).toHaveBeenCalledTimes(3);
     });
 
@@ -472,7 +469,7 @@ describe('AreaChart', () => {
     test("should only render Area once when the brush moves but doesn't change start/end indices", () => {
       const { container } = render(chart);
 
-      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(spy).toHaveBeenCalledTimes(data.length);
       expect(axisSpy).toHaveBeenCalledTimes(3);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
@@ -481,12 +478,25 @@ describe('AreaChart', () => {
       fireEvent.mouseMove(brushSlide, { clientX: 200, clientY: 200 });
       fireEvent.mouseUp(window);
 
-      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(spy).toHaveBeenCalledTimes(data.length);
       expect(axisSpy).toHaveBeenCalledTimes(3);
     });
+  });
+
+  describe('<AreaChart /> + Brush', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <AreaChart width={400} height={400} data={data}>
+        <Area isAnimationActive={false} type="monotone" label dataKey="uv" />
+        <Tooltip />
+        <XAxis />
+        <YAxis />
+        <Brush />
+        {children}
+      </AreaChart>
+    ));
 
     test('should only show the last data when the brush travelers all moved to the right', () => {
-      const { container } = render(chart);
+      const { container } = renderTestCase();
 
       const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
       assertNotNull(leftBrushTraveler);
@@ -500,7 +510,7 @@ describe('AreaChart', () => {
     });
 
     test('should only show the first data when the brush travelers all moved to the left', () => {
-      const { container } = render(chart);
+      const { container } = renderTestCase();
 
       const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
       assertNotNull(rightBrushTraveler);

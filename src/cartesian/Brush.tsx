@@ -1,7 +1,3 @@
-/*
- * After we refactor classes to functional components, we can remove this eslint-disable
- */
-/* eslint-disable max-classes-per-file */
 import * as React from 'react';
 import {
   Children,
@@ -25,13 +21,14 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
-import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
+import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setDataStartEndIndexes } from '../state/chartDataSlice';
+import { ChartData, setDataStartEndIndexes } from '../state/chartDataSlice';
 import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -47,7 +44,7 @@ interface BrushProps {
 
   ariaLabel?: string;
 
-  height: number;
+  height?: number;
   travellerWidth?: number;
   traveller?: BrushTravellerType;
   gap?: number;
@@ -67,6 +64,9 @@ interface BrushProps {
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
+
+type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
+  RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
 
 type PropertiesFromContext = {
   x: number;
@@ -172,8 +172,8 @@ function TravellerLayer({
 type TextOfTickProps = {
   index: number;
   data: any[];
-  dataKey: DataKey<any>;
-  tickFormatter: BrushTickFormatter;
+  dataKey: DataKey<any> | undefined;
+  tickFormatter: BrushTickFormatter | undefined;
 };
 
 /*
@@ -182,9 +182,9 @@ type TextOfTickProps = {
  */
 function getTextOfTick(props: TextOfTickProps): number | string {
   const { index, data, tickFormatter, dataKey } = props;
-  const text = getValueByDataKey(data[index], dataKey, index);
-
   // @ts-expect-error getValueByDataKey does not validate the output type
+  const text: string = getValueByDataKey(data[index], dataKey, index);
+
   return typeof tickFormatter === 'function' ? tickFormatter(text, index) : text;
 }
 
@@ -242,8 +242,8 @@ function Background({
   y: number;
   width: number;
   height: number;
-  fill: string;
-  stroke: string;
+  fill: string | undefined;
+  stroke: string | undefined;
 }) {
   return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
 }
@@ -266,9 +266,9 @@ function BrushText({
   y: number;
   height: number;
   travellerWidth: number;
-  stroke: string;
-  tickFormatter: BrushTickFormatter;
-  dataKey: DataKey<any>;
+  stroke: string | undefined;
+  tickFormatter: BrushTickFormatter | undefined;
+  dataKey: DataKey<any> | undefined;
   data: any[];
   startX: number;
   endX: number;
@@ -311,7 +311,7 @@ function Slide({
 }: {
   y: number;
   height: number;
-  stroke: string;
+  stroke: string | undefined;
   travellerWidth: number;
   startX: number;
   endX: number;
@@ -384,12 +384,12 @@ interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
   isSlideMoving?: boolean;
-  startX?: number;
-  endX?: number;
-  slideMoveStartX?: number;
-  movingTravellerId?: BrushTravellerId;
+  startX: number;
+  endX: number;
+  slideMoveStartX: number;
+  movingTravellerId: BrushTravellerId | undefined;
   isTextActive?: boolean;
-  brushMoveStartX?: number;
+  brushMoveStartX: number;
 
   scale?: ScalePoint<number>;
   scaleValues?: number[];
@@ -424,12 +424,12 @@ const createScale = ({
   width,
   travellerWidth,
 }: {
-  data?: any[];
-  startIndex?: number;
-  endIndex?: number;
-  x?: number;
-  width?: number;
-  travellerWidth?: number;
+  data: ChartData | undefined;
+  startIndex: number;
+  endIndex: number;
+  x: number;
+  width: number;
+  travellerWidth: number;
 }) => {
   if (!data || !data.length) {
     return {};
@@ -458,7 +458,7 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-type BrushWithStateProps = Props &
+type BrushWithStateProps = InternalProps &
   PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
@@ -470,14 +470,14 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       endX: this.handleTravellerDragStart.bind(this, 'endX'),
     };
 
-    this.state = {};
+    this.state = { brushMoveStartX: 0, movingTravellerId: undefined, endX: 0, startX: 0, slideMoveStartX: 0 };
   }
 
-  leaveTimer?: number;
+  leaveTimer: number | null | undefined;
 
-  travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
+  travellerDragStartHandlers: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
-  static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): Partial<State> | null {
     const {
       data,
       width,
@@ -497,24 +497,28 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevWidth: width,
         ...(data && data.length
           ? createScale({ data, width, x, travellerWidth, startIndex, endIndex })
-          : { scale: null, scaleValues: null }),
+          : { scale: undefined, scaleValues: undefined }),
       };
     }
+    const prevScale = prevState.scale;
     if (
-      prevState.scale &&
+      prevScale &&
       (width !== prevState.prevWidth || x !== prevState.prevX || travellerWidth !== prevState.prevTravellerWidth)
     ) {
-      prevState.scale.range([x, x + width - travellerWidth]);
+      prevScale.range([x, x + width - travellerWidth]);
 
-      const scaleValues = prevState.scale.domain().map(entry => prevState.scale(entry));
+      const scaleValues = prevScale
+        .domain()
+        .map(entry => prevScale(entry))
+        .filter(Boolean);
 
       return {
         prevData: data,
         prevTravellerWidth: travellerWidth,
         prevX: x,
         prevWidth: width,
-        startX: prevState.scale(nextProps.startIndex),
-        endX: prevState.scale(nextProps.endIndex),
+        startX: prevScale(nextProps.startIndex),
+        endX: prevScale(nextProps.endIndex),
         scaleValues,
       };
     }
@@ -645,6 +649,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { slideMoveStartX, startX, endX, scaleValues } = this.state;
+    if (scaleValues == null) {
+      return;
+    }
     const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
@@ -687,6 +694,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
+    if (movingTravellerId == null) {
+      return;
+    }
     const prevValue = this.state[movingTravellerId];
 
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
@@ -717,6 +727,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     };
 
     this.setState(
+      // @ts-expect-error not sure why typescript is not happy with this, partial update is fine in React
       {
         [movingTravellerId]: prevValue + delta,
         brushMoveStartX: e.pageX,
@@ -735,6 +746,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     const { data, gap } = this.props;
     // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
     const { scaleValues, startX, endX } = this.state;
+    if (scaleValues == null) {
+      return;
+    }
     // currentScaleValue refers to which coordinate the current traveller should be placed at.
     const currentScaleValue = this.state[id];
 
@@ -756,6 +770,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     this.setState(
+      // @ts-expect-error not sure why typescript is not happy with this, partial update is fine in React
       {
         [id]: newScaleValue,
       },
@@ -889,10 +904,10 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 }
 
-function BrushInternal(props: Props) {
+function BrushInternal(props: InternalProps) {
   const dispatch = useAppDispatch();
   const chartData = useChartData();
-  const { startIndex, endIndex } = useDataIndex();
+  const dataIndexes = useDataIndex();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
@@ -906,16 +921,27 @@ function BrushInternal(props: Props) {
 
   const onChange = useCallback(
     (nextState: BrushStartEndIndex) => {
+      if (dataIndexes == null) {
+        return;
+      }
+      const { startIndex, endIndex } = dataIndexes;
       if (nextState.startIndex !== startIndex || nextState.endIndex !== endIndex) {
         onChangeFromContext?.(nextState);
         onChangeFromProps?.(nextState);
         dispatch(setDataStartEndIndexes(nextState));
       }
     },
-    [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
+    [onChangeFromProps, onChangeFromContext, dispatch, dataIndexes],
   );
 
-  const { x, y, width } = useAppSelector(selectBrushDimensions);
+  const brushDimensions = useAppSelector(selectBrushDimensions);
+  if (brushDimensions == null || dataIndexes == null || chartData == null || !chartData.length) {
+    return null;
+  }
+
+  const { startIndex, endIndex } = dataIndexes;
+  const { x, y, width } = brushDimensions;
+
   const contextProperties: PropertiesFromContext = {
     data: chartData,
     x,
@@ -946,32 +972,30 @@ function BrushSettingsDispatcher(props: BrushSettings): null {
   return null;
 }
 
-export class Brush extends PureComponent<Props, State> {
-  static displayName = 'Brush';
+const defaultBrushProps = {
+  height: 40,
+  travellerWidth: 5,
+  gap: 1,
+  fill: '#fff',
+  stroke: '#666',
+  padding: { top: 1, right: 1, bottom: 1, left: 1 },
+  leaveTimeOut: 1000,
+  alwaysShowText: false,
+} as const satisfies Partial<Props>;
 
-  static defaultProps = {
-    height: 40,
-    travellerWidth: 5,
-    gap: 1,
-    fill: '#fff',
-    stroke: '#666',
-    padding: { top: 1, right: 1, bottom: 1, left: 1 },
-    leaveTimeOut: 1000,
-    alwaysShowText: false,
-  };
-
-  render() {
-    return (
-      <>
-        <BrushSettingsDispatcher
-          height={this.props.height}
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          padding={this.props.padding}
-        />
-        <BrushInternal {...this.props} />
-      </>
-    );
-  }
+export function Brush(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, defaultBrushProps);
+  return (
+    <>
+      <BrushSettingsDispatcher
+        height={props.height}
+        x={props.x}
+        y={props.y}
+        width={props.width}
+        padding={props.padding}
+      />
+      <BrushInternal {...props} />
+    </>
+  );
 }
+Brush.displayName = 'Brush';

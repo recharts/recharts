@@ -40,7 +40,7 @@ export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
 export type PolarGraphicalItemType = 'pie' | 'radar' | 'radialBar';
 
 export interface GraphicalItemSettings extends MaybeStackedGraphicalItem {
-  data: ChartData;
+  data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   /**
    * Why not just stop pushing the graphical items to state when they are hidden?
