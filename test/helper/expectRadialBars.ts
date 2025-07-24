@@ -9,12 +9,15 @@ export type ExpectedRadialBarLabel = {
   textContent: string;
 };
 
-export function expectRadialBars(container: Element, expectedRadialBars: ReadonlyArray<ExpectRadialBar>) {
+export function getRadialBarPaths(container: Element): ReadonlyArray<ExpectRadialBar> {
   const bars = container.querySelectorAll(
     '.recharts-radial-bar-sectors path.recharts-sector.recharts-radial-bar-sector',
   );
+  return Array.from(bars).map(bar => ({ d: trim(bar.getAttribute('d')) }));
+}
 
-  const actualBars = Array.from(bars).map(bar => ({ d: trim(bar.getAttribute('d')) }));
+export function expectRadialBars(container: Element, expectedRadialBars: ReadonlyArray<ExpectRadialBar>) {
+  const actualBars = getRadialBarPaths(container);
   expect(actualBars).toEqual(expectedRadialBars);
 }
 
