@@ -1,0 +1,11 @@
+import { EasingFunction } from './easing';
+import { TimeoutController } from './timeoutController';
+export declare const alpha: (begin: number, end: number, k: number) => number;
+export type FrameId = number;
+export type RequestAnimationFrameCallback = (time: number) => void;
+export type RequestAnimationFrameDi = (callback: RequestAnimationFrameCallback) => FrameId;
+export type CancelAnimationFrameDi = (handle: FrameId) => void;
+export type CancelAnimationFunction = () => void;
+export type StartAnimationFunction = () => CancelAnimationFunction;
+declare const _default: <T extends Record<string, unknown>>(from: T, to: T, easing: EasingFunction, duration: number, render: (currentStyle: T) => void, timeoutController: TimeoutController) => StartAnimationFunction;
+export default _default;

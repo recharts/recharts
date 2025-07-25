@@ -5,15 +5,10 @@ import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectAxisWithScale, selectTicksOfGraphicalItem, selectUnfilteredCartesianItems } from './axisSelectors';
-import { DataKey } from '../../util/types';
 import { getBandSizeOfAxis, isCategoricalAxis } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
-import { GraphicalItemId } from '../graphicalItemsSlice';
-
-export type ResolvedLineSettings = {
-  data: ChartData | undefined;
-  dataKey: DataKey<any> | undefined;
-};
+import { CartesianGraphicalItemSettings, GraphicalItemId } from '../graphicalItemsSlice';
+import { LineSettings } from '../types/LineSettings';
 
 const selectXAxisWithScale = (state: RechartsRootState, xAxisId: AxisId, _yAxisId: AxisId, isPanorama: boolean) =>
   selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
@@ -45,6 +40,10 @@ const pickLineId = (
   id: GraphicalItemId,
 ) => id;
 
+function isLineSettings(item: CartesianGraphicalItemSettings): item is LineSettings {
+  return item.type === 'line';
+}
+
 /*
  * There is a race condition problem because we read some data from props and some from the state.
  * The state is updated through a dispatch and is one render behind,
@@ -59,9 +58,10 @@ const selectSynchronisedLineSettings: (
   yAxisId: AxisId,
   isPanorama: boolean,
   id: GraphicalItemId,
-) => ResolvedLineSettings | undefined = createSelector(
+) => LineSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickLineId],
-  (graphicalItems, id: GraphicalItemId) => graphicalItems.find(x => x.id === id),
+  (graphicalItems, id: GraphicalItemId): LineSettings | undefined =>
+    graphicalItems.filter(isLineSettings).find(x => x.id === id),
 );
 
 export const selectLinePoints: (

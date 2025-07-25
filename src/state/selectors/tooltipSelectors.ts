@@ -81,6 +81,7 @@ import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
+import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -103,6 +104,13 @@ export const selectAllGraphicalItemsSettings = createSelector(
   combineGraphicalItemsSettings,
 );
 
+const selectAllStackedGraphicalItemsSettings: (
+  state: RechartsRootState,
+) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
+  [selectAllGraphicalItemsSettings],
+  (graphicalItems: ReadonlyArray<GraphicalItemSettings>) => graphicalItems.filter(isStacked),
+);
+
 export const selectTooltipGraphicalItemsData = createSelector(
   [selectAllGraphicalItemsSettings],
   combineGraphicalItemsData,
@@ -120,7 +128,7 @@ export const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData
 );
 
 const selectTooltipStackedData: (state: RechartsRootState) => DisplayedStackedData = createSelector(
-  [selectAllGraphicalItemsSettings, selectChartDataWithIndexes, selectTooltipAxis],
+  [selectAllStackedGraphicalItemsSettings, selectChartDataWithIndexes, selectTooltipAxis],
   combineDisplayedStackedData,
 );
 
@@ -134,8 +142,13 @@ const selectTooltipAxisDomainDefinition: (state: RechartsRootState) => AxisDomai
   getDomainDefinition,
 );
 
+const selectAllStackedGraphicalItems: (state: RechartsRootState) => ReadonlyArray<DefinitelyStackedGraphicalItem> =
+  createSelector([selectAllGraphicalItemsSettings], (graphicalItems: ReadonlyArray<GraphicalItemSettings>) =>
+    graphicalItems.filter(isStacked),
+  );
+
 const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(
-  [selectTooltipStackedData, selectAllGraphicalItemsSettings, selectStackOffsetType],
+  [selectTooltipStackedData, selectAllStackedGraphicalItems, selectStackOffsetType],
   combineStackGroups,
 );
 

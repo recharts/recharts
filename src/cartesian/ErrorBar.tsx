@@ -9,7 +9,7 @@ import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
-import { ReportErrorBarSettings, useErrorBarContext } from '../context/CartesianGraphicalItemContext';
+import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useAppSelector } from '../../../src/state/hooks';
-import { ResolvedScatterSettings, selectScatterPoints } from '../../../src/state/selectors/scatterSelectors';
+import { selectScatterPoints } from '../../../src/state/selectors/scatterSelectors';
 import { Customized, Pie, PieChart, Scatter, ScatterChart } from '../../../src';
 import { pageData } from '../../../storybook/stories/data';
 import {
@@ -11,9 +11,10 @@ import {
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
 import { RechartsRootState } from '../../../src/state/store';
+import { ScatterSettings } from '../../../src/state/types/ScatterSettings';
 
 describe('selectScatterPoints', () => {
-  const scatterSettings: ResolvedScatterSettings = {
+  const scatterSettings: ScatterSettings = {
     name: undefined,
     tooltipType: undefined,
     data: pageData,

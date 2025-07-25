@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Series } from 'victory-vendor/d3-shape';
-import { DataKey, NullableCoordinate } from '../../util/types';
-import { BaseValue, computeArea } from '../../cartesian/Area';
+import { NullableCoordinate } from '../../util/types';
+import { computeArea } from '../../cartesian/Area';
 import {
   selectAxisWithScale,
   selectStackGroups,
@@ -16,8 +16,8 @@ import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } f
 import { ChartData } from '../chartDataSlice';
 import { NullablePoint } from '../../shape/Curve';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
-import { MaybeStackedGraphicalItem } from './barSelectors';
 import { StackDataPoint, StackGroup, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
+import { AreaSettings } from '../types/AreaSettings';
 
 export interface AreaPointItem extends NullablePoint {
   x: number | null;
@@ -25,13 +25,6 @@ export interface AreaPointItem extends NullablePoint {
   value?: number | number[];
   payload?: any;
 }
-export type AreaSettings = MaybeStackedGraphicalItem & {
-  connectNulls: boolean;
-  baseValue: BaseValue | undefined;
-  dataKey: DataKey<any>;
-  stackId: StackId | undefined;
-  data: ChartData | undefined;
-};
 
 export type ComputedArea = {
   points: ReadonlyArray<AreaPointItem>;

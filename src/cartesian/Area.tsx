@@ -7,7 +7,13 @@ import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber } from '../util/DataUtils';
-import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, StackId } from '../util/ChartUtils';
+import {
+  getCateCoordinateOfLine,
+  getNormalizedStackId,
+  getTooltipNameProp,
+  getValueByDataKey,
+  StackId,
+} from '../util/ChartUtils';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -23,11 +29,10 @@ import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
-import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
+import { AreaPointItem, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
@@ -40,6 +45,8 @@ import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { AreaSettings } from '../state/types/AreaSettings';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -716,15 +723,32 @@ function AreaImpl(props: WithIdRequired<Props>) {
 
   const areaSettings: AreaSettings = useMemo(
     (): AreaSettings => ({
+      type: 'area',
       id: props.id,
       baseValue: props.baseValue,
-      stackId: props.stackId,
+      stackId: getNormalizedStackId(props.stackId),
       connectNulls,
       data: props.data,
       dataKey: props.dataKey,
       barSize: undefined,
+      hide,
+      xAxisId,
+      yAxisId,
+      zAxisId: undefined,
+      isPanorama,
     }),
-    [props.id, props.baseValue, props.stackId, props.data, props.dataKey, connectNulls],
+    [
+      props.id,
+      props.baseValue,
+      props.stackId,
+      props.data,
+      props.dataKey,
+      connectNulls,
+      hide,
+      xAxisId,
+      yAxisId,
+      isPanorama,
+    ],
   );
   const { points, isRange, baseLine } =
     useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
@@ -920,6 +944,7 @@ export function computeArea({
 
 export function Area(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
+  const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="area">
@@ -927,20 +952,22 @@ export function Area(outsideProps: Props) {
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-          <CartesianGraphicalItemContext
-            id={id}
+          <SetCartesianGraphicalItem
             type="area"
+            id={id}
             data={props.data}
             dataKey={props.dataKey}
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
-            stackId={props.stackId}
+            stackId={getNormalizedStackId(props.stackId)}
             hide={props.hide}
             barSize={undefined}
-          >
-            <AreaImpl {...props} id={id} />
-          </CartesianGraphicalItemContext>
+            baseValue={props.baseValue}
+            isPanorama={isPanorama}
+            connectNulls={props.connectNulls}
+          />
+          <AreaImpl {...props} id={id} />
         </>
       )}
     </RegisterGraphicalItemId>

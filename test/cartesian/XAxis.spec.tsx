@@ -39,7 +39,6 @@ import { pageData } from '../../storybook/stories/data';
 import { Props as XAxisProps } from '../../src/cartesian/XAxis';
 import { expectBars } from '../helper/expectBars';
 import {
-  BarSettings,
   selectAllBarPositions,
   selectBarBandSize,
   selectBarCartesianAxisSize,
@@ -48,6 +47,7 @@ import {
 import { selectChartOffsetInternal } from '../../src/state/selectors/selectChartOffsetInternal';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<XAxis />', () => {

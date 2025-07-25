@@ -462,15 +462,13 @@ export class Radar extends PureComponent<Props> {
         {id => (
           <>
             <PolarGraphicalItemContext
+              type="radar"
               id={id}
               data={undefined} // Radar does not have data prop, why?
               dataKey={this.props.dataKey}
               hide={this.props.hide}
               angleAxisId={this.props.angleAxisId}
               radiusAxisId={this.props.radiusAxisId}
-              stackId={undefined}
-              barSize={undefined}
-              type="radar"
             />
             <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
             <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

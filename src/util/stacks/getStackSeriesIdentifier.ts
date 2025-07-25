@@ -1,5 +1,5 @@
-import { MaybeStackedGraphicalItem } from '../../state/selectors/barSelectors';
 import { StackSeriesIdentifier } from './stackTypes';
+import { MaybeStackedGraphicalItem } from '../../state/types/StackedGraphicalItem';
 
 /**
  * Returns identifier for stack series which is one individual graphical item in the stack.

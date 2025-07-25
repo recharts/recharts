@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import { StackDataPoint, StackSeries } from '../../src/util/stacks/stackTypes';
-import { MaybeStackedGraphicalItem } from '../../src/state/selectors/barSelectors';
+
+import { MaybeStackedGraphicalItem } from '../../src/state/types/StackedGraphicalItem';
 
 export type ExpectedStackedDataSeries = ReadonlyArray<StackDataPoint>;
 

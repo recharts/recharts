@@ -22,9 +22,9 @@ import {
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { TickItemTextProps } from '../../src/polar/PolarAngleAxis';
+import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedAngleAxisTick = {

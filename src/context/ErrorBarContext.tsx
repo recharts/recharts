@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect } from 'react';
-import { CartesianGraphicalItemType, GraphicalItemId } from '../state/graphicalItemsSlice';
-import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { DataKey } from '../util/types';
-import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
-import { useIsPanorama } from './PanoramaContext';
 import { addErrorBar, ErrorBarsSettings, removeErrorBar } from '../state/errorBarSlice';
 import { useAppDispatch } from '../state/hooks';
 import { useGraphicalItemId } from './RegisterGraphicalItemId';
@@ -38,55 +32,6 @@ export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children
 }
 
 export const useErrorBarContext = () => useContext(ErrorBarContext);
-
-type GraphicalItemContextProps = {
-  id: GraphicalItemId;
-  type: CartesianGraphicalItemType;
-  data: ChartData | undefined;
-  xAxisId: AxisId;
-  yAxisId: AxisId;
-  zAxisId: AxisId;
-  dataKey: DataKey<any>;
-  stackId: StackId | undefined;
-  hide: boolean;
-  barSize: string | number | undefined;
-  children: React.ReactNode;
-};
-
-export const CartesianGraphicalItemContext = ({
-  id,
-  children,
-  xAxisId,
-  yAxisId,
-  zAxisId,
-  dataKey,
-  data,
-  stackId,
-  hide,
-  type,
-  barSize,
-}: GraphicalItemContextProps) => {
-  const isPanorama = useIsPanorama();
-
-  return (
-    <>
-      <SetCartesianGraphicalItem
-        id={id}
-        type={type}
-        data={data}
-        xAxisId={xAxisId}
-        yAxisId={yAxisId}
-        zAxisId={zAxisId}
-        dataKey={dataKey}
-        stackId={stackId}
-        hide={hide}
-        barSize={barSize}
-        isPanorama={isPanorama}
-      />
-      {children}
-    </>
-  );
-};
 
 export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
   const dispatch = useAppDispatch();

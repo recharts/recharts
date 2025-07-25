@@ -3,12 +3,13 @@ import { describe, it, expect } from 'vitest';
 import { Area, AreaChart, Tooltip, XAxis, YAxis } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
-import { AreaSettings, selectArea, selectGraphicalItemStackedData } from '../../src/state/selectors/areaSelectors';
+import { selectArea, selectGraphicalItemStackedData } from '../../src/state/selectors/areaSelectors';
 import { selectDisplayedData, selectStackGroups } from '../../src/state/selectors/axisSelectors';
 import { StackId } from '../../src/util/ChartUtils';
 import { ExpectedStackedDataSeries, expectGraphicalItemSettings } from '../helper/expectStackGroups';
 import { ChartData } from '../../src/state/chartDataSlice';
 import { StackGroup } from '../../src/util/stacks/stackTypes';
+import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const data1 = [

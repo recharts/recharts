@@ -7,27 +7,19 @@ import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import {
   selectAxisWithScale,
-  selectZAxisWithScale,
   selectTicksOfGraphicalItem,
-  ZAxisWithScale,
   selectUnfilteredCartesianItems,
+  selectZAxisWithScale,
+  ZAxisWithScale,
 } from './axisSelectors';
-import { DataKey } from '../../util/types';
-import { TooltipType } from '../../component/DefaultTooltipContent';
-
-export type ResolvedScatterSettings = {
-  data: ChartData | undefined;
-  dataKey: DataKey<any> | undefined;
-  tooltipType: TooltipType | undefined;
-  name: string | number | undefined;
-};
+import { ScatterSettings } from '../types/ScatterSettings';
 
 const selectXAxisWithScale = (
   state: RechartsRootState,
   xAxisId: AxisId,
   _yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ) => selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
@@ -37,7 +29,7 @@ const selectXAxisTicks = (
   xAxisId: AxisId,
   _yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ) => selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
@@ -47,7 +39,7 @@ const selectYAxisWithScale = (
   _xAxisId: AxisId,
   yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ) => selectAxisWithScale(state, 'yAxis', yAxisId, isPanorama);
@@ -57,7 +49,7 @@ const selectYAxisTicks = (
   _xAxisId: AxisId,
   yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ) => selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
@@ -70,7 +62,7 @@ const pickScatterSettings = (
   _xAxisId: AxisId,
   _yAxisId: AxisId,
   _zAxisId: AxisId,
-  scatterSettings: ResolvedScatterSettings,
+  scatterSettings: ScatterSettings,
 ) => scatterSettings;
 
 const pickCells = (
@@ -78,7 +70,7 @@ const pickCells = (
   _xAxisId: AxisId,
   _yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => cells;
 
@@ -87,7 +79,7 @@ const scatterChartDataSelector = (
   xAxisId: AxisId,
   yAxisId: AxisId,
   _zAxisId: AxisId,
-  _scatterSettings: ResolvedScatterSettings,
+  _scatterSettings: ScatterSettings,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ): ChartDataState => selectChartDataWithIndexesIfNotInPanorama(state, xAxisId, yAxisId, isPanorama);
@@ -97,8 +89,8 @@ const selectSynchronisedScatterSettings: (
   xAxisId: AxisId,
   yAxisId: AxisId,
   _zAxisId: AxisId,
-  scatterSettings: ResolvedScatterSettings,
-) => ResolvedScatterSettings | undefined = createSelector(
+  scatterSettings: ScatterSettings,
+) => ScatterSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickScatterSettings],
   (graphicalItems, scatterSettingsFromProps) => {
     if (
@@ -120,7 +112,7 @@ export const selectScatterPoints: (
   xAxisId: AxisId,
   yAxisId: AxisId,
   zAxisId: AxisId,
-  scatterSettings: ResolvedScatterSettings,
+  scatterSettings: ScatterSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
 ) => ReadonlyArray<ScatterPointItem> | undefined = createSelector(
@@ -141,7 +133,7 @@ export const selectScatterPoints: (
     yAxis,
     yAxisTicks,
     zAxis: ZAxisWithScale,
-    scatterSettings: ResolvedScatterSettings,
+    scatterSettings: ScatterSettings,
     cells,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
     if (scatterSettings == null) {

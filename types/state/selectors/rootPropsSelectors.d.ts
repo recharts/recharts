@@ -1,0 +1,12 @@
+import { RechartsRootState } from '../store';
+import { StackOffsetType } from '../../util/types';
+import { SyncMethod } from '../../synchronisation/types';
+export declare const selectRootMaxBarSize: (state: RechartsRootState) => number | undefined;
+export declare const selectBarGap: (state: RechartsRootState) => string | number | undefined;
+export declare const selectBarCategoryGap: (state: RechartsRootState) => string | number | undefined;
+export declare const selectRootBarSize: (state: RechartsRootState) => string | number | undefined;
+export declare const selectStackOffsetType: (state: RechartsRootState) => StackOffsetType;
+export declare const selectChartName: (state: RechartsRootState) => string;
+export declare const selectSyncId: (state: RechartsRootState) => string | number;
+export declare const selectSyncMethod: (state: RechartsRootState) => SyncMethod;
+export declare const selectEventEmitter: (state: RechartsRootState) => symbol;

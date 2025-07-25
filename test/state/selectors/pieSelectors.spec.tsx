@@ -6,12 +6,13 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
-import { ResolvedPieSettings, selectPieSectors } from '../../../src/state/selectors/pieSelectors';
+import { selectPieSectors } from '../../../src/state/selectors/pieSelectors';
 import { pageData } from '../../../storybook/stories/data';
 import { Pie, PieChart } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { PieSettings } from '../../../src/state/types/PieSettings';
 
-const pieSettings: ResolvedPieSettings = {
+const pieSettings: PieSettings = {
   data: pageData,
   dataKey: 'uv',
   fill: '',

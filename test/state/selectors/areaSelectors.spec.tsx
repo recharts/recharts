@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
-import { AreaSettings, ComputedArea, selectArea } from '../../../src/state/selectors/areaSelectors';
+import { ComputedArea, selectArea } from '../../../src/state/selectors/areaSelectors';
 import {
   shouldReturnFromInitialState,
   shouldReturnUndefinedOutOfContext,
@@ -11,6 +11,7 @@ import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { Area, AreaChart, XAxis } from '../../../src';
 import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { AreaSettings } from '../../../src/state/types/AreaSettings';
 
 const areaSettings: AreaSettings = {
   id: 'area-0',

@@ -25,7 +25,6 @@ import {
 } from '../../src/state/selectors/polarScaleSelectors';
 import {
   pickMaxBarSize,
-  RadialBarSettings,
   selectBandSizeOfPolarAxis,
   selectPolarBarBandSize,
   selectPolarBarPosition,
@@ -39,6 +38,7 @@ import {
 } from '../../src/state/selectors/polarAxisSelectors';
 import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<RadialBar />', () => {

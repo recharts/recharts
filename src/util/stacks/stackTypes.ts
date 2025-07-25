@@ -1,7 +1,7 @@
 import { Series } from 'victory-vendor/d3-shape';
-import { MaybeStackedGraphicalItem } from '../../state/selectors/barSelectors';
 import { StackId } from '../ChartUtils';
 import { GraphicalItemId } from '../../state/graphicalItemsSlice';
+import { MaybeStackedGraphicalItem } from '../../state/types/StackedGraphicalItem';
 
 /*
  * So chart stacks come in layers:

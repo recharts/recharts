@@ -29,7 +29,6 @@ import {
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
 import {
-  BarSettings,
   selectAllBarPositions,
   selectAllVisibleBars,
   selectAxisBandSize,
@@ -50,6 +49,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { CartesianChartProps } from '../../src/util/types';
+import { BarSettings } from '../../src/state/types/BarSettings';
 import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 
 type DataType = {

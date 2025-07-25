@@ -1,9 +1,9 @@
-import { GraphicalItemSettings } from '../../graphicalItemsSlice';
 import { ChartDataState } from '../../chartDataSlice';
 import { BaseCartesianAxis } from '../../cartesianAxisSlice';
 import { getStackSeriesIdentifier } from '../../../util/stacks/getStackSeriesIdentifier';
 import { getValueByDataKey } from '../../../util/ChartUtils';
 import { StackSeriesIdentifier } from '../../../util/stacks/stackTypes';
+import { DefinitelyStackedGraphicalItem } from '../../types/StackedGraphicalItem';
 
 /**
  * In a stacked chart, each graphical item has its own data. That data could be either:
@@ -20,7 +20,7 @@ export type DisplayedStackedDataPoint = Record<StackSeriesIdentifier, number>;
 export type DisplayedStackedData = ReadonlyArray<DisplayedStackedDataPoint>;
 
 export function combineDisplayedStackedData(
-  cartesianItems: ReadonlyArray<GraphicalItemSettings>,
+  stackedGraphicalItems: ReadonlyArray<DefinitelyStackedGraphicalItem>,
   { chartData = [] }: ChartDataState,
   tooltipAxisSettings: BaseCartesianAxis,
 ): DisplayedStackedData {
@@ -29,7 +29,7 @@ export function combineDisplayedStackedData(
   // A map of tooltip data keys to the stacked data points
   const knownItemsByDataKey = new Map<string | number, DisplayedStackedDataPoint>();
 
-  cartesianItems.forEach(item => {
+  stackedGraphicalItems.forEach(item => {
     // If there is no data on the individual item then we use the root chart data
     const resolvedData = item.data ?? chartData;
     if (resolvedData == null || resolvedData.length === 0) {
@@ -50,6 +50,5 @@ export function combineDisplayedStackedData(
       knownItemsByDataKey.set(tooltipValue, curr);
     });
   });
-  const merged = Array.from(knownItemsByDataKey.values());
-  return merged;
+  return Array.from(knownItemsByDataKey.values());
 }

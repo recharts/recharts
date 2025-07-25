@@ -53,10 +53,10 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
+import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
-import { BarSettings, selectBarRectangles } from '../state/selectors/barSelectors';
+import { selectBarRectangles } from '../state/selectors/barSelectors';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -66,6 +66,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { BarSettings } from '../state/types/BarSettings';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 
 type Rectangle = {
   x: number | null;
@@ -566,6 +568,7 @@ function BarImpl(props: BarImplProps) {
 
   const barSettings: BarSettings = useMemo(
     (): BarSettings => ({
+      type: 'bar',
       id: props.id,
       barSize: props.barSize,
       data: undefined,
@@ -573,8 +576,24 @@ function BarImpl(props: BarImplProps) {
       maxBarSize: props.maxBarSize,
       minPointSize,
       stackId: getNormalizedStackId(props.stackId),
+      xAxisId,
+      yAxisId,
+      zAxisId: undefined,
+      hide,
+      isPanorama,
     }),
-    [props.barSize, props.dataKey, props.maxBarSize, minPointSize, props.stackId, props.id],
+    [
+      props.id,
+      props.barSize,
+      props.dataKey,
+      props.maxBarSize,
+      props.stackId,
+      minPointSize,
+      xAxisId,
+      yAxisId,
+      hide,
+      isPanorama,
+    ],
   );
 
   const cells = findAllByType(props.children, Cell);
@@ -731,6 +750,7 @@ export function computeBarRectangles({
 
 export function Bar(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="bar">
@@ -738,21 +758,23 @@ export function Bar(outsideProps: Props) {
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-          <CartesianGraphicalItemContext
-            id={id}
+          <SetCartesianGraphicalItem
             type="bar"
+            id={id}
             // Bar does not allow setting data directly on the graphical item (why?)
             data={undefined}
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
             dataKey={props.dataKey}
-            stackId={props.stackId}
+            stackId={getNormalizedStackId(props.stackId)}
             hide={props.hide}
             barSize={props.barSize}
-          >
-            <BarImpl {...props} id={id} />
-          </CartesianGraphicalItemContext>
+            minPointSize={props.minPointSize}
+            maxBarSize={props.maxBarSize}
+            isPanorama={isPanorama}
+          />
+          <BarImpl {...props} id={id} />
         </>
       )}
     </RegisterGraphicalItemId>

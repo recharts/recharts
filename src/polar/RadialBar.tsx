@@ -18,6 +18,7 @@ import {
   truncateByDomain,
   getTooltipNameProp,
   BarPositionPosition,
+  getNormalizedStackId,
 } from '../util/ChartUtils';
 import {
   LegendType,
@@ -38,14 +39,9 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
-import {
-  RadialBarSettings,
-  selectRadialBarLegendPayload,
-  selectRadialBarSectors,
-} from '../state/selectors/radialBarSelectors';
+import { selectRadialBarLegendPayload, selectRadialBarSectors } from '../state/selectors/radialBarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
@@ -53,6 +49,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { RadialBarSettings } from '../state/types/RadialBarSettings';
+import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -343,12 +341,17 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
 function RadialBarImpl(props: RadialBarProps) {
   const cells = findAllByType(props.children, Cell);
   const radialBarSettings: RadialBarSettings = {
+    data: undefined,
+    hide: false,
     id: props.id,
     dataKey: props.dataKey,
     minPointSize: props.minPointSize,
-    stackId: props.stackId,
+    stackId: getNormalizedStackId(props.stackId),
     maxBarSize: props.maxBarSize,
     barSize: props.barSize,
+    type: 'radialBar',
+    angleAxisId: props.angleAxisId,
+    radiusAxisId: props.radiusAxisId,
   };
   const data: ReadonlyArray<RadialBarDataItem> =
     useAppSelector(state =>
@@ -507,7 +510,8 @@ export class RadialBar extends PureComponent<RadialBarProps> {
       <RegisterGraphicalItemId id={this.props.id} type="radialBar">
         {id => (
           <>
-            <PolarGraphicalItemContext
+            <SetPolarGraphicalItem
+              type="radialBar"
               id={id}
               // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
               data={undefined} // data prop is injected through generator and overwrites what user passes in
@@ -516,9 +520,10 @@ export class RadialBar extends PureComponent<RadialBarProps> {
               hide={this.props.hide ?? defaultRadialBarProps.hide!}
               angleAxisId={this.props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
               radiusAxisId={this.props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
-              stackId={this.props.stackId}
+              stackId={getNormalizedStackId(this.props.stackId)}
               barSize={this.props.barSize}
-              type="radialBar"
+              minPointSize={this.props.minPointSize}
+              maxBarSize={this.props.maxBarSize}
             />
             <SetRadialBarPayloadLegend {...this.props} />
             <RadialBarImpl {...this.props} id={id} />

@@ -5,7 +5,7 @@ import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxi
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
-import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
+import { selectArea } from '../../src/state/selectors/areaSelectors';
 import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -14,6 +14,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
 import { rangeData } from '../../storybook/stories/data/Page';
+import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('AreaChart', () => {
