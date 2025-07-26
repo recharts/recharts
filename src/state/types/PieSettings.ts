@@ -20,5 +20,5 @@ export interface PieSettings extends BasePolarGraphicalItemSettings {
   innerRadius: number | string;
   outerRadius: number | string | ((element: any) => number);
   cornerRadius: number | string | undefined;
-  presentationProps: Record<string, string>;
+  presentationProps: Record<string, string | number>;
 }

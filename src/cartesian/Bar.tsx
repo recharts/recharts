@@ -58,6 +58,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 type Rectangle = {
   x: number | null;
@@ -289,7 +290,7 @@ function BarRectangles({
   props: BarRectanglesProps;
   showLabels: boolean;
 }) {
-  const { id, ...baseProps } = filterProps(props, false);
+  const { id, ...baseProps } = svgOnlyNoEvents(props);
   const { shape, dataKey, activeBar } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -325,6 +326,7 @@ function BarRectangles({
         const isActive: boolean =
           activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
         const option = isActive ? activeBar : shape;
+        // @ts-expect-error event types are not compatible
         const barRectangleProps: BarRectangleProps = {
           ...baseProps,
           ...entry,

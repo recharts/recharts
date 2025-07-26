@@ -33,11 +33,12 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -386,7 +387,7 @@ function FunnelImpl(props: Props) {
     ...everythingElse
   } = resolveDefaultProps(props, defaultFunnelProps);
 
-  const presentationProps = filterProps(props, false);
+  const presentationProps = svgOnlyNoEvents(props);
   const cells = findAllByType(props.children, Cell);
 
   const funnelSettings: ResolvedFunnelSettings = useMemo(

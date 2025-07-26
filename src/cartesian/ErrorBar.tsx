@@ -5,7 +5,6 @@ import * as React from 'react';
 import { Component, createContext, SVGProps, useContext } from 'react';
 import { Layer } from '../container/Layer';
 import { AnimationTiming, DataKey } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
@@ -13,6 +12,7 @@ import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarC
 import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -87,7 +87,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     animationEasing,
     ...others
   } = props;
-  const svgProps = filterProps(others, false);
+  const svgProps = svgOnlyNoEvents(others);
 
   const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset } = useErrorBarContext();
 

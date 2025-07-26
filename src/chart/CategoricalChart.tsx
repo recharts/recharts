@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { filterProps } from '../util/ReactUtils';
 import { RootSurface } from '../container/RootSurface';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ClipPathProvider } from '../container/ClipPathProvider';
 import { CartesianChartProps } from '../util/types';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 type CategoricalChartRequiredProps = CartesianChartProps & {
   width: NonNullable<CartesianChartProps['width']>;
@@ -14,7 +14,7 @@ type CategoricalChartRequiredProps = CartesianChartProps & {
 export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartRequiredProps>(
   (props: CategoricalChartRequiredProps, ref) => {
     const { children, className, width, height, style, compact, title, desc, ...others } = props;
-    const attrs = filterProps(others, false);
+    const attrs = svgOnlyNoEvents(others);
 
     // The "compact" mode is used as the panorama within Brush
     if (compact) {

@@ -22,6 +22,7 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -132,22 +133,24 @@ const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): T
 
 type PropsWithTicks = Props & { ticks: ReadonlyArray<TickItem> };
 
-const AxisLine = (props: PropsWithTicks): ReactElement => {
+const AxisLine = (props: PropsWithTicks) => {
   const { cx, cy, radius, axisLineType, axisLine, ticks } = props;
   if (!axisLine) {
     return null;
   }
   const axisLineProps = {
-    ...filterProps(props, false),
+    ...svgOnlyNoEvents(props),
     fill: 'none',
     ...filterProps(axisLine, false),
   };
 
   if (axisLineType === 'circle') {
+    // @ts-expect-error wrong SVG element type
     return <Dot className="recharts-polar-angle-axis-line" {...axisLineProps} cx={cx} cy={cy} r={radius} />;
   }
   const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.coordinate));
 
+  // @ts-expect-error wrong SVG element type
   return <Polygon className="recharts-polar-angle-axis-line" {...axisLineProps} points={points} />;
 };
 
@@ -182,7 +185,7 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement =
 
 const Ticks = (props: PropsWithTicks) => {
   const { tick, tickLine, tickFormatter, stroke, ticks } = props;
-  const axisProps = filterProps(props, false);
+  const axisProps = svgOnlyNoEvents(props);
   const customTickProps = filterProps(tick, false);
   const tickLineProps = {
     ...axisProps,
@@ -192,10 +195,10 @@ const Ticks = (props: PropsWithTicks) => {
 
   const items = ticks.map((entry, i) => {
     const lineCoord = getTickLineCoord(entry, props);
-    const textAnchor = getTickTextAnchor(entry, props.orientation);
+    const textAnchor: TextAnchor = getTickTextAnchor(entry, props.orientation);
     const tickProps: TickItemTextProps = {
-      textAnchor,
       ...axisProps,
+      textAnchor,
       stroke: 'none',
       fill: stroke,
       ...customTickProps,
@@ -211,6 +214,7 @@ const Ticks = (props: PropsWithTicks) => {
         key={`tick-${entry.coordinate}`}
         {...adaptEventsOfChild(props, entry, i)}
       >
+        {/* @ts-expect-error we're passing recharts internal `scale` prop in place of SVG scale prop */}
         {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
         <TickItemText
           tick={tick}

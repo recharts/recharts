@@ -192,7 +192,11 @@ interface SectorProps extends GeometrySectorWithCornerRadius {
   className?: string;
 }
 
-export type Props = SVGProps<SVGPathElement> & Partial<SectorProps>;
+/**
+ * SVG cx, cy are `string | number | undefined`, but internally we use `number` so let's
+ * override the types here.
+ */
+export type Props = Omit<SVGProps<SVGPathElement>, 'cx' | 'cy'> & Partial<SectorProps>;
 
 const defaultProps = {
   cx: 0,

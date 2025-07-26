@@ -21,6 +21,7 @@ import {
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -279,7 +280,7 @@ export class CartesianAxis extends Component<Props, IState> {
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
-    const axisProps = filterProps(this.props, false);
+    const axisProps = svgOnlyNoEvents(this.props);
     const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,
@@ -309,6 +310,7 @@ export class CartesianAxis extends Component<Props, IState> {
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (
+            // @ts-expect-error recharts scale is not compatible with SVG scale
             <line
               {...tickLineProps}
               {...lineCoord}

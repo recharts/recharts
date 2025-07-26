@@ -12,7 +12,6 @@ import { COLOR_PANEL } from '../util/Constants';
 import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -31,6 +30,7 @@ import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { Animate } from '../animation/Animate';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -764,7 +764,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
-    const nodeProps = { ...filterProps(this.props, false), ...node, root };
+    const nodeProps = { ...svgOnlyNoEvents(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
@@ -874,7 +874,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   render() {
     const { width, height, className, style, children, type, ...others } = this.props;
-    const attrs = filterProps(others, false);
+    const attrs = svgOnlyNoEvents(others);
 
     return (
       <TooltipPortalContext.Provider value={this.state.tooltipPortal}>

@@ -8,7 +8,6 @@ import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';
 import { ChartOffsetInternal } from '../util/types';
 
-import { filterProps } from '../util/ReactUtils';
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
@@ -18,6 +17,7 @@ import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/se
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
 
 /**
  * The <CartesianGrid horizontal
@@ -134,7 +134,7 @@ interface CartesianGridProps extends InternalCartesianGridProps {
   yAxisId?: AxisId;
 }
 
-type AcceptedSvgProps = Omit<SVGProps<SVGRectElement>, 'offset'>;
+type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset'>;
 
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
@@ -184,7 +184,7 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
     lineItem = option(props);
   } else {
     const { x1, y1, x2, y2, key, ...others } = props;
-    const { offset: __, ...restOfFilteredProps } = filterProps(others, false);
+    const { offset: __, ...restOfFilteredProps } = svgOnlyNoEvents(others);
     lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
   }
 
