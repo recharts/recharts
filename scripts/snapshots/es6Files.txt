@@ -107,6 +107,7 @@
   "es6/state/brushSlice.js",
   "es6/state/cartesianAxisSlice.js",
   "es6/state/chartDataSlice.js",
+  "es6/state/errorBarSlice.js",
   "es6/state/externalEventsMiddleware.js",
   "es6/state/graphicalItemsSlice.js",
   "es6/state/hooks.js",

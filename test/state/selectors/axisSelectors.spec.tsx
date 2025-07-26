@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
 import { Selector } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../../src/state/hooks';
@@ -10,12 +10,13 @@ import {
   implicitYAxis,
   implicitZAxis,
   mergeDomains,
+  selectAllAppliedNumericalValuesIncludingErrorValues,
   selectAllAppliedValues,
+  selectAllErrorBarSettings,
   selectAxisDomain,
   selectAxisDomainIncludingNiceTicks,
   selectAxisRangeWithReverse,
   selectAxisScale,
-  selectAxisSettings,
   selectAxisWithScale,
   selectBaseAxis,
   selectCalculatedXAxisPadding,
@@ -24,6 +25,7 @@ import {
   selectErrorBarsSettings,
   selectHasBar,
   selectNiceTicks,
+  selectNumericalDomain,
   selectSmallestDistanceBetweenValues,
   selectXAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
@@ -68,6 +70,7 @@ import {
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 
 const defaultAxisId: AxisId = 0;
 
@@ -1604,7 +1607,6 @@ describe('selectCartesianGraphicalItemsData', () => {
       type: 'bar',
       hide: false,
       stackId: 's-id',
-      errorBars: [],
       dataKey: 'dataKey',
       data: PageData,
       xAxisId: 'x',
@@ -2502,232 +2504,324 @@ describe('selectErrorBarsSettings', () => {
     expect(yAxisSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should return bars settings if present in BarChart', () => {
-    const xAxisSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      xAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
-      return null;
-    };
-    render(
-      <BarChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
-        <Bar dataKey="x" isAnimationActive={false}>
-          <ErrorBar dataKey="data-x" direction="x" />
-          <ErrorBar dataKey="data-y" direction="y" />
-        </Bar>
-        <Comp />
-        <XAxis type="number" />
-      </BarChart>,
-    );
-    expect(xAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-x',
-        direction: 'x',
-      },
-    ]);
-    expect(yAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-y',
-        direction: 'y',
-      },
-    ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(3);
-    expect(yAxisSpy).toHaveBeenCalledTimes(3);
-  });
+  describe('error bars settings', () => {
+    describe('in BarChart', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
+          <Bar dataKey="x" isAnimationActive={false} id="bar-without-error-bars" />
+          <Bar dataKey="x" isAnimationActive={false} id="my-bar-id">
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Bar>
+          <XAxis type="number" />
+          {children}
+        </BarChart>
+      ));
 
-  it('should return bars settings if present in LineChart', () => {
-    const xAxisSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      xAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
-      return null;
-    };
-    render(
-      <LineChart width={100} height={100}>
-        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
-        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} dataKey="x">
-          <ErrorBar dataKey="data-x" direction="x" />
-          <ErrorBar dataKey="data-y" direction="y" />
-        </Line>
-        <Comp />
-        <XAxis type="number" />
-      </LineChart>,
-    );
-    expect(xAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-x',
-        direction: 'x',
-      },
-    ]);
-    expect(yAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-y',
-        direction: 'y',
-      },
-    ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(3);
-    expect(yAxisSpy).toHaveBeenCalledTimes(3);
-  });
+      it('should select error bar state', () => {
+        const { spy } = renderTestCase(selectAllErrorBarSettings);
+        expect(spy).toHaveBeenLastCalledWith({
+          'my-bar-id': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+        });
+      });
 
-  it('should return bars settings if present in vertical LineChart', () => {
-    const xAxisSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      xAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
-      return null;
-    };
-    render(
-      <LineChart width={100} height={100} layout="vertical">
-        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
-        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} dataKey="x">
-          <ErrorBar dataKey="data-x" direction="x" />
-          <ErrorBar dataKey="data-y" direction="y" />
-        </Line>
-        <Comp />
-        <XAxis type="number" />
-      </LineChart>,
-    );
-    expect(xAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-x',
-        direction: 'x',
-      },
-    ]);
-    expect(yAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-y',
-        direction: 'y',
-      },
-    ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(3);
-    expect(yAxisSpy).toHaveBeenCalledTimes(3);
-  });
+      it('should return XAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
 
-  it('should return bars settings if present in ScatterChart', () => {
-    const xAxisErrorBarSpy = vi.fn();
-    const yAxisErrorBarSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      xAxisErrorBarSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisErrorBarSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisSettings(state, 'yAxis', defaultAxisId)));
-      return null;
-    };
-    render(
-      <ScatterChart width={100} height={100}>
-        <Scatter data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" isAnimationActive={false}>
-          <ErrorBar dataKey="data-x" direction="x" />
-          <ErrorBar dataKey="data-y" direction="y" />
-        </Scatter>
-        <Comp />
-        <XAxis type="number" />
-      </ScatterChart>,
-    );
-    expect(yAxisSpy).toHaveBeenLastCalledWith({
-      allowDataOverflow: false,
-      allowDecimals: true,
-      allowDuplicatedCategory: true,
-      angle: 0,
-      dataKey: undefined,
-      domain: [0, 'auto'],
-      hide: true,
-      id: 0,
-      includeHidden: false,
-      interval: 'preserveEnd',
-      minTickGap: 5,
-      mirror: false,
-      name: undefined,
-      orientation: 'left',
-      padding: {
-        bottom: 0,
-        top: 0,
-      },
-      reversed: false,
-      scale: 'auto',
-      tick: true,
-      tickCount: 5,
-      tickFormatter: undefined,
-      ticks: undefined,
-      type: 'number',
-      unit: undefined,
-      width: 60,
+      it('should return YAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
     });
-    expect(xAxisErrorBarSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-x',
-        direction: 'x',
-      },
-    ]);
-    expect(yAxisErrorBarSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'data-y',
-        direction: 'y',
-      },
-    ]);
-    expect(xAxisErrorBarSpy).toHaveBeenCalledTimes(5);
-    expect(yAxisErrorBarSpy).toHaveBeenCalledTimes(5);
-  });
 
-  it('should report all relevant error bars on Bar, Line, and Scatter', () => {
-    const xAxisSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      xAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
-      return null;
-    };
-    render(
-      <ComposedChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
-        <Bar dataKey="x" isAnimationActive={false}>
-          <ErrorBar dataKey="a" direction="x" />
-          <ErrorBar dataKey="b" direction="y" />
-        </Bar>
-        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
-          <ErrorBar dataKey="c" direction="x" />
-          <ErrorBar dataKey="d" direction="y" />
-        </Line>
-        <Scatter data={[{ x: 100 }, { x: 200 }, { x: 300 }]} isAnimationActive={false}>
-          <ErrorBar dataKey="e" direction="x" />
-          <ErrorBar dataKey="f" direction="y" />
-        </Scatter>
-        <Comp />
-        <XAxis type="number" />
-        <YAxis dataKey="x" />
-      </ComposedChart>,
-    );
-    expect(xAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'a',
-        direction: 'x',
-      },
-      {
-        dataKey: 'c',
-        direction: 'x',
-      },
-      {
-        dataKey: 'e',
-        direction: 'x',
-      },
-    ]);
-    expect(yAxisSpy).toHaveBeenLastCalledWith([
-      {
-        dataKey: 'b',
-        direction: 'y',
-      },
-      {
-        dataKey: 'd',
-        direction: 'y',
-      },
-      {
-        dataKey: 'f',
-        direction: 'y',
-      },
-    ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(5);
-    expect(yAxisSpy).toHaveBeenCalledTimes(5);
+    describe('in LineChart', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={100} height={100}>
+          <Line data={PageData} isAnimationActive={false} dataKey="uv" id="line1" />
+          <Line data={PageData} isAnimationActive={false} dataKey="pv" id="line2">
+            <ErrorBar dataKey="pv" direction="x" />
+            <ErrorBar dataKey="amt" direction="y" />
+          </Line>
+          <XAxis />
+          <YAxis dataKey="uv" />
+          {children}
+        </LineChart>
+      ));
+
+      it('should select error bar state', () => {
+        const { spy } = renderTestCase(selectAllErrorBarSettings);
+        expect(spy).toHaveBeenLastCalledWith({
+          line2: [
+            {
+              dataKey: 'pv',
+              direction: 'x',
+            },
+            {
+              dataKey: 'amt',
+              direction: 'y',
+            },
+          ],
+        });
+      });
+
+      it('should return XAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'pv',
+            direction: 'x',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should return YAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'amt',
+            direction: 'y',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    describe('in Vertical LineChart', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={100} height={100} layout="vertical">
+          <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false} id="line-without-bars" />
+          <Line
+            data={[{ x: 10 }, { x: 20 }, { x: 30 }]}
+            isAnimationActive={false}
+            dataKey="x"
+            id="line-with-error-bars"
+          >
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Line>
+          <XAxis />
+          <YAxis dataKey="x" />
+          {children}
+        </LineChart>
+      ));
+
+      it('should select error bar state', () => {
+        const { spy } = renderTestCase(selectAllErrorBarSettings);
+        expect(spy).toHaveBeenLastCalledWith({
+          'line-with-error-bars': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+        });
+      });
+
+      it('should return XAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should return YAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    describe('in ScatterChart', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={100} height={100}>
+          <Scatter
+            data={[{ x: 1 }, { x: 2 }, { x: 3 }]}
+            dataKey="x"
+            isAnimationActive={false}
+            id="scatter-without-bars"
+          />
+          <Scatter data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} id="scatter-with-error-bars">
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Scatter>
+          <XAxis />
+          <YAxis dataKey="x" />
+          {children}
+        </ScatterChart>
+      ));
+
+      it('should select error bar state', () => {
+        const { spy } = renderTestCase(selectAllErrorBarSettings);
+        expect(spy).toHaveBeenLastCalledWith({
+          'scatter-with-error-bars': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+        });
+      });
+
+      it('should return XAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should return YAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    describe('in ComposedChart', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ComposedChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
+          <Bar dataKey="x" isAnimationActive={false} id="bar-without-error-bars" />
+          <Bar dataKey="x" isAnimationActive={false} id="my-bar-id">
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Bar>
+          <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} id="line-with-error-bars">
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Line>
+          <Scatter data={[{ x: 100 }, { x: 200 }, { x: 300 }]} isAnimationActive={false} id="scatter-with-error-bars">
+            <ErrorBar dataKey="data-x" direction="x" />
+            <ErrorBar dataKey="data-y" direction="y" />
+          </Scatter>
+          <XAxis type="number" />
+          <YAxis dataKey="x" />
+          {children}
+        </ComposedChart>
+      ));
+
+      it('should select error bar state', () => {
+        const { spy } = renderTestCase(selectAllErrorBarSettings);
+        expect(spy).toHaveBeenLastCalledWith({
+          'my-bar-id': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+          'line-with-error-bars': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+          'scatter-with-error-bars': [
+            {
+              dataKey: 'data-x',
+              direction: 'x',
+            },
+            {
+              dataKey: 'data-y',
+              direction: 'y',
+            },
+          ],
+        });
+      });
+
+      it('should return XAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+          {
+            dataKey: 'data-x',
+            direction: 'x',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(4);
+      });
+
+      it('should return YAxis error bars', () => {
+        const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+          {
+            dataKey: 'data-y',
+            direction: 'y',
+          },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(4);
+      });
+    });
   });
 
   it('should be stable when empty', () => {
@@ -2751,12 +2845,6 @@ describe('selectErrorBarsSettings', () => {
       xAxisId: '',
       yAxisId: '',
       zAxisId: 0,
-      errorBars: [
-        {
-          direction: 'x',
-          dataKey: '',
-        },
-      ],
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
@@ -2971,86 +3059,130 @@ describe('selectAxisWithScale', () => {
     expect(yAxisSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should return axis object in a chart with explicit axes', () => {
-    const xAxisSpy = vi.fn();
-    const yAxisSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama)));
-      return null;
-    };
-    render(
+  describe('in chart with explicit axes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChart width={100} height={100} data={PageData}>
         <Line isAnimationActive={false} dataKey="pv" />
         <XAxis dataKey="name" />
         <YAxis />
-        <Comp />
-      </LineChart>,
-    );
-    expect(xAxisSpy).toHaveBeenLastCalledWith({
-      allowDataOverflow: false,
-      allowDecimals: true,
-      allowDuplicatedCategory: true,
-      angle: 0,
-      dataKey: 'name',
-      domain: undefined,
-      height: 30,
-      hide: false,
-      id: defaultAxisId,
-      includeHidden: false,
-      interval: 'preserveEnd',
-      minTickGap: 5,
-      mirror: false,
-      name: undefined,
-      orientation: 'bottom',
-      padding: {
-        left: 0,
-        right: 0,
-      },
-      reversed: false,
-      scale: expect.toBeRechartsScale({
-        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
-        range: [65, 95],
-      }),
-      tick: true,
-      tickCount: 5,
-      tickFormatter: undefined,
-      ticks: undefined,
-      type: 'category',
-      unit: undefined,
+        {children}
+      </LineChart>
+    ));
+
+    it('should select XAxis settings', () => {
+      const { spy } = renderTestCase(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, false));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: true,
+        allowDuplicatedCategory: true,
+        angle: 0,
+        dataKey: 'name',
+        domain: undefined,
+        height: 30,
+        hide: false,
+        id: defaultAxisId,
+        includeHidden: false,
+        interval: 'preserveEnd',
+        minTickGap: 5,
+        mirror: false,
+        name: undefined,
+        orientation: 'bottom',
+        padding: {
+          left: 0,
+          right: 0,
+        },
+        reversed: false,
+        scale: expect.toBeRechartsScale({
+          domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+          range: [65, 95],
+        }),
+        tick: true,
+        tickCount: 5,
+        tickFormatter: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
     });
-    expect(yAxisSpy).toHaveBeenLastCalledWith({
-      allowDataOverflow: false,
-      allowDecimals: true,
-      allowDuplicatedCategory: true,
-      angle: 0,
-      dataKey: undefined,
-      domain: undefined,
-      hide: false,
-      id: 0,
-      includeHidden: false,
-      interval: 'preserveEnd',
-      minTickGap: 5,
-      mirror: false,
-      name: undefined,
-      orientation: 'left',
-      padding: {
-        bottom: 0,
-        top: 0,
-      },
-      reversed: false,
-      scale: expect.toBeRechartsScale({ domain: [0, 10000], range: [65, 5] }),
-      tick: true,
-      tickCount: 5,
-      tickFormatter: undefined,
-      ticks: undefined,
-      type: 'number',
-      unit: undefined,
-      width: 60,
+
+    test('selectAllAppliedNumericalValuesIncludingErrorValues', () => {
+      const { spy } = renderTestCase(state =>
+        selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', defaultAxisId, false),
+      );
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          errorDomain: [],
+          value: 2400,
+        },
+        {
+          errorDomain: [],
+          value: 4567,
+        },
+        {
+          errorDomain: [],
+          value: 1398,
+        },
+        {
+          errorDomain: [],
+          value: 9800,
+        },
+        {
+          errorDomain: [],
+          value: 3908,
+        },
+        {
+          errorDomain: [],
+          value: 4800,
+        },
+      ]);
     });
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+
+    test('selectAxisDomain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', defaultAxisId, false));
+      expect(spy).toHaveBeenLastCalledWith([0, 9800]);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    test('selectNumericalDomain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', defaultAxisId, false));
+      expect(spy).toHaveBeenLastCalledWith([0, 9800]);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should select YAxis settings', () => {
+      const { spy } = renderTestCase(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, false));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: true,
+        allowDuplicatedCategory: true,
+        angle: 0,
+        dataKey: undefined,
+        domain: undefined,
+        hide: false,
+        id: 0,
+        includeHidden: false,
+        interval: 'preserveEnd',
+        minTickGap: 5,
+        mirror: false,
+        name: undefined,
+        orientation: 'left',
+        padding: {
+          bottom: 0,
+          top: 0,
+        },
+        reversed: false,
+        scale: expect.toBeRechartsScale({ domain: [0, 10000], range: [65, 5] }),
+        tick: true,
+        tickCount: 5,
+        tickFormatter: undefined,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+        width: 60,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('should be stable between different calls', () => {

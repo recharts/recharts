@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect } from 'react';
-import { CartesianGraphicalItemType, ErrorBarsSettings, GraphicalItemId } from '../state/graphicalItemsSlice';
+import { createContext, useContext, useEffect } from 'react';
+import { CartesianGraphicalItemType, GraphicalItemId } from '../state/graphicalItemsSlice';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -9,18 +9,10 @@ import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
 import { useIsPanorama } from './PanoramaContext';
 import { useUniqueId } from '../util/useUniqueId';
+import { addErrorBar, ErrorBarsSettings, removeErrorBar } from '../state/errorBarSlice';
+import { useAppDispatch } from '../state/hooks';
 
 const noop = () => {};
-
-type DispatchPayload = {
-  addErrorBar: (errorBar: ErrorBarsSettings) => void;
-  removeErrorBar: (errorBar: ErrorBarsSettings) => void;
-};
-
-const ErrorBarDirectionDispatchContext = createContext<DispatchPayload>({
-  addErrorBar: noop,
-  removeErrorBar: noop,
-});
 
 type ErrorBarContextType<T> = {
   data: ReadonlyArray<T>;
@@ -65,6 +57,8 @@ type GraphicalItemContextProps = {
   children: (id: GraphicalItemId) => React.ReactNode;
 };
 
+const GraphicalItemIdContext = createContext<GraphicalItemId | undefined>(undefined);
+
 export const CartesianGraphicalItemContext = ({
   id,
   children,
@@ -78,26 +72,11 @@ export const CartesianGraphicalItemContext = ({
   type,
   barSize,
 }: GraphicalItemContextProps) => {
-  const [errorBars, updateErrorBars] = React.useState<ReadonlyArray<ErrorBarsSettings>>([]);
-  // useCallback is necessary in these two because without it, the new function reference causes an infinite render loop
-  const addErrorBar = useCallback(
-    (errorBar: ErrorBarsSettings) => {
-      updateErrorBars(prev => [...prev, errorBar]);
-    },
-    [updateErrorBars],
-  );
-  const removeErrorBar = useCallback(
-    (errorBar: ErrorBarsSettings) => {
-      updateErrorBars(prev => prev.filter(eb => eb !== errorBar));
-    },
-    [updateErrorBars],
-  );
   const isPanorama = useIsPanorama();
-
   const resolvedId = useUniqueId(`recharts-${type}`, id);
 
   return (
-    <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
+    <GraphicalItemIdContext.Provider value={resolvedId}>
       <SetCartesianGraphicalItem
         id={resolvedId}
         type={type}
@@ -106,24 +85,30 @@ export const CartesianGraphicalItemContext = ({
         yAxisId={yAxisId}
         zAxisId={zAxisId}
         dataKey={dataKey}
-        errorBars={errorBars}
         stackId={stackId}
         hide={hide}
         barSize={barSize}
         isPanorama={isPanorama}
       />
       {children(resolvedId)}
-    </ErrorBarDirectionDispatchContext.Provider>
+    </GraphicalItemIdContext.Provider>
   );
 };
 
 export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
-  const { addErrorBar, removeErrorBar } = useContext(ErrorBarDirectionDispatchContext);
+  const dispatch = useAppDispatch();
+  const graphicalItemId = useContext(GraphicalItemIdContext);
+
   useEffect(() => {
-    addErrorBar(props);
+    if (graphicalItemId == null) {
+      // ErrorBar outside a graphical item context does not do anything.
+      return noop;
+    }
+    const payload = { itemId: graphicalItemId, errorBar: props };
+    dispatch(addErrorBar(payload));
     return () => {
-      removeErrorBar(props);
+      dispatch(removeErrorBar(payload));
     };
-  }, [addErrorBar, removeErrorBar, props]);
+  }, [dispatch, graphicalItemId, props]);
   return null;
 }

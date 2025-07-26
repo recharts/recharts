@@ -233,7 +233,6 @@ describe('<Scatter />', () => {
         type: 'scatter',
         data,
         dataKey: 'cx',
-        errorBars: [],
         hide: false,
         stackId: undefined,
         xAxisId: 'xaxis id',

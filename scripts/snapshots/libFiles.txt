@@ -107,6 +107,7 @@
   "lib/state/brushSlice.js",
   "lib/state/cartesianAxisSlice.js",
   "lib/state/chartDataSlice.js",
+  "lib/state/errorBarSlice.js",
   "lib/state/externalEventsMiddleware.js",
   "lib/state/graphicalItemsSlice.js",
   "lib/state/hooks.js",

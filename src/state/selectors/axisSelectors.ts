@@ -46,7 +46,6 @@ import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
 import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
 import {
   CartesianGraphicalItemSettings,
-  ErrorBarsSettings,
   GraphicalItemSettings,
   PolarGraphicalItemSettings,
 } from '../graphicalItemsSlice';
@@ -75,6 +74,7 @@ import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdenti
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
+import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -615,13 +615,14 @@ export const combineAppliedNumericalValuesIncludingErrorValues = (
   data: ChartData,
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<CartesianGraphicalItemSettings>,
+  errorBars: ErrorBarsState,
   axisType: XorYorZType,
 ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
   if (items.length > 0) {
     return data
       .flatMap(entry => {
         return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-          const relevantErrorBars = item.errorBars?.filter(errorBar =>
+          const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
             isErrorBarRelevantForAxisType(axisType, errorBar),
           );
           const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
@@ -644,16 +645,45 @@ export const combineAppliedNumericalValuesIncludingErrorValues = (
   return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
 };
 
+export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
+
+const combineRelevantErrorBarSettings = (
+  cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
+  allErrorBarSettings: ErrorBarsState,
+  axisType: XorYType,
+): ReadonlyArray<ErrorBarsSettings> => {
+  return cartesianItemsSettings
+    .flatMap(item => {
+      return allErrorBarSettings[item.id];
+    })
+    .filter(Boolean)
+    .filter(e => {
+      return isErrorBarRelevantForAxisType(axisType, e);
+    });
+};
+
+export const selectErrorBarsSettingsExceptStacked: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<ErrorBarsSettings> = createSelector(
+  [selectCartesianItemsSettingsExceptStacked, selectAllErrorBarSettings, pickAxisType],
+  combineRelevantErrorBarSettings,
+);
+
 export const selectAllAppliedNumericalValuesIncludingErrorValues: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
-  selectDisplayedData,
-  selectBaseAxis,
-  selectCartesianItemsSettingsExceptStacked,
-  pickAxisType,
+  [
+    selectDisplayedData,
+    selectBaseAxis,
+    selectCartesianItemsSettingsExceptStacked,
+    selectAllErrorBarSettings,
+    pickAxisType,
+  ],
   combineAppliedNumericalValuesIncludingErrorValues,
 );
 
@@ -859,7 +889,7 @@ export const combineNumericalDomain = (
   );
 };
 
-const selectNumericalDomain: (
+export const selectNumericalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
@@ -1327,20 +1357,8 @@ export const selectAxisScale: (
 );
 
 export const selectErrorBarsSettings = createSelector(
-  selectCartesianItemsSettings,
-  pickAxisType,
-  (
-    items: ReadonlyArray<CartesianGraphicalItemSettings>,
-    axisType: XorYType,
-  ): ReadonlyArray<ErrorBarsSettings> | undefined => {
-    return items
-      .flatMap(item => {
-        return item.errorBars ?? [];
-      })
-      .filter(e => {
-        return isErrorBarRelevantForAxisType(axisType, e);
-      });
-  },
+  [selectCartesianItemsSettings, selectAllErrorBarSettings, pickAxisType],
+  combineRelevantErrorBarSettings,
 );
 
 function compareIds(a: CartesianAxisSettings, b: CartesianAxisSettings) {

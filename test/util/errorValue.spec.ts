@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { ErrorBarsSettings } from '../../src/state/graphicalItemsSlice';
 import { fromMainValueToError, getErrorDomainByDataKey } from '../../src/state/selectors/axisSelectors';
+import { ErrorBarsSettings } from '../../src/state/errorBarSlice';
 
 describe('fromMainValueToError', () => {
   const invalidValues: ReadonlyArray<unknown> = [

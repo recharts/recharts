@@ -107,6 +107,7 @@
   "types/state/brushSlice.d.ts",
   "types/state/cartesianAxisSlice.d.ts",
   "types/state/chartDataSlice.d.ts",
+  "types/state/errorBarSlice.d.ts",
   "types/state/externalEventsMiddleware.d.ts",
   "types/state/graphicalItemsSlice.d.ts",
   "types/state/hooks.d.ts",
