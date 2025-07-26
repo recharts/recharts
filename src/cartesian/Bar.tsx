@@ -65,6 +65,7 @@ import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 type Rectangle = {
   x: number | null;
@@ -732,25 +733,29 @@ export function Bar(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
-    <>
-      <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-      <CartesianGraphicalItemContext
-        id={props.id}
-        type="bar"
-        // Bar does not allow setting data directly on the graphical item (why?)
-        data={undefined}
-        xAxisId={props.xAxisId}
-        yAxisId={props.yAxisId}
-        zAxisId={0}
-        dataKey={props.dataKey}
-        stackId={props.stackId}
-        hide={props.hide}
-        barSize={props.barSize}
-      >
-        {id => <BarImpl {...props} id={id} />}
-      </CartesianGraphicalItemContext>
-    </>
+    <RegisterGraphicalItemId id={props.id} type="bar">
+      {id => (
+        <>
+          <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <CartesianGraphicalItemContext
+            id={id}
+            type="bar"
+            // Bar does not allow setting data directly on the graphical item (why?)
+            data={undefined}
+            xAxisId={props.xAxisId}
+            yAxisId={props.yAxisId}
+            zAxisId={0}
+            dataKey={props.dataKey}
+            stackId={props.stackId}
+            hide={props.hide}
+            barSize={props.barSize}
+          >
+            <BarImpl {...props} id={id} />
+          </CartesianGraphicalItemContext>
+        </>
+      )}
+    </RegisterGraphicalItemId>
   );
 }
 Bar.displayName = 'Bar';

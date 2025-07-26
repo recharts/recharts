@@ -52,6 +52,7 @@ import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { Animate } from '../animation/Animate';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -70,7 +71,7 @@ type RadialBarSectorsProps = {
 };
 
 function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
   const baseProps = filterProps(others, false);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -503,23 +504,27 @@ export class RadialBar extends PureComponent<RadialBarProps> {
 
   render() {
     return (
-      <>
-        <PolarGraphicalItemContext
-          id={this.props.id}
-          // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
-          data={undefined} // data prop is injected through generator and overwrites what user passes in
-          dataKey={this.props.dataKey}
-          // TS is not smart enough to know defaultProps has values due to the explicit Partial type
-          hide={this.props.hide ?? defaultRadialBarProps.hide!}
-          angleAxisId={this.props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
-          radiusAxisId={this.props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
-          stackId={this.props.stackId}
-          barSize={this.props.barSize}
-          type="radialBar"
-        />
-        <SetRadialBarPayloadLegend {...this.props} />
-        <RadialBarImpl {...this.props} />
-      </>
+      <RegisterGraphicalItemId id={this.props.id} type="radialBar">
+        {id => (
+          <>
+            <PolarGraphicalItemContext
+              id={id}
+              // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
+              data={undefined} // data prop is injected through generator and overwrites what user passes in
+              dataKey={this.props.dataKey}
+              // TS is not smart enough to know defaultProps has values due to the explicit Partial type
+              hide={this.props.hide ?? defaultRadialBarProps.hide!}
+              angleAxisId={this.props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
+              radiusAxisId={this.props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
+              stackId={this.props.stackId}
+              barSize={this.props.barSize}
+              type="radialBar"
+            />
+            <SetRadialBarPayloadLegend {...this.props} />
+            <RadialBarImpl {...this.props} id={id} />
+          </>
+        )}
+      </RegisterGraphicalItemId>
     );
   }
 }

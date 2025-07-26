@@ -34,6 +34,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { Animate } from '../animation/Animate';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 interface RadarPoint {
   x: number;
@@ -224,7 +225,9 @@ function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
   if (!dot) {
     return null;
   }
-  const baseProps = filterProps(props, false);
+  const { id, ...propsWithoutId } = props;
+
+  const baseProps = filterProps(propsWithoutId, false);
   const customDotProps = filterProps(dot, true);
 
   const dots = points.map((entry, i) => {
@@ -455,22 +458,26 @@ export class Radar extends PureComponent<Props> {
 
   render() {
     return (
-      <>
-        <PolarGraphicalItemContext
-          id={this.props.id}
-          data={undefined} // Radar does not have data prop, why?
-          dataKey={this.props.dataKey}
-          hide={this.props.hide}
-          angleAxisId={this.props.angleAxisId}
-          radiusAxisId={this.props.radiusAxisId}
-          stackId={undefined}
-          barSize={undefined}
-          type="radar"
-        />
-        <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <RadarImpl {...this.props} />
-      </>
+      <RegisterGraphicalItemId id={this.props.id} type="radar">
+        {id => (
+          <>
+            <PolarGraphicalItemContext
+              id={id}
+              data={undefined} // Radar does not have data prop, why?
+              dataKey={this.props.dataKey}
+              hide={this.props.hide}
+              angleAxisId={this.props.angleAxisId}
+              radiusAxisId={this.props.radiusAxisId}
+              stackId={undefined}
+              barSize={undefined}
+              type="radar"
+            />
+            <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
+            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+            <RadarImpl {...this.props} id={id} />
+          </>
+        )}
+      </RegisterGraphicalItemId>
     );
   }
 }

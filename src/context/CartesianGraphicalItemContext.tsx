@@ -8,9 +8,9 @@ import { DataKey } from '../util/types';
 import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
 import { useIsPanorama } from './PanoramaContext';
-import { useUniqueId } from '../util/useUniqueId';
 import { addErrorBar, ErrorBarsSettings, removeErrorBar } from '../state/errorBarSlice';
 import { useAppDispatch } from '../state/hooks';
+import { useGraphicalItemId } from './RegisterGraphicalItemId';
 
 const noop = () => {};
 
@@ -40,7 +40,7 @@ export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children
 export const useErrorBarContext = () => useContext(ErrorBarContext);
 
 type GraphicalItemContextProps = {
-  id: string | undefined;
+  id: GraphicalItemId;
   type: CartesianGraphicalItemType;
   data: ChartData | undefined;
   xAxisId: AxisId;
@@ -50,14 +50,8 @@ type GraphicalItemContextProps = {
   stackId: StackId | undefined;
   hide: boolean;
   barSize: string | number | undefined;
-  /**
-   * Children must be a function that receives the resolved ID of the graphical item.
-   * This ID will either be the one provided via props.id or generated automatically.
-   */
-  children: (id: GraphicalItemId) => React.ReactNode;
+  children: React.ReactNode;
 };
-
-const GraphicalItemIdContext = createContext<GraphicalItemId | undefined>(undefined);
 
 export const CartesianGraphicalItemContext = ({
   id,
@@ -73,12 +67,11 @@ export const CartesianGraphicalItemContext = ({
   barSize,
 }: GraphicalItemContextProps) => {
   const isPanorama = useIsPanorama();
-  const resolvedId = useUniqueId(`recharts-${type}`, id);
 
   return (
-    <GraphicalItemIdContext.Provider value={resolvedId}>
+    <>
       <SetCartesianGraphicalItem
-        id={resolvedId}
+        id={id}
         type={type}
         data={data}
         xAxisId={xAxisId}
@@ -90,14 +83,14 @@ export const CartesianGraphicalItemContext = ({
         barSize={barSize}
         isPanorama={isPanorama}
       />
-      {children(resolvedId)}
-    </GraphicalItemIdContext.Provider>
+      {children}
+    </>
   );
 };
 
 export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
   const dispatch = useAppDispatch();
-  const graphicalItemId = useContext(GraphicalItemIdContext);
+  const graphicalItemId = useGraphicalItemId();
 
   useEffect(() => {
     if (graphicalItemId == null) {
