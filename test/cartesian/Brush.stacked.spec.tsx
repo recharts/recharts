@@ -35,11 +35,10 @@ describe('Brush in a stacked chart', () => {
         a: {
           graphicalItems: [
             {
-              id: expect.stringMatching('bar-'),
+              id: expect.stringMatching('^recharts-bar-[:0-9a-z]+$'),
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
-              errorBars: [],
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -53,7 +52,6 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
-              errorBars: [],
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -120,7 +118,6 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
-              errorBars: [],
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -134,7 +131,6 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
-              errorBars: [],
               hide: false,
               isPanorama: false,
               stackId: 'a',

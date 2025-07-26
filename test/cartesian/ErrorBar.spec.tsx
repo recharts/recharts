@@ -1802,7 +1802,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should extend YAxis domain when data is defined on the graphical item', () => {
@@ -1963,7 +1963,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should extend XAxis domain', () => {
@@ -2159,7 +2159,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisDomainSpy).toHaveBeenCalledTimes(5);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(4);
       expectBars(container, [
         {
           d: 'M 65,16.5 h 238.8888888888889 v 92 h -238.8888888888889 Z',

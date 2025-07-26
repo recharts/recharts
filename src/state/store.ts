@@ -16,11 +16,13 @@ import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 import { externalEventsMiddleware } from './externalEventsMiddleware';
 import { touchEventMiddleware } from './touchEventsMiddleware';
+import { errorBarReducer } from './errorBarSlice';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
   cartesianAxis: cartesianAxisReducer,
   chartData: chartDataReducer,
+  errorBars: errorBarReducer,
   graphicalItems: graphicalItemsReducer,
   layout: chartLayoutReducer,
   legend: legendReducer,

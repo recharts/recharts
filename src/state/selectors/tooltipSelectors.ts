@@ -27,6 +27,7 @@ import {
   getDomainDefinition,
   itemAxisPredicate,
   mergeDomains,
+  selectAllErrorBarSettings,
   selectAxisRange,
   selectHasBar,
   selectReferenceAreas,
@@ -149,7 +150,13 @@ const selectTooltipItemsSettingsExceptStacked: (state: RechartsRootState) => Rea
 const selectTooltipAllAppliedNumericalValuesIncludingErrorValues: (
   state: RechartsRootState,
 ) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
-  [selectTooltipDisplayedData, selectTooltipAxis, selectTooltipItemsSettingsExceptStacked, selectTooltipAxisType],
+  [
+    selectTooltipDisplayedData,
+    selectTooltipAxis,
+    selectTooltipItemsSettingsExceptStacked,
+    selectAllErrorBarSettings,
+    selectTooltipAxisType,
+  ],
   combineAppliedNumericalValuesIncludingErrorValues,
 );
 

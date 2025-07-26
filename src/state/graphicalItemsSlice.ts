@@ -1,33 +1,10 @@
-import { PayloadAction, createSlice, current } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
-import { ErrorBarDirection } from '../cartesian/ErrorBar';
 import { NormalizedStackId } from '../util/ChartUtils';
 import { MaybeStackedGraphicalItem } from './selectors/barSelectors';
-
-/**
- * ErrorBars have lot more settings but all the others are scoped to the component itself.
- * Only some of them required to be reported to the global store because XAxis and YAxis need to know
- * if the error bar is contributing to extending the axis domain.
- */
-export type ErrorBarsSettings = {
-  /**
-   * The direction is only used in Scatter chart, and decided based on ChartLayout in other charts.
-   */
-  direction: ErrorBarDirection;
-  /**
-   * The dataKey decides which property from the data will each individual ErrorBar use.
-   * If it so happens that the ErrorBar data are bigger than the axis domain,
-   * the error bar data will stretch the axis domain.
-   */
-  dataKey: DataKey<any>;
-  /*
-   * ErrorBar props say that it has explicit xAxis and yAxis props,
-   * but actually it always inherits the xAxis and yAxis defined on the parent graphical item.
-   */
-};
 
 /**
  * Unique ID of the graphical item.
@@ -66,11 +43,6 @@ export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
   xAxisId: AxisId;
   yAxisId: AxisId;
   zAxisId: AxisId;
-  /**
-   * ErrorBars are only rendered if they are explicitly set in the React tree, otherwise this will be an empty array.
-   * One graphical item can have multiple error bars. This probably only makes sense in Scatter.
-   */
-  errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
   stackId: NormalizedStackId | undefined;
   /**
    * This property is only used in Bar and RadialBar items
