@@ -60,7 +60,7 @@ const selectSynchronisedBarSettings: (
     graphicalItems.filter(item => item.type === 'bar').find(item => item.id === id),
 );
 
-const selectMaxBarSize: (
+export const selectMaxBarSize: (
   _state: RechartsRootState,
   _xAxisId: AxisId,
   _yAxisId: AxisId,

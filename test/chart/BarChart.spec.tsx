@@ -37,7 +37,7 @@ import {
   selectBarPosition,
   selectBarRectangles,
   selectBarSizeList,
-  pickMaxBarSize,
+  selectMaxBarSize,
 } from '../../src/state/selectors/barSelectors';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { pageData } from '../../storybook/stories/data';
@@ -292,38 +292,21 @@ describe('<BarChart />', () => {
     const onePointData = [{ number: 1, name: 'food', uv: 400, pv: 2400 }];
 
     test('renders simple BarChart', () => {
-      const barSettings: BarSettings = {
-        hide: false,
-        isPanorama: false,
-        type: 'bar',
-        xAxisId: undefined,
-        yAxisId: undefined,
-        zAxisId: undefined,
-        id: 'my-bar-id',
-        barSize: undefined,
-        data: undefined,
-        dataKey: 'uv',
-        maxBarSize: undefined,
-        minPointSize: undefined,
-        stackId: undefined,
-      };
       const barSpy = vi.fn();
       const sizeListSpy = vi.fn();
       const Comp = (): null => {
         barSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 0, false)));
-        sizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
+        sizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
         return null;
       };
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
-          <Bar dataKey="uv" isAnimationActive={false} />
+          <Bar dataKey="uv" isAnimationActive={false} id="my-bar-id" />
           <Customized component={<Comp />} />
         </BarChart>,
       );
 
       const expectedBar: BarSettings = {
-        maxBarSize: 0,
-        minPointSize: undefined,
         id: expect.stringMatching('bar-'),
         isPanorama: false,
         maxBarSize: undefined,
@@ -645,28 +628,13 @@ describe('<BarChart />', () => {
     });
 
     describe('when stackId is a number', () => {
-      const barSettings: BarSettings = {
-        hide: false,
-        isPanorama: false,
-        type: 'bar',
-        xAxisId: undefined,
-        yAxisId: undefined,
-        zAxisId: undefined,
-        id: 'my-bar-id',
-        barSize: undefined,
-        data,
-        dataKey: 'pv',
-        maxBarSize: undefined,
-        minPointSize: 0,
-        stackId: '8',
-      };
       const cells: never[] = [];
 
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <BarChart width={100} height={50} data={data}>
           <YAxis />
           <Bar dataKey="uv" stackId="8" fill="#ff7300" isAnimationActive={false} />
-          <Bar dataKey="pv" stackId="8" fill="#387908" isAnimationActive={false} id="my-bar-id" />
+          <Bar dataKey="pv" stackId="8" fill="#387908" isAnimationActive={false} minPointSize={0} id="my-bar-id" />
           {children}
         </BarChart>
       ));
@@ -681,7 +649,7 @@ describe('<BarChart />', () => {
               x: 65.75,
               y: 5,
             },
-            height: 9.599999999999994,
+            height: 9.600000000000001,
             name: 'food',
             payload: {
               name: 'food',
@@ -692,13 +660,13 @@ describe('<BarChart />', () => {
             pv: 2400,
             tooltipPosition: {
               x: 68.75,
-              y: 40.2,
+              y: 38.599999999999994,
             },
             uv: 400,
-            value: 2400,
+            value: [400, 2800],
             width: 6,
             x: 65.75,
-            y: 35.400000000000006,
+            y: 33.8,
           },
           {
             background: {
@@ -718,13 +686,13 @@ describe('<BarChart />', () => {
             pv: 4567,
             tooltipPosition: {
               x: 76.25,
-              y: 35.866,
+              y: 34.666,
             },
             uv: 300,
-            value: 4567,
+            value: [300, 4867],
             width: 6,
             x: 73.25,
-            y: 26.732,
+            y: 25.531999999999996,
           },
           {
             background: {
@@ -733,7 +701,7 @@ describe('<BarChart />', () => {
               x: 80.75,
               y: 5,
             },
-            height: 5.592000000000006,
+            height: 5.591999999999999,
             name: 'storage',
             payload: {
               name: 'storage',
@@ -744,13 +712,13 @@ describe('<BarChart />', () => {
             pv: 1398,
             tooltipPosition: {
               x: 83.75,
-              y: 42.20399999999999,
+              y: 41.004,
             },
             uv: 300,
-            value: 1398,
+            value: [300, 1698],
             width: 6,
             x: 80.75,
-            y: 39.407999999999994,
+            y: 38.208,
           },
           {
             background: {
@@ -770,13 +738,13 @@ describe('<BarChart />', () => {
             pv: 9800,
             tooltipPosition: {
               x: 91.25,
-              y: 25.400000000000002,
+              y: 24.6,
             },
             uv: 200,
-            value: 9800,
+            value: [200, 10000],
             width: 6,
             x: 88.25,
-            y: 5.800000000000001,
+            y: 5,
           },
         ]);
       });
@@ -808,7 +776,7 @@ describe('<BarChart />', () => {
       });
 
       test('selectBarBandSize', () => {
-        const { spy } = renderTestCase(state => selectBarBandSize(state, 0, 0, false, barSettings));
+        const { spy } = renderTestCase(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id'));
         expectLastCalledWith(spy, 7.5);
       });
 
@@ -817,8 +785,8 @@ describe('<BarChart />', () => {
         expectLastCalledWith(spy, 7.5);
       });
 
-      test('pickMaxBarSize', () => {
-        const { spy } = renderTestCase(state => pickMaxBarSize(state, 0, 0, false, barSettings));
+      test('selectMaxBarSize', () => {
+        const { spy } = renderTestCase(state => selectMaxBarSize(state, 0, 0, false, 'my-bar-id'));
         expectLastCalledWith(spy, undefined);
       });
 
@@ -963,8 +931,8 @@ describe('<BarChart />', () => {
 
       expect(seriesOneBarOneEntry).toBeDefined();
       expect(seriesTwoBarOneEntry).toBeDefined();
-      expect(seriesOneBarOneEntry.value).toEqual(400);
-      expect(seriesTwoBarOneEntry.value).toEqual(2400);
+      expect(seriesOneBarOneEntry.value).toEqual([0, 400]);
+      expect(seriesTwoBarOneEntry.value).toEqual([400, 2800]);
 
       expectBars(container, [
         {
@@ -2147,8 +2115,8 @@ describe('<BarChart />', () => {
         {
           dataKeys: ['uv'],
           position: {
-            offset: 56.285714285714285,
-            size: 0,
+            offset: 11.285714285714286,
+            size: 90,
           },
           stackId: undefined,
         },
@@ -2290,7 +2258,7 @@ describe('<BarChart />', () => {
         <Bar stackId="a" dataKey="bottomBox" isAnimationActive={false} />
         <Bar stackId="a" dataKey="bar-avg" isAnimationActive={false} />
         <Bar stackId="a" dataKey="topBox" isAnimationActive={false} />
-        <Bar stackId="a" dataKey="topWhisker" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="topWhisker" isAnimationActive={false} id="my-bar-id" />
         <Bar stackId="a" dataKey="bar-max" isAnimationActive={false} />
 
         <XAxis />
@@ -2335,14 +2303,14 @@ describe('<BarChart />', () => {
         size: 150,
         tooltipPosition: {
           x: 120,
-          y: 145,
+          y: 55,
         },
         topBox: 200,
         topWhisker: 200,
-        value: 200,
+        value: [450, 650],
         width: 88,
         x: 76,
-        y: 125,
+        y: 35,
       },
       {
         average: 550,
@@ -2368,14 +2336,14 @@ describe('<BarChart />', () => {
         size: 250,
         tooltipPosition: {
           x: 230,
-          y: 155,
+          y: 15,
         },
         topBox: 100,
         topWhisker: 100,
-        value: 100,
+        value: [700, 800],
         width: 88,
         x: 186,
-        y: 145,
+        y: 5,
       },
       {
         average: 400,
@@ -2401,14 +2369,14 @@ describe('<BarChart />', () => {
         size: 350,
         tooltipPosition: {
           x: 340,
-          y: 145,
+          y: 25,
         },
         topBox: 200,
         topWhisker: 200,
-        value: 200,
+        value: [600, 800],
         width: 88,
         x: 296,
-        y: 125,
+        y: 5,
       },
     ]);
 
