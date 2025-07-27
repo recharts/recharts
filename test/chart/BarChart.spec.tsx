@@ -31,10 +31,13 @@ import {
   BarSettings,
   selectAllBarPositions,
   selectAllVisibleBars,
+  selectAxisBandSize,
+  selectBarBandSize,
   selectBarCartesianAxisSize,
   selectBarPosition,
   selectBarRectangles,
   selectBarSizeList,
+  pickMaxBarSize,
 } from '../../src/state/selectors/barSelectors';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { pageData } from '../../storybook/stories/data';
@@ -46,6 +49,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { CartesianChartProps } from '../../src/util/types';
+import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 
 type DataType = {
   name: string;
@@ -764,6 +768,36 @@ describe('<BarChart />', () => {
             stackId: '8',
           },
         ]);
+      });
+
+      test('selectRootMaxBarSize', () => {
+        const { spy } = renderTestCase(selectRootMaxBarSize);
+        expect(spy).toHaveBeenLastCalledWith(undefined);
+      });
+
+      test('selectBarGap', () => {
+        const { spy } = renderTestCase(selectBarGap);
+        expect(spy).toHaveBeenLastCalledWith(4);
+      });
+
+      test('selectBarCategoryGap', () => {
+        const { spy } = renderTestCase(selectBarCategoryGap);
+        expect(spy).toHaveBeenLastCalledWith('10%');
+      });
+
+      test('selectBarBandSize', () => {
+        const { spy } = renderTestCase(state => selectBarBandSize(state, 0, 0, false, barSettings));
+        expect(spy).toHaveBeenLastCalledWith(7.5);
+      });
+
+      test('selectAxisBandSize', () => {
+        const { spy } = renderTestCase(state => selectAxisBandSize(state, 0, 0, false));
+        expect(spy).toHaveBeenLastCalledWith(7.5);
+      });
+
+      test('pickMaxBarSize', () => {
+        const { spy } = renderTestCase(state => pickMaxBarSize(state, 0, 0, false, barSettings));
+        expect(spy).toHaveBeenLastCalledWith(0);
       });
 
       it('should select all bar positions', () => {
