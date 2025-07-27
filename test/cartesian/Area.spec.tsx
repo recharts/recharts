@@ -18,6 +18,7 @@ import { useLegendPayload } from '../../src/context/legendPayloadContext';
 import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type TestCase = CartesianChartTestCase;
@@ -474,11 +475,21 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const { rerender } = render(
         <ChartElement data={data}>
-          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} stackId="q" hide id="my-custom-area-id" />
+          <Area
+            dataKey="value"
+            data={data2}
+            xAxisId={7}
+            yAxisId={9}
+            stackId="q"
+            hide
+            id="my-custom-area-id"
+            connectNulls
+            baseValue={123}
+          />
           <Comp />
         </ChartElement>,
       );
-      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+      const expected: ReadonlyArray<AreaSettings> = [
         {
           isPanorama: false,
           type: 'area',
@@ -491,6 +502,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           hide: true,
           barSize: undefined,
           id: 'my-custom-area-id',
+          connectNulls: true,
+          baseValue: 123,
         },
       ];
       expectLastCalledWith(spy, expected);
@@ -520,7 +533,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
-          id: expect.stringMatching('area-'),
+          id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
           isPanorama: false,
           type: 'area',
           data: data2,
@@ -531,6 +544,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           stackId: undefined,
           hide: false,
           barSize: undefined,
+          baseValue: undefined,
+          connectNulls: false,
         },
       ];
       expectLastCalledWith(spy, expected);
@@ -1008,16 +1023,23 @@ describe('computeArea', () => {
   mockScale2.domain = () => [0, 'auto'];
 
   it('should return empty points if displayedData is empty array', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: '',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: '',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       displayedData: [],
       layout: 'horizontal',
       // @ts-expect-error incomplete mock
@@ -1027,17 +1049,24 @@ describe('computeArea', () => {
   });
 
   it('should return displayedData mapped with getCateCoordinateOfLine in horizontal layout', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: 'v',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       layout: 'horizontal',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
@@ -1073,17 +1102,24 @@ describe('computeArea', () => {
   });
 
   it('should return displayedData mapped with getCateCoordinateOfLine in vertical layout', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: 'v',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale, dataKey: 'v' },
@@ -1119,6 +1155,21 @@ describe('computeArea', () => {
   });
 
   it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in horizontal chart', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
@@ -1130,15 +1181,7 @@ describe('computeArea', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: 'v',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       layout: 'horizontal',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
@@ -1174,6 +1217,21 @@ describe('computeArea', () => {
   });
 
   it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in vertical chart', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
@@ -1185,15 +1243,7 @@ describe('computeArea', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: 'v',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale, dataKey: 'v' },
@@ -1229,6 +1279,21 @@ describe('computeArea', () => {
   });
 
   it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 0,
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
@@ -1240,15 +1305,7 @@ describe('computeArea', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      areaSettings: {
-        id: 'area-0',
-        barSize: undefined,
-        connectNulls: false,
-        baseValue: 0,
-        dataKey: 'v',
-        stackId: '',
-        data: [],
-      },
+      areaSettings,
       layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
