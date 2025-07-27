@@ -574,25 +574,8 @@ function ScatterImpl(props: Props) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
   const isPanorama = useIsPanorama();
 
-  const scatterSettings: ScatterSettings = useMemo(
-    (): ScatterSettings => ({
-      type: 'scatter',
-      id: props.id,
-      name: props.name,
-      tooltipType: props.tooltipType,
-      data: props.data,
-      dataKey: props.dataKey,
-      isPanorama,
-      xAxisId,
-      yAxisId,
-      zAxisId,
-      hide,
-    }),
-    [hide, isPanorama, props.data, props.dataKey, props.id, props.name, props.tooltipType, xAxisId, yAxisId, zAxisId],
-  );
-
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, scatterSettings, cells, isPanorama);
+    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, props.id, cells, isPanorama);
   });
   if (needClip == null) {
     return null;
