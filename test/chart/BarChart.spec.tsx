@@ -292,6 +292,12 @@ describe('<BarChart />', () => {
 
     test('renders simple BarChart', () => {
       const barSettings: BarSettings = {
+        hide: false,
+        isPanorama: false,
+        type: 'bar',
+        xAxisId: undefined,
+        yAxisId: undefined,
+        zAxisId: undefined,
         id: 'my-bar-id',
         barSize: undefined,
         data: undefined,
@@ -314,9 +320,13 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      const expectedBar: CartesianGraphicalItemSettings = {
+      const expectedBar: BarSettings = {
+        maxBarSize: 0,
+        minPointSize: undefined,
         id: expect.stringMatching('bar-'),
         isPanorama: false,
+        maxBarSize: undefined,
+        minPointSize: 0,
         barSize: undefined,
         data: undefined,
         dataKey: 'uv',
@@ -635,6 +645,12 @@ describe('<BarChart />', () => {
 
     describe('when stackId is a number', () => {
       const barSettings: BarSettings = {
+        hide: false,
+        isPanorama: false,
+        type: 'bar',
+        xAxisId: undefined,
+        yAxisId: undefined,
+        zAxisId: undefined,
         id: 'my-bar-id',
         barSize: undefined,
         data,
@@ -648,14 +664,14 @@ describe('<BarChart />', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <BarChart width={100} height={50} data={data}>
           <YAxis />
-          <Bar dataKey="uv" stackId={barSettings.stackId} fill="#ff7300" isAnimationActive={false} />
-          <Bar dataKey="pv" stackId={barSettings.stackId} fill="#387908" isAnimationActive={false} />
+          <Bar dataKey="uv" stackId="8" fill="#ff7300" isAnimationActive={false} />
+          <Bar dataKey="pv" stackId="8" fill="#387908" isAnimationActive={false} id="my-bar-id" />
           {children}
         </BarChart>
       ));
 
       it('should select bars', () => {
-        const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, barSettings, cells));
+        const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, 'my-bar-id', cells));
         expectLastCalledWith(spy, [
           {
             background: {
@@ -765,7 +781,7 @@ describe('<BarChart />', () => {
       });
 
       it('should select bar size list', () => {
-        const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 0, false, barSettings));
+        const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id'));
         expectLastCalledWith(spy, [
           {
             barSize: undefined,
@@ -806,7 +822,7 @@ describe('<BarChart />', () => {
       });
 
       it('should select all bar positions', () => {
-        const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 0, false, barSettings));
+        const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id'));
         expectLastCalledWith(spy, [
           {
             dataKeys: ['uv', 'pv'],
@@ -820,7 +836,7 @@ describe('<BarChart />', () => {
       });
 
       it('should select bar position', () => {
-        const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, barSettings));
+        const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, 'my-bar-id'));
         expectLastCalledWith(spy, {
           offset: 0.75,
           size: 6,
@@ -923,42 +939,8 @@ describe('<BarChart />', () => {
     test('Stacked bars are actually stacked', () => {
       let seriesOneBarOneEntry: BarRectangleItem, seriesTwoBarOneEntry: BarRectangleItem;
       const Spy = () => {
-        const seriesOneResult = useAppSelector(state =>
-          selectBarRectangles(
-            state,
-            0,
-            0,
-            false,
-            {
-              id: 'my-bar-id',
-              barSize: '',
-              data,
-              dataKey: 'uv',
-              maxBarSize: 0,
-              minPointSize: 0,
-              stackId: 'test',
-            },
-            [],
-          ),
-        );
-        const seriesTwoResult = useAppSelector(state =>
-          selectBarRectangles(
-            state,
-            0,
-            0,
-            false,
-            {
-              id: 'my-bar-id',
-              barSize: '',
-              data,
-              dataKey: 'pv',
-              maxBarSize: 0,
-              minPointSize: 0,
-              stackId: 'test',
-            },
-            [],
-          ),
-        );
+        const seriesOneResult = useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'bar-uv', []));
+        const seriesTwoResult = useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'bar-pv', []));
         if (seriesOneResult != null) {
           [seriesOneBarOneEntry] = seriesOneResult;
         }
@@ -971,8 +953,8 @@ describe('<BarChart />', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
           <YAxis />
-          <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
-          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} id="bar-uv" />
+          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} id="bar-pv">
             <Spy />
           </Bar>
         </BarChart>,
@@ -1158,19 +1140,9 @@ describe('<BarChart />', () => {
       const barPositionsSpy = vi.fn();
       const totalAxisSizeSpy = vi.fn();
 
-      const barSettings: BarSettings = {
-        id: 'my-bar-id',
-        barSize: undefined,
-        data: undefined,
-        dataKey: 'uv',
-        maxBarSize: 30,
-        minPointSize: undefined,
-        stackId: undefined,
-      };
-
       const Comp = (): null => {
-        barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
-        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
+        barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
         totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
         return null;
       };
@@ -1178,7 +1150,7 @@ describe('<BarChart />', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData}>
           <XAxis dataKey="number" type="number" />
-          <Bar dataKey={barSettings.dataKey} name="uv" isAnimationActive={false} maxBarSize={barSettings.maxBarSize} />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} maxBarSize={30} id="my-bar-id" />
           <Customized component={<Comp />} />
         </BarChart>,
       );
@@ -1296,9 +1268,9 @@ describe('<BarChart />', () => {
 
         test('selectUnfilteredCartesianItems', () => {
           const { spy } = renderTestCase(selectUnfilteredCartesianItems);
-          const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+          const expected: ReadonlyArray<BarSettings> = [
             {
-              id: expect.stringMatching('bar-'),
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
               barSize: 50,
               data: undefined,
@@ -1309,9 +1281,11 @@ describe('<BarChart />', () => {
               xAxisId: 'one',
               yAxisId: 0,
               zAxisId: 0,
+              maxBarSize: undefined,
+              minPointSize: 0,
             },
             {
-              id: expect.stringMatching('bar-'),
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
               barSize: 30,
               data: undefined,
@@ -1322,6 +1296,8 @@ describe('<BarChart />', () => {
               xAxisId: 'two',
               yAxisId: 0,
               zAxisId: 0,
+              maxBarSize: undefined,
+              minPointSize: 0,
             },
           ];
           expectLastCalledWith(spy, expected);
@@ -1334,6 +1310,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 50,
               data: undefined,
               dataKey: 'uv',
@@ -1354,6 +1332,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'pv',
@@ -1440,38 +1420,13 @@ describe('<BarChart />', () => {
       });
 
       describe('renders bars as neighbours when there are multiple YAxes', () => {
-        const leftBarSettings: BarSettings = {
-          id: 'my-bar-id-1',
-          barSize: undefined,
-          data: undefined,
-          dataKey: 'pv',
-          maxBarSize: undefined,
-          minPointSize: undefined,
-          stackId: undefined,
-        };
-
-        const rightBarSettings: BarSettings = {
-          id: 'my-bar-id-2',
-          barSize: undefined,
-          data: undefined,
-          dataKey: 'uv',
-          maxBarSize: undefined,
-          minPointSize: undefined,
-          stackId: undefined,
-        };
-
         const renderTestCase = createSelectorTestCase(({ children }) => (
           <BarChart width={500} height={300} data={data}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="left" orientation="left" />
             <YAxis yAxisId="right" orientation="right" />
-            <Bar yAxisId="left" id={leftBarSettings.id} dataKey={leftBarSettings.dataKey} isAnimationActive={false} />
-            <Bar
-              yAxisId="right"
-              id={rightBarSettings.id}
-              dataKey={rightBarSettings.dataKey}
-              isAnimationActive={false}
-            />
+            <Bar yAxisId="left" id="my-bar-id-1" dataKey="pv" isAnimationActive={false} />
+            <Bar yAxisId="right" id="my-bar-id-2" dataKey="uv" isAnimationActive={false} />
             {children}
           </BarChart>
         ));
@@ -1482,6 +1437,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-1',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
@@ -1495,6 +1452,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-2',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
@@ -1516,6 +1475,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-1',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
@@ -1529,6 +1490,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-2',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
@@ -1550,6 +1513,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-1',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
@@ -1564,6 +1529,8 @@ describe('<BarChart />', () => {
             {
               id: 'my-bar-id-2',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
@@ -1579,7 +1546,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for left axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'my-bar-id-1'));
           expectLastCalledWith(spy, [
             {
               barSize: undefined,
@@ -1596,7 +1563,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for right axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'my-bar-id-2'));
           expectLastCalledWith(spy, [
             {
               barSize: undefined,
@@ -1613,7 +1580,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'my-bar-id-1'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -1636,7 +1603,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'my-bar-id-2'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -1753,6 +1720,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 40,
               data: undefined,
               dataKey: 'uv',
@@ -1766,6 +1735,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'pv',
@@ -1787,6 +1758,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 40,
               data: undefined,
               dataKey: 'uv',
@@ -1800,6 +1773,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'pv',
@@ -1821,6 +1796,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 40,
               data: undefined,
               dataKey: 'uv',
@@ -1835,6 +1812,8 @@ describe('<BarChart />', () => {
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'pv',
@@ -1922,44 +1901,10 @@ describe('<BarChart />', () => {
       });
 
       describe('renders overlapping bars when there are multiple YAxes', () => {
-        const leftBarSettings: BarSettings = {
-          id: 'bar-left',
-          barSize: 30,
-          data: undefined,
-          dataKey: 'uv',
-          maxBarSize: undefined,
-          minPointSize: undefined,
-          stackId: undefined,
-        };
-
-        const rightBarSettings: BarSettings = {
-          id: 'bar-right',
-          barSize: 20,
-          data: undefined,
-          dataKey: 'pv',
-          maxBarSize: undefined,
-          minPointSize: undefined,
-          stackId: undefined,
-        };
-
         const renderTestCase = createSelectorTestCase(({ children }) => (
           <BarChart width={300} height={300} data={data} layout="vertical">
-            <Bar
-              id={leftBarSettings.id}
-              dataKey={leftBarSettings.dataKey}
-              yAxisId="left"
-              fill="blue"
-              barSize={leftBarSettings.barSize}
-              isAnimationActive={false}
-            />
-            <Bar
-              id={rightBarSettings.id}
-              dataKey={rightBarSettings.dataKey}
-              yAxisId="right"
-              fill="green"
-              barSize={rightBarSettings.barSize}
-              isAnimationActive={false}
-            />
+            <Bar id="bar-left" dataKey="uv" yAxisId="left" fill="blue" barSize={30} isAnimationActive={false} />
+            <Bar id="bar-right" dataKey="pv" yAxisId="right" fill="green" barSize={20} isAnimationActive={false} />
             <YAxis yAxisId="left" orientation="left" type="category" />
             <YAxis yAxisId="right" orientation="right" hide type="category" />
             <XAxis type="number" />
@@ -1973,6 +1918,8 @@ describe('<BarChart />', () => {
             {
               id: 'bar-left',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'uv',
@@ -1986,6 +1933,8 @@ describe('<BarChart />', () => {
             {
               id: 'bar-right',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 20,
               data: undefined,
               dataKey: 'pv',
@@ -2007,6 +1956,8 @@ describe('<BarChart />', () => {
             {
               id: 'bar-left',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 30,
               data: undefined,
               dataKey: 'uv',
@@ -2027,6 +1978,8 @@ describe('<BarChart />', () => {
             {
               id: 'bar-right',
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               barSize: 20,
               data: undefined,
               dataKey: 'pv',
@@ -2042,7 +1995,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for left axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'my-bar-id-1'));
           expectLastCalledWith(spy, [
             {
               barSize: 30,
@@ -2054,7 +2007,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for right axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'my-bar-id-2'));
           expectLastCalledWith(spy, [
             {
               barSize: 20,
@@ -2066,7 +2019,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'my-bar-id-1'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['uv'],
@@ -2081,7 +2034,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'my-bar-id-2'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -2171,29 +2124,19 @@ describe('<BarChart />', () => {
     test('renders bars in Brush panorama', () => {
       const barPositionsSpy = vi.fn();
 
-      const barSettings: BarSettings = {
-        id: 'my-bar-id',
-        barSize: undefined,
-        data: undefined,
-        dataKey: 'uv',
-        maxBarSize: 0,
-        minPointSize: undefined,
-        stackId: undefined,
-      };
-
       const Comp = (): null => {
-        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
         return null;
       };
 
       const { container } = render(
         <ComposedChart width={800} height={400} data={pageData}>
-          <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+          <Bar dataKey="uv" isAnimationActive={false} id="my-bar-id" />
           <Customized component={<Comp />} />
 
           <Brush>
             <ComposedChart data={pageData}>
-              <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+              <Bar dataKey="uv" isAnimationActive={false} />
             </ComposedChart>
           </Brush>
         </ComposedChart>,
@@ -2332,21 +2275,9 @@ describe('<BarChart />', () => {
     const barPositionsSpy = vi.fn();
     const barRectanglesSpy = vi.fn();
 
-    const topWhiskerBarSettings: BarSettings = {
-      id: 'my-bar-id',
-      barSize: undefined,
-      data: undefined,
-      dataKey: 'topWhisker',
-      maxBarSize: undefined,
-      minPointSize: 0,
-      stackId: 'a',
-    };
-
     const Comp = (): null => {
-      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, topWhiskerBarSettings)));
-      barRectanglesSpy(
-        useAppSelector(state => selectBarRectangles(state, 0, 0, false, topWhiskerBarSettings, undefined)),
-      );
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
+      barRectanglesSpy(useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'my-bar-id', undefined)));
       return null;
     };
 

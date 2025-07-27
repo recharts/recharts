@@ -35,7 +35,7 @@ const pickCells = (
 
 export const selectDisplayedData: (
   state: RechartsRootState,
-  pieSettings: PieSettings,
+  id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ChartData | undefined = createSelector(
   [selectChartDataAndAlwaysIgnoreIndexes, selectSynchronisedPieSettings, pickCells],
@@ -73,7 +73,7 @@ export const selectPieLegend: (
     pieSettings: PieSettings,
     cells: ReadonlyArray<ReactElement>,
   ): ReadonlyArray<LegendPayload> | undefined => {
-    if (displayedData == null) {
+    if (displayedData == null || pieSettings == null) {
       return undefined;
     }
     return displayedData.map((entry, i): LegendPayload => {

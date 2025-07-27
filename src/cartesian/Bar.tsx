@@ -1,15 +1,5 @@
 import * as React from 'react';
-import {
-  Key,
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
@@ -566,39 +556,9 @@ function BarImpl(props: BarImplProps) {
 
   const isPanorama = useIsPanorama();
 
-  const barSettings: BarSettings = useMemo(
-    (): BarSettings => ({
-      type: 'bar',
-      id: props.id,
-      barSize: props.barSize,
-      data: undefined,
-      dataKey: props.dataKey,
-      maxBarSize: props.maxBarSize,
-      minPointSize,
-      stackId: getNormalizedStackId(props.stackId),
-      xAxisId,
-      yAxisId,
-      zAxisId: undefined,
-      hide,
-      isPanorama,
-    }),
-    [
-      props.id,
-      props.barSize,
-      props.dataKey,
-      props.maxBarSize,
-      props.stackId,
-      minPointSize,
-      xAxisId,
-      yAxisId,
-      hide,
-      isPanorama,
-    ],
-  );
-
   const cells = findAllByType(props.children, Cell);
 
-  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, barSettings, cells));
+  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, props.id, cells));
 
   if (layout !== 'vertical' && layout !== 'horizontal') {
     return null;
