@@ -27,7 +27,6 @@ import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { selectRadarPoints } from '../state/selectors/radarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -35,6 +34,7 @@ import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 
 interface RadarPoint {
   x: number;
@@ -461,7 +461,7 @@ export class Radar extends PureComponent<Props> {
       <RegisterGraphicalItemId id={this.props.id} type="radar">
         {id => (
           <>
-            <PolarGraphicalItemContext
+            <SetPolarGraphicalItem
               type="radar"
               id={id}
               data={undefined} // Radar does not have data prop, why?

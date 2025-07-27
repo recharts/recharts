@@ -52,8 +52,8 @@ import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
-import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -726,7 +726,7 @@ export class Pie extends PureComponent<Props, State> {
       <RegisterGraphicalItemId id={this.props.id} type="pie">
         {id => (
           <>
-            <PolarGraphicalItemContext
+            <SetPolarGraphicalItem
               type="pie"
               id={id}
               data={this.props.data}
