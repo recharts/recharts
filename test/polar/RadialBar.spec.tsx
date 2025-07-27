@@ -13,7 +13,6 @@ import {
 } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
-import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { PageData, ringsData } from '../_data';
 import { expectRadialBars } from '../helper/expectRadialBars';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -50,6 +49,11 @@ describe('<RadialBar />', () => {
       stackId: undefined,
       maxBarSize: undefined,
       barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: 0,
+      radiusAxisId: 0,
+      data: undefined,
+      hide: false,
     };
 
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -64,6 +68,8 @@ describe('<RadialBar />', () => {
       expectLastCalledWith(spy, [
         {
           id: expect.stringMatching('radialBar-'),
+          maxBarSize: undefined,
+          minPointSize: 0,
           angleAxisId: 0,
           barSize: undefined,
           data: undefined,
@@ -431,6 +437,11 @@ describe('<RadialBar />', () => {
       stackId: undefined,
       maxBarSize: undefined,
       barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: '',
+      radiusAxisId: '',
+      data: [],
+      hide: false,
     };
 
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -455,6 +466,8 @@ describe('<RadialBar />', () => {
           radiusAxisId: 0,
           stackId: undefined,
           type: 'radialBar',
+          maxBarSize: undefined,
+          minPointSize: 0,
         },
       ]);
     });
@@ -808,6 +821,11 @@ describe('<RadialBar />', () => {
       stackId: undefined,
       maxBarSize: undefined,
       barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: '',
+      radiusAxisId: '',
+      data: [],
+      hide: false,
     };
 
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -833,6 +851,8 @@ describe('<RadialBar />', () => {
           radiusAxisId: 0,
           stackId: undefined,
           type: 'radialBar',
+          maxBarSize: undefined,
+          minPointSize: 0,
         },
       ]);
     });
@@ -1106,7 +1126,7 @@ describe('<RadialBar />', () => {
         </RadialBarChart>,
       );
 
-      const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+      const expectedPolarItemsSettings: RadialBarSettings = {
         id: expect.stringMatching('radialBar-'),
         barSize: undefined,
         stackId: undefined,
@@ -1116,6 +1136,8 @@ describe('<RadialBar />', () => {
         dataKey: 'value',
         hide: false,
         radiusAxisId: 0,
+        minPointSize: 0,
+        maxBarSize: undefined,
       };
       expect(polarItemsSpy).toHaveBeenLastCalledWith([expectedPolarItemsSettings]);
       expect(polarItemsSpy).toHaveBeenCalledTimes(3);
