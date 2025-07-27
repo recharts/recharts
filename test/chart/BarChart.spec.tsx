@@ -49,6 +49,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { CartesianChartProps } from '../../src/util/types';
+import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { BarSettings } from '../../src/state/types/BarSettings';
 import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 
