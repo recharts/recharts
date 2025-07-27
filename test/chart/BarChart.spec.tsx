@@ -635,10 +635,10 @@ describe('<BarChart />', () => {
     describe('when stackId is a number', () => {
       const barSettings: BarSettings = {
         id: 'my-bar-id',
-        barSize: '',
+        barSize: undefined,
         data,
         dataKey: 'pv',
-        maxBarSize: 0,
+        maxBarSize: undefined,
         minPointSize: 0,
         stackId: '8',
       };
@@ -659,8 +659,8 @@ describe('<BarChart />', () => {
           {
             background: {
               height: 40,
-              width: 0,
-              x: 68.75,
+              width: 6,
+              x: 65.75,
               y: 5,
             },
             height: 9.599999999999994,
@@ -677,15 +677,15 @@ describe('<BarChart />', () => {
             },
             uv: 400,
             value: 2400,
-            width: 0,
-            x: 68.75,
+            width: 6,
+            x: 65.75,
             y: 35.400000000000006,
           },
           {
             background: {
               height: 40,
-              width: 0,
-              x: 76.25,
+              width: 6,
+              x: 73.25,
               y: 5,
             },
             height: 18.268,
@@ -702,15 +702,15 @@ describe('<BarChart />', () => {
             },
             uv: 300,
             value: 4567,
-            width: 0,
-            x: 76.25,
+            width: 6,
+            x: 73.25,
             y: 26.732,
           },
           {
             background: {
               height: 40,
-              width: 0,
-              x: 83.75,
+              width: 6,
+              x: 80.75,
               y: 5,
             },
             height: 5.592000000000006,
@@ -727,15 +727,15 @@ describe('<BarChart />', () => {
             },
             uv: 300,
             value: 1398,
-            width: 0,
-            x: 83.75,
+            width: 6,
+            x: 80.75,
             y: 39.407999999999994,
           },
           {
             background: {
               height: 40,
-              width: 0,
-              x: 91.25,
+              width: 6,
+              x: 88.25,
               y: 5,
             },
             height: 39.2,
@@ -752,8 +752,8 @@ describe('<BarChart />', () => {
             },
             uv: 200,
             value: 9800,
-            width: 0,
-            x: 91.25,
+            width: 6,
+            x: 88.25,
             y: 5.800000000000001,
           },
         ]);
@@ -797,7 +797,7 @@ describe('<BarChart />', () => {
 
       test('pickMaxBarSize', () => {
         const { spy } = renderTestCase(state => pickMaxBarSize(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith(0);
+        expect(spy).toHaveBeenLastCalledWith(undefined);
       });
 
       it('should select all bar positions', () => {
@@ -806,8 +806,8 @@ describe('<BarChart />', () => {
           {
             dataKeys: ['uv', 'pv'],
             position: {
-              offset: 3.75,
-              size: 0,
+              offset: 0.75,
+              size: 6,
             },
             stackId: '8',
           },
@@ -817,8 +817,8 @@ describe('<BarChart />', () => {
       it('should select bar position', () => {
         const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, barSettings));
         expect(spy).toHaveBeenLastCalledWith({
-          offset: 3.75,
-          size: 0,
+          offset: 0.75,
+          size: 6,
         });
       });
 
