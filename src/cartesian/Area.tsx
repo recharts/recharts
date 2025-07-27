@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, NullablePoint, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
@@ -721,37 +721,8 @@ function AreaImpl(props: WithIdRequired<Props>) {
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
-  const areaSettings: AreaSettings = useMemo(
-    (): AreaSettings => ({
-      type: 'area',
-      id: props.id,
-      baseValue: props.baseValue,
-      stackId: getNormalizedStackId(props.stackId),
-      connectNulls,
-      data: props.data,
-      dataKey: props.dataKey,
-      barSize: undefined,
-      hide,
-      xAxisId,
-      yAxisId,
-      zAxisId: undefined,
-      isPanorama,
-    }),
-    [
-      props.id,
-      props.baseValue,
-      props.stackId,
-      props.data,
-      props.dataKey,
-      connectNulls,
-      hide,
-      xAxisId,
-      yAxisId,
-      isPanorama,
-    ],
-  );
   const { points, isRange, baseLine } =
-    useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
+    useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, props.id)) ?? {};
   const plotArea = usePlotArea();
 
   if ((layout !== 'horizontal' && layout !== 'vertical') || plotArea == null) {
@@ -814,7 +785,7 @@ export const getBaseValue = (
 ): number => {
   // The baseValue can be defined both on the AreaChart, and on the Area.
   // The value for the item takes precedence.
-  const baseValue = itemBaseValue ?? chartBaseValue;
+  const baseValue: BaseValue = itemBaseValue ?? chartBaseValue;
 
   if (isNumber(baseValue)) {
     return baseValue;

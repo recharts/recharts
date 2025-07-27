@@ -2,15 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
 import {
   addCartesianGraphicalItem,
-  CartesianGraphicalItemSettings,
   removeCartesianGraphicalItem,
   replaceCartesianGraphicalItem,
 } from '../../src/state/graphicalItemsSlice';
 import { PageData } from '../_data';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
+import { BarSettings } from '../../src/state/types/BarSettings';
+import { LineSettings } from '../../src/state/types/LineSettings';
+import { AreaSettings } from '../../src/state/types/AreaSettings';
 
 describe('graphicalItemsSlice', () => {
-  const item1: CartesianGraphicalItemSettings = {
+  const item1: BarSettings = {
+    maxBarSize: 0,
+    minPointSize: undefined,
     id: 'my-bar',
     isPanorama: false,
     type: 'bar',
@@ -24,21 +28,21 @@ describe('graphicalItemsSlice', () => {
     barSize: undefined,
   };
 
-  const item2: CartesianGraphicalItemSettings = {
+  const item2: LineSettings = {
     id: 'my-line',
     isPanorama: false,
     type: 'line',
-    stackId: undefined,
     dataKey: undefined,
     data: PageData,
     xAxisId: 'x',
     yAxisId: 'y',
     zAxisId: 0,
     hide: false,
-    barSize: undefined,
   };
 
-  const item3: CartesianGraphicalItemSettings = {
+  const item3: AreaSettings = {
+    baseValue: undefined,
+    connectNulls: false,
     id: 'my-area',
     isPanorama: false,
     type: 'area',

@@ -167,6 +167,12 @@ describe('AreaChart', () => {
     const xAxisTicksSpy = vi.fn();
     const Comp = (): null => {
       const areaSettings: AreaSettings = {
+        hide: false,
+        isPanorama: false,
+        type: 'area',
+        xAxisId: undefined,
+        yAxisId: undefined,
+        zAxisId: undefined,
         id: 'area-0',
         barSize: undefined,
         baseValue: undefined,
@@ -175,7 +181,7 @@ describe('AreaChart', () => {
         connectNulls: false,
         data: undefined,
       };
-      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings)));
+      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings.id)));
       xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
       return null;
     };
@@ -377,10 +383,16 @@ describe('AreaChart', () => {
 
   test('renders a stacked chart when stackId is a number', () => {
     const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       id: 'area-0',
       barSize: undefined,
       baseValue: undefined,
-      stackId: 1,
+      stackId: '1',
       dataKey: 'uv',
       connectNulls: false,
       data: undefined,
@@ -394,7 +406,7 @@ describe('AreaChart', () => {
       </AreaChart>
     ));
 
-    const { container } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings));
+    const { container } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings.id));
 
     // if number stackId breaks this will return an empty array
     expectAreaCurve(container, [

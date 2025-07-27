@@ -54,20 +54,32 @@ const dataMerged = [
 describe('AreaChart stacked', () => {
   describe('with single data array', () => {
     const areaSettings1: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area1',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value1',
       stackId: '1',
       data: undefined,
     };
 
     const areaSettings2: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area2',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value2',
       stackId: '1',
       data: undefined,
@@ -119,6 +131,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value1',
               id: 'area1',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               barSize: undefined,
@@ -126,6 +139,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value2',
               id: 'area2',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               barSize: undefined,
@@ -133,6 +147,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value3',
               id: 'area3',
               stackId: '1',
+              hide: false,
             }),
           ],
           stackedData: expect.toBeRechartsStackedData([
@@ -155,7 +170,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
@@ -164,7 +179,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
@@ -173,7 +188,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
       const expected = {
         baseLine: [
           {
@@ -227,7 +242,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
       expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
@@ -292,20 +307,32 @@ describe('AreaChart stacked', () => {
 
   describe('with single data array, and without explicit XAxis dataKey', () => {
     const areaSettings1: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area1',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value1',
       stackId: '1',
       data: undefined,
     };
 
     const areaSettings2: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area2',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value2',
       stackId: '1',
       data: undefined,
@@ -357,6 +384,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value1',
               id: 'area1',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               barSize: undefined,
@@ -364,6 +392,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value2',
               id: 'area2',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               barSize: undefined,
@@ -371,6 +400,7 @@ describe('AreaChart stacked', () => {
               dataKey: 'value3',
               id: 'area3',
               stackId: '1',
+              hide: false,
             }),
           ],
           stackedData: expect.toBeRechartsStackedData([
@@ -393,7 +423,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
@@ -402,7 +432,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
@@ -411,7 +441,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
       const expected = {
         baseLine: [
           {
@@ -465,7 +495,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
       expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
@@ -530,20 +560,32 @@ describe('AreaChart stacked', () => {
 
   describe('with multiple data arrays but each has their own dataKey', () => {
     const areaSettings1: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area1',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value1',
       stackId: '1',
       data: data1Value1,
     };
 
     const areaSettings2: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area2',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value2',
       stackId: '1',
       data: data2Value2,
@@ -604,6 +646,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value1',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area2',
@@ -614,6 +657,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value2',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area3',
@@ -624,6 +668,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value3',
               stackId: '1',
+              hide: false,
             }),
           ],
           stackedData: expect.toBeRechartsStackedData([
@@ -646,7 +691,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
@@ -655,7 +700,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
@@ -664,7 +709,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
       const expected = {
         baseLine: [
           { x: 65, y: 365, payload: { name: 'a', value1: 5 } },
@@ -690,7 +735,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
       expectLastCalledWith(spy, {
         baseLine: [
           // baseline.y from second point is the same as points.y from first point
@@ -733,20 +778,32 @@ describe('AreaChart stacked', () => {
      */
 
     const areaSettings1: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area1',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value',
       stackId: '1',
       data: data1,
     };
 
     const areaSettings2: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area2',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value',
       stackId: '1',
       data: data2,
@@ -807,6 +864,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area2',
@@ -817,6 +875,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area3',
@@ -827,6 +886,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
           ],
           stackedData: expect.toBeRechartsStackedData([
@@ -849,7 +909,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
@@ -858,7 +918,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
@@ -867,7 +927,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
       const expected = {
         baseLine: [
           {
@@ -907,7 +967,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
       expectLastCalledWith(spy, {
         baseLine: [
           {
@@ -966,20 +1026,32 @@ describe('AreaChart stacked', () => {
      */
 
     const areaSettings1: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area1',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value',
       stackId: '1',
       data: data1,
     };
 
     const areaSettings2: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: undefined,
+      yAxisId: undefined,
+      zAxisId: undefined,
       barSize: undefined,
       id: 'area2',
       connectNulls: false,
-      baseValue: 0,
+      baseValue: undefined,
       dataKey: 'value',
       stackId: '1',
       data: data2,
@@ -1040,6 +1112,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area2',
@@ -1050,6 +1123,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
             expectGraphicalItemSettings({
               id: 'area3',
@@ -1060,6 +1134,7 @@ describe('AreaChart stacked', () => {
               ],
               dataKey: 'value',
               stackId: '1',
+              hide: false,
             }),
           ],
           stackedData: expect.toBeRechartsStackedData([
@@ -1082,7 +1157,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
@@ -1091,7 +1166,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
@@ -1100,7 +1175,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
       const expected = {
         baseLine: [
           {
@@ -1140,7 +1215,7 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
+      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
       expectLastCalledWith(spy, {
         baseLine: [
           {
