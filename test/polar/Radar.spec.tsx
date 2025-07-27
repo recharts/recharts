@@ -5,9 +5,9 @@ import { expect, it, vi } from 'vitest';
 import { Radar, Customized, RadarChart, RadarProps } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
-import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { exampleRadarData } from '../_data';
 import { expectRadarPolygons } from '../helper/expectRadarPolygons';
+import { RadarSettings } from '../../src/state/types/RadarSettings';
 
 type point = { x: number; y: number };
 const CustomizedShape = ({ points }: { points: point[] }) => {
@@ -146,10 +146,8 @@ describe('<Radar />', () => {
         </RadarChart>,
       );
 
-      const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+      const expectedPolarItemsSettings: RadarSettings = {
         id: expect.stringMatching('radar-'),
-        barSize: undefined,
-        stackId: undefined,
         type: 'radar',
         angleAxisId: 0,
         data: undefined,
