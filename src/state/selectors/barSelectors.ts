@@ -57,7 +57,7 @@ const pickBarSettings = (
   barSettings: BarSettings,
 ): BarSettings => barSettings;
 
-const pickMaxBarSize = (
+export const pickMaxBarSize = (
   _state: RechartsRootState,
   _xAxisId: AxisId,
   _yAxisId: AxisId,
@@ -263,7 +263,7 @@ export const selectBarBandSize: (
   return getBandSizeOfAxis(axis, ticks, true) ?? maxBarSize ?? 0;
 };
 
-const selectAxisBandSize = (
+export const selectAxisBandSize = (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
