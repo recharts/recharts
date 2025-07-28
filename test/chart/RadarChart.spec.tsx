@@ -18,6 +18,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<RadarChart />', () => {
   describe('with implicit axes', () => {
@@ -30,7 +31,7 @@ describe('<RadarChart />', () => {
 
     it('should select angle settings', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: false,
@@ -56,12 +57,12 @@ describe('<RadarChart />', () => {
 
     it('should select angle axis scale type', () => {
       const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith('band');
+      expectLastCalledWith(spy, 'band');
     });
 
     it('should select radius axis settings', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: false,
@@ -82,12 +83,12 @@ describe('<RadarChart />', () => {
 
     it('should select max radius', () => {
       const { spy } = renderTestCase(selectMaxRadius);
-      expect(spy).toHaveBeenLastCalledWith(245);
+      expectLastCalledWith(spy, 245);
     });
 
     it('should select polar options', () => {
       const { spy } = renderTestCase(selectPolarOptions);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         cx: 100,
         cy: 150,
         endAngle: -270,
@@ -99,12 +100,12 @@ describe('<RadarChart />', () => {
 
     it('should select outer radius', () => {
       const { spy } = renderTestCase(selectOuterRadius);
-      expect(spy).toHaveBeenLastCalledWith(150); // TODO this returns 196, why?
+      expectLastCalledWith(spy, 150); // TODO this returns 196, why?
     });
 
     it('should select radius axis range', () => {
       const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
-      expect(spy).toHaveBeenLastCalledWith([0, 150]);
+      expectLastCalledWith(spy, [0, 150]);
     });
 
     it('should select radius axis scale', () => {
@@ -114,7 +115,7 @@ describe('<RadarChart />', () => {
 
     it('should select radius axis scale type', () => {
       const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith('linear');
+      expectLastCalledWith(spy, 'linear');
     });
 
     it('should render polygon', () => {
@@ -549,7 +550,7 @@ describe('<RadarChart />', () => {
         </RadarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expectLastCalledWith(spy, { height: 40, width: 90, x: 5, y: 5 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -566,7 +567,7 @@ describe('<RadarChart />', () => {
         </RadarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expectLastCalledWith(spy, { height: 40, width: 90, x: 5, y: 5 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -583,7 +584,7 @@ describe('<RadarChart />', () => {
         </RadarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith(100);
+      expectLastCalledWith(spy, 100);
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -600,7 +601,7 @@ describe('<RadarChart />', () => {
         </RadarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith(50);
+      expectLastCalledWith(spy, 50);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });

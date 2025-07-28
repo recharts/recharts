@@ -30,7 +30,7 @@ import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLines } from '../helper/expectLine';
-
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<LineChart />', () => {
@@ -815,7 +815,7 @@ describe('<LineChart />', () => {
 
     it('should select tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#3182bd',
           dataKey: 'y',

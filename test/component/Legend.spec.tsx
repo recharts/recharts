@@ -35,6 +35,7 @@ import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -430,7 +431,7 @@ describe('<Legend />', () => {
         </LineChart>,
       );
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         align: 'center',
         chartHeight: 300,
         chartWidth: 600,
@@ -773,7 +774,7 @@ describe('<Legend />', () => {
         </LineChart>,
       );
       expect.soft(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         align: 'center',
         chartHeight: 300,
         chartWidth: 600,
@@ -1574,7 +1575,7 @@ describe('<Legend />', () => {
           },
         )();
         expect(spy).toHaveBeenCalledTimes(3);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
           bottom: 5 + 13,
@@ -1603,7 +1604,7 @@ describe('<Legend />', () => {
           },
         )();
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
           bottom: 5,
@@ -1632,7 +1633,7 @@ describe('<Legend />', () => {
           },
         )();
         expect(spy).toHaveBeenCalledTimes(3);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
           bottom: 5,
@@ -1661,7 +1662,7 @@ describe('<Legend />', () => {
           },
         )();
         expect(spy).toHaveBeenCalledTimes(3);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
           bottom: 5 + 13,
@@ -1837,7 +1838,7 @@ describe('<Legend />', () => {
 
       it('should select legend payload', () => {
         const { spy } = renderTestCase(selectLegendPayload);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             inactive: false,
             dataKey: 'percent',
@@ -1845,6 +1846,7 @@ describe('<Legend />', () => {
             color: '#3182bd',
             value: '%',
             payload: {
+              // @ts-expect-error extra properties not expected in the type
               dataKey: 'percent',
               name: '%',
               activeDot: true,

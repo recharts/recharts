@@ -1,9 +1,19 @@
 import React, { ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useActiveTooltipDataPoints } from '../../src/hooks';
+import {
+  useActiveTooltipDataPoints,
+  Area,
+  AreaChart,
+  Bar,
+  ComposedChart,
+  Line,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+} from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Area, AreaChart, Bar, ComposedChart, Line, Scatter, ScatterChart, Tooltip, XAxis } from '../../src';
 import { PageData } from '../_data';
 import { hideTooltip, showTooltip, showTooltipClick } from '../component/Tooltip/tooltipTestHelpers';
 import {
@@ -12,6 +22,7 @@ import {
   scatterChartMouseHoverTooltipSelector,
 } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('useActiveTooltipDataPoints', () => {
   beforeEach(() => {
@@ -27,7 +38,7 @@ describe('useActiveTooltipDataPoints', () => {
         return null;
       };
       render(<Comp />);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
@@ -43,7 +54,7 @@ describe('useActiveTooltipDataPoints', () => {
 
       it('should return undefined before any interactions', () => {
         const { spy } = renderTestCase(useActiveTooltipDataPoints);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -51,7 +62,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -67,7 +78,7 @@ describe('useActiveTooltipDataPoints', () => {
         showTooltip(container, areaChartMouseHoverTooltipSelector);
         hideTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(4);
       });
 
@@ -75,7 +86,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -91,7 +102,7 @@ describe('useActiveTooltipDataPoints', () => {
 
       it('should return data point before any interactions', () => {
         const { spy } = renderTestCase(useActiveTooltipDataPoints);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page B',
@@ -106,7 +117,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -122,7 +133,7 @@ describe('useActiveTooltipDataPoints', () => {
         showTooltip(container, areaChartMouseHoverTooltipSelector);
         hideTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(4);
       });
 
@@ -130,7 +141,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page B',
@@ -153,7 +164,7 @@ describe('useActiveTooltipDataPoints', () => {
 
       it('should return undefined before any interactions', () => {
         const { spy } = renderTestCase(useActiveTooltipDataPoints);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -161,7 +172,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -177,7 +188,7 @@ describe('useActiveTooltipDataPoints', () => {
         showTooltip(container, areaChartMouseHoverTooltipSelector);
         hideTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -192,7 +203,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -208,7 +219,7 @@ describe('useActiveTooltipDataPoints', () => {
 
       it('should return undefined before any interactions', () => {
         const { spy } = renderTestCase(useActiveTooltipDataPoints);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -216,7 +227,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -232,7 +243,7 @@ describe('useActiveTooltipDataPoints', () => {
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
         hideTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             amt: 2400,
             name: 'Page C',
@@ -247,7 +258,7 @@ describe('useActiveTooltipDataPoints', () => {
         const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
         showTooltip(container, areaChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -272,7 +283,7 @@ describe('useActiveTooltipDataPoints', () => {
        * but externally that looks just weird when it returns two of the same items.
        * So let's deduplicate.
        */
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           amt: 2400,
           name: 'Page A',
@@ -298,7 +309,7 @@ describe('useActiveTooltipDataPoints', () => {
       const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
       showTooltip(container, composedChartMouseHoverTooltipSelector);
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           amt: 2400,
           name: 'Page C',
@@ -328,7 +339,7 @@ describe('useActiveTooltipDataPoints', () => {
       const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
       showTooltip(container, composedChartMouseHoverTooltipSelector);
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { name: 'Page C', pv: 1398 },
         { name: 'Page C', uv: 300 },
         { amt: 2400, name: 'Page C' },

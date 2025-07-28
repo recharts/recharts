@@ -7,6 +7,7 @@ import { selectActiveIndex, selectActiveLabel, selectTooltipPayload } from '../.
 import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
 import { barChartMouseHoverTooltipSelector, pieChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('defaultIndex', () => {
   describe('in BarChart', () => {
@@ -22,7 +23,7 @@ describe('defaultIndex', () => {
 
     it('should select tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'uv',
@@ -49,7 +50,7 @@ describe('defaultIndex', () => {
       mockGetBoundingClientRect({ width: 100, height: 100 });
       const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', undefined));
       showTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'uv',
@@ -92,7 +93,7 @@ describe('defaultIndex', () => {
 
     it('should select tooltip axis ticks', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#3182bd',
           dataKey: 'uv',
@@ -117,7 +118,7 @@ describe('defaultIndex', () => {
 
     it('should select active label', () => {
       const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith('Page D');
+      expectLastCalledWith(spy, 'Page D');
     });
 
     it('should render tooltip before user interaction', () => {
@@ -136,7 +137,7 @@ describe('defaultIndex', () => {
 
     it('should select active index as the default', () => {
       const { spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith('3');
+      expectLastCalledWith(spy, '3');
     });
 
     it('should render sectors', () => {
@@ -147,12 +148,12 @@ describe('defaultIndex', () => {
     it('should update the active index after mouse hover', () => {
       const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', '3'));
       showTooltip(container, pieChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith('0');
+      expectLastCalledWith(spy, '0');
     });
 
     it('should select tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'pv',
@@ -178,7 +179,7 @@ describe('defaultIndex', () => {
     it('should update the payload after mouse hover', () => {
       const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '3'));
       showTooltip(container, pieChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'pv',

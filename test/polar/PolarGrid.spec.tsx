@@ -23,6 +23,7 @@ import { selectPolarGridAngles, selectPolarGridRadii } from '../../src/state/sel
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { selectAllPolarAppliedNumericalValues, selectPolarNiceTicks } from '../../src/state/selectors/polarSelectors';
 import { TickItem } from '../../src/util/types';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedLine = {
   x1: string;
@@ -522,7 +523,7 @@ describe('<PolarGrid />', () => {
 
     it('should select radius axis settings', () => {
       const { spy } = renderTestCase(state => selectPolarAxis(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: true,
@@ -552,12 +553,12 @@ describe('<PolarGrid />', () => {
 
     it('should select categorical domain', () => {
       const { spy } = renderTestCase(state => selectPolarCategoricalDomain(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should select all polar applied values', () => {
       const { spy } = renderTestCase(state => selectAllPolarAppliedNumericalValues(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           errorDomain: [],
           value: 3,
@@ -579,7 +580,7 @@ describe('<PolarGrid />', () => {
 
     it('should select radius axis ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 14.5,
           index: 0,
@@ -644,7 +645,7 @@ describe('<PolarGrid />', () => {
 
     it('should select angle axis settings', () => {
       const { spy } = renderTestCase(state => selectPolarAxis(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: true,
@@ -665,23 +666,33 @@ describe('<PolarGrid />', () => {
 
     it('should select angle ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 0, value: 0, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 40, value: 1, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 80, value: 2, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 120, value: 3, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 160, value: 4, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 200, value: 5, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 240, value: 6, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 280, value: 7, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 320, value: 8, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 360, value: 9, offset: -0 },
       ]);
     });
 
     it('should select grid angles', () => {
       const { spy } = renderTestCase(state => selectPolarGridAngles(state, 0));
-      expect(spy).toHaveBeenLastCalledWith([0, 40, 80, 120, 160, 200, 240, 280, 320, 360]);
+      expectLastCalledWith(spy, [0, 40, 80, 120, 160, 200, 240, 280, 320, 360]);
     });
 
     it('should render lines', () => {
@@ -848,12 +859,12 @@ describe('<PolarGrid />', () => {
             index: 2,
           },
         ];
-        expect(spy).toHaveBeenLastCalledWith(expected);
+        expectLastCalledWith(spy, expected);
       });
 
       it('should select angles', () => {
         const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'axis-pv'));
-        expect(spy).toHaveBeenLastCalledWith([0, 180, 360]);
+        expectLastCalledWith(spy, [0, 180, 360]);
       });
     });
 
@@ -867,7 +878,7 @@ describe('<PolarGrid />', () => {
 
       it('should select axis settings', () => {
         const { spy } = renderTestCase(state => selectPolarAxis(state, 'angleAxis', 'axis-uv'));
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: undefined,
           allowDuplicatedCategory: false,
@@ -888,7 +899,7 @@ describe('<PolarGrid />', () => {
 
       it('should select nice ticks', () => {
         const { spy } = renderTestCase(state => selectPolarNiceTicks(state, 'angleAxis', 'axis-uv'));
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
       });
 
       it('should select scale', () => {
@@ -901,56 +912,35 @@ describe('<PolarGrid />', () => {
 
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv', false));
-        expect(spy).toHaveBeenLastCalledWith([
-          {
-            coordinate: 0,
-            offset: -0,
-            value: 0,
-          },
-          {
-            coordinate: 47.368421052631575,
-            offset: -0,
-            value: 200,
-          },
-          {
-            coordinate: 94.73684210526315,
-            offset: -0,
-            value: 400,
-          },
-          {
-            coordinate: 142.10526315789474,
-            offset: -0,
-            value: 600,
-          },
-          {
-            coordinate: 189.4736842105263,
-            offset: -0,
-            value: 800,
-          },
-          {
-            coordinate: 236.84210526315792,
-            offset: -0,
-            value: 1000,
-          },
-          {
-            coordinate: 284.2105263157895,
-            offset: -0,
-            value: 1200,
-          },
-          {
-            coordinate: 331.57894736842104,
-            offset: -0,
-            value: 1400,
-          },
+        expectLastCalledWith(spy, [
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 0, offset: -0, value: 0 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 47.368421052631575, offset: -0, value: 200 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 94.73684210526315, offset: -0, value: 400 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 142.10526315789474, offset: -0, value: 600 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 189.4736842105263, offset: -0, value: 800 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 236.84210526315792, offset: -0, value: 1000 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 284.2105263157895, offset: -0, value: 1200 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 331.57894736842104, offset: -0, value: 1400 },
         ]);
       });
 
       it('should select angles', () => {
         const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'axis-uv'));
-        expect(spy).toHaveBeenLastCalledWith([
-          0, 47.368421052631575, 94.73684210526315, 142.10526315789474, 189.4736842105263, 236.84210526315792,
-          284.2105263157895, 331.57894736842104,
-        ]);
+        expectLastCalledWith(
+          spy,
+          [
+            0, 47.368421052631575, 94.73684210526315, 142.10526315789474, 189.4736842105263, 236.84210526315792,
+            284.2105263157895, 331.57894736842104,
+          ],
+        );
       });
 
       it('should render lines pointing to labels of second angle axis', () => {
@@ -1123,7 +1113,7 @@ describe('<PolarGrid />', () => {
 
       it('should select nice ticks', () => {
         const { spy } = renderTestCase(state => selectPolarNiceTicks(state, 'radiusAxis', 'axis-name'));
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
       });
 
       it('should select scale', () => {
@@ -1136,7 +1126,7 @@ describe('<PolarGrid />', () => {
 
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 'axis-name', false));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             coordinate: 8.28571428571428,
             value: 'Page A',
@@ -1184,10 +1174,13 @@ describe('<PolarGrid />', () => {
 
       it('should select array of radii', () => {
         const { spy } = renderTestCase(state => selectPolarGridRadii(state, 'axis-name'));
-        expect(spy).toHaveBeenLastCalledWith([
-          8.28571428571428, 24.857142857142854, 41.42857142857142, 58, 74.57142857142857, 91.14285714285715,
-          107.71428571428574,
-        ]);
+        expectLastCalledWith(
+          spy,
+          [
+            8.28571428571428, 24.857142857142854, 41.42857142857142, 58, 74.57142857142857, 91.14285714285715,
+            107.71428571428574,
+          ],
+        );
       });
     });
   });

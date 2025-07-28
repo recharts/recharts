@@ -2,6 +2,7 @@ import React from 'react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { LineChart, Tooltip } from '../../../src';
 import { TooltipSettingsState } from '../../../src/state/tooltipSlice';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('Tooltip state integration', () => {
   describe('with explicit settings', () => {
@@ -21,7 +22,7 @@ describe('Tooltip state integration', () => {
         active: true,
         defaultIndex: '4',
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
   });
 
@@ -42,7 +43,7 @@ describe('Tooltip state integration', () => {
         shared: undefined,
         trigger: 'hover',
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
   });
 
@@ -62,7 +63,7 @@ describe('Tooltip state integration', () => {
         shared: undefined,
         trigger: 'hover',
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
   });
 });

@@ -5,6 +5,7 @@ import { Area, AreaChart, DefaultLegendContentProps, Legend, LegendPayload, Line
 import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('Legend.itemSorter', () => {
   describe('with default content', () => {
@@ -390,7 +391,8 @@ describe('Legend.itemSorter', () => {
         it('should render all items sorted by dataKey', () => {
           renderTestCase();
 
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
@@ -408,7 +410,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('A').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
@@ -420,7 +423,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('B').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
@@ -466,7 +470,8 @@ describe('Legend.itemSorter', () => {
         it('should render all items sorted by dataKey', () => {
           renderTestCase();
 
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
@@ -484,7 +489,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('A').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
@@ -496,7 +502,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('B').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
@@ -513,7 +520,8 @@ describe('Legend.itemSorter', () => {
             getByText('A').click();
             getByText('B').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
@@ -525,7 +533,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('B').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
@@ -537,7 +546,8 @@ describe('Legend.itemSorter', () => {
           act(() => {
             getByText('A').click();
           });
-          expect(spy).toHaveBeenLastCalledWith(
+          expectLastCalledWith(
+            spy,
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),

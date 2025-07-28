@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { eventCenter, TOOLTIP_SYNC_EVENT } from '../../src/util/Events';
 import { setSyncInteraction } from '../../src/state/tooltipSlice';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('eventCenter', () => {
   it('should send and receive events', () => {
@@ -21,7 +22,8 @@ describe('eventCenter', () => {
       symbol,
     );
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(
+    expectLastCalledWith(
+      spy,
       'my-sync-id',
       setSyncInteraction({
         active: true,

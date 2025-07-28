@@ -42,6 +42,7 @@ import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxis
 import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 import { expectPieSectors } from '../helper/expectPieSectors';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -678,7 +679,7 @@ describe('<Pie />', () => {
       it('should start with empty tooltip state', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             index: null,
@@ -703,7 +704,7 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             index: null,
@@ -761,7 +762,7 @@ describe('<Pie />', () => {
         );
 
         expect(spy).toHaveBeenCalledTimes(4);
-        expect(spy).toHaveBeenLastCalledWith([]);
+        expectLastCalledWith(spy, []);
 
         showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
           clientX: 200,
@@ -769,7 +770,7 @@ describe('<Pie />', () => {
         });
 
         expect(spy).toHaveBeenCalledTimes(5);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataDefinedOnItem: [
               [
@@ -923,7 +924,7 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
 
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             coordinate: undefined,
@@ -944,7 +945,7 @@ describe('<Pie />', () => {
         });
 
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             coordinate: undefined,
@@ -970,7 +971,7 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', undefined));
 
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy).toHaveBeenLastCalledWith(null);
+        expectLastCalledWith(spy, null);
 
         showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
           clientX: 10,
@@ -978,7 +979,7 @@ describe('<Pie />', () => {
         });
 
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith('2');
+        expectLastCalledWith(spy, '2');
       });
 
       it('should select coordinate after touch', () => {
@@ -991,7 +992,7 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', undefined));
 
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
 
         showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
           clientX: 10,
@@ -999,12 +1000,12 @@ describe('<Pie />', () => {
         });
 
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith({ x: 122, y: 200 });
+        expectLastCalledWith(spy, { x: 122, y: 200 });
       });
 
       it('should select tooltip data', () => {
         const { container, spy } = renderTestCase(selectTooltipDisplayedData);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             cx: 250,
             cy: 250,
@@ -1067,7 +1068,7 @@ describe('<Pie />', () => {
           clientY: 10,
         });
 
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'cy',
@@ -1107,7 +1108,7 @@ describe('<Pie />', () => {
 
       it('should select tooltip axis', () => {
         const { spy } = renderTestCase(selectTooltipAxis);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
           allowDuplicatedCategory: false,
@@ -1128,19 +1129,20 @@ describe('<Pie />', () => {
 
       it('should select tooltip axis type', () => {
         const { spy } = renderTestCase(selectTooltipAxisType);
-        expect(spy).toHaveBeenLastCalledWith('angleAxis');
+        expectLastCalledWith(spy, 'angleAxis');
       });
 
       it('should select tooltip axis ID', () => {
         const { spy } = renderTestCase(selectTooltipAxisId);
-        expect(spy).toHaveBeenLastCalledWith(0);
+        expectLastCalledWith(spy, 0);
       });
 
       it('should select unfiltered graphical items', () => {
         const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             id: expect.stringMatching(/^pie-.+$/),
+            // @ts-expect-error unexpected property
             angleAxisId: 0,
             barSize: undefined,
             data: [
@@ -1200,9 +1202,10 @@ describe('<Pie />', () => {
 
       it('should select filtered graphical items', () => {
         const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             id: expect.stringMatching(/^pie-.+$/),
+            // @ts-expect-error unexpected property
             angleAxisId: 0,
             barSize: undefined,
             data: [
@@ -1262,7 +1265,7 @@ describe('<Pie />', () => {
 
       it('should select displayed data', () => {
         const { spy } = renderTestCase(selectTooltipDisplayedData);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             cx: 250,
             cy: 250,
@@ -1312,12 +1315,12 @@ describe('<Pie />', () => {
 
       it('should select tooltip axis domain', () => {
         const { spy } = renderTestCase(selectTooltipAxisDomain);
-        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4]);
+        expectLastCalledWith(spy, [0, 1, 2, 3, 4]);
       });
 
       it('should select tooltip axis domain with nice ticks', () => {
         const { spy } = renderTestCase(selectTooltipAxisDomainIncludingNiceTicks);
-        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4]);
+        expectLastCalledWith(spy, [0, 1, 2, 3, 4]);
       });
 
       it('should select tooltip axis scale', () => {
@@ -1328,7 +1331,7 @@ describe('<Pie />', () => {
       it('should select tooltip ticks', () => {
         const { spy } = renderTestCase(selectTooltipAxisTicks);
         expect(spy).toHaveBeenCalledTimes(3);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             coordinate: -72,
             value: 0,
@@ -1369,7 +1372,7 @@ describe('<Pie />', () => {
         });
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             index: null,
@@ -1395,7 +1398,7 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           click: {
             active: false,
             index: null,
@@ -1646,7 +1649,7 @@ describe('<Pie />', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           angleAxisId: 0,
           barSize: undefined,
@@ -1668,7 +1671,7 @@ describe('<Pie />', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(4);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           angleAxisId: 0,
           barSize: undefined,
@@ -1698,7 +1701,7 @@ describe('<Pie />', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           angleAxisId: 0,
           barSize: undefined,

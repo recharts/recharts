@@ -16,6 +16,7 @@ import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSe
 import { showTooltipOnCoordinate } from './tooltipTestHelpers';
 import { composedChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('Tooltip in chart with multiple data arrays', () => {
   beforeEach(() => {
@@ -54,12 +55,12 @@ describe('Tooltip in chart with multiple data arrays', () => {
     it('should select activeTooltipDataPoints', () => {
       const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
 
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 387.5, clientY: 100 });
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { xAxis: 30, y1: 6 },
         { xAxis: 30, y2: 12 },
       ]);
@@ -82,7 +83,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
     it('should select individual items data', () => {
       const { spy } = renderTestCase(state => selectCartesianGraphicalItemsData(state, 'xAxis', 0));
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { xAxis: 10, y1: 4 },
         { xAxis: 20, y1: 10 },
         { xAxis: 30, y1: 6 },
@@ -100,7 +101,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
     it('should select displayed data', () => {
       const { spy } = renderTestCase(state => selectDisplayedData(state, 'xAxis', 0, false));
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { xAxis: 10, y1: 4 },
         { xAxis: 20, y1: 10 },
         { xAxis: 30, y1: 6 },
@@ -118,7 +119,8 @@ describe('Tooltip in chart with multiple data arrays', () => {
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectAxisScale(state, 'xAxis', 0, false));
 
-      expect(spy).toHaveBeenLastCalledWith(
+      expectLastCalledWith(
+        spy,
         expect.toBeRechartsScale({
           domain: [0, 40],
           range: [65, 495],
@@ -138,20 +140,20 @@ describe('Tooltip in chart with multiple data arrays', () => {
 
     it('should highlight the first dot when hovering the first xaxis tick', () => {
       const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-      expect(spy).toHaveBeenLastCalledWith(null);
+      expectLastCalledWith(spy, null);
 
       showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 118.75, clientY: 100 });
       // this is 4 because the tick is at xAxis=5 which is the fifth point in the displayedData array
-      expect(spy).toHaveBeenLastCalledWith('4');
+      expectLastCalledWith(spy, '4');
     });
 
     it('should highlight the last dot when hovering the last xaxis tick', () => {
       const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-      expect(spy).toHaveBeenLastCalledWith(null);
+      expectLastCalledWith(spy, null);
 
       showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 495, clientY: 100 });
       // this is 3 because the tick is at xAxis=40 which is the fourth point in the displayedData array
-      expect(spy).toHaveBeenLastCalledWith('3');
+      expectLastCalledWith(spy, '3');
     });
   });
 
@@ -170,7 +172,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
 
     it('should highlight the first dot', () => {
       const { spy } = renderTestCase(selectActiveTooltipIndex);
-      expect(spy).toHaveBeenLastCalledWith('0');
+      expectLastCalledWith(spy, '0');
     });
   });
 });

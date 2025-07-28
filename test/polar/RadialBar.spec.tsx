@@ -39,6 +39,7 @@ import {
 } from '../../src/state/selectors/polarAxisSelectors';
 import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
@@ -60,7 +61,7 @@ describe('<RadialBar />', () => {
 
     it('should select polar items', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
@@ -77,7 +78,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis settings', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         // generator has allowDuplicatedCategory set to true, but the actual axis rendering ignores the prop
@@ -107,7 +108,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis settings', () => {
       const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: true,
@@ -136,7 +137,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 16.333333333333332,
           index: 0,
@@ -178,22 +179,22 @@ describe('<RadialBar />', () => {
 
     it('should select barBandSize', () => {
       const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0, false));
-      expect(spy).toHaveBeenLastCalledWith(32.666666666666664);
+      expectLastCalledWith(spy, 32.666666666666664);
     });
 
     it('should pick childMaxBarSize', () => {
       const { spy } = renderTestCase(state => pickMaxBarSize(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should select selectRootMaxBarSize', () => {
       const { spy } = renderTestCase(selectRootMaxBarSize);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should select bar size list', () => {
       const { spy } = renderTestCase(state => selectPolarBarSizeList(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           barSize: undefined,
           dataKeys: ['pv'],
@@ -204,28 +205,29 @@ describe('<RadialBar />', () => {
 
     it('should select barGap', () => {
       const { spy } = renderTestCase(selectBarGap);
-      expect(spy).toHaveBeenLastCalledWith(4);
+      expectLastCalledWith(spy, 4);
     });
 
     it('should select barCategoryGap', () => {
       const { spy } = renderTestCase(selectBarCategoryGap);
-      expect(spy).toHaveBeenLastCalledWith('10%');
+      expectLastCalledWith(spy, '10%');
     });
 
     it('should select bandSize', () => {
       const { spy } = renderTestCase(state => selectPolarBarBandSize(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith(32.666666666666664);
+      expectLastCalledWith(spy, 32.666666666666664);
     });
 
     it('should select bar position and offset', () => {
       const { spy } = renderTestCase(state => selectPolarBarPosition(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith({ offset: 3.266666666666666, size: 26 });
+      expectLastCalledWith(spy, { offset: 3.266666666666666, size: 26 });
     });
 
     it('should select radial bar sectors', () => {
       const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -253,6 +255,7 @@ describe('<RadialBar />', () => {
           value: 2400,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -280,6 +283,7 @@ describe('<RadialBar />', () => {
           value: 4567,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -307,6 +311,7 @@ describe('<RadialBar />', () => {
           value: 1398,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -334,6 +339,7 @@ describe('<RadialBar />', () => {
           value: 9800,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -361,6 +367,7 @@ describe('<RadialBar />', () => {
           value: 3908,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -437,7 +444,7 @@ describe('<RadialBar />', () => {
 
     it('should select polar items', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
@@ -454,7 +461,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis settings', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: false,
@@ -483,7 +490,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis settings', () => {
       const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: true,
@@ -504,7 +511,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis realScaleType', () => {
       const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith('band');
+      expectLastCalledWith(spy, 'band');
     });
 
     it('should select radius axis scale', () => {
@@ -518,12 +525,12 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis range', () => {
       const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
-      expect(spy).toHaveBeenLastCalledWith([0, 196]);
+      expectLastCalledWith(spy, [0, 196]);
     });
 
     it('should select radius axis ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 16.333333333333332,
           index: 0,
@@ -565,17 +572,17 @@ describe('<RadialBar />', () => {
 
     it('should select bar size and offset', () => {
       const { spy } = renderTestCase(state => selectPolarBarPosition(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith({ offset: 3.266666666666666, size: 26 });
+      expectLastCalledWith(spy, { offset: 3.266666666666666, size: 26 });
     });
 
     it('should select bandSize', () => {
       const { spy } = renderTestCase(state => selectPolarBarBandSize(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith(32.666666666666664);
+      expectLastCalledWith(spy, 32.666666666666664);
     });
 
     it('should select bar size list', () => {
       const { spy } = renderTestCase(state => selectPolarBarSizeList(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           barSize: undefined,
           dataKeys: ['pv'],
@@ -586,18 +593,19 @@ describe('<RadialBar />', () => {
 
     it('should select barGap', () => {
       const { spy } = renderTestCase(selectBarGap);
-      expect(spy).toHaveBeenLastCalledWith(4);
+      expectLastCalledWith(spy, 4);
     });
 
     it('should select barCategoryGap', () => {
       const { spy } = renderTestCase(selectBarCategoryGap);
-      expect(spy).toHaveBeenLastCalledWith('10%');
+      expectLastCalledWith(spy, '10%');
     });
 
     it('should select radial bar sectors', () => {
       const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -625,6 +633,7 @@ describe('<RadialBar />', () => {
           value: 2400,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -652,6 +661,7 @@ describe('<RadialBar />', () => {
           value: 4567,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -679,6 +689,7 @@ describe('<RadialBar />', () => {
           value: 1398,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -706,6 +717,7 @@ describe('<RadialBar />', () => {
           value: 9800,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -733,6 +745,7 @@ describe('<RadialBar />', () => {
           value: 3908,
         },
         {
+          // @ts-expect-error extra properties not expected in the type
           amt: 2400,
           background: {
             cx: 250,
@@ -809,7 +822,7 @@ describe('<RadialBar />', () => {
 
     it('should select polar items', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
@@ -826,7 +839,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis settings', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: false,
@@ -847,7 +860,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis realScaleType', () => {
       const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith('linear');
+      expectLastCalledWith(spy, 'linear');
     });
 
     it('should select angle axis scale', () => {
@@ -860,7 +873,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis settings', () => {
       const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: true,
@@ -881,7 +894,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis realScaleType', () => {
       const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith('band');
+      expectLastCalledWith(spy, 'band');
     });
 
     it('should select radius axis scale', () => {
@@ -895,7 +908,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis ticks for axis', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 24.5, index: 0, offset: 24.5, value: 0 },
         { coordinate: 73.5, index: 1, offset: 24.5, value: 1 },
         { coordinate: 122.5, index: 2, offset: 24.5, value: 2 },
@@ -905,7 +918,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis ticks for graphical item', () => {
       const { spy } = renderTestCase(state => selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 0, value: 0, index: 0, offset: 0 },
         { coordinate: 49, value: 1, index: 1, offset: 0 },
         { coordinate: 98, value: 2, index: 2, offset: 0 },
@@ -915,9 +928,10 @@ describe('<RadialBar />', () => {
 
     it('should select radial bar sectors', () => {
       const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           name: 'Elves',
+          // @ts-expect-error extra properties not expected in the type
           rings: 3,
           fill: 'green',
           background: {
@@ -939,6 +953,7 @@ describe('<RadialBar />', () => {
         },
         {
           name: 'Dwarves',
+          // @ts-expect-error extra properties not expected in the type
           rings: 7,
           fill: 'blue',
           background: {
@@ -960,6 +975,7 @@ describe('<RadialBar />', () => {
         },
         {
           name: 'Humans',
+          // @ts-expect-error extra properties not expected in the type
           rings: 9,
           fill: 'red',
           background: {
@@ -981,6 +997,7 @@ describe('<RadialBar />', () => {
         },
         {
           name: 'Sauron',
+          // @ts-expect-error extra properties not expected in the type
           rings: 1,
           fill: 'black',
           background: {

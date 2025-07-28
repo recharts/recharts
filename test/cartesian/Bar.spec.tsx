@@ -27,6 +27,7 @@ import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipM
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
 import { assertNotNull } from '../helper/assertNotNull';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1286,14 +1287,14 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           barSize: undefined,
         },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
 
       rerender(
         <ChartElement data={data}>
           <Customized component={<Comp />} />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenLastCalledWith([]);
+      expectLastCalledWith(spy, []);
     });
 
     it('should report default props to redux state', () => {
@@ -1325,7 +1326,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           barSize: undefined,
         },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
   });
 });
@@ -1435,10 +1436,10 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
 
     it('should show tooltip when hovering over a chart', () => {
       const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-      expect(spy).toHaveBeenLastCalledWith(null);
+      expectLastCalledWith(spy, null);
 
       showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
-      expect(spy).toHaveBeenLastCalledWith('0');
+      expectLastCalledWith(spy, '0');
       expectTooltipPayload(container, '0', ['x : 1', 'y : 2']);
     });
 
@@ -1512,17 +1513,17 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
 
     it('should show tooltip when hovering over a bar', () => {
       const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-      expect(spy).toHaveBeenLastCalledWith(null);
+      expectLastCalledWith(spy, null);
 
       const bars = getAllBars(container);
       showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
-      expect(spy).toHaveBeenLastCalledWith('0');
+      expectLastCalledWith(spy, '0');
       expectTooltipPayload(container, '', ['x : 1']);
     });
 
     it('should select tooltip axis ticks', () => {
       const { spy } = renderTestCase(selectTooltipAxisTicks);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 50,
           index: 0,
@@ -1590,7 +1591,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedStateBeforeHover);
+      expectLastCalledWith(spy, expectedStateBeforeHover);
 
       const bars = getAllBars(container);
       showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
@@ -1659,7 +1660,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedStateAfterHover);
+      expectLastCalledWith(spy, expectedStateAfterHover);
     });
 
     it('should show tooltip somewhere close to the mouse cursor', () => {

@@ -10,6 +10,7 @@ import {
 } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 import { hideTooltip, showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectIsTooltipActive', () => {
   beforeEach(() => {
@@ -27,7 +28,7 @@ describe('selectIsTooltipActive', () => {
 
     it('should select false before any interactions', () => {
       const { spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -35,21 +36,21 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true after mouse hover, and then false again on mouse leave', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
       expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '1',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);
 
       hideTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -68,7 +69,7 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true before any interactions', () => {
       const { spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
@@ -76,21 +77,21 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true after mouse hover, and then false on mouse leave', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '1',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);
 
       hideTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -111,7 +112,7 @@ describe('selectIsTooltipActive', () => {
 
     it('should select false before any interactions', () => {
       const { spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -119,21 +120,21 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true after mouse hover, and then false on mouse leave', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
       expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(4);
 
       hideTooltip(container, scatterChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -154,7 +155,7 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true before any interactions', () => {
       const { spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
@@ -162,21 +163,21 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true after mouse hover, and then false on mouse leave', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', '3'));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '3',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(4);
 
       hideTooltip(container, scatterChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -195,7 +196,7 @@ describe('selectIsTooltipActive', () => {
 
     it('should select false before any interactions', () => {
       const { spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -203,21 +204,21 @@ describe('selectIsTooltipActive', () => {
 
     it('should select true after mouse hover, and then continue returning true after mouse leave', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
       expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '1',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);
 
       hideTooltip(container, barChartMouseHoverTooltipSelector);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '1',
         isActive: true,
       });

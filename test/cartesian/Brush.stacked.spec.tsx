@@ -7,6 +7,7 @@ import { PageData } from '../_data';
 import { expectBrush } from '../helper/expectBrush';
 import { assertNotNull } from '../helper/assertNotNull';
 import { selectStackGroups } from '../../src/state/selectors/axisSelectors';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('Brush in a stacked chart', () => {
   const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -31,7 +32,7 @@ describe('Brush in a stacked chart', () => {
 
     it('should select stack groups', () => {
       const { spy } = renderTestCase(state => selectStackGroups(state, 'xAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         a: {
           graphicalItems: [
             {
@@ -39,6 +40,7 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
+              // @ts-expect-error unexpected property
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -52,6 +54,7 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
+              // @ts-expect-error unexpected property
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -110,7 +113,7 @@ describe('Brush in a stacked chart', () => {
     it('should select stack groups', () => {
       const { container, spy } = renderTestCase(state => selectStackGroups(state, 'xAxis', 0, false));
       prime(container);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         a: {
           graphicalItems: [
             {
@@ -118,6 +121,7 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
+              // @ts-expect-error unexpected property
               hide: false,
               isPanorama: false,
               stackId: 'a',
@@ -131,6 +135,7 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
+              // @ts-expect-error unexpected property
               hide: false,
               isPanorama: false,
               stackId: 'a',

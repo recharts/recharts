@@ -35,6 +35,7 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { selectTooltipPayload, selectTooltipPayloadConfigurations } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('itemSorter in ComposedChart', () => {
   beforeEach(() => {
@@ -78,7 +79,7 @@ describe('itemSorter in ComposedChart', () => {
         const { spy } = renderTestCase(undefined, state =>
           selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'),
         );
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataDefinedOnItem: undefined,
             positions: undefined,
@@ -324,7 +325,7 @@ describe('itemSorter in ComposedChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: '#3182bd',
             dataKey: 'uv',
@@ -619,7 +620,7 @@ describe('itemSorter in ComposedChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: '#3182bd',
             dataKey: 'amt',
@@ -908,7 +909,7 @@ describe('itemSorter in PieChart', () => {
 
     it('should select payload with only one item so there is nothing to sort', () => {
       const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'item', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'uv',
@@ -965,7 +966,7 @@ describe('itemSorter in RadarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'uv',
@@ -1152,7 +1153,7 @@ describe('itemSorter in RadarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'uv',
@@ -1272,7 +1273,7 @@ describe('itemSorter in RadialBarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'uv',
@@ -1585,7 +1586,7 @@ describe('itemSorter in RadialBarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'uv',
@@ -1906,7 +1907,7 @@ describe('itemSorter in stacked BarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'pv',
@@ -2093,7 +2094,7 @@ describe('itemSorter in stacked BarChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: undefined,
             dataKey: 'pv',
@@ -2286,7 +2287,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: '#3182bd',
             dataKey: 'pv',
@@ -2473,7 +2474,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
       it('should select payload sorted by name', () => {
         const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             color: '#3182bd',
             dataKey: 'pv',

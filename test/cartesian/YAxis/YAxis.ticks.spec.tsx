@@ -11,6 +11,7 @@ import {
   selectNiceTicks,
   selectTicksOfAxis,
 } from '../../../src/state/selectors/axisSelectors';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const dataWithDecimals = PageData.map(item => ({
   ...item,
@@ -60,12 +61,13 @@ describe('YAxis ticks', () => {
 
     it('should select YAxis settings', () => {
       const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith(defaultExpectedYAxisSettings);
+      expectLastCalledWith(spy, defaultExpectedYAxisSettings);
     });
 
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectAxisScale(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith(
+      expectLastCalledWith(
+        spy,
         expect.toBeRechartsScale({
           domain: [0, 100],
           range: [265, 5],
@@ -75,12 +77,12 @@ describe('YAxis ticks', () => {
 
     it('should select niceTicks', () => {
       const { spy } = renderTestCase(state => selectNiceTicks(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([0, 25, 50, 75, 100]);
+      expectLastCalledWith(spy, [0, 25, 50, 75, 100]);
     });
 
     it('should select ticks', () => {
       const { spy } = renderTestCase(state => selectTicksOfAxis(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 265, index: 0, offset: 0, value: 0 },
         { coordinate: 200, index: 1, offset: 0, value: 25 },
         { coordinate: 135, index: 2, offset: 0, value: 50 },
@@ -113,7 +115,7 @@ describe('YAxis ticks', () => {
 
     it('should select YAxis settings all the same except for the domain', () => {
       const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: ['dataMin', 'dataMax'],
       });
@@ -121,7 +123,8 @@ describe('YAxis ticks', () => {
 
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectAxisScale(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith(
+      expectLastCalledWith(
+        spy,
         expect.toBeRechartsScale({
           domain: [13.98, 98],
           range: [265, 5],
@@ -131,12 +134,12 @@ describe('YAxis ticks', () => {
 
     it('should select niceTicks', () => {
       const { spy } = renderTestCase(state => selectNiceTicks(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([13.98, 38.98, 63.98, 88.98, 98]);
+      expectLastCalledWith(spy, [13.98, 38.98, 63.98, 88.98, 98]);
     });
 
     it('should select ticks', () => {
       const { spy } = renderTestCase(state => selectTicksOfAxis(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 265, index: 0, offset: 0, value: 13.98 },
         { coordinate: 187.6374672696977, index: 1, offset: 0, value: 38.98 },
         { coordinate: 110.27493453939539, index: 2, offset: 0, value: 63.98 },
@@ -169,7 +172,7 @@ describe('YAxis ticks', () => {
 
     it('should select YAxis settings all the same except for the domain, and tick count', () => {
       const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: ['dataMin', 'dataMax'],
         tickCount: 3,
@@ -179,7 +182,8 @@ describe('YAxis ticks', () => {
 
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectAxisScale(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith(
+      expectLastCalledWith(
+        spy,
         expect.toBeRechartsScale({
           domain: [13.98, 98],
           range: [265, 5],
@@ -189,12 +193,12 @@ describe('YAxis ticks', () => {
 
     it('should select niceTicks', () => {
       const { spy } = renderTestCase(state => selectNiceTicks(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([14, 59, 98]);
+      expectLastCalledWith(spy, [14, 59, 98]);
     });
 
     it('should select ticks', () => {
       const { spy } = renderTestCase(state => selectTicksOfAxis(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 264.93810997381576, index: 0, offset: 0, value: 14 },
         { coordinate: 125.68555105927162, index: 1, offset: 0, value: 59 },
         { coordinate: 5, index: 2, offset: 0, value: 98 },
@@ -223,7 +227,7 @@ describe('YAxis ticks', () => {
 
     it('should select YAxis settings all the same except for the domain, and tick count', () => {
       const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: [0, 200],
         tickCount: 4,
@@ -233,7 +237,8 @@ describe('YAxis ticks', () => {
 
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectAxisScale(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith(
+      expectLastCalledWith(
+        spy,
         expect.toBeRechartsScale({
           domain: [0, 200],
           range: [265, 5],
@@ -243,12 +248,12 @@ describe('YAxis ticks', () => {
 
     it('should select niceTicks', () => {
       const { spy } = renderTestCase(state => selectNiceTicks(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([0, 70, 140, 200]);
+      expectLastCalledWith(spy, [0, 70, 140, 200]);
     });
 
     it('should select ticks', () => {
       const { spy } = renderTestCase(state => selectTicksOfAxis(state, 'yAxis', 0, false));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         { coordinate: 265, index: 0, offset: 0, value: 0 },
         { coordinate: 174, index: 1, offset: 0, value: 70 },
         { coordinate: 83.00000000000001, index: 2, offset: 0, value: 140 },

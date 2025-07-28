@@ -48,6 +48,7 @@ import { selectActivePropsFromChartPointer } from '../../../src/state/selectors/
 import { useTooltipEventType } from '../../../src/state/selectors/selectTooltipEventType';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 import { combineTooltipPayload } from '../../../src/state/selectors/combiners/combineTooltipPayload';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -1051,7 +1052,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
   });
 
   it('should return all tooltip payloads defined on graphical items in ComposedChart', () => {
@@ -1074,7 +1075,8 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
     );
     expect(spy).toHaveBeenCalledTimes(3);
     // two of these elements will send the data as defined; Scatter decides to pre-chew it
-    expect(spy).toHaveBeenLastCalledWith(
+    expectLastCalledWith(
+      spy,
       expect.arrayContaining([
         [1, 2, 3],
         [10, 20, 30],
@@ -1235,7 +1237,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       </PieChart>,
     );
     expect(spy).toHaveBeenCalledTimes(4);
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       [
         [
           {

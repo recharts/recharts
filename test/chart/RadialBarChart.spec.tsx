@@ -7,8 +7,8 @@ import { selectRootBarSize } from '../../src/state/selectors/rootPropsSelectors'
 import { useAppSelector } from '../../src/state/hooks';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
-
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 function assertActiveShapeInteractions(container: HTMLElement) {
   const sectorNodes = container.querySelectorAll('.recharts-sector');
@@ -611,7 +611,7 @@ describe('<RadialBarChart />', () => {
         </RadialBarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expectLastCalledWith(spy, { height: 40, width: 90, x: 5, y: 5 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -628,7 +628,7 @@ describe('<RadialBarChart />', () => {
         </RadialBarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expectLastCalledWith(spy, expect.stringMatching(/recharts\d+-clip/));
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -645,7 +645,7 @@ describe('<RadialBarChart />', () => {
         </RadialBarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith(100);
+      expectLastCalledWith(spy, 100);
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
@@ -662,7 +662,7 @@ describe('<RadialBarChart />', () => {
         </RadialBarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith(50);
+      expectLastCalledWith(spy, 50);
       expect(spy).toHaveBeenCalledTimes(1);
     });
 

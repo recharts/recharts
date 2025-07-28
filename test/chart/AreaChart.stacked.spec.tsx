@@ -9,6 +9,7 @@ import { StackId } from '../../src/util/ChartUtils';
 import { ExpectedStackedDataSeries, expectGraphicalItemSettings } from '../helper/expectStackGroups';
 import { ChartData } from '../../src/state/chartDataSlice';
 import { StackGroup } from '../../src/util/stacks/stackTypes';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const data1 = [
   { name: 'a', value: 5 },
@@ -103,7 +104,7 @@ describe('AreaChart stacked', () => {
         { name: 'a', value1: 5, value2: 10, value3: 23 },
         { name: 'b', value1: 25, value2: 10, value3: 13 },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select stack groups for all areas', () => {
@@ -149,7 +150,7 @@ describe('AreaChart stacked', () => {
           ]),
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the first area', () => {
@@ -158,7 +159,7 @@ describe('AreaChart stacked', () => {
         [0, 5],
         [0, 25],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select data stacks for the second area', () => {
@@ -167,7 +168,7 @@ describe('AreaChart stacked', () => {
         [5, 15],
         [25, 35],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select points for the first area', () => {
@@ -221,17 +222,18 @@ describe('AreaChart stacked', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the second area', () => {
       const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -242,6 +244,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -339,7 +342,7 @@ describe('AreaChart stacked', () => {
         { name: 'a', value1: 5, value2: 10, value3: 23 },
         { name: 'b', value1: 25, value2: 10, value3: 13 },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select stack groups for all areas', () => {
@@ -385,7 +388,7 @@ describe('AreaChart stacked', () => {
           ]),
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the first area', () => {
@@ -394,7 +397,7 @@ describe('AreaChart stacked', () => {
         [0, 5],
         [0, 25],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select data stacks for the second area', () => {
@@ -403,7 +406,7 @@ describe('AreaChart stacked', () => {
         [5, 15],
         [25, 35],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select points for the first area', () => {
@@ -457,17 +460,18 @@ describe('AreaChart stacked', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the second area', () => {
       const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -478,6 +482,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -581,7 +586,7 @@ describe('AreaChart stacked', () => {
         { name: 'a', value3: 23 },
         { name: 'b', value3: 13 },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select stack groups for all areas', () => {
@@ -636,7 +641,7 @@ describe('AreaChart stacked', () => {
           ]),
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the first area', () => {
@@ -645,7 +650,7 @@ describe('AreaChart stacked', () => {
         [0, 5],
         [0, 25],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select data stacks for the second area', () => {
@@ -654,7 +659,7 @@ describe('AreaChart stacked', () => {
         [5, 15],
         [25, 35],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select points for the first area', () => {
@@ -680,15 +685,17 @@ describe('AreaChart stacked', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the second area', () => {
       const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         baseLine: [
           // baseline.y from second point is the same as points.y from first point
+          // @ts-expect-error extra properties not expected in the type
           { x: 65, y: 335, payload: { name: 'a', value2: 10 } },
+          // @ts-expect-error extra properties not expected in the type
           { x: 495, y: 214.99999999999997, payload: { name: 'b', value2: 10 } },
         ],
         isRange: false,
@@ -782,7 +789,7 @@ describe('AreaChart stacked', () => {
         { name: 'a', value: 23 },
         { name: 'b', value: 13 },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select stack groups for all areas', () => {
@@ -837,7 +844,7 @@ describe('AreaChart stacked', () => {
           ]),
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the first area', () => {
@@ -846,7 +853,7 @@ describe('AreaChart stacked', () => {
         [0, 5],
         [0, 25],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select data stacks for the second area', () => {
@@ -855,7 +862,7 @@ describe('AreaChart stacked', () => {
         [5, 15],
         [25, 35],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select points for the first area', () => {
@@ -895,16 +902,17 @@ describe('AreaChart stacked', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the second area', () => {
       const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         baseLine: [
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -913,6 +921,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,
@@ -1013,7 +1022,7 @@ describe('AreaChart stacked', () => {
         { name: 'a', value: 23 },
         { name: 'b', value: 13 },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select stack groups for all areas', () => {
@@ -1068,7 +1077,7 @@ describe('AreaChart stacked', () => {
           ]),
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the first area', () => {
@@ -1077,7 +1086,7 @@ describe('AreaChart stacked', () => {
         [0, 5],
         [0, 25],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select data stacks for the second area', () => {
@@ -1086,7 +1095,7 @@ describe('AreaChart stacked', () => {
         [5, 15],
         [25, 35],
       ];
-      expect(spy).toHaveBeenLastCalledWith(expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
     });
 
     it('should select points for the first area', () => {
@@ -1126,16 +1135,17 @@ describe('AreaChart stacked', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the second area', () => {
       const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         baseLine: [
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -1144,6 +1154,7 @@ describe('AreaChart stacked', () => {
           {
             x: 151,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,

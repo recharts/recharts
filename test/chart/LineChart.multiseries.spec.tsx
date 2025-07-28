@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, test, expect } from 'vitest';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Line, LineChart, Tooltip, useActiveTooltipDataPoints } from '../../src';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const data1 = [
   { numberIndex: 1, date: new Date('2024-10-01'), uv: 4000, amt: undefined },
@@ -31,7 +32,7 @@ describe('LineChart with multiple data series', () => {
 
   test('useActiveTooltipDataPoints', () => {
     const { spy } = renderTestCase(useActiveTooltipDataPoints);
-    expect(spy).toHaveBeenLastCalledWith([data1[1], data2[1]]);
+    expectLastCalledWith(spy, [data1[1], data2[1]]);
   });
 
   it('should activate dots on both lines when hovering over the chart', () => {

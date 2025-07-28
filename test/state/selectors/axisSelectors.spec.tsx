@@ -71,6 +71,7 @@ import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const defaultAxisId: AxisId = 0;
 
@@ -567,7 +568,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 400]);
+      expectLastCalledWith(spy, [0, 400]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -611,7 +612,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expectXAxisTicks(container, []);
     });
 
@@ -630,7 +631,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
@@ -663,7 +664,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 9999]);
+      expectLastCalledWith(spy, [0, 9999]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -810,7 +811,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+      expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
       expectXAxisTicks(container, [
         {
           textContent: 'Page A',
@@ -861,7 +862,7 @@ describe('selectAxisDomain', () => {
             <Comp />
           </BarChart>,
         );
-        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+        expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
         expectXAxisTicks(container, [
           {
             textContent: '400',
@@ -911,7 +912,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
+      expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
       expectXAxisTicks(container, [
         {
           textContent: '400',
@@ -1137,7 +1138,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']);
+      expectLastCalledWith(spy, ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']);
       expectXAxisTicks(container, [
         {
           textContent: 'Jan',
@@ -1186,7 +1187,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
+      expectLastCalledWith(spy, ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
       expectXAxisTicks(container, [
         {
           textContent: 'Jan',
@@ -1246,7 +1247,7 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 1, 2]);
+      expectLastCalledWith(spy, [0, 1, 2]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -1286,7 +1287,7 @@ describe('selectHasBar', () => {
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeVisible();
-    expect(spy).toHaveBeenLastCalledWith(true);
+    expectLastCalledWith(spy, true);
 
     // returns false after Bar is removed from DOM
     rerender(
@@ -1295,7 +1296,7 @@ describe('selectHasBar', () => {
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeNull();
-    expect(spy).toHaveBeenLastCalledWith(false);
+    expectLastCalledWith(spy, false);
   });
 
   it('should return false if there is no Bar in the chart', () => {
@@ -1312,7 +1313,7 @@ describe('selectHasBar', () => {
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeNull();
-    expect(spy).toHaveBeenLastCalledWith(false);
+    expectLastCalledWith(spy, false);
   });
 
   it('should return true if there are two Bars in the chart and then I remove one', () => {
@@ -1330,7 +1331,7 @@ describe('selectHasBar', () => {
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-bar')).toHaveLength(2);
-    expect(spy).toHaveBeenLastCalledWith(true);
+    expectLastCalledWith(spy, true);
     rerender(
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
@@ -1338,7 +1339,7 @@ describe('selectHasBar', () => {
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-bar')).toHaveLength(1);
-    expect(spy).toHaveBeenLastCalledWith(true);
+    expectLastCalledWith(spy, true);
   });
 
   it('should return true if there is RadialBar in RadialChart', () => {
@@ -1355,7 +1356,7 @@ describe('selectHasBar', () => {
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeVisible();
-    expect(spy).toHaveBeenLastCalledWith(true);
+    expectLastCalledWith(spy, true);
 
     // returns false after the only RadialBar is removed from DOM
     rerender(
@@ -1364,7 +1365,7 @@ describe('selectHasBar', () => {
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
-    expect(spy).toHaveBeenLastCalledWith(false);
+    expectLastCalledWith(spy, false);
   });
 
   it('should return false if RadialBarChart has no RadialBar in it', () => {
@@ -1380,7 +1381,7 @@ describe('selectHasBar', () => {
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
-    expect(spy).toHaveBeenLastCalledWith(false);
+    expectLastCalledWith(spy, false);
   });
 });
 
@@ -1403,7 +1404,7 @@ describe('selectCalculatedPadding', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0);
+    expectLastCalledWith(spy, 0);
   });
 
   it('should return a number when padding is "gap"', () => {
@@ -1419,7 +1420,7 @@ describe('selectCalculatedPadding', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(1.247917162580338);
+    expectLastCalledWith(spy, 1.247917162580338);
   });
 
   it('should return a number when padding is "no-gap"', () => {
@@ -1435,7 +1436,7 @@ describe('selectCalculatedPadding', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0.9955652016293147);
+    expectLastCalledWith(spy, 0.9955652016293147);
   });
 
   it('should return 0 when padding=no-gap and there is only one data point on the chart', () => {
@@ -1451,7 +1452,7 @@ describe('selectCalculatedPadding', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0);
+    expectLastCalledWith(spy, 0);
   });
 
   it('should return 0 when padding is an object', () => {
@@ -1467,7 +1468,7 @@ describe('selectCalculatedPadding', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0);
+    expectLastCalledWith(spy, 0);
   });
 });
 
@@ -1525,7 +1526,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0.02773149250178529);
+    expectLastCalledWith(spy, 0.02773149250178529);
   });
 
   it('should return the smallest distance, in percent, between values if type=number', () => {
@@ -1541,7 +1542,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0.02773149250178529);
+    expectLastCalledWith(spy, 0.02773149250178529);
   });
 
   it('should return Infinity, if the data is an empty array', () => {
@@ -1557,7 +1558,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(Infinity);
+    expectLastCalledWith(spy, Infinity);
   });
 
   it('should return Infinity, if the data has only one entry', () => {
@@ -1573,7 +1574,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(Infinity);
+    expectLastCalledWith(spy, Infinity);
   });
 
   it('should return 0 if the data has two items with the same value', () => {
@@ -1589,7 +1590,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(0);
+    expectLastCalledWith(spy, 0);
   });
 });
 
@@ -1634,7 +1635,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -1654,7 +1655,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Bar dataKey="uv" />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -1679,7 +1680,8 @@ describe('selectCartesianGraphicalItemsData', () => {
       </ComposedChart>,
     );
     // as opposed to the tooltip data selector - this one stores all original data without transformation.
-    expect(spy).toHaveBeenLastCalledWith(
+    expectLastCalledWith(
+      spy,
       // the arrayContaining is there because it ignores elements order.
       expect.arrayContaining([7, 8, 9, 70, 80, 90, 1, 2, 3, 10, 20, 30, 4, 5, 6, 40, 50, 60]),
     );
@@ -1795,7 +1797,7 @@ describe('selectCartesianGraphicalItemsData', () => {
      * and then it pretends it was there from the start.
      * Well in this test let's pretend that's not happening and assume it provides the original array instead.
      */
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
   });
 });
 
@@ -1817,7 +1819,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -1835,7 +1837,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         label: 'Iter: 0',
         x: 211,
@@ -1938,7 +1940,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         label: 'Iter: 0',
         x: 211,
@@ -2021,7 +2023,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       { value: 211 },
       { value: 245 },
       { value: 266 },
@@ -2162,7 +2164,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         label: 'Iter: 0',
         x: 211,
@@ -2263,7 +2265,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         label: 'Iter: 1',
         x: 245,
@@ -2314,7 +2316,7 @@ describe('selectAllAppliedValues', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -2334,7 +2336,7 @@ describe('selectAllAppliedValues', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -2356,14 +2358,7 @@ describe('selectAllAppliedValues', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
-      { value: 1 },
-      { value: 2 },
-      { value: 3 },
-      { value: 10 },
-      { value: 20 },
-      { value: 30 },
-    ]);
+    expectLastCalledWith(spy, [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 10 }, { value: 20 }, { value: 30 }]);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -2384,13 +2379,7 @@ describe('selectAllAppliedValues', () => {
         <Comp />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
-      { value: 211 },
-      { value: 245 },
-      { value: 266 },
-      { value: 140 },
-      { value: 131 },
-    ]);
+    expectLastCalledWith(spy, [{ value: 211 }, { value: 245 }, { value: 266 }, { value: 140 }, { value: 131 }]);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -2475,7 +2464,7 @@ describe('selectErrorBarsSettings', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expectLastCalledWith(spy, []);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
@@ -2520,7 +2509,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should select error bar state', () => {
         const { spy } = renderTestCase(selectAllErrorBarSettings);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           'my-bar-id': [
             {
               dataKey: 'data-x',
@@ -2536,7 +2525,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return XAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-x',
             direction: 'x',
@@ -2547,7 +2536,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return YAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-y',
             direction: 'y',
@@ -2573,7 +2562,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should select error bar state', () => {
         const { spy } = renderTestCase(selectAllErrorBarSettings);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           line2: [
             {
               dataKey: 'pv',
@@ -2589,7 +2578,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return XAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'pv',
             direction: 'x',
@@ -2600,7 +2589,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return YAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'amt',
             direction: 'y',
@@ -2631,7 +2620,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should select error bar state', () => {
         const { spy } = renderTestCase(selectAllErrorBarSettings);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           'line-with-error-bars': [
             {
               dataKey: 'data-x',
@@ -2647,7 +2636,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return XAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-x',
             direction: 'x',
@@ -2658,7 +2647,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return YAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-y',
             direction: 'y',
@@ -2689,7 +2678,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should select error bar state', () => {
         const { spy } = renderTestCase(selectAllErrorBarSettings);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           'scatter-with-error-bars': [
             {
               dataKey: 'data-x',
@@ -2705,7 +2694,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return XAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-x',
             direction: 'x',
@@ -2716,7 +2705,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return YAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-y',
             direction: 'y',
@@ -2750,7 +2739,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should select error bar state', () => {
         const { spy } = renderTestCase(selectAllErrorBarSettings);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           'my-bar-id': [
             {
               dataKey: 'data-x',
@@ -2786,7 +2775,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return XAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-x',
             direction: 'x',
@@ -2805,7 +2794,7 @@ describe('selectErrorBarsSettings', () => {
 
       it('should return YAxis error bars', () => {
         const { spy } = renderTestCase(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKey: 'data-y',
             direction: 'y',
@@ -2873,7 +2862,7 @@ describe('selectNiceTicks', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expectLastCalledWith(spy, undefined);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -3071,8 +3060,9 @@ describe('selectAxisWithScale', () => {
 
     it('should select XAxis settings', () => {
       const { spy } = renderTestCase(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, false));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
+        // @ts-expect-error extra properties not expected in the type
         allowDecimals: true,
         allowDuplicatedCategory: true,
         angle: 0,
@@ -3110,7 +3100,7 @@ describe('selectAxisWithScale', () => {
       const { spy } = renderTestCase(state =>
         selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', defaultAxisId, false),
       );
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           errorDomain: [],
           value: 2400,
@@ -3140,20 +3130,21 @@ describe('selectAxisWithScale', () => {
 
     test('selectAxisDomain', () => {
       const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', defaultAxisId, false));
-      expect(spy).toHaveBeenLastCalledWith([0, 9800]);
+      expectLastCalledWith(spy, [0, 9800]);
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
     test('selectNumericalDomain', () => {
       const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', defaultAxisId, false));
-      expect(spy).toHaveBeenLastCalledWith([0, 9800]);
+      expectLastCalledWith(spy, [0, 9800]);
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
     it('should select YAxis settings', () => {
       const { spy } = renderTestCase(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, false));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
+        // @ts-expect-error extra properties not expected in the type
         allowDecimals: true,
         allowDuplicatedCategory: true,
         angle: 0,

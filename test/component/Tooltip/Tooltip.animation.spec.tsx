@@ -12,6 +12,7 @@ import {
 import { lineChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { selectIsTooltipActive } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('Tooltip animation', () => {
   beforeEach(() => {
@@ -47,9 +48,9 @@ describe('Tooltip animation', () => {
 
       it('should select isActive: true', () => {
         const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-        expect(spy).toHaveBeenLastCalledWith({ activeIndex: null, isActive: false });
+        expectLastCalledWith(spy, { activeIndex: null, isActive: false });
         prime(container);
-        expect(spy).toHaveBeenLastCalledWith({ activeIndex: '0', isActive: true });
+        expectLastCalledWith(spy, { activeIndex: '0', isActive: true });
       });
 
       it('should animate towards the final position', () => {
@@ -134,9 +135,9 @@ describe('Tooltip animation', () => {
 
       it('should select isActive: true', () => {
         const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-        expect(spy).toHaveBeenLastCalledWith({ activeIndex: null, isActive: false });
+        expectLastCalledWith(spy, { activeIndex: null, isActive: false });
         prime(container);
-        expect(spy).toHaveBeenLastCalledWith({ activeIndex: '0', isActive: true });
+        expectLastCalledWith(spy, { activeIndex: '0', isActive: true });
       });
 
       it('should animate towards the final position', () => {

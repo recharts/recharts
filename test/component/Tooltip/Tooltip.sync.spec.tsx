@@ -56,6 +56,7 @@ import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSe
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syncSelectors';
 import { selectTooltipPayloadSearcher } from '../../../src/state/selectors/selectTooltipPayloadSearcher';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -367,12 +368,12 @@ describe('Tooltip synchronization', () => {
 
       test(`${name} should put the syncId into redux state`, () => {
         const { spy } = renderTestCase(selectSyncId);
-        expect(spy).toHaveBeenLastCalledWith('tooltipSync');
+        expectLastCalledWith(spy, 'tooltipSync');
       });
 
       test(`${name} should select syncMethod`, () => {
         const { spy } = renderTestCase(selectSyncMethod);
-        expect(spy).toHaveBeenLastCalledWith('index');
+        expectLastCalledWith(spy, 'index');
       });
     },
   );
