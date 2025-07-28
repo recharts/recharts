@@ -209,6 +209,9 @@ function SetPiePayloadLegend(props: Props) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, props.id, cells));
+  if (legendPayload == null) {
+    return null;
+  }
   return <SetPolarLegendPayload legendPayload={legendPayload} />;
 }
 
@@ -710,7 +713,7 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithoutId, sectors }} />
       <PieWithTouchMove {...propsWithoutId} sectors={sectors} />
     </>
   );
@@ -722,8 +725,11 @@ export class Pie extends PureComponent<Props, State> {
   static defaultProps = defaultPieProps;
 
   render() {
+    const { id: externalId, ...propsWithoutId } = this.props;
+    const presentationProps = filterProps(propsWithoutId, false);
+
     return (
-      <RegisterGraphicalItemId id={this.props.id} type="pie">
+      <RegisterGraphicalItemId id={externalId} type="pie">
         {id => (
           <>
             <SetPolarGraphicalItem
@@ -748,7 +754,7 @@ export class Pie extends PureComponent<Props, State> {
               innerRadius={this.props.innerRadius}
               outerRadius={this.props.outerRadius}
               cornerRadius={this.props.cornerRadius}
-              presentationProps={filterProps(this.props, false)}
+              presentationProps={presentationProps}
             />
             <SetPiePayloadLegend {...this.props} />
             <PieImpl {...this.props} id={id} />

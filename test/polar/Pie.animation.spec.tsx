@@ -253,8 +253,7 @@ describe('Pie animation', () => {
       expect(onAnimationStart).toHaveBeenCalledTimes(1);
     });
 
-    // It appears that Pie calls the onAnimationEnd callback too early and so this test fails.
-    it.fails('should call onAnimationEnd callback when the animation ends', async () => {
+    it('should call onAnimationEnd callback when the animation ends', async () => {
       const { animationManager } = renderTestCase();
 
       await animationManager.setAnimationProgress(0.9);

@@ -24,7 +24,7 @@ const selectSynchronisedPieSettings: (state: RechartsRootState, id: GraphicalIte
 const emptyArray: ReadonlyArray<ReactElement> = [];
 const pickCells = (
   _state: RechartsRootState,
-  _pieSettings: PieSettings,
+  _id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => {
   if (cells?.length === 0) {
@@ -39,7 +39,10 @@ export const selectDisplayedData: (
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ChartData | undefined = createSelector(
   [selectChartDataAndAlwaysIgnoreIndexes, selectSynchronisedPieSettings, pickCells],
-  ({ chartData }: ChartDataState, pieSettings: PieSettings, cells): ChartData | undefined => {
+  ({ chartData }: ChartDataState, pieSettings: PieSettings | undefined, cells): ChartData | undefined => {
+    if (pieSettings == null) {
+      return undefined;
+    }
     let displayedData: ChartData | undefined;
     if (pieSettings?.data != null && pieSettings.data.length > 0) {
       displayedData = pieSettings.data;
@@ -70,7 +73,7 @@ export const selectPieLegend: (
   [selectDisplayedData, selectSynchronisedPieSettings, pickCells],
   (
     displayedData: ChartData | undefined,
-    pieSettings: PieSettings,
+    pieSettings: PieSettings | undefined,
     cells: ReadonlyArray<ReactElement>,
   ): ReadonlyArray<LegendPayload> | undefined => {
     if (displayedData == null || pieSettings == null) {

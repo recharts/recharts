@@ -50,6 +50,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 27.074569789674953,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 13.537284894837477,
@@ -66,6 +67,7 @@ describe('selectPieSectors', () => {
           percent: 0.07520713830465264,
           pv: 800,
           startAngle: 0,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -94,6 +96,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 54.14913957934991,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 40.61185468451243,
@@ -110,6 +113,7 @@ describe('selectPieSectors', () => {
           percent: 0.07520713830465264,
           pv: 800,
           startAngle: 27.074569789674953,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -138,6 +142,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 93.98087954110899,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 74.06500956022944,
@@ -154,6 +159,7 @@ describe('selectPieSectors', () => {
           percent: 0.11064372211599745,
           pv: 967,
           startAngle: 54.14913957934991,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -182,6 +188,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 158.08795411089866,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 126.03441682600382,
@@ -198,6 +205,7 @@ describe('selectPieSectors', () => {
           percent: 0.17807520713830466,
           pv: 1098,
           startAngle: 93.98087954110899,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -226,6 +234,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 226.0038240917782,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 192.04588910133845,
@@ -242,6 +251,7 @@ describe('selectPieSectors', () => {
           percent: 0.18865519439133205,
           pv: 1200,
           startAngle: 158.08795411089866,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -270,6 +280,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 295.75525812619503,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 260.8795411089866,
@@ -286,6 +297,7 @@ describe('selectPieSectors', () => {
           percent: 0.19375398342893563,
           pv: 1108,
           startAngle: 226.0038240917782,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -314,6 +326,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 360,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 327.8776290630975,
@@ -330,6 +343,7 @@ describe('selectPieSectors', () => {
           percent: 0.17845761631612492,
           pv: 680,
           startAngle: 295.75525812619503,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -375,6 +389,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 43.28874192093792,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 21.64437096046896,
@@ -391,6 +406,7 @@ describe('selectPieSectors', () => {
           percent: 0.12024650533593867,
           pv: 800,
           startAngle: 0,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -419,6 +435,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 86.57748384187585,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 64.93311288140688,
@@ -435,6 +452,7 @@ describe('selectPieSectors', () => {
           percent: 0.12024650533593867,
           pv: 800,
           startAngle: 43.28874192093792,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -463,6 +481,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 138.90275063880955,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 112.7401172403427,
@@ -479,6 +498,7 @@ describe('selectPieSectors', () => {
           percent: 0.14534796332481587,
           pv: 967,
           startAngle: 86.57748384187585,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -507,6 +527,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 198.31654892529684,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 168.6096497820532,
@@ -523,6 +544,7 @@ describe('selectPieSectors', () => {
           percent: 0.16503832857357584,
           pv: 1098,
           startAngle: 138.90275063880955,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -551,6 +573,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 263.2496618067037,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 230.78310536600029,
@@ -567,6 +590,7 @@ describe('selectPieSectors', () => {
           percent: 0.180369758003908,
           pv: 1200,
           startAngle: 198.31654892529684,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -595,6 +619,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 323.20456936720274,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 293.22711558695323,
@@ -611,6 +636,7 @@ describe('selectPieSectors', () => {
           percent: 0.16654140989027508,
           pv: 1108,
           startAngle: 263.2496618067037,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
@@ -639,6 +665,7 @@ describe('selectPieSectors', () => {
           cx: 200,
           cy: 200,
           endAngle: 360,
+          fill: '#808080',
           innerRadius: 0,
           maxRadius: 275.77164466275354,
           midAngle: 341.6022846836014,
@@ -655,6 +682,7 @@ describe('selectPieSectors', () => {
           percent: 0.10220952953554788,
           pv: 680,
           startAngle: 323.20456936720274,
+          stroke: '#fff',
           tooltipPayload: [
             {
               // @ts-expect-error Pie sends more data than it should
