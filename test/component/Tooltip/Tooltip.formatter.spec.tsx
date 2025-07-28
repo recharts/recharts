@@ -7,6 +7,7 @@ import { barChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors'
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/issues/5658', () => {
   beforeEach(() => {
@@ -48,7 +49,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
 
     it('should select payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '1'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#8884d8',
           dataKey: dataKeyAsFunction,
@@ -125,7 +126,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
 
     it('should select payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '1'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#8884d8',
           dataKey: dataKeyAsFunction,

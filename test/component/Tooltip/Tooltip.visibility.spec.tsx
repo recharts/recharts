@@ -87,6 +87,7 @@ import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -723,12 +724,12 @@ describe('Tooltip visibility', () => {
 
     it('should select chart layout', () => {
       const { spy } = renderTestCase(selectChartLayout);
-      expect(spy).toHaveBeenLastCalledWith('vertical');
+      expectLastCalledWith(spy, 'vertical');
     });
 
     it('should select chart offset', () => {
       const { spy } = renderTestCase(selectChartOffsetInternal);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         bottom: 135,
         brushBottom: 35,
         height: 245,
@@ -747,12 +748,12 @@ describe('Tooltip visibility', () => {
         layout: 'horizontal',
         verticalAlign: 'bottom',
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select legend size', () => {
       const { spy } = renderTestCase(selectLegendSize);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         height: 100,
         width: 100,
       });
@@ -760,7 +761,7 @@ describe('Tooltip visibility', () => {
 
     it('should select legend payload', () => {
       const { spy } = renderTestCase(selectLegendPayload);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#82ca9d',
           dataKey: 'uv',
@@ -792,17 +793,17 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis type', () => {
       const { spy } = renderTestCase(selectTooltipAxisType);
-      expect(spy).toHaveBeenLastCalledWith('yAxis');
+      expectLastCalledWith(spy, 'yAxis');
     });
 
     it('should select tooltip axis ID', () => {
       const { spy } = renderTestCase(selectTooltipAxisId);
-      expect(spy).toHaveBeenLastCalledWith(0);
+      expectLastCalledWith(spy, 0);
     });
 
     it('should select dataStartIndex and dataEndIndex', () => {
       const { spy } = renderTestCase(selectChartDataWithIndexes);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         chartData: [
           {
             amt: 2400,
@@ -849,12 +850,12 @@ describe('Tooltip visibility', () => {
 
     it('should select active label', () => {
       const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
-      expect(spy).toHaveBeenLastCalledWith('Page C');
+      expectLastCalledWith(spy, 'Page C');
     });
 
     it('should select active coordinate', () => {
       const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expect(spy).toHaveBeenCalledTimes(1);
 
       showTooltipOnCoordinate(
@@ -863,7 +864,7 @@ describe('Tooltip visibility', () => {
         LineChartVerticalTestCase.mouseCoordinate,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         x: 200,
         y: 216,
       });
@@ -872,7 +873,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis range', () => {
       const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
-      expect(spy).toHaveBeenLastCalledWith([20, 265]);
+      expectLastCalledWith(spy, [20, 265]);
     });
 
     it('should select tooltip axis scale', () => {
@@ -885,13 +886,13 @@ describe('Tooltip visibility', () => {
 
     it('should select categorical domain', () => {
       const { spy } = renderTestCase(selectTooltipCategoricalDomain);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should select tooltip axis ticks', () => {
       const { spy } = renderTestCase(selectTooltipAxisTicks);
 
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 20,
           index: 0,
@@ -933,7 +934,7 @@ describe('Tooltip visibility', () => {
 
     it('should select isActive and activeIndex, and update it after mouse hover', () => {
       const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
@@ -945,7 +946,7 @@ describe('Tooltip visibility', () => {
         LineChartVerticalTestCase.mouseCoordinate,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         activeIndex: '4',
         isActive: true,
       });
@@ -963,17 +964,17 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis type', () => {
       const { spy } = renderTestCase(selectTooltipAxisType);
-      expect(spy).toHaveBeenLastCalledWith('angleAxis');
+      expectLastCalledWith(spy, 'angleAxis');
     });
 
     it('should select tooltip axis ID', () => {
       const { spy } = renderTestCase(selectTooltipAxisId);
-      expect(spy).toHaveBeenLastCalledWith(0);
+      expectLastCalledWith(spy, 0);
     });
 
     it('should select tooltip axis settings', () => {
       const { spy } = renderTestCase(selectTooltipAxis);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: false,
@@ -994,7 +995,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis range', () => {
       const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
-      expect(spy).toHaveBeenLastCalledWith([90, -270]);
+      expectLastCalledWith(spy, [90, -270]);
     });
 
     it('should select tooltip axis scale', () => {
@@ -1007,7 +1008,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis ticks', () => {
       const { spy } = renderTestCase(selectTooltipAxisTicks);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 90,
           index: 0,
@@ -1118,7 +1119,7 @@ describe('Tooltip visibility', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedBeforeHover);
+      expectLastCalledWith(spy, expectedBeforeHover);
 
       showTooltip(container, RadarChartTestCase.mouseHoverSelector);
 
@@ -1204,22 +1205,22 @@ describe('Tooltip visibility', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedAfterHover);
+      expectLastCalledWith(spy, expectedAfterHover);
     });
 
     it('should select active label', () => {
       const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
-      expect(spy).toHaveBeenLastCalledWith('Page C');
+      expectLastCalledWith(spy, 'Page C');
     });
 
     it('should select active coordinate', () => {
       const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
       expect(spy).toHaveBeenCalledTimes(1);
 
       showTooltipOnCoordinate(container, RadarChartTestCase.mouseHoverSelector, RadarChartTestCase.mouseCoordinate);
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         angle: -210,
         clockWise: false,
         cx: 300,
@@ -1246,22 +1247,22 @@ describe('Tooltip visibility', () => {
 
     it('should select chart layout', () => {
       const { spy } = renderTestCase(selectChartLayout);
-      expect(spy).toHaveBeenLastCalledWith('radial');
+      expectLastCalledWith(spy, 'radial');
     });
 
     it('should select tooltip axis type', () => {
       const { spy } = renderTestCase(selectTooltipAxisType);
-      expect(spy).toHaveBeenLastCalledWith('radiusAxis');
+      expectLastCalledWith(spy, 'radiusAxis');
     });
 
     it('should select tooltip axis ID', () => {
       const { spy } = renderTestCase(selectTooltipAxisId);
-      expect(spy).toHaveBeenLastCalledWith(0);
+      expectLastCalledWith(spy, 0);
     });
 
     it('should select tooltip axis settings', () => {
       const { spy } = renderTestCase(selectTooltipAxis);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: true,
@@ -1282,7 +1283,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis range', () => {
       const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
-      expect(spy).toHaveBeenLastCalledWith([0, 236]);
+      expectLastCalledWith(spy, [0, 236]);
     });
 
     it('should select tooltip axis scale', () => {
@@ -1295,12 +1296,12 @@ describe('Tooltip visibility', () => {
 
     it('should select categoricalDomain = undefined', () => {
       const { spy } = renderTestCase(selectTooltipCategoricalDomain);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should select tooltip axis ticks', () => {
       const { spy } = renderTestCase(selectTooltipAxisTicks);
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           coordinate: 0,
           index: 0,
@@ -1410,27 +1411,27 @@ describe('Tooltip visibility', () => {
 
       it('should select tooltip axis ID', () => {
         const { spy } = renderTestCase(selectTooltipAxisId);
-        expect(spy).toHaveBeenLastCalledWith(0);
+        expectLastCalledWith(spy, 0);
       });
 
       it('should select tooltip axis type', () => {
         const { spy } = renderTestCase(selectTooltipAxisType);
-        expect(spy).toHaveBeenLastCalledWith('xAxis');
+        expectLastCalledWith(spy, 'xAxis');
       });
 
       it('should select active label when given explicit index', () => {
         const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
-        expect(spy).toHaveBeenLastCalledWith(2400);
+        expectLastCalledWith(spy, 2400);
       });
 
       it('should select active coordinate', () => {
         const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
         expect(spy).toHaveBeenCalledTimes(1);
 
         showTooltip(container, composedChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           x: 395,
           y: 200,
         });
@@ -1447,7 +1448,7 @@ describe('Tooltip visibility', () => {
 
       it('should select tooltip axis settings', () => {
         const { spy } = renderTestCase(selectTooltipAxis);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: true,
           allowDuplicatedCategory: true,
@@ -1480,12 +1481,12 @@ describe('Tooltip visibility', () => {
 
       it('should select tooltip axis real scale type', () => {
         const { spy } = renderTestCase(selectTooltipAxisRealScaleType);
-        expect(spy).toHaveBeenLastCalledWith('linear');
+        expectLastCalledWith(spy, 'linear');
       });
 
       it('should select tooltip axis ticks', () => {
         const { spy } = renderTestCase(selectTooltipAxisTicks);
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           { coordinate: 395, value: 2400, index: 0, offset: 0 },
           { coordinate: 395, value: 2400, index: 1, offset: 0 },
           { coordinate: 395, value: 2400, index: 2, offset: 0 },
@@ -1497,7 +1498,7 @@ describe('Tooltip visibility', () => {
 
       it('should select isActive', () => {
         const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           activeIndex: null,
           isActive: false,
         });
@@ -1505,7 +1506,7 @@ describe('Tooltip visibility', () => {
 
         showTooltip(container, composedChartMouseHoverTooltipSelector);
 
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           activeIndex: '0',
           isActive: true,
         });
