@@ -260,7 +260,7 @@ describe('<PieChart />', () => {
       const { spy } = renderTestCase(state => selectPieLegend(state, 'empty-pie', undefined));
       expectLastCalledWith(spy, [
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group A',
@@ -270,7 +270,7 @@ describe('<PieChart />', () => {
           value: 'Group A',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group B',
@@ -280,7 +280,7 @@ describe('<PieChart />', () => {
           value: 'Group B',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group C',
@@ -290,7 +290,7 @@ describe('<PieChart />', () => {
           value: 'Group C',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group D',
@@ -300,7 +300,7 @@ describe('<PieChart />', () => {
           value: 'Group D',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group E',
@@ -310,7 +310,7 @@ describe('<PieChart />', () => {
           value: 'Group E',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group F',
