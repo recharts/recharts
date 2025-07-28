@@ -233,6 +233,7 @@ describe('AreaChart stacked', () => {
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -243,6 +244,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -469,6 +471,7 @@ describe('AreaChart stacked', () => {
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -479,6 +482,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -689,7 +693,9 @@ describe('AreaChart stacked', () => {
       expectLastCalledWith(spy, {
         baseLine: [
           // baseline.y from second point is the same as points.y from first point
+          // @ts-expect-error extra properties not expected in the type
           { x: 65, y: 335, payload: { name: 'a', value2: 10 } },
+          // @ts-expect-error extra properties not expected in the type
           { x: 495, y: 214.99999999999997, payload: { name: 'b', value2: 10 } },
         ],
         isRange: false,
@@ -906,6 +912,7 @@ describe('AreaChart stacked', () => {
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -914,6 +921,7 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,
@@ -1137,6 +1145,7 @@ describe('AreaChart stacked', () => {
           {
             x: 65,
             y: 335,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -1145,6 +1154,7 @@ describe('AreaChart stacked', () => {
           {
             x: 151,
             y: 214.99999999999997,
+            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,

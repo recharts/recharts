@@ -3062,6 +3062,7 @@ describe('selectAxisWithScale', () => {
       const { spy } = renderTestCase(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, false));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
+        // @ts-expect-error extra properties not expected in the type
         allowDecimals: true,
         allowDuplicatedCategory: true,
         angle: 0,
@@ -3143,6 +3144,7 @@ describe('selectAxisWithScale', () => {
       const { spy } = renderTestCase(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, false));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
+        // @ts-expect-error extra properties not expected in the type
         allowDecimals: true,
         allowDuplicatedCategory: true,
         angle: 0,

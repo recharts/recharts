@@ -1846,6 +1846,7 @@ describe('<Legend />', () => {
             color: '#3182bd',
             value: '%',
             payload: {
+              // @ts-expect-error extra properties not expected in the type
               dataKey: 'percent',
               name: '%',
               activeDot: true,

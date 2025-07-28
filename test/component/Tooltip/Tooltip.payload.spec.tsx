@@ -533,6 +533,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'uv',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -583,6 +584,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'pv',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -633,6 +635,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'amt',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -689,6 +692,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'uv',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -739,6 +743,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'pv',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -789,6 +794,7 @@ describe('Tooltip payload', () => {
           ],
           dataKey: 'amt',
           hide: false,
+          // @ts-expect-error extra properties not expected in the type
           isPanorama: false,
           stackId: undefined,
           type: 'line',
@@ -1228,6 +1234,7 @@ describe('Tooltip payload', () => {
         chartData: undefined,
         dataEndIndex: 0,
         dataStartIndex: 0,
+        computedData: undefined,
       });
     });
 
@@ -1235,6 +1242,7 @@ describe('Tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
       expectLastCalledWith(spy, [
         {
+          positions: undefined,
           dataDefinedOnItem: [
             {
               amt: 2400,
@@ -1287,6 +1295,7 @@ describe('Tooltip payload', () => {
           },
         },
         {
+          positions: undefined,
           dataDefinedOnItem: [
             {
               amt: 2400,
@@ -1339,6 +1348,7 @@ describe('Tooltip payload', () => {
           },
         },
         {
+          positions: undefined,
           dataDefinedOnItem: [
             {
               amt: 2400,

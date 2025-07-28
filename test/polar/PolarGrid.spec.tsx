@@ -667,15 +667,25 @@ describe('<PolarGrid />', () => {
     it('should select angle ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
       expectLastCalledWith(spy, [
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 0, value: 0, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 40, value: 1, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 80, value: 2, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 120, value: 3, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 160, value: 4, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 200, value: 5, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 240, value: 6, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 280, value: 7, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 320, value: 8, offset: -0 },
+        // @ts-expect-error the type demands an `index` property but the selector does not return it
         { coordinate: 360, value: 9, offset: -0 },
       ]);
     });
@@ -903,46 +913,22 @@ describe('<PolarGrid />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv', false));
         expectLastCalledWith(spy, [
-          {
-            coordinate: 0,
-            offset: -0,
-            value: 0,
-          },
-          {
-            coordinate: 47.368421052631575,
-            offset: -0,
-            value: 200,
-          },
-          {
-            coordinate: 94.73684210526315,
-            offset: -0,
-            value: 400,
-          },
-          {
-            coordinate: 142.10526315789474,
-            offset: -0,
-            value: 600,
-          },
-          {
-            coordinate: 189.4736842105263,
-            offset: -0,
-            value: 800,
-          },
-          {
-            coordinate: 236.84210526315792,
-            offset: -0,
-            value: 1000,
-          },
-          {
-            coordinate: 284.2105263157895,
-            offset: -0,
-            value: 1200,
-          },
-          {
-            coordinate: 331.57894736842104,
-            offset: -0,
-            value: 1400,
-          },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 0, offset: -0, value: 0 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 47.368421052631575, offset: -0, value: 200 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 94.73684210526315, offset: -0, value: 400 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 142.10526315789474, offset: -0, value: 600 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 189.4736842105263, offset: -0, value: 800 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 236.84210526315792, offset: -0, value: 1000 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 284.2105263157895, offset: -0, value: 1200 },
+          // @ts-expect-error the type demands an `index` property but the selector does not return it
+          { coordinate: 331.57894736842104, offset: -0, value: 1400 },
         ]);
       });
 

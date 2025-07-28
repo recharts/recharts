@@ -767,6 +767,7 @@ describe('Tooltip visibility', () => {
           dataKey: 'uv',
           inactive: false,
           payload: {
+            // @ts-expect-error extra properties not expected in the type
             activeDot: true,
             animateNewValues: true,
             animationBegin: 0,
@@ -1221,6 +1222,7 @@ describe('Tooltip visibility', () => {
       showTooltipOnCoordinate(container, RadarChartTestCase.mouseHoverSelector, RadarChartTestCase.mouseCoordinate);
 
       expectLastCalledWith(spy, {
+        // @ts-expect-error extra properties not expected in the type
         angle: -210,
         clockWise: false,
         cx: 300,

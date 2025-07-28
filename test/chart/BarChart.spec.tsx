@@ -671,6 +671,7 @@ describe('<BarChart />', () => {
               pv: 2400,
               uv: 400,
             },
+            // @ts-expect-error extra properties not expected in the type
             pv: 2400,
             tooltipPosition: {
               x: 68.75,
@@ -696,6 +697,7 @@ describe('<BarChart />', () => {
               pv: 4567,
               uv: 300,
             },
+            // @ts-expect-error extra properties not expected in the type
             pv: 4567,
             tooltipPosition: {
               x: 76.25,
@@ -721,6 +723,7 @@ describe('<BarChart />', () => {
               pv: 1398,
               uv: 300,
             },
+            // @ts-expect-error extra properties not expected in the type
             pv: 1398,
             tooltipPosition: {
               x: 83.75,
@@ -746,6 +749,7 @@ describe('<BarChart />', () => {
               pv: 9800,
               uv: 200,
             },
+            // @ts-expect-error extra properties not expected in the type
             pv: 9800,
             tooltipPosition: {
               x: 91.25,
