@@ -13,6 +13,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<Line />', () => {
   beforeEach(() => {
@@ -166,7 +167,7 @@ describe('<Line />', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         dataKey: 'x',
         // this defaults to y even in an absence of explicit prop
@@ -191,7 +192,7 @@ describe('<Line />', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         dataKey: 'x',
         // in horizontal chart the default direction is y, in vertical it's x
@@ -272,7 +273,7 @@ describe('<Line />', () => {
 
     it('should select tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: '#3182bd',
           dataKey: 'y',

@@ -28,6 +28,7 @@ import { IfOverflow } from '../../../src/util/IfOverflow';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('<YAxis />', () => {
   const data = [
@@ -969,7 +970,7 @@ describe('<YAxis />', () => {
         },
         reversed: true,
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedSettings);
+      expectLastCalledWith(spy, expectedSettings);
     });
 
     it('should remove the configuration from store when DOM element is removed', () => {
@@ -1015,7 +1016,7 @@ describe('<YAxis />', () => {
         reversed: false,
         hide: false,
       };
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         foo: expectedSettings1,
         bar: implicitYAxis,
       });
@@ -1089,7 +1090,7 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
       };
-      expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
+      expectLastCalledWith(spy, expectedSettings2);
       rerender(
         <BarChart width={100} height={100}>
           <YAxis yAxisId="bar" scale="utc" type="category" />
@@ -1126,7 +1127,7 @@ describe('<YAxis />', () => {
         allowDecimals: true,
         reversed: false,
       };
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         foo: implicitYAxis,
         bar: expectedSettings3,
       });
@@ -1136,7 +1137,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         foo: implicitYAxis,
         bar: implicitYAxis,
       });

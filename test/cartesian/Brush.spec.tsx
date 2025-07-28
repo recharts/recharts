@@ -12,6 +12,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectBrush } from '../helper/expectBrush';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<Brush />', () => {
   const data = [
@@ -65,7 +66,7 @@ describe('<Brush />', () => {
     it('should hide dots in the main chart after moving the slider, but keep all dots in the panorama visible', () => {
       const { container, spy } = renderTestCase(selectChartDataWithIndexes);
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         chartData: data,
         dataStartIndex: 0,
         dataEndIndex: data.length - 1,
@@ -77,7 +78,7 @@ describe('<Brush />', () => {
       fireEvent.mouseMove(slider, { clientX: 200 });
       fireEvent.mouseUp(slider);
 
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         chartData: data,
         dataStartIndex: 6,
         dataEndIndex: data.length - 1,

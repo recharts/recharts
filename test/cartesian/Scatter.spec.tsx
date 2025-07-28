@@ -10,6 +10,7 @@ import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<Scatter />', () => {
   const data = [
@@ -257,7 +258,7 @@ describe('<Scatter />', () => {
 
     it('should return tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'uv',

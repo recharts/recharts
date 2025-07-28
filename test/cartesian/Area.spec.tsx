@@ -18,6 +18,7 @@ import { useLegendPayload } from '../../src/context/legendPayloadContext';
 import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type TestCase = CartesianChartTestCase;
 
@@ -492,14 +493,14 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           id: 'my-custom-area-id',
         },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
 
       rerender(
         <ChartElement data={data}>
           <Comp />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenLastCalledWith([]);
+      expectLastCalledWith(spy, []);
     });
 
     it('should report default props to redux state', () => {
@@ -532,7 +533,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           barSize: undefined,
         },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should remember the auto-generated ID between renders', () => {
