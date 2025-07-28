@@ -40,9 +40,11 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
-              // @ts-expect-error unexpected property
               hide: false,
+              // @ts-expect-error unexpected property
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               stackId: 'a',
               type: 'bar',
               xAxisId: 0,
@@ -54,9 +56,11 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
-              // @ts-expect-error unexpected property
               hide: false,
+              // @ts-expect-error unexpected property
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               stackId: 'a',
               type: 'bar',
               xAxisId: 0,
@@ -121,9 +125,11 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'pv',
-              // @ts-expect-error unexpected property
               hide: false,
+              // @ts-expect-error unexpected property
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               stackId: 'a',
               type: 'bar',
               xAxisId: 0,
@@ -135,9 +141,11 @@ describe('Brush in a stacked chart', () => {
               barSize: undefined,
               data: undefined,
               dataKey: 'uv',
-              // @ts-expect-error unexpected property
               hide: false,
+              // @ts-expect-error unexpected property
               isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
               stackId: 'a',
               type: 'bar',
               xAxisId: 0,

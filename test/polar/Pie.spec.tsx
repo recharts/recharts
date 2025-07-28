@@ -1677,7 +1677,7 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       const expectedPie: PieSettings = {
         angleAxisId: 0,
         cornerRadius: undefined,
