@@ -27,6 +27,7 @@ import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipM
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
 import { assertNotNull } from '../helper/assertNotNull';
+import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type TestCase = CartesianChartTestCase;
@@ -1268,13 +1269,13 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
       const { rerender } = renderWithStrictMode(
         <ChartElement data={data}>
-          <Bar dataKey="value" xAxisId={7} yAxisId={9} stackId="q" hide />
+          <Bar dataKey="value" xAxisId={7} yAxisId={9} stackId="q" hide minPointSize={3} maxBarSize={90} barSize={13} />
           <Customized component={<Comp />} />
         </ChartElement>,
       );
-      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+      const expected: ReadonlyArray<BarSettings> = [
         {
-          id: expect.stringMatching('bar-'),
+          id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
           isPanorama: false,
           type: 'bar',
           data: undefined,
@@ -1284,14 +1285,16 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           zAxisId: 0,
           stackId: 'q',
           hide: true,
-          barSize: undefined,
+          barSize: 13,
+          minPointSize: 3,
+          maxBarSize: 90,
         },
       ];
       expectLastCalledWith(spy, expected);
 
       rerender(
         <ChartElement data={data}>
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
       expectLastCalledWith(spy, []);
@@ -1308,12 +1311,12 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" />
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
-          id: expect.stringMatching('bar-'),
+          id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
           isPanorama: false,
           type: 'bar',
           data: undefined,
@@ -1324,6 +1327,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           stackId: undefined,
           hide: false,
           barSize: undefined,
+          minPointSize: 0,
+          maxBarSize: undefined,
         },
       ];
       expectLastCalledWith(spy, expected);

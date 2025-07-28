@@ -1374,22 +1374,19 @@ describe('<LineChart /> and various data sources', () => {
 });
 
 describe('<LineChart /> - Pure Rendering', () => {
-  const pureElements = [Line];
+  const spy = vi.fn();
 
-  const spies: Array<MockInstance<() => React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
   let axisSpy: MockInstance<() => React.ReactElement | null>;
 
   beforeEach(() => {
-    pureElements.forEach((el, i) => {
-      spies[i] = vi.spyOn(el.prototype, 'render');
-    });
+    spy.mockClear();
     axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
 
   const chart = (
     <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={spy} />
       <Tooltip />
       <XAxis />
       <YAxis />
@@ -1401,14 +1398,14 @@ describe('<LineChart /> - Pure Rendering', () => {
   test('should only render Line once when the mouse enters and moves', () => {
     const { container } = render(chart);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseMove(container, { clientX: 200, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseLeave(container);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -1416,7 +1413,7 @@ describe('<LineChart /> - Pure Rendering', () => {
   test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
     const { container } = render(chart);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
@@ -1427,28 +1424,24 @@ describe('<LineChart /> - Pure Rendering', () => {
 
     fireEvent.mouseUp(window);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
   });
 });
 
 describe('<LineChart /> - Pure Rendering with legend', () => {
-  const pureElements = [Line];
-
-  const spies: Array<MockInstance<() => React.ReactElement | null>> = [];
+  const spy = vi.fn();
   // CartesianAxis is what is actually render for XAxis and YAxis
   let axisSpy: MockInstance<() => React.ReactElement | null>;
 
   beforeEach(() => {
-    pureElements.forEach((el, i) => {
-      spies[i] = vi.spyOn(el.prototype, 'render');
-    });
+    spy.mockClear();
     axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
 
   const chart = (
     <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={spy} />
       <Tooltip />
       <XAxis />
       <YAxis />
@@ -1461,7 +1454,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   test('should only render Line once when the mouse enters and moves', () => {
     const { container } = render(chart);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
@@ -1470,7 +1463,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
 
     fireEvent.mouseLeave(container);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -1478,7 +1471,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
     const { container } = render(chart);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
@@ -1487,7 +1480,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseMove(window, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(spy).toHaveBeenCalledTimes(PageData.length);
     expect(axisSpy).toHaveBeenCalledTimes(3);
   });
 });
@@ -1828,7 +1821,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(data1.length * 9);
+    expect(spy).toHaveBeenCalledTimes(data1.length * 6);
     expect(spy).toHaveBeenNthCalledWith(1, data1[0]);
     expect(spy).toHaveBeenNthCalledWith(2, data1[1]);
     expect(spy).toHaveBeenNthCalledWith(3, data1[2]);
@@ -1841,7 +1834,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(data2.length * 9);
+    expect(spy).toHaveBeenCalledTimes(data2.length * 12);
     expect(spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(spy).toHaveBeenNthCalledWith(2, data2[1]);
     expect(spy).toHaveBeenNthCalledWith(3, data2[2]);
@@ -1867,7 +1860,7 @@ describe('<LineChart /> with dataKey as a function', () => {
 
     const { container } = render(<Reproduction />);
     expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 10);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 7);
     expect(dataKey1Spy).toHaveBeenNthCalledWith(1, data1[0]);
     expect(dataKey1Spy).toHaveBeenLastCalledWith(data1[2]);
     expect(dataKey2Spy).toHaveBeenCalledTimes(0);
@@ -1875,9 +1868,9 @@ describe('<LineChart /> with dataKey as a function', () => {
     fireEvent.click(screen.getByText('Use data2'));
 
     expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 14);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 11);
 
-    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 10);
+    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
   });

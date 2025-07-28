@@ -1,15 +1,5 @@
 import * as React from 'react';
-import {
-  Key,
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
@@ -53,10 +43,10 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
+import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
-import { BarSettings, selectBarRectangles } from '../state/selectors/barSelectors';
+import { selectBarRectangles } from '../state/selectors/barSelectors';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -66,6 +56,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { BarSettings } from '../state/types/BarSettings';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 
 type Rectangle = {
   x: number | null;
@@ -564,22 +556,9 @@ function BarImpl(props: BarImplProps) {
 
   const isPanorama = useIsPanorama();
 
-  const barSettings: BarSettings = useMemo(
-    (): BarSettings => ({
-      id: props.id,
-      barSize: props.barSize,
-      data: undefined,
-      dataKey: props.dataKey,
-      maxBarSize: props.maxBarSize,
-      minPointSize,
-      stackId: getNormalizedStackId(props.stackId),
-    }),
-    [props.barSize, props.dataKey, props.maxBarSize, minPointSize, props.stackId, props.id],
-  );
-
   const cells = findAllByType(props.children, Cell);
 
-  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, barSettings, cells));
+  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, props.id, cells));
 
   if (layout !== 'vertical' && layout !== 'horizontal') {
     return null;
@@ -731,6 +710,7 @@ export function computeBarRectangles({
 
 export function Bar(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="bar">
@@ -738,21 +718,23 @@ export function Bar(outsideProps: Props) {
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-          <CartesianGraphicalItemContext
-            id={id}
+          <SetCartesianGraphicalItem
             type="bar"
+            id={id}
             // Bar does not allow setting data directly on the graphical item (why?)
             data={undefined}
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
             dataKey={props.dataKey}
-            stackId={props.stackId}
+            stackId={getNormalizedStackId(props.stackId)}
             hide={props.hide}
             barSize={props.barSize}
-          >
-            <BarImpl {...props} id={id} />
-          </CartesianGraphicalItemContext>
+            minPointSize={props.minPointSize}
+            maxBarSize={props.maxBarSize}
+            isPanorama={isPanorama}
+          />
+          <BarImpl {...props} id={id} />
         </>
       )}
     </RegisterGraphicalItemId>

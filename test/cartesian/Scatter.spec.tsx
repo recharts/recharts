@@ -5,11 +5,11 @@ import { Scatter, Customized, ScatterChart, XAxis, YAxis, ScatterProps } from '.
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
-import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
+import { ScatterSettings } from '../../src/state/types/ScatterSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<Scatter />', () => {
@@ -228,18 +228,18 @@ describe('<Scatter />', () => {
         </ScatterChart>,
       );
 
-      const expected: CartesianGraphicalItemSettings = {
+      const expected: ScatterSettings = {
+        name: undefined,
+        tooltipType: undefined,
         id: expect.stringMatching('scatter-'),
         isPanorama: false,
         type: 'scatter',
         data,
         dataKey: 'cx',
         hide: false,
-        stackId: undefined,
         xAxisId: 'xaxis id',
         yAxisId: 'yaxis id',
         zAxisId: 'zaxis id',
-        barSize: undefined,
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
       expect(settingsSpy).toHaveBeenCalledTimes(3);

@@ -6,7 +6,7 @@ import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataWithIndexes } fro
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
-import { DataKey, LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
+import { LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
 import { BaseAxisWithScale, combineStackGroups } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
@@ -17,14 +17,12 @@ import {
   getBaseValueOfBar,
   isCategoricalAxis,
   RechartsScale,
-  StackId,
 } from '../../util/ChartUtils';
 import {
   BarWithPosition,
   combineAllBarPositions,
   combineBarSizeList,
   combineStackedData,
-  MaybeStackedGraphicalItem,
   SizeList,
 } from './barSelectors';
 import {
@@ -43,13 +41,8 @@ import { isNullish } from '../../util/DataUtils';
 import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { selectTooltipAxis } from './selectTooltipAxis';
-
-export interface RadialBarSettings extends MaybeStackedGraphicalItem {
-  dataKey: DataKey<any> | undefined;
-  minPointSize: number | undefined;
-  stackId: StackId | undefined;
-  maxBarSize: number | undefined;
-}
+import { RadialBarSettings } from '../types/RadialBarSettings';
+import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 
 const selectRadiusAxisForRadialBar = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings =>
   selectRadiusAxis(state, radiusAxisId);
@@ -217,14 +210,14 @@ const selectAllVisibleRadialBars: (
   angleAxisId: AxisId,
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => ReadonlyArray<PolarGraphicalItemSettings> = createSelector(
+) => ReadonlyArray<RadialBarSettings> = createSelector(
   [selectChartLayout, selectUnfilteredPolarItems, pickAngleAxisId, pickRadiusAxisId],
   (
     layout: LayoutType,
     allItems: ReadonlyArray<PolarGraphicalItemSettings>,
     angleAxisId: AxisId,
     radiusAxisId: AxisId,
-  ): ReadonlyArray<PolarGraphicalItemSettings> => {
+  ): ReadonlyArray<RadialBarSettings> => {
     return allItems
       .filter(i => {
         if (layout === 'centric') {
@@ -330,12 +323,20 @@ export const selectPolarBarPosition: (
   },
 );
 
+const selectStackedRadialBars: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector([selectPolarItemsSettings], allPolarItems =>
+  allPolarItems.filter(item => item.type === 'radialBar').filter(isStacked),
+);
+
 const selectPolarCombinedStackedData: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => DisplayedStackedData = createSelector(
-  [selectPolarItemsSettings, selectChartDataAndAlwaysIgnoreIndexes, selectTooltipAxis],
+  [selectStackedRadialBars, selectChartDataAndAlwaysIgnoreIndexes, selectTooltipAxis],
   combineDisplayedStackedData,
 );
 
@@ -344,7 +345,7 @@ const selectStackGroups: (
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => AllStackGroups | undefined = createSelector(
-  [selectPolarCombinedStackedData, selectPolarItemsSettings, selectStackOffsetType],
+  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType],
   combineStackGroups,
 );
 

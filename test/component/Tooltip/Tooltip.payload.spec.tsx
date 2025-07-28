@@ -80,6 +80,7 @@ import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipA
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { LineSettings } from '../../../src/state/types/LineSettings';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
@@ -465,6 +466,39 @@ describe('Tooltip payload', () => {
   );
 
   describe('LineChartDataOnGraphicalItemTestCase', () => {
+    const expectedLine1: LineSettings = {
+      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      data: PageData,
+      dataKey: 'uv',
+      hide: false,
+      isPanorama: false,
+      type: 'line',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+    };
+    const expectedLine2: LineSettings = {
+      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      data: PageData,
+      dataKey: 'pv',
+      hide: false,
+      isPanorama: false,
+      type: 'line',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+    };
+    const expectedLine3: LineSettings = {
+      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      data: PageData,
+      dataKey: 'amt',
+      hide: false,
+      isPanorama: false,
+      type: 'line',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+    };
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChartDataOnGraphicalItemTestCase.Wrapper>
         <Tooltip />
@@ -489,320 +523,12 @@ describe('Tooltip payload', () => {
 
     it('should select unfiltered graphical items', () => {
       const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
-      expectLastCalledWith(spy, [
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'uv',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'pv',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'amt',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-      ]);
+      expectLastCalledWith(spy, [expectedLine1, expectedLine2, expectedLine3]);
     });
 
     it('should select all graphical items', () => {
       const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
-      expectLastCalledWith(spy, [
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'uv',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'pv',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-        {
-          id: expect.stringMatching('line-'),
-          barSize: undefined,
-          data: [
-            {
-              amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
-            },
-            {
-              amt: 2400,
-              name: 'Page B',
-              pv: 4567,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page C',
-              pv: 1398,
-              uv: 300,
-            },
-            {
-              amt: 2400,
-              name: 'Page D',
-              pv: 9800,
-              uv: 200,
-            },
-            {
-              amt: 2400,
-              name: 'Page E',
-              pv: 3908,
-              uv: 278,
-            },
-            {
-              amt: 2400,
-              name: 'Page F',
-              pv: 4800,
-              uv: 189,
-            },
-          ],
-          dataKey: 'amt',
-          hide: false,
-          // @ts-expect-error extra properties not expected in the type
-          isPanorama: false,
-          stackId: undefined,
-          type: 'line',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-      ]);
+      expectLastCalledWith(spy, [expectedLine1, expectedLine2, expectedLine3]);
     });
 
     it('should select tooltip data defined on graphical items', () => {

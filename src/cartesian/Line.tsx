@@ -1,6 +1,5 @@
-// eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { Component, MutableRefObject, PureComponent, Ref, useCallback, useRef, useState } from 'react';
+import { Component, MutableRefObject, Ref, useCallback, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
@@ -26,7 +25,7 @@ import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
+import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
@@ -42,6 +41,7 @@ import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -712,37 +712,30 @@ export function computeLinePoints({
   });
 }
 
-export class Line extends PureComponent<Props> {
-  static displayName = 'Line';
-
-  static defaultProps = defaultLineProps;
-
-  render() {
-    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
-    return (
-      <RegisterGraphicalItemId id={this.props.id} type="line">
-        {id => (
-          <>
-            <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
-            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-            <CartesianGraphicalItemContext
-              id={id}
-              type="line"
-              data={this.props.data}
-              xAxisId={this.props.xAxisId}
-              yAxisId={this.props.yAxisId}
-              zAxisId={0}
-              dataKey={this.props.dataKey}
-              // line doesn't stack
-              stackId={undefined}
-              hide={this.props.hide}
-              barSize={undefined}
-            >
-              <LineImpl {...this.props} id={id} />
-            </CartesianGraphicalItemContext>
-          </>
-        )}
-      </RegisterGraphicalItemId>
-    );
-  }
+export function Line(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, defaultLineProps);
+  const isPanorama = useIsPanorama();
+  return (
+    <RegisterGraphicalItemId id={props.id} type="line">
+      {id => (
+        <>
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetCartesianGraphicalItem
+            type="line"
+            id={id}
+            data={props.data}
+            xAxisId={props.xAxisId}
+            yAxisId={props.yAxisId}
+            zAxisId={0}
+            dataKey={props.dataKey}
+            hide={props.hide}
+            isPanorama={isPanorama}
+          />
+          <LineImpl {...props} id={id} />
+        </>
+      )}
+    </RegisterGraphicalItemId>
+  );
 }
+Line.displayName = 'Line';

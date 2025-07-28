@@ -22,9 +22,9 @@ import {
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { TickItemTextProps } from '../../src/polar/PolarAngleAxis';
+import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedAngleAxisTick = {
@@ -144,8 +144,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -394,8 +392,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -581,8 +577,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -685,8 +679,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -1773,6 +1765,8 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radialBar-'),
+            maxBarSize: undefined,
+            minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
             type: 'radialBar',
@@ -1896,6 +1890,8 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radialBar-'),
+            maxBarSize: undefined,
+            minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
             type: 'radialBar',
@@ -2253,6 +2249,11 @@ describe('<PolarAngleAxis />', () => {
         maxBarSize: undefined,
         minPointSize: undefined,
         stackId: undefined,
+        type: 'radialBar',
+        angleAxisId: 0,
+        radiusAxisId: 0,
+        data: undefined,
+        hide: false,
       };
 
       const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -2429,6 +2430,11 @@ describe('<PolarAngleAxis />', () => {
         maxBarSize: undefined,
         minPointSize: undefined,
         stackId: undefined,
+        type: 'radialBar',
+        angleAxisId: 0,
+        radiusAxisId: 0,
+        data: undefined,
+        hide: false,
       };
 
       const renderTestCase = createSelectorTestCase(({ children }) => (

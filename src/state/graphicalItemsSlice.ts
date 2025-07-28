@@ -3,8 +3,13 @@ import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
-import { NormalizedStackId } from '../util/ChartUtils';
-import { MaybeStackedGraphicalItem } from './selectors/barSelectors';
+import { LineSettings } from './types/LineSettings';
+import { ScatterSettings } from './types/ScatterSettings';
+import { AreaSettings } from './types/AreaSettings';
+import { BarSettings } from './types/BarSettings';
+import { RadialBarSettings } from './types/RadialBarSettings';
+import { PieSettings } from './types/PieSettings';
+import { RadarSettings } from './types/RadarSettings';
 
 /**
  * Unique ID of the graphical item.
@@ -16,7 +21,17 @@ export type GraphicalItemId = string;
 export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
 export type PolarGraphicalItemType = 'pie' | 'radar' | 'radialBar';
 
-export interface GraphicalItemSettings extends MaybeStackedGraphicalItem {
+export interface GraphicalItemSettings {
+  /**
+   * Unique ID of the graphical item.
+   * This is used to identify the graphical item in the state and in the React tree.
+   * This is required for every graphical item - it's either provided by the user or generated automatically.
+   */
+  id: GraphicalItemId;
+  /**
+   * If the given graphical item has its own data array, it will appear here.
+   * If this is undefined, the data will be taken from the chart root prop.
+   */
   data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   /**
@@ -28,13 +43,7 @@ export interface GraphicalItemSettings extends MaybeStackedGraphicalItem {
   hide: boolean;
 }
 
-export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
-  type: CartesianGraphicalItemType;
-  /**
-   * Graphical items that are inside Brush panorama should not interact with the main area graphical items
-   * and vice versa.
-   */
-  isPanorama: boolean;
+export interface BaseCartesianGraphicalItemSettings extends GraphicalItemSettings {
   /**
    * Each of the graphical items explicitly says which axis it uses;
    * this property is optional for users but every graphical item must have a default,
@@ -43,18 +52,21 @@ export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
   xAxisId: AxisId;
   yAxisId: AxisId;
   zAxisId: AxisId;
-  stackId: NormalizedStackId | undefined;
   /**
-   * This property is only used in Bar and RadialBar items
+   * Graphical items that are inside Brush panorama should not interact with the main area graphical items
+   * and vice versa.
    */
-  barSize: number | string | undefined;
-};
+  isPanorama: boolean;
+}
 
-export type PolarGraphicalItemSettings = GraphicalItemSettings & {
-  type: PolarGraphicalItemType;
+export type CartesianGraphicalItemSettings = AreaSettings | BarSettings | LineSettings | ScatterSettings;
+
+export interface BasePolarGraphicalItemSettings extends GraphicalItemSettings {
   angleAxisId: AxisId;
   radiusAxisId: AxisId;
-};
+}
+
+export type PolarGraphicalItemSettings = PieSettings | RadarSettings | RadialBarSettings;
 
 export type GraphicalItemsState = {
   /**

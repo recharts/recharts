@@ -54,7 +54,7 @@ import {
 } from '../../../src';
 import { misbehavedData, PageData } from '../../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
-import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
+import { addCartesianGraphicalItem } from '../../../src/state/graphicalItemsSlice';
 import { generateMockData } from '../../helper/generateMockData';
 import { AxisId, XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { AxisDomain } from '../../../src/util/types';
@@ -71,6 +71,7 @@ import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { BarSettings } from '../../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const defaultAxisId: AxisId = 0;
@@ -1602,7 +1603,9 @@ describe('selectCartesianGraphicalItemsData', () => {
 
   it('should be stable', () => {
     const store = createRechartsStore();
-    const settings: CartesianGraphicalItemSettings = {
+    const settings: BarSettings = {
+      maxBarSize: 0,
+      minPointSize: undefined,
       id: 'id',
       isPanorama: false,
       type: 'bar',
@@ -2822,7 +2825,9 @@ describe('selectErrorBarsSettings', () => {
 
   it('should be stable with data', () => {
     const store = createRechartsStore();
-    const settings: CartesianGraphicalItemSettings = {
+    const settings: BarSettings = {
+      maxBarSize: 0,
+      minPointSize: undefined,
       id: 'bar1',
       isPanorama: false,
       barSize: undefined,

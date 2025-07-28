@@ -14,6 +14,7 @@ import { PageData } from '../../_data';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { AreaSettings } from '../../../src/state/types/AreaSettings';
 
 describe('selectStackGroups', () => {
   const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false);
@@ -53,16 +54,18 @@ describe('selectStackGroups', () => {
         <Comp />
       </BarChart>,
     );
-    expect(stackGroupsSpy).toHaveBeenLastCalledWith({
+    expectLastCalledWith(stackGroupsSpy, {
       a: {
         graphicalItems: [
           {
-            id: expect.stringMatching('bar-'),
+            id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
             barSize: undefined,
             data: undefined,
             dataKey: 'uv',
             hide: false,
             isPanorama: false,
+            maxBarSize: undefined,
+            minPointSize: 0,
             stackId: 'a',
             type: 'bar',
             xAxisId: 0,
@@ -70,12 +73,14 @@ describe('selectStackGroups', () => {
             zAxisId: 0,
           },
           {
-            id: expect.stringMatching('bar-'),
+            id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
             barSize: undefined,
             data: undefined,
             dataKey: 'pv',
             hide: false,
             isPanorama: false,
+            maxBarSize: undefined,
+            minPointSize: 0,
             stackId: 'a',
             type: 'bar',
             xAxisId: 0,
@@ -105,12 +110,14 @@ describe('selectStackGroups', () => {
       b: {
         graphicalItems: [
           {
-            id: expect.stringMatching('bar-'),
+            id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
             barSize: undefined,
             data: undefined,
             dataKey: 'uv',
             hide: false,
             isPanorama: false,
+            maxBarSize: undefined,
+            minPointSize: 0,
             stackId: 'b',
             type: 'bar',
             xAxisId: 0,
@@ -118,12 +125,14 @@ describe('selectStackGroups', () => {
             zAxisId: 0,
           },
           {
-            id: expect.stringMatching('bar-'),
+            id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
             barSize: undefined,
             data: undefined,
             dataKey: 'amt',
             hide: false,
             isPanorama: false,
+            maxBarSize: undefined,
+            minPointSize: 0,
             stackId: 'b',
             type: 'bar',
             xAxisId: 0,
@@ -199,38 +208,39 @@ describe('selectStackGroups', () => {
     describe('on initial render', () => {
       it('should select two graphical items in stack group in the DOM insertion order', () => {
         const { spy } = renderTestCase((state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false));
+        const expectedArea1: AreaSettings = {
+          id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
+          barSize: undefined,
+          baseValue: undefined,
+          connectNulls: false,
+          data: undefined,
+          dataKey: 'uv',
+          hide: false,
+          isPanorama: false,
+          stackId: 'a',
+          type: 'area',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        };
+        const expectedArea2: AreaSettings = {
+          id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
+          barSize: undefined,
+          baseValue: undefined,
+          connectNulls: false,
+          data: undefined,
+          dataKey: 'pv',
+          hide: false,
+          isPanorama: false,
+          stackId: 'a',
+          type: 'area',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        };
         expectLastCalledWith(spy, {
           a: {
-            graphicalItems: [
-              {
-                id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
-                barSize: undefined,
-                data: undefined,
-                dataKey: 'uv',
-                // @ts-expect-error extra properties not expected in the type
-                hide: false,
-                isPanorama: false,
-                stackId: 'a',
-                type: 'area',
-                xAxisId: 0,
-                yAxisId: 0,
-                zAxisId: 0,
-              },
-              {
-                id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
-                barSize: undefined,
-                data: undefined,
-                dataKey: 'pv',
-                // @ts-expect-error extra properties not expected in the type
-                hide: false,
-                isPanorama: false,
-                stackId: 'a',
-                type: 'area',
-                xAxisId: 0,
-                yAxisId: 0,
-                zAxisId: 0,
-              },
-            ],
+            graphicalItems: [expectedArea1, expectedArea2],
             stackedData: expect.toBeRechartsStackedData([
               [
                 [0, 400],

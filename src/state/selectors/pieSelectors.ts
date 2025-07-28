@@ -1,46 +1,30 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
-import { CellProps, LegendType } from '../..';
+import { CellProps } from '../..';
 import { computePieSectors, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
-import { ChartOffsetInternal, DataKey } from '../../util/types';
-import { TooltipType } from '../../component/DefaultTooltipContent';
+import { ChartOffsetInternal } from '../../util/types';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import type { LegendPayload } from '../../component/DefaultLegendContent';
 import { getTooltipNameProp, getValueByDataKey } from '../../util/ChartUtils';
 import { selectUnfilteredPolarItems } from './polarSelectors';
+import { PieSettings } from '../types/PieSettings';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 
-export type ResolvedPieSettings = {
-  name: string | number | undefined;
-  nameKey: DataKey<any>;
-  data: ChartData | undefined;
-  dataKey: DataKey<any> | undefined;
-  tooltipType?: TooltipType | undefined;
+const pickId = (_state: RechartsRootState, id: GraphicalItemId): GraphicalItemId => id;
 
-  legendType: LegendType;
-  fill: string;
-
-  cx?: number | string;
-  cy?: number | string;
-  startAngle?: number;
-  endAngle?: number;
-  paddingAngle?: number;
-  minAngle?: number;
-  innerRadius?: number | string;
-  outerRadius?: number | string | ((element: any) => number);
-  cornerRadius?: number | string;
-  presentationProps?: Record<string, string>;
-};
-
-const pickPieSettings = (_state: RechartsRootState, pieSettings: ResolvedPieSettings) => pieSettings;
+const selectSynchronisedPieSettings: (state: RechartsRootState, id: GraphicalItemId) => PieSettings | undefined =
+  createSelector([selectUnfilteredPolarItems, pickId], (graphicalItems, id) =>
+    graphicalItems.filter(item => item.type === 'pie').find(item => item.id === id),
+  );
 
 // Keep stable reference to an empty array to prevent re-renders
 const emptyArray: ReadonlyArray<ReactElement> = [];
 const pickCells = (
   _state: RechartsRootState,
-  _pieSettings: ResolvedPieSettings,
+  _id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => {
   if (cells?.length === 0) {
@@ -51,11 +35,14 @@ const pickCells = (
 
 export const selectDisplayedData: (
   state: RechartsRootState,
-  pieSettings: ResolvedPieSettings,
+  id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ChartData | undefined = createSelector(
-  [selectChartDataAndAlwaysIgnoreIndexes, pickPieSettings, pickCells],
-  ({ chartData }: ChartDataState, pieSettings: ResolvedPieSettings, cells): ChartData | undefined => {
+  [selectChartDataAndAlwaysIgnoreIndexes, selectSynchronisedPieSettings, pickCells],
+  ({ chartData }: ChartDataState, pieSettings: PieSettings | undefined, cells): ChartData | undefined => {
+    if (pieSettings == null) {
+      return undefined;
+    }
     let displayedData: ChartData | undefined;
     if (pieSettings?.data != null && pieSettings.data.length > 0) {
       displayedData = pieSettings.data;
@@ -80,16 +67,16 @@ export const selectDisplayedData: (
 
 export const selectPieLegend: (
   state: RechartsRootState,
-  pieSettings: ResolvedPieSettings,
+  id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ReadonlyArray<LegendPayload> | undefined = createSelector(
-  [selectDisplayedData, pickPieSettings, pickCells],
+  [selectDisplayedData, selectSynchronisedPieSettings, pickCells],
   (
     displayedData: ChartData | undefined,
-    pieSettings: ResolvedPieSettings,
+    pieSettings: PieSettings | undefined,
     cells: ReadonlyArray<ReactElement>,
   ): ReadonlyArray<LegendPayload> | undefined => {
-    if (displayedData == null) {
+    if (displayedData == null || pieSettings == null) {
       return undefined;
     }
     return displayedData.map((entry, i): LegendPayload => {
@@ -112,35 +99,15 @@ export const selectPieLegend: (
   },
 );
 
-const selectSynchronisedPieSettings: (
-  state: RechartsRootState,
-  pieSettings: ResolvedPieSettings,
-) => ResolvedPieSettings | undefined = createSelector(
-  [selectUnfilteredPolarItems, pickPieSettings],
-  (graphicalItems, pieSettingsFromProps) => {
-    if (
-      graphicalItems.some(
-        pgis =>
-          pgis.type === 'pie' &&
-          pieSettingsFromProps.dataKey === pgis.dataKey &&
-          pieSettingsFromProps.data === pgis.data,
-      )
-    ) {
-      return pieSettingsFromProps;
-    }
-    return undefined;
-  },
-);
-
 export const selectPieSectors: (
   state: RechartsRootState,
-  pieSettings: ResolvedPieSettings,
+  id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => Readonly<PieSectorDataItem[]> | undefined = createSelector(
   [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffsetInternal],
   (
     displayedData: ChartData | undefined,
-    pieSettings: ResolvedPieSettings,
+    pieSettings: PieSettings,
     cells,
     offset: ChartOffsetInternal,
   ): Readonly<PieSectorDataItem[]> | undefined => {

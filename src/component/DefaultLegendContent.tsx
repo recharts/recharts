@@ -149,7 +149,6 @@ export class DefaultLegendContent extends PureComponent<Props> {
       marginRight: 10,
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
-
     return payload.map((entry: LegendPayload, i: number) => {
       const finalFormatter = entry.formatter || formatter;
       const className = clsx({

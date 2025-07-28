@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { combineDisplayedStackedData } from '../../../../src/state/selectors/combiners/combineDisplayedStackedData';
-import { GraphicalItemSettings } from '../../../../src/state/graphicalItemsSlice';
 import { ChartDataState } from '../../../../src/state/chartDataSlice';
 import { BaseCartesianAxis } from '../../../../src/state/cartesianAxisSlice';
+import { DefinitelyStackedGraphicalItem } from '../../../../src/state/types/StackedGraphicalItem';
 
 const emptyAxisSettings: BaseCartesianAxis = {
   type: 'number',
@@ -39,7 +39,7 @@ describe('combineDisplayedStackedData', () => {
   });
 
   it('should stack data points by stack identifier', () => {
-    const cartesianItems: ReadonlyArray<GraphicalItemSettings> = [
+    const cartesianItems: ReadonlyArray<DefinitelyStackedGraphicalItem> = [
       {
         data: [
           { value: 10, name: 'a' },
@@ -77,7 +77,7 @@ describe('combineDisplayedStackedData', () => {
   });
 
   it('should ignore stackIds because another selected down the road handles that', () => {
-    const cartesianItems: ReadonlyArray<GraphicalItemSettings> = [
+    const cartesianItems: ReadonlyArray<DefinitelyStackedGraphicalItem> = [
       {
         data: [
           { value: 10, name: 'a' },

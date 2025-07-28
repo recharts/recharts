@@ -9,7 +9,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { ResolvedPieSettings, selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
+import { selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 
 describe('<PieChart />', () => {
   const data = [
@@ -233,24 +233,6 @@ describe('<PieChart />', () => {
       { name: 'Group E', value: 0 },
       { name: 'Group F', value: 0 },
     ];
-    const emptyPieSettings: ResolvedPieSettings = {
-      name: 'pie1',
-      nameKey: 'name',
-      data: emptyData,
-      dataKey: 'value',
-      tooltipType: undefined,
-      legendType: 'rect',
-      fill: '#ff7300',
-      cx: 200,
-      cy: 200,
-      outerRadius: 80,
-      innerRadius: 0,
-      startAngle: 0,
-      endAngle: 360,
-      paddingAngle: 0,
-      minAngle: 0,
-      cornerRadius: 0,
-    };
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={800} height={400}>
         <Pie
@@ -268,15 +250,15 @@ describe('<PieChart />', () => {
     ));
 
     test('selectDisplayedData', () => {
-      const { spy } = renderTestCase(state => selectDisplayedData(state, emptyPieSettings, undefined));
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'empty-pie', undefined));
       expectLastCalledWith(spy, emptyData);
     });
 
     test('selectPieLegend', () => {
-      const { spy } = renderTestCase(state => selectPieLegend(state, emptyPieSettings, undefined));
+      const { spy } = renderTestCase(state => selectPieLegend(state, 'empty-pie', undefined));
       expectLastCalledWith(spy, [
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group A',
@@ -286,7 +268,7 @@ describe('<PieChart />', () => {
           value: 'Group A',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group B',
@@ -296,7 +278,7 @@ describe('<PieChart />', () => {
           value: 'Group B',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group C',
@@ -306,7 +288,7 @@ describe('<PieChart />', () => {
           value: 'Group C',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group D',
@@ -316,7 +298,7 @@ describe('<PieChart />', () => {
           value: 'Group D',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group E',
@@ -326,7 +308,7 @@ describe('<PieChart />', () => {
           value: 'Group E',
         },
         {
-          color: '#ff7300',
+          color: '#808080',
           payload: {
             // @ts-expect-error extra properties not expected in the type
             name: 'Group F',
@@ -371,25 +353,6 @@ describe('<PieChart />', () => {
   });
 
   describe('with Legend', () => {
-    const pieSettings: ResolvedPieSettings = {
-      name: 'pie1',
-      nameKey: 'name',
-      data,
-      dataKey: 'value',
-      tooltipType: undefined,
-      legendType: 'rect',
-      fill: '#ff7300',
-      cx: 200,
-      cy: 200,
-      outerRadius: 80,
-      innerRadius: 0,
-      startAngle: 0,
-      endAngle: 360,
-      paddingAngle: 0,
-      minAngle: 0,
-      cornerRadius: 0,
-    };
-
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={800} height={400}>
         <Pie
@@ -409,12 +372,12 @@ describe('<PieChart />', () => {
     ));
 
     test('selectDisplayedData', () => {
-      const { spy } = renderTestCase(state => selectDisplayedData(state, pieSettings, undefined));
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'pie1', undefined));
       expectLastCalledWith(spy, data);
     });
 
     test('selectPieLegend', () => {
-      const { spy } = renderTestCase(state => selectPieLegend(state, pieSettings, undefined));
+      const { spy } = renderTestCase(state => selectPieLegend(state, 'pie1', undefined));
       expectLastCalledWith(spy, [
         {
           color: '#ff7300',

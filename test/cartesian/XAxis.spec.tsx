@@ -39,7 +39,6 @@ import { pageData } from '../../storybook/stories/data';
 import { Props as XAxisProps } from '../../src/cartesian/XAxis';
 import { expectBars } from '../helper/expectBars';
 import {
-  BarSettings,
   selectAllBarPositions,
   selectBarBandSize,
   selectBarCartesianAxisSize,
@@ -471,30 +470,20 @@ describe('<XAxis />', () => {
     const barBandSizeSpy = vi.fn();
     const offsetSpy = vi.fn();
 
-    const barSettings: BarSettings = {
-      id: 'my-bar-id',
-      barSize: undefined,
-      data: undefined,
-      dataKey: 'y',
-      maxBarSize: undefined,
-      minPointSize: undefined,
-      stackId: undefined,
-    };
-
     const Comp = (): null => {
       yAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
       barTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'xAxis', 0, false)));
-      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, barSettings)));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id')));
       offsetSpy(useAppSelector(selectChartOffsetInternal));
       return null;
     };
 
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
-        <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+        <Bar dataKey="y" isAnimationActive={false} id="my-bar-id" />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
         <Comp />
       </BarChart>,
     );
@@ -1320,32 +1309,22 @@ describe('<XAxis />', () => {
     const barSizeListSpy = vi.fn();
     const totalAxisSizeSpy = vi.fn();
 
-    const barSettings: BarSettings = {
-      id: 'my-bar-id',
-      barSize: undefined,
-      data: [],
-      dataKey: 'y',
-      maxBarSize: undefined,
-      minPointSize: undefined,
-      stackId: undefined,
-    };
-
     const Comp = (): null => {
       chartDataSpy(useAppSelector(selectChartDataWithIndexes));
       yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
-      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, barSettings)));
-      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
-      barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id')));
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
+      barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
       totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
       return null;
     };
 
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="50%">
-        <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+        <Bar dataKey="y" isAnimationActive={false} id="my-bar-id" />
         <XAxis dataKey="x" type="number" domain={[50, 150]} />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
         <Comp />
       </BarChart>,
     );

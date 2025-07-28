@@ -67,13 +67,13 @@ import { selectAngleAxis, selectAngleAxisRange, selectRadiusAxis, selectRadiusAx
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
-import { MaybeStackedGraphicalItem } from './barSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
+import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
@@ -329,15 +329,27 @@ export const selectCartesianItemsSettings: (
   combineGraphicalItemsSettings,
 );
 
-export const filterGraphicalNotStackedItems = <T extends MaybeStackedGraphicalItem>(
-  cartesianItems: ReadonlyArray<T>,
-): ReadonlyArray<T> => cartesianItems.filter(item => item.stackId === undefined);
+export const selectStackedCartesianItemsSettings: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
+  [selectCartesianItemsSettings],
+  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>): ReadonlyArray<DefinitelyStackedGraphicalItem> => {
+    return cartesianItems.filter(item => item.type === 'area' || item.type === 'bar').filter(isStacked);
+  },
+);
+
+export const filterGraphicalNotStackedItems = (
+  cartesianItems: ReadonlyArray<GraphicalItemSettings>,
+): ReadonlyArray<GraphicalItemSettings> =>
+  cartesianItems.filter(item => !('stackId' in item) || item.stackId === undefined);
 
 const selectCartesianItemsSettingsExceptStacked: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
+) => ReadonlyArray<GraphicalItemSettings> = createSelector(
   [selectCartesianItemsSettings],
   filterGraphicalNotStackedItems,
 );
@@ -536,18 +548,18 @@ export const selectDisplayedStackedData: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => DisplayedStackedData = createSelector(
-  [selectCartesianItemsSettings, selectChartDataWithIndexesIfNotInPanorama, selectTooltipAxis],
+  [selectStackedCartesianItemsSettings, selectChartDataWithIndexesIfNotInPanorama, selectTooltipAxis],
   combineDisplayedStackedData,
 );
 
 export const combineStackGroups = (
   displayedData: DisplayedStackedData,
-  items: ReadonlyArray<MaybeStackedGraphicalItem>,
+  items: ReadonlyArray<DefinitelyStackedGraphicalItem>,
   stackOffsetType: StackOffsetType,
 ): AllStackGroups => {
-  const initialItemsGroups: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
-  const itemsGroup: Record<StackId, ReadonlyArray<MaybeStackedGraphicalItem>> = items.reduce(
-    (acc: Record<StackId, Array<MaybeStackedGraphicalItem>>, item: MaybeStackedGraphicalItem) => {
+  const initialItemsGroups: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
+  const itemsGroup: Record<StackId, ReadonlyArray<DefinitelyStackedGraphicalItem>> = items.reduce(
+    (acc: Record<StackId, Array<DefinitelyStackedGraphicalItem>>, item: DefinitelyStackedGraphicalItem) => {
       if (item.stackId == null) {
         return acc;
       }
@@ -586,7 +598,7 @@ export const selectStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => AllStackGroups | undefined = createSelector(
-  [selectDisplayedStackedData, selectCartesianItemsSettings, selectStackOffsetType],
+  [selectDisplayedStackedData, selectStackedCartesianItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
 

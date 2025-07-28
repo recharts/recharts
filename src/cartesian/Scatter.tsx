@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -35,10 +35,10 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
+import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
+import { selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -49,6 +49,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { ScatterSettings } from '../state/types/ScatterSettings';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -399,7 +401,7 @@ export function computeScatterPoints({
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
   zAxis: ZAxisWithScale;
-  scatterSettings: ResolvedScatterSettings;
+  scatterSettings: ScatterSettings;
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   cells: ReadonlyArray<ReactElement> | undefined;
@@ -570,20 +572,10 @@ function ScatterImpl(props: Props) {
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-
-  const scatterSettings: ResolvedScatterSettings = useMemo(
-    () => ({
-      name: props.name,
-      tooltipType: props.tooltipType,
-      data: props.data,
-      dataKey: props.dataKey,
-    }),
-    [props.data, props.dataKey, props.name, props.tooltipType],
-  );
-
   const isPanorama = useIsPanorama();
+
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, scatterSettings, cells, isPanorama);
+    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, props.id, cells, isPanorama);
   });
   if (needClip == null) {
     return null;
@@ -618,37 +610,31 @@ function ScatterImpl(props: Props) {
   );
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class Scatter extends Component<Props> {
-  static displayName = 'Scatter';
-
-  static defaultProps = defaultScatterProps;
-
-  render() {
-    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
-    return (
-      <RegisterGraphicalItemId id={this.props.id} type="scatter">
-        {id => (
-          <>
-            <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(this.props)} />
-            <CartesianGraphicalItemContext
-              id={id}
-              type="scatter"
-              data={this.props.data}
-              xAxisId={this.props.xAxisId}
-              yAxisId={this.props.yAxisId}
-              zAxisId={this.props.zAxisId}
-              dataKey={this.props.dataKey}
-              // scatter doesn't stack
-              stackId={undefined}
-              hide={this.props.hide}
-              barSize={undefined}
-            >
-              <ScatterImpl {...this.props} id={id} />
-            </CartesianGraphicalItemContext>
-          </>
-        )}
-      </RegisterGraphicalItemId>
-    );
-  }
+export function Scatter(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, defaultScatterProps);
+  const isPanorama = useIsPanorama();
+  return (
+    <RegisterGraphicalItemId id={props.id} type="scatter">
+      {id => (
+        <>
+          <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(props)} />
+          <SetCartesianGraphicalItem
+            type="scatter"
+            id={id}
+            data={props.data}
+            xAxisId={props.xAxisId}
+            yAxisId={props.yAxisId}
+            zAxisId={props.zAxisId}
+            dataKey={props.dataKey}
+            hide={props.hide}
+            name={props.name}
+            tooltipType={props.tooltipType}
+            isPanorama={isPanorama}
+          />
+          <ScatterImpl {...props} id={id} />
+        </>
+      )}
+    </RegisterGraphicalItemId>
+  );
 }
+Scatter.displayName = 'Scatter';
