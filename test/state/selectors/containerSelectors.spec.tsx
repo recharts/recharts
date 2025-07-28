@@ -15,6 +15,7 @@ import { BarChart, ComposedChart, Customized } from '../../../src';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { mockHTMLElementProperty } from '../../helper/mockHTMLElementProperty';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectContainerScale', () => {
   shouldReturnUndefinedOutOfContext(selectContainerScale);
@@ -66,7 +67,7 @@ describe('selectContainerScale', () => {
       </ComposedChart>
     ));
     const { spy } = renderTestCase(selectContainerScale);
-    expect(spy).toHaveBeenLastCalledWith(3 / 5);
+    expectLastCalledWith(spy, 3 / 5);
   });
 
   it('should return scale: 1 in jsdom because jsdom returns zeroes everywhere', () => {
@@ -83,7 +84,7 @@ describe('selectContainerScale', () => {
       </ComposedChart>
     ));
     const { spy } = renderTestCase(selectContainerScale);
-    expect(spy).toHaveBeenLastCalledWith(1);
+    expectLastCalledWith(spy, 1);
   });
 });
 

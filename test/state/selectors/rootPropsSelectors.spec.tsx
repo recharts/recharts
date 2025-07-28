@@ -15,6 +15,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectRootMaxBarSize', () => {
   shouldReturnUndefinedOutOfContext(selectRootMaxBarSize);
@@ -32,7 +33,7 @@ describe('selectRootMaxBarSize', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expectLastCalledWith(spy, undefined);
   });
 
   it('should return and update maxBarSize defined on chart root', () => {
@@ -48,7 +49,7 @@ describe('selectRootMaxBarSize', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(10);
+    expectLastCalledWith(spy, 10);
     expect(spy).toHaveBeenCalledTimes(1);
 
     rerender(
@@ -58,7 +59,7 @@ describe('selectRootMaxBarSize', () => {
       </BarChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith(20);
+    expectLastCalledWith(spy, 20);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });
@@ -79,7 +80,7 @@ describe('selectBarGap', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(4);
+    expectLastCalledWith(spy, 4);
   });
 
   it('should return and update barGap defined on chart root', () => {
@@ -94,7 +95,7 @@ describe('selectBarGap', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(10);
+    expectLastCalledWith(spy, 10);
     expect(spy).toHaveBeenCalledTimes(1);
 
     rerender(
@@ -103,7 +104,7 @@ describe('selectBarGap', () => {
       </BarChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith(20);
+    expectLastCalledWith(spy, 20);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });
@@ -139,7 +140,7 @@ describe('selectBarCategoryGap', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith('10%');
+    expectLastCalledWith(spy, '10%');
   });
 
   it('should return and update barCategoryGap defined on chart root', () => {
@@ -154,7 +155,7 @@ describe('selectBarCategoryGap', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(10);
+    expectLastCalledWith(spy, 10);
     expect(spy).toHaveBeenCalledTimes(1);
 
     rerender(
@@ -163,7 +164,7 @@ describe('selectBarCategoryGap', () => {
       </BarChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith(20);
+    expectLastCalledWith(spy, 20);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });
@@ -184,7 +185,7 @@ describe('selectRootBarSize', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expectLastCalledWith(spy, undefined);
   });
 
   it('should return and update barSize defined on chart root', () => {
@@ -199,7 +200,7 @@ describe('selectRootBarSize', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(10);
+    expectLastCalledWith(spy, 10);
     expect(spy).toHaveBeenCalledTimes(1);
 
     rerender(
@@ -208,7 +209,7 @@ describe('selectRootBarSize', () => {
       </BarChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith(20);
+    expectLastCalledWith(spy, 20);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });
@@ -231,7 +232,7 @@ describe('selectSyncMethod', () => {
         <Comp />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith('value');
+    expectLastCalledWith(spy, 'value');
     expect(spy).toHaveBeenCalledTimes(1);
 
     const fn = () => 1;
@@ -242,7 +243,7 @@ describe('selectSyncMethod', () => {
       </BarChart>,
     );
 
-    expect(spy).toHaveBeenLastCalledWith(fn);
+    expectLastCalledWith(spy, fn);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });

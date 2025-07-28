@@ -13,6 +13,7 @@ import { Area, AreaChart, Bar, BarChart, Legend, LegendPayload } from '../../../
 import { PageData } from '../../_data';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectStackGroups', () => {
   const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false);
@@ -198,7 +199,7 @@ describe('selectStackGroups', () => {
     describe('on initial render', () => {
       it('should select two graphical items in stack group in the DOM insertion order', () => {
         const { spy } = renderTestCase((state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false));
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           a: {
             graphicalItems: [
               {
@@ -206,6 +207,7 @@ describe('selectStackGroups', () => {
                 barSize: undefined,
                 data: undefined,
                 dataKey: 'uv',
+                // @ts-expect-error extra properties not expected in the type
                 hide: false,
                 isPanorama: false,
                 stackId: 'a',
@@ -219,6 +221,7 @@ describe('selectStackGroups', () => {
                 barSize: undefined,
                 data: undefined,
                 dataKey: 'pv',
+                // @ts-expect-error extra properties not expected in the type
                 hide: false,
                 isPanorama: false,
                 stackId: 'a',
@@ -259,7 +262,7 @@ describe('selectStackGroups', () => {
           selectStackGroups(state, 'xAxis', 0, false),
         );
 
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           a: expect.objectContaining({
             graphicalItems: [
               expect.objectContaining({ dataKey: 'uv', hide: false }),
@@ -278,7 +281,7 @@ describe('selectStackGroups', () => {
           fireEvent.click(uvItem);
         });
 
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           a: expect.objectContaining({
             graphicalItems: [expect.objectContaining({ dataKey: 'pv', hide: false })],
           }),
@@ -289,7 +292,7 @@ describe('selectStackGroups', () => {
           fireEvent.click(uvItem);
         });
 
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           a: expect.objectContaining({
             graphicalItems: [
               // This should be in the same order as before hiding

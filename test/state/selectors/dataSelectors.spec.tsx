@@ -11,6 +11,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectChartDataWithIndexes', () => {
   shouldReturnUndefinedOutOfContext(selectChartDataWithIndexes);
@@ -40,7 +41,7 @@ describe('selectChartDataWithIndexes', () => {
       dataStartIndex: 0,
       computedData: undefined,
     };
-    expect(spy).toHaveBeenLastCalledWith(expected);
+    expectLastCalledWith(spy, expected);
   });
 
   it('should return none of the data defined on graphical items', () => {
@@ -89,7 +90,7 @@ describe('selectChartDataWithIndexes', () => {
       dataStartIndex: 0,
       computedData: undefined,
     };
-    expect(spy).toHaveBeenLastCalledWith(expected);
+    expectLastCalledWith(spy, expected);
   });
 
   it('should return indexes from Brush element', () => {
@@ -111,6 +112,6 @@ describe('selectChartDataWithIndexes', () => {
       dataStartIndex: 3,
       computedData: undefined,
     };
-    expect(spy).toHaveBeenLastCalledWith(expected);
+    expectLastCalledWith(spy, expected);
   });
 });

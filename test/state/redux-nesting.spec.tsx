@@ -6,6 +6,7 @@ import { act, render } from '@testing-library/react';
 import { Line, LineChart } from '../../src';
 import { selectChartHeight } from '../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../src/state/hooks';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const exampleSlice = createSlice({
   name: 'example',
@@ -60,7 +61,7 @@ describe('when a Recharts chart is used in another Redux app as a neighbour', ()
     const spy = vi.fn();
     render(<App spy={spy} />);
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(100);
+    expectLastCalledWith(spy, 100);
   });
 
   it('should allow selecting data from the parent app store', () => {
@@ -109,7 +110,7 @@ describe('when a Recharts chart is used in another Redux app as a parent', () =>
     const spy = vi.fn();
     render(<App spy={spy} />);
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(100);
+    expectLastCalledWith(spy, 100);
   });
 
   it('should allow selecting data from the parent app store', () => {
