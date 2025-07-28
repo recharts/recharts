@@ -1,7 +1,7 @@
 import { Mock } from 'vitest';
 
 /**
- * Same as calling `expect(spy)toHaveBeenLastCalledWith(expected)` but this time it has correct typescript types.
+ * Same as calling `expect(spy).toHaveBeenLastCalledWith(expected)` but this time it has correct typescript types.
  * This function will check that the type of `expected` is the same as the type of the argument of the spy.
  * @param spy vi.fn()
  * @param expected1 the first expected argument
