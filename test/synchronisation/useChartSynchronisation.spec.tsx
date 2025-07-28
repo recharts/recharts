@@ -9,6 +9,7 @@ import { selectSyncId } from '../../src/state/selectors/rootPropsSelectors';
 import { hideTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('useTooltipChartSynchronisation', () => {
   let eventSpy: Mock<(...args: any[]) => any>;
@@ -30,7 +31,7 @@ describe('useTooltipChartSynchronisation', () => {
 
     it('should select syncId from the state', () => {
       const { spy } = renderTestCase(selectSyncId);
-      expect(spy).toHaveBeenLastCalledWith('my-sync-id');
+      expectLastCalledWith(spy, 'my-sync-id');
     });
 
     it('should send one sync event on the initial render', () => {
@@ -130,7 +131,7 @@ describe('useTooltipChartSynchronisation', () => {
 
     it('should select syncId from the state', () => {
       const { spy } = renderTestCase(selectSyncId);
-      expect(spy).toHaveBeenLastCalledWith('my-sync-id');
+      expectLastCalledWith(spy, 'my-sync-id');
     });
 
     it('should not send any sync events', () => {
@@ -149,7 +150,7 @@ describe('useTooltipChartSynchronisation', () => {
 
     it('should select syncId from the state', () => {
       const { spy } = renderTestCase(selectSyncId);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should not send any sync events', () => {
@@ -169,7 +170,7 @@ describe('useTooltipChartSynchronisation', () => {
 
     it('should select syncId from the state', () => {
       const { spy } = renderTestCase(selectSyncId);
-      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expectLastCalledWith(spy, undefined);
     });
 
     it('should not send any sync events', () => {
