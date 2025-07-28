@@ -10,8 +10,6 @@ import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../he
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
-import { selectPieLegend } from '../../src/state/selectors/pieSelectors';
-import { ResolvedPieSettings, selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 
 describe('<PieChart />', () => {
   const data = [
