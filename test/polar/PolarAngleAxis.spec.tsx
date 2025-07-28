@@ -144,8 +144,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -394,8 +392,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -581,8 +577,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
@@ -685,8 +679,6 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, [
           {
             id: expect.stringMatching('radar-'),
-            barSize: undefined,
-            stackId: undefined,
             type: 'radar',
             angleAxisId: 0,
             data: undefined,
