@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
-
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<PieChart />', () => {
   const data = [
@@ -420,28 +420,28 @@ describe('<PieChart />', () => {
     it('should provide viewBox', () => {
       const { spy } = renderTestCase(useViewBox);
 
-      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expectLastCalledWith(spy, { height: 40, width: 90, x: 5, y: 5 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
       const { spy } = renderTestCase(useClipPathId);
 
-      expect(spy).toHaveBeenLastCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expectLastCalledWith(spy, expect.stringMatching(/recharts\d+-clip/));
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart width', () => {
       const { spy } = renderTestCase(useChartWidth);
 
-      expect(spy).toHaveBeenLastCalledWith(100);
+      expectLastCalledWith(spy, 100);
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart height', () => {
       const { spy } = renderTestCase(useChartHeight);
 
-      expect(spy).toHaveBeenLastCalledWith(50);
+      expectLastCalledWith(spy, 50);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });

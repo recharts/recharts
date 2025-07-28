@@ -4,6 +4,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PolarAngleAxis, RadialBar, RadialBarChart } from '../../src';
 import { PageData } from '../_data';
 import { selectRadiusAxisTicks } from '../../src/state/selectors/radialBarSelectors';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('RadialBarChart reproducing bug #5966', () => {
   const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -38,6 +39,6 @@ describe('RadialBarChart reproducing bug #5966', () => {
 
   it('should not select any radius axis ticks', () => {
     const { spy } = renderTestCase(state => selectRadiusAxisTicks(state, 0, 0, false));
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expectLastCalledWith(spy, undefined);
   });
 });

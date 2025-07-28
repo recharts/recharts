@@ -14,6 +14,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
 import { rangeData } from '../../storybook/stories/data/Page';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('AreaChart', () => {
   beforeEach(() => {
@@ -538,7 +539,7 @@ describe('AreaChart', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
+      expectLastCalledWith(spy, { x: 5, y: 5, width: 90, height: 40 });
     });
 
     it('should provide clipPathId', () => {

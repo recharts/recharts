@@ -1,7 +1,8 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
-
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+
 import {
   Bar,
   BarChart,
@@ -655,7 +656,7 @@ describe('<BarChart />', () => {
 
       it('should select bars', () => {
         const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, barSettings, cells));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             background: {
               height: 40,
@@ -761,7 +762,7 @@ describe('<BarChart />', () => {
 
       it('should select bar size list', () => {
         const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             barSize: undefined,
             dataKeys: ['uv', 'pv'],
@@ -772,37 +773,37 @@ describe('<BarChart />', () => {
 
       test('selectRootMaxBarSize', () => {
         const { spy } = renderTestCase(selectRootMaxBarSize);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
       });
 
       test('selectBarGap', () => {
         const { spy } = renderTestCase(selectBarGap);
-        expect(spy).toHaveBeenLastCalledWith(4);
+        expectLastCalledWith(spy, 4);
       });
 
       test('selectBarCategoryGap', () => {
         const { spy } = renderTestCase(selectBarCategoryGap);
-        expect(spy).toHaveBeenLastCalledWith('10%');
+        expectLastCalledWith(spy, '10%');
       });
 
       test('selectBarBandSize', () => {
         const { spy } = renderTestCase(state => selectBarBandSize(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith(7.5);
+        expectLastCalledWith(spy, 7.5);
       });
 
       test('selectAxisBandSize', () => {
         const { spy } = renderTestCase(state => selectAxisBandSize(state, 0, 0, false));
-        expect(spy).toHaveBeenLastCalledWith(7.5);
+        expectLastCalledWith(spy, 7.5);
       });
 
       test('pickMaxBarSize', () => {
         const { spy } = renderTestCase(state => pickMaxBarSize(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expectLastCalledWith(spy, undefined);
       });
 
       it('should select all bar positions', () => {
         const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith([
+        expectLastCalledWith(spy, [
           {
             dataKeys: ['uv', 'pv'],
             position: {
@@ -816,7 +817,7 @@ describe('<BarChart />', () => {
 
       it('should select bar position', () => {
         const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, barSettings));
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           offset: 0.75,
           size: 6,
         });
@@ -1319,13 +1320,13 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ];
-          expect(spy).toHaveBeenLastCalledWith(expected);
+          expectLastCalledWith(spy, expected);
           expect(spy).toHaveBeenCalledTimes(2);
         });
 
         it('should select bars for first axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'one', 0, false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
@@ -1345,7 +1346,7 @@ describe('<BarChart />', () => {
 
         it('should select bars for second axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'two', 0, false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
@@ -1501,13 +1502,13 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ];
-          expect(spy).toHaveBeenLastCalledWith(expected);
+          expectLastCalledWith(spy, expected);
           expect(spy).toHaveBeenCalledTimes(2);
         });
 
         it('should select bars for left axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'left', false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: 'my-bar-id-1',
               isPanorama: false,
@@ -1541,7 +1542,7 @@ describe('<BarChart />', () => {
 
         it('should select bars for right axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'right', false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: 'my-bar-id-1',
               isPanorama: false,
@@ -1575,7 +1576,7 @@ describe('<BarChart />', () => {
 
         it('should select bar size list for left axis', () => {
           const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               barSize: undefined,
               dataKeys: ['pv'],
@@ -1592,7 +1593,7 @@ describe('<BarChart />', () => {
 
         it('should select bar size list for right axis', () => {
           const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               barSize: undefined,
               dataKeys: ['pv'],
@@ -1609,7 +1610,7 @@ describe('<BarChart />', () => {
 
         it('should select all bar positions for left axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
               position: {
@@ -1632,7 +1633,7 @@ describe('<BarChart />', () => {
 
         it('should select all bar positions for right axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
               position: {
@@ -1772,13 +1773,13 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ];
-          expect(spy).toHaveBeenLastCalledWith(expected);
+          expectLastCalledWith(spy, expected);
           expect(spy).toHaveBeenCalledTimes(2);
         });
 
         it('should select bars for first axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 2, 0, false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
@@ -1812,7 +1813,7 @@ describe('<BarChart />', () => {
 
         it('should select bars for second axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 1, 0, false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
               isPanorama: false,
@@ -1992,13 +1993,13 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ];
-          expect(spy).toHaveBeenLastCalledWith(expected);
+          expectLastCalledWith(spy, expected);
           expect(spy).toHaveBeenCalledTimes(2);
         });
 
         it('should select bars for left axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'left', false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: 'bar-left',
               isPanorama: false,
@@ -2018,7 +2019,7 @@ describe('<BarChart />', () => {
 
         it('should select bars for right axis', () => {
           const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'right', false));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               id: 'bar-right',
               isPanorama: false,
@@ -2038,7 +2039,7 @@ describe('<BarChart />', () => {
 
         it('should select bar size list for left axis', () => {
           const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               barSize: 30,
               dataKeys: ['uv'],
@@ -2050,7 +2051,7 @@ describe('<BarChart />', () => {
 
         it('should select bar size list for right axis', () => {
           const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               barSize: 20,
               dataKeys: ['pv'],
@@ -2062,7 +2063,7 @@ describe('<BarChart />', () => {
 
         it('should select all bar positions for left axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               dataKeys: ['uv'],
               position: {
@@ -2077,7 +2078,7 @@ describe('<BarChart />', () => {
 
         it('should select all bar positions for right axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings));
-          expect(spy).toHaveBeenLastCalledWith([
+          expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
               position: {
@@ -3163,7 +3164,7 @@ describe('<BarChart />', () => {
 
     it('should return offset', () => {
       const { spy } = renderTestCase(useOffset);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         bottom: 80,
         left: 160,
         right: 100,
@@ -3173,7 +3174,7 @@ describe('<BarChart />', () => {
 
     it('should return plot area', () => {
       const { spy } = renderTestCase(usePlotArea);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         height: 0,
         width: 0,
         x: 160,
@@ -3183,7 +3184,7 @@ describe('<BarChart />', () => {
 
     it('should return internal offset', () => {
       const { spy } = renderTestCase(useOffsetInternal);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         bottom: 80,
         brushBottom: 80,
         height: 0,

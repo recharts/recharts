@@ -48,7 +48,7 @@ import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
-
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('ScatterChart of three dimension data', () => {
@@ -1290,7 +1290,7 @@ describe('ScatterChart of two dimension data', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
+      expectLastCalledWith(spy, { x: 5, y: 5, width: 90, height: 40 });
     });
 
     it('should provide clipPathId', () => {
@@ -1553,7 +1553,7 @@ describe('Tooltip integration', () => {
     it('should return tooltip payload', () => {
       // ScatterChart only allows item interaction
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           color: undefined,
           dataKey: 'uv',
@@ -1901,12 +1901,12 @@ describe('Tooltip integration', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select tooltip payload configurations', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(spy, [
         {
           dataDefinedOnItem: [
             [
@@ -2122,7 +2122,7 @@ describe('Tooltip integration', () => {
 
     it('should select active coordinate', () => {
       const { spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', '0'));
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         x: 67.5,
         y: 50.6,
       });
@@ -2342,7 +2342,7 @@ describe('Tooltip integration', () => {
           },
         },
       ];
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expectLastCalledWith(spy, expected);
     });
   });
 });
@@ -2402,15 +2402,15 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
 
   it('should select tooltip active', () => {
     const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', undefined));
-    expect(spy).toHaveBeenLastCalledWith({ activeIndex: null, isActive: false });
+    expectLastCalledWith(spy, { activeIndex: null, isActive: false });
 
     showTooltip(container, scatterChartMouseHoverTooltipSelector);
-    expect(spy).toHaveBeenLastCalledWith({ activeIndex: '0', isActive: true });
+    expectLastCalledWith(spy, { activeIndex: '0', isActive: true });
   });
 
   it('should select tooltipPayloadConfigurations', () => {
     const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         dataDefinedOnItem: [
           [
@@ -2524,7 +2524,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
 
   it('should select chartDataWithIndexes', () => {
     const { spy } = renderTestCase(selectChartDataWithIndexes);
-    expect(spy).toHaveBeenLastCalledWith({
+    expectLastCalledWith(spy, {
       chartData: undefined,
       computedData: undefined,
       dataEndIndex: 0,
@@ -2535,11 +2535,11 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
   it('should select tooltip payload', () => {
     const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', undefined));
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expectLastCalledWith(spy, undefined);
 
     showTooltip(container, scatterChartMouseHoverTooltipSelector);
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenLastCalledWith([
+    expectLastCalledWith(spy, [
       {
         color: undefined,
         dataKey: 'x',
