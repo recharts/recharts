@@ -9,6 +9,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 import { selectPieLegend } from '../../src/state/selectors/pieSelectors';
 import { ResolvedPieSettings, selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 
@@ -234,24 +235,6 @@ describe('<PieChart />', () => {
       { name: 'Group E', value: 0 },
       { name: 'Group F', value: 0 },
     ];
-    const emptyPieSettings: ResolvedPieSettings = {
-      name: 'pie1',
-      nameKey: 'name',
-      data: emptyData,
-      dataKey: 'value',
-      tooltipType: undefined,
-      legendType: 'rect',
-      fill: '#ff7300',
-      cx: 200,
-      cy: 200,
-      outerRadius: 80,
-      innerRadius: 0,
-      startAngle: 0,
-      endAngle: 360,
-      paddingAngle: 0,
-      minAngle: 0,
-      cornerRadius: 0,
-    };
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={800} height={400}>
         <Pie
@@ -269,12 +252,12 @@ describe('<PieChart />', () => {
     ));
 
     test('selectDisplayedData', () => {
-      const { spy } = renderTestCase(state => selectDisplayedData(state, emptyPieSettings, undefined));
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'empty-pie', undefined));
       expectLastCalledWith(spy, emptyData);
     });
 
     test('selectPieLegend', () => {
-      const { spy } = renderTestCase(state => selectPieLegend(state, emptyPieSettings, undefined));
+      const { spy } = renderTestCase(state => selectPieLegend(state, 'empty-pie', undefined));
       expectLastCalledWith(spy, [
         {
           color: '#ff7300',
@@ -389,6 +372,11 @@ describe('<PieChart />', () => {
         {children}
       </PieChart>
     ));
+
+    test('selectDisplayedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'pie1', undefined));
+      expectLastCalledWith(spy, data);
+    });
 
     test('selectPieLegend', () => {
       const { spy } = renderTestCase(state => selectPieLegend(state, 'pie1', undefined));
