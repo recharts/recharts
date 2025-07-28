@@ -1,15 +1,5 @@
 import * as React from 'react';
-import {
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  ReactNode,
-  SVGProps,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useRef, useState } from 'react';
 import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
@@ -181,12 +171,6 @@ export interface PieLabelRenderProps extends PieDef {
   x: number;
   y: number;
   [key: string]: any;
-}
-
-interface State {
-  prevIsAnimationActive?: boolean;
-  prevSectors?: PieSectorDataItem[];
-  curSectors?: PieSectorDataItem[];
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -702,10 +686,8 @@ const defaultPieProps = {
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 
-function PieImpl(props: Props) {
-  const propsWithDefaults: InternalProps = resolveDefaultProps(props, defaultPieProps);
-
-  const { id, ...propsWithoutId } = propsWithDefaults;
+function PieImpl(props: InternalProps) {
+  const { id, ...propsWithoutId } = props;
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
@@ -713,55 +695,50 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
       <PieWithTouchMove {...propsWithoutId} sectors={sectors} />
     </>
   );
 }
 
-export class Pie extends PureComponent<Props, State> {
-  static displayName = 'Pie';
+export function Pie(outsideProps: Props) {
+  const { id: externalId, ...propsWithoutId } = resolveDefaultProps(outsideProps, defaultPieProps);
+  const presentationProps = filterProps(propsWithoutId, false);
 
-  static defaultProps = defaultPieProps;
-
-  render() {
-    const { id: externalId, ...propsWithoutId } = this.props;
-    const presentationProps = filterProps(propsWithoutId, false);
-
-    return (
-      <RegisterGraphicalItemId id={externalId} type="pie">
-        {id => (
-          <>
-            <SetPolarGraphicalItem
-              type="pie"
-              id={id}
-              data={this.props.data}
-              dataKey={this.props.dataKey}
-              hide={this.props.hide}
-              angleAxisId={0}
-              radiusAxisId={0}
-              name={this.props.name}
-              nameKey={this.props.nameKey}
-              tooltipType={this.props.tooltipType}
-              legendType={this.props.legendType}
-              fill={this.props.fill}
-              cx={this.props.cx}
-              cy={this.props.cy}
-              startAngle={this.props.startAngle}
-              endAngle={this.props.endAngle}
-              paddingAngle={this.props.paddingAngle}
-              minAngle={this.props.minAngle}
-              innerRadius={this.props.innerRadius}
-              outerRadius={this.props.outerRadius}
-              cornerRadius={this.props.cornerRadius}
-              presentationProps={presentationProps}
-            />
-            <SetPiePayloadLegend {...this.props} id={id} />
-            <PieImpl {...this.props} id={id} />
-            {this.props.children}
-          </>
-        )}
-      </RegisterGraphicalItemId>
-    );
-  }
+  return (
+    <RegisterGraphicalItemId id={externalId} type="pie">
+      {id => (
+        <>
+          <SetPolarGraphicalItem
+            type="pie"
+            id={id}
+            data={propsWithoutId.data}
+            dataKey={propsWithoutId.dataKey}
+            hide={propsWithoutId.hide}
+            angleAxisId={0}
+            radiusAxisId={0}
+            name={propsWithoutId.name}
+            nameKey={propsWithoutId.nameKey}
+            tooltipType={propsWithoutId.tooltipType}
+            legendType={propsWithoutId.legendType}
+            fill={propsWithoutId.fill}
+            cx={propsWithoutId.cx}
+            cy={propsWithoutId.cy}
+            startAngle={propsWithoutId.startAngle}
+            endAngle={propsWithoutId.endAngle}
+            paddingAngle={propsWithoutId.paddingAngle}
+            minAngle={propsWithoutId.minAngle}
+            innerRadius={propsWithoutId.innerRadius}
+            outerRadius={propsWithoutId.outerRadius}
+            cornerRadius={propsWithoutId.cornerRadius}
+            presentationProps={presentationProps}
+          />
+          <SetPiePayloadLegend {...propsWithoutId} id={id} />
+          <PieImpl {...propsWithoutId} id={id} />
+          {propsWithoutId.children}
+        </>
+      )}
+    </RegisterGraphicalItemId>
+  );
 }
+Pie.displayName = 'Pie';
