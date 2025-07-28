@@ -748,6 +748,7 @@ export class Pie extends PureComponent<Props, State> {
               innerRadius={this.props.innerRadius}
               outerRadius={this.props.outerRadius}
               cornerRadius={this.props.cornerRadius}
+              presentationProps={filterProps(this.props, false)}
             />
             <SetPiePayloadLegend {...this.props} />
             <PieImpl {...this.props} id={id} />

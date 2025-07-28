@@ -43,6 +43,7 @@ import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAx
 import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 import { expectPieSectors } from '../helper/expectPieSectors';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { PieSettings } from '../../src/state/types/PieSettings';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -761,7 +762,7 @@ describe('<Pie />', () => {
           selectTooltipPayloadConfigurations(state, 'item', 'hover', undefined),
         );
 
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, []);
 
         showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
@@ -769,7 +770,7 @@ describe('<Pie />', () => {
           clientY: 200,
         });
 
-        expect(spy).toHaveBeenCalledTimes(5);
+        expect(spy).toHaveBeenCalledTimes(4);
         expectLastCalledWith(spy, [
           {
             dataDefinedOnItem: [
@@ -1139,128 +1140,70 @@ describe('<Pie />', () => {
 
       it('should select unfiltered graphical items', () => {
         const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
-        expectLastCalledWith(spy, [
-          {
-            id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
-            // @ts-expect-error unexpected property
-            angleAxisId: 0,
-            barSize: undefined,
-            data: [
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 72,
-                innerRadius: 50,
-                name: 'A',
-                outerRadius: 100,
-                startAngle: 0,
-                value: 40,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 144,
-                name: 'B',
-                innerRadius: 50,
-                outerRadius: 100,
-                startAngle: 72,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 216,
-                innerRadius: 50,
-                name: 'C',
-                outerRadius: 100,
-                startAngle: 144,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 288,
-                innerRadius: 50,
-                outerRadius: 100,
-                startAngle: 216,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 360,
-                innerRadius: 50,
-                outerRadius: 100,
-                startAngle: 288,
-              },
-            ],
-            dataKey: 'cy',
-            hide: false,
-            radiusAxisId: 0,
-            stackId: undefined,
-            type: 'pie',
+        const expectedPie: PieSettings = {
+          angleAxisId: 0,
+          cornerRadius: undefined,
+          cx: '50%',
+          cy: '50%',
+          data: sectorsData,
+          dataKey: 'cy',
+          endAngle: 360,
+          fill: '#808080',
+          hide: false,
+          id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
+          innerRadius: 0,
+          legendType: 'rect',
+          minAngle: 0,
+          name: undefined,
+          nameKey: 'name',
+          outerRadius: '80%',
+          paddingAngle: 0,
+          presentationProps: {
+            cx: '50%',
+            cy: '50%',
+            fill: '#808080',
+            stroke: '#fff',
           },
-        ]);
+          radiusAxisId: 0,
+          startAngle: 0,
+          tooltipType: undefined,
+          type: 'pie',
+        };
+        expectLastCalledWith(spy, [expectedPie]);
       });
 
       it('should select filtered graphical items', () => {
         const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
-        expectLastCalledWith(spy, [
-          {
-            id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
-            // @ts-expect-error unexpected property
-            angleAxisId: 0,
-            barSize: undefined,
-            data: [
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 72,
-                innerRadius: 50,
-                name: 'A',
-                outerRadius: 100,
-                startAngle: 0,
-                value: 40,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 144,
-                innerRadius: 50,
-                name: 'B',
-                outerRadius: 100,
-                startAngle: 72,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 216,
-                innerRadius: 50,
-                name: 'C',
-                outerRadius: 100,
-                startAngle: 144,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 288,
-                innerRadius: 50,
-                outerRadius: 100,
-                startAngle: 216,
-              },
-              {
-                cx: 250,
-                cy: 250,
-                endAngle: 360,
-                innerRadius: 50,
-                outerRadius: 100,
-                startAngle: 288,
-              },
-            ],
-            dataKey: 'cy',
-            hide: false,
-            radiusAxisId: 0,
-            stackId: undefined,
-            type: 'pie',
+        const expectedPie: PieSettings = {
+          angleAxisId: 0,
+          cornerRadius: undefined,
+          cx: '50%',
+          cy: '50%',
+          data: sectorsData,
+          dataKey: 'cy',
+          endAngle: 360,
+          fill: '#808080',
+          hide: false,
+          id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
+          innerRadius: 0,
+          legendType: 'rect',
+          minAngle: 0,
+          name: undefined,
+          nameKey: 'name',
+          outerRadius: '80%',
+          paddingAngle: 0,
+          presentationProps: {
+            cx: '50%',
+            cy: '50%',
+            fill: '#808080',
+            stroke: '#fff',
           },
-        ]);
+          radiusAxisId: 0,
+          startAngle: 0,
+          tooltipType: undefined,
+          type: 'pie',
+        };
+        expectLastCalledWith(spy, [expectedPie]);
       });
 
       it('should select displayed data', () => {
@@ -1648,20 +1591,38 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
-      expectLastCalledWith(spy, [
-        {
-          angleAxisId: 0,
-          barSize: undefined,
-          data: PageData,
-          dataKey: 'cy',
-          hide: false,
+      expect(spy).toHaveBeenCalledTimes(3);
+      const expectedPie1: PieSettings = {
+        angleAxisId: 0,
+        cornerRadius: undefined,
+        cx: '50%',
+        cy: '50%',
+        data: PageData,
+        dataKey: 'cy',
+        endAngle: 360,
+        fill: '#808080',
+        hide: false,
+        id: 'my-pie',
+        innerRadius: 100,
+        legendType: 'rect',
+        minAngle: 0,
+        name: undefined,
+        nameKey: 'name',
+        outerRadius: '80%',
+        paddingAngle: 0,
+        presentationProps: {
+          cx: '50%',
+          cy: '50%',
+          fill: '#808080',
           id: 'my-pie',
-          radiusAxisId: 0,
-          stackId: undefined,
-          type: 'pie',
+          stroke: '#fff',
         },
-      ]);
+        radiusAxisId: 0,
+        startAngle: 0,
+        tooltipType: undefined,
+        type: 'pie',
+      };
+      expectLastCalledWith(spy, [expectedPie1]);
 
       rerender(
         <PieChart width={500} height={500}>
@@ -1670,20 +1631,38 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(4);
-      expectLastCalledWith(spy, [
-        {
-          angleAxisId: 0,
-          barSize: undefined,
-          data: PageData,
-          dataKey: 'cx',
-          hide: false,
+      expect(spy).toHaveBeenCalledTimes(6);
+      const expectedPie2: PieSettings = {
+        angleAxisId: 0,
+        cornerRadius: undefined,
+        cx: '50%',
+        cy: '50%',
+        data: PageData,
+        dataKey: 'cx',
+        endAngle: 360,
+        fill: '#808080',
+        hide: false,
+        id: 'my-pie',
+        innerRadius: 200,
+        legendType: 'rect',
+        minAngle: 0,
+        name: undefined,
+        nameKey: 'name',
+        outerRadius: 200,
+        paddingAngle: 0,
+        presentationProps: {
+          cx: '50%',
+          cy: '50%',
+          fill: '#808080',
           id: 'my-pie',
-          radiusAxisId: 0,
-          stackId: undefined,
-          type: 'pie',
+          stroke: '#fff',
         },
-      ]);
+        radiusAxisId: 0,
+        startAngle: 0,
+        tooltipType: undefined,
+        type: 'pie',
+      };
+      expectLastCalledWith(spy, [expectedPie2]);
     });
 
     it('should report default props with autogenerated ID', () => {
@@ -1701,19 +1680,36 @@ describe('<Pie />', () => {
       );
 
       expect(spy).toHaveBeenCalledTimes(2);
-      expectLastCalledWith(spy, [
-        {
-          angleAxisId: 0,
-          barSize: undefined,
-          data: PageData,
-          dataKey: 'cy',
-          hide: false,
-          id: expect.stringMatching(/^recharts-pie-.+$/),
-          radiusAxisId: 0,
-          stackId: undefined,
-          type: 'pie',
+      const expectedPie: PieSettings = {
+        angleAxisId: 0,
+        cornerRadius: undefined,
+        cx: '50%',
+        cy: '50%',
+        data: PageData,
+        dataKey: 'cy',
+        endAngle: 360,
+        fill: '#808080',
+        hide: false,
+        id: expect.stringMatching(/^recharts-pie-.+$/),
+        innerRadius: 100,
+        legendType: 'rect',
+        minAngle: 0,
+        name: undefined,
+        nameKey: 'name',
+        outerRadius: '80%',
+        paddingAngle: 0,
+        presentationProps: {
+          cx: '50%',
+          cy: '50%',
+          fill: '#808080',
+          stroke: '#fff',
         },
-      ]);
+        radiusAxisId: 0,
+        startAngle: 0,
+        tooltipType: undefined,
+        type: 'pie',
+      };
+      expectLastCalledWith(spy, [expectedPie]);
     });
   });
 });
