@@ -7,6 +7,7 @@ import { selectBrushDimensions } from '../../src/state/selectors/brushSelectors'
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { useAccessibilityLayer } from '../../src/context/accessibilityContext';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('Chart dimensions', () => {
   describe('simple chart', () => {
@@ -41,7 +42,7 @@ describe('Chart dimensions', () => {
 
     it('should return chart offset', () => {
       const { spy } = renderTestCase(useOffsetInternal);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         bottom: 13,
         brushBottom: 13,
         height: 176,
@@ -76,7 +77,7 @@ describe('Chart dimensions', () => {
 
     it('should select all brush dimensions = 0', () => {
       const { spy } = renderTestCase(selectBrushDimensions);
-      expect(spy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(spy, {
         height: 0,
         width: 0,
         x: 0,
@@ -166,7 +167,7 @@ describe('Chart dimensions', () => {
 
       it('should return chart offset', () => {
         const { spy } = renderTestCase(useOffsetInternal);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           bottom: 53,
           brushBottom: 13,
           height: 136,
@@ -213,7 +214,7 @@ describe('Chart dimensions', () => {
 
       it('should select brush dimensions', () => {
         const { spy } = renderTestCase(selectBrushDimensions);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           height: 40,
           width: 74,
           x: 14,
@@ -285,7 +286,7 @@ describe('Chart dimensions', () => {
 
       it('should return chart offset from the main chart', () => {
         const { spy } = renderTestCase(useOffsetInternal);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           bottom: 53,
           brushBottom: 13,
           height: 136,
@@ -316,7 +317,7 @@ describe('Chart dimensions', () => {
 
       it('should select brush dimensions', () => {
         const { spy } = renderTestCase(selectBrushDimensions);
-        expect(spy).toHaveBeenLastCalledWith({
+        expectLastCalledWith(spy, {
           height: 40,
           width: 74,
           x: 14,
