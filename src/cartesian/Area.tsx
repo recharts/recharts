@@ -39,6 +39,7 @@ import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -921,24 +922,28 @@ export function Area(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
-    <>
-      <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-      <CartesianGraphicalItemContext
-        id={props.id}
-        type="area"
-        data={props.data}
-        dataKey={props.dataKey}
-        xAxisId={props.xAxisId}
-        yAxisId={props.yAxisId}
-        zAxisId={0}
-        stackId={props.stackId}
-        hide={props.hide}
-        barSize={undefined}
-      >
-        {id => <AreaImpl {...props} id={id} />}
-      </CartesianGraphicalItemContext>
-    </>
+    <RegisterGraphicalItemId id={props.id} type="area">
+      {id => (
+        <>
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <CartesianGraphicalItemContext
+            id={id}
+            type="area"
+            data={props.data}
+            dataKey={props.dataKey}
+            xAxisId={props.xAxisId}
+            yAxisId={props.yAxisId}
+            zAxisId={0}
+            stackId={props.stackId}
+            hide={props.hide}
+            barSize={undefined}
+          >
+            <AreaImpl {...props} id={id} />
+          </CartesianGraphicalItemContext>
+        </>
+      )}
+    </RegisterGraphicalItemId>
   );
 }
 Area.displayName = 'Area';

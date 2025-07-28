@@ -41,6 +41,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -719,25 +720,29 @@ export class Line extends PureComponent<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <>
-        <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <CartesianGraphicalItemContext
-          id={this.props.id}
-          type="line"
-          data={this.props.data}
-          xAxisId={this.props.xAxisId}
-          yAxisId={this.props.yAxisId}
-          zAxisId={0}
-          dataKey={this.props.dataKey}
-          // line doesn't stack
-          stackId={undefined}
-          hide={this.props.hide}
-          barSize={undefined}
-        >
-          {id => <LineImpl {...this.props} id={id} />}
-        </CartesianGraphicalItemContext>
-      </>
+      <RegisterGraphicalItemId id={this.props.id} type="line">
+        {id => (
+          <>
+            <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
+            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+            <CartesianGraphicalItemContext
+              id={id}
+              type="line"
+              data={this.props.data}
+              xAxisId={this.props.xAxisId}
+              yAxisId={this.props.yAxisId}
+              zAxisId={0}
+              dataKey={this.props.dataKey}
+              // line doesn't stack
+              stackId={undefined}
+              hide={this.props.hide}
+              barSize={undefined}
+            >
+              <LineImpl {...this.props} id={id} />
+            </CartesianGraphicalItemContext>
+          </>
+        )}
+      </RegisterGraphicalItemId>
     );
   }
 }

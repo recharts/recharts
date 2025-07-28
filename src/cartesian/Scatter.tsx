@@ -48,6 +48,7 @@ import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -626,24 +627,28 @@ export class Scatter extends Component<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <>
-        <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(this.props)} />
-        <CartesianGraphicalItemContext
-          id={this.props.id}
-          type="scatter"
-          data={this.props.data}
-          xAxisId={this.props.xAxisId}
-          yAxisId={this.props.yAxisId}
-          zAxisId={this.props.zAxisId}
-          dataKey={this.props.dataKey}
-          // scatter doesn't stack
-          stackId={undefined}
-          hide={this.props.hide}
-          barSize={undefined}
-        >
-          {id => <ScatterImpl {...this.props} id={id} />}
-        </CartesianGraphicalItemContext>
-      </>
+      <RegisterGraphicalItemId id={this.props.id} type="scatter">
+        {id => (
+          <>
+            <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(this.props)} />
+            <CartesianGraphicalItemContext
+              id={id}
+              type="scatter"
+              data={this.props.data}
+              xAxisId={this.props.xAxisId}
+              yAxisId={this.props.yAxisId}
+              zAxisId={this.props.zAxisId}
+              dataKey={this.props.dataKey}
+              // scatter doesn't stack
+              stackId={undefined}
+              hide={this.props.hide}
+              barSize={undefined}
+            >
+              <ScatterImpl {...this.props} id={id} />
+            </CartesianGraphicalItemContext>
+          </>
+        )}
+      </RegisterGraphicalItemId>
     );
   }
 }

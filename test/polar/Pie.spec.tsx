@@ -1141,7 +1141,7 @@ describe('<Pie />', () => {
         const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
         expectLastCalledWith(spy, [
           {
-            id: expect.stringMatching(/^pie-.+$/),
+            id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
             // @ts-expect-error unexpected property
             angleAxisId: 0,
             barSize: undefined,
@@ -1204,7 +1204,7 @@ describe('<Pie />', () => {
         const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
         expectLastCalledWith(spy, [
           {
-            id: expect.stringMatching(/^pie-.+$/),
+            id: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
             // @ts-expect-error unexpected property
             angleAxisId: 0,
             barSize: undefined,
@@ -1708,7 +1708,7 @@ describe('<Pie />', () => {
           data: PageData,
           dataKey: 'cy',
           hide: false,
-          id: expect.stringMatching(/^pie-.+$/),
+          id: expect.stringMatching(/^recharts-pie-.+$/),
           radiusAxisId: 0,
           stackId: undefined,
           type: 'pie',

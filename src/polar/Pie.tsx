@@ -53,6 +53,7 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -806,22 +807,26 @@ export class Pie extends PureComponent<Props, State> {
 
   render() {
     return (
-      <>
-        <PolarGraphicalItemContext
-          id={this.props.id}
-          data={this.props.data}
-          dataKey={this.props.dataKey}
-          hide={this.props.hide}
-          angleAxisId={0}
-          radiusAxisId={0}
-          stackId={undefined}
-          barSize={undefined}
-          type="pie"
-        />
-        <SetPiePayloadLegend {...this.props} />
-        <PieImpl {...this.props} />
-        {this.props.children}
-      </>
+      <RegisterGraphicalItemId id={this.props.id} type="pie">
+        {id => (
+          <>
+            <PolarGraphicalItemContext
+              id={id}
+              data={this.props.data}
+              dataKey={this.props.dataKey}
+              hide={this.props.hide}
+              angleAxisId={0}
+              radiusAxisId={0}
+              stackId={undefined}
+              barSize={undefined}
+              type="pie"
+            />
+            <SetPiePayloadLegend {...this.props} />
+            <PieImpl {...this.props} id={id} />
+            {this.props.children}
+          </>
+        )}
+      </RegisterGraphicalItemId>
     );
   }
 }

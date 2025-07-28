@@ -66,6 +66,7 @@
   "types/context/CartesianGraphicalItemContext.d.ts",
   "types/context/PanoramaContext.d.ts",
   "types/context/PolarGraphicalItemContext.d.ts",
+  "types/context/RegisterGraphicalItemId.d.ts",
   "types/context/accessibilityContext.d.ts",
   "types/context/brushUpdateContext.d.ts",
   "types/context/chartDataContext.d.ts",

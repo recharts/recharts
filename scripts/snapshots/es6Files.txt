@@ -66,6 +66,7 @@
   "es6/context/CartesianGraphicalItemContext.js",
   "es6/context/PanoramaContext.js",
   "es6/context/PolarGraphicalItemContext.js",
+  "es6/context/RegisterGraphicalItemId.js",
   "es6/context/accessibilityContext.js",
   "es6/context/brushUpdateContext.js",
   "es6/context/chartDataContext.js",
