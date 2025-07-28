@@ -49,7 +49,6 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { CartesianChartProps } from '../../src/util/types';
-import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { BarSettings } from '../../src/state/types/BarSettings';
 import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
 
@@ -1964,7 +1963,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for left axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'my-bar-id-1'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'bar-left'));
           expectLastCalledWith(spy, [
             {
               barSize: 30,
@@ -1976,7 +1975,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for right axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'my-bar-id-2'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'bar-right'));
           expectLastCalledWith(spy, [
             {
               barSize: 20,
@@ -1988,7 +1987,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'my-bar-id-1'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'bar-left'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['uv'],
@@ -2003,7 +2002,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'my-bar-id-2'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'bar-right'));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
