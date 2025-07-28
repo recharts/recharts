@@ -9,6 +9,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { ResolvedPieSettings, selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 
 describe('<PieChart />', () => {
   const data = [
@@ -223,7 +224,7 @@ describe('<PieChart />', () => {
     ]);
   });
 
-  test('Renders legend when all the values are 0', () => {
+  describe('when all values are zero', () => {
     const emptyData = [
       { name: 'Group A', value: 0 },
       { name: 'Group B', value: 0 },
@@ -232,21 +233,122 @@ describe('<PieChart />', () => {
       { name: 'Group E', value: 0 },
       { name: 'Group F', value: 0 },
     ];
-    const { container } = render(
+    const emptyPieSettings: ResolvedPieSettings = {
+      name: 'pie1',
+      nameKey: 'name',
+      data: emptyData,
+      dataKey: 'value',
+      tooltipType: undefined,
+      legendType: 'rect',
+      fill: '#ff7300',
+      cx: 200,
+      cy: 200,
+      outerRadius: 80,
+      innerRadius: 0,
+      startAngle: 0,
+      endAngle: 360,
+      paddingAngle: 0,
+      minAngle: 0,
+      cornerRadius: 0,
+    };
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={800} height={400}>
-        <Pie dataKey="value" data={emptyData} isAnimationActive={false} cx={200} cy={200} outerRadius={80} />
+        <Pie
+          dataKey="value"
+          data={emptyData}
+          isAnimationActive={false}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          id="empty-pie"
+        />
         <Legend />
-      </PieChart>,
-    );
+        {children}
+      </PieChart>
+    ));
 
-    expectLegendLabels(container, [
-      { fill: '#808080', stroke: undefined, textContent: 'Group A' },
-      { fill: '#808080', stroke: undefined, textContent: 'Group B' },
-      { fill: '#808080', stroke: undefined, textContent: 'Group C' },
-      { fill: '#808080', stroke: undefined, textContent: 'Group D' },
-      { fill: '#808080', stroke: undefined, textContent: 'Group E' },
-      { fill: '#808080', stroke: undefined, textContent: 'Group F' },
-    ]);
+    test('selectDisplayedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedData(state, emptyPieSettings, undefined));
+      expectLastCalledWith(spy, emptyData);
+    });
+
+    test('selectPieLegend', () => {
+      const { spy } = renderTestCase(state => selectPieLegend(state, emptyPieSettings, undefined));
+      expectLastCalledWith(spy, [
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group A',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group A',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group B',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group B',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group C',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group C',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group D',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group D',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group E',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group E',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group F',
+            value: 0,
+          },
+          type: 'rect',
+          value: 'Group F',
+        },
+      ]);
+    });
+
+    test('Renders legend when all the values are 0', () => {
+      const { container } = renderTestCase();
+      expectLegendLabels(container, [
+        { fill: '#808080', stroke: undefined, textContent: 'Group A' },
+        { fill: '#808080', stroke: undefined, textContent: 'Group B' },
+        { fill: '#808080', stroke: undefined, textContent: 'Group C' },
+        { fill: '#808080', stroke: undefined, textContent: 'Group D' },
+        { fill: '#808080', stroke: undefined, textContent: 'Group E' },
+        { fill: '#808080', stroke: undefined, textContent: 'Group F' },
+      ]);
+    });
   });
 
   test("Don't renders any sectors when width or height is smaller than 0", () => {
@@ -268,8 +370,27 @@ describe('<PieChart />', () => {
     expectPieSectors(container, []);
   });
 
-  test('Renders 6 legend item when add a Legend element', () => {
-    const { container } = render(
+  describe('with Legend', () => {
+    const pieSettings: ResolvedPieSettings = {
+      name: 'pie1',
+      nameKey: 'name',
+      data,
+      dataKey: 'value',
+      tooltipType: undefined,
+      legendType: 'rect',
+      fill: '#ff7300',
+      cx: 200,
+      cy: 200,
+      outerRadius: 80,
+      innerRadius: 0,
+      startAngle: 0,
+      endAngle: 360,
+      paddingAngle: 0,
+      minAngle: 0,
+      cornerRadius: 0,
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
@@ -280,19 +401,102 @@ describe('<PieChart />', () => {
           outerRadius={80}
           fill="#ff7300"
           label
+          id="pie1"
         />
         <Legend />
-      </PieChart>,
-    );
+        {children}
+      </PieChart>
+    ));
 
-    expectLegendLabels(container, [
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group A' },
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group B' },
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group C' },
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group D' },
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group E' },
-      { fill: '#ff7300', stroke: undefined, textContent: 'Group F' },
-    ]);
+    test('selectDisplayedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedData(state, pieSettings, undefined));
+      expectLastCalledWith(spy, data);
+    });
+
+    test('selectPieLegend', () => {
+      const { spy } = renderTestCase(state => selectPieLegend(state, pieSettings, undefined));
+      expectLastCalledWith(spy, [
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group A',
+            v: 89,
+            value: 400,
+          },
+          type: 'rect',
+          value: 'Group A',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group B',
+            v: 100,
+            value: 300,
+          },
+          type: 'rect',
+          value: 'Group B',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group C',
+            v: 200,
+            value: 200,
+          },
+          type: 'rect',
+          value: 'Group C',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group D',
+            v: 20,
+            value: 200,
+          },
+          type: 'rect',
+          value: 'Group D',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group E',
+            v: 40,
+            value: 278,
+          },
+          type: 'rect',
+          value: 'Group E',
+        },
+        {
+          color: '#ff7300',
+          payload: {
+            // @ts-expect-error extra properties not expected in the type
+            name: 'Group F',
+            v: 60,
+            value: 189,
+          },
+          type: 'rect',
+          value: 'Group F',
+        },
+      ]);
+    });
+
+    test('Renders 6 legend items', () => {
+      const { container } = renderTestCase();
+
+      expectLegendLabels(container, [
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group A' },
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group B' },
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group C' },
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group D' },
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group E' },
+        { fill: '#ff7300', stroke: undefined, textContent: 'Group F' },
+      ]);
+    });
   });
 
   test('Renders tooltip when add a Tooltip element', () => {

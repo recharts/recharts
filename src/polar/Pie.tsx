@@ -743,8 +743,10 @@ const defaultPieProps = {
 function PieImpl(props: Props) {
   const propsWithDefaults: InternalProps = resolveDefaultProps(props, defaultPieProps);
 
+  const { id, ...propsWithoutId } = propsWithDefaults;
+
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const presentationProps = filterProps(propsWithDefaults, false);
+  const presentationProps = filterProps(propsWithoutId, false);
 
   const pieSettings: ResolvedPieSettings = useMemo(
     () => ({
@@ -792,7 +794,7 @@ function PieImpl(props: Props) {
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
-      <PieWithTouchMove {...propsWithDefaults} sectors={sectors} />
+      <PieWithTouchMove {...propsWithoutId} sectors={sectors} />
     </>
   );
 }
