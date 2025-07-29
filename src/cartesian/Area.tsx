@@ -738,14 +738,9 @@ function AreaImpl(props: WithIdRequired<Props>) {
 
   const { height, width, x: left, y: top } = plotArea;
 
-  /*
-   * It is important to NOT have this condition here,
-   * because we need the Animate inside to receive an empty state
-   * so that it can properly reset its internal state and start a new animation.
-   */
-  // if (!points || !points.length) {
-  //   return null;
-  // }
+  if (!points || !points.length) {
+    return null;
+  }
 
   return (
     <AreaWithState
@@ -786,7 +781,7 @@ export const getBaseValue = (
 ): number => {
   // The baseValue can be defined both on the AreaChart, and on the Area.
   // The value for the item takes precedence.
-  const baseValue: BaseValue = itemBaseValue ?? chartBaseValue;
+  const baseValue: BaseValue | undefined = itemBaseValue ?? chartBaseValue;
 
   if (isNumber(baseValue)) {
     return baseValue;
