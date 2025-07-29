@@ -51,7 +51,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -170,7 +170,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
     return null;
   }
 
-  const scatterProps = svgOnlyNoEvents(props);
+  const scatterProps = svgPropertiesNoEvents(props);
   const customLineProps = filterProps(line, false);
   let linePoints, lineItem;
 
@@ -227,7 +227,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   }
 
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
-  const baseProps = svgOnlyNoEvents(allOtherPropsWithoutId);
+  const baseProps = svgPropertiesNoEvents(allOtherPropsWithoutId);
 
   return (
     <>

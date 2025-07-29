@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 type PolarRadiusViewBox = {
   cx: number;
@@ -115,7 +115,7 @@ const renderAxisLine = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElem
   const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
   const axisLineProps = {
-    ...svgOnlyNoEvents(others),
+    ...svgPropertiesNoEvents(others),
     fill: 'none',
     ...filterProps(axisLine, false),
     x1: point0.x,
@@ -149,7 +149,7 @@ const renderTickItem = (option: Props['tick'], tickProps: any, value: string | n
 const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
   const { angle, tickFormatter, stroke, tick, ...others } = props;
   const textAnchor = getTickTextAnchor(props.orientation);
-  const axisProps = svgOnlyNoEvents(others);
+  const axisProps = svgPropertiesNoEvents(others);
   const customTickProps = filterProps(tick, false);
 
   const items = ticks.map((entry, i) => {

@@ -51,7 +51,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -71,7 +71,7 @@ type RadialBarSectorsProps = {
 
 function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
-  const baseProps = svgOnlyNoEvents(others);
+  const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {

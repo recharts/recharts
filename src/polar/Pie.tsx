@@ -45,7 +45,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PieSettings } from '../state/types/PieSettings';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -330,7 +330,7 @@ function PieLabels({
   if (!showLabels || !label || !sectors) {
     return null;
   }
-  const pieProps = svgOnlyNoEvents(props);
+  const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = filterProps(label, false);
   const customLabelLineProps = filterProps(labelLine, false);
   const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
@@ -690,7 +690,7 @@ function PieImpl(props: InternalProps) {
 
 export function Pie(outsideProps: Props) {
   const { id: externalId, ...propsWithoutId } = resolveDefaultProps(outsideProps, defaultPieProps);
-  const presentationProps = svgOnlyNoEvents(propsWithoutId);
+  const presentationProps = svgPropertiesNoEvents(propsWithoutId);
 
   return (
     <RegisterGraphicalItemId id={externalId} type="pie">

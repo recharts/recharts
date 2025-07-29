@@ -26,7 +26,7 @@ import { clsx } from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface CurveFactories {
   [index: string]: CurveFactory;
@@ -173,7 +173,7 @@ export const Curve: React.FC<Props> = props => {
 
   return (
     <path
-      {...svgOnlyNoEvents(props)}
+      {...svgPropertiesNoEvents(props)}
       {...adaptEventHandlers(props)}
       className={clsx('recharts-curve', className)}
       d={realPath === null ? undefined : realPath}

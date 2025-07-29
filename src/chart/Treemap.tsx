@@ -30,7 +30,7 @@ import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { Animate } from '../animation/Animate';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -764,7 +764,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
-    const nodeProps = { ...svgOnlyNoEvents(this.props), ...node, root };
+    const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
@@ -874,7 +874,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   render() {
     const { width, height, className, style, children, type, ...others } = this.props;
-    const attrs = svgOnlyNoEvents(others);
+    const attrs = svgPropertiesNoEvents(others);
 
     return (
       <TooltipPortalContext.Provider value={this.state.tooltipPortal}>

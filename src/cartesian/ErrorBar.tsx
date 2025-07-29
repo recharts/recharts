@@ -12,7 +12,7 @@ import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarC
 import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -87,7 +87,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     animationEasing,
     ...others
   } = props;
-  const svgProps = svgOnlyNoEvents(others);
+  const svgProps = svgPropertiesNoEvents(others);
 
   const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset } = useErrorBarContext();
 

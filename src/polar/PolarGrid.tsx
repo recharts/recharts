@@ -7,7 +7,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { PolarViewBox } from '../util/types';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface PolarGridProps {
   cx?: number;
@@ -57,7 +57,7 @@ const PolarAngles: React.FC<Props> = props => {
   }
   const polarAnglesProps = {
     stroke: '#ccc',
-    ...svgOnlyNoEvents(props),
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
@@ -77,7 +77,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius, index } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
-    ...svgOnlyNoEvents(props),
+    ...svgPropertiesNoEvents(props),
     fill: 'none',
   };
 
@@ -99,7 +99,7 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   const { radius, index } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
-    ...svgOnlyNoEvents(props),
+    ...svgPropertiesNoEvents(props),
     fill: 'none',
   };
 

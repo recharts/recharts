@@ -17,7 +17,7 @@ import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/se
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 /**
  * The <CartesianGrid horizontal
@@ -184,7 +184,7 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
     lineItem = option(props);
   } else {
     const { x1, y1, x2, y2, key, ...others } = props;
-    const { offset: __, ...restOfFilteredProps } = svgOnlyNoEvents(others);
+    const { offset: __, ...restOfFilteredProps } = svgPropertiesNoEvents(others);
     lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
   }
 

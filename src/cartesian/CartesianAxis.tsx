@@ -21,7 +21,7 @@ import {
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -280,7 +280,7 @@ export class CartesianAxis extends Component<Props, IState> {
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
-    const axisProps = svgOnlyNoEvents(this.props);
+    const axisProps = svgPropertiesNoEvents(this.props);
     const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,

@@ -22,7 +22,7 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -139,7 +139,7 @@ const AxisLine = (props: PropsWithTicks) => {
     return null;
   }
   const axisLineProps = {
-    ...svgOnlyNoEvents(props),
+    ...svgPropertiesNoEvents(props),
     fill: 'none',
     ...filterProps(axisLine, false),
   };
@@ -185,7 +185,7 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement =
 
 const Ticks = (props: PropsWithTicks) => {
   const { tick, tickLine, tickFormatter, stroke, ticks } = props;
-  const axisProps = svgOnlyNoEvents(props);
+  const axisProps = svgPropertiesNoEvents(props);
   const customTickProps = filterProps(tick, false);
   const tickLineProps = {
     ...axisProps,

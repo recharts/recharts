@@ -28,7 +28,7 @@ import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -132,7 +132,7 @@ function TravellerLayer({
   const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
-    ...svgOnlyNoEvents(otherProps),
+    ...svgPropertiesNoEvents(otherProps),
     x,
     y,
     width: travellerWidth,

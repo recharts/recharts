@@ -42,7 +42,7 @@ import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -251,7 +251,7 @@ function Dots({
   const { id, ...propsWithoutId } = props;
 
   const clipDot = isClipDot(dot);
-  const lineProps = svgOnlyNoEvents(propsWithoutId);
+  const lineProps = svgPropertiesNoEvents(propsWithoutId);
   const customDotProps = filterProps(dot, true);
 
   const dots = points.map((entry, i) => {

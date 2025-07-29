@@ -38,7 +38,7 @@ import { Cell } from '../component/Cell';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -387,7 +387,7 @@ function FunnelImpl(props: Props) {
     ...everythingElse
   } = resolveDefaultProps(props, defaultFunnelProps);
 
-  const presentationProps = svgOnlyNoEvents(props);
+  const presentationProps = svgPropertiesNoEvents(props);
   const cells = findAllByType(props.children, Cell);
 
   const funnelSettings: ResolvedFunnelSettings = useMemo(

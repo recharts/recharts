@@ -6,7 +6,7 @@ import { isFragment } from 'react-is';
 import { isNullish } from './DataUtils';
 import { ActiveDotType, FilteredElementKeyMap, FilteredSvgElementType } from './types';
 import { isEventKey } from './excludeEventProps';
-import { isSvgElementPropKey } from './svgOnlyNoEvents';
+import { isSvgElementPropKey } from './svgPropertiesNoEvents';
 
 export const SCALE_TYPES = [
   'auto',

@@ -58,7 +58,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 type Rectangle = {
   x: number | null;
@@ -290,7 +290,7 @@ function BarRectangles({
   props: BarRectanglesProps;
   showLabels: boolean;
 }) {
-  const { id, ...baseProps } = svgOnlyNoEvents(props);
+  const { id, ...baseProps } = svgPropertiesNoEvents(props);
   const { shape, dataKey, activeBar } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);

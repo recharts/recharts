@@ -27,7 +27,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -527,7 +527,7 @@ function renderLinkItem(option: SankeyLinkOptions, props: LinkProps) {
       stroke="#333"
       strokeWidth={linkWidth}
       strokeOpacity="0.2"
-      {...svgOnlyNoEvents(others)}
+      {...svgPropertiesNoEvents(others)}
     />
   );
 }
@@ -676,8 +676,10 @@ function renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
     return option(props);
   }
 
-  // @ts-expect-error recharts radius is not compatible with SVG radius
-  return <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...svgOnlyNoEvents(props)} />;
+  return (
+    // @ts-expect-error recharts radius is not compatible with SVG radius
+    <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...svgPropertiesNoEvents(props)} />
+  );
 }
 
 const buildNodeProps = ({
@@ -903,7 +905,7 @@ export class Sankey extends PureComponent<Props, State> {
     }
 
     const { links, modifiedNodes, modifiedLinks } = this.state;
-    const attrs = svgOnlyNoEvents(others);
+    const attrs = svgPropertiesNoEvents(others);
 
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>

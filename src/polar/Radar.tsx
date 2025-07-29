@@ -35,7 +35,7 @@ import { useAnimationId } from '../util/useAnimationId';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
-import { svgOnlyNoEvents } from '../util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface RadarPoint {
   x: number;
@@ -228,7 +228,7 @@ function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
   }
   const { id, ...propsWithoutId } = props;
 
-  const baseProps = svgOnlyNoEvents(propsWithoutId);
+  const baseProps = svgPropertiesNoEvents(propsWithoutId);
   const customDotProps = filterProps(dot, true);
 
   const dots = points.map((entry, i) => {

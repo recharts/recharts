@@ -1,8 +1,8 @@
 import { CSSProperties } from 'react';
 import { describe, it, expect } from 'vitest';
-import { svgOnlyNoEvents } from '../../src/util/svgOnlyNoEvents';
+import { svgPropertiesNoEvents } from '../../src/util/svgPropertiesNoEvents';
 
-describe('svgOnlyNoEvents', () => {
+describe('svgPropertiesNoEvents', () => {
   it('should allow only SVG properties and exclude event handlers', () => {
     const input = {
       'aria-label': 'test',
@@ -24,7 +24,7 @@ describe('svgOnlyNoEvents', () => {
       custom: 'not-a-svg-prop',
     };
 
-    const output = svgOnlyNoEvents(input);
+    const output = svgPropertiesNoEvents(input);
 
     expect(output).toEqual({
       'aria-label': 'test',
@@ -49,14 +49,14 @@ describe('svgOnlyNoEvents', () => {
       custom: 'not-a-svg-prop',
     };
 
-    const output = svgOnlyNoEvents(input);
+    const output = svgPropertiesNoEvents(input);
 
     expect(output).toEqual({});
   });
 
   it('should handle an empty object', () => {
     const input = {};
-    const output = svgOnlyNoEvents(input);
+    const output = svgPropertiesNoEvents(input);
     expect(output).toEqual({});
   });
 
@@ -112,10 +112,10 @@ describe('svgOnlyNoEvents', () => {
       style?: CSSProperties;
     };
     // @ts-expect-error this should be a type error because `width` is not in the input, so it should not be in the output either
-    const w = svgOnlyNoEvents(input).width;
+    const w = svgPropertiesNoEvents(input).width;
     expect(w).toBeUndefined(); // width is not in the input, so it should not be in the output
 
-    const output: ExpectedOutputType = svgOnlyNoEvents(input);
+    const output: ExpectedOutputType = svgPropertiesNoEvents(input);
     expect(output).toEqual({
       'aria-label': 'test',
       className: 'svg-class',
