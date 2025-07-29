@@ -51,6 +51,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -169,7 +170,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
     return null;
   }
 
-  const scatterProps = filterProps(props, false);
+  const scatterProps = svgPropertiesNoEvents(props);
   const customLineProps = filterProps(line, false);
   let linePoints, lineItem;
 
@@ -226,7 +227,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   }
 
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
-  const baseProps = filterProps(allOtherPropsWithoutId, false);
+  const baseProps = svgPropertiesNoEvents(allOtherPropsWithoutId);
 
   return (
     <>
@@ -255,6 +256,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           >
+            {/* @ts-expect-error recharts cx, cy is not compatible with SVG cx, cy */}
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
           </Layer>
         );

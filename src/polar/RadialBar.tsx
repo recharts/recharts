@@ -51,6 +51,7 @@ import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -70,7 +71,7 @@ type RadialBarSectorsProps = {
 
 function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
-  const baseProps = filterProps(others, false);
+  const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -99,6 +100,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
         // @ts-expect-error the types need a bit of attention
         const onClick = onClickFromContext(entry, i);
 
+        // @ts-expect-error cx types are incompatible
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),

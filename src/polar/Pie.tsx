@@ -44,6 +44,8 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
+import { PieSettings } from '../state/types/PieSettings';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -328,7 +330,7 @@ function PieLabels({
   if (!showLabels || !label || !sectors) {
     return null;
   }
-  const pieProps = filterProps(props, false);
+  const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = filterProps(label, false);
   const customLabelLineProps = filterProps(labelLine, false);
   const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
@@ -433,22 +435,7 @@ export function computePieSectors({
 }: {
   displayedData: ReadonlyArray<RealPieData>;
   cells: ReadonlyArray<ReactElement> | undefined;
-  pieSettings: {
-    dataKey: DataKey<any> | undefined;
-    tooltipType?: TooltipType;
-    name?: string | number;
-    nameKey?: DataKey<any>;
-    cx?: number | string;
-    cy?: number | string;
-    startAngle?: number;
-    endAngle?: number;
-    paddingAngle?: number;
-    minAngle?: number;
-    innerRadius?: number | string;
-    outerRadius?: number | string | ((dataPoint: any) => number);
-    cornerRadius?: number | string;
-    presentationProps?: Record<string, string>;
-  };
+  pieSettings: PieSettings;
   offset: ChartOffsetInternal;
 }): ReadonlyArray<PieSectorDataItem> {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
@@ -703,7 +690,7 @@ function PieImpl(props: InternalProps) {
 
 export function Pie(outsideProps: Props) {
   const { id: externalId, ...propsWithoutId } = resolveDefaultProps(outsideProps, defaultPieProps);
-  const presentationProps = filterProps(propsWithoutId, false);
+  const presentationProps = svgPropertiesNoEvents(propsWithoutId);
 
   return (
     <RegisterGraphicalItemId id={externalId} type="pie">
@@ -731,6 +718,7 @@ export function Pie(outsideProps: Props) {
             innerRadius={propsWithoutId.innerRadius}
             outerRadius={propsWithoutId.outerRadius}
             cornerRadius={propsWithoutId.cornerRadius}
+            // @ts-expect-error we're passing DataKey and other internals as presentationProps
             presentationProps={presentationProps}
           />
           <SetPiePayloadLegend {...propsWithoutId} id={id} />

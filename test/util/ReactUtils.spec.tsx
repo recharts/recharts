@@ -5,7 +5,7 @@ import { Bar, Line } from '../../src';
 import { filterProps, findAllByType, getDisplayName, isValidSpreadableProp, toArray } from '../../src/util/ReactUtils';
 import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 
-describe('ReactUtils untest tests', () => {
+describe('ReactUtils', () => {
   describe('filterProps', () => {
     test.each([true, false, 125, null, undefined])('should return null when called with %s', input => {
       expect(filterProps(input, false)).toBeNull();
@@ -39,11 +39,17 @@ describe('ReactUtils untest tests', () => {
       expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: { x: 1, y: 2 } }, false)).toEqual({});
     });
 
-    test('should include events when includeEvents is true', () => {
+    test('should include events and svg elements when includeEvents is true and SVG type is passed', () => {
       expect(
         filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: vi.fn() }, true, 'svg'),
       ).toEqual({
         viewBox: '0 0 0 0',
+        onClick: expect.any(Function),
+      });
+    });
+
+    test('should include _only_ events when includeEvents is true and no specific SVG element type is passed', () => {
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: vi.fn() }, true)).toEqual({
         onClick: expect.any(Function),
       });
     });
@@ -74,6 +80,49 @@ describe('ReactUtils untest tests', () => {
         'data-x': 'foo',
       });
     });
+
+    test('should only return SVG-compatible attributes, excluding events', () => {
+      const input = {
+        data: [
+          { name: 'Page A', uv: 590, pv: 800, amt: 1400 },
+          { name: 'Page B', uv: 590, pv: 800, amt: 1400 },
+          { name: 'Page C', uv: 868, pv: 967, amt: 1506 },
+          { name: 'Page D', uv: 1397, pv: 1098, amt: 989 },
+          { name: 'Page E', uv: 1480, pv: 1200, amt: 1228 },
+          { name: 'Page F', uv: 1520, pv: 1108, amt: 1100 },
+          { name: 'Page G', uv: 1400, pv: 680, amt: 1700 },
+        ],
+        dataKey: 'uv',
+        animationBegin: 400,
+        animationDuration: 1500,
+        animationEasing: 'ease',
+        cx: '50%',
+        cy: '50%',
+        endAngle: 360,
+        fill: '#808080',
+        hide: false,
+        innerRadius: 0,
+        isAnimationActive: true,
+        labelLine: true,
+        legendType: 'rect',
+        minAngle: 0,
+        nameKey: 'name',
+        outerRadius: '80%',
+        paddingAngle: 0,
+        rootTabIndex: 0,
+        startAngle: 0,
+        stroke: '#fff',
+        onClick: vi.fn(),
+      };
+      const result = filterProps(input, false);
+      const expected = {
+        cx: '50%',
+        cy: '50%',
+        fill: '#808080',
+        stroke: '#fff',
+      };
+      expect(result).toEqual(expected);
+    });
   });
 
   describe('isValidSpreadableProp', () => {
@@ -95,6 +144,11 @@ describe('ReactUtils untest tests', () => {
     test('return true for valid SVGElementType', () => {
       const isValid = isValidSpreadableProp('00 00 00 00', 'points', false, 'polyline');
       expect(isValid).toBeTruthy();
+    });
+
+    test('return true for numbers and symbols', () => {
+      expect(isValidSpreadableProp('numbers are valid keys', 6)).toBeTruthy();
+      expect(isValidSpreadableProp('symbols are valid keys', Symbol('test'))).toBeTruthy();
     });
   });
 

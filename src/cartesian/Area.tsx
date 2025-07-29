@@ -47,6 +47,7 @@ import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { AreaSettings } from '../state/types/AreaSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -221,7 +222,7 @@ function Dots({
   }
 
   const clipDot = isClipDot(dot);
-  const areaProps = filterProps(props, false);
+  const areaProps = svgPropertiesNoEvents(props);
   const customDotProps = filterProps(dot, true);
 
   const dots = points.map((entry: AreaPointItem, i: number) => {
@@ -269,7 +270,7 @@ function StaticArea({
   const { layout, type, stroke, connectNulls, isRange } = props;
 
   const { id, ...propsWithoutId } = props;
-  const allOtherProps = filterProps(propsWithoutId, false);
+  const allOtherProps = svgPropertiesNoEvents(propsWithoutId);
 
   return (
     <>

@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { clsx } from 'clsx';
 import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
+
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface DotProps {
   className?: string;
@@ -23,7 +24,7 @@ export const Dot: React.FC<Props> = props => {
   if (cx === +cx && cy === +cy && r === +r) {
     return (
       <circle
-        {...filterProps(props, false)}
+        {...svgPropertiesNoEvents(props)}
         {...adaptEventHandlers(props)}
         className={layerClass}
         cx={cx}

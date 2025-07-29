@@ -4,7 +4,9 @@ import * as React from 'react';
 import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { isNullish } from './DataUtils';
-import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
+import { ActiveDotType, FilteredElementKeyMap, FilteredSvgElementType } from './types';
+import { isEventKey } from './excludeEventProps';
+import { isSvgElementPropKey } from './svgPropertiesNoEvents';
 
 export const SCALE_TYPES = [
   'auto',
@@ -121,10 +123,14 @@ export const isClipDot = (dot: ActiveDotType): boolean => {
  */
 export const isValidSpreadableProp = (
   property: unknown,
-  key: string,
+  key: PropertyKey,
   includeEvents?: boolean,
   svgElementType?: FilteredSvgElementType,
-) => {
+): boolean => {
+  if (typeof key === 'symbol' || typeof key === 'number') {
+    // Allow symbols and numbers as valid keys
+    return true;
+  }
   /**
    * If the svg element type is explicitly included, check against the filtered element key map
    * to determine if there are attributes that should only exist on that element type.
@@ -132,14 +138,25 @@ export const isValidSpreadableProp = (
    */
   const matchingElementTypeKeys = (svgElementType && FilteredElementKeyMap?.[svgElementType]) ?? [];
 
-  return (
-    key.startsWith('data-') ||
-    (typeof property !== 'function' &&
-      ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
-    (includeEvents && EventKeys.includes(key))
-  );
+  const isDataAttribute = key.startsWith('data-');
+  const isSpecificSvgAttribute: boolean =
+    typeof property !== 'function' &&
+    ((Boolean(svgElementType) && matchingElementTypeKeys.includes(key)) || isSvgElementPropKey(key));
+  const isEventAttribute: boolean = Boolean(includeEvents) && isEventKey(key);
+  return isDataAttribute || isSpecificSvgAttribute || isEventAttribute;
 };
 
+/**
+ * Filters the props object to only include valid SVG attributes or event handlers.
+ * @deprecated do not use this function, as it is not type-safe and may lead to unexpected behavior. Returns `any`.
+ * Instead, use:
+ * - `excludeEventProps` to exclude event handlers
+ * - `svgOnlyNoEvents` to exclude non-SVG attributes, and exclude event handlers too
+ * @param props - The props object to filter, which can be a Record, Component, FunctionComponent, boolean, or unknown.
+ * @param includeEvents - A boolean indicating whether to include event handlers in the filtered props.
+ * @param svgElementType - An optional parameter specifying the type of SVG element to filter attributes for.
+ * @returns A new object containing only valid SVG attributes or event handlers, or null if the input is not valid.
+ */
 export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean | unknown,
   includeEvents: boolean,

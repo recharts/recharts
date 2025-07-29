@@ -2,12 +2,12 @@ import { clsx } from 'clsx';
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
-import { filterProps } from '../util/ReactUtils';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { PolarViewBox } from '../util/types';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface PolarGridProps {
   cx?: number;
@@ -22,7 +22,7 @@ interface PolarGridProps {
   radiusAxisId?: AxisId;
 }
 
-export type Props = SVGProps<SVGPathElement> & PolarGridProps;
+export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 
 type ConcentricProps = Props & {
   // The radius of circle
@@ -57,7 +57,7 @@ const PolarAngles: React.FC<Props> = props => {
   }
   const polarAnglesProps = {
     stroke: '#ccc',
-    ...filterProps(props, false),
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
@@ -77,11 +77,12 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius, index } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
-    ...filterProps(props, false),
+    ...svgPropertiesNoEvents(props),
     fill: 'none',
   };
 
   return (
+    // @ts-expect-error wrong SVG element type
     <circle
       {...concentricCircleProps}
       className={clsx('recharts-polar-grid-concentric-circle', props.className)}
@@ -98,7 +99,7 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   const { radius, index } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
-    ...filterProps(props, false),
+    ...svgPropertiesNoEvents(props),
     fill: 'none',
   };
 

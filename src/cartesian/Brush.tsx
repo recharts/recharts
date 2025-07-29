@@ -19,7 +19,6 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -29,6 +28,7 @@ import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -132,7 +132,7 @@ function TravellerLayer({
   const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
-    ...filterProps(otherProps, false),
+    ...svgPropertiesNoEvents(otherProps),
     x,
     y,
     width: travellerWidth,
