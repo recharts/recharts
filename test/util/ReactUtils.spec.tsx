@@ -123,6 +123,50 @@ describe('ReactUtils', () => {
       };
       expect(result).toEqual(expected);
     });
+
+    test('should only return SVG-compatible attributes, including events', () => {
+      const input = {
+        data: [
+          { name: 'Page A', uv: 590, pv: 800, amt: 1400 },
+          { name: 'Page B', uv: 590, pv: 800, amt: 1400 },
+          { name: 'Page C', uv: 868, pv: 967, amt: 1506 },
+          { name: 'Page D', uv: 1397, pv: 1098, amt: 989 },
+          { name: 'Page E', uv: 1480, pv: 1200, amt: 1228 },
+          { name: 'Page F', uv: 1520, pv: 1108, amt: 1100 },
+          { name: 'Page G', uv: 1400, pv: 680, amt: 1700 },
+        ],
+        dataKey: 'uv',
+        animationBegin: 400,
+        animationDuration: 1500,
+        animationEasing: 'ease',
+        cx: '50%',
+        cy: '50%',
+        endAngle: 360,
+        fill: '#808080',
+        hide: false,
+        innerRadius: 0,
+        isAnimationActive: true,
+        labelLine: true,
+        legendType: 'rect',
+        minAngle: 0,
+        nameKey: 'name',
+        outerRadius: '80%',
+        paddingAngle: 0,
+        rootTabIndex: 0,
+        startAngle: 0,
+        stroke: '#fff',
+        onClick: vi.fn(),
+      };
+      const result = filterProps(input, true);
+      const expected = {
+        cx: '50%',
+        cy: '50%',
+        fill: '#808080',
+        stroke: '#fff',
+        onClick: input.onClick,
+      };
+      expect(result).toEqual(expected);
+    });
   });
 
   describe('isValidSpreadableProp', () => {
