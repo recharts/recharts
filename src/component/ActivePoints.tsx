@@ -73,7 +73,7 @@ type ActivePointsProps = {
    * `undefined` means that the color is not set, and the point will be transparent.
    */
   mainColor: string | undefined;
-  itemDataKey: DataKey<any>;
+  itemDataKey: DataKey<any> | undefined;
   activeDot: ActiveDotType;
 };
 

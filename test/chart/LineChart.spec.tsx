@@ -617,7 +617,7 @@ describe('<LineChart />', () => {
     expect(onMouseDown).toHaveBeenCalledWith(
       expect.objectContaining({
         className: 'recharts-line-curve',
-        clipPath: null,
+        clipPath: undefined,
         connectNulls: false,
         fill: 'none',
         height: 360,
@@ -643,7 +643,7 @@ describe('<LineChart />', () => {
     expect(onMouseUp).toHaveBeenCalledWith(
       expect.objectContaining({
         className: 'recharts-line-curve',
-        clipPath: null,
+        clipPath: undefined,
         connectNulls: false,
         fill: 'none',
         height: 360,
@@ -668,7 +668,7 @@ describe('<LineChart />', () => {
     expect(onClick).toHaveBeenCalledWith(
       expect.objectContaining({
         className: 'recharts-line-curve',
-        clipPath: null,
+        clipPath: undefined,
         connectNulls: false,
         fill: 'none',
         height: 360,
