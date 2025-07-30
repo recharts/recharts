@@ -15,8 +15,8 @@ import { Animate } from '../animation/Animate';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 export interface ErrorBarDataItem {
-  x: number;
-  y: number;
+  x: number | null;
+  y: number | null;
   value: number;
   errorVal?: number[] | number;
 }
@@ -106,7 +106,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   const errorBars = data.map((entry: any) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey, direction);
 
-    if (!errorVal) {
+    if (!errorVal || x == null || y == null) {
       return null;
     }
 

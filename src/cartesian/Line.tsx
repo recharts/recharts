@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Component, MutableRefObject, Ref, useCallback, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
-import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
-import { interpolateNumber, isNullish } from '../util/DataUtils';
+import { interpolate, isNullish } from '../util/DataUtils';
 import { filterProps, isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -44,9 +44,15 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
-export interface LinePointItem extends CurvePoint {
-  readonly value?: number;
+export interface LinePointItem {
+  readonly value: number;
   readonly payload?: any;
+  /**
+   * Line coordinates can have gaps in them. We have `connectNulls` prop that allows to connect those gaps anyway.
+   * What it means is that some points can have `null` x or y coordinates.
+   */
+  x: number | null;
+  y: number | null;
 }
 
 /**
@@ -64,13 +70,13 @@ interface InternalLineProps {
   data?: any;
   dataKey?: DataKey<any>;
   dot: ActiveDotType;
-  height?: number;
+  height: number;
   hide: boolean;
   id: string;
   isAnimationActive: boolean;
   label: ImplicitLabelType;
   layout: 'horizontal' | 'vertical';
-  left?: number;
+  left: number;
   legendType: LegendType;
 
   name?: string | number;
@@ -81,10 +87,10 @@ interface InternalLineProps {
 
   points: ReadonlyArray<LinePointItem>;
   tooltipType?: TooltipType;
-  top?: number;
+  top: number;
   type?: CurveType;
   unit?: string | number;
-  width?: number;
+  width: number;
   xAxisId: AxisId;
   yAxisId: AxisId;
 }
@@ -272,7 +278,7 @@ function Dots({
     return renderDotItem(dot, dotProps);
   });
   const dotsProps = {
-    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
+    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined,
   };
 
   return (
@@ -302,7 +308,7 @@ function StaticCurve({
     ...filterProps(others, true),
     fill: 'none',
     className: 'recharts-line-curve',
-    clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    clipPath: needClip ? `url(#clipPath-${clipPathId})` : undefined,
     points,
     type,
     layout,
@@ -336,9 +342,9 @@ function CurveWithAnimation({
 }: {
   clipPathId: string;
   props: InternalProps;
-  pathRef: MutableRefObject<SVGPathElement>;
+  pathRef: MutableRefObject<SVGPathElement | null>;
   longestAnimatedLengthRef: MutableRefObject<number>;
-  previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem>>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
 }) {
   const {
     points,
@@ -405,8 +411,8 @@ function CurveWithAnimation({
       key={animationId}
     >
       {({ t }: { t: number }) => {
-        const interpolator = interpolateNumber(startingPoint, totalLength + startingPoint);
-        const curLength = Math.min(interpolator(t), totalLength);
+        const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
+        const curLength = Math.min(lengthInterpolated, totalLength);
         let currentStrokeDasharray;
 
         if (strokeDasharray) {
@@ -421,23 +427,30 @@ function CurveWithAnimation({
           const stepData =
             t === 1
               ? points
-              : points.map((entry, index) => {
+              : points.map((entry, index): LinePointItem => {
                   const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
                   if (prevPoints[prevPointIndex]) {
                     const prev = prevPoints[prevPointIndex];
-                    const interpolatorX = interpolateNumber(prev.x, entry.x);
-                    const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                    return {
+                      ...entry,
+                      x: interpolate(prev.x, entry.x, t),
+                      y: interpolate(prev.y, entry.y, t),
+                    };
                   }
 
                   // magic number of faking previous x and y location
                   if (animateNewValues) {
-                    const interpolatorX = interpolateNumber(width * 2, entry.x);
-                    const interpolatorY = interpolateNumber(height / 2, entry.y);
-                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                    return {
+                      ...entry,
+                      x: interpolate(width * 2, entry.x, t),
+                      y: interpolate(height / 2, entry.y, t),
+                    };
                   }
-                  return { ...entry, x: entry.x, y: entry.y };
+                  return {
+                    ...entry,
+                    x: entry.x,
+                    y: entry.y,
+                  };
                 });
           // eslint-disable-next-line no-param-reassign
           previousPointsRef.current = stepData;
@@ -633,16 +646,18 @@ function LineImpl(props: WithIdRequired<Props>) {
   } = resolveDefaultProps(props, defaultLineProps);
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
-  const { height, width, x: left, y: top } = usePlotArea();
+  const plotArea = usePlotArea();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
   const points: ReadonlyArray<LinePointItem> | undefined = useAppSelector(state =>
     selectLinePoints(state, xAxisId, yAxisId, isPanorama, id),
   );
-  if ((layout !== 'horizontal' && layout !== 'vertical') || points == null) {
+  if ((layout !== 'horizontal' && layout !== 'vertical') || points == null || plotArea == null) {
     // Cannot render Line in an unsupported layout
     return null;
   }
+
+  const { height, width, x: left, y: top } = plotArea;
 
   return (
     <LineWithState
@@ -691,26 +706,35 @@ export function computeLinePoints({
   bandSize: number;
   displayedData: any[];
 }): ReadonlyArray<LinePointItem> {
-  return displayedData.map((entry, index): LinePointItem => {
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    const value: number = getValueByDataKey(entry, dataKey);
+  return displayedData
+    .map((entry, index): LinePointItem | null => {
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      const value: number = getValueByDataKey(entry, dataKey);
 
-    if (layout === 'horizontal') {
+      if (layout === 'horizontal') {
+        const x = getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index });
+        const y = isNullish(value) ? null : yAxis.scale(value);
+        return {
+          x,
+          y,
+          value,
+          payload: entry,
+        };
+      }
+
+      const x = isNullish(value) ? null : xAxis.scale(value);
+      const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index });
+      if (x == null || y == null) {
+        return null;
+      }
       return {
-        x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isNullish(value) ? null : yAxis.scale(value),
+        x,
+        y,
         value,
         payload: entry,
       };
-    }
-
-    return {
-      x: isNullish(value) ? null : xAxis.scale(value),
-      y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-      value,
-      payload: entry,
-    };
-  });
+    })
+    .filter(Boolean);
 }
 
 export function Line(outsideProps: Props) {

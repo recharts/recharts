@@ -7,7 +7,7 @@ import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
-import { interpolateNumber, isNan, mathSign } from '../util/DataUtils';
+import { interpolate, isNan, mathSign } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
@@ -68,11 +68,16 @@ type Rectangle = {
 };
 
 export interface BarRectangleItem extends RectangleProps {
-  value?: number | [number, number];
+  value: number | [number, number];
   /** the coordinate of background rectangle */
   background?: Rectangle;
   tooltipPosition: Coordinate;
   readonly payload?: any;
+  // These are inherited from RectangleProps, but we need to redefine them here and make non-nullable
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export interface BarProps {
@@ -124,7 +129,7 @@ type InternalBarProps = {
    * Injected from Redux store
    */
   layout: 'horizontal' | 'vertical';
-  data: ReadonlyArray<BarRectangleItem>;
+  data: ReadonlyArray<BarRectangleItem> | undefined;
 
   /*
    * Provided by user, has defaults
@@ -212,8 +217,8 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
-  data: ReadonlyArray<BarRectangleItem>;
-  dataKey: DataKey<any>;
+  data: ReadonlyArray<BarRectangleItem> | undefined;
+  dataKey: DataKey<any> | undefined;
   allOtherBarProps: Props;
 };
 
@@ -229,8 +234,11 @@ function BarBackground(props: BarBackgroundProps) {
     ...restOfAllOtherProps
   } = allOtherBarProps;
 
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
   if (!backgroundFromProps || data == null) {
     return null;
@@ -278,7 +286,7 @@ function BarBackground(props: BarBackgroundProps) {
 }
 
 type BarRectanglesProps = InternalProps & {
-  data: ReadonlyArray<BarRectangleItem>;
+  data: ReadonlyArray<BarRectangleItem> | undefined;
 };
 
 function BarRectangles({
@@ -286,7 +294,7 @@ function BarRectangles({
   props,
   showLabels,
 }: {
-  data: ReadonlyArray<BarRectangleItem>;
+  data: ReadonlyArray<BarRectangleItem> | undefined;
   props: BarRectanglesProps;
   showLabels: boolean;
 }) {
@@ -303,8 +311,11 @@ function BarRectangles({
     ...restOfAllOtherProps
   } = props;
 
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
 
   if (!data) {
@@ -326,7 +337,7 @@ function BarRectangles({
         const isActive: boolean =
           activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
         const option = isActive ? activeBar : shape;
-        // @ts-expect-error event types are not compatible
+        // ts-expect-error event types are not compatible - this only fires with strictNullChecks on
         const barRectangleProps: BarRectangleProps = {
           ...baseProps,
           ...entry,
@@ -364,7 +375,7 @@ function RectanglesWithAnimation({
   previousRectanglesRef,
 }: {
   props: InternalProps;
-  previousRectanglesRef: MutableRefObject<ReadonlyArray<BarRectangleItem>>;
+  previousRectanglesRef: MutableRefObject<null | ReadonlyArray<BarRectangleItem>>;
 }) {
   const {
     data,
@@ -410,27 +421,21 @@ function RectanglesWithAnimation({
         const stepData =
           t === 1
             ? data
-            : data.map((entry, index) => {
+            : data?.map((entry: BarRectangleItem, index: number): BarRectangleItem => {
                 const prev = prevData && prevData[index];
 
                 if (prev) {
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
-                  const interpolatorWidth = interpolateNumber(prev.width, entry.width);
-                  const interpolatorHeight = interpolateNumber(prev.height, entry.height);
-
                   return {
                     ...entry,
-                    x: interpolatorX(t),
-                    y: interpolatorY(t),
-                    width: interpolatorWidth(t),
-                    height: interpolatorHeight(t),
+                    x: interpolate(prev.x, entry.x, t),
+                    y: interpolate(prev.y, entry.y, t),
+                    width: interpolate(prev.width, entry.width, t),
+                    height: interpolate(prev.height, entry.height, t),
                   };
                 }
 
                 if (layout === 'horizontal') {
-                  const interpolatorHeight = interpolateNumber(0, entry.height);
-                  const h = interpolatorHeight(t);
+                  const h = interpolate(0, entry.height, t);
 
                   return {
                     ...entry,
@@ -439,15 +444,17 @@ function RectanglesWithAnimation({
                   };
                 }
 
-                const interpolator = interpolateNumber(0, entry.width);
-                const w = interpolator(t);
+                const w = interpolate(0, entry.width, t);
 
                 return { ...entry, width: w };
               });
 
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
-          previousRectanglesRef.current = stepData;
+          previousRectanglesRef.current = stepData ?? null;
+        }
+        if (stepData == null) {
+          return null;
         }
         return (
           <Layer>
@@ -512,7 +519,7 @@ class BarWithState extends PureComponent<InternalProps> {
             <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
           </defs>
         )}
-        <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+        <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
           <RenderRectangles {...this.props} />
         </Layer>
@@ -634,80 +641,86 @@ export function computeBarRectangles({
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
 
-  return displayedData.map((entry, index): BarRectangleItem => {
-    let value, x, y, width, height, background: Rectangle;
+  return displayedData
+    .map((entry, index): BarRectangleItem | null => {
+      let value, x: number | null, y, width, height, background: Rectangle;
 
-    if (stackedData) {
-      // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
-      value = truncateByDomain(stackedData[index], stackedDomain);
-    } else {
-      value = getValueByDataKey(entry, dataKey);
+      if (stackedData) {
+        // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
+        value = truncateByDomain(stackedData[index], stackedDomain);
+      } else {
+        value = getValueByDataKey(entry, dataKey);
 
-      if (!Array.isArray(value)) {
-        value = [baseValue, value];
+        if (!Array.isArray(value)) {
+          value = [baseValue, value];
+        }
       }
-    }
 
-    const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
+      const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
 
-    if (layout === 'horizontal') {
-      const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
-      x = getCateCoordinateOfBar({
-        axis: xAxis,
-        ticks: xAxisTicks,
-        bandSize,
-        offset: pos.offset,
-        entry,
-        index,
-      });
-      y = currentValueScale ?? baseValueScale ?? undefined;
-      width = pos.size;
-      const computedHeight = baseValueScale - currentValueScale;
-      height = isNan(computedHeight) ? 0 : computedHeight;
-      background = { x, y: offset.top, width, height: offset.height };
+      if (layout === 'horizontal') {
+        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
+        x = getCateCoordinateOfBar({
+          axis: xAxis,
+          ticks: xAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        y = currentValueScale ?? baseValueScale ?? undefined;
+        width = pos.size;
+        const computedHeight = baseValueScale - currentValueScale;
+        height = isNan(computedHeight) ? 0 : computedHeight;
+        background = { x, y: offset.top, width, height: offset.height };
 
-      if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-        const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
+        if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
+          const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
 
-        y -= delta;
-        height += delta;
+          y -= delta;
+          height += delta;
+        }
+      } else {
+        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+        x = baseValueScale;
+        y = getCateCoordinateOfBar({
+          axis: yAxis,
+          ticks: yAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        width = currentValueScale - baseValueScale;
+        height = pos.size;
+        background = { x: offset.left, y, width: offset.width, height };
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
+          const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
+          width += delta;
+        }
       }
-    } else {
-      const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
-      x = baseValueScale;
-      y = getCateCoordinateOfBar({
-        axis: yAxis,
-        ticks: yAxisTicks,
-        bandSize,
-        offset: pos.offset,
-        entry,
-        index,
-      });
-      width = currentValueScale - baseValueScale;
-      height = pos.size;
-      background = { x: offset.left, y, width: offset.width, height };
 
-      if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-        const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
-        width += delta;
+      if (x == null || y == null || width == null || height == null) {
+        return null;
       }
-    }
 
-    const barRectangleItem: BarRectangleItem = {
-      ...entry,
-      x,
-      y,
-      width,
-      height,
-      value: stackedData ? value : value[1],
-      payload: entry,
-      background,
-      tooltipPosition: { x: x + width / 2, y: y + height / 2 },
-      ...(cells && cells[index] && cells[index].props),
-    } satisfies BarRectangleItem;
+      const barRectangleItem: BarRectangleItem = {
+        ...entry,
+        x,
+        y,
+        width,
+        height,
+        value: stackedData ? value : value[1],
+        payload: entry,
+        background,
+        tooltipPosition: { x: x + width / 2, y: y + height / 2 },
+        ...(cells && cells[index] && cells[index].props),
+      } satisfies BarRectangleItem;
 
-    return barRectangleItem;
-  });
+      return barRectangleItem;
+    })
+    .filter(Boolean);
 }
 
 export function Bar(outsideProps: Props) {
