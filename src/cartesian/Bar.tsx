@@ -234,8 +234,11 @@ function BarBackground(props: BarBackgroundProps) {
     ...restOfAllOtherProps
   } = allOtherBarProps;
 
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
   if (!backgroundFromProps || data == null) {
     return null;
@@ -308,8 +311,11 @@ function BarRectangles({
     ...restOfAllOtherProps
   } = props;
 
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
 
   if (!data) {
@@ -331,7 +337,7 @@ function BarRectangles({
         const isActive: boolean =
           activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
         const option = isActive ? activeBar : shape;
-        // @ts-expect-error event types are not compatible
+        // ts-expect-error event types are not compatible - this only fires with strictNullChecks on
         const barRectangleProps: BarRectangleProps = {
           ...baseProps,
           ...entry,
