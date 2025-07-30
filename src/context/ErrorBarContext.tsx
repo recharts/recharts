@@ -9,7 +9,7 @@ import { useGraphicalItemId } from './RegisterGraphicalItemId';
 const noop = () => {};
 
 type ErrorBarContextType<T> = {
-  data: ReadonlyArray<T>;
+  data: ReadonlyArray<T> | undefined;
   xAxisId: AxisId;
   yAxisId: AxisId;
   dataPointFormatter: ErrorBarDataPointFormatter;

@@ -423,7 +423,8 @@ export const selectBarPosition: (
       return undefined;
     }
     const position = allBarPositions.find(
-      (p: BarWithPosition) => p.stackId === barSettings.stackId && p.dataKeys.includes(barSettings.dataKey),
+      (p: BarWithPosition) =>
+        p.stackId === barSettings.stackId && barSettings.dataKey != null && p.dataKeys.includes(barSettings.dataKey),
     );
     if (position == null) {
       return undefined;
