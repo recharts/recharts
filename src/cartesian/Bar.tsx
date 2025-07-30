@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
-import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
+import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
@@ -504,7 +504,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 
 class BarWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, layout } = this.props;
+    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id } = this.props;
     if (hide) {
       return null;
     }
@@ -523,9 +523,7 @@ class BarWithState extends PureComponent<InternalProps> {
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
           <RenderRectangles {...this.props} />
         </Layer>
-        <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-          {this.props.children}
-        </SetErrorBarPreferredDirection>
+        {this.props.children}
       </Layer>
     );
   }
