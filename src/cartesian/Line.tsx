@@ -7,7 +7,7 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
+import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish } from '../util/DataUtils';
 import { filterProps, isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -552,8 +552,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 // eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
   render() {
-    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, layout } =
-      this.props;
+    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip } = this.props;
 
     if (hide) {
       return null;
@@ -584,17 +583,15 @@ class LineWithState extends Component<InternalProps> {
             </defs>
           )}
           <RenderCurve props={this.props} clipPathId={clipPathId} />
-          <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-            <SetErrorBarContext
-              xAxisId={xAxisId}
-              yAxisId={yAxisId}
-              data={points}
-              dataPointFormatter={errorBarDataPointFormatter}
-              errorBarOffset={0}
-            >
-              {this.props.children}
-            </SetErrorBarContext>
-          </SetErrorBarPreferredDirection>
+          <SetErrorBarContext
+            xAxisId={xAxisId}
+            yAxisId={yAxisId}
+            data={points}
+            dataPointFormatter={errorBarDataPointFormatter}
+            errorBarOffset={0}
+          >
+            {this.props.children}
+          </SetErrorBarContext>
         </Layer>
         <ActivePoints
           activeDot={this.props.activeDot}

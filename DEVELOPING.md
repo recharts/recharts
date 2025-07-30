@@ -95,6 +95,8 @@ You will see new files created in the `test-vr/__snapshots__` directory, please 
 ### See VR test results
 
 Open http://localhost:9323 in your browser to see the results of the tests.
+The CLI will tell you to run a "show-report" which is not necessary because there is already a Docker container running
+in the background and serving the report. Just open the URL in your browser.
 
 ## Releases
 

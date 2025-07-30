@@ -2,7 +2,7 @@
  * @fileOverview Render a group of error bar
  */
 import * as React from 'react';
-import { Component, createContext, SVGProps, useContext } from 'react';
+import { Component, SVGProps } from 'react';
 import { Layer } from '../container/Layer';
 import { AnimationTiming, DataKey } from '../util/types';
 import { BarRectangleItem } from './Bar';
@@ -13,6 +13,7 @@ import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { useChartLayout } from '../context/chartLayoutContext';
 
 export interface ErrorBarDataItem {
   x: number | null;
@@ -190,27 +191,15 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   return <Layer className="recharts-errorBars">{errorBars}</Layer>;
 }
 
-const ErrorBarPreferredDirection = createContext<ErrorBarDirection | undefined>(undefined);
-
 function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined): ErrorBarDirection {
-  const preferredDirection = useContext(ErrorBarPreferredDirection);
+  const layout = useChartLayout();
   if (directionFromProps != null) {
     return directionFromProps;
   }
-  if (preferredDirection != null) {
-    return preferredDirection;
+  if (layout != null) {
+    return layout === 'horizontal' ? 'y' : 'x';
   }
   return 'x';
-}
-
-export function SetErrorBarPreferredDirection({
-  direction,
-  children,
-}: {
-  direction: ErrorBarDirection;
-  children: React.ReactNode;
-}) {
-  return <ErrorBarPreferredDirection.Provider value={direction}>{children}</ErrorBarPreferredDirection.Provider>;
 }
 
 const errorBarDefaultProps = {
