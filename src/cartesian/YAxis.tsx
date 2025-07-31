@@ -19,6 +19,7 @@ import {
   selectTicksOfAxis,
   selectYAxisPosition,
   selectYAxisSize,
+  selectYAxisSettings,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -76,6 +77,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
+  const axisSettings = useAppSelector(state => selectYAxisSettings(state, yAxisId));
 
   useLayoutEffect(() => {
     // No dynamic width calculation is done when width !== 'auto'
@@ -129,6 +131,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={viewBox}
       ticks={cartesianTickItems}
+      padding={axisSettings.padding}
     />
   );
 };

@@ -22,6 +22,7 @@ import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -47,6 +48,8 @@ export interface CartesianAxisProps {
   tickMargin?: number;
   hide?: boolean;
   label?: any;
+  /** Padding information passed to custom tick components */
+  padding?: XAxisPadding | YAxisPadding;
 
   minTickGap?: number;
   /**
@@ -275,7 +278,7 @@ export class CartesianAxis extends Component<Props, IState> {
     letterSpacing: string,
     ticks: ReadonlyArray<CartesianTickItem> = [],
   ): React.ReactElement | null {
-    const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
+    const { tickLine, stroke, tick, tickFormatter, unit, padding } = this.props;
     // @ts-expect-error some properties are optional in props but required in getTicks
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
@@ -301,6 +304,7 @@ export class CartesianAxis extends Component<Props, IState> {
         payload: entry,
         visibleTicksCount: finalTicks.length,
         tickFormatter,
+        padding,
       };
 
       return (
