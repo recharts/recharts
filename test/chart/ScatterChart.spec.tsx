@@ -50,6 +50,7 @@ import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelect
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -2589,5 +2590,65 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
     const { container } = renderTestCase();
     showTooltip(container, `${scatterChartMouseHoverTooltipSelector}:nth-child(2)`);
     expectTooltipPayload(container, '', ['stature : 100cm', 'weight : 200kg']);
+  });
+
+  it('should render an empty chart with tick labels when ticks are provided and allowDataOverflow is set to true', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" type="number" allowDataOverflow ticks={[150, 250, 350, 450]} />
+        <YAxis dataKey="y" name="weight" unit="kg" type="number" allowDataOverflow ticks={[100, 200, 300, 400]} />
+        <CartesianGrid />
+        <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
+        <Tooltip />
+        <Legend layout="vertical" />
+      </ScatterChart>,
+    );
+    expectScatterPoints(container, []);
+
+    expectXAxisTicks(container, [
+      {
+        textContent: '150cm',
+        x: '100',
+        y: '348',
+      },
+      {
+        textContent: '250cm',
+        x: '193.33333333333331',
+        y: '348',
+      },
+      {
+        textContent: '350cm',
+        x: '286.66666666666663',
+        y: '348',
+      },
+      {
+        textContent: '450cm',
+        x: '380',
+        y: '348',
+      },
+    ]);
+
+    expectYAxisTicks(container, [
+      {
+        textContent: '100kg',
+        x: '92',
+        y: '340',
+      },
+      {
+        textContent: '200kg',
+        x: '92',
+        y: '230.00000000000003',
+      },
+      {
+        textContent: '300kg',
+        x: '92',
+        y: '120.00000000000001',
+      },
+      {
+        textContent: '400kg',
+        x: '92',
+        y: '10',
+      },
+    ]);
   });
 });

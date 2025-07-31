@@ -933,10 +933,9 @@ export const combineAxisDomain = (
   axisType: XorYorZType,
   numericalDomain: NumberDomain | undefined,
 ): NumberDomain | CategoricalDomain | undefined => {
-  if (axisSettings == null || displayedData == null || displayedData.length === 0) {
+  if ((axisSettings == null || displayedData == null || displayedData.length === 0) && numericalDomain === undefined) {
     return undefined;
   }
-
   const { dataKey, type } = axisSettings;
   const isCategorical = isCategoricalAxis(layout, axisType);
 
