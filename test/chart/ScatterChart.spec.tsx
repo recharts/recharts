@@ -2590,4 +2590,29 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
     showTooltip(container, `${scatterChartMouseHoverTooltipSelector}:nth-child(2)`);
     expectTooltipPayload(container, '', ['stature : 100cm', 'weight : 200kg']);
   });
+
+  it('should render an empty chart with tick labels when ticks are provided and allowDataOverflow is set to true', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" type="number" allowDataOverflow ticks={[150, 250, 350, 450]} />
+        <YAxis dataKey="y" name="weight" unit="kg" type="number" allowDataOverflow ticks={[100, 200, 300, 400]} />
+        <CartesianGrid />
+        <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
+        <Tooltip />
+        <Legend layout="vertical" />
+      </ScatterChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-symbol')).toHaveLength(0);
+
+    expect(container.textContent).toContain('150cm');
+    expect(container.textContent).toContain('250cm');
+    expect(container.textContent).toContain('350cm');
+    expect(container.textContent).toContain('450cm');
+
+    expect(container.textContent).toContain('100kg');
+    expect(container.textContent).toContain('200kg');
+    expect(container.textContent).toContain('300kg');
+    expect(container.textContent).toContain('400kg');
+  });
 });
