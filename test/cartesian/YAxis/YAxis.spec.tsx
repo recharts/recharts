@@ -2185,4 +2185,89 @@ describe('<YAxis />', () => {
     expect(calculatedYAxisWidth).toBe(88); // 80 width + 6 tick size + 2 tick margin
     expect(yAxisLine).toHaveAttribute('width', '88');
   });
+
+  describe('custom tick components', () => {
+    interface TickProps {
+      x?: number;
+      y?: number;
+      payload?: { value: string | number };
+      padding?: { top?: number; bottom?: number } | 'gap' | 'no-gap';
+      [key: string]: unknown;
+    }
+
+    it('should pass object padding to custom tick component', () => {
+      let receivedPadding: { top?: number; bottom?: number } | undefined;
+      const expectedPadding = { top: 20, bottom: 30 };
+
+      const CustomYAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as { top?: number; bottom?: number };
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis padding={expectedPadding} tick={<CustomYAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual(expectedPadding);
+    });
+
+    it('should pass string padding to custom tick component', () => {
+      let receivedPadding: string | undefined;
+      const expectedPadding = 'gap';
+
+      const CustomYAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as string;
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis padding={expectedPadding} tick={<CustomYAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toBe(expectedPadding);
+    });
+
+    it('should pass padding to function-based custom tick', () => {
+      let receivedPadding: { top?: number; bottom?: number } | undefined;
+      const expectedPadding = { top: 15, bottom: 25 };
+
+      const customTickFunction = (props: TickProps) => {
+        receivedPadding = props.padding as { top?: number; bottom?: number };
+        return <text {...props}>Function Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis padding={expectedPadding} tick={customTickFunction} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual(expectedPadding);
+    });
+
+    it('should pass default padding when no padding is specified', () => {
+      let receivedPadding: { top?: number; bottom?: number } | string = 'not-called';
+
+      const CustomYAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as { top?: number; bottom?: number };
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis tick={<CustomYAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual({ top: 0, bottom: 0 });
+    });
+  });
 });
