@@ -75,7 +75,6 @@ const XAxisImpl = (props: Props) => {
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
-  const axisSettings = useAppSelector(state => selectXAxisSettings(state, xAxisId));
 
   if (axisSize == null || position == null) {
     return null;
@@ -94,7 +93,6 @@ const XAxisImpl = (props: Props) => {
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={viewBox}
       ticks={cartesianTickItems}
-      padding={axisSettings.padding}
     />
   );
 };
