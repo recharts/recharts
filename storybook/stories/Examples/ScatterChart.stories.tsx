@@ -5,6 +5,7 @@ import {
   Cell,
   LabelList,
   Legend,
+  ReferenceArea,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -744,5 +745,64 @@ export const ChangingDataKey = {
       left: 20,
       bottom: 5,
     },
+  },
+};
+
+const getHourFromTimestamp = (value: number) => {
+  const data = new Date(value as number);
+  let hour = data.getHours();
+  const minute = data.getMinutes();
+
+  // Format to 12-hour clock with AM/PM
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour %= 12;
+  hour = hour === 0 ? 12 : hour;
+
+  const label = minute > 0 ? `${hour}:${minute.toString().padStart(2, '0')} ${ampm}` : `${hour} ${ampm}`;
+  return label;
+};
+
+export const EmptyChart = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ScatterChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          <CartesianGrid />
+          <ReferenceArea y1={70} y2={150} />
+          <XAxis
+            type="number"
+            allowDataOverflow
+            ticks={[
+              new Date('2025-05-06T00:00:00').getTime(),
+              new Date('2025-05-06T03:00:00').getTime(),
+              new Date('2025-05-06T06:00:00').getTime(),
+              new Date('2025-05-06T09:00:00').getTime(),
+              new Date('2025-05-06T12:00:00').getTime(),
+              new Date('2025-05-06T15:00:00').getTime(),
+              new Date('2025-05-06T18:00:00').getTime(),
+              new Date('2025-05-06T21:00:00').getTime(),
+              new Date('2025-05-07T00:00:00').getTime(),
+            ]}
+            tickFormatter={(tickValue, _index) => {
+              if (typeof tickValue !== 'number') return String(tickValue);
+              const label = getHourFromTimestamp(tickValue);
+              return label;
+            }}
+            dataKey="hour"
+            domain={[new Date('2025-05-06T00:00:00').getTime(), new Date('2025-05-07T00:00:00').getTime()]}
+          />
+          <YAxis allowDataOverflow type="number" ticks={[0, 80, 180, 220]} />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+          <Scatter name="A school" data={[]} fill="#8884d8" />
+        </ScatterChart>
+      </ResponsiveContainer>
+    );
   },
 };
