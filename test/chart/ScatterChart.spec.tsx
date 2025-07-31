@@ -50,6 +50,7 @@ import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelect
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -2602,17 +2603,52 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
         <Legend layout="vertical" />
       </ScatterChart>,
     );
+    expectScatterPoints(container, []);
 
-    expect(container.querySelectorAll('.recharts-symbol')).toHaveLength(0);
+    expectXAxisTicks(container, [
+      {
+        textContent: '150cm',
+        x: '100',
+        y: '348',
+      },
+      {
+        textContent: '250cm',
+        x: '193.33333333333331',
+        y: '348',
+      },
+      {
+        textContent: '350cm',
+        x: '286.66666666666663',
+        y: '348',
+      },
+      {
+        textContent: '450cm',
+        x: '380',
+        y: '348',
+      },
+    ]);
 
-    expect(container.textContent).toContain('150cm');
-    expect(container.textContent).toContain('250cm');
-    expect(container.textContent).toContain('350cm');
-    expect(container.textContent).toContain('450cm');
-
-    expect(container.textContent).toContain('100kg');
-    expect(container.textContent).toContain('200kg');
-    expect(container.textContent).toContain('300kg');
-    expect(container.textContent).toContain('400kg');
+    expectYAxisTicks(container, [
+      {
+        textContent: '100kg',
+        x: '92',
+        y: '340',
+      },
+      {
+        textContent: '200kg',
+        x: '92',
+        y: '230.00000000000003',
+      },
+      {
+        textContent: '300kg',
+        x: '92',
+        y: '120.00000000000001',
+      },
+      {
+        textContent: '400kg',
+        x: '92',
+        y: '10',
+      },
+    ]);
   });
 });
