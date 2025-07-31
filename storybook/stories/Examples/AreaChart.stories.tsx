@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
 import { Args } from '@storybook/react-vite';
-import { pageData, rangeData } from '../data';
+import { pageData, rangeData, timeData } from '../data';
 import {
   AreaChart,
   ResponsiveContainer,
@@ -66,11 +66,10 @@ export const StackedAreaChart = {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
           <YAxis />
-          <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-          <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-          <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          <XAxis dataKey="x" type="number" scale="time" domain={['auto', 'auto']} />
+          <Area type="monotone" dataKey="y" stackId="1" stroke="#8884d8" fill="#8884d8" />
+          <Area type="monotone" dataKey="z" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Tooltip active defaultIndex={2} />
           <RechartsHookInspector
             position={context.rechartsInspectorPosition}
@@ -85,7 +84,7 @@ export const StackedAreaChart = {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 400,
-    data: pageData,
+    data: timeData,
     margin: {
       top: 10,
       right: 30,

@@ -626,6 +626,142 @@ describe('<BarChart />', () => {
       ]);
     });
 
+    test('renders a horizontal stacked bar chart when x-axis is of type number', () => {
+      const dataWithNumberAsKey = [
+        { xKey: 4000, uv: 400, pv: 2400 },
+        { xKey: 6000, uv: 300, pv: 4567 },
+        { xKey: 8000, uv: 300, pv: 1398 },
+        { xKey: 10000, uv: 200, pv: 9800 },
+      ];
+
+      const { container } = render(
+        <BarChart width={500} height={400} data={dataWithNumberAsKey}>
+          <XAxis type="number" dataKey="xKey" domain={['dataMin', 'dataMax']} />
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
+          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M -60.33333333333333,350.59999999999997 h 130 v 14.400000000000034 h -130 Z',
+          height: '14.400000000000034',
+          radius: '0',
+          width: '130',
+          x: '-60.33333333333333',
+          y: '350.59999999999997',
+        },
+        {
+          d: 'M 103.00000000000001,354.2 h 130 v 10.800000000000011 h -130 Z',
+          height: '10.800000000000011',
+          radius: '0',
+          width: '130',
+          x: '103.00000000000001',
+          y: '354.2',
+        },
+        {
+          d: 'M 266.33333333333337,354.2 h 130 v 10.800000000000011 h -130 Z',
+          height: '10.800000000000011',
+          radius: '0',
+          width: '130',
+          x: '266.33333333333337',
+          y: '354.2',
+        },
+        {
+          d: 'M 429.6666666666667,357.8 h 130 v 7.199999999999989 h -130 Z',
+          height: '7.199999999999989',
+          radius: '0',
+          width: '130',
+          x: '429.6666666666667',
+          y: '357.8',
+        },
+        {
+          d: 'M -60.33333333333333,264.2 h 130 v 86.39999999999998 h -130 Z',
+          height: '86.39999999999998',
+          radius: '0',
+          width: '130',
+          x: '-60.33333333333333',
+          y: '264.2',
+        },
+        {
+          d: 'M 103.00000000000001,189.788 h 130 v 164.41199999999998 h -130 Z',
+          height: '164.41199999999998',
+          radius: '0',
+          width: '130',
+          x: '103.00000000000001',
+          y: '189.788',
+        },
+        {
+          d: 'M 266.33333333333337,303.872 h 130 v 50.327999999999975 h -130 Z',
+          height: '50.327999999999975',
+          radius: '0',
+          width: '130',
+          x: '266.33333333333337',
+          y: '303.872',
+        },
+        {
+          d: 'M 429.6666666666667,5 h 130 v 352.8 h -130 Z',
+          height: '352.8',
+          radius: '0',
+          width: '130',
+          x: '429.6666666666667',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('renders stacked bar chart when x-axis is of type number and layout is vertical', () => {
+      const dataWithNumberAsKey = [
+        { xKey: 4000, uv: 400, pv: 2400 },
+        { xKey: 6000, uv: 300, pv: 4567 },
+        { xKey: 8000, uv: 300, pv: 1398 },
+        { xKey: 10000, uv: 200, pv: 9800 },
+      ];
+
+      const { container } = render(
+        <BarChart width={500} height={400} data={dataWithNumberAsKey} layout="vertical">
+          <XAxis type="number" dataKey="xKey" domain={['dataMin', 'dataMax']} />
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
+          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 5,-18.99999999999999 h 19.6 v 47 h -19.6 Z',
+          height: '47',
+          radius: '0',
+          width: '19.6',
+          x: '5',
+          y: '-18.99999999999999',
+        },
+        {
+          d: 'M 5,341 h 14.7 v 47 h -14.7 Z',
+          height: '47',
+          radius: '0',
+          width: '14.7',
+          x: '5',
+          y: '341',
+        },
+        {
+          d: 'M 24.6,-18.99999999999999 h 117.60000000000002 v 47 h -117.60000000000002 Z',
+          height: '47',
+          radius: '0',
+          width: '117.60000000000002',
+          x: '24.6',
+          y: '-18.99999999999999',
+        },
+        {
+          d: 'M 19.7,341 h 223.78300000000002 v 47 h -223.78300000000002 Z',
+          height: '47',
+          radius: '0',
+          width: '223.78300000000002',
+          x: '19.7',
+          y: '341',
+        },
+      ]);
+    });
+
     describe('when stackId is a number', () => {
       const cells: never[] = [];
 

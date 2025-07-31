@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import type { Action, Store } from '@reduxjs/toolkit';
 import type { Subscription } from 'react-redux';
-import type { CheckFrequency } from 'react-redux/es/hooks/useSelector';
+
 import type { RechartsRootState } from './store';
 
 /*
@@ -14,8 +14,6 @@ import type { RechartsRootState } from './store';
 export type RechartsReduxContextValue = {
   store: Store<RechartsRootState, Action>;
   subscription: Subscription;
-  stabilityCheck: CheckFrequency;
-  noopCheck: CheckFrequency;
 };
 
 /**
