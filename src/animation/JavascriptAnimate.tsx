@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { noop } from 'es-toolkit';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import configUpdate from './configUpdate';
 import { configEasing, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
-import { AnimationManagerContext } from './Animate';
-import { createDefaultAnimationManager } from './createDefaultAnimationManager';
+import { useAnimationManager } from './useAnimationManager';
 
 type JavascriptAnimateProps = {
   animationManager?: AnimationManager;
@@ -41,11 +40,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
   const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
 
-  const contextAnimationManager = useContext(AnimationManagerContext);
-  const animationManager = useMemo(
-    () => props.animationManager ?? contextAnimationManager ?? createDefaultAnimationManager(),
-    [props.animationManager, contextAnimationManager],
-  );
+  const animationManager = useAnimationManager(props.animationManager);
 
   const [style, setStyle] = useState<TimeAsObject>(isActive ? from : to);
   const stopJSAnimation = useRef<(() => void) | null>(null);
@@ -55,6 +50,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
       setStyle(to);
     }
   }, [isActive]);
+
   useEffect(() => {
     if (!isActive || !canBegin) {
       return noop;
