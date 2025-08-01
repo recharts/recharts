@@ -55,7 +55,6 @@ export const WithErrorBarsAndExtendedDomain = {
         <Scatter name="A school" data={data} fill="blue">
           {/* This ErrorBar does render, but it does not extend the domain of XAxis unfortunately */}
           <ErrorBar dataKey="errorX" width={2} strokeWidth={3} stroke="green" direction="x" />
-          {/* Hm and neither does this, why, I thought it does */}
           <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
         </Scatter>
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
