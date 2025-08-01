@@ -4856,5 +4856,90 @@ describe('<XAxis />', () => {
     });
   });
 
+  describe('custom tick components', () => {
+    interface TickProps {
+      x?: number;
+      y?: number;
+      payload?: { value: string | number };
+      padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
+      [key: string]: unknown;
+    }
+
+    it('should pass object padding to custom tick component', () => {
+      let receivedPadding: { left?: number; right?: number } | undefined;
+      const expectedPadding = { left: 20, right: 30 };
+
+      const CustomXAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as { left?: number; right?: number };
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={lineData}>
+          <XAxis padding={expectedPadding} tick={<CustomXAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual(expectedPadding);
+    });
+
+    it('should pass string padding to custom tick component', () => {
+      let receivedPadding: string | undefined;
+      const expectedPadding = 'gap';
+
+      const CustomXAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as string;
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={lineData}>
+          <XAxis padding={expectedPadding} tick={<CustomXAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toBe(expectedPadding);
+    });
+
+    it('should pass padding to function-based custom tick', () => {
+      let receivedPadding: { left?: number; right?: number } | undefined;
+      const expectedPadding = { left: 15, right: 25 };
+
+      const customTickFunction = (props: TickProps) => {
+        receivedPadding = props.padding as { left?: number; right?: number };
+        return <text {...props}>Function Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={lineData}>
+          <XAxis padding={expectedPadding} tick={customTickFunction} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual(expectedPadding);
+    });
+
+    it('should pass default padding when no padding is specified', () => {
+      let receivedPadding: { left?: number; right?: number } | string = 'not-called';
+
+      const CustomXAxisTick = (props: TickProps) => {
+        receivedPadding = props.padding as { left?: number; right?: number };
+        return <text {...props}>Custom Tick</text>;
+      };
+
+      render(
+        <LineChart width={400} height={400} data={lineData}>
+          <XAxis tick={<CustomXAxisTick />} />
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+
+      expect(receivedPadding).toEqual({ left: 0, right: 0 });
+    });
+  });
+
   describe.todo('in vertical stacked BarChart');
 });
