@@ -10,8 +10,6 @@ import { createDefaultAnimationManager } from './createDefaultAnimationManager';
 
 type JavascriptAnimateProps = {
   animationManager?: AnimationManager;
-  from: Record<string, unknown>;
-  to: Record<string, unknown>;
   duration?: number;
   begin?: number;
   easing?: EasingInput;
@@ -19,7 +17,7 @@ type JavascriptAnimateProps = {
   canBegin?: boolean;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  children: (style: Record<string, unknown>) => React.ReactNode;
+  children: (time: number) => React.ReactNode;
 };
 
 const defaultJavascriptAnimateProps = {
@@ -32,9 +30,16 @@ const defaultJavascriptAnimateProps = {
   onAnimationStart: () => {},
 } as const satisfies Partial<JavascriptAnimateProps>;
 
+type TimeAsObject = {
+  t: number;
+};
+
+const from: TimeAsObject = { t: 0 };
+const to: TimeAsObject = { t: 1 };
+
 export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
-  const { isActive, canBegin, from, to, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
+  const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
 
   const contextAnimationManager = useContext(AnimationManagerContext);
   const animationManager = useMemo(
@@ -42,21 +47,20 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     [props.animationManager, contextAnimationManager],
   );
 
-  const [style, setStyle] = useState(isActive ? from : to);
+  const [style, setStyle] = useState<TimeAsObject>(isActive ? from : to);
   const stopJSAnimation = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!isActive) {
       setStyle(to);
     }
-  }, [isActive, to]);
-
+  }, [isActive]);
   useEffect(() => {
     if (!isActive || !canBegin) {
       return noop;
     }
 
-    const startAnimation = configUpdate(
+    const startAnimation = configUpdate<TimeAsObject>(
       from,
       to,
       configEasing(easing),
@@ -78,7 +82,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
       }
       onAnimationEnd();
     };
-  }, [isActive, canBegin, to, from, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager]);
+  }, [isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager]);
 
-  return children(style);
+  return children(style.t);
 }

@@ -54,11 +54,11 @@ import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/s
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 type Rectangle = {
   x: number | null;
@@ -406,18 +406,16 @@ function RectanglesWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
       key={animationId}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const stepData =
           t === 1
             ? data
@@ -462,7 +460,7 @@ function RectanglesWithAnimation({
           </Layer>
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 
