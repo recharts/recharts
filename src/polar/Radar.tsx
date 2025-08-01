@@ -32,10 +32,10 @@ import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
-import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 interface RadarPoint {
   x: number;
@@ -336,18 +336,16 @@ function PolygonWithAnimation({
   }, [onAnimationStart]);
 
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       key={`radar-${animationId}`}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
         const stepData =
           t === 1
@@ -382,7 +380,7 @@ function PolygonWithAnimation({
         }
         return <StaticPolygon points={stepData} props={props} showLabels={!isAnimating} />;
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 

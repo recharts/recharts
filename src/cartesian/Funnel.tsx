@@ -36,9 +36,9 @@ import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selecto
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -247,18 +247,16 @@ function TrapezoidsWithAnimation({
   }, [onAnimationStart]);
 
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       key={animationId}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const stepData =
           t === 1
             ? trapezoids
@@ -308,7 +306,7 @@ function TrapezoidsWithAnimation({
           </Layer>
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 

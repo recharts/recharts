@@ -47,11 +47,11 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -160,18 +160,16 @@ function SectorsWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       key={animationId}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const stepData =
           t === 1
             ? data
@@ -209,7 +207,7 @@ function SectorsWithAnimation({
           </Layer>
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 

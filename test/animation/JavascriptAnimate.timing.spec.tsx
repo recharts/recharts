@@ -25,8 +25,6 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
@@ -51,8 +49,6 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -74,8 +70,6 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -91,124 +85,24 @@ describe('JavascriptAnimate timing', () => {
       expect(handleAnimationStart).not.toHaveBeenCalled();
     });
 
-    it('should call children function with current style', async () => {
+    it('should call children function with current time', async () => {
       const timeoutController = new MockTimeoutController();
       const animationManager = createAnimateManager(timeoutController);
       const childFunction = vi.fn();
 
       render(
-        <JavascriptAnimate from={{ opacity: 1 }} to={{ opacity: 0 }} duration={500} animationManager={animationManager}>
+        <JavascriptAnimate duration={500} animationManager={animationManager}>
           {childFunction}
         </JavascriptAnimate>,
       );
 
-      expect(childFunction).toHaveBeenCalledWith({ opacity: 1 });
+      expect(childFunction).toHaveBeenCalledWith(0);
       expect(childFunction).toHaveBeenCalledTimes(1);
 
       await timeoutController.flushAllTimeouts();
 
       expect(childFunction).toHaveBeenCalledTimes(3);
-      expect(childFunction).toHaveBeenCalledWith({ opacity: 0 });
-    });
-  });
-
-  describe('with animation steps as objects with a string CSS values', () => {
-    it('should call onAnimationStart and onAnimationEnd', async () => {
-      const timeoutController = new MockTimeoutController();
-      const animationManager = createAnimateManager(timeoutController);
-
-      const transformOrigin = `100px 50px`;
-
-      render(
-        <JavascriptAnimate
-          from={{ transform: 'scaleY(0)', transformOrigin }}
-          to={{ transform: 'scaleY(1)', transformOrigin }}
-          duration={500}
-          onAnimationStart={handleAnimationStart}
-          onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager}
-        >
-          {() => <div className="test-wrapper" />}
-        </JavascriptAnimate>,
-      );
-
-      expect(handleAnimationStart).toHaveBeenCalledTimes(1);
-      expect(handleAnimationEnd).not.toHaveBeenCalled();
-
-      await timeoutController.flushAllTimeouts();
-
-      expect(handleAnimationStart).toHaveBeenCalledTimes(1);
-      expect(handleAnimationEnd).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not start animation if canBegin is false', async () => {
-      const timeoutController = new MockTimeoutController();
-      const animationManager = createAnimateManager(timeoutController);
-
-      render(
-        <JavascriptAnimate
-          from={{ transform: 'scaleY(0)' }}
-          to={{ transform: 'scaleY(1)' }}
-          duration={500}
-          canBegin={false}
-          onAnimationStart={handleAnimationStart}
-          animationManager={animationManager}
-        >
-          {() => <div className="test-wrapper" />}
-        </JavascriptAnimate>,
-      );
-
-      await timeoutController.flushAllTimeouts();
-
-      expect(handleAnimationStart).not.toHaveBeenCalled();
-    });
-
-    it('should not start animation if isActive is false', async () => {
-      const timeoutController = new MockTimeoutController();
-      const animationManager = createAnimateManager(timeoutController);
-
-      render(
-        <JavascriptAnimate
-          from={{ transform: 'scaleY(0)' }}
-          to={{ transform: 'scaleY(1)' }}
-          duration={500}
-          isActive={false}
-          onAnimationStart={handleAnimationStart}
-          animationManager={animationManager}
-        >
-          {() => <div className="test-wrapper" />}
-        </JavascriptAnimate>,
-      );
-
-      await timeoutController.flushAllTimeouts();
-
-      expect(handleAnimationStart).not.toHaveBeenCalled();
-    });
-
-    it('should call children function with current style (but it does not)', async () => {
-      const timeoutController = new MockTimeoutController();
-      const animationManager = createAnimateManager(timeoutController);
-      const childFunction = vi.fn();
-
-      render(
-        <JavascriptAnimate
-          from={{ transform: 'scaleY(0)' }}
-          to={{ transform: 'scaleY(1)' }}
-          duration={500}
-          animationManager={animationManager}
-        >
-          {childFunction}
-        </JavascriptAnimate>,
-      );
-
-      expect(childFunction).toHaveBeenCalledWith({ transform: 'scaleY(0)' });
-      expect(childFunction).toHaveBeenCalledTimes(1);
-
-      await timeoutController.flushAllTimeouts();
-
-      expect(childFunction).toHaveBeenCalledTimes(3);
-      // More bugs. NaN instead of interpolated value.
-      expect(childFunction).toHaveBeenCalledWith({ transform: 'scaleY(0)NaN' });
+      expect(childFunction).toHaveBeenCalledWith(1);
     });
   });
 
@@ -219,8 +113,6 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
@@ -231,7 +123,7 @@ describe('JavascriptAnimate timing', () => {
       );
 
       // first tick sets the starting state
-      expect(child).toHaveBeenCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenCalledWith(0);
       expect(child).toHaveBeenCalledTimes(1);
       expect(handleAnimationStart).toHaveBeenCalledTimes(0);
       expect(handleAnimationEnd).toHaveBeenCalledTimes(0);
@@ -251,7 +143,8 @@ describe('JavascriptAnimate timing', () => {
       expect(handleAnimationStart).toHaveBeenCalledTimes(1);
       expect(handleAnimationEnd).toHaveBeenCalledTimes(0);
 
-      expect(child).toHaveBeenCalledWith({ opacity: 1 });
+      // animation is starting at time zero
+      expect(child).toHaveBeenCalledWith(0);
       expect(child).toHaveBeenCalledTimes(1);
 
       animationManager.assertQueue([500, '[function handleAnimationEnd]']);
@@ -263,24 +156,24 @@ describe('JavascriptAnimate timing', () => {
 
       // this tick should start rendering the child with progressing animation
       await animationManager.triggerNextTimeout(100);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.77, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.22, 1));
       expect(child).toHaveBeenCalledTimes(3);
 
       await animationManager.triggerNextTimeout(200);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.36, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.63, 1));
       expect(child).toHaveBeenCalledTimes(4);
 
       await animationManager.triggerNextTimeout(300);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.14, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.86, 1));
       expect(child).toHaveBeenCalledTimes(5);
 
       await animationManager.triggerNextTimeout(800);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0, 1) });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(6);
 
       await animationManager.poll();
 
-      expect(child).toHaveBeenCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenCalledWith(1);
       expect(child).toHaveBeenCalledTimes(6);
 
       animationManager.assertQueue(['[function handleAnimationEnd]']);
@@ -293,14 +186,12 @@ describe('JavascriptAnimate timing', () => {
       expect(handleAnimationEnd).toHaveBeenCalledTimes(1);
     });
 
-    it('should not start animation if canBegin is false, and render with "from" state', () => {
+    it('should not start animation if canBegin is false, and render with time zero', () => {
       const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -313,18 +204,16 @@ describe('JavascriptAnimate timing', () => {
       animationManager.assertQueue(null);
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(child).toHaveBeenCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenCalledWith(0);
       expect(child).toHaveBeenCalledTimes(1);
     });
 
-    it('should go straight to "to" state when isActive is false', () => {
+    it('should go straight to final state when isActive is false', () => {
       const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -337,7 +226,7 @@ describe('JavascriptAnimate timing', () => {
       animationManager.assertQueue(null);
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(child).toHaveBeenCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenCalledWith(1);
       expect(child).toHaveBeenCalledTimes(1);
     });
 
@@ -347,8 +236,6 @@ describe('JavascriptAnimate timing', () => {
 
       const { rerender } = render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -361,14 +248,12 @@ describe('JavascriptAnimate timing', () => {
       animationManager.assertQueue(null);
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(1);
 
       // Now we change isActive to true
       rerender(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           isActive
           onAnimationStart={handleAnimationStart}
@@ -390,7 +275,7 @@ describe('JavascriptAnimate timing', () => {
       await animationManager.poll();
 
       expect(handleAnimationStart).toHaveBeenCalledTimes(1);
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(2);
 
       animationManager.assertQueue([0, '[function onAnimationActive]', 500, '[function onAnimationEnd]']);
@@ -403,32 +288,32 @@ describe('JavascriptAnimate timing', () => {
 
       animationManager.assertQueue([500, '[function onAnimationEnd]']);
 
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(2);
 
       await animationManager.triggerNextTimeout(16);
       /*
-       * The child abruptly changes to the "from" state, not great!
-       * We assume that the animation starts from the "from" state
+       * The child abruptly changes to the starting state, not great!
+       * We assume that the animation starts from the starting state
        * and put responsibility of the initial state on the user
        */
-      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenLastCalledWith(0);
       expect(child).toHaveBeenCalledTimes(3);
 
       await animationManager.triggerNextTimeout(100);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.77, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.22, 1));
       expect(child).toHaveBeenCalledTimes(4);
 
       await animationManager.triggerNextTimeout(200);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.36, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.63, 1));
       expect(child).toHaveBeenCalledTimes(5);
 
       await animationManager.triggerNextTimeout(300);
-      expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.14, 1) });
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.86, 1));
       expect(child).toHaveBeenCalledTimes(6);
 
       await animationManager.triggerNextTimeout(800);
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(7);
     });
 
@@ -440,8 +325,6 @@ describe('JavascriptAnimate timing', () => {
         return (
           <>
             <JavascriptAnimate
-              from={{ opacity: 1 }}
-              to={{ opacity: 0 }}
               duration={500}
               isActive={isActive}
               onAnimationStart={handleAnimationStart}
@@ -461,7 +344,7 @@ describe('JavascriptAnimate timing', () => {
       animationManager.assertQueue(null);
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(1);
       expect(animationManager.isRunning()).toBe(false);
 
@@ -489,7 +372,7 @@ describe('JavascriptAnimate timing', () => {
       await animationManager.poll();
       animationManager.assertQueue([500, '[function onAnimationEnd]']);
 
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(3);
 
       await animationManager.triggerNextTimeout(16);
@@ -498,18 +381,16 @@ describe('JavascriptAnimate timing', () => {
        * We assume that the animation starts from the "from" state
        * and put responsibility of the initial state on the user
        */
-      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenLastCalledWith(0);
       expect(child).toHaveBeenCalledTimes(4);
     });
 
-    it('should rerender with the "to" state when isActive is false', () => {
+    it('should rerender with the final state when isActive is false', () => {
       const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       const { rerender } = render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -524,13 +405,11 @@ describe('JavascriptAnimate timing', () => {
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
       expect(handleAnimationEnd).not.toHaveBeenCalled();
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(1);
 
       rerender(
         <JavascriptAnimate
-          from={{ opacity: 0.7 }}
-          to={{ opacity: 0.3 }}
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -541,7 +420,7 @@ describe('JavascriptAnimate timing', () => {
         </JavascriptAnimate>,
       );
 
-      expect(child).toHaveBeenLastCalledWith({ opacity: 0.3 });
+      expect(child).toHaveBeenLastCalledWith(1);
       expect(child).toHaveBeenCalledTimes(3);
       animationManager.assertQueue(null);
       expect(handleAnimationStart).not.toHaveBeenCalled();
@@ -554,8 +433,6 @@ describe('JavascriptAnimate timing', () => {
 
       const { rerender } = render(
         <JavascriptAnimate
-          from={{ opacity: 1 }}
-          to={{ opacity: 0 }}
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -568,13 +445,11 @@ describe('JavascriptAnimate timing', () => {
       animationManager.assertQueue(null);
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenLastCalledWith(0);
       expect(child).toHaveBeenCalledTimes(1);
 
       rerender(
         <JavascriptAnimate
-          from={{ opacity: 0.7 }}
-          to={{ opacity: 0.3 }}
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -587,8 +462,8 @@ describe('JavascriptAnimate timing', () => {
       // rerendering should not start the animation, this appears correct
       animationManager.assertQueue(null);
 
-      // however, the child should be rerendered with the fresh "from" state so this looks like a bug
-      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      // however, the child should be rerendered with the fresh starting state so this looks like a bug
+      expect(child).toHaveBeenLastCalledWith(0);
       expect(child).toHaveBeenCalledTimes(2);
     });
   });

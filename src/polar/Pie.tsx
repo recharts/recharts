@@ -41,11 +41,11 @@ import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PieSettings } from '../state/types/PieSettings';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -550,18 +550,16 @@ function SectorsWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       key={animationId}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const stepData: PieSectorDataItem[] = [];
         const first = sectors && sectors[0];
         let curAngle = first.startAngle;
@@ -609,7 +607,7 @@ function SectorsWithAnimation({
           </Layer>
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 

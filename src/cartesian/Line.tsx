@@ -37,12 +37,12 @@ import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AreaPointItem } from '../state/selectors/areaSelectors';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 export interface LinePointItem {
   readonly value: number;
@@ -399,18 +399,16 @@ function CurveWithAnimation({
   const startingPoint = longestAnimatedLengthRef.current;
 
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
       key={animationId}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
         const curLength = Math.min(lengthInterpolated, totalLength);
         let currentStrokeDasharray;
@@ -509,7 +507,7 @@ function CurveWithAnimation({
           />
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 

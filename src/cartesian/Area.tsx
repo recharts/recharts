@@ -41,13 +41,13 @@ import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { AreaSettings } from '../state/types/AreaSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -459,18 +459,16 @@ function AreaWithAnimation({
   const prevPoints = previousPointsRef.current;
   const prevBaseLine = previousBaselineRef.current;
   return (
-    <Animate
+    <JavascriptAnimate
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
       easing={animationEasing}
-      from={{ t: 0 }}
-      to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
       key={animationId}
     >
-      {({ t }: { t: number }) => {
+      {(t: number) => {
         if (prevPoints) {
           const prevPointsDiffFactor = prevPoints.length / points.length;
           const stepPoints: ReadonlyArray<AreaPointItem> =
@@ -569,7 +567,7 @@ function AreaWithAnimation({
           </Layer>
         );
       }}
-    </Animate>
+    </JavascriptAnimate>
   );
 }
 
