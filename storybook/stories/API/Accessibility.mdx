@@ -7,15 +7,14 @@ import { CategoricalChartProps } from './props/ChartProps';
 
 Anything that a user can do with a mouse, a user should also be able to do using only the keyboard. This is a fundamental requirement for anyone looking to make their software accessibility, and is expanded on in the [W3C's WCAG 2.1.1 success criteria](https://www.w3.org/WAI/WCAG21/Understanding/keyboard.html).
 
-While keyboard-only access is not available out of the box, you can turn on support for keyboard interactions using the `accessibilityLayer` prop. The accessibility layer adds the chart to the tab order, and adds keyboard event handler to listen for arrow keys. This will quickly and easily support accessibility for keyboard-only users.
+**Starting with Recharts 3.0, accessibility support is enabled by default** for all charts. The `accessibilityLayer` prop is set to `true` by default, which means keyboard navigation and screen reader support are automatically available without any additional configuration.
 
-To see how this works, try the following chart, where the accessibility layer has been applied. You can press the TAB key until you reach the chart. When you see a black border appear around the chart, the chart is "in focus". Once in focus, you can press the left or right arrow key to navigate between individual points. As you navigate, the tooltip will appear at each point, providing access to underlying data.
+To see how this works, try the following chart. You can press the TAB key until you reach the chart. When you see a black border appear around the chart, the chart is "in focus". Once in focus, you can press the left or right arrow key to navigate between individual points. As you navigate, the tooltip will appear at each point, providing access to underlying data.
 
 <ResponsiveContainer width="100%" height={400}>
     <LineChart
         data={pageData}
         title="Line chart showing UV values for pages"
-        accessibilityLayer
     >
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
         <XAxis dataKey="name" />
@@ -33,7 +32,6 @@ The code to generate this example is:
     <LineChart
         data={pageData}
         title="Line chart showing UV values for pages"
-        accessibilityLayer
     >
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
         <XAxis dataKey="name" />
@@ -43,25 +41,28 @@ The code to generate this example is:
 </ResponsiveContainer>
 ```
 
-The accessibility layer is not currently available for all charts. The accessibility layer can only be used under the following conditions:
-1. The chart must be categorical. This includes: AreaChart, BarChart, ComposedChart, and LineChart.
-2. The chart must include a tooltip.
-3. The chart must have a horizontal layout.
+Note that we no longer need to explicitly set `accessibilityLayer` since it's enabled by default in Recharts 3.0. If you need to disable accessibility features, you can set `accessibilityLayer={false}`.
+
+## Supported Charts
+
+Accessibility support is available for all chart types in Recharts, including:
+- **Cartesian Charts**: AreaChart, BarChart, LineChart, ComposedChart, ScatterChart
+- **Polar Charts**: PieChart, RadarChart, RadialBarChart  
+- **Other Charts**: FunnelChart, Treemap, Sankey, SunburstChart
+
+All charts support keyboard navigation and screen reader accessibility when `accessibilityLayer` is enabled (which it is by default).
 
 ## Screen reader support
 The accessibility layer works with the tooltip to provide feedback to screen reader users.
 
-If you are using a default tooltip, it will work with the `accessibilityLayer` to support screen reader users. The default tooltip will turn into a "live region", which means that screen readers will read the contents of the region as it updates. This will give blind users access to the underlying data in a chart, alongside sighted users.
+When using the default tooltip, it automatically works with screen reader users. The default tooltip becomes a "live region", which means that screen readers will read the contents as they update. This gives blind users access to the underlying data in a chart.
 
-If you are building your own custom tooltip, you can turn it into a live region by using the attributes `role="status" aria-live="assertive"`. Keep in mind that the full content of the tooltip will be read for every data point that the user interacts with, so it's best practices to keep the content in the tooltip to a minimum.
+If you are building a custom tooltip, you can turn it into a live region by using the attributes `role="status" aria-live="assertive"`. Keep in mind that the full content of the tooltip will be read for every data point that the user interacts with, so it's best practice to keep the content concise.
 
 ## Technical notes
 
-When you apply the `accessibilityLayer` to a chart, it will do a couple of things:
-1. By default, it will set the `role="application"`. This can be overwritten if you pass in your own `role` prop.
-2. By default, it will set the `tabIndex={0}`. This can be overwritten if you pass in your own `tabIndex` prop.
+When `accessibilityLayer` is enabled (which it is by default), it will:
+1. Set `role="application"` on the chart. This can be overridden by passing your own `role` prop.
+2. Set `tabIndex={0}` to add the chart to the tab order. This can be overridden by passing your own `tabIndex` prop.
 
-The accessibility layer works by spoofing mouse movements. 
-The layer adds an `onKeyDown` handler to intercept `ArrowLeft` and `ArrowRight` keys. 
-These keystrokes will then be transformed into mouse movements. 
-This means that if you are using `onMouseMove` in addition to `accessibilityLayer`, the `onMouseMove` callback will be fired when the user presses the left and right arrow keys.
+The accessibility layer adds keyboard event handlers to listen for `ArrowLeft` and `ArrowRight` keys. These keystrokes are used to navigate between data points and update the tooltip accordingly. The implementation no longer spoofs mouse movements as it did in earlier versions.

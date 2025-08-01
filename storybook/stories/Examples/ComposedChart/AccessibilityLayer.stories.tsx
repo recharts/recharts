@@ -33,7 +33,6 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
             left: 20,
           }}
           data={pageData}
-          accessibilityLayer
         >
           <Area isAnimationActive={false} dataKey="uv" {...args} />
           {/* All further components are added to show the interaction with the Area properties */}
@@ -82,7 +81,6 @@ export const AccessibleWithButton = {
             left: 0,
             bottom: 0,
           }}
-          accessibilityLayer
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
