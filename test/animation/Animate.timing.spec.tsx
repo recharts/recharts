@@ -19,84 +19,117 @@ describe('Animate timing', () => {
   });
 
   describe('with animation steps as strings', () => {
-    it('should change the style of children via element cloning and vi fake timers', () => {
-      vi.useFakeTimers();
-      expect.assertions(2);
-      const { container } = render(
-        // @ts-expect-error TODO - fix the type error
-        <Animate from="1" to="0" attributeName="opacity" duration={500}>
-          <div className="test-wrapper" />
-        </Animate>,
-      );
-      const element = container.getElementsByClassName('test-wrapper')[0];
-      expect(element).toHaveStyle({
-        opacity: 1,
-        transition: null,
+    describe('when the child is an element', () => {
+      it('should change the style of children via element cloning and vi fake timers', () => {
+        vi.useFakeTimers();
+        expect.assertions(2);
+        const { container } = render(
+          // @ts-expect-error TODO - fix the type error
+          <Animate from="1" to="0" attributeName="opacity" duration={500}>
+            <div className="test-wrapper" />
+          </Animate>,
+        );
+        const element = container.getElementsByClassName('test-wrapper')[0];
+        expect(element).toHaveStyle({
+          opacity: 1,
+          transition: null,
+        });
+
+        act(() => {
+          vi.advanceTimersByTime(700);
+        });
+
+        expect(element).toHaveStyle({
+          opacity: 0,
+          transition: 'opacity 500ms ease',
+        });
       });
 
-      act(() => {
-        vi.advanceTimersByTime(700);
+      it('should change the style of a single child via element cloning', async () => {
+        const animationManager = new MockTickingAnimationManager();
+        const { container } = render(
+          // @ts-expect-error TODO - fix the type error
+          <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
+            <div className="test-wrapper" />
+          </Animate>,
+        );
+        const element = container.getElementsByClassName('test-wrapper')[0];
+        expect(element).toHaveStyle({
+          opacity: 1,
+          transition: null,
+        });
+
+        await animationManager.poll(3);
+
+        expect(element).toHaveStyle({
+          opacity: 0,
+          transition: 'opacity 500ms ease',
+        });
       });
 
-      expect(element).toHaveStyle({
-        opacity: 0,
-        transition: 'opacity 500ms ease',
+      it('should change style of multiple children via element cloning', async () => {
+        const animationManager = new MockTickingAnimationManager();
+        const { container } = render(
+          // @ts-expect-error TODO - fix the type error
+          <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
+            <div className="test-wrapper-1" />
+            <div className="test-wrapper-2" />
+          </Animate>,
+        );
+
+        const element1 = container.getElementsByClassName('test-wrapper-1')[0];
+        const element2 = container.getElementsByClassName('test-wrapper-2')[0];
+
+        expect(element1).toHaveStyle({
+          opacity: 1,
+          transition: null,
+        });
+        expect(element2).toHaveStyle({
+          opacity: 1,
+          transition: null,
+        });
+
+        await animationManager.poll(3);
+
+        expect(element1).toHaveStyle({
+          opacity: 0,
+          transition: 'opacity 500ms ease',
+        });
+        expect(element2).toHaveStyle({
+          opacity: 0,
+          transition: 'opacity 500ms ease',
+        });
       });
     });
 
-    it('should change the style of a single child via element cloning', async () => {
-      const animationManager = new MockTickingAnimationManager();
-      const { container } = render(
-        // @ts-expect-error TODO - fix the type error
-        <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
-          <div className="test-wrapper" />
-        </Animate>,
-      );
-      const element = container.getElementsByClassName('test-wrapper')[0];
-      expect(element).toHaveStyle({
-        opacity: 1,
-        transition: null,
-      });
+    describe('when the child is a function', () => {
+      it.fails('should call children function with current style', async () => {
+        const timeoutController = new MockTimeoutController();
+        const animationManager = createAnimateManager(timeoutController);
+        const childFunction = vi.fn();
 
-      await animationManager.poll(3);
+        render(
+          <Animate
+            // @ts-expect-error types do not allow this
+            from="scaleY(0)"
+            // @ts-expect-error types do not allow this
+            to="scaleY{1}"
+            attributeName="transform"
+            duration={500}
+            animationManager={animationManager}
+          >
+            {childFunction}
+          </Animate>,
+        );
 
-      expect(element).toHaveStyle({
-        opacity: 0,
-        transition: 'opacity 500ms ease',
-      });
-    });
+        expect(childFunction).toHaveBeenLastCalledWith('scaleY(0)');
+        expect(childFunction).toHaveBeenCalledTimes(1);
 
-    it('should change style of multiple children via element cloning', async () => {
-      const animationManager = new MockTickingAnimationManager();
-      const { container } = render(
-        // @ts-expect-error TODO - fix the type error
-        <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
-          <div className="test-wrapper-1" />
-          <div className="test-wrapper-2" />
-        </Animate>,
-      );
+        await timeoutController.flushAllTimeouts();
 
-      const element1 = container.getElementsByClassName('test-wrapper-1')[0];
-      const element2 = container.getElementsByClassName('test-wrapper-2')[0];
-
-      expect(element1).toHaveStyle({
-        opacity: 1,
-        transition: null,
-      });
-      expect(element2).toHaveStyle({
-        opacity: 1,
-        transition: null,
-      });
-
-      await animationManager.poll(3);
-
-      expect(element1).toHaveStyle({
-        opacity: 0,
-        transition: 'opacity 500ms ease',
-      });
-      expect(element2).toHaveStyle({
-        opacity: 0,
-        transition: 'opacity 500ms ease',
+        expect(childFunction).toHaveBeenCalledTimes(3);
+        // this is not at all what happens
+        expect(childFunction).toHaveBeenLastCalledWith('scaleY(1)');
       });
     });
 
