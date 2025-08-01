@@ -11,8 +11,8 @@ import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 
 export interface ErrorBarDataItem {
   x: number | null;
@@ -155,6 +155,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
     }
 
+    const scaleDirection: string = direction === 'x' ? 'scaleX' : 'scaleY';
+
     const transformOrigin = `${x + offset}px ${y + offset}px`;
 
     return (
@@ -164,23 +166,20 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
         {...svgProps}
       >
         {lineCoordinates.map(coordinates => {
-          const lineStyle = isAnimationActive ? { transformOrigin: `${coordinates.x1 - 5}px` } : undefined;
+          const lineStyle = isAnimationActive ? { transformOrigin } : undefined;
           return (
-            <Animate
-              from={{ transform: 'scaleY(0)', transformOrigin }}
-              to={{ transform: 'scaleY(1)', transformOrigin }}
+            <CSSTransitionAnimate
+              from={`${scaleDirection}(0)`}
+              to={`${scaleDirection}(1)`}
+              attributeName="transform"
               begin={animationBegin}
               easing={animationEasing}
               isActive={isAnimationActive}
               duration={animationDuration}
               key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
-              // @ts-expect-error TODO - fix the type error
-              style={{
-                transformOrigin,
-              }}
             >
-              <line {...coordinates} style={lineStyle} />
-            </Animate>
+              {style => <line {...coordinates} style={{ ...lineStyle, ...style }} />}
+            </CSSTransitionAnimate>
           );
         })}
       </Layer>

@@ -36,22 +36,19 @@ const expectErrorBars = (container: HTMLElement, linesExpected: ReadonlyArray<Ex
   expect(linesActual).toEqual(linesExpected);
 };
 
-function assertAnimationStyles(
-  container: HTMLElement,
-  animation: boolean = true,
-  expectedStyles: { [key: string]: string } = {},
-) {
+function assertAnimationStyles(container: HTMLElement, animation: boolean, expectedStyles: { [key: string]: string }) {
   const errorBars = container.querySelectorAll('.recharts-errorBar');
   errorBars.forEach(bar => {
     const lineElements = bar.querySelectorAll('line');
     lineElements.forEach(line => {
-      if (animation) {
-        const style = line.getAttribute('style');
-        Object.entries(expectedStyles).forEach(([key, value]) => {
-          expect(style).toContain(`${key}: ${value}`);
-        });
+      const style = line.getAttribute('style');
+      Object.entries(expectedStyles).forEach(([key, value]) => {
+        expect(style).toContain(`${key}: ${value}`);
+      });
+      if (animation === true) {
+        expect(line.getAttribute('style')).toContain('transition');
       } else {
-        expect(line.getAttribute('style')).toBeNull();
+        expect(line.getAttribute('style')).not.toContain('transition');
       }
     });
   });
@@ -868,7 +865,7 @@ describe('<ErrorBar />', () => {
       },
     ]);
     assertAnimationStyles(container, true, {
-      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
     });
   });
@@ -956,7 +953,9 @@ describe('<ErrorBar />', () => {
         y2: '127.5',
       },
     ]);
-    assertAnimationStyles(container, false);
+    assertAnimationStyles(container, false, {
+      transform: 'scaleY(1)',
+    });
   });
 
   test('Renders Error Bars with animation delay', () => {
@@ -1043,7 +1042,7 @@ describe('<ErrorBar />', () => {
       },
     ]);
     assertAnimationStyles(container, true, {
-      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
     });
 
@@ -1137,7 +1136,7 @@ describe('<ErrorBar />', () => {
       },
     ]);
     assertAnimationStyles(container, true, {
-      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
     });
   });
@@ -1226,7 +1225,7 @@ describe('<ErrorBar />', () => {
       },
     ]);
     assertAnimationStyles(container, true, {
-      transition: 'transform 400ms linear,transform-origin 400ms linear',
+      transition: 'transform 400ms linear',
       transform: 'scaleY(1)',
     });
   });
