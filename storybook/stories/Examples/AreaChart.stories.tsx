@@ -703,6 +703,7 @@ export const StackedAreaWithCustomLegend = {
             strokeWidth={3}
             fill="rgba(136,132,216,0.47)"
             hide={hiddenItems.includes('uv')}
+            animationBegin={0}
           />
           <Area
             type="monotone"
@@ -712,6 +713,7 @@ export const StackedAreaWithCustomLegend = {
             strokeWidth={3}
             fill="rgba(130,202,157,0.47)"
             hide={hiddenItems.includes('pv')}
+            animationBegin={300}
           />
           <Area
             type="monotone"
@@ -721,6 +723,7 @@ export const StackedAreaWithCustomLegend = {
             strokeWidth={3}
             fill="rgba(255,198,88,0.47)"
             hide={hiddenItems.includes('amt')}
+            animationBegin={600}
           />
           <RechartsHookInspector
             position={context.rechartsInspectorPosition}
