@@ -1,7 +1,6 @@
-// eslint-disable-next-line max-classes-per-file
 import { expect, userEvent, within } from 'storybook/test';
 import { Args, StoryObj } from '@storybook/react-vite';
-import React, { PureComponent, useState } from 'react';
+import React, { useState } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
 import {
   Line,
@@ -504,31 +503,23 @@ export const ClipDot: StoryObj = {
 
 export const WithCustomizedLabel = {
   render: (args: Args, context: RechartsStoryContext) => {
-    class CustomizedLabel extends PureComponent {
-      render() {
-        const { x, y, stroke, value } = this.props as any;
+    const CustomizedLabel = ({ x, y, stroke, value }: any) => {
+      return (
+        <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">
+          {value}
+        </text>
+      );
+    };
 
-        return (
-          <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">
-            {value}
+    const CustomizedAxisTick = ({ x, y, payload }: any) => {
+      return (
+        <g transform={`translate(${x},${y})`}>
+          <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
+            {payload.value}
           </text>
-        );
-      }
-    }
-
-    class CustomizedAxisTick extends PureComponent {
-      render() {
-        const { x, y, payload } = this.props as any;
-
-        return (
-          <g transform={`translate(${x},${y})`}>
-            <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
-              {payload.value}
-            </text>
-          </g>
-        );
-      }
-    }
+        </g>
+      );
+    };
 
     return (
       <ResponsiveContainer width="100%" height="100%">
