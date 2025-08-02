@@ -23,8 +23,15 @@ export const detectReferenceElementsDomain = (
 
   if (elements.length) {
     finalDomain = elements.reduce((result: number[], el: any) => {
-      if (el.props[idKey] === axisId && ifOverflowMatches(el.props, 'extendDomain') && isNumber(el.props[valueKey])) {
-        const value = el.props[valueKey];
+      const elementDefaultProps = (el.type as any)?.defaultProps;
+      const elementProps = elementDefaultProps ? { ...elementDefaultProps, ...el.props } : el.props;
+
+      if (
+        elementProps[idKey] === axisId &&
+        ifOverflowMatches(elementProps, 'extendDomain') &&
+        isNumber(elementProps[valueKey])
+      ) {
+        const value = elementProps[valueKey];
 
         return [Math.min(result[0], value), Math.max(result[1], value)];
       }
@@ -37,14 +44,17 @@ export const detectReferenceElementsDomain = (
     const key2 = `${valueKey}2`;
 
     finalDomain = areas.reduce((result: number[], el: any) => {
+      const areaDefaultProps = (el.type as any)?.defaultProps;
+      const areaProps = areaDefaultProps ? { ...areaDefaultProps, ...el.props } : el.props;
+
       if (
-        el.props[idKey] === axisId &&
-        ifOverflowMatches(el.props, 'extendDomain') &&
-        isNumber(el.props[key1]) &&
-        isNumber(el.props[key2])
+        areaProps[idKey] === axisId &&
+        ifOverflowMatches(areaProps, 'extendDomain') &&
+        isNumber(areaProps[key1]) &&
+        isNumber(areaProps[key2])
       ) {
-        const value1 = el.props[key1];
-        const value2 = el.props[key2];
+        const value1 = areaProps[key1];
+        const value2 = areaProps[key2];
 
         return [Math.min(result[0], value1, value2), Math.max(result[1], value1, value2)];
       }
