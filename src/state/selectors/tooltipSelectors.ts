@@ -217,6 +217,8 @@ const selectTooltipNumericalDomain: (state: RechartsRootState) => NumberDomain |
     selectTooltipDomainOfStackGroups,
     selectTooltipAllAppliedNumericalValuesIncludingErrorValues,
     selectTooltipReferenceElementsDomain,
+    selectChartLayout,
+    selectTooltipAxisType,
   ],
   combineNumericalDomain,
 );
