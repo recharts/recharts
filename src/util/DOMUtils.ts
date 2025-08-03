@@ -3,15 +3,13 @@ import { Global } from './Global';
 import { Size } from './types';
 
 interface StringCache {
-  widthCache: Record<string, any>;
-  cacheCount: number;
+  widthCache: Map<string, any>;
 }
 
 const stringCache: StringCache = {
-  widthCache: {},
-  cacheCount: 0,
+  widthCache: new Map<string, Size>(),
 };
-const MAX_CACHE_NUM = 2000;
+export const MAX_CACHE_NUM = 2000;
 const SPAN_STYLE = {
   position: 'absolute',
   top: '-20000px',
@@ -41,8 +39,8 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}):
   const copyStyle = removeInvalidKeys(style);
   const cacheKey = JSON.stringify({ text, copyStyle });
 
-  if (stringCache.widthCache[cacheKey]) {
-    return stringCache.widthCache[cacheKey];
+  if (stringCache.widthCache.has(cacheKey)) {
+    return stringCache.widthCache.get(cacheKey)!;
   }
 
   try {
@@ -63,11 +61,11 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}):
     const rect = measurementSpan.getBoundingClientRect();
     const result = { width: rect.width, height: rect.height };
 
-    stringCache.widthCache[cacheKey] = result;
+    stringCache.widthCache.set(cacheKey, result);
 
-    if (++stringCache.cacheCount > MAX_CACHE_NUM) {
-      stringCache.cacheCount = 0;
-      stringCache.widthCache = {};
+    if (stringCache.widthCache.size > MAX_CACHE_NUM) {
+      const oldestKey = stringCache.widthCache.keys().next().value;
+      stringCache.widthCache.delete(oldestKey);
     }
 
     return result;
