@@ -1,7 +1,7 @@
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 import { StartAnimationFunction } from './configUpdate';
 
-export type ReactSmoothStyle = object;
+export type ReactSmoothStyle = string | object;
 
 /**
  * Represents a single item in the ReactSmoothQueue.
@@ -26,7 +26,7 @@ export type AnimationManager = {
 };
 
 export function createAnimateManager(timeoutController: TimeoutController): AnimationManager {
-  let currStyle: ReactSmoothQueueItem | ReactSmoothQueue = {};
+  let currStyle: ReactSmoothQueueItem | ReactSmoothQueue | undefined;
   let handleChange: HandleChangeFn = () => null;
   let shouldStop = false;
   let cancelTimeout: CancelableTimeout | null = null;
@@ -41,7 +41,7 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
         return;
       }
 
-      const styles = _style;
+      const styles: ReactSmoothQueue = _style;
       const [curr, ...restStyles] = styles;
 
       if (typeof curr === 'number') {
@@ -53,6 +53,11 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
       setStyle(curr);
       cancelTimeout = timeoutController.setTimeout(setStyle.bind(null, restStyles));
       return;
+    }
+
+    if (typeof _style === 'string') {
+      currStyle = _style;
+      handleChange(currStyle);
     }
 
     if (typeof _style === 'object') {

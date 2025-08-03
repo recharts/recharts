@@ -17,11 +17,11 @@ import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContex
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
+  setActiveClickItemIndex,
+  setActiveMouseOverItemIndex,
   TooltipIndex,
   TooltipPayloadConfiguration,
   TooltipPayloadSearcher,
-  setActiveClickItemIndex,
-  setActiveMouseOverItemIndex,
 } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
@@ -29,8 +29,8 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { Animate } from '../animation/Animate';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -290,6 +290,9 @@ export interface Props {
 
   data?: ReadonlyArray<TreemapDataType>;
 
+  /**
+   * @deprecated unused prop, doesn't do anything, use `key` instead
+   */
   animationId?: number;
 
   style?: any;
@@ -673,7 +676,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       animationEasing,
       isUpdateAnimationActive,
       type,
-      animationId,
       colorPanel,
       dataKey,
     } = this.props;
@@ -712,53 +714,41 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
 
     return (
-      <Animate
+      <CSSTransitionAnimate
+        from={`translate(${translateX}px, ${translateX}px)`}
+        to="translate(0, 0)"
+        attributeName="transform"
         begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
         easing={animationEasing}
-        key={`treemap-${animationId}`}
-        from={{ x, y, width, height }}
-        to={{ x, y, width, height }}
+        isActive={isAnimationActive}
+        duration={animationDuration}
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
-        {({ x: currX, y: currY, width: currWidth, height: currHeight }: TreemapNode) => (
-          <Animate
-            // @ts-expect-error TODO - fix the type error
-            from={`translate(${translateX}px, ${translateX}px)`}
-            // @ts-expect-error TODO - fix the type error
-            to="translate(0, 0)"
-            attributeName="transform"
-            begin={animationBegin}
-            easing={animationEasing}
-            isActive={isAnimationActive}
-            duration={animationDuration}
-          >
-            <Layer {...event}>
-              {/* when animation is in progress , only render depth=1 nodes */}
-              {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
-              {depth > 2 && !isAnimationFinished ? null : (
-                <ContentItemWithEvents
-                  content={content}
-                  dataKey={dataKey}
-                  nodeProps={{
-                    ...nodeProps,
-                    isAnimationActive,
-                    isUpdateAnimationActive: !isUpdateAnimationActive,
-                    width: currWidth,
-                    height: currHeight,
-                    x: currX,
-                    y: currY,
-                  }}
-                  type={type}
-                  colorPanel={colorPanel}
-                />
-              )}
-            </Layer>
-          </Animate>
+        {style => (
+          <Layer {...event} style={style}>
+            {/* when animation is in progress , only render depth=1 nodes */}
+            {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
+            {depth > 2 && !isAnimationFinished ? null : (
+              <ContentItemWithEvents
+                content={content}
+                dataKey={dataKey}
+                nodeProps={{
+                  ...nodeProps,
+                  isAnimationActive,
+                  isUpdateAnimationActive: !isUpdateAnimationActive,
+                  width,
+                  height,
+                  x,
+                  y,
+                }}
+                type={type}
+                colorPanel={colorPanel}
+              />
+            )}
+          </Layer>
         )}
-      </Animate>
+      </CSSTransitionAnimate>
     );
   }
 

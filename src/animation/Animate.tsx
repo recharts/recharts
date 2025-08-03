@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { PureComponent, cloneElement, Children, createContext, useContext } from 'react';
+import { Children, cloneElement, createContext, PureComponent, useContext } from 'react';
 import isEqual from 'es-toolkit/compat/isEqual';
-import { AnimationManager, createAnimateManager } from './AnimationManager';
+import { AnimationManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal } from './util';
-import { RequestAnimationFrameTimeoutController } from './timeoutController';
+import { createDefaultAnimationManager } from './createDefaultAnimationManager';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -32,10 +32,6 @@ type AnimateState = {
   style: Record<string, any>;
 };
 
-function createDefaultAnimationManager(): AnimationManager {
-  return createAnimateManager(new RequestAnimationFrameTimeoutController());
-}
-
 class AnimateImpl extends PureComponent<AnimateProps, AnimateState> {
   static displayName = 'Animate';
 
@@ -52,9 +48,9 @@ class AnimateImpl extends PureComponent<AnimateProps, AnimateState> {
 
   private mounted: boolean = false;
 
-  private manager: AnimationManager | null = null;
+  private manager: AnimationManager | undefined = undefined;
 
-  private stopJSAnimation: () => void | null = null;
+  private stopJSAnimation: (() => void) | null = null;
 
   private unSubscribe: (() => void) | null = null;
 
