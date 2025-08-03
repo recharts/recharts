@@ -23,8 +23,15 @@ export const detectReferenceElementsDomain = (
 
   if (elements.length) {
     finalDomain = elements.reduce((result: number[], el: any) => {
-      if (el.props[idKey] === axisId && ifOverflowMatches(el.props, 'extendDomain') && isNumber(el.props[valueKey])) {
-        const value = el.props[valueKey];
+      const elementDefaultProps = (el.type as any)?.defaultProps;
+      const elementProps = elementDefaultProps ? { ...elementDefaultProps, ...el.props } : el.props;
+
+      if (
+        elementProps[idKey] === axisId &&
+        ifOverflowMatches(elementProps, 'extendDomain') &&
+        isNumber(elementProps[valueKey])
+      ) {
+        const value = elementProps[valueKey];
 
         return [Math.min(result[0], value), Math.max(result[1], value)];
       }
