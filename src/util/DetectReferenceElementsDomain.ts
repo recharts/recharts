@@ -44,17 +44,14 @@ export const detectReferenceElementsDomain = (
     const key2 = `${valueKey}2`;
 
     finalDomain = areas.reduce((result: number[], el: any) => {
-      const areaDefaultProps = (el.type as any)?.defaultProps;
-      const areaProps = areaDefaultProps ? { ...areaDefaultProps, ...el.props } : el.props;
-
       if (
-        areaProps[idKey] === axisId &&
-        ifOverflowMatches(areaProps, 'extendDomain') &&
-        isNumber(areaProps[key1]) &&
-        isNumber(areaProps[key2])
+        el.props[idKey] === axisId &&
+        ifOverflowMatches(el.props, 'extendDomain') &&
+        isNumber(el.props[key1]) &&
+        isNumber(el.props[key2])
       ) {
-        const value1 = areaProps[key1];
-        const value2 = areaProps[key2];
+        const value1 = el.props[key1];
+        const value2 = el.props[key2];
 
         return [Math.min(result[0], value1, value2), Math.max(result[1], value1, value2)];
       }
