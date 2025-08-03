@@ -354,5 +354,9 @@ export const API = {
     width: 300,
     stroke: '#000',
     fill: 'red',
+    isAnimationActive: true,
+    isUpdateAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
   },
 };
