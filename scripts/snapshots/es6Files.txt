@@ -196,6 +196,7 @@
   "es6/util/FunnelUtils.js",
   "es6/util/Global.js",
   "es6/util/IfOverflow.js",
+  "es6/util/LRUCache.js",
   "es6/util/LogUtils.js",
   "es6/util/PolarUtils.js",
   "es6/util/RadialBarUtils.js",
