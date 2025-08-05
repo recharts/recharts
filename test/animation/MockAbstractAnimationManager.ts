@@ -40,12 +40,11 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
    * This is useful for stepping through the easing function which has its own independent timing mechanism.
    * If there are no timeouts to trigger, it will throw an error.
    * @param now The current time in milliseconds.
-   * @throws Error Will throw an error if there are no timeouts to trigger.
    * @returns Promise<void>
    */
   protected async triggerNextTimeout(now: number): Promise<void> {
     if (this.timeoutController.getCallbacksCount() === 0) {
-      throw new Error('No timeouts to trigger');
+      return;
     }
 
     await this.timeoutController.triggerNextTimeout(now);

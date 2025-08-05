@@ -1,11 +1,7 @@
 import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
 import { AnimationManager, ReactSmoothQueue } from '../../src/animation/AnimationManager';
 
-/**
- * A higher level mock animation manager that allows for less granular control
- * but also requires less setup to get to a certain point in the animation.
- */
-export class MockProgressAnimationManager extends MockAbstractAnimationManager implements AnimationManager {
+export interface MockAnimationManager {
   /**
    * Sets the eased animation progress to a specific percentage.
    * It will step through all previous timeouts, objects, and functions in the queue and execute them as normal,
@@ -28,6 +24,30 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
    * @throws Error Will throw an error if the queue is empty or if the percentage is not between 0 and 1.
    * @returns Promise<void>
    */
+  setAnimationProgress(percent: number): Promise<void>;
+
+  /**
+   * Completes the animation immediately, finishing all items in the queue.
+   * This will not call onAnimationEnd or anything like that,
+   * it will just finish everything in the queue immediately.
+   * If you want to call onAnimationEnd, you need to do that manually.
+   *
+   * @throws Error Will throw an error if the queue is empty.
+   * @returns Promise<void>
+   */
+  completeAnimation(): Promise<void>;
+
+  isAnimating(): boolean;
+}
+
+/**
+ * A higher level mock animation manager that allows for less granular control
+ * but also requires less setup to get to a certain point in the animation.
+ */
+export class MockProgressAnimationManager
+  extends MockAbstractAnimationManager
+  implements AnimationManager, MockAnimationManager
+{
   async setAnimationProgress(percent: number): Promise<void> {
     if (this.queue === null || this.queue.length === 0) {
       throw new Error('Queue is empty');
@@ -55,15 +75,6 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
   }
 
-  /**
-   * Completes the animation immediately, finishing all items in the queue.
-   * This will not call onAnimationEnd or anything like that,
-   * it will just finish everything in the queue immediately.
-   * If you want to call onAnimationEnd, you need to do that manually.
-   *
-   * @throws Error Will throw an error if the queue is empty.
-   * @returns Promise<void>
-   */
   async completeAnimation(): Promise<void> {
     if (this.queue === null || this.queue.length === 0) {
       throw new Error('Queue is empty');

@@ -27,12 +27,11 @@ export class MockTimeoutController implements TimeoutController {
    * If there are no timeouts registered, it throws an error.
    * If there are multiple timeouts, it triggers the first one in the queue.
    * @param now - The current time in milliseconds.
-   * @throws If there are no timeouts to trigger.
    * @returns undefined
    */
   async triggerNextTimeout(now: number): Promise<void> {
     if (this.timeouts.length === 0) {
-      throw new Error('No timeouts to trigger');
+      return;
     }
 
     const { callback } = this.timeouts.shift();

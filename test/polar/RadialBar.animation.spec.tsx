@@ -5,8 +5,8 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { pageDataWithFillColor } from '../../storybook/stories/data';
 import { RadialBar, RadialBarChart } from '../../src';
 import { getRadialBarPaths } from '../helper/expectRadialBars';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const smallerData = pageDataWithFillColor.slice(0, 2);
 
@@ -16,7 +16,7 @@ function getRadialBarPathStrings(container: Element): ReadonlyArray<string> {
 
 async function expectAnimatedRadialBarPaths(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<string>>> {
   assertNotNull(container);
@@ -132,7 +132,7 @@ describe('RadialBar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -187,7 +187,7 @@ describe('RadialBar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -245,7 +245,7 @@ describe('RadialBar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);

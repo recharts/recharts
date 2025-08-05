@@ -4,9 +4,10 @@ import { Mock, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
-import { AnimationManagerContext } from '../../src/animation/Animate';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertUniqueHtmlIds } from '../util/assertUniqueHtmlIds';
+import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
+import { CompositeAnimationManager } from '../animation/CompositeAnimationManager';
 
 const emptySelector: Selector<RechartsRootState, undefined, never> = () => {};
 
@@ -15,7 +16,7 @@ type TestCaseResult<T> = {
   spy: Mock<(selectorResult: T) => void>;
   debug: () => void;
   rerender: (ui: ReactNode) => void;
-  animationManager: MockProgressAnimationManager;
+  animationManager: MockAnimationManager;
   getByText: (text: string) => HTMLElement;
 };
 
@@ -24,7 +25,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     selector: Selector<RechartsRootState, T, never> = emptySelector,
   ): TestCaseResult<T> {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
-    const animationManager = new MockProgressAnimationManager();
+    const animationManager = new CompositeAnimationManager();
 
     const Comp = (): null => {
       spy(useAppSelectorWithStableTest(selector));
@@ -32,7 +33,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     };
 
     const { container, debug, rerender, getByText } = render(
-      <AnimationManagerContext.Provider value={animationManager}>
+      <AnimationManagerContext.Provider value={animationManager.factory}>
         <Component>
           <Comp />
         </Component>

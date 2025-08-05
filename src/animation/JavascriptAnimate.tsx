@@ -40,7 +40,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
   const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
 
-  const animationManager = useAnimationManager(props.animationManager);
+  const animationManager = useAnimationManager('JavascriptAnimate', props.animationManager);
 
   const [style, setStyle] = useState<TimeAsObject>(isActive ? from : to);
   const stopJSAnimation = useRef<(() => void) | null>(null);

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Children, cloneElement, createContext, PureComponent, useContext } from 'react';
+import { Children, cloneElement, PureComponent } from 'react';
 import isEqual from 'es-toolkit/compat/isEqual';
 import { AnimationManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal } from './util';
-import { createDefaultAnimationManager } from './createDefaultAnimationManager';
+import { useAnimationManager } from './useAnimationManager';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -270,15 +270,11 @@ class AnimateImpl extends PureComponent<AnimateProps, AnimateState> {
   }
 }
 
-export const AnimationManagerContext = createContext<AnimationManager | null>(null);
-
 export function Animate(props: AnimateProps) {
-  const contextAnimationManager = useContext(AnimationManagerContext);
-
-  return (
-    <AnimateImpl
-      {...props}
-      animationManager={props.animationManager ?? contextAnimationManager ?? createDefaultAnimationManager()}
-    />
+  const animationManager = useAnimationManager(
+    props.attributeName ?? Object.keys(props.to).join(','),
+    props.animationManager,
   );
+
+  return <AnimateImpl {...props} animationManager={animationManager} />;
 }
