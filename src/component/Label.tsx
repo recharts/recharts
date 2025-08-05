@@ -415,14 +415,19 @@ export function Label({ offset = 5, ...restProps }: Props) {
     return null;
   }
 
+  const propsWithViewBox = {
+    ...props,
+    viewBox,
+  };
+
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = props;
+    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }
 
   let label: ReactNode;
   if (typeof content === 'function') {
-    label = createElement(content as any, props);
+    label = createElement(content as any, propsWithViewBox);
 
     if (isValidElement(label)) {
       return label;
