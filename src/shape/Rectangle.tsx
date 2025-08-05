@@ -7,11 +7,11 @@ import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { interpolate } from '../util/DataUtils';
 import { useAnimationId } from '../util/useAnimationId';
+import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 
 export type RectRadius = [number, number, number, number];
 
@@ -166,29 +166,33 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
           prevYRef.current = currY;
         }
         return (
-          <Animate
+          <CSSTransitionAnimate
             canBegin={totalLength > 0}
-            // @ts-expect-error TODO - fix the type error
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-            // @ts-expect-error TODO - fix the type error
             to={`${totalLength}px 0px`}
             attributeName="strokeDasharray"
             begin={animationBegin}
             duration={animationDuration}
             isActive={isAnimationActive}
-            easing={animationEasing}
+            easing={typeof animationEasing === 'string' ? animationEasing : undefined}
           >
-            <path
-              {...filterProps(props, true)}
-              width={currWidth}
-              height={currHeight}
-              x={currX}
-              y={currY}
-              className={layerClass}
-              d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
-              ref={pathRef}
-            />
-          </Animate>
+            {animationStyle => (
+              <path
+                {...filterProps(props, true)}
+                width={currWidth}
+                height={currHeight}
+                x={currX}
+                y={currY}
+                className={layerClass}
+                d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
+                ref={pathRef}
+                style={{
+                  ...animationStyle,
+                  ...props.style,
+                }}
+              />
+            )}
+          </CSSTransitionAnimate>
         );
       }}
     </JavascriptAnimate>

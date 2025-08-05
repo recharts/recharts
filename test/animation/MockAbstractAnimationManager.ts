@@ -89,7 +89,7 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
     this.queue = this.queue.slice(1);
     if (typeof head === 'function') {
       head();
-    } else if (typeof head === 'object') {
+    } else if (typeof head === 'object' || typeof head === 'string') {
       this.listener?.(head);
     } else if (typeof head === 'number') {
       // just pretending that there was a timeout, good enough for testing
