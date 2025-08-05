@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Funnel, FunnelChart } from '../../src';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
 import { PageData } from '../_data';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const smallerData = PageData.slice(0, 2);
 
@@ -19,7 +19,7 @@ function getFunnelPathStrings(container: Element): ReadonlyArray<string> {
 
 async function expectAnimatedFunnelPaths(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<string>>> {
   assertNotNull(container);
@@ -138,7 +138,7 @@ describe('Funnel animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -193,7 +193,7 @@ describe('Funnel animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -251,7 +251,7 @@ describe('Funnel animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);

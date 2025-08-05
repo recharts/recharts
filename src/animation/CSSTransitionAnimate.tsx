@@ -47,7 +47,7 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
     children,
   } = props;
 
-  const animationManager = useAnimationManager(props.animationManager);
+  const animationManager = useAnimationManager(attributeName, props.animationManager);
 
   const [style, setStyle] = useState<T>(isActive ? from : to);
 

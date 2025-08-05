@@ -6,8 +6,8 @@ import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingCl
 import { BarChart, Bar } from '../../src';
 import { PageData } from '../_data';
 import { expectBars, getAllBarPaths } from '../helper/expectBars';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const smallerData = PageData.slice(0, 2);
 
@@ -25,7 +25,7 @@ const smallerData = PageData.slice(0, 2);
  */
 async function expectBarHeightAnimation(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<{
   heights: ReadonlyArray<ReadonlyArray<string>>;
@@ -269,7 +269,7 @@ describe('Bar animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
         await animationManager.completeAnimation();
 
@@ -298,7 +298,7 @@ describe('Bar animation', () => {
     });
 
     describe('interaction in the middle of the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the 'pv' dataKey, so we let the animation run half way
         await animationManager.setAnimationProgress(0.5);
 
@@ -353,7 +353,7 @@ describe('Bar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
       await animationManager.completeAnimation();
 
@@ -407,7 +407,7 @@ describe('Bar animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.completeAnimation();
 
         const button = container.querySelector('button');
@@ -431,7 +431,7 @@ describe('Bar animation', () => {
     });
 
     describe('interaction in the middle of the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.setAnimationProgress(0.5);
 
         const button = container.querySelector('button');

@@ -4,7 +4,6 @@ import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
 import {
   ExpectedRadarDot,
@@ -13,6 +12,7 @@ import {
   getRadarDots,
   getRadarPolygons,
 } from '../helper/expectRadarPolygons';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const RADAR_RADIUS = 40;
 const CX = 50;
@@ -41,7 +41,7 @@ function getPolygonPath(container: Element): string {
 
 async function expectAnimatedRadarPolygons(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<string>> {
   assertNotNull(container);
@@ -77,7 +77,7 @@ function getRadarDotRadii(container: Element): ReadonlyArray<number> {
 
 async function expectAnimatedDotRadii(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<number>>> {
   assertNotNull(container);
@@ -120,7 +120,7 @@ function getDotPosition(dot: SVGCircleElement): { cx: string; cy: string } {
 
 async function expectAnimatedRadarDots(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<ExpectedRadarDot>>> {
   assertNotNull(container);
@@ -313,7 +313,7 @@ describe('Radar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -393,7 +393,7 @@ describe('Radar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -482,7 +482,7 @@ describe('Radar animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);
@@ -561,7 +561,7 @@ describe('Radar animation', () => {
       );
     });
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       assertNotNull(button);

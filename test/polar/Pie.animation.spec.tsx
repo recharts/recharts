@@ -10,9 +10,9 @@ import {
   getPieSectorAngles,
   expectPieSectorAngles,
 } from '../helper/expectPieSectors';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
 import { trim } from '../helper/trim';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const smallerData = PageData.slice(0, 3);
 
@@ -27,7 +27,7 @@ const finalSectorPaths = [
 
 async function expectAnimatedPiePaths(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<string>>> {
   assertNotNull(container);
@@ -85,7 +85,7 @@ async function expectAnimatedPiePaths(
 
 async function expectAnimatedPieAngles(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<ReadonlyArray<ReadonlyArray<{ startAngle: number; endAngle: number }>>> {
   assertNotNull(container);
@@ -356,7 +356,7 @@ describe('Pie animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the 'amt' dataKey, so we need to run the animation to completion.
         await animationManager.completeAnimation();
 
@@ -396,7 +396,7 @@ describe('Pie animation', () => {
     });
 
     describe('interaction in the middle of the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the 'amt' dataKey, so we let the animation run half way
         await animationManager.setAnimationProgress(0.5);
 
@@ -465,7 +465,7 @@ describe('Pie animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       // The test begins initially with the 'amt' dataKey, so we need to run the animation to completion.
       await animationManager.completeAnimation();
 
@@ -531,7 +531,7 @@ describe('Pie animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.completeAnimation();
 
         const button = container.querySelector('button');
@@ -567,7 +567,7 @@ describe('Pie animation', () => {
     });
 
     describe('interaction in the middle of the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.setAnimationProgress(0.5);
 
         const button = container.querySelector('button');

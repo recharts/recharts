@@ -7,9 +7,9 @@ import { PageData } from '../_data';
 import { mockGetTotalLength } from '../helper/mockGetTotalLength';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { expectDots } from '../helper/expectDots';
 import { expectLines } from '../helper/expectLine';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 function getLine(container: HTMLElement) {
   return container.querySelector('.recharts-line-curve');
@@ -533,7 +533,7 @@ describe('Line animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interrupting the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         /*
          * In this test, we wait for the initial animation to start, but not to complete.
          * We interrupt it by changing the dataKey prop, in the middle.
@@ -767,7 +767,7 @@ describe('Line animation', () => {
     });
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the UV dataKey, so we need to run the animation to completion.
         await animationManager.completeAnimation();
 
@@ -1013,7 +1013,7 @@ describe('Line animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       // The test begins initially with the UV dataKey, so we need to run the animation to completion.
       await animationManager.completeAnimation();
 
@@ -1095,7 +1095,7 @@ describe('Line animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('interrupting the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         /*
          * In this test, we wait for the initial animation to start, but not to complete.
          * We interrupt it by changing the data array, in the middle.
@@ -1177,7 +1177,7 @@ describe('Line animation', () => {
     });
 
     describe('interaction after initial animation completes', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the UV dataKey, so we need to run the animation to completion.
         await animationManager.completeAnimation();
 
@@ -1426,7 +1426,7 @@ describe('Line animation', () => {
       );
     });
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       // The test begins initially with the first data array, so we need to run the animation to completion.
       await animationManager.completeAnimation();
 

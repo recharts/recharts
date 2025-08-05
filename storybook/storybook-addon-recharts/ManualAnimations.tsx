@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { MockProgressAnimationManager } from '../../test/animation/MockProgressAnimationManager';
-import { AnimationManager } from '../../src/animation/AnimationManager';
-import { AnimationManagerContext } from '../../src/animation/Animate';
+import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
+import { CompositeAnimationManager } from '../../test/animation/CompositeAnimationManager';
 
 type Props = {
   isEnabled: boolean;
   children: React.ReactNode;
 };
 
-class ManualAnimationManager extends MockProgressAnimationManager implements AnimationManager {}
-const animationManager = new ManualAnimationManager();
+const animationManager = new CompositeAnimationManager();
 
 export function ManualAnimations({ isEnabled, children }: Props) {
   const [progress, setProgress] = useState(0);
@@ -34,7 +32,7 @@ export function ManualAnimations({ isEnabled, children }: Props) {
     return children;
   }
   return (
-    <AnimationManagerContext.Provider value={animationManager}>
+    <AnimationManagerContext.Provider value={animationManager.factory}>
       {/* div to force vertical stacking. Comes with some basic styling so that it allows ResponsiveContainer to render */}
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
         {children}

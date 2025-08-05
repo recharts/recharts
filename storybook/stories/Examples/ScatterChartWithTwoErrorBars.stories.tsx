@@ -4,7 +4,7 @@ import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar }
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { XAxisProps } from '../API/props/XAxisProps';
 import { CartesianChartProps } from '../API/props/CartesianChartProps';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import { ManualAnimations, RechartsHookInspector } from '../../storybook-addon-recharts';
 import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 const bespokeArgTypes = {
@@ -38,31 +38,33 @@ export const WithErrorBarsAndExtendedDomain = {
     ];
 
     return (
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
-        }}
-        layout={args.layout}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" unit="cm" allowDataOverflow={args.allowDataOverflow} />
-        <YAxis type="number" dataKey="y" name="weight" unit="kg" allowDataOverflow={args.allowDataOverflow} />
-        <Scatter name="A school" data={data} fill="blue">
-          {/* This ErrorBar does render, but it does not extend the domain of XAxis unfortunately */}
-          <ErrorBar dataKey="errorX" width={2} strokeWidth={3} stroke="green" direction="x" />
-          <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
-        </Scatter>
-        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
-      </ScatterChart>
+      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+        <ScatterChart
+          width={400}
+          height={400}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          layout={args.layout}
+        >
+          <CartesianGrid />
+          <XAxis type="number" dataKey="x" name="stature" unit="cm" allowDataOverflow={args.allowDataOverflow} />
+          <YAxis type="number" dataKey="y" name="weight" unit="kg" allowDataOverflow={args.allowDataOverflow} />
+          <Scatter name="A school" data={data} fill="blue">
+            {/* This ErrorBar does render, but it does not extend the domain of XAxis unfortunately */}
+            <ErrorBar dataKey="errorX" width={2} strokeWidth={3} stroke="green" direction="x" />
+            <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
+          </Scatter>
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </ScatterChart>
+      </ManualAnimations>
     );
   },
   args: getStoryArgsFromArgsTypesObject(bespokeArgTypes),

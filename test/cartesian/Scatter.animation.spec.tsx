@@ -5,8 +5,8 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { ScatterChart, Scatter, Legend, YAxis } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { ExpectedPoint, expectScatterPoints, getAllScatterPoints } from '../helper/expectScatterPoints';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 function getDotsXY(container: Element): ReadonlyArray<{ cx: string; cy: string }> {
   return getAllScatterPoints(container).map(dot => ({
@@ -24,7 +24,7 @@ function getDotsXY(container: Element): ReadonlyArray<{ cx: string; cy: string }
  * @param animationManager mock animation manager
  * @return Promise that resolves to x, y coordinates of all the dots
  */
-async function dotsDoNotMove(container: Element, animationManager: MockProgressAnimationManager) {
+async function dotsDoNotMove(container: Element, animationManager: MockAnimationManager) {
   const initial = getDotsXY(container);
 
   await animationManager.setAnimationProgress(0.1);
@@ -53,7 +53,7 @@ async function dotsDoNotMove(container: Element, animationManager: MockProgressA
  */
 async function dotsAnimate(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<{ cx: string; cy: string }>> {
   const initial = getDotsXY(container);
 
@@ -114,7 +114,7 @@ function assertAllItemsAreEqual<T>(arr: ReadonlyArray<T>): void {
  */
 async function animatedScatterPoint(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const initialPaths = getAllScatterPointPathsDs(container);
   assertAllItemsAreEqual(initialPaths);
@@ -292,7 +292,7 @@ describe('Scatter Animation', () => {
     };
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.setAnimationProgress(0.3);
       const button = container.querySelector('button');
       expect(button).toBeInTheDocument();
@@ -337,7 +337,7 @@ describe('Scatter Animation', () => {
     };
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       expect(button).toBeInTheDocument();
@@ -395,7 +395,7 @@ describe('Scatter Animation', () => {
       );
     });
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       // The test has animationActive={true} so the Scatter is playing the entrance animation.
       await animationManager.setAnimationProgress(0.3);
 

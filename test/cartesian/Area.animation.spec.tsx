@@ -5,10 +5,10 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Area, AreaChart, Legend, YAxis } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { expectAreaCurve, ExpectedArea } from '../helper/expectAreaCurve';
 import { assertNotNull } from '../helper/assertNotNull';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
+import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 function d(points: string): ExpectedArea {
   // Helper to build the expected area path string
@@ -79,7 +79,7 @@ const expectedUvLabels: ReadonlyArray<ExpectedLabel> = [
 /*
  * Will assert that the area curve does not change during the animation.
  */
-async function expectAreaCurveDoesNotChange(container: Element, animationManager: MockProgressAnimationManager) {
+async function expectAreaCurveDoesNotChange(container: Element, animationManager: MockAnimationManager) {
   const initialPath = getAreaCurve(container).getAttribute('d');
 
   await animationManager.setAnimationProgress(0.1);
@@ -111,7 +111,7 @@ function getDotsY(container: Element) {
  */
 async function animatedHorizontalDots(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const initialDotsX: ReadonlyArray<string> = getDotsX(container);
   // the Y coordinates of the dots should not change during the animation
@@ -144,7 +144,7 @@ async function animatedHorizontalDots(
   return [initialDotsX.join(','), dotsY1.join(','), dotsY2.join(','), dotsY3.join(',')];
 }
 
-async function expectLabelsHideDuringAnimation(container: Element, animationManager: MockProgressAnimationManager) {
+async function expectLabelsHideDuringAnimation(container: Element, animationManager: MockAnimationManager) {
   expectLabels(container, []);
 
   await animationManager.setAnimationProgress(0.1);
@@ -157,7 +157,7 @@ async function expectLabelsHideDuringAnimation(container: Element, animationMana
   expectLabels(container, []);
 }
 
-async function expectLabelsRemainVisible(container: Element, animationManager: MockProgressAnimationManager) {
+async function expectLabelsRemainVisible(container: Element, animationManager: MockAnimationManager) {
   expectLabels(container, expectedUvLabels);
 
   await animationManager.setAnimationProgress(0.1);
@@ -178,7 +178,7 @@ function getClipPathRect(container: Element) {
 
 async function horizontalClipPathAnimation(
   container: Element,
-  animationManager: MockProgressAnimationManager,
+  animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const clipPathRect = getClipPathRect(container);
   const x = clipPathRect.getAttribute('x');
@@ -223,7 +223,7 @@ function assertClipPathNotPresent(container: Element) {
   expect(clipPath).toBeNull();
 }
 
-async function animatedPath(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+async function animatedPath(container: HTMLElement, animationManager: MockAnimationManager) {
   const d1 = getAreaCurveD(container);
 
   await animationManager.setAnimationProgress(0.1);
@@ -320,7 +320,7 @@ describe('Area animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     describe('when interrupting the initial animation', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.setAnimationProgress(0.3);
         const button = container.querySelector('button');
         expect(button).toBeInTheDocument();
@@ -372,7 +372,7 @@ describe('Area animation', () => {
     });
 
     describe('when changing dataKey after the initial animation completed', () => {
-      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.completeAnimation();
         const button = container.querySelector('button');
         expect(button).toBeInTheDocument();
@@ -423,7 +423,7 @@ describe('Area animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
       expect(button).toBeInTheDocument();
@@ -471,7 +471,7 @@ describe('Area animation', () => {
       );
     });
 
-    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.setAnimationProgress(0.3);
       const button = container.querySelector('button');
       expect(button).toBeInTheDocument();
