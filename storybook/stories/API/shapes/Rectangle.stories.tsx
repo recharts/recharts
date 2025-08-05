@@ -341,7 +341,7 @@ export default {
 export const API = {
   render: (args: Record<string, any>) => {
     return (
-      <svg height={args.height} width="100%">
+      <svg height="100%" width="100%">
         <Rectangle {...args} />
       </svg>
     );

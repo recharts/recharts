@@ -4,10 +4,14 @@
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import { AnimationDuration, AnimationTiming } from '../util/types';
+import { AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { EasingInput } from '../animation/easing';
+import { interpolate } from '../util/DataUtils';
+import { useAnimationId } from '../util/useAnimationId';
+import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 
 export type RectRadius = [number, number, number, number];
 
@@ -77,7 +81,7 @@ interface RectangleProps {
   isUpdateAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
 }
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
@@ -120,6 +124,12 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const { x, y, width, height, radius, className } = props;
   const { animationEasing, animationDuration, animationBegin, isAnimationActive, isUpdateAnimationActive } = props;
 
+  const prevWidthRef = useRef<number>(width);
+  const prevHeightRef = useRef<number>(height);
+  const prevXRef = useRef<number>(x);
+  const prevYRef = useRef<number>(y);
+  const animationId = useAnimationId(props);
+
   if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
     return null;
   }
@@ -131,37 +141,56 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
     );
   }
 
+  const prevWidth = prevWidthRef.current;
+  const prevHeight = prevHeightRef.current;
+  const prevX = prevXRef.current;
+  const prevY = prevYRef.current;
+
   return (
-    <Animate
+    <JavascriptAnimate
+      key={animationId}
       canBegin={totalLength > 0}
-      from={{ width, height, x, y }}
-      to={{ width, height, x, y }}
       duration={animationDuration}
-      // @ts-expect-error TODO - fix the type error
-      animationEasing={animationEasing}
+      easing={animationEasing}
       isActive={isUpdateAnimationActive}
     >
-      {({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
-        <Animate
-          canBegin={totalLength > 0}
-          // @ts-expect-error TODO - fix the type error
-          from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-          // @ts-expect-error TODO - fix the type error
-          to={`${totalLength}px 0px`}
-          attributeName="strokeDasharray"
-          begin={animationBegin}
-          duration={animationDuration}
-          isActive={isAnimationActive}
-          easing={animationEasing}
-        >
-          <path
-            {...filterProps(props, true)}
-            className={layerClass}
-            d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
-            ref={pathRef}
-          />
-        </Animate>
-      )}
-    </Animate>
+      {(t: number) => {
+        const currWidth = interpolate(prevWidth, width, t);
+        const currHeight = interpolate(prevHeight, height, t);
+        const currX = interpolate(prevX, x, t);
+        const currY = interpolate(prevY, y, t);
+        if (pathRef.current) {
+          prevWidthRef.current = currWidth;
+          prevHeightRef.current = currHeight;
+          prevXRef.current = currX;
+          prevYRef.current = currY;
+        }
+        return (
+          <CSSTransitionAnimate
+            canBegin={totalLength > 0}
+            from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+            to={`${totalLength}px 0px`}
+            attributeName="strokeDasharray"
+            begin={animationBegin}
+            duration={animationDuration}
+            isActive={isAnimationActive}
+            easing={typeof animationEasing === 'string' ? animationEasing : undefined}
+          >
+            {animationStyle => (
+              <path
+                {...filterProps(props, true)}
+                className={layerClass}
+                d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
+                ref={pathRef}
+                style={{
+                  ...animationStyle,
+                  ...props.style,
+                }}
+              />
+            )}
+          </CSSTransitionAnimate>
+        );
+      }}
+    </JavascriptAnimate>
   );
 };

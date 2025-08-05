@@ -56,8 +56,6 @@ async function expectAnimatedPath(
   animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const initialPath = getRectPath(container);
-  expect(initialPath).toBe(expectedPathBeforeWidthChange);
-  expect(getRectPath(container)).toBe(initialPath);
 
   const allPaths: string[] = [];
   allPaths.push(initialPath);
@@ -109,7 +107,7 @@ function RectangleTestCase({
   const [width, setWidth] = React.useState(80);
   return (
     <>
-      <button type="button" onClick={() => setWidth(100)}>
+      <button type="button" onClick={() => setWidth(w => (w === 100 ? 80 : 100))}>
         Change width
       </button>
       <Surface width={400} height={400}>
@@ -215,9 +213,9 @@ describe('Rectangle animation', () => {
           return expectPathDoesNotAnimate(container, animationManager);
         });
 
-        it('should not add stroke-dasharray property', () => {
+        it('should not animate stroke-dasharray property', () => {
           const { container } = renderTestCase();
-          expectNoStrokeDasharray(container);
+          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 0px;');
         });
       });
 
@@ -240,9 +238,9 @@ describe('Rectangle animation', () => {
           ]);
         });
 
-        it('should not add stroke-dasharray property', () => {
+        it('should not animate stroke-dasharray property', () => {
           const { container } = renderTestCase();
-          expectNoStrokeDasharray(container);
+          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 0px;');
         });
       });
     },
@@ -312,13 +310,13 @@ describe('Rectangle animation', () => {
         it('should animate stroke-dasharray', async () => {
           const { container, animationManager } = renderTestCase();
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
-            'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 0px; transition: stroke-dasharray 1500ms ease;',
+            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 0px 1234px;',
+            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 1234px 0px;',
           ]);
         });
       });
 
-      describe('when width changes 2', () => {
+      describe('when width changes', () => {
         it('should animate', async () => {
           const { container, animationManager } = renderTestCase();
           await prime(container);
@@ -328,6 +326,7 @@ describe('Rectangle animation', () => {
         it('should animate the rectangle path', async () => {
           const { container, animationManager } = renderTestCase();
           await prime(container);
+          // animation when the rectangle width increases
           expect(await expectAnimatedPath(container, animationManager)).toEqual([
             'M 50,54 A 4,4,0,0,1,54,50 L 126,50 A 4,4,0,0,1,130,54 L 130,146 A 4,4,0,0,1,126,150 L 54,150 A 4,4,0,0,1,50,146 Z',
             'M 50,54 A 4,4,0,0,1,54,50 L 127.89592611432087,50 A 4,4,0,0,1,131.89592611432087,54 L 131.89592611432087,146 A 4,4,0,0,1,127.89592611432087,150 L 54,150 A 4,4,0,0,1,50,146 Z',
@@ -335,14 +334,23 @@ describe('Rectangle animation', () => {
             'M 50,54 A 4,4,0,0,1,54,50 L 144.8152922859528,50 A 4,4,0,0,1,148.8152922859528,54 L 148.8152922859528,146 A 4,4,0,0,1,144.8152922859528,150 L 54,150 A 4,4,0,0,1,50,146 Z',
             'M 50,54 A 4,4,0,0,1,54,50 L 146,50 A 4,4,0,0,1,150,54 L 150,146 A 4,4,0,0,1,146,150 L 54,150 A 4,4,0,0,1,50,146 Z',
           ]);
+          await prime(container);
+          // animation when the rectangle width decreases
+          expect(await expectAnimatedPath(container, animationManager)).toEqual([
+            'M 50,54 A 4,4,0,0,1,54,50 L 146,50 A 4,4,0,0,1,150,54 L 150,146 A 4,4,0,0,1,146,150 L 54,150 A 4,4,0,0,1,50,146 Z',
+            'M 50,54 A 4,4,0,0,1,54,50 L 144.10407388567913,50 A 4,4,0,0,1,148.10407388567913,54 L 148.10407388567913,146 A 4,4,0,0,1,144.10407388567913,150 L 54,150 A 4,4,0,0,1,50,146 Z',
+            'M 50,54 A 4,4,0,0,1,54,50 L 132.34918988043722,50 A 4,4,0,0,1,136.34918988043722,54 L 136.34918988043722,146 A 4,4,0,0,1,132.34918988043722,150 L 54,150 A 4,4,0,0,1,50,146 Z',
+            'M 50,54 A 4,4,0,0,1,54,50 L 127.18470771404719,50 A 4,4,0,0,1,131.1847077140472,54 L 131.1847077140472,146 A 4,4,0,0,1,127.18470771404719,150 L 54,150 A 4,4,0,0,1,50,146 Z',
+            'M 50,54 A 4,4,0,0,1,54,50 L 126,50 A 4,4,0,0,1,130,54 L 130,146 A 4,4,0,0,1,126,150 L 54,150 A 4,4,0,0,1,50,146 Z',
+          ]);
         });
 
         it('should animate stroke-dasharray', async () => {
           const { container, animationManager } = renderTestCase();
           await prime(container);
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
-            'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 0px; transition: stroke-dasharray 1500ms ease;',
+            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 0px 1234px;',
+            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 1234px 0px;',
           ]);
         });
       });

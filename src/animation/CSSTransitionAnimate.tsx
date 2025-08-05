@@ -18,7 +18,7 @@ type CSSTransitionAnimateProps<T extends ReactSmoothStyle> = {
   attributeName: string;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  children: (style: CSSProperties) => React.ReactNode;
+  children: (style: CSSProperties | undefined) => React.ReactNode;
 };
 
 const defaultProps = {
