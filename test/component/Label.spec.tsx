@@ -159,11 +159,36 @@ describe('<Label />', () => {
 
   describe('in PieChart', () => {
     describe('with custom content function', () => {
-      it('should pass the correct props to the content function', () => {
+      it('should pass the correct props to the content function when position=center', () => {
         const contentFn = vi.fn();
         render(
           <PieChart height={100} width={200}>
             <Label value="text" position="center" content={contentFn} />
+          </PieChart>,
+        );
+
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            viewBox: {
+              height: 90,
+              width: 190,
+              x: 5,
+              y: 5,
+            },
+            value: 'text',
+            content: contentFn,
+            position: 'center',
+            offset: 5,
+          },
+          {},
+        );
+      });
+
+      it('should pass the correct props to the content function when position=insideEnd', () => {
+        const contentFn = vi.fn();
+        render(
+          <PieChart height={100} width={200}>
+            <Label value="text" position="insideEnd" content={contentFn} />
           </PieChart>,
         );
 
@@ -180,7 +205,7 @@ describe('<Label />', () => {
             },
             value: 'text',
             content: contentFn,
-            position: 'center',
+            position: 'insideEnd',
             offset: 5,
           },
           {},
