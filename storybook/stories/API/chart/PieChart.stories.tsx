@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
-import { pageData } from '../../data';
+import { pageDataWithFillColor } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -34,7 +34,7 @@ export const Simple = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
-    data: pageData,
+    data: pageDataWithFillColor,
     activeShape: { fill: 'red' },
     margin: {
       top: 0,
@@ -47,29 +47,29 @@ export const Simple = {
 
 export const Donut = {
   render: (args: Record<string, any>, context: RechartsStoryContext) => {
-    const { data } = args;
     return (
-      <ResponsiveContainer width="100%" height={400}>
-        <PieChart {...args}>
-          <Pie data={data} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80}>
-            <Label position="center" fill="#000" fontSize={12} fontWeight="bold" dy={-7}>
-              Donut
-            </Label>
-            <Label position="center" fontSize={12} fontWeight="bold" dy={8}>
-              Chart
-            </Label>
-          </Pie>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      <PieChart {...args}>
+        <Pie data={args.data} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} cornerRadius={8}>
+          <Label position="center" fill="#000" fontSize={12} fontWeight="bold" dy={-7}>
+            Donut
+          </Label>
+          <Label position="center" fontSize={12} fontWeight="bold" dy={8}>
+            Chart
+          </Label>
+          <Legend align="right" verticalAlign="middle" layout="vertical" />
+        </Pie>
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
+      </PieChart>
     );
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
-    data: pageData,
+    width: 500,
+    height: 300,
+    data: pageDataWithFillColor,
   },
 };
 

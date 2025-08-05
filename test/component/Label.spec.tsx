@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-
-import { Label, Line, LineChart, ReferenceLine, Surface } from '../../src';
+import { describe, it, expect, vi } from 'vitest';
+import { Label, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 
 const data = [
@@ -155,5 +155,91 @@ describe('<Label />', () => {
     expect(screen.getByText(/400/i)).toBeInTheDocument();
 
     cleanupMockAnimation();
+  });
+
+  describe('in PieChart', () => {
+    describe('with custom content function', () => {
+      it('should pass the correct props to the content function when position=center', () => {
+        const contentFn = vi.fn();
+        render(
+          <PieChart height={100} width={200}>
+            <Label value="text" position="center" content={contentFn} />
+          </PieChart>,
+        );
+
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            viewBox: {
+              height: 90,
+              width: 190,
+              x: 5,
+              y: 5,
+            },
+            value: 'text',
+            content: contentFn,
+            position: 'center',
+            offset: 5,
+          },
+          {},
+        );
+      });
+
+      it('should pass the correct props to the content function when position=insideEnd', () => {
+        const contentFn = vi.fn();
+        render(
+          <PieChart height={100} width={200}>
+            <Label value="text" position="insideEnd" content={contentFn} />
+          </PieChart>,
+        );
+
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            viewBox: {
+              clockWise: false,
+              cx: 100,
+              cy: 50,
+              endAngle: 360,
+              innerRadius: 0,
+              outerRadius: 36,
+              startAngle: 0,
+            },
+            value: 'text',
+            content: contentFn,
+            position: 'insideEnd',
+            offset: 5,
+          },
+          {},
+        );
+      });
+    });
+  });
+
+  describe('in LineChart', () => {
+    describe('with custom content function', () => {
+      it('should pass the correct props to the content function', () => {
+        const contentFn = vi.fn();
+        render(
+          <LineChart width={400} height={400} data={data}>
+            <Label value="text" position="center" content={contentFn} />
+          </LineChart>,
+        );
+
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            viewBox: {
+              height: 390,
+              width: 390,
+              x: 5,
+              y: 5,
+            },
+            value: 'text',
+            content: contentFn,
+            position: 'center',
+            offset: 5,
+          },
+          {},
+        );
+      });
+    });
   });
 });

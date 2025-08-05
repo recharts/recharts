@@ -404,9 +404,16 @@ export function Label({ offset = 5, ...restProps }: Props) {
   } = props;
 
   const polarViewBox = useAppSelector(selectPolarViewBox);
-  const viewBoxFromContext = useViewBox();
+  const cartesianViewBox = useViewBox();
 
-  const viewBox = viewBoxFromProps || polarViewBox || viewBoxFromContext;
+  /*
+   * I am not proud about this solution but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
+   * What we should really do is split Label into two components: CartesianLabel and PolarLabel and then handle their respective viewBoxes separately.
+   * Also other components should set its own viewBox in a context so that we can fix https://github.com/recharts/recharts/issues/6156
+   */
+  const resolvedViewBox = position === 'center' ? cartesianViewBox : (polarViewBox ?? cartesianViewBox);
+
+  const viewBox = viewBoxFromProps || resolvedViewBox;
 
   if (
     !viewBox ||
@@ -415,14 +422,19 @@ export function Label({ offset = 5, ...restProps }: Props) {
     return null;
   }
 
+  const propsWithViewBox = {
+    ...props,
+    viewBox,
+  };
+
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = props;
+    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }
 
   let label: ReactNode;
   if (typeof content === 'function') {
-    label = createElement(content as any, props);
+    label = createElement(content as any, propsWithViewBox);
 
     if (isValidElement(label)) {
       return label;
