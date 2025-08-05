@@ -179,10 +179,6 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
             {animationStyle => (
               <path
                 {...filterProps(props, true)}
-                width={currWidth}
-                height={currHeight}
-                x={currX}
-                y={currY}
                 className={layerClass}
                 d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
                 ref={pathRef}
