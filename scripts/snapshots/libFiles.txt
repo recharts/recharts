@@ -200,6 +200,7 @@
   "lib/util/FunnelUtils.js",
   "lib/util/Global.js",
   "lib/util/IfOverflow.js",
+  "lib/util/LRUCache.js",
   "lib/util/LogUtils.js",
   "lib/util/PolarUtils.js",
   "lib/util/RadialBarUtils.js",

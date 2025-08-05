@@ -200,6 +200,7 @@
   "types/util/FunnelUtils.d.ts",
   "types/util/Global.d.ts",
   "types/util/IfOverflow.d.ts",
+  "types/util/LRUCache.d.ts",
   "types/util/LogUtils.d.ts",
   "types/util/PolarUtils.d.ts",
   "types/util/RadialBarUtils.d.ts",
