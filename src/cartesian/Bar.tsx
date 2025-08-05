@@ -24,7 +24,6 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
   ChartOffsetInternal,
   Coordinate,
   DataKey,
@@ -59,6 +58,7 @@ import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { EasingInput } from '../animation/easing';
 
 type Rectangle = {
   x: number | null;
@@ -106,7 +106,7 @@ export interface BarProps {
   isAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   id?: string;
   label?: ImplicitLabelType;
 }
@@ -143,7 +143,7 @@ type InternalBarProps = {
   isAnimationActive: boolean;
   animationBegin: number;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
 
   /*
    * Provided by user
