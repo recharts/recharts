@@ -1,0 +1,31 @@
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Trapezoid.stories';
+
+# Trapezoid
+
+The Trapezoid is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+
+```jsx
+<svg height={200} width="%100">
+  <Trapezoid {...trapezoidProps} />
+</svg>
+```
+
+or
+
+```jsx
+<Customized component={<Trapezoid {...trapezoidProps} />} />
+```
+
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Trapezoid
+
+<Controls of={ComponentStories.API} />
