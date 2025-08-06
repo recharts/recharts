@@ -17,8 +17,7 @@ import {
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector, ManualAnimations } from '../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
@@ -581,7 +580,7 @@ export const RangedAreaChartWithGradient = {
 };
 
 export const WithChangingDataKeyAndAnimations = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [dataKey, setDataKey] = React.useState('uv');
     return (
       <>
@@ -608,18 +607,16 @@ export const WithChangingDataKeyAndAnimations = {
             Hidden
           </label>
         </form>
-        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-          <ResponsiveContainer width="100%">
-            <ComposedChart {...args}>
-              <Legend />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
-              <Tooltip />
-              <RechartsHookInspector />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ManualAnimations>
+        <ResponsiveContainer width="100%">
+          <ComposedChart {...args}>
+            <Legend />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
+            <Tooltip />
+            <RechartsHookInspector />
+          </ComposedChart>
+        </ResponsiveContainer>
       </>
     );
   },

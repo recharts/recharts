@@ -480,6 +480,7 @@ export const API = {
           {/* The target component */}
           <Bar dataKey="uv" {...args} />
           <Tooltip />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

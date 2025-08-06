@@ -1,6 +1,6 @@
 import type { Renderer, ProjectAnnotations } from 'storybook/internal/types';
 import { RechartsInspectorDecorator } from './RechartsInspectorDecorator';
-import { PARAM_POSITION_KEY } from './constants';
+import { PARAM_MANUAL_ANIMATIONS_KEY, PARAM_POSITION_KEY } from './constants';
 
 const preview: ProjectAnnotations<Renderer> = {
   decorators: [RechartsInspectorDecorator],
@@ -13,6 +13,7 @@ const preview: ProjectAnnotations<Renderer> = {
      * but also allow users to hide it.
      */
     [PARAM_POSITION_KEY]: undefined,
+    [PARAM_MANUAL_ANIMATIONS_KEY]: false,
   },
 };
 

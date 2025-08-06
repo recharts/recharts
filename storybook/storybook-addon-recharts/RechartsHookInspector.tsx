@@ -10,6 +10,7 @@ import { ChartInspectorProps } from './inspectors/types';
 import { OffsetShower } from './inspectors/OffsetShower';
 import { PlotAreaShower } from './inspectors/PlotAreaShower';
 import { useRechartsInspectorState } from './RechartsInspectorDecorator';
+import { ManualAnimations } from './ManualAnimations';
 
 function Controls({
   defaultOpened,
@@ -28,13 +29,14 @@ function Controls({
     <>
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
       <Component setEnabledOverlays={setEnabledOverlays} defaultOpened={defaultOpened} />
+      <ManualAnimations />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
   );
 }
 
 /**
- * Blanket component is an svg component that darkens the background a little bit.
+ * Blanket component is a svg component that darkens the background a little bit.
  * @constructor
  */
 function Blanket() {

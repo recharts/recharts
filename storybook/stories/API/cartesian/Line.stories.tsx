@@ -9,8 +9,7 @@ import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { data, General as GeneralProps } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
-import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -29,33 +28,31 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
-      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-        <ResponsiveContainer width="100%" height={surfaceHeight}>
-          <ComposedChart
-            width={surfaceWidth}
-            height={surfaceHeight}
-            margin={{
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
-            }}
-            data={pageData}
-          >
-            {/* All components are added to show the interaction with the Line properties */}
-            <Legend />
-            <XAxis dataKey="name" />
-            <YAxis width="auto" />
-            {/* The target component */}
-            <Line dataKey="uv" {...args} />
-            <Tooltip />
-            <RechartsHookInspector />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </ManualAnimations>
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          {/* All components are added to show the interaction with the Line properties */}
+          <Legend />
+          <XAxis dataKey="name" />
+          <YAxis width="auto" />
+          {/* The target component */}
+          <Line dataKey="uv" {...args} />
+          <Tooltip />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>
     );
   },
   args: {

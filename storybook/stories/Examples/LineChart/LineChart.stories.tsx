@@ -16,8 +16,7 @@ import {
   ReferenceArea,
 } from '../../../../src';
 import { DataKey } from '../../../../src/util/types';
-import { RechartsHookInspector, ManualAnimations } from '../../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { CategoricalChartProps } from '../../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 
@@ -1048,7 +1047,7 @@ export const ReversedXAxis = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -1070,7 +1069,7 @@ export const ChangingDataKey = {
     const [visible, setVisible] = useState(true);
 
     return (
-      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+      <>
         <button
           type="button"
           onClick={() => {
@@ -1115,7 +1114,7 @@ export const ChangingDataKey = {
             label={{ fill: 'red', dy: -25 }}
           />
         </LineChart>
-      </ManualAnimations>
+      </>
     );
   },
   args: {

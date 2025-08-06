@@ -19,8 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: BarChartProps,
@@ -1133,7 +1132,7 @@ export const ChangingDataKeyAndStacked = {
 };
 
 export const ChangingData = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     type MyDataShape = Array<{ number: number }>;
 
     const [data, setData] = useState<MyDataShape>([{ number: 10 }]);
@@ -1155,27 +1154,25 @@ export const ChangingData = {
     };
 
     return (
-      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-        <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
-          <BarChart {...args} data={data}>
-            <YAxis hide domain={[0, 100]} />
-            <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-            <RechartsHookInspector />
-          </BarChart>
+      <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
+        <BarChart {...args} data={data}>
+          <YAxis hide domain={[0, 100]} />
+          <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
+          <RechartsHookInspector />
+        </BarChart>
 
-          <button type="button" onClick={changeSynchronously}>
-            Change data synchronously
-          </button>
+        <button type="button" onClick={changeSynchronously}>
+          Change data synchronously
+        </button>
 
-          <button type="button" onClick={changeAsynchronously}>
-            Change data with setTimeout
-          </button>
+        <button type="button" onClick={changeAsynchronously}>
+          Change data with setTimeout
+        </button>
 
-          <button type="button" onClick={reset}>
-            Reset
-          </button>
-        </div>
-      </ManualAnimations>
+        <button type="button" onClick={reset}>
+          Reset
+        </button>
+      </div>
     );
   },
   args: {

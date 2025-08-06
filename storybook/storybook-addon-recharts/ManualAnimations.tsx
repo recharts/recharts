@@ -1,16 +1,10 @@
-import React, { useState } from 'react';
-import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
-import { CompositeAnimationManager } from '../../test/animation/CompositeAnimationManager';
+import React, { useContext, useState } from 'react';
+import { AnimationManagerControlsContext, useRechartsInspectorState } from './RechartsInspectorDecorator';
 
-type Props = {
-  isEnabled: boolean;
-  children: React.ReactNode;
-};
-
-const animationManager = new CompositeAnimationManager();
-
-export function ManualAnimations({ isEnabled, children }: Props) {
+export function ManualAnimations() {
   const [progress, setProgress] = useState(0);
+  const animationManager = useContext(AnimationManagerControlsContext);
+  const { manualAnimationsEnabled } = useRechartsInspectorState();
 
   const handleProgressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -28,39 +22,29 @@ export function ManualAnimations({ isEnabled, children }: Props) {
     setProgress(1);
   };
 
-  if (!isEnabled) {
-    return children;
+  if (!manualAnimationsEnabled) {
+    return null;
   }
   return (
-    <AnimationManagerContext.Provider value={animationManager.factory}>
-      {/* div to force vertical stacking. Comes with some basic styling so that it allows ResponsiveContainer to render */}
-      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {children}
-        <form>
-          <h3>Manual Animations</h3>
-          <p>
-            Use the buttons below to control the animations manually. This is useful for testing and debugging
-            animations in Recharts.
-          </p>
-          <label htmlFor="animation-progress">
-            Animation Progress:
-            <input
-              type="range"
-              id="animation-progress"
-              min={0}
-              max={1}
-              step={0.1}
-              value={progress}
-              onChange={handleProgressChange}
-              style={{ width: 200, marginLeft: 8 }}
-            />
-            <span style={{ marginLeft: 8 }}>{progress * 100}%</span>
-          </label>
-          <button type="button" onClick={completeAnimation}>
-            Finish animation
-          </button>
-        </form>
-      </div>
-    </AnimationManagerContext.Provider>
+    <form>
+      <h3>Manual Animations</h3>
+      <label htmlFor="animation-progress">
+        Animation Progress:
+        <input
+          type="range"
+          id="animation-progress"
+          min={0}
+          max={1}
+          step={0.1}
+          value={progress}
+          onChange={handleProgressChange}
+          style={{ width: 200, marginLeft: 8 }}
+        />
+        <span style={{ marginLeft: 8 }}>{progress * 100}%</span>
+      </label>
+      <button type="button" onClick={completeAnimation}>
+        Finish animation
+      </button>
+    </form>
   );
 }

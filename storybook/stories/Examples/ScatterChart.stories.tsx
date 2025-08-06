@@ -18,8 +18,7 @@ import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
-import { ManualAnimations, RechartsHookInspector } from '../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 
 export default {
@@ -625,7 +624,7 @@ export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -675,30 +674,28 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-          <ScatterChart {...args} data={useData2 ? data2 : data1}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-            <YAxis dataKey={useData2 ? dataKey2 : dataKey1} width="auto" />
-            <ZAxis range={[200, 200]} />
-            <Tooltip />
-            <Legend />
-            <RechartsHookInspector />
-            <Scatter
-              name="Animated Scatter"
-              lineType="joint"
-              line
-              hide={!visible}
-              dataKey={useData2 ? dataKey2 : dataKey1}
-              stroke="#8884d8"
-              fill="#8884d8"
-              strokeWidth={3}
-              strokeDasharray="2 2"
-              label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
-            />
-            <RechartsHookInspector />
-          </ScatterChart>
-        </ManualAnimations>
+        <ScatterChart {...args} data={useData2 ? data2 : data1}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} width="auto" />
+          <ZAxis range={[200, 200]} />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector />
+          <Scatter
+            name="Animated Scatter"
+            lineType="joint"
+            line
+            hide={!visible}
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            fill="#8884d8"
+            strokeWidth={3}
+            strokeDasharray="2 2"
+            label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
+          />
+          <RechartsHookInspector />
+        </ScatterChart>
       </>
     );
   },
