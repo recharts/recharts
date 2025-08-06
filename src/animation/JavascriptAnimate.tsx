@@ -8,6 +8,11 @@ import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 
 type JavascriptAnimateProps = {
+  /**
+   * Unique name for the animation.
+   * Used to identify the animation in the AnimationManager and for debugging.
+   */
+  animationName: string;
   animationManager?: AnimationManager;
   duration?: number;
   begin?: number;
@@ -40,7 +45,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
   const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
 
-  const animationManager = useAnimationManager('JavascriptAnimate', props.animationManager);
+  const animationManager = useAnimationManager(props.animationName, props.animationManager);
 
   const [style, setStyle] = useState<TimeAsObject>(isActive ? from : to);
   const stopJSAnimation = useRef<(() => void) | null>(null);

@@ -407,6 +407,7 @@ function RectanglesWithAnimation({
   }, [onAnimationStart]);
   return (
     <JavascriptAnimate
+      animationName={`Bar-${props.dataKey}`}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}
