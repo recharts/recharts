@@ -9,6 +9,7 @@ import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
 import { OffsetShower } from './inspectors/OffsetShower';
 import { PlotAreaShower } from './inspectors/PlotAreaShower';
+import { useRechartsInspectorState } from './RechartsInspectorDecorator';
 
 function Controls({
   defaultOpened,
@@ -53,8 +54,6 @@ const overlaysThatNeedBlanket = ['useChartWidth, useChartHeight', 'useOffset', '
 
 export function RechartsHookInspector({
   defaultOpened,
-  position,
-  setPosition,
 }: {
   defaultOpened?: string;
   position: Position | undefined;
@@ -63,6 +62,7 @@ export function RechartsHookInspector({
   const layout = useChartLayout();
   const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>(defaultOpened ? [defaultOpened] : []);
   const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
+  const { position, setPosition } = useRechartsInspectorState();
 
   useEffect(() => {
     if (position == null && defaultOpened !== undefined && typeof setPosition === 'function') {
