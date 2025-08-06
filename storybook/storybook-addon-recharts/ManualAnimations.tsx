@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { RewindIcon, FastForwardIcon } from '@storybook/icons';
 import { AnimationManagerControlsContext, useRechartsInspectorState } from './RechartsInspectorDecorator';
 import { useAllAnimationManagers } from '../../test/animation/CompositeAnimationManager';
 import { MockAnimationManager } from '../../test/animation/MockProgressAnimationManager';
@@ -26,14 +27,13 @@ const useAnimationProgress = (allAnimationManagers: Map<string, MockAnimationMan
         setProgressMap(prev => new Map(prev).set(animationId, progress));
       }
     } else {
-      const promises: Promise<void>[] = [];
       const newProgressMap = new Map(progressMap);
       // eslint-disable-next-line no-restricted-syntax
       for (const [id, manager] of allAnimationManagers.entries()) {
-        promises.push(manager.setAnimationProgress(safeProgress));
+        // eslint-disable-next-line no-await-in-loop
+        await manager.setAnimationProgress(safeProgress);
         newProgressMap.set(id, progress);
       }
-      await Promise.all(promises);
       setProgressMap(newProgressMap);
     }
   };
@@ -45,20 +45,26 @@ function SingleAnimationControl({
   animationId,
   progress,
   onProgressChange,
-  onComplete,
   label,
+  onRewind,
+  onFastForward,
 }: {
   animationId: string;
   progress: number;
   onProgressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onComplete: (e: React.MouseEvent) => void;
   label: string;
+  onRewind: (e: React.MouseEvent) => void;
+  onFastForward: (e: React.MouseEvent) => void;
 }) {
   const inputId = `animation-progress-${animationId}`;
 
   return (
     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
       <label htmlFor={inputId}>{label}</label>
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+      <button type="button" onClick={onRewind} title="Rewind to start">
+        <RewindIcon />
+      </button>
       <input
         type="range"
         id={inputId}
@@ -70,8 +76,9 @@ function SingleAnimationControl({
         style={{ width: 200, marginLeft: 8 }}
       />
       <span style={{ marginLeft: 8, width: 40 }}>{Math.round(progress * 100)}%</span>
-      <button type="button" onClick={onComplete}>
-        Finish animation
+      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+      <button type="button" onClick={onFastForward} title="Fast-forward to end">
+        <FastForwardIcon />
       </button>
     </div>
   );
@@ -96,7 +103,12 @@ export function ManualAnimations() {
     await setProgress(value, animationId);
   };
 
-  const completeAnimation = (animationId: string) => async (e: React.MouseEvent) => {
+  const rewindAnimation = (animationId: string) => async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await setProgress(0, animationId);
+  };
+
+  const fastForwardAnimation = (animationId: string) => async (e: React.MouseEvent) => {
     e.preventDefault();
     await setProgress(1, animationId);
   };
@@ -106,14 +118,14 @@ export function ManualAnimations() {
     await setProgress(value);
   };
 
-  const completeAll = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    await setProgress(1);
-  };
-
   const resetAll = async (e: React.MouseEvent) => {
     e.preventDefault();
     await setProgress(0);
+  };
+
+  const fastForwardAll = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await setProgress(1);
   };
 
   const allProgressValues = Array.from(progressMap.values());
@@ -129,7 +141,8 @@ export function ManualAnimations() {
           label="All animations:"
           progress={averageProgress}
           onProgressChange={handleAllProgressChange}
-          onComplete={completeAll}
+          onRewind={resetAll}
+          onFastForward={fastForwardAll}
         />
       )}
       {Array.from(allAnimationManagers.keys()).map(animationId => (
@@ -139,17 +152,10 @@ export function ManualAnimations() {
           label={`Animation ${animationId}:`}
           progress={progressMap.get(animationId) ?? 0}
           onProgressChange={handleProgressChange(animationId)}
-          onComplete={completeAnimation(animationId)}
+          onRewind={rewindAnimation(animationId)}
+          onFastForward={fastForwardAnimation(animationId)}
         />
       ))}
-      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-        <button type="button" onClick={completeAll}>
-          Finish all animations
-        </button>
-        <button type="button" onClick={resetAll}>
-          Reset all animations
-        </button>
-      </div>
     </form>
   );
 }
