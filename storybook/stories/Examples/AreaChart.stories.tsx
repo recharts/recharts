@@ -394,7 +394,6 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Tooltip />
-            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
       </div>

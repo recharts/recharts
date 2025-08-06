@@ -69,7 +69,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
       this.animationManagers.delete(animationId);
       this.notifySubscribers();
     };
-    const manager = new MockProgressAnimationManager(onStop);
+    const manager = new MockProgressAnimationManager(animationId, onStop);
     this.animationManagers.set(animationId, manager);
     this.notifySubscribers();
     return manager;
