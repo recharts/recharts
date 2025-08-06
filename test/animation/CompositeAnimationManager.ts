@@ -65,7 +65,11 @@ export class CompositeAnimationManager implements MockAnimationManager {
   }
 
   public factory: AnimationManagerFactory = (animationId: string): AnimationManager => {
-    const manager = new MockProgressAnimationManager();
+    const onStop = () => {
+      this.animationManagers.delete(animationId);
+      this.notifySubscribers();
+    };
+    const manager = new MockProgressAnimationManager(onStop);
     this.animationManagers.set(animationId, manager);
     this.notifySubscribers();
     return manager;

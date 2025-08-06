@@ -48,6 +48,13 @@ export class MockProgressAnimationManager
   extends MockAbstractAnimationManager
   implements AnimationManager, MockAnimationManager
 {
+  private readonly onStop?: () => void;
+
+  constructor(onStop?: () => void) {
+    super();
+    this.onStop = onStop;
+  }
+
   async setAnimationProgress(percent: number): Promise<void> {
     if (this.queue === null || this.queue.length === 0) {
       throw new Error('Queue is empty');
@@ -85,7 +92,9 @@ export class MockProgressAnimationManager
       await this.setAnimationProgress(1);
     }
 
-    return this.poll(this.queue.length);
+    const result = this.poll(this.queue.length);
+    this.onStop?.();
+    return result;
   }
 
   start(queue: ReactSmoothQueue) {
@@ -98,6 +107,7 @@ export class MockProgressAnimationManager
     super.stop();
     this.isPrimed = false; // Reset the primed state when stopping the queue
     this.animationProgress = 0; // Reset the animation progress when stopping a queue
+    this.onStop?.();
   }
 
   private isPrimed: boolean = false;
