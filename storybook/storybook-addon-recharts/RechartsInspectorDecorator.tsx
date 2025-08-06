@@ -58,6 +58,9 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
       setGlobals({
         [PARAM_POSITION_KEY]: newPosition,
       });
+      if (newPosition === 'hidden') {
+        setManualAnimationsEnabled(false);
+      }
     },
     [position, setGlobals],
   );
