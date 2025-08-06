@@ -101,6 +101,11 @@ export function ManualAnimations() {
     await setProgress(1, animationId);
   };
 
+  const handleAllProgressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    await setProgress(value);
+  };
+
   const completeAll = async (e: React.MouseEvent) => {
     e.preventDefault();
     await setProgress(1);
@@ -111,9 +116,22 @@ export function ManualAnimations() {
     await setProgress(0);
   };
 
+  const allProgressValues = Array.from(progressMap.values());
+  const averageProgress =
+    allProgressValues.length > 0 ? allProgressValues.reduce((sum, p) => sum + p, 0) / allProgressValues.length : 0;
+
   return (
     <form style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <h3>Manual Animations</h3>
+      {allAnimationManagers.size > 1 && (
+        <SingleAnimationControl
+          animationId="all-animations"
+          label="All animations:"
+          progress={averageProgress}
+          onProgressChange={handleAllProgressChange}
+          onComplete={completeAll}
+        />
+      )}
       {Array.from(allAnimationManagers.keys()).map(animationId => (
         <SingleAnimationControl
           key={animationId}
