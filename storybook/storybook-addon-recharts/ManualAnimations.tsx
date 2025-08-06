@@ -46,17 +46,19 @@ function SingleAnimationControl({
   progress,
   onProgressChange,
   onComplete,
+  label,
 }: {
   animationId: string;
   progress: number;
   onProgressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onComplete: (e: React.MouseEvent) => void;
+  label: string;
 }) {
   const inputId = `animation-progress-${animationId}`;
 
   return (
     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-      <label htmlFor={inputId}>Animation {animationId}:</label>
+      <label htmlFor={inputId}>{label}</label>
       <input
         type="range"
         id={inputId}
@@ -116,6 +118,7 @@ export function ManualAnimations() {
         <SingleAnimationControl
           key={animationId}
           animationId={animationId}
+          label={`Animation ${animationId}:`}
           progress={progressMap.get(animationId) ?? 0}
           onProgressChange={handleProgressChange(animationId)}
           onComplete={completeAnimation(animationId)}
