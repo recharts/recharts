@@ -24,12 +24,14 @@ function SingleAnimationControl({
     setProgress(1);
   };
 
+  const inputId = `animation-progress-${animationId}`;
+
   return (
     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-      <label htmlFor="animation-progress">Animation {animationId}:</label>
+      <label htmlFor={inputId}>Animation {animationId}:</label>
       <input
         type="range"
-        id="animation-progress"
+        id={inputId}
         min={0}
         max={1}
         step={0.1}
