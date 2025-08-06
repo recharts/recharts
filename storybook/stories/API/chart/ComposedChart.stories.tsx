@@ -20,7 +20,6 @@ import {
 } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -32,7 +31,7 @@ export default {
 // This render template can be shared across multiple stories.
 // All stories use the same data, but pass different children.
 const HorizontalChartTemplate = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <Composed
@@ -46,10 +45,7 @@ const HorizontalChartTemplate = {
           }}
         >
           {args.children}
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Composed>
       </ResponsiveContainer>
     );
@@ -136,7 +132,7 @@ export const LineBarHorizontal = {
 };
 
 export const LineBarAreaScatterTimeScale = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const tickFormatter = (tick: Date) => {
       return tick.toLocaleString('en-GB', {
         /*
@@ -178,10 +174,7 @@ export const LineBarAreaScatterTimeScale = {
               <Bar dataKey="y" barSize={20} fill="#413ea0" />
               <Line type="monotone" dataKey="y" stroke="#ff7300" />
               <Tooltip />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </Composed>
           </div>
         </div>

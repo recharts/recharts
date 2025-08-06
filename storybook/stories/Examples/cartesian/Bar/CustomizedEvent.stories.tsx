@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react-vite';
 import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Bar/Customised Event',
 };
 
 export const CustomizedEvent = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     const [activeIndex, setActiveIndex] = useState(1);
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
@@ -33,10 +31,7 @@ export const CustomizedEvent = {
                 <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${name}`} />
               ))}
             </Bar>
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
       </>

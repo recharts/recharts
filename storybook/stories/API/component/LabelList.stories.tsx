@@ -5,7 +5,6 @@ import { ResponsiveContainer, LabelList, LineChart, Line } from '../../../../src
 import { pageData } from '../../data';
 import { LabelListProps } from '../props/LabelListProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -15,7 +14,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -34,10 +33,7 @@ export const API = {
           <Line dataKey="uv">
             <LabelList {...args} />
           </Line>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

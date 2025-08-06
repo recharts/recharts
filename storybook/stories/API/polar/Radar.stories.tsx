@@ -80,10 +80,7 @@ export const General = {
             <PolarAngleAxis dataKey="subject" />
             <PolarRadiusAxis />
             <Radar {...args} />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </RadarChart>
         </ResponsiveContainer>
       </ManualAnimations>

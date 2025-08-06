@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { ComposedChart, XAxis } from '../../../../../src';
 import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 
@@ -14,15 +13,12 @@ export default {
 };
 
 export const WithDifferentDataTypes = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div>
         <ComposedChart width={600} height={50} data={pageData}>
           <XAxis dataKey="name" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
         <ComposedChart width={600} height={50} data={coordinateWithValueData}>
           <XAxis {...args} dataKey="x" domain={['auto', 'auto']} type="number" />

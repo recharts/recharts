@@ -22,10 +22,7 @@ export const API = {
             <PolarAngleAxis />
             <RadialBar dataKey="uv" {...args} />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </RadialBarChart>
         </ResponsiveContainer>
       </ManualAnimations>

@@ -52,10 +52,7 @@ export const API = {
             {/* The target component */}
             <Line dataKey="uv" {...args} />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
       </ManualAnimations>

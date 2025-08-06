@@ -5,7 +5,6 @@ import { RadarChartProps } from '../API/props/RadarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { rangeData } from '../data';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadarChartProps,
@@ -16,7 +15,7 @@ export default {
 };
 
 export const NumberAngleType: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarGrid gridType="circle" />
@@ -26,10 +25,7 @@ export const NumberAngleType: StoryObj = {
         <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
 
         <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -47,7 +43,7 @@ export const NumberAngleType: StoryObj = {
 };
 
 export const CategoryAngleType: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarGrid gridType="circle" />
@@ -57,10 +53,7 @@ export const CategoryAngleType: StoryObj = {
         <PolarAngleAxis dataKey="angle" axisLineType="circle" type="category" />
 
         <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -78,7 +71,7 @@ export const CategoryAngleType: StoryObj = {
 };
 
 export const ShouldBeCorrectAngle: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarGrid />
@@ -87,10 +80,7 @@ export const ShouldBeCorrectAngle: StoryObj = {
 
         <Radar dataKey="value" fillOpacity={0} stroke="#000" />
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -114,7 +104,7 @@ export const ShouldBeCorrectAngle: StoryObj = {
 };
 
 export const RadarWithLegend: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarGrid gridType="circle" />
@@ -125,10 +115,7 @@ export const RadarWithLegend: StoryObj = {
 
         <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
         <Tooltip defaultIndex={2} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -146,7 +133,7 @@ export const RadarWithLegend: StoryObj = {
 };
 
 export const RangedRadarChart: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarGrid />
@@ -154,10 +141,7 @@ export const RangedRadarChart: StoryObj = {
         <PolarAngleAxis dataKey="day" />
         <Radar type="number" name="Temperature" dataKey="temperature" fill="orange" fillOpacity={0.5} stroke="blue" />
         <Tooltip defaultIndex={2} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -170,7 +154,7 @@ export const RangedRadarChart: StoryObj = {
 };
 
 export const RadarWithChangingDataKey: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [dataKey, setDataKey] = React.useState('key1');
     return (
       <>
@@ -211,10 +195,7 @@ export const RadarWithChangingDataKey: StoryObj = {
             label={{ fill: 'red' }}
           />
           <Tooltip defaultIndex={2} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </RadarChart>
       </>
     );

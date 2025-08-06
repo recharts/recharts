@@ -5,7 +5,6 @@ import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../
 import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: CategoricalChartProps,
@@ -13,7 +12,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const { data, ...rest } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -21,10 +20,7 @@ export const Simple = {
           <XAxis dataKey="x" />
           <YAxis dataKey="y" />
           <Scatter data={data} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );

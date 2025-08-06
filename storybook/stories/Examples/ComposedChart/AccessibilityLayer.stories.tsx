@@ -15,14 +15,13 @@ import { pageData } from '../../data';
 import { General } from '../../API/props/CartesianComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: ComposedChart,
 };
 
 export const AreaChartWithAccessibilityLayer: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <ComposedChart
@@ -40,10 +39,7 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -62,7 +58,7 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
 };
 
 export const AccessibleWithButton = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     const [toggle, setToggle] = useState(true);
 
     return (
@@ -89,10 +85,7 @@ export const AccessibleWithButton = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           {toggle && <Tooltip />}
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </div>
     );

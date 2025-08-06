@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 
 export default {
@@ -9,7 +8,7 @@ export default {
 };
 
 export const PieWithPatterns = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
@@ -30,10 +29,7 @@ export const PieWithPatterns = {
               <Cell key={`cell-${entry.name}`} fill={`url(#pattern-${entry.name})`} />
             ))}
           </Pie>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

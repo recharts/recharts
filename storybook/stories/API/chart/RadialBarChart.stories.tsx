@@ -7,7 +7,6 @@ import { Cell, Legend, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip }
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 export default {
@@ -16,15 +15,12 @@ export default {
 };
 
 export const Simple: StoryObj = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: StorybookArgs) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} label={{ position: 'insideStart', fill: 'white' }} />
         <Tooltip defaultIndex={3} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadialBarChart>
     );
   },
@@ -37,7 +33,7 @@ export const Simple: StoryObj = {
 };
 
 export const WithCustomizedClickLegendEvent = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const { data } = args;
     const [selectedRadialBar, setSelectedRadialBar] = useState('35-39');
 
@@ -74,10 +70,7 @@ export const WithCustomizedClickLegendEvent = {
               </ul>
             )}
           />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </RadialBarChart>
       </ResponsiveContainer>
     );

@@ -20,7 +20,6 @@ import {
 } from '../../../src';
 import { generateMockData } from '../../../test/helper/generateMockData';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { TooltipProps } from '../API/props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 
@@ -31,7 +30,7 @@ export default {
 
 // We do not export this story, but reuse the rendering across multiple examples with various args.
 const SimpleTooltipStory = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
@@ -39,10 +38,7 @@ const SimpleTooltipStory = {
           <YAxis />
           <Tooltip {...args} />
           <Line dataKey="uv" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -58,7 +54,7 @@ export const ActiveTooltip = {
 };
 
 export const SettingTooltipIndex = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <LineChart
       width={500}
       height={300}
@@ -77,10 +73,7 @@ export const SettingTooltipIndex = {
       <Tooltip {...args} />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-      <RechartsHookInspector
-        position={context.rechartsInspectorPosition}
-        setPosition={context.rechartsSetInspectorPosition}
-      />
+      <RechartsHookInspector />
     </LineChart>
   ),
   args: {
@@ -90,7 +83,7 @@ export const SettingTooltipIndex = {
 };
 
 export const LockedByClick = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [isLocked, setIsLocked] = React.useState(false);
     // The TooltipData contains the payload, the label and the x position of the tooltip.
     // Their update is interrupted by the click event, so we need to store them in a state.
@@ -129,10 +122,7 @@ export const LockedByClick = {
           />
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -145,7 +135,7 @@ export const LockedByClick = {
 };
 
 export const CssScaledParent = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [scale, setScale] = useState(1.2);
     const handleZoomIn = useCallback(() => setScale(s => s + 0.1), []);
     const handleZoomOut = useCallback(() => setScale(s => s - 0.1), []);
@@ -180,10 +170,7 @@ export const CssScaledParent = {
               <Line dataKey="uv" />
               <Bar dataKey="pv" />
               <Tooltip {...args} />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -215,7 +202,7 @@ const lineData = [
 ];
 
 export const SeparateDataSetsForChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart data={areaData}>
@@ -224,10 +211,7 @@ export const SeparateDataSetsForChart = {
           <Tooltip {...args} />
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -295,7 +279,7 @@ export const CustomContentExample = {
 };
 
 export const LargeDataArray = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -314,10 +298,7 @@ export const LargeDataArray = {
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -328,7 +309,7 @@ export const LargeDataArray = {
 };
 
 export const IncludeHidden = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -346,10 +327,7 @@ export const IncludeHidden = {
           <Tooltip {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -361,17 +339,14 @@ export const IncludeHidden = {
 };
 
 export const SharedTooltipInBarChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={pageData}>
           <Bar dataKey="uv" fill="green" />
           <Bar dataKey="pv" fill="red" />
           <Tooltip {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -385,17 +360,14 @@ export const SharedTooltipInBarChart = {
 };
 
 export const SharedTooltipInRadialBarChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart data={pageData}>
           <RadialBar dataKey="uv" fill="green" />
           <RadialBar dataKey="pv" fill="red" />
           <Tooltip {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </RadialBarChart>
       </ResponsiveContainer>
     );
@@ -415,7 +387,7 @@ export const SharedTooltipInRadialBarChart = {
  * It should instead overflow the chart.
  */
 export const TallTooltipInNarrowChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={50}>
         <LineChart data={pageData}>
@@ -423,10 +395,7 @@ export const TallTooltipInNarrowChart = {
           <Line dataKey="uv" fill="green" />
           <Line dataKey="pv" fill="red" />
           <Line dataKey="amt" fill="amt" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -439,7 +408,7 @@ export const TallTooltipInNarrowChart = {
 };
 
 export const TooltipWithPortal = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
 
     return (
@@ -449,10 +418,7 @@ export const TooltipWithPortal = {
             {portalRef && <Tooltip {...args} portal={portalRef} />}
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -495,7 +461,7 @@ const d1 = [
 ];
 
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -511,10 +477,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
             <LineChart data={d1} style={{ border: '1px solid black' }}>
               <Tooltip {...args} />
               <Line dataKey="Triggers" />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -527,7 +490,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
 };
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -543,10 +506,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
               <Tooltip {...args} />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -560,7 +520,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
 };
 
 export const RechartsTooltipBug5542Repro = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div
         style={{
@@ -586,10 +546,7 @@ export const RechartsTooltipBug5542Repro = {
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </BarChart>
         </div>
       </div>
@@ -602,7 +559,7 @@ export const RechartsTooltipBug5542Repro = {
 };
 
 export const TooltipWithNegativeOffset = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
@@ -610,10 +567,7 @@ export const TooltipWithNegativeOffset = {
           <YAxis />
           <Line dataKey="uv" />
           <Tooltip {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

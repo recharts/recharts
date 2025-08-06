@@ -22,7 +22,6 @@ import {
 import { ResponsiveProps } from '../props/Tooltip';
 import { GeneralStyle } from '../props/Styles';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -51,7 +50,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
@@ -59,10 +58,7 @@ export const API = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
             <Legend />
           </Funnel>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </FunnelChart>
       </ResponsiveContainer>
     );

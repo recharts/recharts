@@ -4,7 +4,6 @@ import { Area, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis,
 import { pageData } from '../../data';
 import { PageData } from '../../../../test/_data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { TooltipProps } from '../props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -19,7 +18,7 @@ const dataAmt = PageData.map(p => ({ name: p.name, amt: p.amt }));
 
 export const UseActiveTooltipDataPoints = {
   name: 'useActiveTooltipDataPoints',
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
@@ -30,11 +29,7 @@ export const UseActiveTooltipDataPoints = {
           <YAxis />
           <Legend />
           <Tooltip {...args} />
-          <RechartsHookInspector
-            defaultOpened="useActiveTooltipDataPoints"
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector defaultOpened="useActiveTooltipDataPoints" />
         </ComposedChart>
       </ResponsiveContainer>
     );

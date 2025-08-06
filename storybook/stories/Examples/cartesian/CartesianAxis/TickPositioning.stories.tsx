@@ -1,16 +1,14 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
 import { Line, LineChart, ResponsiveContainer, XAxis } from '../../../../../src';
 import { ticks } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Cartesian Axis/Tick Positioning',
 };
 
 export const TickPositioning = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     const intervalOptions = [
       'preserveStart',
       'preserveEnd',
@@ -42,10 +40,7 @@ export const TickPositioning = {
               height={70}
             />
           ))}
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

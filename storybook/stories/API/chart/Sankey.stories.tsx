@@ -6,7 +6,6 @@ import { NodeProps } from '../../../../src/chart/Sankey';
 import { data, margin } from '../props/ChartProps';
 import { dataKey } from '../props/CartesianComponentShared';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -26,15 +25,12 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Sankey data={nodeLinkData} {...args}>
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Sankey>
       </ResponsiveContainer>
     );
@@ -45,14 +41,11 @@ export const Simple = {
 };
 
 export const Customized = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Sankey data={nodeLinkData} {...args}>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Sankey>
       </ResponsiveContainer>
     );
@@ -67,7 +60,7 @@ export const Customized = {
 };
 
 export const CustomNodeAndLink = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const colors = ['#3C898E', '#486DF0', '#6F50E5'];
 
     type CustomNodePayload = {
@@ -176,10 +169,7 @@ export const CustomNodeAndLink = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args}>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Sankey>
       </ResponsiveContainer>
     );

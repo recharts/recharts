@@ -5,7 +5,6 @@ import { coordinateWithValueData } from '../../data';
 import { XAxisProps } from '../props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,
@@ -13,7 +12,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <LineChart width={600} height={300} data={coordinateWithValueData}>
@@ -23,10 +22,7 @@ export const API = {
           <Legend />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -74,7 +70,7 @@ const CustomXAxisTickWithPadding = (props: any) => {
 };
 
 export const CustomTickWithPadding = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const sampleData = [
       { name: 'Jan', value: 400, category: 'A' },
       { name: 'Feb', value: 300, category: 'B' },
@@ -93,10 +89,7 @@ export const CustomTickWithPadding = {
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -111,7 +104,7 @@ export const CustomTickWithPadding = {
 };
 
 export const CustomTickFunction = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const sampleData = [
       { month: 'Jan', sales: 1200, profit: 400 },
       { month: 'Feb', sales: 1900, profit: 500 },
@@ -154,10 +147,7 @@ export const CustomTickFunction = {
           <Line type="monotone" dataKey="profit" stroke="#82ca9d" name="Profit" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

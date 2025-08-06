@@ -171,7 +171,6 @@ import { hide } from '../props/Styles';
 import { legendType } from '../props/Legend';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const EventHandlers = {
   onAbort,
@@ -483,7 +482,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -500,10 +499,7 @@ export const API = {
           <Scatter {...args} />
           <XAxis dataKey="pv" />
           <YAxis dataKey="uv" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

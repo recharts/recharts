@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { scaleTime } from 'victory-vendor/d3-scale';
-import { Args } from '@storybook/react-vite';
 import {
   CartesianGrid,
   Legend,
@@ -17,7 +16,6 @@ import {
   useActiveTooltipLabel,
 } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: LineChart,
@@ -155,7 +153,7 @@ function JointActiveDot({ dataKey, fill }: { dataKey: 'y1' | 'y2'; fill: string 
 }
 
 export const DualLineChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
@@ -185,10 +183,7 @@ export const DualLineChart = {
           {/* Draw extra active dot for Series 2 */}
           <JointActiveDot dataKey="y2" fill="blue" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

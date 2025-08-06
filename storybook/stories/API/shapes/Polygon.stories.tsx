@@ -163,7 +163,6 @@ import {
   onWheelCapture,
 } from '../props/EventHandlers';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const pointDefault = [
   { x: 100, y: 100 },
@@ -374,7 +373,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -388,10 +387,7 @@ export const API = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -404,7 +400,7 @@ export const API = {
 };
 
 export const UsingConnectNulls = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -418,10 +414,7 @@ export const UsingConnectNulls = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -435,7 +428,7 @@ export const UsingConnectNulls = {
 };
 
 export const UsingBaselinePoints = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -449,10 +442,7 @@ export const UsingBaselinePoints = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

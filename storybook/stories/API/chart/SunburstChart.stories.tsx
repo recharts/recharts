@@ -5,7 +5,6 @@ import { SunburstData } from '../../../../src/chart/SunburstChart';
 import { CategoricalChartProps, ChartSizeProps, data, dataKey, margin } from '../props/ChartProps';
 import { PolarChartProps } from '../props/PolarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const { innerRadius, outerRadius, cx, cy, startAngle, endAngle } = PolarChartProps;
 
@@ -112,14 +111,11 @@ const hierarchy: SunburstData = {
 };
 
 export const Sunburst = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
         <SunburstChart {...args} data={args.data}>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </SunburstChart>
       </ResponsiveContainer>
     );
@@ -131,14 +127,11 @@ export const Sunburst = {
 };
 
 export const WithStartAndEndAngle = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
         <SunburstChart {...args} data={args.data}>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </SunburstChart>
       </ResponsiveContainer>
     );
@@ -152,15 +145,12 @@ export const WithStartAndEndAngle = {
 };
 
 export const WithTooltip = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
         <SunburstChart {...args} data={args.data}>
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </SunburstChart>
       </ResponsiveContainer>
     );

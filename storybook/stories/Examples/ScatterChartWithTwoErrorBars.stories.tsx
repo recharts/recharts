@@ -59,10 +59,7 @@ export const WithErrorBarsAndExtendedDomain = {
             <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
           </Scatter>
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ManualAnimations>
     );

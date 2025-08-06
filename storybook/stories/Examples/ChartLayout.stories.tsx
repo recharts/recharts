@@ -4,7 +4,6 @@ import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { ChartSizeDimensions } from '../../ChartSizeDimensions';
 
 function ShowScale() {
@@ -40,7 +39,7 @@ export default {
  * https://github.com/recharts/recharts/issues/5477
  */
 export const WithAbsolutePositionAndFlexboxParents = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div style={{ display: 'flex', height: '100vh' }}>
         <div
@@ -65,10 +64,7 @@ export const WithAbsolutePositionAndFlexboxParents = {
             <ComposedChart {...args}>
               <ChartSizeDimensions />
               <ShowScale />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </ComposedChart>
           </div>
         </div>

@@ -5,7 +5,6 @@ import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip 
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadarChartProps } from '../props/RadarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadarChartProps,
@@ -13,7 +12,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart {...args}>
         <PolarAngleAxis dataKey="name" />
@@ -21,10 +20,7 @@ export const Simple = {
         <PolarGrid />
         <Tooltip defaultIndex={1} />
         <Radar dataKey="uv" stroke="green" strokeOpacity={0.7} fill="green" fillOpacity={0.5} strokeWidth={3} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },

@@ -9,7 +9,6 @@ import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave }
 import { dataKey } from '../props/CartesianComponentShared';
 import { GeneralStyle } from '../props/Styles';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -76,14 +75,11 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );
@@ -97,15 +93,12 @@ export const Simple = {
 };
 
 export const WithTooltip = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );
@@ -121,7 +114,7 @@ export const WithTooltip = {
 const colors = ['#8889DD', '#9597E4', '#8DC77B', '#A5D297', '#E2CF45', '#F8C12D'];
 
 export const WithCustomContent = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap
@@ -161,10 +154,7 @@ export const WithCustomContent = {
           }}
         >
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );

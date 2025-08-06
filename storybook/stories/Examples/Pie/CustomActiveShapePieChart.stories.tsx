@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { PieSectorDataItem } from '../../../../src/polar/Pie';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Pie,
@@ -19,7 +18,7 @@ const data = [
 const NoContent = (): null => null;
 
 export const CustomActiveShapePieChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const renderActiveShape = (props: PieSectorDataItem) => {
       const RADIAN = Math.PI / 180;
       const {
@@ -83,10 +82,7 @@ export const CustomActiveShapePieChart = {
         <PieChart width={400} height={400}>
           <Pie dataKey="value" {...args} activeShape={renderActiveShape} />
           <Tooltip defaultIndex={0} content={NoContent} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

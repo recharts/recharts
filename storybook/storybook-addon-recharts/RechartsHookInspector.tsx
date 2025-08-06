@@ -52,13 +52,7 @@ function Blanket() {
 
 const overlaysThatNeedBlanket = ['useChartWidth, useChartHeight', 'useOffset', 'usePlotArea'];
 
-export function RechartsHookInspector({
-  defaultOpened,
-}: {
-  defaultOpened?: string;
-  position: Position | undefined;
-  setPosition: (newPosition: Position) => void;
-}) {
+export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: string }) {
   const layout = useChartLayout();
   const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>(defaultOpened ? [defaultOpened] : []);
   const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
