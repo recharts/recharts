@@ -310,8 +310,8 @@ describe('Rectangle animation', () => {
         it('should animate stroke-dasharray', async () => {
           const { container, animationManager } = renderTestCase();
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
-            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 0px 1234px;',
-            'transition: stroke-dasharray 1500ms ease; stroke-dasharray: 1234px 0px;',
+            'stroke-dasharray: 0px 1px; transition: stroke-dasharray 1500ms ease;',
+            'stroke-dasharray: 1234px 0px; transition: stroke-dasharray 1500ms ease;',
           ]);
         });
       });

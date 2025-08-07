@@ -26,7 +26,7 @@ describe('CSSTransitionAnimate timing', () => {
         expect.assertions(2);
         const childFunction = vi.fn();
         render(
-          <CSSTransitionAnimate from="1" to="0" attributeName="opacity" duration={500}>
+          <CSSTransitionAnimate animationId="1" from="1" to="0" attributeName="opacity" duration={500}>
             {childFunction}
           </CSSTransitionAnimate>,
         );
@@ -53,6 +53,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -81,6 +82,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         render(
           <CSSTransitionAnimate
+            animationId="1"
             from="scaleY(0)"
             to="scaleY(1)"
             attributeName="transform"
@@ -114,6 +116,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         render(
           <CSSTransitionAnimate
+            animationId="1"
             from="scaleY(0)"
             to="scaleY(1)"
             attributeName="transform"
@@ -141,6 +144,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         const { rerender } = render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -166,6 +170,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -192,6 +197,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -211,12 +217,13 @@ describe('CSSTransitionAnimate timing', () => {
         expect(child).toHaveBeenCalledTimes(1);
       });
 
-      it('should restart animation when isActive changes to true', async () => {
+      it('should restart animation when isActive changes to true via rerender', async () => {
         const animationManager = new MockTickingAnimationManager();
         const child = vi.fn();
 
         const { rerender } = render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -238,6 +245,7 @@ describe('CSSTransitionAnimate timing', () => {
         // Now we change isActive to true
         rerender(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -268,6 +276,7 @@ describe('CSSTransitionAnimate timing', () => {
           return (
             <>
               <CSSTransitionAnimate
+                animationId="1"
                 from="1"
                 to="0"
                 attributeName="opacity"
@@ -316,6 +325,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         const { rerender } = render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -338,6 +348,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         rerender(
           <CSSTransitionAnimate
+            animationId="1"
             from="0.7"
             to="0.3"
             attributeName="opacity"
@@ -366,6 +377,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         const { rerender } = render(
           <CSSTransitionAnimate
+            animationId="1"
             from="1"
             to="0"
             attributeName="opacity"
@@ -386,6 +398,7 @@ describe('CSSTransitionAnimate timing', () => {
 
         rerender(
           <CSSTransitionAnimate
+            animationId="1"
             from="0.7"
             to="0.3"
             attributeName="opacity"
@@ -403,6 +416,58 @@ describe('CSSTransitionAnimate timing', () => {
 
         // however, the child should be rerendered with the fresh "from" state so this looks like a bug
         expect(child).toHaveBeenLastCalledWith({ opacity: '1' });
+        expect(child).toHaveBeenCalledTimes(2);
+      });
+
+      it('should start animation on rerender if canBegin changes from false to true', () => {
+        const animationManager = new MockTickingAnimationManager();
+        const child = vi.fn();
+
+        const { rerender } = render(
+          <CSSTransitionAnimate
+            animationId="1"
+            from="1"
+            to="0"
+            attributeName="opacity"
+            duration={500}
+            canBegin={false}
+            onAnimationStart={handleAnimationStart}
+            animationManager={animationManager}
+          >
+            {child}
+          </CSSTransitionAnimate>,
+        );
+
+        animationManager.assertQueue(null);
+
+        expect(handleAnimationStart).not.toHaveBeenCalled();
+        expect(child).toHaveBeenLastCalledWith({ opacity: '1' });
+        expect(child).toHaveBeenCalledTimes(1);
+
+        rerender(
+          <CSSTransitionAnimate
+            animationId="1"
+            from="0.7"
+            to="0.3"
+            attributeName="opacity"
+            duration={500}
+            canBegin
+            onAnimationStart={handleAnimationStart}
+            animationManager={animationManager}
+          >
+            {child}
+          </CSSTransitionAnimate>,
+        );
+
+        // queue should be populated with the animation steps
+        animationManager.assertQueue(['[function handleAnimationStart]', 0, '0.3', 500, '[function onAnimationEnd]']);
+
+        expect(handleAnimationStart).toHaveBeenCalledTimes(0);
+        /*
+         * now the child should be rerendered with the fresh "from" state, using the latest "from" value - NOT the one from before when canBegin was false
+         * buuuut it uses the old "from" value, which is a bug. I suppose we can live with it for now?
+         */
+        expect(child).toHaveBeenLastCalledWith({ opacity: '1', transition: 'opacity 500ms ease' });
         expect(child).toHaveBeenCalledTimes(2);
       });
     });

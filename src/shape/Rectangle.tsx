@@ -128,7 +128,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const prevHeightRef = useRef<number>(height);
   const prevXRef = useRef<number>(x);
   const prevYRef = useRef<number>(y);
-  const animationId = useAnimationId(props);
+  const animationId = useAnimationId(rectangleProps, 'rectangle-');
 
   if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
     return null;
@@ -168,6 +168,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
         }
         return (
           <CSSTransitionAnimate
+            animationId={animationId}
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
             to={`${totalLength}px 0px`}
