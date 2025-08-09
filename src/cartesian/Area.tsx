@@ -862,7 +862,6 @@ export function computeArea({
 
     if (isHorizontalLayout) {
       return {
-        // @ts-expect-error getCateCoordinateOfLine expects chart data to be an object, we allow unknown
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
         y: isBreakPoint ? null : yAxis.scale(value[1]),
         value,
@@ -872,7 +871,6 @@ export function computeArea({
 
     return {
       x: isBreakPoint ? null : xAxis.scale(value[1]),
-      // @ts-expect-error getCateCoordinateOfLine expects chart data to be an object, we allow unknown
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value,
       payload: entry,
