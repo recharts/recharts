@@ -60,7 +60,7 @@ interface PieDef {
   /** The inner radius of sectors */
   innerRadius?: number | string;
   /** The outer radius of sectors */
-  outerRadius?: number | string | ((dataPoint: any) => number);
+  outerRadius?: number | string | ((dataPoint: any) => number | string);
   cornerRadius?: number | string;
 }
 
@@ -242,11 +242,11 @@ const getTextAnchor = (x: number, cx: number) => {
 
 const getOuterRadius = (
   dataPoint: any,
-  outerRadius?: number | string | ((element: any) => number),
+  outerRadius?: number | string | ((element: any) => number | string),
   maxPieRadius?: number,
 ) => {
   if (typeof outerRadius === 'function') {
-    return outerRadius(dataPoint);
+    return getPercentValue(outerRadius(dataPoint), maxPieRadius, maxPieRadius * 0.8);
   }
   return getPercentValue(outerRadius, maxPieRadius, maxPieRadius * 0.8);
 };
@@ -256,7 +256,7 @@ const parseCoordinateOfPie = (
     cx?: number | string;
     cy?: number | string;
     innerRadius?: number | string;
-    outerRadius?: number | string | ((dataPoint: any) => number);
+    outerRadius?: number | string | ((dataPoint: any) => number | string);
     maxRadius?: number;
   },
   offset: ChartOffsetInternal,

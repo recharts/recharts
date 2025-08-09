@@ -35,7 +35,7 @@ const GeneralProps: Args = {
   outerRadius: {
     description: `The outer radius of all the sectors. If set a percentage, the final value is
       obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
-      If set a function, the function will be called to return customized radius.`,
+      If set a function, the function will be called to return customized radius, in the form of a string percentage or a number.`,
     table: {
       type: { summary: 'percentage | number | Function', defaultValue: '80%' },
       category: 'General',

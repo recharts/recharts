@@ -1710,4 +1710,84 @@ describe('<Pie />', () => {
       expectLastCalledWith(spy, [expectedPie]);
     });
   });
+
+  describe('Coordinates', () => {
+    it('should allow outerRadius callback to return string', () => {
+      const data = [
+        { name: 'A', value: 40 },
+        { name: 'B', value: 30 },
+        { name: 'C', value: 20 },
+      ];
+
+      const outerRadiusCallback = (dataPoint: any) => {
+        // Return different string values based on data point
+        if (dataPoint.name === 'A') return '60%';
+        if (dataPoint.name === 'B') return '80%';
+        return '100%';
+      };
+
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={outerRadiusCallback}
+            data={data}
+            dataKey="value"
+          />
+        </PieChart>,
+      );
+
+      // Verify that sectors are rendered with different outer radius values
+      const sectors = container.querySelectorAll('.recharts-sector');
+      expect(sectors).toHaveLength(3);
+
+      // Check that sectors have different sizes due to different outer radius values
+      const sectorPaths = Array.from(sectors).map(sector => sector.getAttribute('d'));
+      expect(sectorPaths[0]).not.toBe(sectorPaths[1]);
+      expect(sectorPaths[1]).not.toBe(sectorPaths[2]);
+      expect(sectorPaths[0]).not.toBe(sectorPaths[2]);
+    });
+
+    it('should allow outerRadius callback to return number', () => {
+      const data = [
+        { name: 'A', value: 40 },
+        { name: 'B', value: 30 },
+        { name: 'C', value: 20 },
+      ];
+
+      const outerRadiusCallback = (dataPoint: any) => {
+        // Return different number values based on data point
+        if (dataPoint.name === 'A') return 100;
+        if (dataPoint.name === 'B') return 150;
+        return 200;
+      };
+
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={outerRadiusCallback}
+            data={data}
+            dataKey="value"
+          />
+        </PieChart>,
+      );
+
+      // Verify that sectors are rendered
+      const sectors = container.querySelectorAll('.recharts-sector');
+      expect(sectors).toHaveLength(3);
+
+      // Check that sectors have different sizes due to different outer radius values
+      const sectorPaths = Array.from(sectors).map(sector => sector.getAttribute('d'));
+      expect(sectorPaths[0]).not.toBe(sectorPaths[1]);
+      expect(sectorPaths[1]).not.toBe(sectorPaths[2]);
+      expect(sectorPaths[0]).not.toBe(sectorPaths[2]);
+    });
+  });
 });
