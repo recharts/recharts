@@ -60,7 +60,7 @@ export const useEffectDebug = (
     if (changedKeys.length) {
       const prev = Object.fromEntries(
         changedKeys.map(key => {
-          if (key in changedKeys) {
+          if (key in changedDeps) {
             return [key, changedDeps[key].before];
           }
           return [key, undefined];
