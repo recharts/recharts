@@ -51,7 +51,7 @@ export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwi
       <RechartsHookInspectorButton
         isActive={manualAnimationsEnabled}
         onClick={() => setManualAnimationsEnabled(!manualAnimationsEnabled)}
-        title="Move to east"
+        title="Toggle manual animations"
       >
         <VideoIcon />
       </RechartsHookInspectorButton>
