@@ -220,14 +220,6 @@ describe('Bar stacked with truncateByDomain', () => {
         },
       });
     });
-
-    // test('selectStackedDataOfItem', () => {
-    //   const { spy } = renderTestCase(state => selectStackedDataOfItem(state, 0, 0, false, 'bar-wins'));
-    //   expect(spy).toHaveBeenLastCalledWith([
-    //     [0, 0],
-    //     [0, 3],
-    //   ]);
-    // });
   });
 
   it('should render bars', () => {
