@@ -8,7 +8,7 @@ describe('Animate progress', () => {
   describe('when child is a function', () => {
     describe('with from, to as objects', () => {
       it('should call the function child with the current style', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('1');
         const child = vi.fn();
 
         render(
@@ -39,7 +39,7 @@ describe('Animate progress', () => {
 
     describe('with from, to as numbers', () => {
       it('should call the function child with the current style (but it does not)', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('1');
         const child = vi.fn();
 
         render(
@@ -70,7 +70,7 @@ describe('Animate progress', () => {
 
     describe('with from, to as strings', () => {
       it('should call the function child with the current style (but it does not)', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('1');
         const child = vi.fn();
 
         render(
@@ -105,7 +105,7 @@ describe('Animate progress', () => {
 
     describe('with from, to as CSS transforms', () => {
       it('should call the function child with the current style (but it does not)', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('1');
         const child = vi.fn();
 
         const transformOrigin = `100px 50px`;
@@ -148,7 +148,7 @@ describe('Animate progress', () => {
       });
 
       it('should clone the child with the current style (but it does not)', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('1');
         const transformOrigin = `100px 50px`;
 
         const { container } = render(
@@ -172,7 +172,7 @@ describe('Animate progress', () => {
 
     describe('when "to" changes in the middle of the animation', () => {
       it('should update the child with the new style and unfortunately it jumps in the middle', async () => {
-        const animationManager = new MockProgressAnimationManager();
+        const animationManager = new MockProgressAnimationManager('');
         const child = vi.fn();
 
         const { rerender } = render(

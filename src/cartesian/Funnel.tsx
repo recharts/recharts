@@ -228,7 +228,7 @@ function TrapezoidsWithAnimation({
 
   return (
     <JavascriptAnimate
-      animationName={animationId}
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

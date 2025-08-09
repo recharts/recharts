@@ -148,7 +148,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
 
   return (
     <JavascriptAnimate
-      animationName={animationId}
+      animationId={animationId}
       key={animationId}
       canBegin={totalLength > 0}
       duration={animationDuration}
