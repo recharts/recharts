@@ -12,6 +12,10 @@ const usePrevious = <T>(value: T | null): T | null => {
   return ref.current;
 };
 
+type FirstDependencies = Record<string, unknown>;
+
+type ChangedDependencies = Record<string, { before: unknown; after: unknown }>;
+
 export const useEffectDebug = (
   debuggerName: string,
   effectHook: EffectCallback,
@@ -21,22 +25,22 @@ export const useEffectDebug = (
   const previousDeps = usePrevious(dependencies);
 
   if (previousDeps === null) {
-    const changedDeps = dependencies.reduce(
-      (accum, dependency, index) => {
-        const keyName = dependencyNames[index] || index;
+    const firstDependencies: FirstDependencies = dependencies.reduce<FirstDependencies>(
+      (accum: FirstDependencies, dependency, index): FirstDependencies => {
+        const keyName = dependencyNames[index] || String(index);
         return {
           ...accum,
           [keyName]: dependency,
         };
       },
-      {} as Record<string, any>,
+      {},
     );
-    console.log('[use-effect-debugger]', debuggerName, 'initial render', changedDeps);
+    console.log('[use-effect-debugger]', debuggerName, 'initial render', firstDependencies);
   } else {
-    const changedDeps = dependencies.reduce(
-      (accum, dependency, index) => {
+    const changedDeps: ChangedDependencies = dependencies.reduce<ChangedDependencies>(
+      (accum: ChangedDependencies, dependency, index): ChangedDependencies => {
         if (dependency !== previousDeps[index]) {
-          const keyName = dependencyNames[index] || index;
+          const keyName = dependencyNames[index] || String(index);
           return {
             ...accum,
             [keyName]: {
@@ -48,13 +52,20 @@ export const useEffectDebug = (
 
         return accum;
       },
-      {} as Record<string, { before: any; after: any }>,
+      {},
     );
 
     const changedKeys = Object.keys(changedDeps);
 
     if (changedKeys.length) {
-      const prev = Object.fromEntries(changedKeys.map(key => [key, changedDeps[key].before]));
+      const prev = Object.fromEntries(
+        changedKeys.map(key => {
+          if (key in changedKeys) {
+            return [key, changedDeps[key].before];
+          }
+          return [key, undefined];
+        }),
+      );
       const curr = Object.fromEntries(changedKeys.map(key => [key, changedDeps[key].after]));
       // eslint-disable-next-line no-console
       console.log('[use-effect-debugger]', debuggerName, changedKeys.join(', '), {
