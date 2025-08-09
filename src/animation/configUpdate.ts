@@ -118,7 +118,7 @@ function createStepperUpdate<T extends Record<string, unknown>>(
 
 type TimingStyle = Record<string, [number, number]>;
 
-function createTimingUpdate<T extends Record<string, unknown>>(
+function createTimingUpdate<T extends Record<string, number>>(
   from: T,
   to: T,
   easing: BezierEasingFunction,
@@ -130,7 +130,7 @@ function createTimingUpdate<T extends Record<string, unknown>>(
   let stopAnimation: CancelAnimationFunction | null = null;
 
   const timingStyle: TimingStyle = interKeys.reduce(
-    (res, key): TimingStyle => ({
+    (res: TimingStyle, key: string): TimingStyle => ({
       ...res,
       [key]: [from[key], to[key]],
     }),
@@ -180,7 +180,7 @@ function createTimingUpdate<T extends Record<string, unknown>>(
 
 // configure update function
 // eslint-disable-next-line import/no-default-export
-export default <T extends Record<string, unknown>>(
+export default <T extends Record<string, number>>(
   from: T,
   to: T,
   easing: EasingFunction,
