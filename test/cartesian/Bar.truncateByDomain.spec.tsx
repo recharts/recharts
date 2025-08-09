@@ -13,7 +13,7 @@ import { selectDisplayedStackedData, selectStackGroups } from '../../src/state/s
 /*
  * Example data in the original report are larger, here I removed some data to make it simpler while still reproducing the issue.
  * You will find that the day=1 data point is repeated, and it's used as XAxis dataKey.
- * What was the intention? Not sure. Perhaps it relies on allowDuplicateCategory?
+ * Recharts should render these two as two separate bars.
  */
 const data = [
   {
