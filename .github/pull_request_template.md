@@ -1,5 +1,3 @@
-<!--- Provide a general summary of your changes in the Title above -->
-
 ## Description
 
 <!--- Describe your changes in detail -->
@@ -39,4 +37,4 @@
 - [ ] My change requires a change to the documentation.
 - [ ] I have updated the documentation accordingly.
 - [ ] I have added tests to cover my changes.
-- [ ] I have added a storybook story or extended an existing story to show my changes
+- [ ] I have added a storybook story or VR test, or extended an existing story or VR test to show my changes
