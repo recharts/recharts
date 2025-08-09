@@ -170,6 +170,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
           const lineStyle = isAnimationActive ? { transformOrigin } : undefined;
           return (
             <CSSTransitionAnimate
+              animationId={`error-bar-${direction}`}
               from={`${scaleDirection}(0)`}
               to={`${scaleDirection}(1)`}
               attributeName="transform"
@@ -177,7 +178,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
               easing={animationEasing}
               isActive={isAnimationActive}
               duration={animationDuration}
-              key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
+              key={`errorbar-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
             >
               {style => <line {...coordinates} style={{ ...lineStyle, ...style }} />}
             </CSSTransitionAnimate>

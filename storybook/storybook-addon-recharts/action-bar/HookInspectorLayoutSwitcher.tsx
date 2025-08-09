@@ -1,9 +1,10 @@
 import React from 'react';
-import { CloseIcon } from '@storybook/icons';
+import { CloseIcon, VideoIcon } from '@storybook/icons';
 import { Position } from '../constants';
 import { LayoutBarIcon } from './LayoutBarIcon';
 import { RechartsHookInspectorButton } from './RechartsHookInspectorButton';
 import './actionbar.css';
+import { useRechartsInspectorState } from '../RechartsInspectorDecorator';
 
 export type LayoutSwitcherProps = {
   position: Position;
@@ -15,6 +16,7 @@ function Separator() {
 }
 
 export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwitcherProps) {
+  const { manualAnimationsEnabled, setManualAnimationsEnabled } = useRechartsInspectorState();
   return (
     <>
       <RechartsHookInspectorButton
@@ -44,6 +46,14 @@ export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwi
         title="Move to east"
       >
         <LayoutBarIcon direction="EAST" />
+      </RechartsHookInspectorButton>
+      <Separator />
+      <RechartsHookInspectorButton
+        isActive={manualAnimationsEnabled}
+        onClick={() => setManualAnimationsEnabled(!manualAnimationsEnabled)}
+        title="Toggle manual animations"
+      >
+        <VideoIcon />
       </RechartsHookInspectorButton>
       <Separator />
       <RechartsHookInspectorButton

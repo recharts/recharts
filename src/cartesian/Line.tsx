@@ -400,6 +400,7 @@ function CurveWithAnimation({
 
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

@@ -4,7 +4,6 @@ import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: CategoricalChartProps,
@@ -12,15 +11,12 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <LineChart {...args}>
           <Line dataKey="uv" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -31,17 +27,14 @@ export const Simple = {
 };
 
 export const SynchronizedTooltip = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div>
         <LineChart {...args} id="BookOne" className="BookOne">
           <Line isAnimationActive={false} name="BookOne" type="monotone" dataKey="uv" stroke="#111" />
           <XAxis dataKey="name" />
           <Tooltip active />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
         <LineChart {...args} id="BookTwo" className="BookTwo">
           <Line isAnimationActive={false} name="BookTwo" type="monotone" dataKey="uv" stroke="#ff7300" />

@@ -5,8 +5,7 @@ import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
-import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   dataKey: {
@@ -60,33 +59,28 @@ export default {
 };
 
 export const General = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
-      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-        <ResponsiveContainer width="100%" height={500}>
-          <RadarChart
-            cx="50%"
-            cy="50%"
-            outerRadius="80%"
-            data={subjectData}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis />
-            <Radar {...args} />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
-      </ManualAnimations>
+      <ResponsiveContainer width="100%" height={500}>
+        <RadarChart
+          cx="50%"
+          cy="50%"
+          outerRadius="80%"
+          data={subjectData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <PolarRadiusAxis />
+          <Radar {...args} />
+          <RechartsHookInspector />
+        </RadarChart>
+      </ResponsiveContainer>
     );
   },
   args: {

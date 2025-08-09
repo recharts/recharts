@@ -187,7 +187,6 @@ import {
   isAnimationActive,
 } from '../props/AnimationProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
@@ -481,6 +480,7 @@ export const API = {
           {/* The target component */}
           <Bar dataKey="uv" {...args} />
           <Tooltip />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -558,7 +558,7 @@ const dataWithSmallishValues = [
   },
 ];
 export const WithMinHeight = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const renderCustomizedLabel = (props: any) => {
       const { x, y, width, value } = props;
       const radius = 10;
@@ -595,10 +595,7 @@ export const WithMinHeight = {
             <LabelList dataKey="name" content={renderCustomizedLabel} />
           </Bar>
           <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );

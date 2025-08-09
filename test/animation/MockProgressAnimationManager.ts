@@ -48,9 +48,19 @@ export class MockProgressAnimationManager
   extends MockAbstractAnimationManager
   implements AnimationManager, MockAnimationManager
 {
+  private readonly onStop?: () => void;
+
+  constructor(
+    private animationId: string,
+    onStop?: () => void,
+  ) {
+    super();
+    this.onStop = onStop;
+  }
+
   async setAnimationProgress(percent: number): Promise<void> {
     if (this.queue === null || this.queue.length === 0) {
-      throw new Error('Queue is empty');
+      throw new Error(`[${this.animationId}] Queue is empty`);
     }
     if (percent < 0) {
       throw new Error('Percent must be greater than or equal to 0');
@@ -85,7 +95,9 @@ export class MockProgressAnimationManager
       await this.setAnimationProgress(1);
     }
 
-    return this.poll(this.queue.length);
+    const result = this.poll(this.queue.length);
+    this.onStop?.();
+    return result;
   }
 
   start(queue: ReactSmoothQueue) {
@@ -98,6 +110,7 @@ export class MockProgressAnimationManager
     super.stop();
     this.isPrimed = false; // Reset the primed state when stopping the queue
     this.animationProgress = 0; // Reset the animation progress when stopping a queue
+    this.onStop?.();
   }
 
   private isPrimed: boolean = false;
@@ -125,6 +138,7 @@ export class MockProgressAnimationManager
     if (this.isPrimed) {
       return;
     }
+    this.isPrimed = true;
 
     /*
      * We don't really have a good way to check which function is the easing function.
@@ -141,8 +155,6 @@ export class MockProgressAnimationManager
      * to kickstart and set up its internal state.
      */
     await this.triggerNextTimeout(this.firstTick);
-
-    this.isPrimed = true;
   }
 
   /**
@@ -156,7 +168,7 @@ export class MockProgressAnimationManager
    */
   private async peekAnimationDuration(): Promise<number> {
     if (this.queue === null || this.queue.length === 0) {
-      throw new Error('Queue is empty');
+      throw new Error(`[${this.animationId}] Queue is empty`);
     }
 
     await this.prime();
@@ -165,7 +177,7 @@ export class MockProgressAnimationManager
 
     if (typeof animationDuration !== 'number') {
       throw new Error(
-        `We assume the first item in the queue is the animation duration.
+        `[${this.animationId}] We assume the first item in the queue is the animation duration.
         Found: [${typeof animationDuration}] instead.
         This probably means you are calling this method at a wrong time.`,
       );

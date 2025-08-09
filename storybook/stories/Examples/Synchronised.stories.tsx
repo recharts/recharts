@@ -25,7 +25,6 @@ import {
 } from '../../../src';
 import { PageData } from '../../../test/_data';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 const SynchronisationProps = {
   syncId: { control: 'text' },
@@ -77,7 +76,7 @@ const orange = '#ff7300';
 const pink = '#dd4a98';
 
 export const Synchronised = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <>
         <ResponsiveContainer width="100%" height={200}>
@@ -99,10 +98,7 @@ export const Synchronised = {
             <Area type="monotone" dataKey="uv" stroke={green} fill={green} />
             <Brush />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
 
@@ -219,7 +215,7 @@ export const Synchronised = {
 };
 
 export const SynchronisedWithDataOnItem = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const series = [
       {
         name: 'Series 1',
@@ -251,10 +247,7 @@ export const SynchronisedWithDataOnItem = {
           {series.map(s => (
             <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
           ))}
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
         <LineChart {...args} width={500} height={300}>
           <XAxis dataKey="x" type="number" domain={[0, 3]} />

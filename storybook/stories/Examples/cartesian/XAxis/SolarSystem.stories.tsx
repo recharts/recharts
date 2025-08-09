@@ -1,13 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
 import { solarSystem } from '../../../data/solarSystem';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default { Component: XAxis };
 
-export const MassBarChart = (args: Args, context: RechartsStoryContext) => {
+export const MassBarChart = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={solarSystem} width={100} height={100}>
@@ -15,16 +13,13 @@ export const MassBarChart = (args: Args, context: RechartsStoryContext) => {
         <YAxis width={100} label={{ value: 'Mass [kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90 }} />
         <Bar dataKey="massKg" unit="kg" />
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export const MassBarChartCategoricalY = (args: Args, context: RechartsStoryContext) => {
+export const MassBarChartCategoricalY = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={solarSystem} width={100} height={100}>
@@ -36,16 +31,13 @@ export const MassBarChartCategoricalY = (args: Args, context: RechartsStoryConte
         />
         <Bar dataKey="massKg" unit="kg" />
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export const MassBarChartCustomYDomain = (args: Args, context: RechartsStoryContext) => {
+export const MassBarChartCustomYDomain = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={solarSystem} width={100} height={100}>
@@ -58,16 +50,13 @@ export const MassBarChartCustomYDomain = (args: Args, context: RechartsStoryCont
         />
         <Bar dataKey="massKg" unit="kg" />
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export const MassBarChartLogScale = (args: Args, context: RechartsStoryContext) => {
+export const MassBarChartLogScale = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={solarSystem} width={100} height={100}>
@@ -80,17 +69,14 @@ export const MassBarChartLogScale = (args: Args, context: RechartsStoryContext) 
         />
         <Bar dataKey="massKg" unit="kg" />
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
 /* eslint-disable react/jsx-no-bind */
-export const MassBarChartCustomTicks = (args: Args, context: RechartsStoryContext) => {
+export const MassBarChartCustomTicks = () => {
   function kgToYottagram(value: number): string {
     // the data is defined in kg
     const yottagram = value / 1e24;
@@ -109,10 +95,7 @@ export const MassBarChartCustomTicks = (args: Args, context: RechartsStoryContex
         />
         <Bar dataKey="massKg" name="mass" unit=" yottagram" />
         <Tooltip formatter={kgToYottagram} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </BarChart>
     </ResponsiveContainer>
   );

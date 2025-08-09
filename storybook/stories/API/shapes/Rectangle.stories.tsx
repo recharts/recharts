@@ -347,13 +347,14 @@ export const API = {
     );
   },
   args: {
-    radius: 0,
-    x: 0,
-    y: 0,
+    radius: 7,
+    x: 10,
+    y: 10,
     height: 200,
     width: 300,
     stroke: '#000',
-    fill: 'red',
+    strokeWidth: 5,
+    fill: '#67ba67',
     isAnimationActive: true,
     isUpdateAnimationActive: true,
     animationBegin: 0,

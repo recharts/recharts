@@ -18,8 +18,7 @@ import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
-import { ManualAnimations, RechartsHookInspector } from '../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 
 export default {
@@ -31,7 +30,7 @@ export default {
 };
 
 export const Simple: Meta<ScatterProps> = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       { x: 100, y: 200, z: 200 },
       { x: 100, y: 200, z: 200 },
@@ -58,10 +57,7 @@ export const Simple: Meta<ScatterProps> = {
           <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={1} />
           <Scatter activeShape={args.activeShape} name="A school" data={data} fill="#8884d8" />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -72,7 +68,7 @@ export const Simple: Meta<ScatterProps> = {
 };
 
 export const ThreeDim = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data01 = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -101,10 +97,7 @@ export const ThreeDim = {
           <Scatter name="A school" data={data01} fill="#8884d8" shape="star" />
           <Scatter name="B school" data={data02} fill="#82ca9d" shape="triangle" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -121,7 +114,7 @@ export const ThreeDim = {
 };
 
 export const JointLine = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data01 = [
       { x: 10, y: 30 },
       { x: 30, y: 200 },
@@ -149,10 +142,7 @@ export const JointLine = {
           <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
           <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -169,7 +159,7 @@ export const JointLine = {
 };
 
 export const BubbleChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data01 = [
       { hour: '12a', index: 1, value: 170 },
       { hour: '1a', index: 1, value: 180 },
@@ -306,10 +296,7 @@ export const BubbleChart = {
             <BubbleAxes day="Sunday" />
             <Bubbles data={data01} />
             <MyTooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -377,7 +364,7 @@ export const BubbleChart = {
 };
 
 export const WithLabels = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -397,10 +384,7 @@ export const WithLabels = {
             <LabelList dataKey="x" />
           </Scatter>
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -417,7 +401,7 @@ export const WithLabels = {
 };
 
 export const MultipleYAxes = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data01 = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -459,10 +443,7 @@ export const MultipleYAxes = {
           <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
           <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -479,7 +460,7 @@ export const MultipleYAxes = {
 };
 
 export const WithCells = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -501,10 +482,7 @@ export const WithCells = {
           ))}
         </Scatter>
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ScatterChart>
     );
   },
@@ -522,7 +500,7 @@ export const WithCells = {
 };
 
 export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ScatterChart {...args}>
         <CartesianGrid vertical={false} yAxisId="axis-babies" />
@@ -588,10 +566,7 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
           shape="circle"
         />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} shared={false} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ScatterChart>
     );
   },
@@ -610,7 +585,7 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
 };
 
 export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       { x: 100, y: 100, z: 200 },
       { x: 100, y: 200, z: 200 },
@@ -638,10 +613,7 @@ export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
           <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -652,7 +624,7 @@ export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -702,36 +674,28 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-          <ScatterChart {...args} data={useData2 ? data2 : data1}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-            <YAxis dataKey={useData2 ? dataKey2 : dataKey1} width="auto" />
-            <ZAxis range={[200, 200]} />
-            <Tooltip />
-            <Legend />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-            <Scatter
-              name="Animated Scatter"
-              lineType="joint"
-              line
-              hide={!visible}
-              dataKey={useData2 ? dataKey2 : dataKey1}
-              stroke="#8884d8"
-              fill="#8884d8"
-              strokeWidth={3}
-              strokeDasharray="2 2"
-              label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
-            />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          </ScatterChart>
-        </ManualAnimations>
+        <ScatterChart {...args} data={useData2 ? data2 : data1}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} width="auto" />
+          <ZAxis range={[200, 200]} />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector />
+          <Scatter
+            name="Animated Scatter"
+            lineType="joint"
+            line
+            hide={!visible}
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            fill="#8884d8"
+            strokeWidth={3}
+            strokeDasharray="2 2"
+            label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
+          />
+          <RechartsHookInspector />
+        </ScatterChart>
       </>
     );
   },

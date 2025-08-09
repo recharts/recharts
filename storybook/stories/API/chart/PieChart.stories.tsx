@@ -5,7 +5,6 @@ import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -17,17 +16,14 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Record<string, any>) => {
     const { data, activeShape } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
         <PieChart {...args}>
           <Pie data={data} dataKey="uv" activeShape={activeShape} />
           <Tooltip defaultIndex={3} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -46,7 +42,7 @@ export const Simple = {
 };
 
 export const Donut = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Record<string, any>) => {
     return (
       <PieChart {...args}>
         <Pie data={args.data} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} cornerRadius={8}>
@@ -58,10 +54,7 @@ export const Donut = {
           </Label>
           <Legend align="right" verticalAlign="middle" layout="vertical" />
         </Pie>
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </PieChart>
     );
   },
@@ -74,7 +67,7 @@ export const Donut = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Record<string, any>) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1', fill: 'blue' },
       { x: { value: 2 }, name: 'x2', fill: 'red' },
@@ -127,10 +120,7 @@ export const ChangingDataKey = {
         <PieChart {...args} data={useData2 ? data2 : data1}>
           <Tooltip />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
           <Pie
             data={useData2 ? data2 : data1}
             name="Animated line"

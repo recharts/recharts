@@ -18,7 +18,6 @@ import { GeneralStyle } from '../props/Styles';
 import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const StyleProps: Args = {
   ...GeneralStyle,
@@ -110,7 +109,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -127,10 +126,7 @@ export const API = {
           <YAxis type="number" />
           <Line dataKey="uv" />
           <ReferenceArea {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

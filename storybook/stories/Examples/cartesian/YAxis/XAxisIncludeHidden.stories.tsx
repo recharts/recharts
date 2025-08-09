@@ -1,9 +1,7 @@
 import React, { ComponentProps, useState } from 'react';
-import { Args } from '@storybook/react-vite';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Legend } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { YAxisProps } from '../../../API/props/YAxisProps';
 
@@ -14,7 +12,7 @@ export default {
 };
 
 export const WithIncludeHidden = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     const allKeys = Object.keys(pageData[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
@@ -39,10 +37,7 @@ export const WithIncludeHidden = {
             <Legend onClick={handleLegendClick} />
             <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
             <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
       </>

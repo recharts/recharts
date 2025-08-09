@@ -7,7 +7,6 @@ import { timeData } from '../data';
 import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,
@@ -18,7 +17,7 @@ interface Args {
 }
 
 const StoryTemplate = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart
@@ -32,10 +31,7 @@ const StoryTemplate = {
         >
           <XAxis dataKey="x" {...args} domain={['auto', 'auto']} />
           <Line dataKey="y" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -97,7 +93,7 @@ function multiFormat(date: Date): string {
 
 export const WithD3Scale = {
   ...StoryTemplate,
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const timeValues = args.data.map(row => row.x);
     // The d3 scaleTime domain requires numeric values
     const numericValues = timeValues.map(time => time.valueOf());
@@ -129,10 +125,7 @@ export const WithD3Scale = {
           <XAxis dataKey="x" {...args} {...xAxisArgs} />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

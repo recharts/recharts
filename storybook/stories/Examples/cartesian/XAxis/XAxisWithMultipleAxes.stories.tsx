@@ -5,7 +5,6 @@ import { Line, LineChart, Tooltip, XAxis } from '../../../../../src';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,
@@ -13,7 +12,7 @@ export default {
 };
 
 export const XAxisWithMultipleAxes = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <article style={{ display: 'flex', flexDirection: 'column' }}>
       <LineChart width={700} height={700} data={pageData}>
         <XAxis {...args} dataKey="name" xAxisId="a" orientation="top" height={40} />
@@ -25,10 +24,7 @@ export const XAxisWithMultipleAxes = {
         <Line dataKey="uv" xAxisId="b" />
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </LineChart>
       <p>
         {`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a

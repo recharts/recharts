@@ -14,7 +14,6 @@ import { StorybookArgs } from '../../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -23,7 +22,7 @@ export default {
 } satisfies Meta<typeof RadialBarChart>;
 
 export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar angleAxisId="axis-pv" radiusAxisId="axis-name" dataKey="pv" fillOpacity={0.3} fill="purple" />
@@ -51,10 +50,7 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
         <PolarRadiusAxis radiusAxisId="axis-amt" dataKey="amt" type="number" angle={180} stroke="black" />
         <PolarGrid stroke="red" strokeOpacity={0.5} angleAxisId="axis-pv" radiusAxisId="axis-name" />
         <PolarGrid stroke="blue" strokeOpacity={0.5} angleAxisId="axis-uv" radiusAxisId="axis-amt" />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadialBarChart>
     );
   },

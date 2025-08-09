@@ -5,7 +5,6 @@ import { coordinateWithValueData } from '../../data';
 import { YAxisProps } from '../props/YAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: YAxis,
@@ -22,7 +21,7 @@ const getWidth = (width: string | number) => {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const width = getWidth(args.width);
 
     return (
@@ -34,10 +33,7 @@ export const API = {
           <Legend />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -89,7 +85,7 @@ const CustomYAxisTickWithPadding = (props: any) => {
 };
 
 export const YAxisCustomTickWithPadding = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const sampleData = [
       { category: 'Product A', value: 400, target: 450 },
       { category: 'Product B', value: 300, target: 350 },
@@ -108,10 +104,7 @@ export const YAxisCustomTickWithPadding = {
           <Line type="monotone" dataKey="target" stroke="#e74c3c" strokeDasharray="5 5" name="Target" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

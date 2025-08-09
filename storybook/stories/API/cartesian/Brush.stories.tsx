@@ -15,7 +15,6 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: Args = {
   ariaLabel: {
@@ -97,15 +96,12 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Line dataKey="uv" />
         <Brush {...args} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -123,7 +119,7 @@ export const API = {
 };
 
 export const PanoramaWithLine = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Line dataKey="uv" />
@@ -133,10 +129,7 @@ export const PanoramaWithLine = {
             <Line dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -144,7 +137,7 @@ export const PanoramaWithLine = {
 };
 
 export const PanoramaWithArea = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Area dataKey="uv" />
@@ -154,10 +147,7 @@ export const PanoramaWithArea = {
             <Area dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -165,7 +155,7 @@ export const PanoramaWithArea = {
 };
 
 export const PanoramaWithBar = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Bar dataKey="uv" />
@@ -175,10 +165,7 @@ export const PanoramaWithBar = {
             <Bar dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -186,7 +173,7 @@ export const PanoramaWithBar = {
 };
 
 export const PanoramaWithScatter = {
-  render: (args: Args, context: RechartsStoryContext) => (
+  render: (args: Args) => (
     <ResponsiveContainer width="100%" height={400}>
       <ScatterChart data={pageData}>
         <Scatter dataKey="uv" />
@@ -196,10 +183,7 @@ export const PanoramaWithScatter = {
             <Scatter dataKey="uv" />
           </ScatterChart>
         </Brush>
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ScatterChart>
     </ResponsiveContainer>
   ),

@@ -6,7 +6,6 @@ import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -17,7 +16,7 @@ export default {
 };
 
 export const Simple: StoryObj<FunnelProps> = {
-  render: (args: FunnelProps, context: RechartsStoryContext<FunnelProps>) => {
+  render: (args: FunnelProps) => {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={200}>
@@ -34,10 +33,7 @@ export const Simple: StoryObj<FunnelProps> = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </FunnelChart>
       </ResponsiveContainer>
     );
@@ -86,7 +82,7 @@ export const Simple: StoryObj<FunnelProps> = {
 };
 
 export const WithChangingDataKey: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [dataKey, setDataKey] = React.useState('amt');
     return (
       <>
@@ -125,10 +121,7 @@ export const WithChangingDataKey: StoryObj = {
             label={{ dataKey: 'name', stroke: 'none', fill: 'black', strokeDasharray: '0 0' }}
           />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </FunnelChart>
       </>
     );

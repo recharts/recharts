@@ -39,6 +39,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { useAnimationId } from '../util/useAnimationId';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -189,27 +190,6 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
-let latestId = 0;
-
-/**
- * This hook will return a unique animation id for the given reference.
- * The ID increments every time the reference changes.
- * @param reference The reference to track
- * @returns The unique animation ID
- */
-function useAnimationId(reference: unknown) {
-  const idRef = useRef<number>(latestId);
-  const ref = useRef(reference);
-
-  if (ref.current !== reference) {
-    idRef.current += 1;
-    latestId = idRef.current;
-    ref.current = reference;
-  }
-
-  return idRef.current;
-}
-
 function TrapezoidsWithAnimation({
   previousTrapezoidsRef,
   props,
@@ -230,7 +210,7 @@ function TrapezoidsWithAnimation({
 
   const [isAnimating, setIsAnimating] = useState(true);
 
-  const animationId = useAnimationId(trapezoids);
+  const animationId = useAnimationId(trapezoids, 'recharts-funnel-');
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -248,6 +228,7 @@ function TrapezoidsWithAnimation({
 
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

@@ -3,7 +3,6 @@ import { Args, ArgTypes } from '@storybook/react-vite';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: ArgTypes = {
   x: {
@@ -115,16 +114,13 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [500, 500];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart width={surfaceWidth} height={surfaceHeight}>
           <CartesianGrid {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -144,7 +140,7 @@ export const API = {
 };
 
 export const MultipleGrids = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart width={500} height={500} data={pageData}>
@@ -152,10 +148,7 @@ export const MultipleGrids = {
           <YAxis dataKey="pv" />
           {args.displayGridA && <CartesianGrid verticalFill={['#aaeeee', '#eeeeaa']} stroke="trasparent" />}
           {args.displayGridB && <CartesianGrid stroke="silver" strokeDasharray="3 3" strokeWidth={3} />}
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

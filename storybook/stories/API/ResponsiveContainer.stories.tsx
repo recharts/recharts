@@ -3,7 +3,6 @@ import { Args, StoryObj } from '@storybook/react-vite';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { pageData } from '../data/Page';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { Props } from '../../../src/component/ResponsiveContainer';
 
 export default {
@@ -15,7 +14,7 @@ export default {
 
 export const API: StoryObj<Props> = {
   // https://github.com/recharts/recharts/issues/172
-  render: (args: Args, context: RechartsStoryContext<Props>) => {
+  render: (args: Args) => {
     return (
       <div
         style={{
@@ -44,10 +43,7 @@ export const API: StoryObj<Props> = {
               <YAxis />
               <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
               <Tooltip />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </AreaChart>
           </ResponsiveContainer>
         </div>

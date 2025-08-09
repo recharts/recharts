@@ -4,7 +4,6 @@ import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContaine
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: Args = {
   dataKey: {
@@ -70,7 +69,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ScatterChart
@@ -89,10 +88,7 @@ export const API = {
           <Scatter data={errorData} fill="#ff7300">
             <ErrorBar dataKey="errorY" {...args} />
           </Scatter>
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );

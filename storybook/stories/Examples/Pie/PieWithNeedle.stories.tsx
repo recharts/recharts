@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Pie,
@@ -51,7 +50,7 @@ const Needle = ({
 };
 
 export const PieWithNeedle = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
@@ -78,10 +77,7 @@ export const PieWithNeedle = {
             activeShape={Needle}
           />
           <Tooltip defaultIndex={1} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

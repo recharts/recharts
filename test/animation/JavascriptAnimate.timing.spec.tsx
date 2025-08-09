@@ -25,6 +25,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
@@ -49,6 +50,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -70,6 +72,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -91,7 +94,7 @@ describe('JavascriptAnimate timing', () => {
       const childFunction = vi.fn();
 
       render(
-        <JavascriptAnimate duration={500} animationManager={animationManager}>
+        <JavascriptAnimate animationId="1" duration={500} animationManager={animationManager}>
           {childFunction}
         </JavascriptAnimate>,
       );
@@ -113,6 +116,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
@@ -192,6 +196,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -214,6 +219,7 @@ describe('JavascriptAnimate timing', () => {
 
       render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -236,6 +242,7 @@ describe('JavascriptAnimate timing', () => {
 
       const { rerender } = render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -254,6 +261,7 @@ describe('JavascriptAnimate timing', () => {
       // Now we change isActive to true
       rerender(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive
           onAnimationStart={handleAnimationStart}
@@ -325,6 +333,7 @@ describe('JavascriptAnimate timing', () => {
         return (
           <>
             <JavascriptAnimate
+              animationId="1"
               duration={500}
               isActive={isActive}
               onAnimationStart={handleAnimationStart}
@@ -391,6 +400,7 @@ describe('JavascriptAnimate timing', () => {
 
       const { rerender } = render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -410,6 +420,7 @@ describe('JavascriptAnimate timing', () => {
 
       rerender(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
@@ -433,6 +444,7 @@ describe('JavascriptAnimate timing', () => {
 
       const { rerender } = render(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
@@ -450,6 +462,7 @@ describe('JavascriptAnimate timing', () => {
 
       rerender(
         <JavascriptAnimate
+          animationId="1"
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}

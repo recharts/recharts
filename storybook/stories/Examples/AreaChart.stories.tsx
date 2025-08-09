@@ -17,8 +17,7 @@ import {
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector, ManualAnimations } from '../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
@@ -29,7 +28,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -38,10 +37,7 @@ export const Simple = {
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -61,7 +57,7 @@ export const Simple = {
 };
 
 export const StackedAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -71,10 +67,7 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="y" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="z" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Tooltip active defaultIndex={2} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
           <Legend />
         </AreaChart>
       </ResponsiveContainer>
@@ -95,15 +88,12 @@ export const StackedAreaChart = {
 };
 
 export const TinyAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -123,7 +113,7 @@ export const TinyAreaChart = {
 };
 
 export const PercentAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
 
     const getPercent = (value: number, total: number = 0) => {
@@ -160,10 +150,7 @@ export const PercentAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip content={renderTooltipContent} defaultIndex={3} active />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -184,7 +171,7 @@ export const PercentAreaChart = {
 };
 
 export const CardinalAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const cardinal = curveCardinal.tension(0.2);
 
     return (
@@ -196,10 +183,7 @@ export const CardinalAreaChart = {
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
           <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -219,7 +203,7 @@ export const CardinalAreaChart = {
 };
 
 export const AreaChartConnectNulls = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -238,10 +222,7 @@ export const AreaChartConnectNulls = {
             <YAxis />
             <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -304,7 +285,7 @@ export const AreaChartConnectNulls = {
 };
 
 export const StackedAreaChartConnectNulls = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -327,10 +308,7 @@ export const StackedAreaChartConnectNulls = {
             <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
             <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
             <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -393,7 +371,7 @@ export const StackedAreaChartConnectNulls = {
 };
 
 export const SynchronisedAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <div style={{ width: '100%' }}>
         <h4>A demo of synchronized AreaCharts</h4>
@@ -404,10 +382,7 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
@@ -419,10 +394,6 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -444,7 +415,7 @@ export const SynchronisedAreaChart = {
 };
 
 export const AreaChartFillByValue = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const gradientOffset = () => {
       const dataMax = Math.max(...args.data.map((i: any) => i.uv));
       const dataMin = Math.min(...args.data.map((i: any) => i.uv));
@@ -475,10 +446,7 @@ export const AreaChartFillByValue = {
           </defs>
           <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -541,7 +509,7 @@ export const AreaChartFillByValue = {
 };
 
 export const RangedAreaChart = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -549,10 +517,7 @@ export const RangedAreaChart = {
           <YAxis />
           <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
           <Tooltip defaultIndex={4} active />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -580,7 +545,7 @@ const rangeData2 = [
 ];
 
 export const RangedAreaChartWithGradient = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={rangeData2} width={1000} height={600} margin={{ top: 20, right: 200, bottom: 20, left: 20 }}>
@@ -603,10 +568,7 @@ export const RangedAreaChartWithGradient = {
           />
           <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -617,7 +579,7 @@ export const RangedAreaChartWithGradient = {
 };
 
 export const WithChangingDataKeyAndAnimations = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [dataKey, setDataKey] = React.useState('uv');
     return (
       <>
@@ -644,21 +606,16 @@ export const WithChangingDataKeyAndAnimations = {
             Hidden
           </label>
         </form>
-        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
-          <ResponsiveContainer width="100%">
-            <ComposedChart {...args}>
-              <Legend />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
-              <Tooltip />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ManualAnimations>
+        <ResponsiveContainer width="100%">
+          <ComposedChart {...args}>
+            <Legend />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
+            <Tooltip />
+            <RechartsHookInspector />
+          </ComposedChart>
+        </ResponsiveContainer>
       </>
     );
   },
@@ -678,7 +635,7 @@ export const WithChangingDataKeyAndAnimations = {
 
 export const StackedAreaWithCustomLegend = {
   // Reproducing https://github.com/recharts/recharts/issues/5992
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
 
     const handleClick = ({ dataKey }: LegendPayload) => {
@@ -724,10 +681,7 @@ export const StackedAreaWithCustomLegend = {
             hide={hiddenItems.includes('amt')}
             animationBegin={600}
           />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
           <Legend
             content={({ payload }) => (
               <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>

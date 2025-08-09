@@ -9,6 +9,8 @@ import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
 import { OffsetShower } from './inspectors/OffsetShower';
 import { PlotAreaShower } from './inspectors/PlotAreaShower';
+import { useRechartsInspectorState } from './RechartsInspectorDecorator';
+import { ManualAnimations } from './ManualAnimations';
 
 function Controls({
   defaultOpened,
@@ -27,13 +29,14 @@ function Controls({
     <>
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
       <Component setEnabledOverlays={setEnabledOverlays} defaultOpened={defaultOpened} />
+      <ManualAnimations />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
   );
 }
 
 /**
- * Blanket component is an svg component that darkens the background a little bit.
+ * Blanket component is a svg component that darkens the background a little bit.
  * @constructor
  */
 function Blanket() {
@@ -51,18 +54,11 @@ function Blanket() {
 
 const overlaysThatNeedBlanket = ['useChartWidth, useChartHeight', 'useOffset', 'usePlotArea'];
 
-export function RechartsHookInspector({
-  defaultOpened,
-  position,
-  setPosition,
-}: {
-  defaultOpened?: string;
-  position: Position | undefined;
-  setPosition: (newPosition: Position) => void;
-}) {
+export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: string }) {
   const layout = useChartLayout();
   const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>(defaultOpened ? [defaultOpened] : []);
   const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
+  const { position, setPosition } = useRechartsInspectorState();
 
   useEffect(() => {
     if (position == null && defaultOpened !== undefined && typeof setPosition === 'function') {

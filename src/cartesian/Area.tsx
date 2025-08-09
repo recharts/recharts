@@ -460,6 +460,7 @@ function AreaWithAnimation({
   const prevBaseLine = previousBaselineRef.current;
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

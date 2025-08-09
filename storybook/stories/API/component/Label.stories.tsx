@@ -15,7 +15,6 @@ import {
   PolarGrid,
 } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -113,7 +112,7 @@ const availablePositions = [
 ] as const;
 
 export const CartesianPositions = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
@@ -133,10 +132,7 @@ export const CartesianPositions = {
             <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
           ))}
           <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -145,7 +141,7 @@ export const CartesianPositions = {
 };
 
 export const PolarPositions = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadarChart
         width={800}
@@ -166,10 +162,7 @@ export const PolarPositions = {
           <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
         ))}
         <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadarChart>
     );
   },

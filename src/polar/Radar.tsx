@@ -337,6 +337,7 @@ function PolygonWithAnimation({
 
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

@@ -5,7 +5,6 @@ import { dateWithValueData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,
@@ -14,7 +13,7 @@ export default {
 };
 
 export const WithTickFormatter = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const tickFormatter = (value: number) =>
       new Date(value).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -36,10 +35,7 @@ export const WithTickFormatter = {
             tickFormatter={tickFormatter}
           />
           <Line dataKey="value" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -215,13 +215,13 @@ describe('<Scatter />', () => {
   });
 
   describe('state integration', () => {
-    it('should publish its configuration to redux store', () => {
+    it('should publish its configuration to redux store, and update it when the props change', () => {
       const settingsSpy = vi.fn();
       const Comp = (): null => {
         settingsSpy(useAppSelector(selectUnfilteredCartesianItems));
         return null;
       };
-      render(
+      const { rerender } = render(
         <ScatterChart height={400} width={400}>
           <Scatter data={data} dataKey="cx" xAxisId="xaxis id" yAxisId="yaxis id" zAxisId="zaxis id" />
           <Customized component={<Comp />} />
@@ -243,6 +243,20 @@ describe('<Scatter />', () => {
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
       expect(settingsSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <ScatterChart height={400} width={400}>
+          <Scatter data={data} dataKey="cx" xAxisId="xaxis id" yAxisId="yaxis id" zAxisId="zaxis id" name="new name" />
+          <Customized component={<Comp />} />
+        </ScatterChart>,
+      );
+
+      const expectedWithName: ScatterSettings = {
+        ...expected,
+        name: 'new name',
+      };
+      expect(settingsSpy).toHaveBeenLastCalledWith([expectedWithName]);
+      expect(settingsSpy).toHaveBeenCalledTimes(6);
     });
   });
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const data = [
   { value: 'Luck', percent: 10, color: 'orange' },
@@ -18,7 +17,7 @@ export default {
 };
 
 export const PieWithCells = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
@@ -29,10 +28,7 @@ export const PieWithCells = {
           </Pie>
           <Legend />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

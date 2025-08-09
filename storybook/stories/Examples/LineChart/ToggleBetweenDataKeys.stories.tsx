@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-
-import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: LineChart,
@@ -14,7 +11,7 @@ export default {
 };
 
 export const ToggleBetweenDataKeys = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     const [dataKey, setDataKey] = useState('pv');
 
     return (
@@ -39,10 +36,7 @@ export const ToggleBetweenDataKeys = {
             <Legend />
             <Line type="monotone" dataKey={dataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
       </>

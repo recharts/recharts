@@ -5,7 +5,6 @@ import { rechartsPackageDownloads, pageData } from '../../data';
 import { LegendProps } from '../props/Legend';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: LegendProps,
@@ -13,7 +12,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -32,10 +31,7 @@ export const API = {
           <Legend {...args} />
           <Line dataKey="uv" stroke="#8884d8" name="Series 1 (UV)" />
           <Line dataKey="pv" stroke="#82ca9d" name="Series 2 (PV)" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -44,7 +40,7 @@ export const API = {
 };
 
 export const LegendPortal = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [, surfaceHeight] = [600, 300];
     const [legendPortal, setLegendPortal] = useState<HTMLDivElement | null>(null);
 
@@ -96,10 +92,7 @@ export const LegendPortal = {
                 }}
                 labelFormatter={value => new Date(value).toLocaleDateString()}
               />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </AreaChart>
           </ResponsiveContainer>
         </div>

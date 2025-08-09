@@ -1,5 +1,4 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
 import {
   ComposedChart,
   Line,
@@ -11,14 +10,13 @@ import {
 } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/ReferenceLine/ReferenceLineSegment',
 };
 
 export const Segment = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -40,10 +38,7 @@ export const Segment = {
               { x: 'Page E', y: 1500 },
             ]}
           />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

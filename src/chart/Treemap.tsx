@@ -715,6 +715,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
     return (
       <CSSTransitionAnimate
+        animationId={`treemap-${nodeProps.tooltipIndex}`}
         from={`translate(${translateX}px, ${translateX}px)`}
         to="translate(0, 0)"
         attributeName="transform"

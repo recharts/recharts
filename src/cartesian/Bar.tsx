@@ -407,6 +407,7 @@ function RectanglesWithAnimation({
   }, [onAnimationStart]);
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

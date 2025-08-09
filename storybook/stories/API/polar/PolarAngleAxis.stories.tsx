@@ -6,7 +6,6 @@ import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: StorybookArgs = {
   type: {
@@ -83,14 +82,11 @@ export default {
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 export const API = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <RadialBarChart width={surfaceWidth} height={surfaceHeight} data={pageData}>
         <PolarAngleAxis {...args} />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </RadialBarChart>
     );
   },

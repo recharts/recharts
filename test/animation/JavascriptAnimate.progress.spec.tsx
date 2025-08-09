@@ -7,11 +7,11 @@ import { JavascriptAnimate } from '../../src/animation/JavascriptAnimate';
 
 describe('JavascriptAnimate progress', () => {
   it('should call the function child with the current time', async () => {
-    const animationManager = new MockProgressAnimationManager();
+    const animationManager = new MockProgressAnimationManager('1');
     const child = vi.fn();
 
     render(
-      <JavascriptAnimate easing="linear" duration={500} animationManager={animationManager}>
+      <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager}>
         {child}
       </JavascriptAnimate>,
     );
@@ -31,11 +31,11 @@ describe('JavascriptAnimate progress', () => {
 
   describe('when easing changes in the middle of the animation', () => {
     it('should update the child with the new time and unfortunately it jumps in the middle', async () => {
-      const animationManager = new MockProgressAnimationManager();
+      const animationManager = new MockProgressAnimationManager('1');
       const child = vi.fn();
 
       const { rerender } = render(
-        <JavascriptAnimate easing="linear" duration={500} animationManager={animationManager}>
+        <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager}>
           {child}
         </JavascriptAnimate>,
       );
@@ -49,7 +49,7 @@ describe('JavascriptAnimate progress', () => {
 
       // Change "to" in the middle of the animation
       rerender(
-        <JavascriptAnimate easing="ease-out" duration={500} animationManager={animationManager}>
+        <JavascriptAnimate animationId="1" easing="ease-out" duration={500} animationManager={animationManager}>
           {child}
         </JavascriptAnimate>,
       );

@@ -296,6 +296,7 @@ function SymbolsWithAnimation({
   }, []);
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

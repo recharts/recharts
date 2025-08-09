@@ -16,8 +16,7 @@ import {
   ReferenceArea,
 } from '../../../../src';
 import { DataKey } from '../../../../src/util/types';
-import { RechartsHookInspector, ManualAnimations } from '../../../storybook-addon-recharts';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { CategoricalChartProps } from '../../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 
@@ -30,7 +29,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -41,10 +40,7 @@ export const Simple = {
           <Tooltip cursor={{ stroke: 'gold', strokeWidth: 2 }} defaultIndex={3} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -63,15 +59,12 @@ export const Simple = {
 };
 
 export const Tiny = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -84,7 +77,7 @@ export const Tiny = {
 };
 
 export const Dashed = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
@@ -105,10 +98,7 @@ export const Dashed = {
           <Tooltip defaultIndex={3} active />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -126,7 +116,7 @@ export const Dashed = {
 };
 
 export const LogarithmicYAxis = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -146,10 +136,7 @@ export const LogarithmicYAxis = {
             activeDot={{ r: 8 }}
             unit=" KFLOPS"
           />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -168,7 +155,7 @@ export const LogarithmicYAxis = {
 };
 
 export const Vertical = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -179,10 +166,7 @@ export const Vertical = {
           <Tooltip defaultIndex={4} active />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -202,7 +186,7 @@ export const Vertical = {
 };
 
 export const BiAxial = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -214,10 +198,7 @@ export const BiAxial = {
           <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -235,7 +216,7 @@ export const BiAxial = {
   },
 };
 export const VerticalWithSpecifiedDomain = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -246,10 +227,7 @@ export const VerticalWithSpecifiedDomain = {
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -268,7 +246,7 @@ export const VerticalWithSpecifiedDomain = {
   },
 };
 export const ConnectNulls = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <>
         <ResponsiveContainer width="100%" height={200}>
@@ -278,10 +256,7 @@ export const ConnectNulls = {
             <YAxis />
             <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
 
@@ -318,7 +293,7 @@ export const ConnectNulls = {
   },
 };
 export const WithXAxisPadding = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -329,10 +304,7 @@ export const WithXAxisPadding = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -344,7 +316,7 @@ export const WithXAxisPadding = {
   },
 };
 export const WithReferenceLines = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -357,10 +329,7 @@ export const WithReferenceLines = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -378,7 +347,7 @@ export const WithReferenceLines = {
   },
 };
 export const WithCustomizedDot = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const CustomizedDot = (props: any) => {
       const { cx, cy, value } = props;
 
@@ -434,10 +403,7 @@ export const WithCustomizedDot = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={<CustomizedDot />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -456,7 +422,7 @@ export const WithCustomizedDot = {
 };
 
 export const ClipDot: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
@@ -478,10 +444,7 @@ export const ClipDot: StoryObj = {
           <XAxis dataKey="name" allowDataOverflow />
           <YAxis allowDataOverflow />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -502,7 +465,7 @@ export const ClipDot: StoryObj = {
 };
 
 export const WithCustomizedLabel = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const CustomizedLabel = ({ x, y, stroke, value }: any) => {
       return (
         <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">
@@ -531,10 +494,7 @@ export const WithCustomizedLabel = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" label={<CustomizedLabel />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -554,7 +514,7 @@ export const WithCustomizedLabel = {
 };
 
 export const HighlightAndZoom = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const initialState = {
       data: impressionsData,
       left: 'dataMin',
@@ -668,10 +628,7 @@ export const HighlightAndZoom = {
               <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
             ) : null}
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -685,7 +642,7 @@ export const HighlightAndZoom = {
 };
 
 export const LineChartHasMultiSeries = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -697,10 +654,7 @@ export const LineChartHasMultiSeries = {
           <Line dataKey="pv" />
           <Line dataKey="amt" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -714,7 +668,7 @@ export const LineChartHasMultiSeries = {
 };
 
 export const LineChartAxisInterval = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: () => {
     return (
       <>
         <LineChart width={200} height={100} data={pageData}>
@@ -724,10 +678,7 @@ export const LineChartAxisInterval = {
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
 
         <LineChart width={200} height={100} data={pageData}>
@@ -762,7 +713,7 @@ export const LineChartAxisInterval = {
 };
 
 export const NegativeValuesWithReferenceLines = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       { x: -50, y: -50 },
       { x: 0, y: 0 },
@@ -819,10 +770,7 @@ export const NegativeValuesWithReferenceLines = {
           {minX < 0 && <ReferenceLine x={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
 
           <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" stroke="black" tooltipType="none" />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -848,7 +796,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     await userEvent.click(canvas.getByTestId('toggle'));
     expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
   },
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data = [
       {
         name: 'Page A',
@@ -954,10 +902,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 dot={false}
               />
               <Tooltip />
-              <RechartsHookInspector
-                position={context.rechartsInspectorPosition}
-                setPosition={context.rechartsSetInspectorPosition}
-              />
+              <RechartsHookInspector />
             </>
           )}
         </LineChart>
@@ -976,7 +921,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
 };
 
 export const WithBrush: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer>
         <LineChart {...args}>
@@ -988,10 +933,7 @@ export const WithBrush: StoryObj = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1003,7 +945,7 @@ export const WithBrush: StoryObj = {
 };
 
 export const HideOnLegendClick: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
 
     const handleLegendClick = (dataKey?: DataKey<any>) => {
@@ -1028,10 +970,7 @@ export const HideOnLegendClick: StoryObj = {
           <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1043,7 +982,7 @@ export const HideOnLegendClick: StoryObj = {
 };
 
 export const LineTrailingIcon: StoryObj = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const lastDotKey = 'lastDot';
 
     return (
@@ -1062,10 +1001,7 @@ export const LineTrailingIcon: StoryObj = {
             dot={{ stroke: 'red', strokeWidth: 1, r: 4 }}
           />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1080,7 +1016,7 @@ export const LineTrailingIcon: StoryObj = {
 };
 
 export const ReversedXAxis = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -1091,10 +1027,7 @@ export const ReversedXAxis = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1114,7 +1047,7 @@ export const ReversedXAxis = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (args: Args) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -1136,7 +1069,7 @@ export const ChangingDataKey = {
     const [visible, setVisible] = useState(true);
 
     return (
-      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+      <>
         <button
           type="button"
           onClick={() => {
@@ -1169,10 +1102,7 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
+          <RechartsHookInspector />
           <Line
             name="Animated line"
             hide={!visible}
@@ -1184,7 +1114,7 @@ export const ChangingDataKey = {
             label={{ fill: 'red', dy: -25 }}
           />
         </LineChart>
-      </ManualAnimations>
+      </>
     );
   },
   args: {

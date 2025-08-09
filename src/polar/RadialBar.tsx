@@ -161,6 +161,7 @@ function SectorsWithAnimation({
   }, [onAnimationStart]);
   return (
     <JavascriptAnimate
+      animationId={animationId}
       begin={animationBegin}
       duration={animationDuration}
       isActive={isAnimationActive}

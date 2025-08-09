@@ -15,14 +15,13 @@ import {
 } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
-import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Brush,
 };
 
 export const ControlledBrush = {
-  render: (args: Args, context: RechartsStoryContext) => {
+  render: (_args: Args) => {
     const [startIndex, setStartIndex] = useState<number | undefined>(2);
     const [endIndex, setEndIndex] = useState<number | undefined>(5);
 
@@ -41,10 +40,7 @@ export const ControlledBrush = {
               }}
               alwaysShowText
             />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
+            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
         <input
@@ -70,7 +66,7 @@ export const ControlledBrush = {
 };
 
 export const PanoramicBrush = {
-  render: (_args: Args, context: RechartsStoryContext) => {
+  render: (_args: Args) => {
     return (
       <ComposedChart width={600} height={300} data={pageData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
         <XAxis dataKey="name" />
@@ -89,10 +85,7 @@ export const PanoramicBrush = {
           </LineChart>
         </Brush>
         <Tooltip />
-        <RechartsHookInspector
-          position={context.rechartsInspectorPosition}
-          setPosition={context.rechartsSetInspectorPosition}
-        />
+        <RechartsHookInspector />
       </ComposedChart>
     );
   },
