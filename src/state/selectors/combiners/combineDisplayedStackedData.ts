@@ -24,7 +24,7 @@ export function combineDisplayedStackedData(
   { chartData = [] }: ChartDataState,
   tooltipAxisSettings: BaseCartesianAxis,
 ): DisplayedStackedData {
-  const tooltipDataKey = tooltipAxisSettings?.dataKey;
+  const { allowDuplicatedCategory, dataKey: tooltipDataKey } = tooltipAxisSettings;
 
   // A map of tooltip data keys to the stacked data points
   const knownItemsByDataKey = new Map<string | number, DisplayedStackedDataPoint>();
@@ -38,7 +38,10 @@ export function combineDisplayedStackedData(
     }
     const stackIdentifier = getStackSeriesIdentifier(item);
     resolvedData.forEach((entry, index) => {
-      const tooltipValue = tooltipDataKey == null ? index : String(getValueByDataKey(entry, tooltipDataKey, null));
+      const tooltipValue =
+        tooltipDataKey == null || allowDuplicatedCategory
+          ? index
+          : String(getValueByDataKey(entry, tooltipDataKey, null));
       const numericValue = getValueByDataKey(entry, item.dataKey, 0);
       let curr;
       if (knownItemsByDataKey.has(tooltipValue)) {
