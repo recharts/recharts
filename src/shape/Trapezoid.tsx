@@ -7,10 +7,10 @@ import { clsx } from 'clsx';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { Animate } from '../animation/Animate';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
 import { interpolate } from '../util/DataUtils';
+import { getTransitionVal } from '../animation/util';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
@@ -113,6 +113,10 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
   const prevX = prevXRef.current;
   const prevY = prevYRef.current;
 
+  const from = `0px ${totalLength === -1 ? 1 : totalLength}px`;
+  const to = `${totalLength}px 0px`;
+  const transition = getTransitionVal(['strokeDasharray'], animationDuration, animationEasing);
+
   return (
     <JavascriptAnimate
       animationId={animationId}
@@ -121,6 +125,7 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
       duration={animationDuration}
       easing={animationEasing}
       isActive={isUpdateAnimationActive}
+      begin={animationBegin}
     >
       {(t: number) => {
         const currUpperWidth = interpolate(prevUpperWidth, upperWidth, t);
@@ -136,25 +141,18 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
           prevXRef.current = currX;
           prevYRef.current = currY;
         }
+        const animationStyle = t > 0 ? { transition, strokeDasharray: to } : { strokeDasharray: from };
         return (
-          <Animate
-            canBegin={totalLength > 0}
-            // @ts-expect-error TODO - fix the type error
-            from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-            // @ts-expect-error TODO - fix the type error
-            to={`${totalLength}px 0px`}
-            attributeName="strokeDasharray"
-            begin={animationBegin}
-            duration={animationDuration}
-            easing={animationEasing}
-          >
-            <path
-              {...filterProps(trapezoidProps, true)}
-              className={layerClass}
-              d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
-              ref={pathRef}
-            />
-          </Animate>
+          <path
+            {...filterProps(trapezoidProps, true)}
+            className={layerClass}
+            d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
+            ref={pathRef}
+            style={{
+              ...animationStyle,
+              ...trapezoidProps.style,
+            }}
+          />
         );
       }}
     </JavascriptAnimate>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { noop } from 'es-toolkit';
 import { AnimationManager, ReactSmoothStyle } from './AnimationManager';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -45,26 +45,31 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
     easing,
     begin,
     onAnimationEnd,
-    onAnimationStart,
+    onAnimationStart: onAnimationStartFromProps,
     children,
   } = props;
 
   const animationManager = useAnimationManager(animationId + attributeName, props.animationManager);
-  const [style, setStyle] = useState<T>(isActive ? from : to);
-
-  useEffect(() => {
+  const [style, setStyle] = useState<T>(() => {
     if (!isActive) {
-      setStyle(to);
+      return to;
     }
-  }, [isActive, to]);
+    return from;
+  });
+  const initialized = useRef(false);
+
+  const onAnimationStart = useCallback(() => {
+    setStyle(from);
+    onAnimationStartFromProps();
+  }, [from, onAnimationStartFromProps]);
 
   useEffect(() => {
     if (!isActive || !canBegin) {
       return noop;
     }
 
+    initialized.current = true;
     const unsubscribe = animationManager.subscribe(setStyle);
-
     animationManager.start([onAnimationStart, begin, to, duration, onAnimationEnd]);
 
     return () => {
@@ -74,9 +79,25 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
       }
       onAnimationEnd();
     };
-  }, [isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager, to]);
+  }, [isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager, to, from]);
 
-  if (isActive && canBegin) {
+  if (!isActive) {
+    /*
+     * With isActive=false, the component always renders with the final style, immediately,
+     * and ignores all other props.
+     * Also there is no transition applied.
+     */
+    return children({
+      [attributeName]: to,
+    });
+  }
+  if (!canBegin) {
+    return children({
+      [attributeName]: from,
+    });
+  }
+
+  if (initialized.current) {
     const transition = getTransitionVal([attributeName], duration, easing);
     return children({
       transition,
@@ -84,6 +105,6 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
     });
   }
   return children({
-    [attributeName]: style,
+    [attributeName]: from,
   });
 }

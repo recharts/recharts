@@ -359,17 +359,19 @@ export const API = {
   },
   args: {
     ...{
-      x: 75,
-      y: 0,
+      x: 85,
+      y: 10,
       upperWidth: 50,
       lowerWidth: 200,
       height: 200,
-      fill: 'red',
+      fill: '#67ba67',
       isAnimationActive: true,
       isUpdateAnimationActive: true,
       animationBegin: 0,
       animationDuration: 1500,
       animationEasing: 'ease',
+      stroke: 'black',
+      strokeWidth: 3,
     },
   },
 };

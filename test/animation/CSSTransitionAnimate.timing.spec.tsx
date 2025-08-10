@@ -33,7 +33,6 @@ describe('CSSTransitionAnimate timing', () => {
 
         expectLastCalledWith(childFunction, {
           opacity: '1',
-          transition: 'opacity 500ms ease',
         });
 
         act(() => {
@@ -88,6 +87,7 @@ describe('CSSTransitionAnimate timing', () => {
             attributeName="transform"
             duration={500}
             animationManager={animationManager}
+            canBegin
           >
             {childFunction}
           </CSSTransitionAnimate>,
@@ -95,14 +95,12 @@ describe('CSSTransitionAnimate timing', () => {
 
         expect(childFunction).toHaveBeenLastCalledWith({
           transform: 'scaleY(0)',
-          transition: 'transform 500ms ease',
         });
         expect(childFunction).toHaveBeenCalledTimes(1);
 
         await timeoutController.flushAllTimeouts();
 
         expect(childFunction).toHaveBeenCalledTimes(2);
-        // this is not at all what happens
         expect(childFunction).toHaveBeenLastCalledWith({
           transform: 'scaleY(1)',
           transition: 'transform 500ms ease',
@@ -157,7 +155,7 @@ describe('CSSTransitionAnimate timing', () => {
           </CSSTransitionAnimate>,
         );
 
-        animationManager.assertQueue(['[function handleAnimationStart]', 0, '0', 500, '[function handleAnimationEnd]']);
+        animationManager.assertQueue(['[function anonymous]', 0, '0', 500, '[function handleAnimationEnd]']);
 
         rerender(<></>);
 
@@ -259,13 +257,30 @@ describe('CSSTransitionAnimate timing', () => {
         );
 
         // queue should be populated with the animation steps
-        animationManager.assertQueue(['[function handleAnimationStart]', 0, '0', 300, '[function onAnimationEnd]']);
+        animationManager.assertQueue(['[function anonymous]', 0, '0', 300, '[function onAnimationEnd]']);
+        expect(handleAnimationStart).toHaveBeenCalledTimes(0);
 
-        await animationManager.poll();
-
-        expect(handleAnimationStart).toHaveBeenCalledTimes(1);
-        expect(child).toHaveBeenLastCalledWith({ opacity: '0', transition: 'opacity 300ms ease' });
+        expect(child).toHaveBeenLastCalledWith({ opacity: '1' });
         expect(child).toHaveBeenCalledTimes(2);
+
+        await animationManager.poll(1);
+        animationManager.assertQueue([0, '0', 300, '[function onAnimationEnd]']);
+        expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+
+        await animationManager.poll(1);
+        animationManager.assertQueue(['0', 300, '[function onAnimationEnd]']);
+
+        await animationManager.poll(1);
+        animationManager.assertQueue([300, '[function onAnimationEnd]']);
+        // After the first animation tick, we should receive a `to` value with transition applied
+        expect(child).toHaveBeenLastCalledWith({
+          opacity: '0',
+          transition: 'opacity 300ms ease',
+        });
+
+        animationManager.assertQueue([300, '[function onAnimationEnd]']);
+
+        await animationManager.triggerNextTimeout(16);
       });
 
       it('should restart animation when isActive changes to true via button click', async () => {
@@ -309,12 +324,12 @@ describe('CSSTransitionAnimate timing', () => {
         });
 
         // queue should be populated with the animation steps
-        animationManager.assertQueue(['[function handleAnimationStart]', 0, '0', 500, '[function onAnimationEnd]']);
+        animationManager.assertQueue(['[function anonymous]', 0, '0', 500, '[function onAnimationEnd]']);
         expect(animationManager.isRunning()).toBe(true);
         await animationManager.poll();
 
         expect(handleAnimationStart).toHaveBeenCalledTimes(1);
-        expect(child).toHaveBeenLastCalledWith({ opacity: '0', transition: 'opacity 500ms ease' });
+        expect(child).toHaveBeenLastCalledWith({ opacity: '1', transition: 'opacity 500ms ease' });
         expect(child).toHaveBeenCalledTimes(3);
         animationManager.assertQueue([0, '0', 500, '[function onAnimationEnd]']);
       });
@@ -362,10 +377,8 @@ describe('CSSTransitionAnimate timing', () => {
           </CSSTransitionAnimate>,
         );
 
-        // this second render does not look like it's necessary but also doesn't hurt
-        expect(child).toHaveBeenNthCalledWith(2, { opacity: '0' });
         expect(child).toHaveBeenLastCalledWith({ opacity: '0.3' });
-        expect(child).toHaveBeenCalledTimes(3);
+        expect(child).toHaveBeenCalledTimes(2);
         animationManager.assertQueue(null);
         expect(handleAnimationStart).not.toHaveBeenCalled();
         expect(handleAnimationEnd).not.toHaveBeenCalled();
@@ -414,12 +427,12 @@ describe('CSSTransitionAnimate timing', () => {
         // rerendering should not start the animation, this appears correct
         animationManager.assertQueue(null);
 
-        // however, the child should be rerendered with the fresh "from" state so this looks like a bug
-        expect(child).toHaveBeenLastCalledWith({ opacity: '1' });
+        // the child should now be rerendered with the fresh "from" state
+        expect(child).toHaveBeenLastCalledWith({ opacity: '0.7' });
         expect(child).toHaveBeenCalledTimes(2);
       });
 
-      it('should start animation on rerender if canBegin changes from false to true', () => {
+      it('should start animation on rerender if canBegin changes from false to true', async () => {
         const animationManager = new MockTickingAnimationManager();
         const child = vi.fn();
 
@@ -459,16 +472,48 @@ describe('CSSTransitionAnimate timing', () => {
           </CSSTransitionAnimate>,
         );
 
-        // queue should be populated with the animation steps
-        animationManager.assertQueue(['[function handleAnimationStart]', 0, '0.3', 500, '[function onAnimationEnd]']);
-
-        expect(handleAnimationStart).toHaveBeenCalledTimes(0);
+        expect(handleAnimationStart).not.toHaveBeenCalled();
         /*
-         * now the child should be rerendered with the fresh "from" state, using the latest "from" value - NOT the one from before when canBegin was false
-         * buuuut it uses the old "from" value, which is a bug. I suppose we can live with it for now?
+         * now the child should be rerendered with the fresh "from" state, using the latest "from" value
+         *  - NOT the `from` from before when canBegin was false
+         * This is necessary for the stroke-dasharray animation in Trapezoid and Rectangle to work correctly.
+         * It is equally important that the transition is not applied here, as the animation is not yet running.
+         * If there was a transition then the browser starts animating from the previous irrelevant `from` value.
+         * This is tricky but necessary because the input into the `from` is calculated from a DOM ref,
+         *  and it takes a tick for the ref to arrive.
          */
-        expect(child).toHaveBeenLastCalledWith({ opacity: '1', transition: 'opacity 500ms ease' });
+        expect(child).toHaveBeenLastCalledWith({ opacity: '0.7' });
         expect(child).toHaveBeenCalledTimes(2);
+
+        await animationManager.poll();
+
+        expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+        expect(child).toHaveBeenLastCalledWith({ opacity: '0.7', transition: 'opacity 500ms ease' });
+        expect(child).toHaveBeenCalledTimes(3);
+
+        await animationManager.poll();
+
+        expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+        expect(child).toHaveBeenCalledTimes(3);
+
+        await animationManager.poll();
+
+        expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+        expect(child).toHaveBeenLastCalledWith({
+          opacity: '0.3',
+          transition: 'opacity 500ms ease',
+        });
+        expect(child).toHaveBeenCalledTimes(4);
+
+        /*
+         * Now after the first animation tick, we should receive a `to` value
+         * with transition applied.
+         */
+        expect(child).toHaveBeenLastCalledWith({
+          opacity: '0.3',
+          transition: 'opacity 500ms ease',
+        });
+        expect(child).toHaveBeenCalledTimes(4);
       });
     });
   });
