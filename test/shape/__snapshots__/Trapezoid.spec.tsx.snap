@@ -50,7 +50,7 @@ exports[`<Trapezoid /> > Render 1 Trapezoid with animation in simple Trapezoid 1
     <desc />
     <path
       class="recharts-trapezoid"
-      d="M 300,100L 300,100L 300,150L 300,150L 300,100 Z"
+      d="M 300,100L 400,100L 350,150L 350,150L 300,100 Z"
       fill="#f00"
       height="50"
       style="stroke-dasharray: 0px 1px;"

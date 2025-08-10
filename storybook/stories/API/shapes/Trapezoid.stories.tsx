@@ -164,19 +164,6 @@ import {
   onWheelCapture,
 } from '../props/EventHandlers';
 
-const defaultProps = {
-  x: 75,
-  y: 0,
-  upperWidth: 50,
-  lowerWidth: 200,
-  height: 200,
-  fill: 'red',
-  isUpdateAnimationActive: false,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
-};
-
 export default {
   component: Trapezoid,
   argTypes: {
@@ -365,12 +352,24 @@ export default {
 export const API = {
   render: (args: Args) => {
     return (
-      <svg height={args.height} width="%100">
+      <svg height="100%" width="%100">
         <Trapezoid {...args} />
       </svg>
     );
   },
   args: {
-    ...defaultProps,
+    ...{
+      x: 75,
+      y: 0,
+      upperWidth: 50,
+      lowerWidth: 200,
+      height: 200,
+      fill: 'red',
+      isAnimationActive: true,
+      isUpdateAnimationActive: true,
+      animationBegin: 0,
+      animationDuration: 1500,
+      animationEasing: 'ease',
+    },
   },
 };
