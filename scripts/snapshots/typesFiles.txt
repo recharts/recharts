@@ -1,6 +1,5 @@
 [
   "types/animation",
-  "types/animation/Animate.d.ts",
   "types/animation/AnimationManager.d.ts",
   "types/animation/CSSTransitionAnimate.d.ts",
   "types/animation/JavascriptAnimate.d.ts",

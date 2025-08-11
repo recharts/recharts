@@ -11,7 +11,7 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { interpolate } from '../util/DataUtils';
 import { useAnimationId } from '../util/useAnimationId';
-import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
+import { getTransitionVal } from '../animation/util';
 
 export type RectRadius = [number, number, number, number];
 
@@ -146,6 +146,14 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const prevX = prevXRef.current;
   const prevY = prevYRef.current;
 
+  const from = `0px ${totalLength === -1 ? 1 : totalLength}px`;
+  const to = `${totalLength}px 0px`;
+  const transition = getTransitionVal(
+    ['strokeDasharray'],
+    animationDuration,
+    typeof animationEasing === 'string' ? animationEasing : undefined,
+  );
+
   return (
     <JavascriptAnimate
       animationId={animationId}
@@ -154,6 +162,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
       duration={animationDuration}
       easing={animationEasing}
       isActive={isUpdateAnimationActive}
+      begin={animationBegin}
     >
       {(t: number) => {
         const currWidth = interpolate(prevWidth, width, t);
@@ -166,31 +175,25 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
           prevXRef.current = currX;
           prevYRef.current = currY;
         }
+        let animationStyle: { transition: string; strokeDasharray: string } | { strokeDasharray: string };
+        if (!isAnimationActive) {
+          animationStyle = { strokeDasharray: to };
+        } else if (t > 0) {
+          animationStyle = { transition, strokeDasharray: to };
+        } else {
+          animationStyle = { strokeDasharray: from };
+        }
         return (
-          <CSSTransitionAnimate
-            animationId={animationId}
-            canBegin={totalLength > 0}
-            from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-            to={`${totalLength}px 0px`}
-            attributeName="strokeDasharray"
-            begin={animationBegin}
-            duration={animationDuration}
-            isActive={isAnimationActive}
-            easing={typeof animationEasing === 'string' ? animationEasing : undefined}
-          >
-            {animationStyle => (
-              <path
-                {...filterProps(props, true)}
-                className={layerClass}
-                d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
-                ref={pathRef}
-                style={{
-                  ...animationStyle,
-                  ...props.style,
-                }}
-              />
-            )}
-          </CSSTransitionAnimate>
+          <path
+            {...filterProps(props, true)}
+            className={layerClass}
+            d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
+            ref={pathRef}
+            style={{
+              ...animationStyle,
+              ...props.style,
+            }}
+          />
         );
       }}
     </JavascriptAnimate>

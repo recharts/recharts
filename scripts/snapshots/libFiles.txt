@@ -1,6 +1,5 @@
 [
   "lib/animation",
-  "lib/animation/Animate.js",
   "lib/animation/AnimationManager.js",
   "lib/animation/CSSTransitionAnimate.js",
   "lib/animation/JavascriptAnimate.js",
