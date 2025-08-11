@@ -1,6 +1,5 @@
 [
   "es6/animation",
-  "es6/animation/Animate.js",
   "es6/animation/AnimationManager.js",
   "es6/animation/CSSTransitionAnimate.js",
   "es6/animation/JavascriptAnimate.js",
