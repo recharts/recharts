@@ -49,6 +49,57 @@ describe('axis domain hooks', () => {
     });
   });
 
+  describe('with explicit axis IDs', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={500} height={300} data={PageData}>
+        <Line dataKey="uv" xAxisId="xAxis1" yAxisId="yAxis1" />
+        <XAxis dataKey="name" xAxisId="xAxis1" />
+        <YAxis dataKey="pv" yAxisId="yAxis1" />
+        {children}
+      </LineChart>
+    ));
+
+    it('should select XAxis categorical domain with explicit ID', () => {
+      const { spy } = renderTestCase(() => useXAxisDomain('xAxis1'));
+      expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    });
+
+    it('should select YAxis numerical domain with explicit ID', () => {
+      const { spy } = renderTestCase(() => useYAxisDomain('yAxis1'));
+      expectLastCalledWith(spy, [0, 9800]);
+    });
+
+    it('should return default XAxis domain when called without ID', () => {
+      const { spy } = renderTestCase(() => useXAxisDomain());
+      // When called without ID, it defaults to the implicit XAxis
+      expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
+    });
+
+    it('should return default YAxis domain when called without ID', () => {
+      const { spy } = renderTestCase(() => useYAxisDomain());
+      /*
+       * When called without ID, it defaults to ID 0 but there is no graphical item with yAxisId 0,
+       * so it returns undefined.
+       */
+      expectLastCalledWith(spy, undefined);
+    });
+
+    it('should return default domain when passed an invalid xAxisId', () => {
+      const { spy } = renderTestCase(() => useXAxisDomain('invalidAxisId'));
+      // Axis with id 'invalidAxisId' does not exist, so this returns domain of what the default xAxis would be.
+      expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
+    });
+
+    it('should return default domain when passed an invalid yAxisId', () => {
+      const { spy } = renderTestCase(() => useYAxisDomain('invalidAxisId'));
+      /*
+       * Because there are no graphical items with yAxisId 'invalidAxisId',
+       * the selector has no chance of inferring the dataKey and can't determine the domain.
+       */
+      expectLastCalledWith(spy, undefined);
+    });
+  });
+
   describe('with explicit XAxis with dataKey', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChart width={500} height={300} data={PageData}>
