@@ -1,0 +1,40 @@
+# `useXAxisDomain` and `useYAxisDomain`
+
+These two hooks return the domain of the X and Y axes respectively.
+
+The domain can be either numeric or categorical, depending on the type of axis.
+
+Numeric domains will return an array of two numbers, representing the minimum and maximum values of the axis.
+
+Categorical domains will return an array of values, representing the categories on the axis.
+In case there are no data points, and in case of categorical axis that requires unique values but the data contains duplicates,
+the categorical domain uses numerical index values instead of the actual values.
+
+Both of these hooks will return `undefined` if called outside of a chart context or if the domain cannot be calculated.
+
+Both accept an optional `axisId` parameter to specify which axis to get the domain for.
+If not provided, the default axis ID of `0` will be used.
+
+## Example Usage
+
+```jsx
+import React from 'react';
+import { useXAxisDomain, useYAxisDomain, Line, YAxis, XAxis, LineChart } from 'recharts';
+
+const MyComponent = () => {
+  const xAxisDomain = useXAxisDomain();
+  const yAxisDomain = useYAxisDomain();
+  console.log('X Axis Domain:', xAxisDomain);
+  console.log('Y Axis Domain:', yAxisDomain);
+  return null;
+};
+
+const MyChart = () => (
+  <LineChart data={data}>
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Line type="monotone" dataKey="value" />
+    <MyComponent />
+  </LineChart>
+);
+```

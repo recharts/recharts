@@ -17,6 +17,8 @@ import { ChartInspector } from './ChartInspector';
 import { PlotAreaInspector } from './PlotAreaInspector';
 import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
 import { UseActiveTooltipDataPointsInspector } from './UseActiveTooltipDataPointsInspector';
+import { XAxisDomainInspector } from './XAxisDomainInspector';
+import { YAxisDomainInspector } from './YAxisDomainInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -26,6 +28,8 @@ const externalInspectors: Record<string, ComponentType> = {
   useOffset: OffsetInspector,
   usePlotArea: PlotAreaInspector,
   useActiveTooltipDataPoints: UseActiveTooltipDataPointsInspector,
+  useXAxisDomain: XAxisDomainInspector,
+  useYAxisDomain: YAxisDomainInspector,
 };
 
 /**
