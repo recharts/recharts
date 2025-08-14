@@ -16,6 +16,7 @@ import {
   ErrorBar,
   Rectangle,
   LegendPayload,
+  LabelList,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
@@ -1179,6 +1180,49 @@ export const ChangingData = {
     ...getStoryArgsFromArgsTypesObject(BarChartProps),
     width: 100,
     height: 100,
+  },
+};
+
+export const VerticalWithLabelLists = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart width={500} height={250} {...args} layout="vertical">
+          <Bar dataKey="value" fill="#aebbae" isAnimationActive={false}>
+            <LabelList dataKey="value" position="insideLeft" />
+            <LabelList dataKey="label" position="right" />
+          </Bar>
+
+          <XAxis dataKey="value" type="number" />
+          <YAxis dataKey="label" hide type="category" />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+    data: [
+      {
+        label: 'World Trade Organization',
+        value: 74,
+      },
+      {
+        label: 'African Development Bank',
+        value: 8,
+      },
+      {
+        label: 'International Bank for Reconstruction and Development',
+        value: 5,
+      },
+    ],
   },
 };
 
