@@ -802,6 +802,12 @@ describe('<BarChart />', () => {
             width: 6,
             x: 65.75,
             y: 33.8,
+            parentViewBox: {
+              height: expect.any(Number),
+              width: expect.any(Number),
+              x: expect.any(Number),
+              y: expect.any(Number),
+            },
           },
           {
             background: {
@@ -828,6 +834,12 @@ describe('<BarChart />', () => {
             width: 6,
             x: 73.25,
             y: 25.531999999999996,
+            parentViewBox: {
+              height: expect.any(Number),
+              width: expect.any(Number),
+              x: expect.any(Number),
+              y: expect.any(Number),
+            },
           },
           {
             background: {
@@ -854,6 +866,12 @@ describe('<BarChart />', () => {
             width: 6,
             x: 80.75,
             y: 38.208,
+            parentViewBox: {
+              height: expect.any(Number),
+              width: expect.any(Number),
+              x: expect.any(Number),
+              y: expect.any(Number),
+            },
           },
           {
             background: {
@@ -880,6 +898,12 @@ describe('<BarChart />', () => {
             width: 6,
             x: 88.25,
             y: 5,
+            parentViewBox: {
+              height: expect.any(Number),
+              width: expect.any(Number),
+              x: expect.any(Number),
+              y: expect.any(Number),
+            },
           },
         ]);
       });
@@ -2446,6 +2470,12 @@ describe('<BarChart />', () => {
         width: 88,
         x: 76,
         y: 35,
+        parentViewBox: {
+          height: expect.any(Number),
+          width: expect.any(Number),
+          x: expect.any(Number),
+          y: expect.any(Number),
+        },
       },
       {
         average: 550,
@@ -2479,6 +2509,12 @@ describe('<BarChart />', () => {
         width: 88,
         x: 186,
         y: 5,
+        parentViewBox: {
+          height: expect.any(Number),
+          width: expect.any(Number),
+          x: expect.any(Number),
+          y: expect.any(Number),
+        },
       },
       {
         average: 400,
@@ -2512,6 +2548,12 @@ describe('<BarChart />', () => {
         width: 88,
         x: 296,
         y: 5,
+        parentViewBox: {
+          height: expect.any(Number),
+          width: expect.any(Number),
+          x: expect.any(Number),
+          y: expect.any(Number),
+        },
       },
     ]);
 

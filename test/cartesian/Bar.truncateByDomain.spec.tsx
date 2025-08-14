@@ -114,6 +114,12 @@ describe('Bar stacked with truncateByDomain', () => {
           wins: 0,
           x: 78,
           y: 275,
+          parentViewBox: {
+            height: 400,
+            width: 800,
+            x: 0,
+            y: 0,
+          },
         },
         {
           background: {
@@ -143,6 +149,12 @@ describe('Bar stacked with truncateByDomain', () => {
           wins: 3,
           x: 458,
           y: 221,
+          parentViewBox: {
+            height: 400,
+            width: 800,
+            x: 0,
+            y: 0,
+          },
         },
       ]);
     });

@@ -24,6 +24,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
+  CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
   DataKey,
@@ -31,6 +32,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   TickItem,
   TooltipType,
+  ViewBox,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
@@ -73,6 +75,7 @@ export interface BarRectangleItem extends RectangleProps {
   background?: Rectangle;
   tooltipPosition: Coordinate;
   readonly payload?: any;
+  parentViewBox?: ViewBox;
   // These are inherited from RectangleProps, but we need to redefine them here and make non-nullable
   x: number;
   y: number;
@@ -619,6 +622,7 @@ export function computeBarRectangles({
   displayedData,
   offset,
   cells,
+  parentViewBox,
 }: {
   layout: 'horizontal' | 'vertical';
   barSettings: BarSettings;
@@ -632,6 +636,7 @@ export function computeBarRectangles({
   offset: ChartOffsetInternal;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
+  parentViewBox: CartesianViewBoxRequired;
 }): ReadonlyArray<BarRectangleItem> | undefined {
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
@@ -712,6 +717,7 @@ export function computeBarRectangles({
         payload: entry,
         background,
         tooltipPosition: { x: x + width / 2, y: y + height / 2 },
+        parentViewBox,
         ...(cells && cells[index] && cells[index].props),
       } satisfies BarRectangleItem;
 
