@@ -852,6 +852,12 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         width: 196,
         x: expect.any(Number),
         y: 5,
+        parentViewBox: {
+          height: expect.any(Number),
+          width: expect.any(Number),
+          x: expect.any(Number),
+          y: expect.any(Number),
+        },
       };
       const backgroundComponent = (props: unknown) => {
         expect.soft(props).toEqual(expectedProps);
@@ -1002,7 +1008,12 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             height: expect.any(Number),
             index: expect.any(Number),
             offset: 5,
-            parentViewBox: undefined,
+            parentViewBox: {
+              height: expect.any(Number),
+              width: expect.any(Number),
+              x: expect.any(Number),
+              y: expect.any(Number),
+            },
             textBreakAll: undefined,
             value: expect.any(Number),
             viewBox: {

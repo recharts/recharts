@@ -13,12 +13,12 @@ import {
 import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
-import { ChartOffsetInternal, DataKey, LayoutType, TickItem } from '../../util/types';
+import { CartesianViewBoxRequired, ChartOffsetInternal, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
-import { selectChartOffsetInternal } from './selectChartOffsetInternal';
+import { selectAxisViewBox, selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
@@ -477,6 +477,7 @@ export const selectBarRectangles: (
 ) => ReadonlyArray<BarRectangleItem> | undefined = createSelector(
   [
     selectChartOffsetInternal,
+    selectAxisViewBox,
     selectXAxisWithScale,
     selectYAxisWithScale,
     selectXAxisTicks,
@@ -491,6 +492,7 @@ export const selectBarRectangles: (
   ],
   (
     offset: ChartOffsetInternal,
+    axisViewBox: CartesianViewBoxRequired,
     xAxis: BaseAxisWithScale,
     yAxis: BaseAxisWithScale,
     xAxisTicks,
@@ -506,6 +508,7 @@ export const selectBarRectangles: (
     if (
       barSettings == null ||
       pos == null ||
+      axisViewBox == null ||
       (layout !== 'horizontal' && layout !== 'vertical') ||
       xAxis == null ||
       yAxis == null ||
@@ -532,6 +535,7 @@ export const selectBarRectangles: (
       layout,
       barSettings,
       pos,
+      parentViewBox: axisViewBox,
       bandSize,
       xAxis,
       yAxis,
