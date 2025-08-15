@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ReactElement, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
-import { ImplicitLabelType, Label } from '../component/Label';
+import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
@@ -124,7 +124,10 @@ function ReferenceAreaImpl(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
       {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
-      {Label.renderCallByParent(props, rect)}
+      <CartesianLabelContextProvider {...rect}>
+        <CartesianLabelFromLabelProp label={props.label} />
+        {props.children}
+      </CartesianLabelContextProvider>
     </Layer>
   );
 }
