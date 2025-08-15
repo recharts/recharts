@@ -1,7 +1,24 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { AreaChart, Label, Line, LineChart, ReferenceArea, ReferenceDot, ReferenceLine, XAxis, YAxis } from '../../src';
-import { pageData } from '../../storybook/stories/data';
+import {
+  AreaChart,
+  Label,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ReferenceArea,
+  ReferenceDot,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from '../../src';
+import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
 
 const availablePositions = [
   'top',
@@ -101,6 +118,78 @@ test('ReferenceLine > Label', async ({ mount }) => {
         ))}
       </ReferenceLine>
     </AreaChart>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('RadarChart > Label', async ({ mount }) => {
+  const component = await mount(
+    <RadarChart width={900} height={500} data={pageData}>
+      {availablePositions.map(position => (
+        <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+      ))}
+      <PolarRadiusAxis dataKey="uv" angle={45} />
+      <PolarAngleAxis dataKey="name" />
+      <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+    </RadarChart>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('PolarRadiusAxis > Label', async ({ mount }) => {
+  const component = await mount(
+    <RadarChart width={900} height={500} data={pageData}>
+      <PolarRadiusAxis dataKey="uv" angle={45}>
+        {availablePositions.map(position => (
+          <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+        ))}
+      </PolarRadiusAxis>
+      <PolarAngleAxis dataKey="name" />
+      <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+    </RadarChart>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('PolarAngleAxis > Label', async ({ mount }) => {
+  // Label does not render in PolarAngleAxis at all, this looks like a bug and/or missing feature
+  const component = await mount(
+    <RadarChart width={900} height={500} data={pageData}>
+      <PolarRadiusAxis dataKey="uv" angle={45} />
+      <PolarAngleAxis dataKey="name">
+        {availablePositions.map(position => (
+          <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+        ))}
+      </PolarAngleAxis>
+      <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+    </RadarChart>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('PieChart > Label', async ({ mount }) => {
+  const component = await mount(
+    <PieChart width={900} height={500}>
+      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false} />
+      {availablePositions.map(position => (
+        <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+      ))}
+      <Legend />
+    </PieChart>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('Pie > Label', async ({ mount }) => {
+  const component = await mount(
+    <PieChart width={900} height={500}>
+      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false}>
+        {availablePositions.map(position => (
+          <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+        ))}
+      </Pie>
+      <Legend />
+    </PieChart>,
   );
   await expect(component).toHaveScreenshot();
 });
