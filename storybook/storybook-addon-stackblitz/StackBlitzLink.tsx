@@ -19,8 +19,8 @@ type StackBlitzLinkProps = {
 };
 
 // React 18+ boilerplate
-// language=jsx
-const indexJsCode = `
+// language=tsx
+const indexTsxCode = `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Example from './Example';
@@ -32,18 +32,45 @@ root.render(<Example />);
 // language=HTML
 const indexHtmlCode = `<div id="root" style="width: 100vw; height: 100vh;" />`;
 
+// tsconfig.json
+const tsconfigJsonCode = `{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
+}`;
+
 const dependencies: ProjectDependencies = {
   react: '^19.0.0',
   'react-is': '^19.0.0',
   'react-dom': '^19.0.0',
-  recharts: '^3.0.0',
+  recharts: '^3.1.0',
+  '@types/react': '^19.0.0',
+  '@types/react-dom': '^19.0.0',
+  typescript: '^5.0.0',
 };
 
 /*
  * This creates a link that creates a new StackBlitz project
  * with the provided code and opens it in a new tab.
  * This assumes that the code is a Recharts example component which exports the React component as the default export.
- * This uses a javascript template, no typescript support in this one.
+ * This uses TypeScript with full type checking enabled.
  */
 export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
   return (
@@ -63,17 +90,15 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
             title,
             files: {
               'public/index.html': indexHtmlCode,
-              /*
-               * This file has jsx in it, but create-react-app requires that the entry point is a src/index.ts file.
-               */
-              'src/index.js': indexJsCode,
-              'src/Example.jsx': code,
+              'src/index.tsx': indexTsxCode,
+              'src/Example.tsx': code,
+              'tsconfig.json': tsconfigJsonCode,
             },
             dependencies,
           },
           {
             newWindow: true,
-            openFile: 'src/Example.jsx',
+            openFile: 'src/Example.tsx',
             /*
              * In this simple case, there is really only one interesting file to look at,
              * so let's hide the sidebar by default.
