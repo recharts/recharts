@@ -18,7 +18,7 @@ function defaultUniqBy(entry: LegendPayload) {
 }
 
 type ContentProps = Props & {
-  margin: Margin;
+  margin: Partial<Margin>;
   chartWidth: number;
   chartHeight: number;
   contextPayload: ReadonlyArray<LegendPayload>;
@@ -49,7 +49,7 @@ type PositionInput = {
 };
 
 function getDefaultPosition(
-  style: React.CSSProperties,
+  style: CSSProperties | undefined,
   props: PositionInput,
   margin: Margin,
   chartWidth: number,
@@ -137,11 +137,14 @@ function LegendWrapper(props: Props) {
   const [lastBoundingBox, updateBoundingBox] = useElementOffset([contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
+  if (chartWidth == null || chartHeight == null) {
+    return null;
+  }
   const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
   // if the user supplies their own portal, only use their defined wrapper styles
-  const outerStyle: CSSProperties = portalFromProps
+  const outerStyle: CSSProperties | undefined = portalFromProps
     ? wrapperStyle
     : {
         position: 'absolute',

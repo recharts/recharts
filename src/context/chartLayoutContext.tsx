@@ -90,14 +90,8 @@ export const useChartHeight = (): number | undefined => {
   return useAppSelector(selectChartHeight);
 };
 
-const manyComponentsThrowErrorsIfMarginIsUndefined: Margin = {
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-};
-export const useMargin = (): Margin => {
-  return useAppSelector(state => state.layout.margin) ?? manyComponentsThrowErrorsIfMarginIsUndefined;
+export const useMargin = (): Margin | undefined => {
+  return useAppSelector(state => state.layout.margin);
 };
 
 export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
@@ -114,7 +108,7 @@ export const ReportChartSize = (props: Size): null => {
   return null;
 };
 
-export const ReportChartMargin = ({ margin }: { margin: Margin }): null => {
+export const ReportChartMargin = ({ margin }: { margin: Partial<Margin> }): null => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setMargin(margin));

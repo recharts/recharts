@@ -30,7 +30,6 @@ import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
-import { LegendPortalContext } from '../../src/context/legendPortalContext';
 import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Size } from '../../src/util/types';
@@ -339,7 +338,7 @@ describe('<Legend />', () => {
   });
 
   describe('custom content as a react element', () => {
-    it('should render result', () => {
+    it('should render result in a portal', () => {
       const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
 
       function Example() {
@@ -347,10 +346,9 @@ describe('<Legend />', () => {
 
         return (
           <>
-            <LegendPortalContext.Provider value={portalRef}>
-              {/* @ts-expect-error payload is now omitted from Legend types */}
-              <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
-            </LegendPortalContext.Provider>
+            <AreaChart width={600} height={300} data={categoricalData}>
+              <Legend width={500} height={30} content={<CustomizedLegend />} portal={portalRef} />
+            </AreaChart>
             <div
               data-testid="my-custom-portal-target"
               ref={node => {
@@ -366,7 +364,7 @@ describe('<Legend />', () => {
       const { container } = render(<Example />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
-      expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
+      expect(container.querySelectorAll('[data-testid="my-custom-portal-target"] .customized-legend')).toHaveLength(1);
     });
 
     it('should render a custom component wrapped legend', () => {

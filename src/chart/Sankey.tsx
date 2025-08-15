@@ -468,7 +468,7 @@ interface SankeyProps {
   style?: React.CSSProperties;
   className?: string;
   children?: any;
-  margin?: Margin;
+  margin?: Partial<Margin>;
   onClick?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
@@ -489,7 +489,7 @@ interface State {
   prevData?: SankeyData;
   prevWidth?: number;
   prevHeight?: number;
-  prevMargin?: Margin;
+  prevMargin?: Partial<Margin>;
   prevIterations?: number;
   prevNodeWidth?: number;
   prevNodePadding?: number;
