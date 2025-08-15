@@ -23,6 +23,10 @@ export default defineConfig({
   outputDir: '/recharts/test-vr/test-results',
   /* Maximum time one test can run for. */
   timeout: 10 * 1000,
+  expect: {
+    /* https://playwright.dev/docs/test-timeouts */
+    timeout: 10 * 1000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
