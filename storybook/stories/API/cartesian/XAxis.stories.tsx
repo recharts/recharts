@@ -1,6 +1,16 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
+import {
+  CartesianGrid,
+  Label,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 import { XAxisProps } from '../props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -36,7 +46,7 @@ export const API = {
     tickMargin: 20,
     angle: 45,
     height: 70,
-    label: { value: 'The Axis Label', position: 'insideBottomRight' },
+    label: { value: 'The Axis Label insideBottomRight', position: 'insideBottomRight' },
   },
 };
 
@@ -47,7 +57,6 @@ export const API = {
  */
 const CustomXAxisTickWithPadding = (props: any) => {
   const { x, y, payload, padding } = props;
-
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={16} textAnchor="middle" fill="#666" fontSize="12">
@@ -80,11 +89,21 @@ export const CustomTickWithPadding = {
       { name: 'Jun', value: 239, category: 'F' },
     ];
 
+    const CustomLabels = () => (
+      <>
+        <Label position="insideTopLeft">Label insideTopLeft</Label>
+        <Label position="insideTopRight">Label insideTopRight</Label>
+        <Label position="insideTop">Label insideTop</Label>
+      </>
+    );
+
     return (
       <ResponsiveContainer width="100%" height={500}>
         <LineChart data={sampleData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis {...args} dataKey="name" tick={<CustomXAxisTickWithPadding />} height={80} />
+          <XAxis {...args} dataKey="name" tick={<CustomXAxisTickWithPadding />} height={80}>
+            <CustomLabels />
+          </XAxis>
           <YAxis />
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
           <Tooltip />

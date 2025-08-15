@@ -9,7 +9,7 @@ import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
-import { Label } from '../component/Label';
+import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
 import { isNumber } from '../util/DataUtils';
 import {
   CartesianViewBox,
@@ -47,7 +47,7 @@ export interface CartesianAxisProps {
   mirror?: boolean;
   tickMargin?: number;
   hide?: boolean;
-  label?: any;
+  label?: ImplicitLabelType;
   /** Padding information passed to custom tick components */
   padding?: XAxisPadding | YAxisPadding;
 
@@ -375,7 +375,15 @@ export class CartesianAxis extends Component<Props, IState> {
       >
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(this.state.fontSize, this.state.letterSpacing, ticks)}
-        {Label.renderCallByParent(this.props)}
+        <CartesianLabelContextProvider
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height}
+        >
+          <CartesianLabelFromLabelProp label={this.props.label} />
+          {this.props.children}
+        </CartesianLabelContextProvider>
       </Layer>
     );
   }

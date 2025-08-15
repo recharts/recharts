@@ -1,11 +1,21 @@
 import * as React from 'react';
-import { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  ReactNode,
+  ReactElement,
+  createElement,
+  SVGProps,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react';
 import { clsx } from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
+import { ViewBox, PolarViewBox, CartesianViewBox, DataKey, CartesianViewBoxRequired } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -65,6 +75,39 @@ export type ImplicitLabelType =
   | ((props: any) => ReactElement<SVGElement>)
   // dataKey is only applicable when label is used implicitly from graphical element props
   | (Props & { dataKey?: DataKey<any> });
+
+const CartesianLabelContext = createContext<CartesianViewBox | null>(null);
+
+export const CartesianLabelContextProvider = ({
+  x,
+  y,
+  width,
+  height,
+  children,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  children: ReactNode;
+}) => {
+  const viewBox: CartesianViewBoxRequired = useMemo(
+    () => ({
+      x,
+      y,
+      width,
+      height,
+    }),
+    [x, y, width, height],
+  );
+  return <CartesianLabelContext.Provider value={viewBox}>{children}</CartesianLabelContext.Provider>;
+};
+
+const useCartesianLabelContext = () => {
+  const labelChildContext = useContext(CartesianLabelContext);
+  const chartContext = useViewBox();
+  return labelChildContext || chartContext;
+};
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
@@ -404,7 +447,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   } = props;
 
   const polarViewBox = useAppSelector(selectPolarViewBox);
-  const cartesianViewBox = useViewBox();
+  const cartesianViewBox = useCartesianLabelContext();
 
   /*
    * I am not proud about this solution but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -469,7 +512,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
 
 Label.displayName = 'Label';
 
-const parseViewBox = (props: any): ViewBox => {
+export const parseViewBox = (props: any): ViewBox => {
   const {
     cx,
     cy,
@@ -526,7 +569,7 @@ const parseViewBox = (props: any): ViewBox => {
   return undefined;
 };
 
-const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
+const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
   if (!label) {
     return null;
   }
@@ -543,7 +586,7 @@ const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject
 
   if (isValidElement(label)) {
     if (label.type === Label) {
-      return cloneElement<LabelProps>(label, { key: 'label-implicit', ...commonProps });
+      return cloneElement<SVGElement>(label, { key: 'label-implicit', ...commonProps });
     }
 
     return <Label key="label-implicit" content={label} {...commonProps} />;
@@ -560,6 +603,13 @@ const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject
   return null;
 };
 
+/**
+ * @deprecated do not use as it relies on direct child access. Instead, use `CartesianLabelFromLabelProp`.
+ * @param parentProps - The props of the parent component that contains the label.
+ * @param viewBox - The viewBox to be used for the label.
+ * @param checkPropsLabel - Whether to check the `label` prop of the parent component.
+ * @returns An array of React elements representing the labels, or null if no labels are found
+ */
 const renderCallByParent = (
   parentProps: {
     children?: ReactNode;
@@ -593,3 +643,9 @@ const renderCallByParent = (
 
 Label.parseViewBox = parseViewBox;
 Label.renderCallByParent = renderCallByParent;
+
+export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
+  const viewBox = useCartesianLabelContext();
+
+  return parseLabel(label, viewBox) || null;
+}

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Component, ReactElement, SVGProps, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
-import { ImplicitLabelType, Label } from '../component/Label';
+import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNan, isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
@@ -210,7 +210,10 @@ function ReferenceLineImpl(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-line', className)}>
       {renderLine(shape, lineProps)}
-      {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
+      <CartesianLabelContextProvider {...rectWithCoords({ x1, y1, x2, y2 })}>
+        <CartesianLabelFromLabelProp label={props.label} />
+        {props.children}
+      </CartesianLabelContextProvider>
     </Layer>
   );
 }

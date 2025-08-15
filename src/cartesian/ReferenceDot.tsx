@@ -3,7 +3,7 @@ import { Component, ReactElement, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
-import { ImplicitLabelType, Label } from '../component/Label';
+import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
@@ -115,12 +115,10 @@ function ReferenceDotImpl(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
       {renderDot(shape, dotProps)}
-      {Label.renderCallByParent(props, {
-        x: cx - r,
-        y: cy - r,
-        width: 2 * r,
-        height: 2 * r,
-      })}
+      <CartesianLabelContextProvider x={cx - r} y={cy - r} width={2 * r} height={2 * r}>
+        <CartesianLabelFromLabelProp label={props.label} />
+        {props.children}
+      </CartesianLabelContextProvider>
     </Layer>
   );
 }
