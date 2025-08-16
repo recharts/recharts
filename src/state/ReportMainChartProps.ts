@@ -12,7 +12,7 @@ type MainChartProps = {
   width: number;
   height: number;
   layout: LayoutType;
-  margin: Margin;
+  margin: Partial<Margin>;
 };
 
 export function ReportMainChartProps({ layout, width, height, margin }: MainChartProps): null {

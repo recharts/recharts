@@ -120,6 +120,6 @@ export {
   useYAxisDomain,
 } from './hooks';
 
-export { useChartHeight, useChartWidth } from './context/chartLayoutContext';
+export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';
 
 export type { ChartOffset, PlotArea } from './types';

@@ -764,10 +764,10 @@ export interface CartesianTickItem extends TickItem {
 }
 
 export interface Margin {
-  top?: number;
-  right?: number;
-  bottom?: number;
-  left?: number;
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
 }
 
 export interface CartesianViewBox {
@@ -993,7 +993,7 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   height?: number;
   id?: string;
   layout?: CartesianLayout;
-  margin?: Margin;
+  margin?: Partial<Margin>;
   maxBarSize?: number;
   reverseStackOrder?: boolean;
   role?: string;

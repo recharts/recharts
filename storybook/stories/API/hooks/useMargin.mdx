@@ -1,0 +1,24 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './useMargin.stories.tsx';
+
+<Meta of={ComponentStories} />
+
+# useMargin
+
+A hook that returns the margin of the chart. The margin is an object with `top`, `right`, `bottom`, and `left` properties.
+
+Margin is the empty space around the chart. Excludes axes and legend and brushes and the like.
+
+This is declared by the user in the chart props.
+
+If you are interested in the space occupied by axes, legend, or brushes, use `useOffset` hook instead,
+which also includes calculated widths and heights of axes and legends and so.
+
+## Signature
+
+```
+import { useMargin } from 'recharts';
+const margin = useMargin();
+```
+
+<Canvas of={ComponentStories.UseMargin} layout='padded' />
