@@ -5,13 +5,14 @@ import minBy from 'es-toolkit/compat/minBy';
 
 import { clsx } from 'clsx';
 import { Text } from '../component/Text';
-import { Label } from '../component/Label';
+import { PolarLabelContextProvider, PolarLabelFromLabelProp } from '../component/Label';
 import { Layer } from '../container/Layer';
 import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import {
   adaptEventsOfChild,
   BaseAxisProps,
   Coordinate,
+  PolarViewBoxRequired,
   PresentationAttributesAdaptChildEvent,
   TickItem,
 } from '../util/types';
@@ -22,15 +23,6 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-
-type PolarRadiusViewBox = {
-  cx: number;
-  cy: number;
-  startAngle: number;
-  endAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-};
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -91,7 +83,7 @@ const getTickTextAnchor = (orientation: TickOrientation): string => {
   return textAnchor;
 };
 
-const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<TickItem>): PolarRadiusViewBox => {
+const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<TickItem>): PolarViewBoxRequired => {
   const maxRadiusTick = maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
   const minRadiusTick = minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
 
@@ -102,6 +94,7 @@ const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<
     endAngle: angle,
     innerRadius: minRadiusTick.coordinate || 0,
     outerRadius: maxRadiusTick.coordinate || 0,
+    clockWise: false,
   };
 };
 
@@ -204,7 +197,10 @@ export const PolarRadiusAxisWrapper: FunctionComponent<Props> = (defaultsAndInpu
     <Layer className={clsx('recharts-polar-radius-axis', AXIS_TYPE, props.className)}>
       {axisLine && renderAxisLine(props, ticks)}
       {tick && renderTicks(props, ticks)}
-      {Label.renderCallByParent(props, getViewBox(props.angle, props.cx, props.cy, ticks))}
+      <PolarLabelContextProvider {...getViewBox(props.angle, props.cx, props.cy, ticks)}>
+        <PolarLabelFromLabelProp label={props.label} />
+        {props.children}
+      </PolarLabelContextProvider>
     </Layer>
   );
 };

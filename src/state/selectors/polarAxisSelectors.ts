@@ -190,7 +190,7 @@ export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequi
       outerRadius,
       startAngle,
       endAngle,
-      clockWise: false,
+      clockWise: false, // this property look useful, why not use it?
     };
   },
 );

@@ -15,7 +15,14 @@ import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ViewBox, PolarViewBox, CartesianViewBox, DataKey, CartesianViewBoxRequired } from '../util/types';
+import {
+  ViewBox,
+  PolarViewBox,
+  CartesianViewBox,
+  DataKey,
+  CartesianViewBoxRequired,
+  PolarViewBoxRequired,
+} from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -106,6 +113,41 @@ export const CartesianLabelContextProvider = ({
 const useCartesianLabelContext = () => {
   const labelChildContext = useContext(CartesianLabelContext);
   const chartContext = useViewBox();
+  return labelChildContext || chartContext;
+};
+
+const PolarLabelContext = createContext<PolarViewBoxRequired | null>(null);
+
+export const PolarLabelContextProvider = ({
+  cx,
+  cy,
+  innerRadius,
+  outerRadius,
+  startAngle,
+  endAngle,
+  clockWise,
+  children,
+}: PolarViewBoxRequired & {
+  children: ReactNode;
+}) => {
+  const viewBox: PolarViewBoxRequired = useMemo(
+    () => ({
+      cx,
+      cy,
+      innerRadius,
+      outerRadius,
+      startAngle,
+      endAngle,
+      clockWise,
+    }),
+    [cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise],
+  );
+  return <PolarLabelContext.Provider value={viewBox}>{children}</PolarLabelContext.Provider>;
+};
+
+export const usePolarLabelContext = () => {
+  const labelChildContext = useContext(PolarLabelContext);
+  const chartContext = useAppSelector(selectPolarViewBox);
   return labelChildContext || chartContext;
 };
 
@@ -445,8 +487,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
     textBreakAll,
     labelRef,
   } = props;
-
-  const polarViewBox = useAppSelector(selectPolarViewBox);
+  const polarViewBox = usePolarLabelContext();
   const cartesianViewBox = useCartesianLabelContext();
 
   /*
@@ -646,6 +687,12 @@ Label.renderCallByParent = renderCallByParent;
 
 export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
   const viewBox = useCartesianLabelContext();
+
+  return parseLabel(label, viewBox) || null;
+}
+
+export function PolarLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
+  const viewBox = usePolarLabelContext();
 
   return parseLabel(label, viewBox) || null;
 }
