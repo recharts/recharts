@@ -58,6 +58,7 @@ export const AreaImplicitLabelListTest = () => (
   <AreaChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Area
+        key={position}
         type="monotone"
         dataKey="uv"
         stroke="#8884d8"
@@ -90,6 +91,7 @@ export const BarImplicitLabelListTest = () => (
   <BarChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Bar
+        key={position}
         dataKey="uv"
         fill="none"
         stroke="green"
@@ -122,6 +124,7 @@ export const LineImplicitLabelListTest = () => (
   <LineChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Line
+        key={position}
         type="monotone"
         dataKey="uv"
         stroke="#8884d8"
@@ -156,6 +159,7 @@ export const ScatterImplicitLabelListTest = () => (
     <YAxis dataKey="uv" />
     {availablePositions.map(position => (
       <Scatter
+        key={position}
         data={shortData}
         fill="#8884d8"
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
@@ -188,6 +192,7 @@ export const PieImplicitLabelListTest = () => (
   <PieChart width={900} height={500}>
     {availablePositions.map(position => (
       <Pie
+        key={position}
         data={shortFillColorData}
         dataKey="uv"
         cx={450}
@@ -223,6 +228,7 @@ export const RadarImplicitLabelListTest = () => (
   <RadarChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Radar
+        key={position}
         dataKey="uv"
         stroke="#8884d8"
         fill="none"
@@ -262,7 +268,12 @@ export const RadialBarImplicitLabelListTest = () => (
     data={shortData}
   >
     {availablePositions.map(position => (
-      <RadialBar dataKey="uv" fill="none" label={{ position, offset: 50, angle: -30, valueAccessor: () => position }} />
+      <RadialBar
+        key={position}
+        dataKey="uv"
+        fill="none"
+        label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
+      />
     ))}
     <LabelList />
   </RadialBarChart>
