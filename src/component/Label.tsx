@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { Text } from './Text';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import {
@@ -644,46 +644,7 @@ const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox, labelRef?: React
   return null;
 };
 
-/**
- * @deprecated do not use as it relies on direct child access. Instead, use `CartesianLabelFromLabelProp`.
- * @param parentProps - The props of the parent component that contains the label.
- * @param viewBox - The viewBox to be used for the label.
- * @param checkPropsLabel - Whether to check the `label` prop of the parent component.
- * @returns An array of React elements representing the labels, or null if no labels are found
- */
-const renderCallByParent = (
-  parentProps: {
-    children?: ReactNode;
-    label?: unknown;
-    labelRef?: React.RefObject<Element>;
-  },
-  viewBox?: ViewBox,
-  checkPropsLabel = true,
-): ReactElement[] | null => {
-  if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
-    return null;
-  }
-  const { children, labelRef } = parentProps;
-  const parentViewBox = parseViewBox(parentProps);
-
-  const explicitChildren = findAllByType(children, Label).map((child, index) => {
-    return cloneElement(child, {
-      viewBox: viewBox || parentViewBox,
-      // eslint-disable-next-line react/no-array-index-key
-      key: `label-${index}`,
-    });
-  });
-
-  if (!checkPropsLabel) {
-    return explicitChildren;
-  }
-  const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox, labelRef);
-
-  return [implicitLabel, ...explicitChildren];
-};
-
 Label.parseViewBox = parseViewBox;
-Label.renderCallByParent = renderCallByParent;
 
 export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
   const viewBox = useCartesianLabelContext();
