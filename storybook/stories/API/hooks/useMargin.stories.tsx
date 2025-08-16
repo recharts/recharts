@@ -1,24 +1,24 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { ComposedChart, Legend, Line, ResponsiveContainer, useOffset, XAxis, YAxis } from '../../../../src';
+import { ComposedChart, Legend, Line, ResponsiveContainer, useMargin, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
-import { OffsetShower } from '../../../storybook-addon-recharts/inspectors/OffsetShower';
+import { MarginShower } from '../../../storybook-addon-recharts/inspectors/MarginShower';
 
 export default {
-  title: 'API/hooks/useOffset',
-  component: useOffset,
+  title: 'API/hooks/useMargin',
+  component: useMargin,
   parameters: {
     docs: {
       description: {
         component:
-          'This story demonstrates the use of the `useOffset` hook to read chart offset in a responsive container.',
+          'This story demonstrates the use of the `useMargin` hook to read chart margin in a responsive container.',
       },
     },
   },
 };
 
-export const UseOffset = {
-  name: 'useOffset',
+export const UseMargin = {
+  name: 'useMargin',
   render: (args: Args) => {
     return (
       <ResponsiveContainer width={args.width} height={args.height}>
@@ -27,7 +27,7 @@ export const UseOffset = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
-          <OffsetShower />
+          <MarginShower />
         </ComposedChart>
       </ResponsiveContainer>
     );

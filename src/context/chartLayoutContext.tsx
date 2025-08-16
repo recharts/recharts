@@ -90,6 +90,16 @@ export const useChartHeight = (): number | undefined => {
   return useAppSelector(selectChartHeight);
 };
 
+/**
+ * Margin is the empty space around the chart. Excludes axes and legend and brushes and the like.
+ * This is declared by the user in the chart props.
+ * If you are interested in the space occupied by axes, legend, or brushes,
+ * use `useOffset` instead.
+ *
+ * Returns `undefined` if used outside a chart context.
+ *
+ * @returns {Margin | undefined} The margin of the chart in pixels, or `undefined` if not in a chart context.
+ */
 export const useMargin = (): Margin | undefined => {
   return useAppSelector(state => state.layout.margin);
 };

@@ -1,4 +1,4 @@
-import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './useOffset.stories.tsx';
 
 <Meta of={ComponentStories} />
@@ -27,6 +27,8 @@ The offset includes:
 - Width and height of the axes
 - Width and height of the legend
 - Brush height
+
+(If you are only interested in the margins, use the `useMargin` hook instead.)
 
 The offset is independent of charts position on the page, meaning it does not change as the chart is scrolled or resized.
 
