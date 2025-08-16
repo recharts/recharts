@@ -6,7 +6,7 @@ import { Label, ContentType, Props as LabelProps, LabelPosition, isLabelContentA
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { DataKey, ViewBox } from '../util/types';
+import { CartesianViewBoxRequired, DataKey, ViewBox } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 
 interface Data {
@@ -39,6 +39,11 @@ export type ImplicitLabelListType<T extends Data> =
   | Props<T>;
 
 const defaultAccessor = (entry: Data) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
+
+export type CartesianLabelListContextType<T> = {
+  entry: T;
+  viewBox: CartesianViewBoxRequired;
+};
 
 export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...restProps }: Props<T>) {
   const { data, dataKey, clockWise, id, textBreakAll, ...others } = restProps;
