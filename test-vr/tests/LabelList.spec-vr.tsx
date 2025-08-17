@@ -16,6 +16,7 @@ import {
   RadialBarExplicitLabelListTest,
   RadialBarImplicitLabelListTest,
   FunnelImplicitLabelListTest,
+  FunnelExplicitLabelListTest,
 } from './LabelListComponents';
 
 test('Area > implicit LabelList', async ({ mount }) => {
@@ -94,6 +95,6 @@ test('Funnel > implicit LabelList', async ({ mount }) => {
 });
 
 test('Funnel > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<FunnelImplicitLabelListTest />); // Funnel does not have explicit LabelList
+  const component = await mount(<FunnelExplicitLabelListTest />);
   await expect(component).toHaveScreenshot();
 });
