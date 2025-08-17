@@ -1,6 +1,6 @@
 import get from 'es-toolkit/compat/get';
 
-export const mathSign = (value: number) => {
+export const mathSign = (value: number): number => {
   if (value === 0) {
     return 0;
   }
@@ -25,7 +25,7 @@ export const isNumber = (value: unknown): value is number =>
 export const isNumOrStr = (value: unknown): value is number | string => isNumber(value) || typeof value === 'string';
 
 let idCounter = 0;
-export const uniqueId = (prefix?: string) => {
+export const uniqueId = (prefix?: string): string => {
   const id = ++idCounter;
 
   return `${prefix || ''}${id}`;
@@ -44,7 +44,7 @@ export const getPercentValue = (
   totalValue: number | undefined,
   defaultValue = 0,
   validate = false,
-) => {
+): number => {
   if (!isNumber(percent) && typeof percent !== 'string') {
     return defaultValue;
   }
@@ -99,7 +99,10 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
  *  @param numberB The second number
  *  @return A function that returns the interpolated number
  */
-export const interpolateNumber = (numberA: number | undefined, numberB: number | undefined) => {
+export const interpolateNumber = (
+  numberA: number | undefined,
+  numberB: number | undefined,
+): ((t: number) => number) | (() => number | undefined) => {
   if (isNumber(numberA) && isNumber(numberB)) {
     return (t: number) => numberA + t * (numberB - numberA);
   }
@@ -137,7 +140,9 @@ export function findEntryInArray<T>(
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: number }>) => {
+export const getLinearRegression = (
+  data: ReadonlyArray<{ cx?: number; cy?: number }>,
+): { xmin: number; xmax: number; a: number; b: number } | null => {
   if (!data || !data.length) {
     return null;
   }
