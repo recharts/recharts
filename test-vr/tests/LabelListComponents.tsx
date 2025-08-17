@@ -272,6 +272,8 @@ export const RadialBarImplicitLabelListTest = () => (
         key={position}
         dataKey="uv"
         fill="none"
+        stroke="blue"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -290,7 +292,7 @@ export const RadialBarExplicitLabelListTest = () => (
     barSize={20}
     data={shortData}
   >
-    <RadialBar dataKey="uv" fill="none">
+    <RadialBar dataKey="uv" fill="none" stroke="blue" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
