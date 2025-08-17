@@ -93,7 +93,7 @@ describe('<Brush />', () => {
     });
   });
 
-  test('Render 2 travelers and 1 slide in simple Brush', () => {
+  test('Render 2 travelers and 1 slide in simple Brush', async () => {
     const { container } = render(
       <BarChart width={400} height={100} data={data}>
         <Brush dataKey="value" x={100} y={50} width={400} height={40} />
@@ -128,7 +128,7 @@ describe('<Brush />', () => {
     // this is using X in pixels, not value, why? Doesn't sound very accessible
     expect(traveller1.getAttribute('aria-valuenow')).toBe('100');
     expect(traveller1.getAttribute('style')).toBe('cursor: col-resize;');
-    expect(traveller1.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller1.svg');
+    await expect(traveller1.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller1.svg');
 
     const traveller2 = allTravellers[1];
     expect(traveller2.getAttributeNames()).toEqual([
@@ -147,7 +147,7 @@ describe('<Brush />', () => {
     // this is using X in pixels, not value, why? Doesn't sound very accessible
     expect(traveller2.getAttribute('aria-valuenow')).toBe('495');
     expect(traveller2.getAttribute('style')).toBe('cursor: col-resize;');
-    expect(traveller2.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller2.svg');
+    await expect(traveller2.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller2.svg');
   });
 
   test('custom traveller Element should receive extra sneaky props', () => {
