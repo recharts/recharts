@@ -1,4 +1,4 @@
-export function reduxDevtoolsJsonStringifyReplacer(_key: string, value: unknown) {
+export function reduxDevtoolsJsonStringifyReplacer(_key: string, value: unknown): unknown {
   if (value instanceof HTMLElement) {
     return `HTMLElement <${value.tagName} class="${value.className}">`;
   }

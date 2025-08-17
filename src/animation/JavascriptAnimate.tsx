@@ -37,7 +37,7 @@ type TimeAsObject = {
 const from: TimeAsObject = { t: 0 };
 const to: TimeAsObject = { t: 1 };
 
-export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
+export function JavascriptAnimate(outsideProps: JavascriptAnimateProps): React.ReactNode {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
   const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
 

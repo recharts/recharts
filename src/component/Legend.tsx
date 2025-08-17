@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, PureComponent, useEffect } from 'react';
+import { CSSProperties, PureComponent, useEffect, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import { DefaultLegendContent, LegendPayload, Props as DefaultProps } from './DefaultLegendContent';
@@ -13,7 +13,7 @@ import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayout
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
 
-function defaultUniqBy(entry: LegendPayload) {
+function defaultUniqBy(entry: LegendPayload): unknown {
   return entry.value;
 }
 
@@ -24,7 +24,7 @@ type ContentProps = Props & {
   contextPayload: ReadonlyArray<LegendPayload>;
 };
 
-function LegendContent(props: ContentProps) {
+function LegendContent(props: ContentProps): ReactElement {
   const { contextPayload, ...otherProps } = props;
   const finalPayload = getUniqPayload(contextPayload, props.payloadUniqBy, defaultUniqBy);
   const contentProps = {
@@ -55,7 +55,7 @@ function getDefaultPosition(
   chartWidth: number,
   chartHeight: number,
   box: ElementOffset,
-) {
+): CSSProperties {
   const { layout, align, verticalAlign } = props;
   let hPos, vPos;
 
@@ -127,7 +127,7 @@ function LegendSizeDispatcher(props: Size): null {
   return null;
 }
 
-function LegendWrapper(props: Props) {
+function LegendWrapper(props: Props): React.ReactPortal | null {
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
@@ -214,7 +214,7 @@ export class Legend extends PureComponent<Props, State> {
     return null;
   }
 
-  public render() {
+  public render(): ReactElement {
     return <LegendWrapper {...this.props} />;
   }
 }
