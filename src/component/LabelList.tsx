@@ -1,25 +1,51 @@
 import * as React from 'react';
-import { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
+import { cloneElement, createContext, ReactElement, ReactNode, SVGProps, useContext } from 'react';
 import last from 'es-toolkit/compat/last';
 
-import { Label, ContentType, Props as LabelProps, LabelPosition, isLabelContentAFunction } from './Label';
+import { ContentType, isLabelContentAFunction, Label, LabelPosition, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { filterProps, findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { CartesianViewBoxRequired, DataKey, ViewBox } from '../util/types';
+import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 
-interface Data {
-  value?: number | string | Array<number | string>;
-  payload?: any;
-  parentViewBox?: ViewBox;
+/**
+ * This is public API because we expose it as the valueAccessor parameter.
+ *
+ * The properties of "viewBox" are repeated as the root props of the entry object.
+ * So it doesn't matter if you read entry.x or entry.viewBox.x, they are the same.
+ *
+ * It's not necessary to pass redundant data, but we keep it for backward compatibility.
+ */
+export interface CartesianLabelListEntry extends CartesianViewBoxRequired {
+  /**
+   * Value is what renders in the UI as the label content.
+   */
+  value: number | string | Array<number | string>;
+  /**
+   * Payload is the source data object for this entry. The shape of this depends on what the user has passed
+   * as the data prop to the chart.
+   */
+  payload: unknown;
+  /**
+   * The bounding box of the graphical element that this label is attached to.
+   * This will be an individual Bar for example.
+   */
+  viewBox: CartesianViewBoxRequired;
+  parentViewBox?: CartesianViewBoxRequired;
 }
 
-interface LabelListProps<T extends Data> {
+export interface PolarLabelListEntry {
+  value?: number | string | Array<number | string>;
+  payload?: unknown;
+  viewBox: PolarViewBoxRequired;
+  parentViewBox?: PolarViewBoxRequired;
+  clockWise?: boolean;
+}
+
+interface LabelListProps {
   id?: string;
-  // why is data a prop here, shouldn't this only come from chart data?
-  data?: ReadonlyArray<T>;
-  valueAccessor?: (entry: T, index: number) => string | number;
+  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number;
   clockWise?: boolean;
   dataKey?: DataKey<Record<string, any>>;
   content?: ContentType;
@@ -30,23 +56,38 @@ interface LabelListProps<T extends Data> {
   formatter?: (label: React.ReactNode) => React.ReactNode;
 }
 
-export type Props<T extends Data> = SVGProps<SVGTextElement> & LabelListProps<T>;
+export type Props = SVGProps<SVGTextElement> & LabelListProps;
 
-export type ImplicitLabelListType<T extends Data> =
+export type ImplicitLabelListType =
   | boolean
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
-  | Props<T>;
+  | Props;
 
-const defaultAccessor = (entry: Data) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
+const defaultAccessor = (entry: CartesianLabelListEntry) =>
+  Array.isArray(entry.value) ? last(entry.value) : entry.value;
 
-export type CartesianLabelListContextType<T> = {
-  entry: T;
-  viewBox: CartesianViewBoxRequired;
-};
+const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
-export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...restProps }: Props<T>) {
-  const { data, dataKey, clockWise, id, textBreakAll, ...others } = restProps;
+export const CartesianLabelListContextProvider = CartesianLabelListContext.Provider;
+
+const PolarLabelListContext = createContext<ReadonlyArray<PolarLabelListEntry> | undefined>(undefined);
+
+export const PolarLabelListContextProvider = PolarLabelListContext.Provider;
+
+function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
+  return useContext(CartesianLabelListContext);
+}
+
+function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefined {
+  return useContext(PolarLabelListContext);
+}
+
+export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
+  const { dataKey, clockWise, id, textBreakAll, ...others } = restProps;
+  const cartesianData = useCartesianLabelListContext();
+  const polarData = usePolarLabelListContext();
+  const data = cartesianData || polarData;
 
   if (!data || !data.length) {
     return null;
@@ -69,7 +110,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
             parentViewBox={entry.parentViewBox}
             value={value}
             textBreakAll={textBreakAll}
-            viewBox={Label.parseViewBox(isNullish(clockWise) ? entry : { ...entry, clockWise })}
+            viewBox={entry.viewBox}
             key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             index={index}
           />
@@ -81,7 +122,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
 
 LabelList.displayName = 'LabelList';
 
-function parseLabelList<T extends Data>(label: unknown, data: ReadonlyArray<T>) {
+function parseLabelList<T extends CartesianLabelListEntry>(label: unknown, data: ReadonlyArray<T>) {
   if (!label) {
     return null;
   }
@@ -101,12 +142,11 @@ function parseLabelList<T extends Data>(label: unknown, data: ReadonlyArray<T>) 
   return null;
 }
 
-function renderCallByParent<T extends Data>(
+function renderCallByParent<T extends CartesianLabelListEntry>(
   parentProps: { children?: ReactNode; label?: unknown },
   data: ReadonlyArray<T>,
-  checkPropsLabel = true,
 ) {
-  if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
+  if (!parentProps || (!parentProps.children && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
@@ -118,9 +158,6 @@ function renderCallByParent<T extends Data>(
       key: `labelList-${index}`,
     }),
   );
-  if (!checkPropsLabel) {
-    return explicitChildren;
-  }
 
   const implicitLabelList = parseLabelList(parentProps.label, data);
 
@@ -128,3 +165,23 @@ function renderCallByParent<T extends Data>(
 }
 
 LabelList.renderCallByParent = renderCallByParent;
+
+export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListType }) {
+  if (!label) {
+    return null;
+  }
+
+  if (label === true) {
+    return <LabelList key="labelList-implicit" />;
+  }
+
+  if (React.isValidElement(label) || isLabelContentAFunction(label)) {
+    return <LabelList key="labelList-implicit" content={label} />;
+  }
+
+  if (typeof label === 'object') {
+    return <LabelList key="labelList-implicit" {...label} />;
+  }
+
+  return null;
+}

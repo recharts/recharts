@@ -97,7 +97,6 @@ export const BarImplicitLabelListTest = () => (
         dataKey="uv"
         fill="none"
         stroke="green"
-        // @ts-expect-error typescript type says that valueAccessor is not a valid prop, but it does work
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -130,7 +129,6 @@ export const LineImplicitLabelListTest = () => (
         type="monotone"
         dataKey="uv"
         stroke="#8884d8"
-        // @ts-expect-error typescript type says that valueAccessor is not a valid prop, but it does work
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -205,7 +203,6 @@ export const PieImplicitLabelListTest = () => (
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
-    <LabelList />
   </PieChart>
 );
 

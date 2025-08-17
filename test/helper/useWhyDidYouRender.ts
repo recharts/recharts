@@ -43,6 +43,9 @@ export function useWhyDidYouRender<T extends Record<string, any>>(
           curr,
         });
       }
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('[why-did-you-render?]', componentName, 'initial render', allProps);
     }
 
     previousProps.current = props;

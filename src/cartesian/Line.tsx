@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { Component, MutableRefObject, Ref, useCallback, useRef, useState } from 'react';
+import { Component, MutableRefObject, ReactNode, Ref, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { ImplicitLabelType } from '../component/Label';
-import { LabelList } from '../component/LabelList';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  ImplicitLabelListType,
+  LabelListFromLabelProp,
+} from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish } from '../util/DataUtils';
 import { filterProps, isClipDot } from '../util/ReactUtils';
@@ -74,7 +78,7 @@ interface InternalLineProps {
   hide: boolean;
   id: string;
   isAnimationActive: boolean;
-  label: ImplicitLabelType;
+  label: ImplicitLabelListType;
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
@@ -114,7 +118,7 @@ interface LineProps {
   id?: string;
   isAnimationActive?: boolean;
 
-  label?: ImplicitLabelType;
+  label?: ImplicitLabelListType;
   legendType?: LegendType;
 
   name?: string | number;
@@ -288,20 +292,55 @@ function Dots({
   );
 }
 
+function LineLabelListProvider({
+  showLabels,
+  children,
+  points,
+}: {
+  showLabels: boolean;
+  children: ReactNode;
+  points: ReadonlyArray<LinePointItem>;
+}) {
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
+    return points?.map((point): CartesianLabelListEntry => {
+      const viewBox = {
+        x: point.x,
+        y: point.y,
+        width: 0,
+        height: 0,
+      };
+      return {
+        ...viewBox,
+        value: point.value,
+        payload: point.payload,
+        viewBox,
+        /*
+         * Line is not passing parentViewBox to the LabelList so the labels can escape - looks like a bug, should we pass parentViewBox?
+         * Or should this just be the root chart viewBox?
+         */
+        parentViewBox: undefined,
+      };
+    });
+  }, [points]);
+  return (
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </CartesianLabelListContextProvider>
+  );
+}
+
 function StaticCurve({
   clipPathId,
   pathRef,
   points,
   strokeDasharray,
   props,
-  showLabels,
 }: {
   clipPathId: string;
   pathRef: Ref<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
   strokeDasharray?: string;
-  showLabels: boolean;
 }) {
   const { type, layout, connectNulls, needClip, ...others } = props;
   const curveProps = {
@@ -320,7 +359,6 @@ function StaticCurve({
     <>
       {points?.length > 1 && <Curve {...curveProps} pathRef={pathRef} />}
       <Dots points={points} clipPathId={clipPathId} props={props} />
-      {showLabels && LabelList.renderCallByParent(props, points)}
     </>
   );
 }
@@ -364,6 +402,7 @@ function CurveWithAnimation({
   const animationId = useAnimationId(props, 'recharts-line-');
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const showLabels = !isAnimating;
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -399,119 +438,121 @@ function CurveWithAnimation({
   const startingPoint = longestAnimatedLengthRef.current;
 
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      onAnimationEnd={handleAnimationEnd}
-      onAnimationStart={handleAnimationStart}
-      key={animationId}
-    >
-      {(t: number) => {
-        const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
-        const curLength = Math.min(lengthInterpolated, totalLength);
-        let currentStrokeDasharray;
-        if (isAnimationActive) {
-          if (strokeDasharray) {
-            const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-            currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+    <LineLabelListProvider points={points} showLabels={showLabels}>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        onAnimationEnd={handleAnimationEnd}
+        onAnimationStart={handleAnimationStart}
+        key={animationId}
+      >
+        {(t: number) => {
+          const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
+          const curLength = Math.min(lengthInterpolated, totalLength);
+          let currentStrokeDasharray;
+          if (isAnimationActive) {
+            if (strokeDasharray) {
+              const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+              currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+            } else {
+              currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+            }
           } else {
-            currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+            currentStrokeDasharray = strokeDasharray == null ? undefined : String(strokeDasharray);
           }
-        } else {
-          currentStrokeDasharray = strokeDasharray == null ? undefined : String(strokeDasharray);
-        }
 
-        if (prevPoints) {
-          const prevPointsDiffFactor = prevPoints.length / points.length;
-          const stepData =
-            t === 1
-              ? points
-              : points.map((entry, index): LinePointItem => {
-                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                  if (prevPoints[prevPointIndex]) {
-                    const prev = prevPoints[prevPointIndex];
+          if (prevPoints) {
+            const prevPointsDiffFactor = prevPoints.length / points.length;
+            const stepData =
+              t === 1
+                ? points
+                : points.map((entry, index): LinePointItem => {
+                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                    if (prevPoints[prevPointIndex]) {
+                      const prev = prevPoints[prevPointIndex];
+                      return {
+                        ...entry,
+                        x: interpolate(prev.x, entry.x, t),
+                        y: interpolate(prev.y, entry.y, t),
+                      };
+                    }
+
+                    // magic number of faking previous x and y location
+                    if (animateNewValues) {
+                      return {
+                        ...entry,
+                        x: interpolate(width * 2, entry.x, t),
+                        y: interpolate(height / 2, entry.y, t),
+                      };
+                    }
                     return {
                       ...entry,
-                      x: interpolate(prev.x, entry.x, t),
-                      y: interpolate(prev.y, entry.y, t),
+                      x: entry.x,
+                      y: entry.y,
                     };
-                  }
+                  });
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = stepData;
+            return (
+              <StaticCurve
+                props={props}
+                points={stepData}
+                clipPathId={clipPathId}
+                pathRef={pathRef}
+                strokeDasharray={currentStrokeDasharray}
+              />
+            );
+          }
 
-                  // magic number of faking previous x and y location
-                  if (animateNewValues) {
-                    return {
-                      ...entry,
-                      x: interpolate(width * 2, entry.x, t),
-                      y: interpolate(height / 2, entry.y, t),
-                    };
-                  }
-                  return {
-                    ...entry,
-                    x: entry.x,
-                    y: entry.y,
-                  };
-                });
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = stepData;
+          /*
+           * Here it is important to wait a little bit with updating the previousPointsRef
+           * before the animation has a time to initialize.
+           * If we set the previous pointsRef immediately, we set it before the Legend height it calculated
+           * and before pathRef is set.
+           * If that happens, the Line will re-render again after Legend had reported its height
+           * which will start a new animation with the previous points as the starting point
+           * which gives the effect of the Line animating slightly upwards (where the animation distance equals the Legend height).
+           * Waiting for t > 0 is indirect but good enough to ensure that the Legend height is calculated and animation works properly.
+           *
+           * Total length similarly is calculated from the pathRef. We should not update the previousPointsRef
+           * before the pathRef is set, otherwise we will have a wrong total length.
+           */
+          if (t > 0 && totalLength > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = points;
+            /*
+             * totalLength is set from a ref and is not updated in the first tick of the animation.
+             * It defaults to zero which is exactly what we want here because we want to grow from zero,
+             * however the same happens when the data change.
+             *
+             * In that case we want to remember the previous length and continue from there, and only animate the shape.
+             *
+             * Therefore the totalLength > 0 check.
+             *
+             * The Animate is about to fire handleAnimationStart which will update the state
+             * and cause a re-render and read a new proper totalLength which will be used in the next tick
+             * and update the longestAnimatedLengthRef.
+             */
+            // eslint-disable-next-line no-param-reassign
+            longestAnimatedLengthRef.current = curLength;
+          }
           return (
             <StaticCurve
               props={props}
-              points={stepData}
+              points={points}
               clipPathId={clipPathId}
               pathRef={pathRef}
-              showLabels={!isAnimating}
               strokeDasharray={currentStrokeDasharray}
             />
           );
-        }
-
-        /*
-         * Here it is important to wait a little bit with updating the previousPointsRef
-         * before the animation has a time to initialize.
-         * If we set the previous pointsRef immediately, we set it before the Legend height it calculated
-         * and before pathRef is set.
-         * If that happens, the Line will re-render again after Legend had reported its height
-         * which will start a new animation with the previous points as the starting point
-         * which gives the effect of the Line animating slightly upwards (where the animation distance equals the Legend height).
-         * Waiting for t > 0 is indirect but good enough to ensure that the Legend height is calculated and animation works properly.
-         *
-         * Total length similarly is calculated from the pathRef. We should not update the previousPointsRef
-         * before the pathRef is set, otherwise we will have a wrong total length.
-         */
-        if (t > 0 && totalLength > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = points;
-          /*
-           * totalLength is set from a ref and is not updated in the first tick of the animation.
-           * It defaults to zero which is exactly what we want here because we want to grow from zero,
-           * however the same happens when the data change.
-           *
-           * In that case we want to remember the previous length and continue from there, and only animate the shape.
-           *
-           * Therefore the totalLength > 0 check.
-           *
-           * The Animate is about to fire handleAnimationStart which will update the state
-           * and cause a re-render and read a new proper totalLength which will be used in the next tick
-           * and update the longestAnimatedLengthRef.
-           */
-          // eslint-disable-next-line no-param-reassign
-          longestAnimatedLengthRef.current = curLength;
-        }
-        return (
-          <StaticCurve
-            props={props}
-            points={points}
-            clipPathId={clipPathId}
-            pathRef={pathRef}
-            showLabels={!isAnimating}
-            strokeDasharray={currentStrokeDasharray}
-          />
-        );
-      }}
-    </JavascriptAnimate>
+        }}
+      </JavascriptAnimate>
+      <LabelListFromLabelProp label={props.label} />
+      {props.children}
+    </LineLabelListProvider>
   );
 }
 
@@ -577,7 +618,6 @@ class LineWithState extends Component<InternalProps> {
               )}
             </defs>
           )}
-          <RenderCurve props={this.props} clipPathId={clipPathId} />
           <SetErrorBarContext
             xAxisId={xAxisId}
             yAxisId={yAxisId}
@@ -585,7 +625,7 @@ class LineWithState extends Component<InternalProps> {
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
           >
-            {this.props.children}
+            <RenderCurve props={this.props} clipPathId={clipPathId} />
           </SetErrorBarContext>
         </Layer>
         <ActivePoints

@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
-import { addErrorBar, ErrorBarsSettings, removeErrorBar } from '../state/errorBarSlice';
+import { addErrorBar, ErrorBarsSettings, removeErrorBar, replaceErrorBar } from '../state/errorBarSlice';
 import { useAppDispatch } from '../state/hooks';
 import { useGraphicalItemId } from './RegisterGraphicalItemId';
-
-const noop = () => {};
+import { useWhyDidYouRender } from '../../test/helper/useWhyDidYouRender';
 
 type ErrorBarContextType<T> = {
   data: ReadonlyArray<T> | undefined;
@@ -36,17 +35,30 @@ export const useErrorBarContext = () => useContext(ErrorBarContext);
 export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
   const dispatch = useAppDispatch();
   const graphicalItemId = useGraphicalItemId();
+  const prevPropsRef = useRef<ErrorBarsSettings | null>(null);
+  useWhyDidYouRender('ReportErrorBarSettings', props, { graphicalItemId });
 
   useEffect(() => {
     if (graphicalItemId == null) {
       // ErrorBar outside a graphical item context does not do anything.
-      return noop;
+      return;
     }
-    const payload = { itemId: graphicalItemId, errorBar: props };
-    dispatch(addErrorBar(payload));
-    return () => {
-      dispatch(removeErrorBar(payload));
-    };
+    if (prevPropsRef.current === null) {
+      dispatch(addErrorBar({ itemId: graphicalItemId, errorBar: props }));
+    } else if (prevPropsRef.current !== props) {
+      dispatch(replaceErrorBar({ itemId: graphicalItemId, prev: prevPropsRef.current, next: props }));
+    }
+    prevPropsRef.current = props;
   }, [dispatch, graphicalItemId, props]);
+
+  useEffect(() => {
+    return () => {
+      if (prevPropsRef.current != null) {
+        dispatch(removeErrorBar({ itemId: graphicalItemId, errorBar: prevPropsRef.current }));
+        prevPropsRef.current = null;
+      }
+    };
+  }, [dispatch, graphicalItemId]);
+
   return null;
 }

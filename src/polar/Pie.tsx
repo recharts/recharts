@@ -46,6 +46,7 @@ import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PieSettings } from '../state/types/PieSettings';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { LabelListFromLabelProp, PolarLabelListContextProvider, PolarLabelListEntry } from '../component/LabelList';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -206,7 +207,6 @@ type PieSectorsProps = {
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: InternalProps;
-  showLabels: boolean;
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
@@ -370,8 +370,24 @@ function PieLabels({
   return <Layer className="recharts-pie-labels">{labels}</Layer>;
 }
 
+function PieLabelList({
+  sectors,
+  props,
+  showLabels,
+}: {
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  props: InternalProps;
+  showLabels: boolean;
+}) {
+  const { label } = props;
+  if (typeof label === 'object' && label != null && 'position' in label) {
+    return <LabelListFromLabelProp label={props.label} />;
+  }
+  return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
+}
+
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, showLabels } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -422,7 +438,6 @@ function PieSectors(props: PieSectorsProps) {
           </Layer>
         );
       })}
-      <PieLabels sectors={sectors} props={allOtherPieProps} showLabels={showLabels} />
     </>
   );
 }
@@ -512,6 +527,44 @@ export function computePieSectors({
   return sectors;
 }
 
+function PieLabelListProvider({
+  showLabels,
+  sectors,
+  children,
+}: {
+  showLabels: boolean;
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  children: ReactNode;
+}) {
+  const labelListEntries: ReadonlyArray<PolarLabelListEntry> = useMemo(() => {
+    if (!showLabels || !sectors) {
+      return [];
+    }
+    return sectors.map(
+      (entry): PolarLabelListEntry => ({
+        value: entry.value,
+        payload: entry.payload,
+        clockWise: false,
+        parentViewBox: undefined,
+        viewBox: {
+          cx: entry.cx,
+          cy: entry.cy,
+          innerRadius: entry.innerRadius,
+          outerRadius: entry.outerRadius,
+          startAngle: entry.startAngle,
+          endAngle: entry.endAngle,
+          clockWise: false,
+        },
+      }),
+    );
+  }, [sectors, showLabels]);
+  return (
+    <PolarLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </PolarLabelListContextProvider>
+  );
+}
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -550,65 +603,68 @@ function SectorsWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      onAnimationStart={handleAnimationStart}
-      onAnimationEnd={handleAnimationEnd}
-      key={animationId}
-    >
-      {(t: number) => {
-        const stepData: PieSectorDataItem[] = [];
-        const first = sectors && sectors[0];
-        let curAngle = first?.startAngle;
+    <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        onAnimationStart={handleAnimationStart}
+        onAnimationEnd={handleAnimationEnd}
+        key={animationId}
+      >
+        {(t: number) => {
+          const stepData: PieSectorDataItem[] = [];
+          const first = sectors && sectors[0];
+          let curAngle = first?.startAngle;
 
-        sectors?.forEach((entry, index) => {
-          const prev = prevSectors && prevSectors[index];
-          const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
+          sectors?.forEach((entry, index) => {
+            const prev = prevSectors && prevSectors[index];
+            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
-          if (prev) {
-            const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
-            const latest = {
-              ...entry,
-              startAngle: curAngle + paddingAngle,
-              endAngle: curAngle + angleIp(t) + paddingAngle,
-            };
+            if (prev) {
+              const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + angleIp(t) + paddingAngle,
+              };
 
-            stepData.push(latest);
-            curAngle = latest.endAngle;
-          } else {
-            const { endAngle, startAngle } = entry;
-            const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
-            const deltaAngle = interpolatorAngle(t);
-            const latest = {
-              ...entry,
-              startAngle: curAngle + paddingAngle,
-              endAngle: curAngle + deltaAngle + paddingAngle,
-            };
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            } else {
+              const { endAngle, startAngle } = entry;
+              const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
+              const deltaAngle = interpolatorAngle(t);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + deltaAngle + paddingAngle,
+              };
 
-            stepData.push(latest);
-            curAngle = latest.endAngle;
-          }
-        });
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            }
+          });
 
-        // eslint-disable-next-line no-param-reassign
-        previousSectorsRef.current = stepData;
-        return (
-          <Layer>
-            <PieSectors
-              sectors={stepData}
-              activeShape={activeShape}
-              inactiveShape={inactiveShape}
-              allOtherPieProps={props}
-              showLabels={!isAnimating}
-            />
-          </Layer>
-        );
-      }}
-    </JavascriptAnimate>
+          // eslint-disable-next-line no-param-reassign
+          previousSectorsRef.current = stepData;
+          return (
+            <Layer>
+              <PieSectors
+                sectors={stepData}
+                activeShape={activeShape}
+                inactiveShape={inactiveShape}
+                allOtherPieProps={props}
+              />
+            </Layer>
+          );
+        }}
+      </JavascriptAnimate>
+      <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
+      {props.children}
+    </PieLabelListProvider>
   );
 }
 
@@ -697,7 +753,6 @@ export function Pie(outsideProps: Props) {
           />
           <SetPiePayloadLegend {...propsWithoutId} id={id} />
           <PieImpl {...propsWithoutId} id={id} />
-          {propsWithoutId.children}
         </>
       )}
     </RegisterGraphicalItemId>

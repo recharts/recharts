@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import * as React from 'react';
-import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
@@ -8,7 +8,12 @@ import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
-import { ImplicitLabelListType, LabelList } from '../component/LabelList';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  ImplicitLabelListType,
+  LabelListFromLabelProp,
+} from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -46,31 +51,36 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
   payload?: any;
   isActive: boolean;
   tooltipPosition: Coordinate;
+  /**
+   * The maximum width of the trapezoid, which is the maximum of upperWidth and lowerWidth
+   */
+  width: number;
 }
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalFunnelProps {
-  trapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
-  className?: string;
-  dataKey: DataKey<any>;
-  nameKey?: DataKey<any>;
-  data?: any[];
-  hide?: boolean;
-  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  lastShapeType?: 'triangle' | 'rectangle';
-  reversed?: boolean;
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
-  isAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
+  className?: string;
+  data?: any[];
+  dataKey: DataKey<any>;
+  hide?: boolean;
   id?: string;
+  isAnimationActive?: boolean;
+  label?: ImplicitLabelListType;
+  lastShapeType?: 'triangle' | 'rectangle';
+  legendType?: LegendType;
+  nameKey?: DataKey<any>;
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+  reversed?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  tooltipType?: TooltipType;
+  trapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
 }
 
 /**
@@ -87,7 +97,7 @@ interface FunnelProps {
   hide?: boolean;
   id?: string;
   isAnimationActive?: boolean;
-  label?: ImplicitLabelListType<any>;
+  label?: ImplicitLabelListType;
   lastShapeType?: 'triangle' | 'rectangle';
   legendType?: LegendType;
   nameKey?: DataKey<any>;
@@ -114,7 +124,6 @@ type FunnelComposedData = {
 type FunnelTrapezoidsProps = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   allOtherFunnelProps: Props;
-  showLabels: boolean;
 };
 
 function getTooltipEntrySettings(
@@ -139,8 +148,39 @@ function getTooltipEntrySettings(
   };
 }
 
+function FunnelLabelListProvider({
+  showLabels,
+  trapezoids,
+  children,
+}: {
+  showLabels: boolean;
+  trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
+  children: ReactNode;
+}) {
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
+    if (!showLabels) {
+      return null;
+    }
+    return trapezoids.map(
+      (entry): CartesianLabelListEntry => ({
+        value: entry.name,
+        payload: entry.payload,
+        parentViewBox: undefined,
+        viewBox: {
+          x: entry.x,
+          y: entry.y,
+          width: entry.width,
+          height: entry.height,
+        },
+      }),
+    );
+  }, [showLabels, trapezoids]);
+
+  return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
+}
+
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, allOtherFunnelProps, showLabels } = props;
+  const { trapezoids, allOtherFunnelProps } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -185,7 +225,6 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           </Layer>
         );
       })}
-      {showLabels && LabelList.renderCallByParent(allOtherFunnelProps, trapezoids)}
     </>
   );
 }
@@ -209,6 +248,7 @@ function TrapezoidsWithAnimation({
   const prevTrapezoids = previousTrapezoidsRef.current;
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const showLabels = !isAnimating;
 
   const animationId = useAnimationId(trapezoids, 'recharts-funnel-');
 
@@ -227,29 +267,46 @@ function TrapezoidsWithAnimation({
   }, [onAnimationStart]);
 
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      key={animationId}
-      onAnimationStart={handleAnimationStart}
-      onAnimationEnd={handleAnimationEnd}
-    >
-      {(t: number) => {
-        const stepData =
-          t === 1
-            ? trapezoids
-            : trapezoids.map((entry: FunnelTrapezoidItem, index: number) => {
-                const prev = prevTrapezoids && prevTrapezoids[index];
+    <FunnelLabelListProvider showLabels={showLabels} trapezoids={trapezoids}>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        key={animationId}
+        onAnimationStart={handleAnimationStart}
+        onAnimationEnd={handleAnimationEnd}
+      >
+        {(t: number) => {
+          const stepData =
+            t === 1
+              ? trapezoids
+              : trapezoids.map((entry: FunnelTrapezoidItem, index: number) => {
+                  const prev = prevTrapezoids && prevTrapezoids[index];
 
-                if (prev) {
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
-                  const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
-                  const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
-                  const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+                  if (prev) {
+                    const interpolatorX = interpolateNumber(prev.x, entry.x);
+                    const interpolatorY = interpolateNumber(prev.y, entry.y);
+                    const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
+                    const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
+                    const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+
+                    return {
+                      ...entry,
+                      x: interpolatorX(t),
+                      y: interpolatorY(t),
+                      upperWidth: interpolatorUpperWidth(t),
+                      lowerWidth: interpolatorLowerWidth(t),
+                      height: interpolatorHeight(t),
+                    };
+                  }
+
+                  const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
+                  const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
+                  const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
+                  const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
+                  const interpolatorHeight = interpolateNumber(0, entry.height);
 
                   return {
                     ...entry,
@@ -259,35 +316,22 @@ function TrapezoidsWithAnimation({
                     lowerWidth: interpolatorLowerWidth(t),
                     height: interpolatorHeight(t),
                   };
-                }
+                });
 
-                const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
-                const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
-                const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
-                const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
-                const interpolatorHeight = interpolateNumber(0, entry.height);
-
-                return {
-                  ...entry,
-                  x: interpolatorX(t),
-                  y: interpolatorY(t),
-                  upperWidth: interpolatorUpperWidth(t),
-                  lowerWidth: interpolatorLowerWidth(t),
-                  height: interpolatorHeight(t),
-                };
-              });
-
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousTrapezoidsRef.current = stepData;
-        }
-        return (
-          <Layer>
-            <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={props} showLabels={!isAnimating} />
-          </Layer>
-        );
-      }}
-    </JavascriptAnimate>
+          if (t > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousTrapezoidsRef.current = stepData;
+          }
+          return (
+            <Layer>
+              <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={props} />
+            </Layer>
+          );
+        }}
+      </JavascriptAnimate>
+      <LabelListFromLabelProp label={props.label} />
+      {props.children}
+    </FunnelLabelListProvider>
   );
 }
 

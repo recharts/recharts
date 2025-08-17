@@ -1,22 +1,18 @@
-import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './LabelList.stories';
 
 # LabelList
 
-The LabelList component is used to display a label for a component.
+The LabelList component displays one label for each data point in a series.
 
 <Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={ComponentStories} />
-</Canvas>
+<Canvas of={ComponentStories.API} layout='padded' />
 
 ## Parent Components
 
 The LabelList can be used within a `<Area />`, `<Bar />`, `<Line />`, `<Scatter />`, `<Pie />`, `<Radar />`, `<RadialBar />`, or `<Funnel />`
 
 ## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
 
 <Controls of={ComponentStories.API} />

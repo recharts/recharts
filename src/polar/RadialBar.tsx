@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, useCallback, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
@@ -9,7 +9,12 @@ import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { ImplicitLabelListType, LabelList } from '../component/LabelList';
+import {
+  ImplicitLabelListType,
+  LabelListFromLabelProp,
+  PolarLabelListContextProvider,
+  PolarLabelListEntry,
+} from '../component/LabelList';
 import { Cell } from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 import {
@@ -69,6 +74,40 @@ type RadialBarSectorsProps = {
   showLabels: boolean;
 };
 
+function RadialBarLabelListProvider({
+  showLabels,
+  sectors,
+  children,
+}: {
+  showLabels: boolean;
+  sectors: ReadonlyArray<RadialBarDataItem>;
+  children: ReactNode;
+}) {
+  const labelListEntries: ReadonlyArray<PolarLabelListEntry> = sectors.map(
+    (sector): PolarLabelListEntry => ({
+      value: sector.value,
+      payload: sector.payload,
+      parentViewBox: undefined,
+      clockWise: false,
+      viewBox: {
+        cx: sector.cx,
+        cy: sector.cy,
+        innerRadius: sector.innerRadius,
+        outerRadius: sector.outerRadius,
+        startAngle: sector.startAngle,
+        endAngle: sector.endAngle,
+        clockWise: false,
+      },
+    }),
+  );
+
+  return (
+    <PolarLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </PolarLabelListContextProvider>
+  );
+}
+
 function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
@@ -90,7 +129,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   }
 
   return (
-    <>
+    <RadialBarLabelListProvider showLabels={showLabels} sectors={sectors}>
       {sectors.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
         // @ts-expect-error the types need a bit of attention
@@ -119,8 +158,9 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
 
         return <RadialBarSector {...radialBarSectorProps} />;
       })}
-      {showLabels && LabelList.renderCallByParent(allOtherRadialBarProps, sectors)}
-    </>
+      <LabelListFromLabelProp label={allOtherRadialBarProps.label} />
+      {allOtherRadialBarProps.children}
+    </RadialBarLabelListProvider>
   );
 }
 
@@ -240,7 +280,7 @@ interface InternalRadialBarProps {
   legendType?: LegendType;
   tooltipType?: TooltipType;
   hide?: boolean;
-  label?: ImplicitLabelListType<any>;
+  label?: ImplicitLabelListType;
   stackId?: string | number;
   background?: RadialBarBackground;
   onAnimationStart?: () => void;

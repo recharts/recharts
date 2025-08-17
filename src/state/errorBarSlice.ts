@@ -40,6 +40,17 @@ const errorBarSlice = createSlice({
       }
       state[itemId].push(errorBar);
     },
+    replaceErrorBar: (
+      state,
+      action: PayloadAction<{ itemId: GraphicalItemId; prev: ErrorBarsSettings; next: ErrorBarsSettings }>,
+    ) => {
+      const { itemId, prev, next } = action.payload;
+      if (state[itemId]) {
+        state[itemId] = state[itemId].map(e =>
+          e.dataKey === prev.dataKey && e.direction === prev.direction ? next : e,
+        );
+      }
+    },
     removeErrorBar: (state, action: PayloadAction<{ itemId: GraphicalItemId; errorBar: ErrorBarsSettings }>) => {
       const { itemId, errorBar } = action.payload;
       if (state[itemId]) {
@@ -49,6 +60,6 @@ const errorBarSlice = createSlice({
   },
 });
 
-export const { addErrorBar, removeErrorBar } = errorBarSlice.actions;
+export const { addErrorBar, replaceErrorBar, removeErrorBar } = errorBarSlice.actions;
 
 export const errorBarReducer = errorBarSlice.reducer;

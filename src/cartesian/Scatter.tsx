@@ -1,9 +1,14 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
-import { ImplicitLabelListType, LabelList } from '../component/LabelList';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  LabelListFromLabelProp,
+  ImplicitLabelListType,
+} from '../component/LabelList';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
@@ -52,6 +57,7 @@ import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { useViewBox } from '../context/chartLayoutContext';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -60,9 +66,36 @@ interface ScatterPointNode {
 }
 
 export interface ScatterPointItem {
-  cx?: number;
-  cy?: number;
-  size?: number;
+  /**
+   * The x coordinate of the point center in pixels.
+   */
+  cx: number;
+  /**
+   * The y coordinate of the point center in pixels.
+   */
+  cy: number;
+  /**
+   * The x coordinate (in pixels) of the top-left corner of the rectangle that wraps the point.
+   */
+  x: number;
+  /**
+   * The y coordinate (in pixels) of the top-left corner of the rectangle that wraps the point.
+   */
+  y: number;
+  /**
+   * ScatterPointItem size is an abstract number that is used to calculate the radius of the point.
+   * It's not the radius itself, but rather a value that is used to calculate the radius.
+   * Interacts with the zAxis range.
+   */
+  size: number;
+  /**
+   * Width of the point in pixels.
+   */
+  width: number;
+  /**
+   * Height of the point in pixels.
+   */
+  height: number;
   node?: ScatterPointNode;
   payload?: any;
   tooltipPayload?: TooltipPayload;
@@ -94,7 +127,7 @@ interface ScatterInternalProps {
   shape: ScatterCustomizedShape;
   points: ReadonlyArray<ScatterPointItem>;
   hide: boolean;
-  label?: ImplicitLabelListType<any>;
+  label?: ImplicitLabelListType;
 
   isAnimationActive: boolean;
   animationBegin: number;
@@ -126,7 +159,7 @@ interface ScatterProps {
   activeShape?: ScatterCustomizedShape;
   shape?: ScatterCustomizedShape;
   hide?: boolean;
-  label?: ImplicitLabelListType<any>;
+  label?: ImplicitLabelListType;
 
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -207,8 +240,56 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
   );
 }
 
+function ScatterLabelListProvider({
+  showLabels,
+  points,
+  children,
+}: {
+  showLabels: boolean;
+  points: ReadonlyArray<ScatterPointItem>;
+  children: ReactNode;
+}) {
+  const chartViewBox = useViewBox();
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
+    return points?.map((point): CartesianLabelListEntry => {
+      const viewBox = {
+        /*
+         * Scatter label uses x and y as the reference point for the label,
+         * not cx and cy.
+         */
+        x: point.x,
+        /*
+         * Scatter label uses x and y as the reference point for the label,
+         * not cx and cy.
+         */
+        y: point.y,
+        width: point.width,
+        height: point.height,
+      };
+      return {
+        ...viewBox,
+        /*
+         * Here we put undefined because Scatter shows two values usually, one for X and one for Y.
+         * LabelList will see this undefined and will use its own `dataKey` prop to determine which value to show,
+         * using the payload below.
+         */
+        value: undefined,
+        payload: point.payload,
+        viewBox,
+        parentViewBox: chartViewBox,
+      };
+    });
+  }, [chartViewBox, points]);
+
+  return (
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </CartesianLabelListContextProvider>
+  );
+}
+
 function ScatterSymbols(props: ScatterSymbolsProps) {
-  const { points, showLabels, allOtherScatterProps } = props;
+  const { points, allOtherScatterProps } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -256,12 +337,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           >
-            {/* @ts-expect-error recharts cx, cy is not compatible with SVG cx, cy */}
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
           </Layer>
         );
       })}
-      {showLabels && LabelList.renderCallByParent(allOtherPropsWithoutId, points)}
     </>
   );
 }
@@ -294,53 +373,62 @@ function SymbolsWithAnimation({
     // }
     setIsAnimating(true);
   }, []);
+
+  const showLabels = !isAnimating;
+
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      onAnimationEnd={handleAnimationEnd}
-      onAnimationStart={handleAnimationStart}
-      key={animationId}
-    >
-      {(t: number) => {
-        const stepData =
-          t === 1
-            ? points
-            : points.map((entry, index) => {
-                const prev = prevPoints && prevPoints[index];
+    <>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        onAnimationEnd={handleAnimationEnd}
+        onAnimationStart={handleAnimationStart}
+        key={animationId}
+      >
+        {(t: number) => {
+          const stepData =
+            t === 1
+              ? points
+              : points?.map((entry, index) => {
+                  const prev = prevPoints && prevPoints[index];
 
-                if (prev) {
-                  const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
-                  const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
-                  const interpolatorSize = interpolateNumber(prev.size, entry.size);
+                  if (prev) {
+                    const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
+                    const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
+                    const interpolatorSize = interpolateNumber(prev.size, entry.size);
 
-                  return {
-                    ...entry,
-                    cx: interpolatorCx(t),
-                    cy: interpolatorCy(t),
-                    size: interpolatorSize(t),
-                  };
-                }
+                    return {
+                      ...entry,
+                      cx: interpolatorCx(t),
+                      cy: interpolatorCy(t),
+                      size: interpolatorSize(t),
+                    };
+                  }
 
-                const interpolator = interpolateNumber(0, entry.size);
+                  const interpolator = interpolateNumber(0, entry.size);
 
-                return { ...entry, size: interpolator(t) };
-              });
+                  return { ...entry, size: interpolator(t) };
+                });
 
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = stepData;
-        }
-        return (
-          <Layer>
-            <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={!isAnimating} />
-          </Layer>
-        );
-      }}
-    </JavascriptAnimate>
+          if (t > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = stepData;
+          }
+          return (
+            <Layer>
+              <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={showLabels} />
+            </Layer>
+          );
+        }}
+      </JavascriptAnimate>
+      <ScatterLabelListProvider showLabels={showLabels} points={points}>
+        <LabelListFromLabelProp label={props.label} />
+        {props.children}
+      </ScatterLabelListProvider>
+    </>
   );
 }
 
@@ -494,7 +582,7 @@ const errorBarDataPointFormatter = (
 };
 
 function ScatterWithId(props: InternalProps) {
-  const { hide, points, className, needClip, xAxisId, yAxisId, id, children } = props;
+  const { hide, points, className, needClip, xAxisId, yAxisId, id } = props;
   const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
   if (hide) {
     return null;
@@ -516,11 +604,10 @@ function ScatterWithId(props: InternalProps) {
         dataPointFormatter={errorBarDataPointFormatter}
         errorBarOffset={0}
       >
-        {children}
+        <Layer key="recharts-scatter-symbols">
+          <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+        </Layer>
       </SetErrorBarContext>
-      <Layer key="recharts-scatter-symbols">
-        <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
-      </Layer>
     </Layer>
   );
 }

@@ -1,4 +1,42 @@
-import { StorybookArgs } from '../../../StorybookArgs';
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
+
+export const positionProp: StorybookArg = {
+  description: 'The position of label relative to the view box. (Optional)',
+  control: { type: 'select' },
+  options: [
+    'top',
+    'left',
+    'right',
+    'bottom',
+    'inside',
+    'outside',
+    'insideLeft',
+    'insideRight',
+    'insideTop',
+    'insideBottom',
+    'insideTopLeft',
+    'insideBottomLeft',
+    'insideTopRight',
+    'insideBottomRight',
+    'insideStart',
+    'insideEnd',
+    'end',
+    'center',
+    'centerTop',
+    'centerBottom',
+    'middle',
+  ],
+  table: {
+    type: {
+      summary:
+        'top, left, right, bottom, inside, outside, insideLeft, ' +
+        'insideRight, insideTop, insideBottom, insideTopLeft, ' +
+        'insideBottomLeft, insideTopRight, insideBottomRight, ' +
+        'insideStart, insideEnd, end, center, centerTop, centerBottom, middle',
+    },
+    category: 'General',
+  },
+};
 
 export const LabelListProps: StorybookArgs = {
   dataKey: {
@@ -29,19 +67,7 @@ export const LabelListProps: StorybookArgs = {
       },
     },
   },
-  position: {
-    description: 'The position of each label relative to it view box.',
-    table: {
-      type: {
-        summary:
-          '"top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | ' +
-          '"insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | ' +
-          '"insideBottomLeft" | "insideTopRight" | "insideBottomRight" | ' +
-          '"insideStart" | "insideEnd" | "end" | "center" | "centerTop" | "centerBottom" | "middle"',
-      },
-      category: 'General',
-    },
-  },
+  position: positionProp,
   offset: {
     description: 'The offset to the specified "position"',
     defaultValue: 5,
@@ -57,16 +83,6 @@ export const LabelListProps: StorybookArgs = {
     table: {
       type: {
         summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  data: {
-    description: 'The data input to the charts.',
-    defaultValue: 5,
-    table: {
-      type: {
-        summary: 'Number',
       },
       category: 'General',
     },
