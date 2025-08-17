@@ -15,7 +15,7 @@ import { curry } from './utils';
  * @param  {Number} value The number
  * @return {Integer}      Digit count
  */
-function getDigitCount(value: number) {
+function getDigitCount(value: number): number {
   let result;
 
   if (value === 0) {
@@ -60,7 +60,7 @@ function rangeStep(start: Decimal, end: Decimal, step: Decimal): Array<number> {
  * @param  {Number} t  A value in [0, 1]
  * @return {Number}    A value in the domain
  */
-const interpolateNumber = curry((a: number, b: number, t: number) => {
+const interpolateNumber = curry((a: number, b: number, t: number): number => {
   const newA = +a;
   const newB = +b;
 
@@ -75,7 +75,7 @@ const interpolateNumber = curry((a: number, b: number, t: number) => {
  * @param  {Number} x Can be considered as an output value after interpolation
  * @return {Number}   When x is in the range a ~ b, the return value is in [0, 1]
  */
-const uninterpolateNumber = curry((a: number, b: number, x: number) => {
+const uninterpolateNumber = curry((a: number, b: number, x: number): number => {
   let diff = b - +a;
 
   diff = diff || Infinity;
@@ -92,7 +92,7 @@ const uninterpolateNumber = curry((a: number, b: number, x: number) => {
  * @return {Number}   When x is in the interval a ~ b, the return value is in [0, 1].
  *                    When x is not in the interval a ~ b, it will be truncated to the interval a ~ b.
  */
-const uninterpolateTruncation = curry((a: number, b: number, x: number) => {
+const uninterpolateTruncation = curry((a: number, b: number, x: number): number => {
   let diff = b - +a;
 
   diff = diff || Infinity;

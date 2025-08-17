@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectContainerScale } from '../state/selectors/containerSelectors';
 import { setScale } from '../state/layoutSlice';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 
-export function useReportScale() {
+export function useReportScale(): Dispatch<SetStateAction<HTMLElement | null>> {
   const dispatch = useAppDispatch();
   const [ref, setRef] = useState<HTMLElement | null>(null);
   const scale = useAppSelector(selectContainerScale);
