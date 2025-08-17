@@ -21,6 +21,8 @@ import {
   LabelList,
   XAxis,
   YAxis,
+  FunnelChart,
+  Funnel,
 } from '../../src';
 import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
 
@@ -272,6 +274,8 @@ export const RadialBarImplicitLabelListTest = () => (
         key={position}
         dataKey="uv"
         fill="none"
+        stroke="blue"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -290,7 +294,7 @@ export const RadialBarExplicitLabelListTest = () => (
     barSize={20}
     data={shortData}
   >
-    <RadialBar dataKey="uv" fill="none">
+    <RadialBar dataKey="uv" fill="none" stroke="blue" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
@@ -303,4 +307,38 @@ export const RadialBarExplicitLabelListTest = () => (
       ))}
     </RadialBar>
   </RadialBarChart>
+);
+
+export const FunnelImplicitLabelListTest = () => (
+  <FunnelChart width={800} height={500} data={shortFillColorData} margin={margin}>
+    {availablePositions.map(position => (
+      <Funnel
+        key={position}
+        type="monotone"
+        dataKey="uv"
+        stroke="#8884d8"
+        fill="none"
+        isAnimationActive={false}
+        label={{ position, offset: 80, angle: -30, valueAccessor: () => position }}
+      />
+    ))}
+    <LabelList />
+  </FunnelChart>
+);
+
+export const FunnelExplicitLabelListTest = () => (
+  <FunnelChart width={800} height={500} data={shortFillColorData} margin={margin}>
+    <Funnel type="monotone" dataKey="uv" stroke="#8884d8" fill="none" isAnimationActive={false}>
+      {availablePositions.map(position => (
+        <LabelList
+          key={position}
+          position={position}
+          offset={80}
+          angle={-30}
+          className={position}
+          valueAccessor={() => position}
+        />
+      ))}
+    </Funnel>
+  </FunnelChart>
 );
