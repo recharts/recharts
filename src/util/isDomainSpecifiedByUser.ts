@@ -55,7 +55,7 @@ export function extendDomain(
 export function numericalDomainSpecifiedWithoutRequiringData(
   userDomain: AxisDomain | undefined,
   allowDataOverflow: boolean,
-) {
+): NumberDomain | undefined {
   if (!allowDataOverflow) {
     // Cannot compute data overflow if the data is not provided
     return undefined;

@@ -26,6 +26,6 @@ export function typeGuardTrapezoidProps(option: SVGProps<SVGPathElement>, props:
 
 export type FunnelTrapezoidProps = { option: FunnelProps['activeShape'] } & FunnelTrapezoidItem;
 
-export function FunnelTrapezoid(props: FunnelTrapezoidProps) {
+export function FunnelTrapezoid(props: FunnelTrapezoidProps): React.JSX.Element {
   return <Shape shapeType="trapezoid" propTransformer={typeGuardTrapezoidProps} {...props} />;
 }

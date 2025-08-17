@@ -35,6 +35,6 @@ export interface RadialBarSectorProps extends SectorProps {
   isActive?: boolean;
 }
 
-export function RadialBarSector(props: RadialBarSectorProps) {
+export function RadialBarSector(props: RadialBarSectorProps): React.JSX.Element {
   return <Shape shapeType="sector" propTransformer={typeGuardSectorProps} {...props} />;
 }

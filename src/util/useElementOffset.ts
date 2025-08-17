@@ -50,7 +50,7 @@ export type SetElementOffset = (node: HTMLElement | null) => void;
 export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = []): [ElementOffset, SetElementOffset] {
   const [lastBoundingBox, setLastBoundingBox] = useState<ElementOffset>({ height: 0, left: 0, top: 0, width: 0 });
   const updateBoundingBox = useCallback(
-    (node: HTMLDivElement | null) => {
+    (node: HTMLDivElement | null): void => {
       if (node != null) {
         const rect = node.getBoundingClientRect();
         const box: ElementOffset = {

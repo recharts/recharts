@@ -31,7 +31,10 @@ export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
 
-function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
+function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
+  option: OptionType,
+  props: ExtraProps,
+): ShapePropsType {
   return {
     ...props,
     ...option,
@@ -81,7 +84,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
   activeClassName = 'recharts-active-shape',
   isActive,
   ...props
-}: ShapeProps<OptionType, ExtraProps, ShapePropsType>) {
+}: ShapeProps<OptionType, ExtraProps, ShapePropsType>): React.JSX.Element {
   let shape: React.JSX.Element;
 
   if (isValidElement(option)) {
