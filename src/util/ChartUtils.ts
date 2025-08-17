@@ -187,7 +187,7 @@ export const appendOffsetOfLegend = (
   return offset;
 };
 
-export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType) =>
+export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType): boolean =>
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis') ||
   (layout === 'centric' && axisType === 'angleAxis') ||
@@ -352,7 +352,7 @@ export const getTicksOfAxis = (
 };
 
 const EPS = 1e-4;
-export const checkDomainOfScale = (scale: any) => {
+export const checkDomainOfScale = (scale: any): void => {
   const domain = scale.domain();
 
   if (!domain || domain.length <= 2) {

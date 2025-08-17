@@ -1,6 +1,9 @@
 import { Coordinate, Size } from './types';
 
-export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: Coordinate) => ({
+export const rectWithPoints = (
+  { x: x1, y: y1 }: Coordinate,
+  { x: x2, y: y2 }: Coordinate,
+): { x: number; y: number; width: number; height: number } => ({
   x: Math.min(x1, x2),
   y: Math.min(y1, y2),
   width: Math.abs(x2 - x1),
@@ -12,8 +15,17 @@ export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: C
  * @param  {Object} coords     x1, x2, y1, and y2
  * @return {Object} object
  */
-export const rectWithCoords = ({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) =>
-  rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
+export const rectWithCoords = ({
+  x1,
+  y1,
+  x2,
+  y2,
+}: {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}): { x: number; y: number; width: number; height: number } => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
 
 export class ScaleHelper {
   static EPS = 1e-4;
@@ -132,7 +144,7 @@ export function normalizeAngle(angle: number): number {
  * @param {number} angle Angle in degrees in which the text is displayed.
  * @return {number} The width of the largest horizontal line that fits inside a rectangle that is displayed at an angle.
  */
-export const getAngledRectangleWidth = ({ width, height }: Size, angle: number | undefined = 0) => {
+export const getAngledRectangleWidth = ({ width, height }: Size, angle: number | undefined = 0): number => {
   // Ensure angle is >= 0 && < 180
   const normalizedAngle = normalizeAngle(angle);
   const angleRadians = (normalizedAngle * Math.PI) / 180;

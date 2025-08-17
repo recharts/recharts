@@ -1,13 +1,13 @@
-const identity = (i: any) => i;
+const identity = (i: any): any => i;
 
 export const PLACE_HOLDER = {
   '@@functional/placeholder': true,
 };
 
-const isPlaceHolder = (val: any) => val === PLACE_HOLDER;
+const isPlaceHolder = (val: any): boolean => val === PLACE_HOLDER;
 
-const curry0 = (fn: (...args: any[]) => any) =>
-  function _curried(...args: any[]) {
+const curry0 = (fn: (...args: any[]) => any): ((...args: any[]) => any) =>
+  function _curried(...args: any[]): any {
     if (args.length === 0 || (args.length === 1 && isPlaceHolder(args[0]))) {
       return _curried;
     }
@@ -15,12 +15,12 @@ const curry0 = (fn: (...args: any[]) => any) =>
     return fn(...args);
   };
 
-const curryN = (n: number, fn: (...args: any[]) => any) => {
+const curryN = (n: number, fn: (...args: any[]) => any): ((...args: any[]) => any) => {
   if (n === 1) {
     return fn;
   }
 
-  return curry0((...args: any[]) => {
+  return curry0((...args: any[]): any => {
     const argsLength = args.filter(arg => arg !== PLACE_HOLDER).length;
 
     if (argsLength >= n) {
@@ -29,7 +29,7 @@ const curryN = (n: number, fn: (...args: any[]) => any) => {
 
     return curryN(
       n - argsLength,
-      curry0((...restArgs: any[]) => {
+      curry0((...restArgs: any[]): any => {
         const newArgs = args.map(arg => (isPlaceHolder(arg) ? restArgs.shift() : arg));
 
         return fn(...newArgs, ...restArgs);
@@ -38,10 +38,10 @@ const curryN = (n: number, fn: (...args: any[]) => any) => {
   });
 };
 
-export const curry = (fn: (...args: any[]) => any) => curryN(fn.length, fn);
+export const curry = (fn: (...args: any[]) => any): ((...args: any[]) => any) => curryN(fn.length, fn);
 
-export const range = (begin: number, end: number) => {
-  const arr = [];
+export const range = (begin: number, end: number): number[] => {
+  const arr: number[] = [];
 
   for (let i = begin; i < end; ++i) {
     arr[i - begin] = i;
@@ -50,7 +50,7 @@ export const range = (begin: number, end: number) => {
   return arr;
 };
 
-export const map = curry((fn: (value: any, index: number, array: any[]) => unknown, arr: any[]) => {
+export const map: any = curry((fn: (value: any, index: number, array: any[]) => unknown, arr: any[]): any => {
   if (Array.isArray(arr)) {
     return arr.map(fn);
   }
@@ -60,7 +60,7 @@ export const map = curry((fn: (value: any, index: number, array: any[]) => unkno
     .map(fn);
 });
 
-export const compose = (...args: any[]) => {
+export const compose = (...args: any[]): ((...fnArgs: any[]) => any) => {
   if (!args.length) {
     return identity;
   }
@@ -70,7 +70,7 @@ export const compose = (...args: any[]) => {
   const firstFn = fns[0];
   const tailsFn = fns.slice(1);
 
-  return (...composeArgs: any[]) => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
+  return (...composeArgs: any[]): any => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
 };
 
 export const reverse = <T extends any[] | string>(arr: T): T => {

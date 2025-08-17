@@ -14,7 +14,7 @@ import { getDigitCount, rangeStep } from './util/arithmetic';
  * @param  {Number} max       The maximum value
  * @return {Array} An interval
  */
-export const getValidInterval = ([min, max]: [number, number]) => {
+export const getValidInterval = ([min, max]: [number, number]): [number, number] => {
   let [validMin, validMax] = [min, max];
 
   // exchange
@@ -33,7 +33,7 @@ export const getValidInterval = ([min, max]: [number, number]) => {
  * @param  correctionFactor A correction factor
  * @return The step which is easy to understand between two ticks
  */
-export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
+export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number): Decimal => {
   if (roughStep.lte(0)) {
     return new Decimal(0);
   }
@@ -206,7 +206,11 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickCount: number, allowDecimals = true) {
+function getTickValuesFixedDomainFn(
+  [min, max]: readonly [number, number],
+  tickCount: number,
+  allowDecimals = true,
+): number[] {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
 
@@ -235,5 +239,5 @@ function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickC
   return min > max ? reverse(values) : values;
 }
 
-export const getNiceTickValues = memoize(getNiceTickValuesFn);
-export const getTickValuesFixedDomain = memoize(getTickValuesFixedDomainFn);
+export const getNiceTickValues: typeof getNiceTickValuesFn = memoize(getNiceTickValuesFn);
+export const getTickValuesFixedDomain: typeof getTickValuesFixedDomainFn = memoize(getTickValuesFixedDomainFn);
