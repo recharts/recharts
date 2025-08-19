@@ -144,7 +144,7 @@ function SectorsWithAnimation({
 
   const prevData = previousSectorsRef.current;
 
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -213,16 +213,9 @@ function SectorsWithAnimation({
 }
 
 function RenderSectors(props: RadialBarProps) {
-  const { data = [], isAnimationActive } = props;
-
   const previousSectorsRef = useRef<ReadonlyArray<RadialBarDataItem> | null>(null);
-  const prevData = previousSectorsRef.current;
 
-  if (isAnimationActive && data && data.length && (!prevData || prevData !== data)) {
-    return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
-  }
-
-  return <RadialBarSectors sectors={data} allOtherRadialBarProps={props} showLabels />;
+  return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
 interface InternalRadialBarProps {

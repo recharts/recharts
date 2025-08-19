@@ -544,17 +544,19 @@ function AreaWithAnimation({
         }
         return (
           <Layer>
-            <defs>
-              <clipPath id={`animationClipPath-${clipPathId}`}>
-                <ClipRect
-                  alpha={t}
-                  points={points}
-                  baseLine={baseLine}
-                  layout={props.layout}
-                  strokeWidth={props.strokeWidth}
-                />
-              </clipPath>
-            </defs>
+            {isAnimationActive && (
+              <defs>
+                <clipPath id={`animationClipPath-${clipPathId}`}>
+                  <ClipRect
+                    alpha={t}
+                    points={points}
+                    baseLine={baseLine}
+                    layout={props.layout}
+                    strokeWidth={props.strokeWidth}
+                  />
+                </clipPath>
+              </defs>
+            )}
             <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
               <StaticArea
                 points={points}
@@ -577,8 +579,6 @@ function AreaWithAnimation({
  * It also holds the state of the animation.
  */
 function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPathId: string; props: InternalProps }) {
-  const { points, baseLine, isAnimationActive } = props;
-
   /*
    * These two must be refs, not state!
    * Because we want to store the most recent shape of the animation in case we have to interrupt the animation;
@@ -590,39 +590,13 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
   const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
   const previousBaselineRef = useRef<InternalProps['baseLine'] | null>();
 
-  const prevPoints = previousPointsRef.current;
-  const prevBaseLine = previousBaselineRef.current;
-
-  if (
-    isAnimationActive &&
-    /*
-     * Here it's important that we unmount of AreaWithAnimation in case points are undefined
-     * - this will make sure to interrupt the animation if it's running.
-     * We still get to keep the last shape of the animation in the refs above.
-     */
-    points &&
-    points.length &&
-    (prevPoints !== points || prevBaseLine !== baseLine)
-  ) {
-    return (
-      <AreaWithAnimation
-        needClip={needClip}
-        clipPathId={clipPathId}
-        props={props}
-        previousPointsRef={previousPointsRef}
-        previousBaselineRef={previousBaselineRef}
-      />
-    );
-  }
-
   return (
-    <StaticArea
-      points={points}
-      baseLine={baseLine}
+    <AreaWithAnimation
       needClip={needClip}
       clipPathId={clipPathId}
       props={props}
-      showLabels
+      previousPointsRef={previousPointsRef}
+      previousBaselineRef={previousBaselineRef}
     />
   );
 }

@@ -18,7 +18,7 @@ import { exampleRadarData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('selectRadarPoints', () => {
-  const selector = (state: RechartsRootState) => selectRadarPoints(state, 0, 0, false, 'value');
+  const selector = (state: RechartsRootState) => selectRadarPoints(state, 0, 0, false, 'radar-value');
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);
@@ -31,7 +31,7 @@ describe('selectRadarPoints', () => {
     };
     render(
       <RadarChart width={500} height={500} data={exampleRadarData}>
-        <Radar dataKey="value" />
+        <Radar dataKey="value" id="radar-value" />
         <PolarAngleAxis dataKey="value" />
         <Comp />
       </RadarChart>,
@@ -168,8 +168,8 @@ describe('selectRadarPoints', () => {
 
   it('should return new data after interaction', () => {
     const spy = vi.fn();
-    const Comp = ({ dataKey }: { dataKey: string }): null => {
-      spy(useAppSelectorWithStableTest(state => selectRadarPoints(state, 0, 0, false, dataKey)));
+    const Comp = (): null => {
+      spy(useAppSelectorWithStableTest(state => selectRadarPoints(state, 0, 0, false, 'radar-value')));
       return null;
     };
     const TestCase = () => {
@@ -186,8 +186,8 @@ describe('selectRadarPoints', () => {
             </button>
           )}
           <RadarChart data={exampleRadarData} width={400} height={400}>
-            <Radar dataKey={dataKey} />
-            <Comp dataKey={dataKey} />
+            <Radar dataKey={dataKey} id="radar-value" />
+            <Comp />
           </RadarChart>
         </>
       );

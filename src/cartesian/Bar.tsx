@@ -469,19 +469,9 @@ function RectanglesWithAnimation({
 }
 
 function RenderRectangles(props: InternalProps) {
-  const { data, isAnimationActive } = props;
   const previousRectanglesRef = useRef<ReadonlyArray<BarRectangleItem> | null>(null);
 
-  if (
-    isAnimationActive &&
-    data &&
-    data.length &&
-    (previousRectanglesRef.current == null || previousRectanglesRef.current !== data)
-  ) {
-    return <RectanglesWithAnimation previousRectanglesRef={previousRectanglesRef} props={props} />;
-  }
-
-  return <BarRectangles props={props} data={data} showLabels />;
+  return <RectanglesWithAnimation previousRectanglesRef={previousRectanglesRef} props={props} />;
 }
 
 const defaultMinPointSize: number = 0;
@@ -507,7 +497,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 class BarWithState extends PureComponent<InternalProps> {
   render() {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id } = this.props;
-    if (hide) {
+    if (hide || data == null) {
       return null;
     }
 

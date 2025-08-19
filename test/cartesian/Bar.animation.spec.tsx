@@ -193,6 +193,7 @@ describe('Bar animation', () => {
     it('should call onAnimationEnd callback when the animation ends', async () => {
       const { animationManager } = renderTestCase();
 
+      expect(onAnimationEnd).not.toHaveBeenCalled();
       await animationManager.setAnimationProgress(0.9);
       expect(onAnimationEnd).not.toHaveBeenCalled();
 

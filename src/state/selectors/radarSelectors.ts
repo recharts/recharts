@@ -12,6 +12,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getBandSizeOfAxis, isCategoricalAxis, RechartsScale } from '../../util/ChartUtils';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { selectUnfilteredPolarItems } from './polarSelectors';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 
 const selectRadiusAxisScale = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
   selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
@@ -111,20 +112,20 @@ export const selectAngleAxisWithScaleAndViewport: (
   },
 );
 
-const pickDataKey = (
+const pickId = (
   _state: RechartsRootState,
   _radiusAxisId: AxisId,
   _angleAxisId: AxisId,
   _isPanorama: boolean,
-  radarDataKey: DataKey<any> | undefined,
-): DataKey<any> | undefined => radarDataKey;
+  radarId: GraphicalItemId,
+): GraphicalItemId => radarId;
 
 const selectBandSizeOfAxis: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,
   isPanorama: boolean,
-  radarDataKey: DataKey<any> | undefined,
+  radarId: GraphicalItemId,
 ) => number | undefined = createSelector(
   [
     selectChartLayout,
@@ -152,23 +153,23 @@ const selectSynchronisedRadarDataKey: (
   _radiusAxisId: AxisId,
   _angleAxisId: AxisId,
   _isPanorama: boolean,
-  radarDataKey: DataKey<any> | undefined,
-) => DataKey<any> | undefined = createSelector(
-  [selectUnfilteredPolarItems, pickDataKey],
-  (graphicalItems, radarDataKey) => {
-    if (graphicalItems.some(pgis => pgis.type === 'radar' && radarDataKey === pgis.dataKey)) {
-      return radarDataKey;
-    }
+  radarId: GraphicalItemId,
+) => DataKey<any> | undefined = createSelector([selectUnfilteredPolarItems, pickId], (graphicalItems, radarId) => {
+  if (graphicalItems == null) {
     return undefined;
-  },
-);
+  }
+  // Find the radar item with the given radarId
+  const pgis = graphicalItems.find(item => item.type === 'radar' && radarId === item.id);
+  // If found, return its dataKey
+  return pgis?.dataKey;
+});
 
 export const selectRadarPoints: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,
   isPanorama: boolean,
-  radarDataKey: DataKey<any> | undefined,
+  radarId: GraphicalItemId,
 ) => RadarComposedData | undefined = createSelector(
   [
     selectRadiusAxisForRadar,

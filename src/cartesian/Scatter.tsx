@@ -344,19 +344,6 @@ function SymbolsWithAnimation({
   );
 }
 
-function RenderSymbols(props: InternalProps) {
-  const { points, isAnimationActive } = props;
-  const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
-
-  const prevPoints = previousPointsRef.current;
-
-  if (isAnimationActive && points && points.length && (!prevPoints || prevPoints !== points)) {
-    return <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />;
-  }
-
-  return <ScatterSymbols points={points} allOtherScatterProps={props} showLabels />;
-}
-
 type InputRequiredToComputeTooltipEntrySettings = {
   dataKey?: DataKey<any> | undefined;
   points?: ReadonlyArray<ScatterPointItem>;
@@ -508,6 +495,7 @@ const errorBarDataPointFormatter = (
 
 function ScatterWithId(props: InternalProps) {
   const { hide, points, className, needClip, xAxisId, yAxisId, id, children } = props;
+  const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
   if (hide) {
     return null;
   }
@@ -531,7 +519,7 @@ function ScatterWithId(props: InternalProps) {
         {children}
       </SetErrorBarContext>
       <Layer key="recharts-scatter-symbols">
-        <RenderSymbols {...props} />
+        <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
       </Layer>
     </Layer>
   );
@@ -581,12 +569,9 @@ function ScatterImpl(props: Props) {
   if (needClip == null) {
     return null;
   }
-  /*
-   * Do not check if points is null here!
-   * It is important that the animation component receives `null` as points
-   * so that it can reset its internal state and start animating to new positions.
-   */
-  // if (points == null)
+  if (points == null) {
+    return null;
+  }
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />

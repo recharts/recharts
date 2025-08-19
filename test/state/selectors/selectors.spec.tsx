@@ -1236,7 +1236,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         <Pie data={[{ y: 10 }, { y: 20 }, { y: 30 }]} dataKey="y" />
       </PieChart>,
     );
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
     expectLastCalledWith(spy, [
       [
         [

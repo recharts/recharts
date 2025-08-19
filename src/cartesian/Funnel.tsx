@@ -208,7 +208,7 @@ function TrapezoidsWithAnimation({
   } = props;
   const prevTrapezoids = previousTrapezoidsRef.current;
 
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const animationId = useAnimationId(trapezoids, 'recharts-funnel-');
 
@@ -292,15 +292,9 @@ function TrapezoidsWithAnimation({
 }
 
 function RenderTrapezoids(props: InternalProps) {
-  const { trapezoids, isAnimationActive } = props;
-
   const previousTrapezoidsRef = useRef<ReadonlyArray<FunnelTrapezoidItem> | null>(null);
-  const prevTrapezoids = previousTrapezoidsRef.current;
 
-  if (isAnimationActive && trapezoids && trapezoids.length && (!prevTrapezoids || prevTrapezoids !== trapezoids)) {
-    return <TrapezoidsWithAnimation props={props} previousTrapezoidsRef={previousTrapezoidsRef} />;
-  }
-  return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={props} showLabels />;
+  return <TrapezoidsWithAnimation props={props} previousTrapezoidsRef={previousTrapezoidsRef} />;
 }
 
 const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetInternal) => {

@@ -76,6 +76,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
+          onAnimationEnd={handleAnimationEnd}
           animationManager={animationManager}
         >
           {() => <div className="test-wrapper" />}
@@ -85,7 +86,7 @@ describe('JavascriptAnimate timing', () => {
       await timeoutController.flushAllTimeouts();
 
       expect(handleAnimationStart).not.toHaveBeenCalled();
-      expect(handleAnimationStart).not.toHaveBeenCalled();
+      expect(handleAnimationEnd).not.toHaveBeenCalled();
     });
 
     it('should call children function with current time', async () => {
