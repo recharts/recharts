@@ -797,12 +797,12 @@ describe('<LineChart />', () => {
     expect(newLineDots[0].children).toHaveLength(3);
 
     // make sure the new first dot is the same as the old 2 dot, just in a new place
-    expect(lineDots[0].children[0]).toHaveAttribute('cx', margin.left.toString());
-    expect(lineDots[0].children[0]).toHaveAttribute('cy', '20');
+    expect(newLineDots[0].children[0]).toHaveAttribute('cx', margin.left.toString());
+    expect(newLineDots[0].children[0]).toHaveAttribute('cy', '20');
 
     // verify one of the dots that we expect to move when the brush happens
-    expect(lineDots[0].children[1]).toHaveAttribute('cx', '200');
-    expect(lineDots[0].children[1]).toHaveAttribute('cy', '126.66666666666667');
+    expect(newLineDots[0].children[1]).toHaveAttribute('cx', '200');
+    expect(newLineDots[0].children[1]).toHaveAttribute('cy', '126.66666666666667');
   });
 
   describe('Tooltip integration', () => {

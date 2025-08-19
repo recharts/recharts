@@ -413,12 +413,15 @@ function CurveWithAnimation({
         const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
         const curLength = Math.min(lengthInterpolated, totalLength);
         let currentStrokeDasharray;
-
-        if (strokeDasharray) {
-          const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-          currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+        if (isAnimationActive) {
+          if (strokeDasharray) {
+            const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+            currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+          } else {
+            currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+          }
         } else {
-          currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+          currentStrokeDasharray = strokeDasharray == null ? undefined : String(strokeDasharray);
         }
 
         if (prevPoints) {
@@ -513,26 +516,19 @@ function CurveWithAnimation({
 }
 
 function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
-  const { points, isAnimationActive } = props;
   const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
   const longestAnimatedLengthRef = useRef<number>(0);
   const pathRef = useRef<SVGPathElement | null>(null);
 
-  const prevPoints = previousPointsRef.current;
-
-  if (isAnimationActive && points && points.length && prevPoints !== points) {
-    return (
-      <CurveWithAnimation
-        props={props}
-        clipPathId={clipPathId}
-        previousPointsRef={previousPointsRef}
-        longestAnimatedLengthRef={longestAnimatedLengthRef}
-        pathRef={pathRef}
-      />
-    );
-  }
-
-  return <StaticCurve props={props} points={points} clipPathId={clipPathId} pathRef={pathRef} showLabels />;
+  return (
+    <CurveWithAnimation
+      props={props}
+      clipPathId={clipPathId}
+      previousPointsRef={previousPointsRef}
+      longestAnimatedLengthRef={longestAnimatedLengthRef}
+      pathRef={pathRef}
+    />
+  );
 }
 
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
