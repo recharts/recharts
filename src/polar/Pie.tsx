@@ -385,7 +385,7 @@ function PieSectors(props: PieSectorsProps) {
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
 
-  if (sectors == null) {
+  if (sectors == null || sectors.length === 0) {
     return null;
   }
 
@@ -534,7 +534,7 @@ function SectorsWithAnimation({
 
   const prevSectors = previousSectorsRef.current;
 
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -563,9 +563,9 @@ function SectorsWithAnimation({
       {(t: number) => {
         const stepData: PieSectorDataItem[] = [];
         const first = sectors && sectors[0];
-        let curAngle = first.startAngle;
+        let curAngle = first?.startAngle;
 
-        sectors.forEach((entry, index) => {
+        sectors?.forEach((entry, index) => {
           const prev = prevSectors && prevSectors[index];
           const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
@@ -612,43 +612,6 @@ function SectorsWithAnimation({
   );
 }
 
-function RenderSectors(props: InternalProps) {
-  const { sectors, isAnimationActive, activeShape, inactiveShape } = props;
-
-  const previousSectorsRef = useRef<ReadonlyArray<PieSectorDataItem> | null>(null);
-  const prevSectors = previousSectorsRef.current;
-
-  if (isAnimationActive && sectors && sectors.length && (!prevSectors || prevSectors !== sectors)) {
-    return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
-  }
-
-  return (
-    <PieSectors
-      sectors={sectors}
-      activeShape={activeShape}
-      inactiveShape={inactiveShape}
-      allOtherPieProps={props}
-      showLabels
-    />
-  );
-}
-
-function PieWithTouchMove(props: InternalProps) {
-  const { hide, className, rootTabIndex } = props;
-
-  const layerClass = clsx('recharts-pie', className);
-
-  if (hide) {
-    return null;
-  }
-
-  return (
-    <Layer tabIndex={rootTabIndex} className={layerClass}>
-      <RenderSectors {...props} />
-    </Layer>
-  );
-}
-
 const defaultPieProps = {
   animationBegin: 400,
   animationDuration: 1500,
@@ -674,15 +637,27 @@ const defaultPieProps = {
 
 function PieImpl(props: InternalProps) {
   const { id, ...propsWithoutId } = props;
+  const { hide, className, rootTabIndex } = props;
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const sectors = useAppSelector(state => selectPieSectors(state, id, cells));
 
+  const previousSectorsRef = useRef<ReadonlyArray<PieSectorDataItem> | null>(null);
+
+  const layerClass = clsx('recharts-pie', className);
+
+  if (hide || sectors == null) {
+    previousSectorsRef.current = null;
+    return <Layer tabIndex={rootTabIndex} className={layerClass} />;
+  }
+
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
-      <PieWithTouchMove {...propsWithoutId} sectors={sectors} />
+      <Layer tabIndex={rootTabIndex} className={layerClass}>
+        <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
+      </Layer>
     </>
   );
 }
