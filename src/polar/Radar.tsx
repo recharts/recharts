@@ -319,7 +319,7 @@ function PolygonWithAnimation({
   } = props;
   const prevPoints = previousPointsRef.current;
   const animationId = useAnimationId(props, 'recharts-radar-');
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -386,15 +386,9 @@ function PolygonWithAnimation({
 }
 
 function RenderPolygon(props: Props) {
-  const { points, isAnimationActive, isRange } = props;
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
-  const prevPoints = previousPointsRef.current;
 
-  if (isAnimationActive && points && points.length && !isRange && (!prevPoints || prevPoints !== points)) {
-    return <PolygonWithAnimation props={props} previousPointsRef={previousPointsRef} />;
-  }
-
-  return <StaticPolygon points={points} props={props} showLabels />;
+  return <PolygonWithAnimation props={props} previousPointsRef={previousPointsRef} />;
 }
 
 const defaultRadarProps: Partial<Props> = {
@@ -414,7 +408,7 @@ class RadarWithState extends PureComponent<Props> {
   render() {
     const { hide, className, points } = this.props;
 
-    if (hide) {
+    if (hide || points == null) {
       return null;
     }
 
@@ -439,7 +433,7 @@ class RadarWithState extends PureComponent<Props> {
 function RadarImpl(props: Props) {
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
-    selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.dataKey),
+    selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.id),
   );
 
   return (
