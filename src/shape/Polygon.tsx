@@ -11,7 +11,7 @@ const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;
 };
 
-const getParsedPoints = (points: Coordinate[] = []) => {
+const getParsedPoints = (points: ReadonlyArray<Coordinate> = []) => {
   let segmentPoints: Coordinate[][] = [[]];
 
   points.forEach(entry => {
@@ -34,7 +34,7 @@ const getParsedPoints = (points: Coordinate[] = []) => {
   return segmentPoints;
 };
 
-const getSinglePolygonPath = (points: Coordinate[], connectNulls?: boolean) => {
+const getSinglePolygonPath = (points: ReadonlyArray<Coordinate>, connectNulls?: boolean) => {
   let segmentPoints = getParsedPoints(points);
 
   if (connectNulls) {
@@ -56,19 +56,23 @@ const getSinglePolygonPath = (points: Coordinate[], connectNulls?: boolean) => {
   return segmentPoints.length === 1 ? `${polygonPath}Z` : polygonPath;
 };
 
-const getRanglePath = (points: Coordinate[], baseLinePoints: Coordinate[], connectNulls?: boolean) => {
+const getRanglePath = (
+  points: ReadonlyArray<Coordinate>,
+  baseLinePoints: ReadonlyArray<Coordinate>,
+  connectNulls?: boolean,
+) => {
   const outerPath = getSinglePolygonPath(points, connectNulls);
 
   return `${outerPath.slice(-1) === 'Z' ? outerPath.slice(0, -1) : outerPath}L${getSinglePolygonPath(
-    baseLinePoints.reverse(),
+    Array.from(baseLinePoints).reverse(),
     connectNulls,
   ).slice(1)}`;
 };
 
 interface PolygonProps {
   className?: string;
-  points?: Coordinate[];
-  baseLinePoints?: Coordinate[];
+  points?: ReadonlyArray<Coordinate>;
+  baseLinePoints?: ReadonlyArray<Coordinate>;
   connectNulls?: boolean;
 }
 
