@@ -13,7 +13,7 @@ import {
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
-import { interpolateNumber, isNullish } from '../util/DataUtils';
+import { interpolate, isNullish } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
@@ -221,7 +221,7 @@ export function computeRadarPoints({
   return { points, isRange, baseLinePoints };
 }
 
-function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
+function Dots({ points, props }: { points: ReadonlyArray<RadarPoint>; props: Props }) {
   const { dot, dataKey } = props;
   if (!dot) {
     return null;
@@ -251,12 +251,22 @@ function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
   return <Layer className="recharts-radar-dots">{dots}</Layer>;
 }
 
-function StaticPolygon({ points, props, showLabels }: { points: RadarPoint[]; props: Props; showLabels: boolean }) {
+function StaticPolygon({
+  points,
+  baseLinePoints,
+  props,
+  showLabels,
+}: {
+  points: ReadonlyArray<RadarPoint>;
+  baseLinePoints: ReadonlyArray<RadarPoint>;
+  props: Props;
+  showLabels: boolean;
+}) {
   if (points == null) {
     return null;
   }
 
-  const { shape, isRange, baseLinePoints, connectNulls } = props;
+  const { shape, isRange, connectNulls } = props;
 
   const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseEnter } = props;
@@ -301,15 +311,38 @@ function StaticPolygon({ points, props, showLabels }: { points: RadarPoint[]; pr
   );
 }
 
+const interpolatePolarPoint =
+  (prevPoints: ReadonlyArray<RadarPoint>, prevPointsDiffFactor: number, t: number) =>
+  (entry: RadarPoint, index: number) => {
+    const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
+
+    if (prev) {
+      return {
+        ...entry,
+        x: interpolate(prev.x, entry.x, t),
+        y: interpolate(prev.y, entry.y, t),
+      };
+    }
+
+    return {
+      ...entry,
+      x: interpolate(entry.cx, entry.x, t),
+      y: interpolate(entry.cy, entry.y, t),
+    };
+  };
+
 function PolygonWithAnimation({
   props,
   previousPointsRef,
+  previousBaseLinePointsRef,
 }: {
   props: Props;
   previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint>>;
+  previousBaseLinePointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
 }) {
   const {
     points,
+    baseLinePoints,
     isAnimationActive,
     animationBegin,
     animationDuration,
@@ -318,6 +351,11 @@ function PolygonWithAnimation({
     onAnimationStart,
   } = props;
   const prevPoints = previousPointsRef.current;
+  const prevBaseLinePoints = previousBaseLinePointsRef.current;
+
+  const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
+  const prevBaseLinePointsDiffFactor = prevBaseLinePoints && prevBaseLinePoints.length / baseLinePoints.length;
+
   const animationId = useAnimationId(props, 'recharts-radar-');
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -347,39 +385,27 @@ function PolygonWithAnimation({
       onAnimationStart={handleAnimationStart}
     >
       {(t: number) => {
-        const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
-        const stepData =
+        const stepData = t === 1 ? points : points.map(interpolatePolarPoint(prevPoints, prevPointsDiffFactor, t));
+
+        const stepBaseLinePoints =
           t === 1
-            ? points
-            : points.map((entry, index) => {
-                const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
-
-                if (prev) {
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                  return {
-                    ...entry,
-                    x: interpolatorX(t),
-                    y: interpolatorY(t),
-                  };
-                }
-
-                const interpolatorX = interpolateNumber(entry.cx, entry.x);
-                const interpolatorY = interpolateNumber(entry.cy, entry.y);
-
-                return {
-                  ...entry,
-                  x: interpolatorX(t),
-                  y: interpolatorY(t),
-                };
-              });
+            ? baseLinePoints
+            : baseLinePoints?.map(interpolatePolarPoint(prevBaseLinePoints, prevBaseLinePointsDiffFactor, t));
 
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
           previousPointsRef.current = stepData;
+          // eslint-disable-next-line no-param-reassign
+          previousBaseLinePointsRef.current = stepBaseLinePoints;
         }
-        return <StaticPolygon points={stepData} props={props} showLabels={!isAnimating} />;
+        return (
+          <StaticPolygon
+            points={stepData}
+            baseLinePoints={stepBaseLinePoints}
+            props={props}
+            showLabels={!isAnimating}
+          />
+        );
       }}
     </JavascriptAnimate>
   );
@@ -387,8 +413,15 @@ function PolygonWithAnimation({
 
 function RenderPolygon(props: Props) {
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
+  const previousBaseLinePointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
 
-  return <PolygonWithAnimation props={props} previousPointsRef={previousPointsRef} />;
+  return (
+    <PolygonWithAnimation
+      props={props}
+      previousPointsRef={previousPointsRef}
+      previousBaseLinePointsRef={previousBaseLinePointsRef}
+    />
+  );
 }
 
 const defaultRadarProps: Partial<Props> = {
