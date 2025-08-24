@@ -51,10 +51,6 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
   payload?: any;
   isActive: boolean;
   tooltipPosition: Coordinate;
-  /**
-   * The maximum width of the trapezoid, which is the maximum of upperWidth and lowerWidth
-   */
-  width: number;
 }
 
 /**
@@ -165,7 +161,8 @@ function FunnelLabelListProvider({
       const viewBox = {
         x: entry.x,
         y: entry.y,
-        width: entry.width,
+        // Label positions in Funnel are calculated relative to upperWidth so that's what we need to pass here as "width"
+        width: entry.upperWidth,
         height: entry.height,
       };
       return {
