@@ -1,6 +1,3 @@
-/**
- * @fileOverview Curve
- */
 import * as React from 'react';
 import { SVGProps } from 'react';
 
@@ -86,16 +83,27 @@ const registerSymbol = (key: string, factory: D3SymbolType) => {
 
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
   const props = { ...rest, type, size, sizeType };
+  let realType: SymbolType = 'circle';
+  if (typeof type === 'string') {
+    /*
+     * Our type guard is not as strong as it could be (i.e. non-existent),
+     * and so despite the typescript type saying that `type` is a `SymbolType`,
+     * we can get numbers or really anything, so let's have a runtime check here to fix the exception.
+     *
+     * https://github.com/recharts/recharts/issues/6197
+     */
+    realType = type;
+  }
 
   /**
    * Calculate the path of curve
    * @return {String} path
    */
   const getPath = () => {
-    const symbolFactory = getSymbolFactory(type);
+    const symbolFactory = getSymbolFactory(realType);
     const symbol = shapeSymbol()
       .type(symbolFactory)
-      .size(calculateAreaSize(size, sizeType, type));
+      .size(calculateAreaSize(size, sizeType, realType));
 
     return symbol();
   };
