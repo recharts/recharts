@@ -37,7 +37,7 @@ import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipP
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
-import { selectTooltipAxis } from './selectTooltipAxis';
+import { selectTooltipAxisDataKey } from './selectTooltipAxis';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
@@ -163,7 +163,7 @@ export const selectTooltipPayload: (
     selectTooltipPayloadConfigurations,
     selectActiveIndex,
     selectChartDataWithIndexes,
-    selectTooltipAxis,
+    selectTooltipAxisDataKey,
     selectActiveLabel,
     selectTooltipPayloadSearcher,
     pickTooltipEventType,

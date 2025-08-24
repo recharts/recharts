@@ -214,7 +214,7 @@ describe('useOffsetInternal', () => {
       top: 10,
       width: 240,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should include default height of XAxis', () => {

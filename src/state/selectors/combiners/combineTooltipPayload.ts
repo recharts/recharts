@@ -7,7 +7,7 @@ import {
   TooltipPayloadSearcher,
 } from '../../tooltipSlice';
 import { ChartData, ChartDataState } from '../../chartDataSlice';
-import { BaseAxisProps, DataKey, TooltipEventType } from '../../../util/types';
+import { DataKey, TooltipEventType } from '../../../util/types';
 import { findEntryInArray } from '../../../util/DataUtils';
 import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
 import { getSliced } from '../../../util/getSliced';
@@ -27,7 +27,7 @@ export const combineTooltipPayload = (
   tooltipPayloadConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
   activeIndex: TooltipIndex,
   chartDataState: ChartDataState,
-  tooltipAxis: BaseAxisProps | undefined,
+  tooltipAxisDataKey: DataKey<any> | undefined,
   activeLabel: string | undefined,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
   tooltipEventType: TooltipEventType,
@@ -44,12 +44,12 @@ export const combineTooltipPayload = (
 
     const sliced = Array.isArray(finalData) ? getSliced(finalData, dataStartIndex, dataEndIndex) : finalData;
 
-    const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxis?.dataKey;
+    const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxisDataKey;
     // BaseAxisProps does not support nameKey but it could!
     const finalNameKey: DataKey<any> | undefined = settings?.nameKey; // ?? tooltipAxis?.nameKey;
     let tooltipPayload: unknown;
     if (
-      tooltipAxis?.dataKey &&
+      tooltipAxisDataKey &&
       Array.isArray(sliced) &&
       /*
        * findEntryInArray won't work for Scatter because Scatter provides an array of arrays
@@ -75,7 +75,7 @@ export const combineTooltipPayload = (
        */
       tooltipEventType === 'axis'
     ) {
-      tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
+      tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data

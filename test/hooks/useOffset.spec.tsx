@@ -1,8 +1,24 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis, useOffset, LineChart, usePlotArea } from '../../src';
+import {
+  Brush,
+  ComposedChart,
+  Customized,
+  Legend,
+  XAxis,
+  YAxis,
+  useOffset,
+  LineChart,
+  usePlotArea,
+  useActiveTooltipDataPoints,
+  Line,
+  Tooltip,
+} from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { pageData } from '../../storybook/stories/data';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('useOffset', () => {
   it('should return undefined when used outside of chart', () => {
@@ -164,7 +180,7 @@ describe('useOffset', () => {
       right: 20,
       top: 10,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should include default height of XAxis', () => {
@@ -257,6 +273,8 @@ describe('useOffset', () => {
   });
 
   it('should render when used in the same component as XAxis', () => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+    const spy = vi.fn();
     /*
      * https://github.com/recharts/recharts/issues/6211
      * https://github.com/recharts/recharts/issues/6236
@@ -264,13 +282,23 @@ describe('useOffset', () => {
     const Child = () => {
       usePlotArea();
       useOffset();
+      useActiveTooltipDataPoints();
+      spy();
       return <XAxis />;
     };
 
-    render(
-      <LineChart width={500} height={300} data={[]}>
+    const { container } = render(
+      <LineChart width={500} height={300} data={pageData}>
+        <Line dataKey="uv" />
+        <Tooltip />
         <Child />
       </LineChart>,
     );
+
+    expect(spy).toHaveBeenCalledTimes(3);
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+
+    expect(spy).toHaveBeenCalledTimes(5);
   });
 });

@@ -11,7 +11,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
-import { BaseAxisProps, ChartCoordinate, ChartPointer, Coordinate, TooltipEventType } from '../../../src/util/types';
+import { ChartCoordinate, ChartPointer, Coordinate, TooltipEventType } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   addTooltipEntrySettings,
@@ -423,13 +423,12 @@ describe('selectTooltipPayload', () => {
 
   it('should return array of payloads for Scatter because Scatter naturally does its own special thing', () => {
     const chartDataState: ChartDataState = initialChartDataState;
-    const tooltipAxis: BaseAxisProps | undefined = undefined;
     const activeLabel: string | undefined = undefined;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       [exampleTooltipPayloadConfiguration1],
       '0',
       chartDataState,
-      tooltipAxis,
+      undefined,
       activeLabel,
       arrayTooltipSearcher,
       'item',
@@ -473,15 +472,12 @@ describe('selectTooltipPayload', () => {
       positions: undefined,
     };
     const chartDataState: ChartDataState = initialChartDataState;
-    const tooltipAxis: BaseAxisProps = {
-      dataKey: 'dataKeyOnAxis',
-    };
     const activeLabel: string | undefined = undefined;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       [tooltipPayloadConfiguration],
       '0',
       chartDataState,
-      tooltipAxis,
+      'dataKeyOnAxis',
       activeLabel,
       arrayTooltipSearcher,
       'axis',
