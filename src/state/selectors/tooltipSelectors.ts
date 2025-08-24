@@ -79,7 +79,7 @@ import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { selectTooltipAxisType } from './selectTooltipAxisType';
-import { selectTooltipAxis } from './selectTooltipAxis';
+import { selectTooltipAxis, selectTooltipAxisDataKey } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 
@@ -425,7 +425,7 @@ export const selectActiveTooltipPayload: (state: RechartsRootState) => TooltipPa
     selectTooltipPayloadConfigurations,
     selectActiveTooltipIndex,
     selectChartDataWithIndexes,
-    selectTooltipAxis,
+    selectTooltipAxisDataKey,
     selectActiveLabel,
     selectTooltipPayloadSearcher,
     selectTooltipEventType,
