@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { cloneElement, createContext, ReactElement, ReactNode, SVGProps, useContext } from 'react';
+import { createContext, ReactElement, SVGProps, useContext } from 'react';
 import last from 'es-toolkit/compat/last';
 
 import { ContentType, isLabelContentAFunction, Label, LabelPosition, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
 import { isNullish } from '../util/DataUtils';
@@ -121,50 +121,6 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 }
 
 LabelList.displayName = 'LabelList';
-
-function parseLabelList<T extends CartesianLabelListEntry>(label: unknown, data: ReadonlyArray<T>) {
-  if (!label) {
-    return null;
-  }
-
-  if (label === true) {
-    return <LabelList key="labelList-implicit" data={data} />;
-  }
-
-  if (React.isValidElement(label) || isLabelContentAFunction(label)) {
-    return <LabelList key="labelList-implicit" data={data} content={label} />;
-  }
-
-  if (typeof label === 'object') {
-    return <LabelList data={data} {...label} key="labelList-implicit" />;
-  }
-
-  return null;
-}
-
-function renderCallByParent<T extends CartesianLabelListEntry>(
-  parentProps: { children?: ReactNode; label?: unknown },
-  data: ReadonlyArray<T>,
-) {
-  if (!parentProps || (!parentProps.children && !parentProps.label)) {
-    return null;
-  }
-  const { children } = parentProps;
-
-  const explicitChildren = findAllByType(children, LabelList).map((child, index) =>
-    cloneElement(child, {
-      data,
-      // eslint-disable-next-line react/no-array-index-key
-      key: `labelList-${index}`,
-    }),
-  );
-
-  const implicitLabelList = parseLabelList(parentProps.label, data);
-
-  return [implicitLabelList, ...explicitChildren];
-}
-
-LabelList.renderCallByParent = renderCallByParent;
 
 export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListType }) {
   if (!label) {
