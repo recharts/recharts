@@ -5,7 +5,6 @@ import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
 import { addErrorBar, ErrorBarsSettings, removeErrorBar, replaceErrorBar } from '../state/errorBarSlice';
 import { useAppDispatch } from '../state/hooks';
 import { useGraphicalItemId } from './RegisterGraphicalItemId';
-import { useWhyDidYouRender } from '../../test/helper/useWhyDidYouRender';
 
 type ErrorBarContextType<T> = {
   data: ReadonlyArray<T> | undefined;
@@ -36,7 +35,6 @@ export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
   const dispatch = useAppDispatch();
   const graphicalItemId = useGraphicalItemId();
   const prevPropsRef = useRef<ErrorBarsSettings | null>(null);
-  useWhyDidYouRender('ReportErrorBarSettings', props, { graphicalItemId });
 
   useEffect(() => {
     if (graphicalItemId == null) {
