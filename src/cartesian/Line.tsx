@@ -439,6 +439,7 @@ function CurveWithAnimation({
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
+      {props.children}
       <JavascriptAnimate
         animationId={animationId}
         begin={animationBegin}
@@ -551,7 +552,6 @@ function CurveWithAnimation({
         }}
       </JavascriptAnimate>
       <LabelListFromLabelProp label={props.label} />
-      {props.children}
     </LineLabelListProvider>
   );
 }

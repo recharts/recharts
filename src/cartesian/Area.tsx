@@ -494,6 +494,7 @@ function AreaWithAnimation({
   const prevBaseLine = previousBaselineRef.current;
   return (
     <AreaLabelListProvider showLabels={showLabels} points={points}>
+      {props.children}
       <JavascriptAnimate
         animationId={animationId}
         begin={animationBegin}
@@ -605,7 +606,6 @@ function AreaWithAnimation({
         }}
       </JavascriptAnimate>
       <LabelListFromLabelProp label={props.label} />
-      {props.children}
     </AreaLabelListProvider>
   );
 }

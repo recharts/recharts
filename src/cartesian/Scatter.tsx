@@ -377,7 +377,8 @@ function SymbolsWithAnimation({
   const showLabels = !isAnimating;
 
   return (
-    <>
+    <ScatterLabelListProvider showLabels={showLabels} points={points}>
+      {props.children}
       <JavascriptAnimate
         animationId={animationId}
         begin={animationBegin}
@@ -424,11 +425,8 @@ function SymbolsWithAnimation({
           );
         }}
       </JavascriptAnimate>
-      <ScatterLabelListProvider showLabels={showLabels} points={points}>
-        <LabelListFromLabelProp label={props.label} />
-        {props.children}
-      </ScatterLabelListProvider>
-    </>
+      <LabelListFromLabelProp label={props.label} />
+    </ScatterLabelListProvider>
   );
 }
 
