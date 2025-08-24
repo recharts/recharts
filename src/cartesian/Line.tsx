@@ -319,6 +319,7 @@ function LineLabelListProvider({
          * Or should this just be the root chart viewBox?
          */
         parentViewBox: undefined,
+        fill: undefined,
       };
     });
   }, [points]);

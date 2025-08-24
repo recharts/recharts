@@ -318,6 +318,7 @@ function BarLabelListProvider({
         payload: entry.payload,
         parentViewBox: entry.parentViewBox,
         viewBox,
+        fill: entry.fill,
       };
     },
   );

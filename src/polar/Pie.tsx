@@ -559,6 +559,7 @@ function PieLabelListProvider({
           endAngle: entry.endAngle,
           clockWise: false,
         },
+        fill: entry.fill,
       }),
     );
   }, [sectors, showLabels]);

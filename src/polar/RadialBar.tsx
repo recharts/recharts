@@ -98,6 +98,7 @@ function RadialBarLabelListProvider({
         endAngle: sector.endAngle,
         clockWise: false,
       },
+      fill: sector.fill,
     }),
   );
 

@@ -278,6 +278,7 @@ function AreaLabelListProvider({
       payload: point.payload,
       parentViewBox: undefined,
       viewBox,
+      fill: undefined,
     };
   });
 

@@ -199,7 +199,6 @@ export const PieImplicitLabelListTest = () => (
         cy={250}
         outerRadius={120}
         isAnimationActive={false}
-        // @ts-expect-error typescript type says that position is not a valid prop, but it does work
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -217,6 +216,7 @@ export const PieExplicitLabelListTest = () => (
           angle={-30}
           className={position}
           valueAccessor={() => position}
+          fill="black"
         />
       ))}
     </Pie>

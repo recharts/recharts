@@ -171,6 +171,7 @@ function FunnelLabelListProvider({
         payload: entry.payload,
         parentViewBox: undefined,
         viewBox,
+        fill: entry.fill,
       };
     });
   }, [showLabels, trapezoids]);

@@ -277,6 +277,7 @@ function ScatterLabelListProvider({
         payload: point.payload,
         viewBox,
         parentViewBox: chartViewBox,
+        fill: undefined,
       };
     });
   }, [chartViewBox, points]);

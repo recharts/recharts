@@ -300,6 +300,7 @@ function RadarLabelListProvider({
       payload: point.payload,
       parentViewBox: undefined,
       viewBox,
+      fill: undefined,
     };
   });
 

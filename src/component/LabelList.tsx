@@ -9,15 +9,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 
-/**
- * This is public API because we expose it as the valueAccessor parameter.
- *
- * The properties of "viewBox" are repeated as the root props of the entry object.
- * So it doesn't matter if you read entry.x or entry.viewBox.x, they are the same.
- *
- * It's not necessary to pass redundant data, but we keep it for backward compatibility.
- */
-export interface CartesianLabelListEntry extends CartesianViewBoxRequired {
+interface BaseLabelListEntry {
   /**
    * Value is what renders in the UI as the label content.
    */
@@ -27,6 +19,18 @@ export interface CartesianLabelListEntry extends CartesianViewBoxRequired {
    * as the data prop to the chart.
    */
   payload: unknown;
+  fill: string | undefined;
+}
+
+/**
+ * This is public API because we expose it as the valueAccessor parameter.
+ *
+ * The properties of "viewBox" are repeated as the root props of the entry object.
+ * So it doesn't matter if you read entry.x or entry.viewBox.x, they are the same.
+ *
+ * It's not necessary to pass redundant data, but we keep it for backward compatibility.
+ */
+export interface CartesianLabelListEntry extends BaseLabelListEntry, CartesianViewBoxRequired {
   /**
    * The bounding box of the graphical element that this label is attached to.
    * This will be an individual Bar for example.
@@ -35,9 +39,7 @@ export interface CartesianLabelListEntry extends CartesianViewBoxRequired {
   parentViewBox?: CartesianViewBoxRequired;
 }
 
-export interface PolarLabelListEntry {
-  value?: number | string | Array<number | string>;
-  payload?: unknown;
+export interface PolarLabelListEntry extends BaseLabelListEntry {
   viewBox: PolarViewBoxRequired;
   parentViewBox?: PolarViewBoxRequired;
   clockWise?: boolean;
@@ -117,6 +119,13 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
             {...filterProps(entry, true)}
             {...others}
             {...idProps}
+            /*
+             * Prefer to use the explicit fill from LabelList props.
+             * Only in an absence of that, fall back to the fill of the entry.
+             * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
+             * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+             */
+            fill={restProps.fill ?? entry.fill}
             parentViewBox={entry.parentViewBox}
             value={value}
             textBreakAll={textBreakAll}
