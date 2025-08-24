@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 
-import get from 'es-toolkit/compat/get';
 import { selectLegendSettings, selectLegendSize } from './legendSelectors';
 import {
   CartesianViewBoxRequired,
@@ -20,6 +19,48 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
+function selectLeftAxesOffset(state: RechartsRootState): number {
+  const yAxes = selectAllYAxes(state);
+  return yAxes.reduce((result: number, entry: YAxisSettings): number => {
+    if (entry.orientation === 'left' && !entry.mirror && !entry.hide) {
+      const width = typeof entry.width === 'number' ? entry.width : DEFAULT_Y_AXIS_WIDTH;
+      return result + width;
+    }
+    return result;
+  }, 0);
+}
+
+function selectRightAxesOffset(state: RechartsRootState): number {
+  const yAxes = selectAllYAxes(state);
+  return yAxes.reduce((result: number, entry: YAxisSettings): number => {
+    if (entry.orientation === 'right' && !entry.mirror && !entry.hide) {
+      const width = typeof entry.width === 'number' ? entry.width : DEFAULT_Y_AXIS_WIDTH;
+      return result + width;
+    }
+    return result;
+  }, 0);
+}
+
+function selectTopAxesOffset(state: RechartsRootState): number {
+  const xAxes = selectAllXAxes(state);
+  return xAxes.reduce((result: number, entry: XAxisSettings): number => {
+    if (entry.orientation === 'top' && !entry.mirror && !entry.hide) {
+      return result + entry.height;
+    }
+    return result;
+  }, 0);
+}
+
+function selectBottomAxesOffset(state: RechartsRootState): number {
+  const xAxes = selectAllXAxes(state);
+  return xAxes.reduce((result: number, entry: XAxisSettings): number => {
+    if (entry.orientation === 'bottom' && !entry.mirror && !entry.hide) {
+      return result + entry.height;
+    }
+    return result;
+  }, 0);
+}
+
 /**
  * For internal use only.
  *
@@ -32,8 +73,10 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     selectChartHeight,
     selectMargin,
     selectBrushHeight,
-    selectAllXAxes,
-    selectAllYAxes,
+    selectLeftAxesOffset,
+    selectRightAxesOffset,
+    selectTopAxesOffset,
+    selectBottomAxesOffset,
     selectLegendSettings,
     selectLegendSize,
   ],
@@ -42,37 +85,22 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     chartHeight: number,
     margin: Margin,
     brushHeight: number,
-    xAxes: XAxisSettings[],
-    yAxes: YAxisSettings[],
+    leftAxesOffset: number,
+    rightAxesOffset: number,
+    topAxesOffset: number,
+    bottomAxesOffset: number,
     legendSettings: LegendSettings,
     legendSize: Size,
   ): ChartOffsetInternal => {
-    const offsetH: OffsetHorizontal = yAxes.reduce(
-      (result: OffsetHorizontal, entry: YAxisSettings): OffsetHorizontal => {
-        const { orientation } = entry;
+    const offsetH: OffsetHorizontal = {
+      left: (margin.left || 0) + leftAxesOffset,
+      right: (margin.right || 0) + rightAxesOffset,
+    };
 
-        if (!entry.mirror && !entry.hide) {
-          const width = typeof entry.width === 'number' ? entry.width : DEFAULT_Y_AXIS_WIDTH;
-          return { ...result, [orientation]: result[orientation] + width };
-        }
-
-        return result;
-      },
-      { left: margin.left || 0, right: margin.right || 0 },
-    );
-
-    const offsetV: OffsetVertical = xAxes.reduce(
-      (result: OffsetVertical, entry: XAxisSettings): OffsetVertical => {
-        const { orientation } = entry;
-
-        if (!entry.mirror && !entry.hide) {
-          return { ...result, [orientation]: get(result, `${orientation}`) + entry.height };
-        }
-
-        return result;
-      },
-      { top: margin.top || 0, bottom: margin.bottom || 0 },
-    );
+    const offsetV: OffsetVertical = {
+      top: (margin.top || 0) + topAxesOffset,
+      bottom: (margin.bottom || 0) + bottomAxesOffset,
+    };
 
     let offset = { ...offsetV, ...offsetH };
 

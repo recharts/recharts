@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis, useOffset } from '../../src';
+import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis, useOffset, LineChart, usePlotArea } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('useOffset', () => {
@@ -254,5 +254,23 @@ describe('useOffset', () => {
       right: 20,
       top: 10,
     });
+  });
+
+  it('should render when used in the same component as XAxis', () => {
+    /*
+     * https://github.com/recharts/recharts/issues/6211
+     * https://github.com/recharts/recharts/issues/6236
+     */
+    const Child = () => {
+      usePlotArea();
+      useOffset();
+      return <XAxis />;
+    };
+
+    render(
+      <LineChart width={500} height={300} data={[]}>
+        <Child />
+      </LineChart>,
+    );
   });
 });
