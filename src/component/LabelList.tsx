@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createContext, ReactElement, SVGProps, useContext } from 'react';
+import { createContext, SVGProps, useContext } from 'react';
 import last from 'es-toolkit/compat/last';
 
-import { ContentType, isLabelContentAFunction, Label, LabelPosition, Props as LabelProps } from './Label';
+import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
 import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -48,7 +48,7 @@ interface LabelListProps {
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number;
   clockWise?: boolean;
   dataKey?: DataKey<Record<string, any>>;
-  content?: ContentType;
+  content?: LabelContentType;
   textBreakAll?: boolean;
   position?: LabelPosition;
   offset?: LabelProps['offset'];
@@ -58,11 +58,21 @@ interface LabelListProps {
 
 export type Props = SVGProps<SVGTextElement> & LabelListProps;
 
-export type ImplicitLabelListType =
-  | boolean
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | Props;
+/**
+ * This is the type accepted for the `label` prop on various graphical items.
+ * It accepts:
+ *
+ * boolean:
+ *    true = labels show,
+ *    false = labels don't show
+ * React element:
+ *    will be cloned with extra props
+ * function:
+ *    is used as <Label content={function} />, so this will be called once for each individual label (so typically once for each data point)
+ * object:
+ *    the props to be passed to a LabelList component
+ */
+export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
 const defaultAccessor = (entry: CartesianLabelListEntry) =>
   Array.isArray(entry.value) ? last(entry.value) : entry.value;
@@ -136,7 +146,7 @@ export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListTyp
   }
 
   if (typeof label === 'object') {
-    return <LabelList key="labelList-implicit" {...label} />;
+    return <LabelList key="labelList-implicit" {...label} type={String(label.type)} />;
   }
 
   return null;

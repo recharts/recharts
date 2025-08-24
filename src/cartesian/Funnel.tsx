@@ -161,19 +161,21 @@ function FunnelLabelListProvider({
     if (!showLabels) {
       return null;
     }
-    return trapezoids.map(
-      (entry): CartesianLabelListEntry => ({
+    return trapezoids.map((entry): CartesianLabelListEntry => {
+      const viewBox = {
+        x: entry.x,
+        y: entry.y,
+        width: entry.width,
+        height: entry.height,
+      };
+      return {
+        ...viewBox,
         value: entry.name,
         payload: entry.payload,
         parentViewBox: undefined,
-        viewBox: {
-          x: entry.x,
-          y: entry.y,
-          width: entry.width,
-          height: entry.height,
-        },
-      }),
-    );
+        viewBox,
+      };
+    });
   }, [showLabels, trapezoids]);
 
   return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;

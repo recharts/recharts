@@ -23,7 +23,6 @@ import {
   ChartOffsetInternal,
   Coordinate,
   DataKey,
-  GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
@@ -46,7 +45,12 @@ import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PieSettings } from '../state/types/PieSettings';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { LabelListFromLabelProp, PolarLabelListContextProvider, PolarLabelListEntry } from '../component/LabelList';
+import {
+  ImplicitLabelListType,
+  LabelListFromLabelProp,
+  PolarLabelListContextProvider,
+  PolarLabelListEntry,
+} from '../component/LabelList';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -71,16 +75,7 @@ type PieLabelLine =
   | SVGProps<SVGPathElement>
   | boolean;
 
-export type PieLabelProps = PieSectorData &
-  GeometrySector & {
-    tooltipPayload?: any;
-  } & PieLabelRenderProps;
-
-export type PieLabel<P extends PieLabelProps = PieLabelProps> =
-  | ReactElement<SVGElement>
-  | ((props: P) => ReactNode | ReactElement<SVGElement>)
-  | (SVGProps<SVGTextElement> & { offsetRadius?: number })
-  | boolean;
+export type PieLabel = ImplicitLabelListType;
 
 export type PieSectorData = {
   percent?: number;
@@ -118,7 +113,7 @@ interface InternalPieProps extends PieDef {
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: PieLabel;
+  label?: ImplicitLabelListType;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -152,7 +147,7 @@ interface PieProps extends PieDef {
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: PieLabel;
+  label?: ImplicitLabelListType;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -282,6 +277,13 @@ const parseDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
+function getClassNamePropertyIfExists(u: unknown): string {
+  if (u && typeof u === 'object' && 'className' in u && typeof u.className === 'string') {
+    return u.className;
+  }
+  return '';
+}
+
 const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
@@ -294,7 +296,7 @@ const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   return <Curve {...props} type="linear" className={className} />;
 };
 
-const renderLabelItem = (option: PieLabel, props: any, value: any) => {
+const renderLabelItem = (option: ImplicitLabelListType, props: any, value: any) => {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -306,10 +308,7 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
     }
   }
 
-  const className = clsx(
-    'recharts-pie-label-text',
-    typeof option !== 'boolean' && typeof option !== 'function' ? option.className : '',
-  );
+  const className = clsx('recharts-pie-label-text', getClassNamePropertyIfExists(option));
   return (
     <Text {...props} alignmentBaseline="middle" className={className}>
       {label}
@@ -333,7 +332,12 @@ function PieLabels({
   const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = filterProps(label, false);
   const customLabelLineProps = filterProps(labelLine, false);
-  const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
+  const offsetRadius =
+    (typeof label === 'object' &&
+      'offsetRadius' in label &&
+      typeof label.offsetRadius === 'number' &&
+      label.offsetRadius) ||
+    20;
 
   const labels = sectors.map((entry, i) => {
     const midAngle = (entry.startAngle + entry.endAngle) / 2;

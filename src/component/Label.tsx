@@ -27,7 +27,7 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
-export type ContentType = ReactElement | ((props: Props) => ReactNode);
+export type LabelContentType = ReactElement | ((props: Props) => ReactNode);
 
 export type LabelPosition =
   | 'top'
@@ -65,7 +65,7 @@ interface LabelProps {
   position?: LabelPosition;
   children?: ReactNode;
   className?: string;
-  content?: ContentType;
+  content?: LabelContentType;
   textBreakAll?: boolean;
   angle?: number;
   index?: number;

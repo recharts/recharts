@@ -497,7 +497,7 @@ function RectanglesWithAnimation({
           }
           return (
             <Layer>
-              <BarRectangles props={props} data={stepData} showLabels={showLabels} />
+              <BarRectangles props={props} data={stepData} />
             </Layer>
           );
         }}

@@ -129,13 +129,7 @@ describe('<Label />', () => {
   it('Renders label by label props with animation disabled', () => {
     const { container } = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <Line
-          type="monotone"
-          dataKey="uv"
-          stroke="#ff7300"
-          label={{ value: 'hello', position: 'center' }}
-          isAnimationActive={false}
-        />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ position: 'center' }} isAnimationActive={false} />
       </LineChart>,
     );
 
@@ -147,7 +141,7 @@ describe('<Label />', () => {
     mockAnimation();
     const { container } = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ value: 'hello', position: 'center' }} />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ position: 'center' }} />
       </LineChart>,
     );
 
