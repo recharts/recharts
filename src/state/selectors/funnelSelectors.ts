@@ -8,11 +8,6 @@ import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 
-type FunnelComposedData = {
-  trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  data: ChartData | undefined;
-};
-
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
   data: ChartData | undefined;
@@ -42,13 +37,13 @@ export const selectFunnelTrapezoids: (
     cells,
     presentationProps,
   }: ResolvedFunnelSettings,
-) => FunnelComposedData = createSelector(
+) => ReadonlyArray<FunnelTrapezoidItem> = createSelector(
   [selectChartOffsetInternal, pickFunnelSettings, selectChartDataAndAlwaysIgnoreIndexes],
   (
     offset: ChartOffsetInternal,
     { data, dataKey, nameKey, tooltipType, lastShapeType, reversed, customWidth, cells, presentationProps },
     { chartData },
-  ): FunnelComposedData => {
+  ): ReadonlyArray<FunnelTrapezoidItem> => {
     let displayedData: ChartData | undefined;
     if (data != null && data.length > 0) {
       displayedData = data;
@@ -66,7 +61,7 @@ export const selectFunnelTrapezoids: (
     } else if (cells && cells.length) {
       displayedData = cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
     } else {
-      return { trapezoids: [], data: displayedData };
+      return [];
     }
 
     return computeFunnelTrapezoids({

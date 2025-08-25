@@ -302,9 +302,9 @@ function BarLabelListProvider({
 }: {
   showLabels: boolean;
   children: ReactNode;
-  rects: ReadonlyArray<BarRectangleItem>;
+  rects: ReadonlyArray<BarRectangleItem> | undefined;
 }) {
-  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = rects.map(
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> | undefined = rects?.map(
     (entry: BarRectangleItem): CartesianLabelListEntry => {
       const viewBox = {
         x: entry.x,
@@ -324,7 +324,7 @@ function BarLabelListProvider({
   );
 
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );

@@ -47,7 +47,7 @@ export interface PolarLabelListEntry extends BaseLabelListEntry {
 
 interface LabelListProps {
   id?: string;
-  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number;
+  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number | undefined;
   clockWise?: boolean;
   dataKey?: DataKey<Record<string, any>>;
   content?: LabelContentType;
@@ -76,8 +76,7 @@ export type Props = SVGProps<SVGTextElement> & LabelListProps;
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
-const defaultAccessor = (entry: CartesianLabelListEntry) =>
-  Array.isArray(entry.value) ? last(entry.value) : entry.value;
+const defaultAccessor = (entry: BaseLabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
 
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
