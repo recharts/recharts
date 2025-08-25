@@ -11,7 +11,7 @@ export function ScatterSymbol({
 }: {
   option: ActiveShape<ScatterPointItem> | SymbolType;
   isActive: boolean;
-} & ScatterPointItem) {
+} & ScatterPointItem): React.JSX.Element {
   if (typeof option === 'string') {
     return <Shape option={<Symbols type={option} {...props} />} isActive={isActive} shapeType="symbols" {...props} />;
   }

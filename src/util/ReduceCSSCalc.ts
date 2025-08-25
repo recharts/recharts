@@ -23,7 +23,7 @@ function convertToPx(value: number, unit: string): number {
 }
 
 class DecimalCSS {
-  static parse(str: string) {
+  static parse(str: string): DecimalCSS {
     const [, numStr, unit] = NUM_SPLIT_REGEX.exec(str) ?? [];
 
     return new DecimalCSS(parseFloat(numStr), unit ?? '');
@@ -51,7 +51,7 @@ class DecimalCSS {
     }
   }
 
-  add(other: DecimalCSS) {
+  add(other: DecimalCSS): DecimalCSS {
     if (this.unit !== other.unit) {
       return new DecimalCSS(NaN, '');
     }
@@ -59,7 +59,7 @@ class DecimalCSS {
     return new DecimalCSS(this.num + other.num, this.unit);
   }
 
-  subtract(other: DecimalCSS) {
+  subtract(other: DecimalCSS): DecimalCSS {
     if (this.unit !== other.unit) {
       return new DecimalCSS(NaN, '');
     }
@@ -67,7 +67,7 @@ class DecimalCSS {
     return new DecimalCSS(this.num - other.num, this.unit);
   }
 
-  multiply(other: DecimalCSS) {
+  multiply(other: DecimalCSS): DecimalCSS {
     if (this.unit !== '' && other.unit !== '' && this.unit !== other.unit) {
       return new DecimalCSS(NaN, '');
     }
@@ -75,7 +75,7 @@ class DecimalCSS {
     return new DecimalCSS(this.num * other.num, this.unit || other.unit);
   }
 
-  divide(other: DecimalCSS) {
+  divide(other: DecimalCSS): DecimalCSS {
     if (this.unit !== '' && other.unit !== '' && this.unit !== other.unit) {
       return new DecimalCSS(NaN, '');
     }
@@ -83,11 +83,11 @@ class DecimalCSS {
     return new DecimalCSS(this.num / other.num, this.unit || other.unit);
   }
 
-  toString() {
+  toString(): string {
     return `${this.num}${this.unit}`;
   }
 
-  isNaN() {
+  isNaN(): boolean {
     return isNan(this.num);
   }
 }

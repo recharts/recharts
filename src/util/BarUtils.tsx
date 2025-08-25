@@ -46,7 +46,7 @@ export type BarRectangleProps = {
   height?: number;
 } & Omit<BarProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
-export function BarRectangle(props: BarRectangleProps) {
+export function BarRectangle(props: BarRectangleProps): React.JSX.Element {
   return (
     <Shape
       shapeType="rectangle"
@@ -65,9 +65,11 @@ export type MinPointSize = number | ((value: number | undefined | null, index: n
  * @param defaultValue default minPointSize
  * @returns minPointSize
  */
-export const minPointSizeCallback =
-  (minPointSize: MinPointSize, defaultValue = 0) =>
-  (value: unknown, index: number): number => {
+export const minPointSizeCallback = (
+  minPointSize: MinPointSize,
+  defaultValue = 0,
+): ((value: unknown, index: number) => number) => {
+  return (value: unknown, index: number): number => {
     if (isNumber(minPointSize)) return minPointSize;
     const isValueNumberOrNil = isNumber(value) || isNullish(value);
     if (isValueNumberOrNil) {
@@ -80,3 +82,4 @@ export const minPointSizeCallback =
     );
     return defaultValue;
   };
+};

@@ -1,6 +1,6 @@
 const PREFIX_LIST = ['Webkit', 'Moz', 'O', 'ms'];
 
-export const generatePrefixStyle = (name: string, value: string) => {
+export const generatePrefixStyle = (name: string, value: string): Record<string, string> | undefined => {
   if (!name) {
     return undefined;
   }

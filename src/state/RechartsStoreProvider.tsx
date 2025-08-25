@@ -12,7 +12,11 @@ type RechartsStoreProviderProps = {
   reduxStoreName?: string;
 };
 
-export function RechartsStoreProvider({ preloadedState, children, reduxStoreName }: RechartsStoreProviderProps) {
+export function RechartsStoreProvider({
+  preloadedState,
+  children,
+  reduxStoreName,
+}: RechartsStoreProviderProps): ReactNode {
   const isPanorama = useIsPanorama();
   /*
    * Why the ref? Redux official documentation recommends to use store as a singleton,

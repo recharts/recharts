@@ -32,7 +32,7 @@ export const SCALE_TYPES = [
  * @param  {Object} Comp Specified Component
  * @return {String}      Display name of Component
  */
-export const getDisplayName = (Comp: React.ComponentType | string) => {
+export const getDisplayName = (Comp: React.ComponentType | string): string => {
   if (typeof Comp === 'string') {
     return Comp;
   }
@@ -161,7 +161,7 @@ export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean | unknown,
   includeEvents: boolean,
   svgElementType?: FilteredSvgElementType,
-) => {
+): Record<string, any> | null => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
     return null;
   }

@@ -40,7 +40,7 @@ export type CursorConnectedProps = CursorProps & {
   chartName: string;
 };
 
-export function CursorInternal(props: CursorConnectedProps) {
+export function CursorInternal(props: CursorConnectedProps): ReactElement | null {
   const { coordinate, payload, index, offset, tooltipAxisBandSize, layout, cursor, tooltipEventType, chartName } =
     props;
 
@@ -101,7 +101,7 @@ export function CursorInternal(props: CursorConnectedProps) {
  * It usually shows together with a tooltip
  * to emphasise which part of the chart does the tooltip refer to.
  */
-export function Cursor(props: CursorProps) {
+export function Cursor(props: CursorProps): ReactElement {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
   const offset = useOffsetInternal();
   const layout = useChartLayout();

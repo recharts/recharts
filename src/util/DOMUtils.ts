@@ -127,7 +127,7 @@ export const clearStringCache = (): void => {
  * Get cache statistics for debugging purposes.
  * @returns Cache statistics including size and max size
  */
-export const getStringCacheStats = () => ({
+export const getStringCacheStats = (): { size: number; maxSize: number } => ({
   size: stringCache.size(),
   maxSize: currentConfig.cacheSize,
 });

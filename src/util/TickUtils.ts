@@ -2,13 +2,17 @@ import { getAngledRectangleWidth } from './CartesianUtils';
 import { getEveryNthWithCondition } from './getEveryNthWithCondition';
 import { Size, CartesianTickItem, CartesianViewBoxRequired } from './types';
 
-export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number) {
+export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number): number {
   const size = { width: contentSize.width + unitSize.width, height: contentSize.height + unitSize.height };
 
   return getAngledRectangleWidth(size, angle);
 }
 
-export function getTickBoundaries(viewBox: CartesianViewBoxRequired, sign: number, sizeKey: string) {
+export function getTickBoundaries(
+  viewBox: CartesianViewBoxRequired,
+  sign: number,
+  sizeKey: string,
+): { start: number; end: number } {
   const isWidth = sizeKey === 'width';
   const { x, y, width, height } = viewBox;
   if (sign === 1) {
