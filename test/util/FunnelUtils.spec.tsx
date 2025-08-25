@@ -20,6 +20,8 @@ describe('funnelUtils', () => {
     y: 11,
     isActive: false,
     tooltipPosition: undefined,
+    height: 0,
+    name: undefined,
   };
   it('typeGuardTrapezoidProps returns object from options + props', () => {
     const mockRes: TrapezoidProps = {
@@ -54,6 +56,11 @@ describe('funnelUtils', () => {
           option={{ x: 10, y: 10 }}
           isActive
           height={100}
+          x={0}
+          y={0}
+          upperWidth={0}
+          lowerWidth={0}
+          name={undefined}
         />
       </svg>,
     );

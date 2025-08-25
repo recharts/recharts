@@ -1141,6 +1141,7 @@ describe('<Pie />', () => {
       it('should select unfiltered graphical items', () => {
         const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
         const expectedPie: PieSettings = {
+          maxRadius: undefined,
           angleAxisId: 0,
           cornerRadius: undefined,
           cx: '50%',
@@ -1175,6 +1176,7 @@ describe('<Pie />', () => {
       it('should select filtered graphical items', () => {
         const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
         const expectedPie: PieSettings = {
+          maxRadius: undefined,
           angleAxisId: 0,
           cornerRadius: undefined,
           cx: '50%',
@@ -1593,6 +1595,7 @@ describe('<Pie />', () => {
 
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedPie1: PieSettings = {
+        maxRadius: undefined,
         angleAxisId: 0,
         cornerRadius: undefined,
         cx: '50%',
@@ -1632,6 +1635,7 @@ describe('<Pie />', () => {
 
       expect(spy).toHaveBeenCalledTimes(6);
       const expectedPie2: PieSettings = {
+        maxRadius: undefined,
         angleAxisId: 0,
         cornerRadius: undefined,
         cx: '50%',
@@ -1679,6 +1683,7 @@ describe('<Pie />', () => {
 
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedPie: PieSettings = {
+        maxRadius: undefined,
         angleAxisId: 0,
         cornerRadius: undefined,
         cx: '50%',
