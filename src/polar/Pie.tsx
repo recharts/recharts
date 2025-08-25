@@ -13,7 +13,7 @@ import { Cell } from '../component/Cell';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
-import { getPercentValue, interpolateNumber, isNumber, mathSign } from '../util/DataUtils';
+import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -51,6 +51,7 @@ import {
   PolarLabelListContextProvider,
   PolarLabelListEntry,
 } from '../component/LabelList';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -78,16 +79,22 @@ type PieLabelLine =
 export type PieLabel = ImplicitLabelListType;
 
 export type PieSectorData = {
-  percent?: number;
-  name?: string | number;
+  cx: number;
+  cy: number;
+  dataKey?: string;
+  endAngle: number;
+  innerRadius: number;
   midAngle?: number;
   middleRadius?: number;
-  tooltipPosition?: Coordinate;
-  value?: number;
+  name?: string | number;
+  outerRadius: number;
   paddingAngle?: number;
-  dataKey?: string;
   payload?: any;
+  percent?: number;
+  startAngle: number;
   tooltipPayload?: ReadonlyArray<TooltipPayload>;
+  tooltipPosition: Coordinate;
+  value: number;
 };
 
 export type PieSectorDataItem = SectorProps & PieSectorData;
@@ -96,7 +103,7 @@ export type PieSectorDataItem = SectorProps & PieSectorData;
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalPieProps extends PieDef {
-  id?: string;
+  id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
@@ -109,7 +116,7 @@ interface InternalPieProps extends PieDef {
   hide?: boolean;
   /** the input data */
   data?: any[];
-  sectors?: ReadonlyArray<PieSectorDataItem>;
+  sectors: ReadonlyArray<PieSectorDataItem>;
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
@@ -187,7 +194,7 @@ export type PieCoordinate = {
   maxRadius: number;
 };
 
-function SetPiePayloadLegend(props: Props) {
+function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId }) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, props.id, cells));
@@ -199,16 +206,16 @@ function SetPiePayloadLegend(props: Props) {
 
 type PieSectorsProps = {
   sectors: Readonly<PieSectorDataItem[]>;
-  activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
-  inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
-  allOtherPieProps: InternalProps;
+  activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
+  inactiveShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
+  allOtherPieProps: WithoutId<InternalProps>;
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
   const { dataKey, nameKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
-    dataDefinedOnItem: sectors?.map((p: PieSectorDataItem) => p.tooltipPayload),
-    positions: sectors?.map((p: PieSectorDataItem) => p.tooltipPosition),
+    dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
+    positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
     settings: {
       stroke,
       strokeWidth,
@@ -237,8 +244,8 @@ const getTextAnchor = (x: number, cx: number) => {
 
 const getOuterRadius = (
   dataPoint: any,
-  outerRadius?: number | string | ((element: any) => number | string),
-  maxPieRadius?: number,
+  outerRadius: number | string | ((element: any) => number | string),
+  maxPieRadius: number,
 ) => {
   if (typeof outerRadius === 'function') {
     return getPercentValue(outerRadius(dataPoint), maxPieRadius, maxPieRadius * 0.8);
@@ -246,26 +253,16 @@ const getOuterRadius = (
   return getPercentValue(outerRadius, maxPieRadius, maxPieRadius * 0.8);
 };
 
-const parseCoordinateOfPie = (
-  item: {
-    cx?: number | string;
-    cy?: number | string;
-    innerRadius?: number | string;
-    outerRadius?: number | string | ((dataPoint: any) => number | string);
-    maxRadius?: number;
-  },
-  offset: ChartOffsetInternal,
-  dataPoint: any,
-): PieCoordinate => {
+const parseCoordinateOfPie = (pieSettings: PieSettings, offset: ChartOffsetInternal, dataPoint: any): PieCoordinate => {
   const { top, left, width, height } = offset;
   const maxPieRadius = getMaxRadius(width, height);
-  const cx = left + getPercentValue(item.cx, width, width / 2);
-  const cy = top + getPercentValue(item.cy, height, height / 2);
-  const innerRadius = getPercentValue(item.innerRadius, maxPieRadius, 0);
+  const cx = left + getPercentValue(pieSettings.cx, width, width / 2);
+  const cy = top + getPercentValue(pieSettings.cy, height, height / 2);
+  const innerRadius = getPercentValue(pieSettings.innerRadius, maxPieRadius, 0);
 
-  const outerRadius = getOuterRadius(dataPoint, item.outerRadius, maxPieRadius);
+  const outerRadius = getOuterRadius(dataPoint, pieSettings.outerRadius, maxPieRadius);
 
-  const maxRadius = item.maxRadius || Math.sqrt(width * width + height * height) / 2;
+  const maxRadius = pieSettings.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
   return { cx, cy, innerRadius, outerRadius, maxRadius };
 };
@@ -322,7 +319,7 @@ function PieLabels({
   showLabels,
 }: {
   sectors: ReadonlyArray<PieSectorDataItem>;
-  props: InternalProps;
+  props: WithoutId<InternalProps>;
   showLabels: boolean;
 }) {
   const { label, labelLine, dataKey } = props;
@@ -380,7 +377,7 @@ function PieLabelList({
   showLabels,
 }: {
   sectors: ReadonlyArray<PieSectorDataItem>;
-  props: InternalProps;
+  props: WithoutId<InternalProps>;
   showLabels: boolean;
 }) {
   const { label } = props;
@@ -452,11 +449,11 @@ export function computePieSectors({
   cells,
   offset,
 }: {
+  pieSettings: PieSettings;
   displayedData: ReadonlyArray<RealPieData>;
   cells: ReadonlyArray<ReactElement> | undefined;
-  pieSettings: PieSettings;
   offset: ChartOffsetInternal;
-}): ReadonlyArray<PieSectorDataItem> {
+}): ReadonlyArray<PieSectorDataItem> | undefined {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
@@ -564,17 +561,19 @@ function PieLabelListProvider({
     );
   }, [sectors, showLabels]);
   return (
-    <PolarLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <PolarLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </PolarLabelListContextProvider>
   );
 }
 
+type WithoutId<T> = Omit<T, 'id'>;
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
 }: {
-  props: InternalProps;
+  props: WithoutId<InternalProps>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
 }) {
   const {
@@ -629,19 +628,18 @@ function SectorsWithAnimation({
             const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
             if (prev) {
-              const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+              const angle = interpolate(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle, t);
               const latest = {
                 ...entry,
                 startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + angleIp(t) + paddingAngle,
+                endAngle: curAngle + angle + paddingAngle,
               };
 
               stepData.push(latest);
               curAngle = latest.endAngle;
             } else {
               const { endAngle, startAngle } = entry;
-              const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
-              const deltaAngle = interpolatorAngle(t);
+              const deltaAngle = interpolate(0, endAngle - startAngle, t);
               const latest = {
                 ...entry,
                 startAngle: curAngle + paddingAngle,
@@ -696,7 +694,7 @@ const defaultPieProps = {
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 
-function PieImpl(props: InternalProps) {
+function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   const { id, ...propsWithoutId } = props;
   const { hide, className, rootTabIndex } = props;
 

@@ -18,9 +18,6 @@ import { RadarSettings } from './types/RadarSettings';
  */
 export type GraphicalItemId = string;
 
-export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
-export type PolarGraphicalItemType = 'pie' | 'radar' | 'radialBar';
-
 export interface GraphicalItemSettings {
   /**
    * Unique ID of the graphical item.
