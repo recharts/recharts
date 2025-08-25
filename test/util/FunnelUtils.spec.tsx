@@ -13,6 +13,9 @@ describe('funnelUtils', () => {
     height: 100,
   };
   const mockProps: FunnelTrapezoidItem = {
+    width: 100,
+    upperWidth: 80,
+    lowerWidth: 60,
     x: 11,
     y: 11,
     isActive: false,
@@ -25,6 +28,10 @@ describe('funnelUtils', () => {
       // @ts-expect-error the types do not match what the function is doing
       isActive: mockProps.isActive,
       height: mockOptions.height,
+      lowerWidth: 60,
+      tooltipPosition: undefined,
+      upperWidth: 80,
+      width: 100,
     };
     const res = typeGuardTrapezoidProps(mockOptions, mockProps);
 
@@ -42,13 +49,11 @@ describe('funnelUtils', () => {
     const { container } = render(
       <svg width={100} height={100}>
         <FunnelTrapezoid
+          width={100}
           tooltipPosition={mockTooltipPosition}
           option={{ x: 10, y: 10 }}
-          {...{
-            isActive: true,
-            height: 100,
-          }}
-          isActive={Boolean(true)}
+          isActive
+          height={100}
         />
       </svg>,
     );

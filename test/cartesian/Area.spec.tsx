@@ -58,11 +58,13 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         );
       };
 
-      render(
+      const { debug } = render(
         <ChartElement data={data}>
           <Area dataKey="value" isAnimationActive={false} baseLine={200} label={renderLabel} />
         </ChartElement>,
       );
+
+      debug();
 
       expect(screen.getAllByText('Customized Label')).toHaveLength(data.length);
     });

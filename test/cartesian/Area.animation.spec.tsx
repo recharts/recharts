@@ -27,52 +27,103 @@ function getAreaCurveD(container: Element): string {
 
 const expectedUvLabels: ReadonlyArray<ExpectedLabel> = [
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '400',
-    width: null,
+    width: '0',
     x: '5',
     y: '5',
   },
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '300',
-    width: null,
+    width: '0',
     x: '23',
     y: '27.5',
   },
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '300',
-    width: null,
+    width: '0',
     x: '41',
     y: '27.5',
   },
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '200',
-    width: null,
+    width: '0',
     x: '59',
     y: '50',
   },
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '278',
-    width: null,
+    width: '0',
     x: '77',
     y: '32.45',
   },
   {
-    height: null,
+    height: '0',
     offset: '5',
     textContent: '189',
-    width: null,
+    width: '0',
     x: '95',
     y: '52.475',
+  },
+];
+
+const expectedPvLabels: ReadonlyArray<ExpectedLabel> = [
+  {
+    height: '0',
+    offset: '5',
+    textContent: '2400',
+    width: '0',
+    x: '5',
+    y: '73.4',
+  },
+  {
+    height: '0',
+    offset: '5',
+    textContent: '4567',
+    width: '0',
+    x: '23',
+    y: '53.897000000000006',
+  },
+  {
+    height: '0',
+    offset: '5',
+    textContent: '1398',
+    width: '0',
+    x: '41',
+    y: '82.41799999999999',
+  },
+  {
+    height: '0',
+    offset: '5',
+    textContent: '9800',
+    width: '0',
+    x: '59',
+    y: '6.8000000000000025',
+  },
+  {
+    height: '0',
+    offset: '5',
+    textContent: '3908',
+    width: '0',
+    x: '77',
+    y: '59.827999999999996',
+  },
+  {
+    height: '0',
+    offset: '5',
+    textContent: '4800',
+    width: '0',
+    x: '95',
+    y: '51.8',
   },
 ];
 
@@ -145,8 +196,6 @@ async function animatedHorizontalDots(
 }
 
 async function expectLabelsHideDuringAnimation(container: Element, animationManager: MockAnimationManager) {
-  expectLabels(container, []);
-
   await animationManager.setAnimationProgress(0.1);
   expectLabels(container, []);
 
@@ -154,20 +203,6 @@ async function expectLabelsHideDuringAnimation(container: Element, animationMana
   expectLabels(container, []);
 
   await animationManager.completeAnimation();
-  expectLabels(container, []);
-}
-
-async function expectLabelsRemainVisible(container: Element, animationManager: MockAnimationManager) {
-  expectLabels(container, expectedUvLabels);
-
-  await animationManager.setAnimationProgress(0.1);
-  expectLabels(container, expectedUvLabels);
-
-  await animationManager.setAnimationProgress(0.9);
-  expectLabels(container, expectedUvLabels);
-
-  await animationManager.completeAnimation();
-  expectLabels(container, expectedUvLabels);
 }
 
 function getClipPathRect(container: Element) {
@@ -294,7 +329,10 @@ describe('Area animation', () => {
     it('should hide labels during the animation', async () => {
       const { container, animationManager } = renderTestCase();
 
-      return expectLabelsRemainVisible(container, animationManager);
+      expectLabels(container, expectedUvLabels);
+      await expectLabelsHideDuringAnimation(container, animationManager);
+      // after animation is done, labels should render
+      expectLabels(container, expectedUvLabels);
     });
   });
 
@@ -310,7 +348,7 @@ describe('Area animation', () => {
             Change dataKey
           </button>
           <AreaChart data={PageData} width={100} height={100}>
-            <Area dataKey={dataKey} animationEasing="linear" dot />
+            <Area dataKey={dataKey} animationEasing="linear" dot label />
             {children}
           </AreaChart>
         </div>
@@ -343,7 +381,8 @@ describe('Area animation', () => {
       it('should hide labels during the animation', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
-        return expectLabelsHideDuringAnimation(container, animationManager);
+        await expectLabelsHideDuringAnimation(container, animationManager);
+        expectLabels(container, expectedPvLabels);
       });
 
       it('should animate the area path', async () => {

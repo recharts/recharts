@@ -7,9 +7,7 @@ import { LabelListProps } from '../props/LabelListProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
-  argTypes: {
-    ...LabelListProps,
-  },
+  argTypes: LabelListProps,
   component: LabelList,
 };
 

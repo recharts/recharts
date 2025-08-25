@@ -1026,7 +1026,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             x: expect.any(Number),
             y: expect.any(Number),
           },
-          {}, // this object arrives as a second argument, I am not sure where that comes from
+          {}, // second argument is a ref object
         );
       });
 

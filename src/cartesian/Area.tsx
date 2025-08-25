@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, useCallback, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, NullablePoint, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { LabelList } from '../component/LabelList';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  LabelListFromLabelProp,
+} from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber } from '../util/DataUtils';
 import {
@@ -252,20 +256,51 @@ function Dots({
   );
 }
 
+function AreaLabelListProvider({
+  showLabels,
+  children,
+  points,
+}: {
+  showLabels: boolean;
+  children: ReactNode;
+  points: ReadonlyArray<AreaPointItem>;
+}) {
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
+    const viewBox = {
+      x: point.x,
+      y: point.y,
+      width: 0,
+      height: 0,
+    };
+    return {
+      ...viewBox,
+      value: point.value,
+      payload: point.payload,
+      parentViewBox: undefined,
+      viewBox,
+      fill: undefined,
+    };
+  });
+
+  return (
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </CartesianLabelListContextProvider>
+  );
+}
+
 function StaticArea({
   points,
   baseLine,
   needClip,
   clipPathId,
   props,
-  showLabels,
 }: {
   points: ReadonlyArray<AreaPointItem>;
   baseLine: Props['baseLine'];
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
-  showLabels: boolean;
 }) {
   const { layout, type, stroke, connectNulls, isRange } = props;
 
@@ -312,7 +347,6 @@ function StaticArea({
         </Layer>
       )}
       <Dots points={points} props={propsWithoutId} clipPathId={clipPathId} />
-      {showLabels && LabelList.renderCallByParent(propsWithoutId, points)}
     </>
   );
 }
@@ -440,7 +474,8 @@ function AreaWithAnimation({
   } = props;
   const animationId = useAnimationId(props, 'recharts-area-');
 
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const showLabels = !isAnimating;
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -459,118 +494,120 @@ function AreaWithAnimation({
   const prevPoints = previousPointsRef.current;
   const prevBaseLine = previousBaselineRef.current;
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      onAnimationEnd={handleAnimationEnd}
-      onAnimationStart={handleAnimationStart}
-      key={animationId}
-    >
-      {(t: number) => {
-        if (prevPoints) {
-          const prevPointsDiffFactor = prevPoints.length / points.length;
-          const stepPoints: ReadonlyArray<AreaPointItem> =
-            /*
-             * Here it is important that at the very end of the animation, on the last frame,
-             * we render the original points without any interpolation.
-             * This is needed because the code above is checking for reference equality to decide if the animation should run
-             * and if we create a new array instance (even if the numbers were the same)
-             * then we would break animations.
-             */
-            t === 1
-              ? points
-              : points.map((entry, index): AreaPointItem => {
-                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                  if (prevPoints[prevPointIndex]) {
-                    const prev: AreaPointItem = prevPoints[prevPointIndex];
+    <AreaLabelListProvider showLabels={showLabels} points={points}>
+      {props.children}
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        onAnimationEnd={handleAnimationEnd}
+        onAnimationStart={handleAnimationStart}
+        key={animationId}
+      >
+        {(t: number) => {
+          if (prevPoints) {
+            const prevPointsDiffFactor = prevPoints.length / points.length;
+            const stepPoints: ReadonlyArray<AreaPointItem> =
+              /*
+               * Here it is important that at the very end of the animation, on the last frame,
+               * we render the original points without any interpolation.
+               * This is needed because the code above is checking for reference equality to decide if the animation should run
+               * and if we create a new array instance (even if the numbers were the same)
+               * then we would break animations.
+               */
+              t === 1
+                ? points
+                : points.map((entry, index): AreaPointItem => {
+                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                    if (prevPoints[prevPointIndex]) {
+                      const prev: AreaPointItem = prevPoints[prevPointIndex];
 
-                    return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                  }
+                      return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+                    }
 
-                  return entry;
-                });
-          let stepBaseLine: number | ReadonlyArray<NullablePoint>;
+                    return entry;
+                  });
+            let stepBaseLine: number | ReadonlyArray<NullablePoint>;
 
-          if (isNumber(baseLine)) {
-            stepBaseLine = interpolate(prevBaseLine, baseLine, t);
-          } else if (isNullish(baseLine) || isNan(baseLine)) {
-            stepBaseLine = interpolate(prevBaseLine, 0, t);
-          } else {
-            stepBaseLine = baseLine.map((entry, index) => {
-              const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-              if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
-                const prev = prevBaseLine[prevPointIndex];
+            if (isNumber(baseLine)) {
+              stepBaseLine = interpolate(prevBaseLine, baseLine, t);
+            } else if (isNullish(baseLine) || isNan(baseLine)) {
+              stepBaseLine = interpolate(prevBaseLine, 0, t);
+            } else {
+              stepBaseLine = baseLine.map((entry, index) => {
+                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
+                  const prev = prevBaseLine[prevPointIndex];
 
-                return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-              }
+                  return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+                }
 
-              return entry;
-            });
-          }
+                return entry;
+              });
+            }
 
-          if (t > 0) {
-            /*
-             * We need to keep the refs in the parent component because we need to remember the last shape of the animation
-             * even if AreaWithAnimation is unmounted as that happens when changing props.
-             *
-             * And we need to update the refs here because here is where the interpolation is computed.
-             * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
-             */
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = stepPoints;
-            // eslint-disable-next-line no-param-reassign
-            previousBaselineRef.current = stepBaseLine;
-          }
-          return (
-            <StaticArea
-              points={stepPoints}
-              baseLine={stepBaseLine}
-              needClip={needClip}
-              clipPathId={clipPathId}
-              props={props}
-              showLabels={!isAnimating}
-            />
-          );
-        }
-
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = points;
-          // eslint-disable-next-line no-param-reassign
-          previousBaselineRef.current = baseLine;
-        }
-        return (
-          <Layer>
-            {isAnimationActive && (
-              <defs>
-                <clipPath id={`animationClipPath-${clipPathId}`}>
-                  <ClipRect
-                    alpha={t}
-                    points={points}
-                    baseLine={baseLine}
-                    layout={props.layout}
-                    strokeWidth={props.strokeWidth}
-                  />
-                </clipPath>
-              </defs>
-            )}
-            <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
+            if (t > 0) {
+              /*
+               * We need to keep the refs in the parent component because we need to remember the last shape of the animation
+               * even if AreaWithAnimation is unmounted as that happens when changing props.
+               *
+               * And we need to update the refs here because here is where the interpolation is computed.
+               * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
+               */
+              // eslint-disable-next-line no-param-reassign
+              previousPointsRef.current = stepPoints;
+              // eslint-disable-next-line no-param-reassign
+              previousBaselineRef.current = stepBaseLine;
+            }
+            return (
               <StaticArea
-                points={points}
-                baseLine={baseLine}
+                points={stepPoints}
+                baseLine={stepBaseLine}
                 needClip={needClip}
                 clipPathId={clipPathId}
                 props={props}
-                showLabels
               />
+            );
+          }
+
+          if (t > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = points;
+            // eslint-disable-next-line no-param-reassign
+            previousBaselineRef.current = baseLine;
+          }
+          return (
+            <Layer>
+              {isAnimationActive && (
+                <defs>
+                  <clipPath id={`animationClipPath-${clipPathId}`}>
+                    <ClipRect
+                      alpha={t}
+                      points={points}
+                      baseLine={baseLine}
+                      layout={props.layout}
+                      strokeWidth={props.strokeWidth}
+                    />
+                  </clipPath>
+                </defs>
+              )}
+              <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
+                <StaticArea
+                  points={points}
+                  baseLine={baseLine}
+                  needClip={needClip}
+                  clipPathId={clipPathId}
+                  props={props}
+                />
+              </Layer>
             </Layer>
-          </Layer>
-        );
-      }}
-    </JavascriptAnimate>
+          );
+        }}
+      </JavascriptAnimate>
+      <LabelListFromLabelProp label={props.label} />
+    </AreaLabelListProvider>
   );
 }
 

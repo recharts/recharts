@@ -1,22 +1,17 @@
-import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Label.stories';
 
 # Label
 
-The Label component is used to display a label for a component.
+The Label component displays a single text label at a specified position in a chart or in a parent component.
 
 <Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={ComponentStories} />
-</Canvas>
+<Canvas of={ComponentStories.CartesianPositions} layout='padded'/>
 
 ## Parent Components
 The Label can be used within a `<XAxis />`, `<YAxis />`, `<ReferenceArea />`, `<ReferenceDot />`, `<ReferenceLine />`, `<Pie />` or a `<PolarRadiusAxis />`
 
-
 ## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
 
 <Controls of={ComponentStories.CartesianPositions} />

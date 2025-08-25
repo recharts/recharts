@@ -29,50 +29,50 @@ describe('Line animation', () => {
 
   const expectedUvLabels: ReadonlyArray<ExpectedLabel> = [
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '400',
-      width: null,
+      width: '0',
       x: '5',
       y: '5',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '300',
-      width: null,
+      width: '0',
       x: '23',
       y: '27.5',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '300',
-      width: null,
+      width: '0',
       x: '41',
       y: '27.5',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '200',
-      width: null,
+      width: '0',
       x: '59',
       y: '50',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '278',
-      width: null,
+      width: '0',
       x: '77',
       y: '32.45',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '189',
-      width: null,
+      width: '0',
       x: '95',
       y: '52.475',
     },
@@ -80,108 +80,52 @@ describe('Line animation', () => {
 
   const expectedPvLabels: ReadonlyArray<ExpectedLabel> = [
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '2400',
-      width: null,
+      width: '0',
       x: '5',
       y: '73.4',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '4567',
-      width: null,
+      width: '0',
       x: '23',
       y: '53.897000000000006',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '1398',
-      width: null,
+      width: '0',
       x: '41',
       y: '82.41799999999999',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '9800',
-      width: null,
+      width: '0',
       x: '59',
       y: '6.8000000000000025',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '3908',
-      width: null,
+      width: '0',
       x: '77',
       y: '59.827999999999996',
     },
     {
-      height: null,
+      height: '0',
       offset: '5',
       textContent: '4800',
-      width: null,
+      width: '0',
       x: '95',
       y: '51.8',
-    },
-  ];
-
-  /*
-   * The expected labels for the PV dataKey, but with UV positions.
-   * This is a bug; labels flash with the new text content at the old positions.
-   * Because it happens so quickly, it is not visible in the browser so we can just live with it.
-   */
-  const pvLabelsWithUvPositions: ReadonlyArray<ExpectedLabel> = [
-    {
-      height: null,
-      offset: '5',
-      textContent: '2400',
-      width: null,
-      x: '5',
-      y: '5',
-    },
-    {
-      height: null,
-      offset: '5',
-      textContent: '4567',
-      width: null,
-      x: '23',
-      y: '27.5',
-    },
-    {
-      height: null,
-      offset: '5',
-      textContent: '1398',
-      width: null,
-      x: '41',
-      y: '27.5',
-    },
-    {
-      height: null,
-      offset: '5',
-      textContent: '9800',
-      width: null,
-      x: '59',
-      y: '50',
-    },
-    {
-      height: null,
-      offset: '5',
-      textContent: '3908',
-      width: null,
-      x: '77',
-      y: '32.45',
-    },
-    {
-      height: null,
-      offset: '5',
-      textContent: '4800',
-      width: null,
-      x: '95',
-      y: '52.475',
     },
   ];
 
@@ -586,15 +530,17 @@ describe('Line animation', () => {
       it('should hide labels during the animation', async () => {
         const { container, animationManager } = renderTestCase();
 
+        // Chart starts with UV dataKey, so UV labels are expected
+        expectLabels(container, expectedUvLabels);
+
         await prime(container, animationManager);
 
         /*
          * The labels should still be hidden! But all labels now appear again.
          * Why? Because the animation is not started yet, but they swap to PV label values immediately.
-         * Unfortunately the labels still show at the UV position so we have a flash of new labels at the old position.
          * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
          */
-        expectLabels(container, pvLabelsWithUvPositions);
+        expectLabels(container, expectedPvLabels);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -812,10 +758,9 @@ describe('Line animation', () => {
         /*
          * The labels should still be hidden! But all labels now appear again.
          * Why? Because the animation is not started yet, but they swap to PV label values immediately.
-         * Unfortunately the labels still show at the UV position so we have a flash of new labels at the old position.
          * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
          */
-        expectLabels(container, pvLabelsWithUvPositions);
+        expectLabels(container, expectedPvLabels);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -1153,10 +1098,9 @@ describe('Line animation', () => {
         /*
          * The labels should still be hidden! But all labels now appear again.
          * Why? Because the animation is not started yet, but they swap to new label values immediately.
-         * Unfortunately the labels still show at the old position so we have a flash of new labels at the old position.
          * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
          */
-        expectLabels(container, pvLabelsWithUvPositions);
+        expectLabels(container, expectedPvLabels);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -1222,10 +1166,9 @@ describe('Line animation', () => {
         /*
          * The labels should still be hidden! But all labels now appear again.
          * Why? Because the animation is not started yet, but they swap to new label values immediately.
-         * Unfortunately the labels still show at the old position so we have a flash of new labels at the old position.
          * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
          */
-        expectLabels(container, pvLabelsWithUvPositions);
+        expectLabels(container, expectedPvLabels);
 
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
@@ -1471,43 +1414,40 @@ describe('Line animation', () => {
       /*
        * The labels should still be hidden! But all labels now appear again.
        * Why? Because the animation is not started yet, but they swap to new label values immediately.
-       * Unfortunately the labels still show at the old position so we have a flash of new labels at the old position.
        * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
-       *
-       * What's worse, we get 4 labels because the new data is larger.
        */
       expectLabels(container, [
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '400',
-          width: null,
+          width: '0',
           x: '5',
           y: '5',
         },
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '300',
-          width: null,
-          x: '5',
-          y: '5',
-        },
-        {
-          height: null,
-          offset: '5',
-          textContent: '300',
-          width: null,
-          x: '95',
+          width: '0',
+          x: '35',
           y: '27.5',
         },
         {
-          height: null,
+          height: '0',
+          offset: '5',
+          textContent: '300',
+          width: '0',
+          x: '65',
+          y: '27.5',
+        },
+        {
+          height: '0',
           offset: '5',
           textContent: '200',
-          width: null,
+          width: '0',
           x: '95',
-          y: '27.5',
+          y: '50',
         },
       ]);
 
@@ -1528,34 +1468,34 @@ describe('Line animation', () => {
       // after the animation is completed, the labels should appear again, this time at the new position
       expectLabels(container, [
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '400',
-          width: null,
+          width: '0',
           x: '5',
           y: '5',
         },
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '300',
-          width: null,
+          width: '0',
           x: '35',
           y: '27.5',
         },
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '300',
-          width: null,
+          width: '0',
           x: '65',
           y: '27.5',
         },
         {
-          height: null,
+          height: '0',
           offset: '5',
           textContent: '200',
-          width: null,
+          width: '0',
           x: '95',
           y: '50',
         },

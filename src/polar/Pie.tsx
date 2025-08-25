@@ -23,7 +23,6 @@ import {
   ChartOffsetInternal,
   Coordinate,
   DataKey,
-  GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
@@ -46,6 +45,12 @@ import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PieSettings } from '../state/types/PieSettings';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import {
+  ImplicitLabelListType,
+  LabelListFromLabelProp,
+  PolarLabelListContextProvider,
+  PolarLabelListEntry,
+} from '../component/LabelList';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -70,16 +75,7 @@ type PieLabelLine =
   | SVGProps<SVGPathElement>
   | boolean;
 
-export type PieLabelProps = PieSectorData &
-  GeometrySector & {
-    tooltipPayload?: any;
-  } & PieLabelRenderProps;
-
-export type PieLabel<P extends PieLabelProps = PieLabelProps> =
-  | ReactElement<SVGElement>
-  | ((props: P) => ReactNode | ReactElement<SVGElement>)
-  | (SVGProps<SVGTextElement> & { offsetRadius?: number })
-  | boolean;
+export type PieLabel = ImplicitLabelListType;
 
 export type PieSectorData = {
   percent?: number;
@@ -117,7 +113,7 @@ interface InternalPieProps extends PieDef {
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: PieLabel;
+  label?: ImplicitLabelListType;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -151,7 +147,7 @@ interface PieProps extends PieDef {
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: PieLabel;
+  label?: ImplicitLabelListType;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -206,7 +202,6 @@ type PieSectorsProps = {
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: InternalProps;
-  showLabels: boolean;
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
@@ -282,6 +277,13 @@ const parseDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
+function getClassNamePropertyIfExists(u: unknown): string {
+  if (u && typeof u === 'object' && 'className' in u && typeof u.className === 'string') {
+    return u.className;
+  }
+  return '';
+}
+
 const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
@@ -294,7 +296,7 @@ const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   return <Curve {...props} type="linear" className={className} />;
 };
 
-const renderLabelItem = (option: PieLabel, props: any, value: any) => {
+const renderLabelItem = (option: ImplicitLabelListType, props: any, value: any) => {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -306,10 +308,7 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
     }
   }
 
-  const className = clsx(
-    'recharts-pie-label-text',
-    typeof option !== 'boolean' && typeof option !== 'function' ? option.className : '',
-  );
+  const className = clsx('recharts-pie-label-text', getClassNamePropertyIfExists(option));
   return (
     <Text {...props} alignmentBaseline="middle" className={className}>
       {label}
@@ -333,7 +332,12 @@ function PieLabels({
   const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = filterProps(label, false);
   const customLabelLineProps = filterProps(labelLine, false);
-  const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
+  const offsetRadius =
+    (typeof label === 'object' &&
+      'offsetRadius' in label &&
+      typeof label.offsetRadius === 'number' &&
+      label.offsetRadius) ||
+    20;
 
   const labels = sectors.map((entry, i) => {
     const midAngle = (entry.startAngle + entry.endAngle) / 2;
@@ -370,8 +374,24 @@ function PieLabels({
   return <Layer className="recharts-pie-labels">{labels}</Layer>;
 }
 
+function PieLabelList({
+  sectors,
+  props,
+  showLabels,
+}: {
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  props: InternalProps;
+  showLabels: boolean;
+}) {
+  const { label } = props;
+  if (typeof label === 'object' && label != null && 'position' in label) {
+    return <LabelListFromLabelProp label={props.label} />;
+  }
+  return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
+}
+
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, showLabels } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -422,7 +442,6 @@ function PieSectors(props: PieSectorsProps) {
           </Layer>
         );
       })}
-      <PieLabels sectors={sectors} props={allOtherPieProps} showLabels={showLabels} />
     </>
   );
 }
@@ -512,6 +531,45 @@ export function computePieSectors({
   return sectors;
 }
 
+function PieLabelListProvider({
+  showLabels,
+  sectors,
+  children,
+}: {
+  showLabels: boolean;
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  children: ReactNode;
+}) {
+  const labelListEntries: ReadonlyArray<PolarLabelListEntry> = useMemo(() => {
+    if (!showLabels || !sectors) {
+      return [];
+    }
+    return sectors.map(
+      (entry): PolarLabelListEntry => ({
+        value: entry.value,
+        payload: entry.payload,
+        clockWise: false,
+        parentViewBox: undefined,
+        viewBox: {
+          cx: entry.cx,
+          cy: entry.cy,
+          innerRadius: entry.innerRadius,
+          outerRadius: entry.outerRadius,
+          startAngle: entry.startAngle,
+          endAngle: entry.endAngle,
+          clockWise: false,
+        },
+        fill: entry.fill,
+      }),
+    );
+  }, [sectors, showLabels]);
+  return (
+    <PolarLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </PolarLabelListContextProvider>
+  );
+}
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -550,65 +608,68 @@ function SectorsWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      onAnimationStart={handleAnimationStart}
-      onAnimationEnd={handleAnimationEnd}
-      key={animationId}
-    >
-      {(t: number) => {
-        const stepData: PieSectorDataItem[] = [];
-        const first = sectors && sectors[0];
-        let curAngle = first?.startAngle;
+    <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        onAnimationStart={handleAnimationStart}
+        onAnimationEnd={handleAnimationEnd}
+        key={animationId}
+      >
+        {(t: number) => {
+          const stepData: PieSectorDataItem[] = [];
+          const first = sectors && sectors[0];
+          let curAngle = first?.startAngle;
 
-        sectors?.forEach((entry, index) => {
-          const prev = prevSectors && prevSectors[index];
-          const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
+          sectors?.forEach((entry, index) => {
+            const prev = prevSectors && prevSectors[index];
+            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
-          if (prev) {
-            const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
-            const latest = {
-              ...entry,
-              startAngle: curAngle + paddingAngle,
-              endAngle: curAngle + angleIp(t) + paddingAngle,
-            };
+            if (prev) {
+              const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + angleIp(t) + paddingAngle,
+              };
 
-            stepData.push(latest);
-            curAngle = latest.endAngle;
-          } else {
-            const { endAngle, startAngle } = entry;
-            const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
-            const deltaAngle = interpolatorAngle(t);
-            const latest = {
-              ...entry,
-              startAngle: curAngle + paddingAngle,
-              endAngle: curAngle + deltaAngle + paddingAngle,
-            };
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            } else {
+              const { endAngle, startAngle } = entry;
+              const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
+              const deltaAngle = interpolatorAngle(t);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + deltaAngle + paddingAngle,
+              };
 
-            stepData.push(latest);
-            curAngle = latest.endAngle;
-          }
-        });
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            }
+          });
 
-        // eslint-disable-next-line no-param-reassign
-        previousSectorsRef.current = stepData;
-        return (
-          <Layer>
-            <PieSectors
-              sectors={stepData}
-              activeShape={activeShape}
-              inactiveShape={inactiveShape}
-              allOtherPieProps={props}
-              showLabels={!isAnimating}
-            />
-          </Layer>
-        );
-      }}
-    </JavascriptAnimate>
+          // eslint-disable-next-line no-param-reassign
+          previousSectorsRef.current = stepData;
+          return (
+            <Layer>
+              <PieSectors
+                sectors={stepData}
+                activeShape={activeShape}
+                inactiveShape={inactiveShape}
+                allOtherPieProps={props}
+              />
+            </Layer>
+          );
+        }}
+      </JavascriptAnimate>
+      <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
+      {props.children}
+    </PieLabelListProvider>
   );
 }
 
@@ -697,7 +758,6 @@ export function Pie(outsideProps: Props) {
           />
           <SetPiePayloadLegend {...propsWithoutId} id={id} />
           <PieImpl {...propsWithoutId} id={id} />
-          {propsWithoutId.children}
         </>
       )}
     </RegisterGraphicalItemId>

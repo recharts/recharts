@@ -27,7 +27,7 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
-export type ContentType = ReactElement | ((props: Props) => ReactNode);
+export type LabelContentType = ReactElement | ((props: Props) => ReactNode);
 
 export type LabelPosition =
   | 'top'
@@ -65,7 +65,7 @@ interface LabelProps {
   position?: LabelPosition;
   children?: ReactNode;
   className?: string;
-  content?: ContentType;
+  content?: LabelContentType;
   textBreakAll?: boolean;
   angle?: number;
   index?: number;
@@ -553,63 +553,6 @@ export function Label({ offset = 5, ...restProps }: Props) {
 
 Label.displayName = 'Label';
 
-export const parseViewBox = (props: any): ViewBox => {
-  const {
-    cx,
-    cy,
-    angle,
-    startAngle,
-    endAngle,
-    r,
-    radius,
-    innerRadius,
-    outerRadius,
-    x,
-    y,
-    top,
-    left,
-    width,
-    height,
-    clockWise,
-    labelViewBox,
-  } = props;
-
-  if (labelViewBox) {
-    return labelViewBox;
-  }
-
-  if (isNumber(width) && isNumber(height)) {
-    if (isNumber(x) && isNumber(y)) {
-      return { x, y, width, height };
-    }
-    if (isNumber(top) && isNumber(left)) {
-      return { x: top, y: left, width, height };
-    }
-  }
-
-  if (isNumber(x) && isNumber(y)) {
-    return { x, y, width: 0, height: 0 };
-  }
-
-  if (isNumber(cx) && isNumber(cy)) {
-    return {
-      cx,
-      cy,
-      startAngle: startAngle || angle || 0,
-      endAngle: endAngle || angle || 0,
-      innerRadius: innerRadius || 0,
-      outerRadius: outerRadius || radius || r || 0,
-      clockWise,
-    };
-  }
-
-  if (props.viewBox) {
-    return props.viewBox;
-  }
-
-  return undefined;
-};
-
 const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
   if (!label) {
     return null;
@@ -643,8 +586,6 @@ const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox, labelRef?: React
 
   return null;
 };
-
-Label.parseViewBox = parseViewBox;
 
 export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
   const viewBox = useCartesianLabelContext();

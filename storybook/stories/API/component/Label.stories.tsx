@@ -17,6 +17,7 @@ import {
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { positionProp } from '../props/LabelListProps';
 
 const LabelProps: Args = {
   formatter: {
@@ -34,18 +35,7 @@ const LabelProps: Args = {
       category: 'General',
     },
   },
-  position: {
-    description: 'The position of label relative to the view box. (Optional)',
-    table: {
-      control: { type: 'String | Number' },
-      summary:
-        'top, left, right, bottom, inside, outside, insideLeft, ' +
-        'insideRight, insideTop, insideBottom, insideTopLeft, ' +
-        'insideBottomLeft, insideTopRight, insideBottomRight, ' +
-        'insideStart, insideEnd, end, center, centerTop, centerBottom, middle',
-      category: 'General',
-    },
-  },
+  position: positionProp,
   offset: {
     description: 'The offset to the specified "position"',
     table: {

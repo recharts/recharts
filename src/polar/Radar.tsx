@@ -9,6 +9,7 @@ import {
   useRef,
   MutableRefObject,
   useState,
+  ReactNode,
 } from 'react';
 import last from 'es-toolkit/compat/last';
 
@@ -20,7 +21,11 @@ import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/Ch
 import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { LabelList } from '../component/LabelList';
+import {
+  LabelListFromLabelProp,
+  CartesianLabelListEntry,
+  CartesianLabelListContextProvider,
+} from '../component/LabelList';
 import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration, ActiveDotType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
@@ -251,16 +256,69 @@ function Dots({ points, props }: { points: ReadonlyArray<RadarPoint>; props: Pro
   return <Layer className="recharts-radar-dots">{dots}</Layer>;
 }
 
+function RadarLabelListProvider({
+  showLabels,
+  points,
+  children,
+}: {
+  showLabels: boolean;
+  points: ReadonlyArray<RadarPoint>;
+  children: ReactNode;
+}) {
+  /*
+   * Radar provides a Cartesian label list context. Do we want to also provide a polar label list context?
+   * That way, users can choose to use polar positions for the Radar labels.
+   */
+  // const labelListEntries: ReadonlyArray<PolarLabelListEntry> = points.map(
+  //   (point): PolarLabelListEntry => ({
+  //     value: point.value,
+  //     payload: point.payload,
+  //     parentViewBox: undefined,
+  //     clockWise: false,
+  //     viewBox: {
+  //       cx: point.cx,
+  //       cy: point.cy,
+  //       innerRadius: point.radius,
+  //       outerRadius: point.radius,
+  //       startAngle: point.angle,
+  //       endAngle: point.angle,
+  //       clockWise: false,
+  //     },
+  //   }),
+  // );
+
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
+    const viewBox = {
+      x: point.x,
+      y: point.y,
+      width: 0,
+      height: 0,
+    };
+    return {
+      ...viewBox,
+      value: point.value,
+      payload: point.payload,
+      parentViewBox: undefined,
+      viewBox,
+      fill: undefined,
+    };
+  });
+
+  return (
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+      {children}
+    </CartesianLabelListContextProvider>
+  );
+}
+
 function StaticPolygon({
   points,
   baseLinePoints,
   props,
-  showLabels,
 }: {
   points: ReadonlyArray<RadarPoint>;
   baseLinePoints: ReadonlyArray<RadarPoint>;
   props: Props;
-  showLabels: boolean;
 }) {
   if (points == null) {
     return null;
@@ -306,7 +364,6 @@ function StaticPolygon({
     <Layer className="recharts-radar-polygon">
       {radar}
       <Dots props={props} points={points} />
-      {showLabels && LabelList.renderCallByParent(props, points)}
     </Layer>
   );
 }
@@ -358,6 +415,7 @@ function PolygonWithAnimation({
 
   const animationId = useAnimationId(props, 'recharts-radar-');
   const [isAnimating, setIsAnimating] = useState(false);
+  const showLabels = !isAnimating;
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
@@ -374,40 +432,37 @@ function PolygonWithAnimation({
   }, [onAnimationStart]);
 
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
-      key={`radar-${animationId}`}
-      onAnimationEnd={handleAnimationEnd}
-      onAnimationStart={handleAnimationStart}
-    >
-      {(t: number) => {
-        const stepData = t === 1 ? points : points.map(interpolatePolarPoint(prevPoints, prevPointsDiffFactor, t));
+    <RadarLabelListProvider showLabels={showLabels} points={points}>
+      <JavascriptAnimate
+        animationId={animationId}
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        key={`radar-${animationId}`}
+        onAnimationEnd={handleAnimationEnd}
+        onAnimationStart={handleAnimationStart}
+      >
+        {(t: number) => {
+          const stepData = t === 1 ? points : points.map(interpolatePolarPoint(prevPoints, prevPointsDiffFactor, t));
 
-        const stepBaseLinePoints =
-          t === 1
-            ? baseLinePoints
-            : baseLinePoints?.map(interpolatePolarPoint(prevBaseLinePoints, prevBaseLinePointsDiffFactor, t));
+          const stepBaseLinePoints =
+            t === 1
+              ? baseLinePoints
+              : baseLinePoints?.map(interpolatePolarPoint(prevBaseLinePoints, prevBaseLinePointsDiffFactor, t));
 
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = stepData;
-          // eslint-disable-next-line no-param-reassign
-          previousBaseLinePointsRef.current = stepBaseLinePoints;
-        }
-        return (
-          <StaticPolygon
-            points={stepData}
-            baseLinePoints={stepBaseLinePoints}
-            props={props}
-            showLabels={!isAnimating}
-          />
-        );
-      }}
-    </JavascriptAnimate>
+          if (t > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = stepData;
+            // eslint-disable-next-line no-param-reassign
+            previousBaseLinePointsRef.current = stepBaseLinePoints;
+          }
+          return <StaticPolygon points={stepData} baseLinePoints={stepBaseLinePoints} props={props} />;
+        }}
+      </JavascriptAnimate>
+      <LabelListFromLabelProp label={props.label} />
+      {props.children}
+    </RadarLabelListProvider>
   );
 }
 
