@@ -53,9 +53,9 @@ describe('TooltipBoundingBox', () => {
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });
 
-  it('should hide children when dismissed using Escape key', () => {
+  it('should hide children when dismissed using Escape key', async () => {
     render(<TooltipBoundingBox {...defaultProps} active={false} />);
-    userEvent.keyboard('{Escape}');
+    await userEvent.keyboard('{Escape}');
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });

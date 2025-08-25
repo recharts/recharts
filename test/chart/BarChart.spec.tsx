@@ -3553,7 +3553,7 @@ describe('<BarChart />', () => {
       expect(tooltips4[1]).not.toBeVisible();
     });
 
-    it('should render two connected charts when given same syncId', () => {
+    it('should render two connected charts when given same syncId', async () => {
       const { container } = render(
         <>
           <BarChart syncId={1} width={100} height={50} data={data}>
@@ -3591,8 +3591,8 @@ describe('<BarChart />', () => {
       fireEvent.mouseOut(barCharts[0]);
       const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
       // TODO: remove these waits. Right now with both Context and Redux there are too many re-renders.
-      waitFor(() => expect(tooltips3[0]).not.toBeVisible());
-      waitFor(() => expect(tooltips3[1]).not.toBeVisible());
+      await waitFor(() => expect(tooltips3[0]).not.toBeVisible());
+      await waitFor(() => expect(tooltips3[1]).not.toBeVisible());
 
       fireEvent.mouseOut(barCharts[1]);
       const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');
