@@ -7,7 +7,7 @@
     "noEmit": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "target": "es6",
+    "target": "es2023",
     "types": ["vitest/globals"]
   },
   "include": [

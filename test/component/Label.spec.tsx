@@ -3,6 +3,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { Label, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
+import { PolarViewBoxRequired } from '../../src/util/types';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -14,13 +15,14 @@ const data = [
 ];
 
 describe('<Label />', () => {
-  const polarViewBox = {
+  const polarViewBox: PolarViewBoxRequired = {
     cx: 50,
     cy: 50,
     innerRadius: 20,
     outerRadius: 80,
     startAngle: 0,
     endAngle: 90,
+    clockWise: false,
   };
   it('Render polar labels (position="center")', () => {
     const { container } = render(

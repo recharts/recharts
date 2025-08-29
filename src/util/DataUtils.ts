@@ -16,7 +16,7 @@ export const isNan = (value: unknown): boolean => {
   return typeof value == 'number' && value != +value;
 };
 
-export const isPercent = (value: string | number): value is `${number}%` =>
+export const isPercent = (value: string | number | undefined): value is `${number}%` =>
   typeof value === 'string' && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number =>

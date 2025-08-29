@@ -779,7 +779,7 @@ export interface CartesianViewBox {
 
 export type CartesianViewBoxRequired = Required<CartesianViewBox>;
 
-export interface PolarViewBox {
+interface PolarViewBox {
   cx?: number;
   cy?: number;
   innerRadius?: number;
@@ -791,7 +791,7 @@ export interface PolarViewBox {
 
 export type PolarViewBoxRequired = Required<PolarViewBox>;
 
-export type ViewBox = CartesianViewBox | PolarViewBox;
+export type ViewBox = CartesianViewBoxRequired | PolarViewBoxRequired;
 
 type RecordString<T> = Record<string, T>;
 

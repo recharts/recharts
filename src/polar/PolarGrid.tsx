@@ -6,7 +6,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
-import { PolarViewBox } from '../util/types';
+import { PolarViewBoxRequired } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 interface PolarGridProps {
@@ -143,7 +143,7 @@ export const PolarGrid = ({
   outerRadius: outerRadiusFromOutside,
   ...inputs
 }: Props) => {
-  const polarViewBox: PolarViewBox | undefined = useAppSelector(selectPolarViewBox);
+  const polarViewBox: PolarViewBoxRequired | undefined = useAppSelector(selectPolarViewBox);
 
   const props = {
     cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
@@ -153,7 +153,7 @@ export const PolarGrid = ({
     ...inputs,
   };
 
-  const { polarAngles: polarAnglesInput, polarRadius: polarRadiusInput, cx, cy, innerRadius, outerRadius } = props;
+  const { polarAngles: polarAnglesInput, polarRadius: polarRadiusInput, outerRadius } = props;
 
   const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));
   const polarRadiiFromRedux = useAppSelector(state => selectPolarGridRadii(state, radiusAxisId));
@@ -168,10 +168,6 @@ export const PolarGrid = ({
   return (
     <g className="recharts-polar-grid">
       <PolarAngles
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
         gridType={gridType}
         radialLines={radialLines}
         {...props}
@@ -179,10 +175,6 @@ export const PolarGrid = ({
         polarRadius={polarRadius}
       />
       <ConcentricGridPath
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
         gridType={gridType}
         radialLines={radialLines}
         {...props}
