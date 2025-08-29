@@ -15,21 +15,15 @@ import { Text } from './Text';
 import { filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import {
-  ViewBox,
-  PolarViewBox,
-  CartesianViewBox,
-  DataKey,
-  CartesianViewBoxRequired,
-  PolarViewBoxRequired,
-} from '../util/types';
+import { ViewBox, DataKey, CartesianViewBoxRequired, PolarViewBoxRequired } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type LabelContentType = ReactElement | ((props: Props) => ReactNode);
 
-export type LabelPosition =
+type CartesianLabelPosition =
   | 'top'
   | 'left'
   | 'right'
@@ -56,6 +50,10 @@ export type LabelPosition =
       y?: number;
     };
 
+type PolarLabelPosition = 'insideStart' | 'insideEnd' | 'end';
+
+export type LabelPosition = CartesianLabelPosition | PolarLabelPosition;
+
 interface LabelProps {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
@@ -74,6 +72,10 @@ interface LabelProps {
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
 
+type PropsWithDefaults = Props & {
+  offset: number;
+};
+
 export type ImplicitLabelType =
   | boolean
   | string
@@ -83,7 +85,7 @@ export type ImplicitLabelType =
   // dataKey is only applicable when label is used implicitly from graphical element props
   | (Props & { dataKey?: DataKey<any> });
 
-const CartesianLabelContext = createContext<CartesianViewBox | null>(null);
+const CartesianLabelContext = createContext<CartesianViewBoxRequired | null>(null);
 
 export const CartesianLabelContextProvider = ({
   x,
@@ -110,7 +112,7 @@ export const CartesianLabelContextProvider = ({
   return <CartesianLabelContext.Provider value={viewBox}>{children}</CartesianLabelContext.Provider>;
 };
 
-const useCartesianLabelContext = () => {
+const useCartesianLabelContext = (): CartesianViewBoxRequired | undefined => {
   const labelChildContext = useContext(CartesianLabelContext);
   const chartContext = useViewBox();
   return labelChildContext || chartContext;
@@ -145,7 +147,7 @@ export const PolarLabelContextProvider = ({
   return <PolarLabelContext.Provider value={viewBox}>{children}</PolarLabelContext.Provider>;
 };
 
-export const usePolarLabelContext = () => {
+export const usePolarLabelContext = (): PolarViewBoxRequired | undefined => {
   const labelChildContext = useContext(PolarLabelContext);
   const chartContext = useAppSelector(selectPolarViewBox);
   return labelChildContext || chartContext;
@@ -174,27 +176,34 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
 };
 
 const renderRadialLabel = (
-  labelProps: Props,
+  labelProps: PropsWithDefaults,
+  position: PolarLabelPosition,
   label: ReactNode,
   attrs: SVGProps<SVGTextElement>,
-  viewBox: PolarViewBox,
+  viewBox: PolarViewBoxRequired,
 ) => {
-  const { position, offset, className } = labelProps;
+  const { offset, className } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
   const sign = deltaAngle >= 0 ? 1 : -1;
   let labelAngle, direction;
 
-  if (position === 'insideStart') {
-    labelAngle = startAngle + sign * offset;
-    direction = clockWise;
-  } else if (position === 'insideEnd') {
-    labelAngle = endAngle - sign * offset;
-    direction = !clockWise;
-  } else if (position === 'end') {
-    labelAngle = endAngle + sign * offset;
-    direction = clockWise;
+  switch (position) {
+    case 'insideStart':
+      labelAngle = startAngle + sign * offset;
+      direction = clockWise;
+      break;
+    case 'insideEnd':
+      labelAngle = endAngle - sign * offset;
+      direction = !clockWise;
+      break;
+    case 'end':
+      labelAngle = endAngle + sign * offset;
+      direction = clockWise;
+      break;
+    default:
+      throw new Error(`Unsupported position ${position}`);
   }
 
   direction = deltaAngle <= 0 ? direction : !direction;
@@ -216,8 +225,8 @@ const renderRadialLabel = (
   );
 };
 
-const getAttrsOfPolarLabel = (viewBox: PolarViewBox, offset: Props['offset'], position: Props['position']) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox as PolarViewBox;
+const getAttrsOfPolarLabel = (viewBox: PolarViewBoxRequired, offset: number, position: LabelPosition | undefined) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox;
   const midAngle = (startAngle + endAngle) / 2;
 
   if (position === 'outside') {
@@ -269,8 +278,17 @@ const getAttrsOfPolarLabel = (viewBox: PolarViewBox, offset: Props['offset'], po
   };
 };
 
-const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
-  const { parentViewBox, offset, position } = props;
+const isPolar = (viewBox: CartesianViewBoxRequired | PolarViewBoxRequired): viewBox is PolarViewBoxRequired =>
+  'cx' in viewBox && isNumber(viewBox.cx);
+
+const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianViewBoxRequired) => {
+  const { parentViewBox: parentViewBoxFromProps, offset, position } = props;
+  let parentViewBox: CartesianViewBoxRequired | undefined;
+  if (parentViewBoxFromProps != null && !isPolar(parentViewBoxFromProps)) {
+    // Check that nobody is trying to pass a polar viewBox to a cartesian label
+    parentViewBox = parentViewBoxFromProps;
+  }
+
   const { x, y, width, height } = viewBox;
 
   // Define vertical offsets and position inverts based on the value being positive or negative
@@ -297,7 +315,7 @@ const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
+            height: Math.max(y - parentViewBox.y, 0),
             width,
           }
         : {}),
@@ -316,10 +334,7 @@ const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            height: Math.max(
-              (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
-              0,
-            ),
+            height: Math.max(parentViewBox.y + parentViewBox.height - (y + height), 0),
             width,
           }
         : {}),
@@ -338,7 +353,7 @@ const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
+            width: Math.max(attrs.x - parentViewBox.x, 0),
             height,
           }
         : {}),
@@ -356,10 +371,7 @@ const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            width: Math.max(
-              (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
-              0,
-            ),
+            width: Math.max(parentViewBox.x + parentViewBox.width - attrs.x, 0),
             height,
           }
         : {}),
@@ -472,11 +484,12 @@ const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
   };
 };
 
-const isPolar = (viewBox: CartesianViewBox | PolarViewBox): viewBox is PolarViewBox =>
-  'cx' in viewBox && isNumber(viewBox.cx);
+const defaultLabelProps = {
+  offset: 5,
+} as const satisfies Partial<Props>;
 
-export function Label({ offset = 5, ...restProps }: Props) {
-  const props = { offset, ...restProps };
+export function Label(outerProps: Props) {
+  const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
     position,
@@ -531,7 +544,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const attrs = filterProps(props, true);
 
   if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
-    return renderRadialLabel(props, label, attrs, viewBox);
+    return renderRadialLabel(props, position, label, attrs, viewBox);
   }
 
   const positionAttrs = isPolarLabel
@@ -553,7 +566,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
 
 Label.displayName = 'Label';
 
-const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
+const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox | undefined, labelRef?: React.RefObject<Element>) => {
   if (!label) {
     return null;
   }

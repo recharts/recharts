@@ -447,7 +447,16 @@ describe('<LineChart />', () => {
     expect(labels).toHaveLength(6);
 
     labels.forEach(l => {
-      expect(l.getAttributeNames()).toEqual(['offset', 'width', 'height', 'x', 'y', 'class', 'text-anchor', 'fill']);
+      expect(l.getAttributeNames().toSorted()).toEqual([
+        'class',
+        'fill',
+        'height',
+        'offset',
+        'text-anchor',
+        'width',
+        'x',
+        'y',
+      ]);
       expect(l).toHaveAttribute('offset', '5');
       expect(l).toHaveAttribute('class', 'recharts-text recharts-label');
       expect(l).toHaveAttribute('text-anchor', 'middle');
