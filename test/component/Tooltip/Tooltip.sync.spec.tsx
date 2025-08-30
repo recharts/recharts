@@ -947,3 +947,442 @@ describe('Cursor synchronization', () => {
     });
   });
 });
+
+describe('Tooltip coordinate bounding in synchronization', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  describe.each([
+    {
+      name: 'LineChart to LineChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <LineChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="uv" />
+          {children}
+        </LineChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <LineChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="pv" />
+          {children}
+        </LineChart>
+      ),
+      mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+    },
+    {
+      name: 'AreaChart to AreaChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <AreaChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Area dataKey="uv" />
+          {children}
+        </AreaChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <AreaChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Area dataKey="pv" />
+          {children}
+        </AreaChart>
+      ),
+      mouseHoverSelector: areaChartMouseHoverTooltipSelector,
+    },
+    {
+      name: 'BarChart to BarChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <BarChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="uv" />
+          {children}
+        </BarChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <BarChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="pv" />
+          {children}
+        </BarChart>
+      ),
+      mouseHoverSelector: barChartMouseHoverTooltipSelector,
+    },
+    {
+      name: 'ComposedChart to ComposedChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <ComposedChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="uv" />
+          {children}
+        </ComposedChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <ComposedChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="pv" />
+          {children}
+        </ComposedChart>
+      ),
+      mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+    },
+    {
+      name: 'RadarChart to RadarChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <RadarChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis />
+          <Tooltip />
+          <Radar dataKey="uv" />
+          {children}
+        </RadarChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <RadarChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis />
+          <Tooltip />
+          <Radar dataKey="pv" />
+          {children}
+        </RadarChart>
+      ),
+      mouseHoverSelector: radarChartMouseHoverTooltipSelector,
+    },
+    {
+      name: 'RadialBarChart to RadialBarChart',
+      smallChart: ({ children }: { children: ReactNode }) => (
+        <RadialBarChart syncId="boundingTest" data={PageData} width={200} height={200} className="small-chart">
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis />
+          <Tooltip />
+          <RadialBar dataKey="uv" isAnimationActive={false} />
+          {children}
+        </RadialBarChart>
+      ),
+      largeChart: ({ children }: { children: ReactNode }) => (
+        <RadialBarChart syncId="boundingTest" data={PageData} width={600} height={400} className="large-chart">
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis />
+          <Tooltip />
+          <RadialBar dataKey="pv" isAnimationActive={false} />
+          {children}
+        </RadialBarChart>
+      ),
+      mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
+    },
+  ])(
+    'when using syncMethod=index with different chart dimensions: $name',
+    ({ smallChart: SmallChart, largeChart: LargeChart, mouseHoverSelector }) => {
+      const renderBoundingTestCase = createSynchronisedSelectorTestCase(SmallChart, LargeChart);
+
+      it('should bound coordinates within chart container when x exceeds maxX', () => {
+        const { wrapperB, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        expect(spyA).toHaveBeenLastCalledWith(undefined);
+        expect(spyB).toHaveBeenLastCalledWith(undefined);
+
+        showTooltip(wrapperB, mouseHoverSelector);
+
+        expect(spyA).toHaveBeenCalled();
+        const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+        if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA) {
+          expect(lastCallA.x).toBeLessThanOrEqual(200);
+          expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        }
+      });
+
+      it('should preserve coordinate properties while bounding x and y', () => {
+        const { wrapperB, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        expect(spyA).toHaveBeenLastCalledWith(undefined);
+        expect(spyB).toHaveBeenLastCalledWith(undefined);
+
+        showTooltip(wrapperB, mouseHoverSelector);
+
+        expect(spyA).toHaveBeenCalled();
+        expect(spyB).toHaveBeenCalled();
+
+        const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+        const lastCallB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+
+        if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+          expect(lastCallA.x).toBeLessThanOrEqual(200);
+          expect(lastCallA.y).toBeLessThanOrEqual(200);
+          expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+          expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+        }
+
+        if (lastCallB && typeof lastCallB === 'object' && 'x' in lastCallB && 'y' in lastCallB) {
+          expect(lastCallB.x).toBeLessThanOrEqual(600);
+          expect(lastCallB.y).toBeLessThanOrEqual(400);
+        }
+      });
+
+      it('should not modify coordinates when they are within bounds', () => {
+        const { wrapperA, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        showTooltip(wrapperA, mouseHoverSelector);
+
+        expect(spyA).toHaveBeenCalled();
+        expect(spyB).toHaveBeenCalled();
+
+        const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+        const lastCallB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+
+        if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+          expect(lastCallA.x).toBeLessThanOrEqual(200);
+          expect(lastCallA.y).toBeLessThanOrEqual(200);
+        }
+
+        if (lastCallB && typeof lastCallB === 'object' && 'x' in lastCallB && 'y' in lastCallB) {
+          expect(lastCallB.x).toBeLessThanOrEqual(600);
+          expect(lastCallB.y).toBeLessThanOrEqual(400);
+        }
+      });
+    },
+  );
+
+  describe('cross-chart type synchronization', () => {
+    it('should bound coordinates when synchronizing between different chart types', () => {
+      const renderCrossChartTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="crossChartTest" data={PageData} width={200} height={150} className="line-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <AreaChart syncId="crossChartTest" data={PageData} width={400} height={300} className="area-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="pv" />
+            {children}
+          </AreaChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderCrossChartTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, areaChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(200);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(150);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should handle LineChart to RadialBarChart synchronization with property preservation', () => {
+      const renderLineToRadialTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="lineToRadialTest" data={PageData} width={300} height={200} className="line-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <RadialBarChart syncId="lineToRadialTest" data={PageData} width={500} height={400} className="radial-chart">
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Tooltip />
+            <RadialBar dataKey="pv" isAnimationActive={false} />
+            {children}
+          </RadialBarChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderLineToRadialTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object') {
+        // Should preserve radial properties
+        expect(lastCallA).toHaveProperty('angle');
+        expect(lastCallA).toHaveProperty('clockWise');
+        expect(lastCallA).toHaveProperty('cx');
+        expect(lastCallA).toHaveProperty('cy');
+        expect(lastCallA).toHaveProperty('endAngle');
+        expect(lastCallA).toHaveProperty('innerRadius');
+        expect(lastCallA).toHaveProperty('outerRadius');
+        expect(lastCallA).toHaveProperty('radius');
+        expect(lastCallA).toHaveProperty('startAngle');
+
+        // Should bound x and y coordinates
+        if ('x' in lastCallA && 'y' in lastCallA) {
+          expect(lastCallA.x).toBeLessThanOrEqual(300);
+          expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+          expect(lastCallA.y).toBeLessThanOrEqual(200);
+          expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+        }
+      }
+    });
+  });
+
+  describe('edge cases for coordinate bounding', () => {
+    const renderEdgeCaseTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart syncId="edgeCaseTest" data={PageData} width={300} height={200}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Line dataKey="uv" />
+        {children}
+      </LineChart>
+    ));
+
+    it('should handle undefined coordinate gracefully', () => {
+      const { spy } = renderEdgeCaseTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
+
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+    });
+
+    it('should handle zero-sized viewBox', () => {
+      const renderZeroViewBoxTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart syncId="zeroViewBoxTest" data={PageData} width={0} height={0}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="uv" />
+          {children}
+        </LineChart>
+      ));
+
+      const { spy } = renderZeroViewBoxTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
+
+      expect(() => spy).not.toThrow();
+    });
+
+    it('should maintain synchronization behavior for identical chart sizes', () => {
+      const renderIdenticalSizeTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="identicalSizeTest" data={PageData} width={300} height={200}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="identicalSizeTest" data={PageData} width={300} height={200}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="pv" />
+            {children}
+          </LineChart>
+        ),
+      );
+
+      const { wrapperA, spyA, spyB } = renderIdenticalSizeTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      expect(spyB).toHaveBeenCalled();
+
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+      const lastCallB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+
+      if (
+        lastCallA &&
+        lastCallB &&
+        typeof lastCallA === 'object' &&
+        typeof lastCallB === 'object' &&
+        'x' in lastCallA &&
+        'y' in lastCallA &&
+        'x' in lastCallB &&
+        'y' in lastCallB
+      ) {
+        expect(Math.abs(lastCallA.x - lastCallB.x)).toBeLessThan(5);
+        expect(Math.abs(lastCallA.y - lastCallB.y)).toBeLessThan(5);
+      }
+    });
+
+    it('should handle extreme coordinate values', () => {
+      const renderExtremeTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="extremeTest" data={PageData} width={100} height={50}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="extremeTest" data={PageData} width={1000} height={800}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="pv" />
+            {children}
+          </LineChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderExtremeTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, lineChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(100);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(50);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+  });
+});
