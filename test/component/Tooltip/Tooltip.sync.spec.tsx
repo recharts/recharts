@@ -1170,10 +1170,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
   );
 
   describe('cross-chart type synchronization', () => {
-    it('should bound coordinates when synchronizing between different chart types', () => {
-      const renderCrossChartTestCase = createSynchronisedSelectorTestCase(
+    it('should bound coordinates when synchronizing from AreaChart to LineChart', () => {
+      const renderAreaToLineTestCase = createSynchronisedSelectorTestCase(
         ({ children }) => (
-          <LineChart syncId="crossChartTest" data={PageData} width={200} height={150} className="line-chart">
+          <LineChart syncId="areaToLineTest" data={PageData} width={200} height={150} className="line-chart">
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
@@ -1182,7 +1182,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
           </LineChart>
         ),
         ({ children }) => (
-          <AreaChart syncId="crossChartTest" data={PageData} width={400} height={300} className="area-chart">
+          <AreaChart syncId="areaToLineTest" data={PageData} width={400} height={300} className="area-chart">
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
@@ -1192,7 +1192,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         ),
       );
 
-      const { wrapperB, spyA } = renderCrossChartTestCase(state =>
+      const { wrapperB, spyA } = renderAreaToLineTestCase(state =>
         selectActiveCoordinate(state, 'axis', 'hover', undefined),
       );
 
@@ -1205,6 +1205,45 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         expect(lastCallA.x).toBeLessThanOrEqual(200);
         expect(lastCallA.x).toBeGreaterThanOrEqual(0);
         expect(lastCallA.y).toBeLessThanOrEqual(150);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should bound coordinates when synchronizing from LineChart to AreaChart', () => {
+      const renderLineToAreaTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <AreaChart syncId="lineToAreaTest" data={PageData} width={300} height={200} className="area-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="uv" />
+            {children}
+          </AreaChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="lineToAreaTest" data={PageData} width={500} height={350} className="line-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="pv" />
+            {children}
+          </LineChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderLineToAreaTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, lineChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(300);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(200);
         expect(lastCallA.y).toBeGreaterThanOrEqual(0);
       }
     });
@@ -1260,6 +1299,272 @@ describe('Tooltip coordinate bounding in synchronization', () => {
           expect(lastCallA.y).toBeLessThanOrEqual(200);
           expect(lastCallA.y).toBeGreaterThanOrEqual(0);
         }
+      }
+    });
+
+    it('should handle BarChart to ComposedChart synchronization', () => {
+      const renderBarToComposedTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <ComposedChart syncId="barToComposedTest" data={PageData} width={250} height={180} className="composed-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </ComposedChart>
+        ),
+        ({ children }) => (
+          <BarChart syncId="barToComposedTest" data={PageData} width={450} height={320} className="bar-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="pv" />
+            {children}
+          </BarChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderBarToComposedTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, barChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(250);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(180);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should handle ComposedChart to AreaChart synchronization', () => {
+      const renderComposedToAreaTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <AreaChart syncId="composedToAreaTest" data={PageData} width={280} height={220} className="area-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="uv" />
+            {children}
+          </AreaChart>
+        ),
+        ({ children }) => (
+          <ComposedChart
+            syncId="composedToAreaTest"
+            data={PageData}
+            width={520}
+            height={380}
+            className="composed-chart"
+          >
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="pv" />
+            <Line dataKey="amt" />
+            {children}
+          </ComposedChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderComposedToAreaTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, composedChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(280);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(220);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should handle RadarChart to LineChart synchronization', () => {
+      const renderRadarToLineTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="radarToLineTest" data={PageData} width={320} height={240} className="line-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <RadarChart syncId="radarToLineTest" data={PageData} width={600} height={500} className="radar-chart">
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Tooltip />
+            <Radar dataKey="pv" />
+            {children}
+          </RadarChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderRadarToLineTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, radarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(320);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(240);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should handle RadialBarChart to BarChart synchronization with property preservation', () => {
+      const renderRadialBarToBarTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <BarChart syncId="radialBarToBarTest" data={PageData} width={350} height={250} className="bar-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="uv" />
+            {children}
+          </BarChart>
+        ),
+        ({ children }) => (
+          <RadialBarChart
+            syncId="radialBarToBarTest"
+            data={PageData}
+            width={550}
+            height={450}
+            className="radial-bar-chart"
+          >
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Tooltip />
+            <RadialBar dataKey="pv" isAnimationActive={false} />
+            {children}
+          </RadialBarChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderRadialBarToBarTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object') {
+        // Should preserve all radial properties when synchronizing to cartesian chart
+        expect(lastCallA).toHaveProperty('angle');
+        expect(lastCallA).toHaveProperty('clockWise');
+        expect(lastCallA).toHaveProperty('cx');
+        expect(lastCallA).toHaveProperty('cy');
+        expect(lastCallA).toHaveProperty('endAngle');
+        expect(lastCallA).toHaveProperty('innerRadius');
+        expect(lastCallA).toHaveProperty('outerRadius');
+        expect(lastCallA).toHaveProperty('radius');
+        expect(lastCallA).toHaveProperty('startAngle');
+
+        // Should bound x and y coordinates
+        if ('x' in lastCallA && 'y' in lastCallA) {
+          expect(lastCallA.x).toBeLessThanOrEqual(350);
+          expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+          expect(lastCallA.y).toBeLessThanOrEqual(250);
+          expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+        }
+      }
+    });
+
+    it('should handle AreaChart to RadarChart synchronization', () => {
+      const renderAreaToRadarTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <RadarChart syncId="areaToRadarTest" data={PageData} width={300} height={280} className="radar-chart">
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Tooltip />
+            <Radar dataKey="uv" />
+            {children}
+          </RadarChart>
+        ),
+        ({ children }) => (
+          <AreaChart syncId="areaToRadarTest" data={PageData} width={480} height={360} className="area-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="pv" />
+            {children}
+          </AreaChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderAreaToRadarTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, areaChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(300);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(280);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    it('should handle multi-chart synchronization with mixed chart types', () => {
+      const renderMultiChartTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="multiChartTest" data={PageData} width={200} height={160} className="line-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <ComposedChart syncId="multiChartTest" data={PageData} width={400} height={300} className="composed-chart">
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area dataKey="pv" />
+            <Bar dataKey="amt" />
+            <Line dataKey="uv" />
+            {children}
+          </ComposedChart>
+        ),
+      );
+
+      const { wrapperB, spyA } = renderMultiChartTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperB, composedChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenCalled();
+      const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+
+      if (lastCallA && typeof lastCallA === 'object' && 'x' in lastCallA && 'y' in lastCallA) {
+        expect(lastCallA.x).toBeLessThanOrEqual(200);
+        expect(lastCallA.x).toBeGreaterThanOrEqual(0);
+        expect(lastCallA.y).toBeLessThanOrEqual(160);
+        expect(lastCallA.y).toBeGreaterThanOrEqual(0);
       }
     });
   });
