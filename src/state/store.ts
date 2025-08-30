@@ -53,7 +53,7 @@ export const createRechartsStore = (
         externalEventsMiddleware.middleware,
         touchEventMiddleware.middleware,
       ]),
-    devTools: {
+    devTools: !!window.RECHARTS_DEV_TOOLS_ENABLED && {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,
       },
@@ -64,3 +64,9 @@ export const createRechartsStore = (
 
 export type RechartsRootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = Dispatch<Action>;
+
+declare global {
+  interface Window {
+    RECHARTS_DEV_TOOLS_ENABLED?: boolean;
+  }
+}
