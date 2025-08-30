@@ -18,6 +18,7 @@ import {
   selectAxisScale,
   selectTicksOfAxis,
   selectYAxisPosition,
+  selectYAxisSettings,
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
@@ -76,6 +77,13 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
+  /*
+   * Here we select settings from the store and prefer to use them instead of the actual props
+   * so that the chart is consistent. If we used the props directly, some components will use axis settings
+   * from state and some from props and because there is a render step between these two, they might be showing different things.
+   * https://github.com/recharts/recharts/issues/6257
+   */
+  const synchronizedSettings = useAppSelector(state => selectYAxisSettings(state, yAxisId));
 
   useLayoutEffect(() => {
     // No dynamic width calculation is done when width !== 'auto'
@@ -111,15 +119,17 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     width,
   ]);
 
-  if (axisSize == null || position == null) {
+  if (axisSize == null || position == null || synchronizedSettings == null) {
     return null;
   }
 
   const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+  const { id, ...restSynchronizedSettings } = synchronizedSettings;
 
   return (
     <CartesianAxis
       {...allOtherProps}
+      {...restSynchronizedSettings}
       ref={cartesianAxisRef}
       labelRef={labelRef}
       scale={scale}

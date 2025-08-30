@@ -556,14 +556,14 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(3);
+      expect(axisSpy).toHaveBeenCalledTimes(4);
 
       fireEvent.mouseEnter(container, { clientX: 30, clientY: 200 });
       fireEvent.mouseMove(container, { clientX: 200, clientY: 200 });
       fireEvent.mouseLeave(container);
 
       expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(3);
+      expect(axisSpy).toHaveBeenCalledTimes(4);
     });
 
     // protect against the future where someone might mess up our clean rendering
@@ -571,7 +571,7 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(3);
+      expect(axisSpy).toHaveBeenCalledTimes(4);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
       assertNotNull(brushSlide);
@@ -580,7 +580,7 @@ describe('AreaChart', () => {
       fireEvent.mouseUp(window);
 
       expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(3);
+      expect(axisSpy).toHaveBeenCalledTimes(4);
     });
   });
 

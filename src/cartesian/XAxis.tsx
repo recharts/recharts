@@ -50,8 +50,6 @@ function SetXAxisSettings(props: SetXAxisSettingsProps): ReactNode {
     const { children, ...rest } = props;
     return rest;
   }, [props]);
-  const synchronizedSettings = useAppSelector(state => selectXAxisSettings(state, settings.id));
-  const settingsAreSynchronized = settings === synchronizedSettings;
 
   useEffect(() => {
     dispatch(addXAxis(settings));
@@ -59,11 +57,7 @@ function SetXAxisSettings(props: SetXAxisSettingsProps): ReactNode {
       dispatch(removeXAxis(settings));
     };
   }, [settings, dispatch]);
-
-  if (settingsAreSynchronized) {
-    return props.children;
-  }
-  return null;
+  return props.children;
 }
 
 const XAxisImpl = (props: Props) => {
@@ -75,16 +69,25 @@ const XAxisImpl = (props: Props) => {
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
+  /*
+   * Here we select settings from the store and prefer to use them instead of the actual props
+   * so that the chart is consistent. If we used the props directly, some components will use axis settings
+   * from state and some from props and because there is a render step between these two, they might be showing different things.
+   * https://github.com/recharts/recharts/issues/6257
+   */
+  const synchronizedSettings = useAppSelector(state => selectXAxisSettings(state, xAxisId));
 
-  if (axisSize == null || position == null) {
+  if (axisSize == null || position == null || synchronizedSettings == null) {
     return null;
   }
 
   const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+  const { id, ...restSynchronizedSettings } = synchronizedSettings;
 
   return (
     <CartesianAxis
       {...allOtherProps}
+      {...restSynchronizedSettings}
       scale={scale}
       x={position.x}
       y={position.y}
