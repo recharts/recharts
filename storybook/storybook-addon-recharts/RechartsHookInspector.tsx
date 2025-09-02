@@ -11,6 +11,7 @@ import { OffsetShower } from './inspectors/OffsetShower';
 import { PlotAreaShower } from './inspectors/PlotAreaShower';
 import { useRechartsInspectorState } from './RechartsInspectorDecorator';
 import { ManualAnimations } from './ManualAnimations';
+import { CrosshairControls } from './crosshairs/CrosshairControls';
 
 function Controls({
   defaultOpened,
@@ -30,6 +31,7 @@ function Controls({
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
       <Component setEnabledOverlays={setEnabledOverlays} defaultOpened={defaultOpened} />
       <ManualAnimations />
+      <CrosshairControls />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
   );

@@ -2,7 +2,7 @@ import React, { createContext, useCallback } from 'react';
 import { StoryFn } from '@storybook/react-vite';
 import { useGlobals } from 'storybook/preview-api';
 import { noop } from 'es-toolkit';
-import { PARAM_MANUAL_ANIMATIONS_KEY, PARAM_POSITION_KEY, Position } from './constants';
+import { PARAM_CROSSHAIR_CONTROLS_KEY, PARAM_MANUAL_ANIMATIONS_KEY, PARAM_POSITION_KEY, Position } from './constants';
 import { HookInspectorLayout } from './HookInspectorWrapper';
 import { RechartsContextProperties } from './RechartsStoryContext';
 import { CompositeAnimationManager } from '../../test/animation/CompositeAnimationManager';
@@ -17,6 +17,8 @@ type RechartsInspectorState = {
   setPosition: (newPosition: Position) => void;
   manualAnimationsEnabled: boolean;
   setManualAnimationsEnabled: (isEnabled: boolean) => void;
+  crosshairControlsEnabled: boolean;
+  setCrosshairControlsEnabled: (isEnabled: boolean) => void;
 };
 
 const RechartsInspectorContext = createContext<RechartsInspectorState>({
@@ -25,6 +27,8 @@ const RechartsInspectorContext = createContext<RechartsInspectorState>({
   setPosition: noop,
   manualAnimationsEnabled: false,
   setManualAnimationsEnabled: noop,
+  crosshairControlsEnabled: false,
+  setCrosshairControlsEnabled: noop,
 });
 
 export const AnimationManagerControlsContext = createContext(animationManager);
@@ -37,6 +41,7 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
   const [globals, setGlobals] = useGlobals();
   const position = globals[PARAM_POSITION_KEY];
   const manualAnimationsEnabled = globals[PARAM_MANUAL_ANIMATIONS_KEY];
+  const crosshairControlsEnabled = globals[PARAM_CROSSHAIR_CONTROLS_KEY];
 
   const setManualAnimationsEnabled = useCallback(
     (isEnabled: boolean) => {
@@ -50,6 +55,18 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
     [manualAnimationsEnabled, setGlobals],
   );
 
+  const setCrosshairControlsEnabled = useCallback(
+    (isEnabled: boolean) => {
+      if (isEnabled === crosshairControlsEnabled) {
+        return;
+      }
+      setGlobals({
+        [PARAM_CROSSHAIR_CONTROLS_KEY]: isEnabled,
+      });
+    },
+    [crosshairControlsEnabled, setGlobals],
+  );
+
   const setPosition = useCallback(
     (newPosition: Position) => {
       if (newPosition === position) {
@@ -60,9 +77,10 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
       });
       if (newPosition === 'hidden') {
         setManualAnimationsEnabled(false);
+        setCrosshairControlsEnabled(false);
       }
     },
-    [position, setGlobals],
+    [position, setGlobals, setManualAnimationsEnabled, setCrosshairControlsEnabled],
   );
 
   const context: RechartsContextProperties = {
@@ -83,6 +101,8 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
             setPosition,
             manualAnimationsEnabled,
             setManualAnimationsEnabled,
+            crosshairControlsEnabled,
+            setCrosshairControlsEnabled,
           }}
         >
           <HookInspectorLayout position={position}>

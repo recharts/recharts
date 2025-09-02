@@ -1,5 +1,5 @@
 import React from 'react';
-import { CloseIcon, VideoIcon } from '@storybook/icons';
+import { CloseIcon, VideoIcon, LocationIcon } from '@storybook/icons';
 import { Position } from '../constants';
 import { LayoutBarIcon } from './LayoutBarIcon';
 import { RechartsHookInspectorButton } from './RechartsHookInspectorButton';
@@ -16,7 +16,8 @@ function Separator() {
 }
 
 export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwitcherProps) {
-  const { manualAnimationsEnabled, setManualAnimationsEnabled } = useRechartsInspectorState();
+  const { manualAnimationsEnabled, setManualAnimationsEnabled, crosshairControlsEnabled, setCrosshairControlsEnabled } =
+    useRechartsInspectorState();
   return (
     <>
       <RechartsHookInspectorButton
@@ -48,6 +49,13 @@ export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwi
         <LayoutBarIcon direction="EAST" />
       </RechartsHookInspectorButton>
       <Separator />
+      <RechartsHookInspectorButton
+        isActive={crosshairControlsEnabled}
+        onClick={() => setCrosshairControlsEnabled(!crosshairControlsEnabled)}
+        title="Toggle crosshair controls"
+      >
+        <LocationIcon />
+      </RechartsHookInspectorButton>
       <RechartsHookInspectorButton
         isActive={manualAnimationsEnabled}
         onClick={() => setManualAnimationsEnabled(!manualAnimationsEnabled)}

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useRechartsInspectorState } from '../RechartsInspectorDecorator';
 
 export type CrosshairType = {
   id: number;
@@ -77,19 +78,14 @@ export const useCrosshairManager = (props?: UseCrosshairManagerProps): UseCrossh
   };
 };
 
-type CrosshairControlsProps = {
-  crosshairs: CrosshairType[];
-  isAdding: boolean;
-  onAddCrosshair: () => void;
-  onDeleteCrosshair: (id: number) => void;
-};
+export const CrosshairControls = () => {
+  const { crosshairControlsEnabled } = useRechartsInspectorState();
+  const { crosshairs, isAdding, onAddCrosshair, onDeleteCrosshair } = useCrosshairManager();
 
-export const CrosshairControls = ({
-  crosshairs,
-  isAdding,
-  onAddCrosshair,
-  onDeleteCrosshair,
-}: CrosshairControlsProps) => {
+  if (!crosshairControlsEnabled) {
+    return null;
+  }
+
   return (
     <div>
       <button type="button" onClick={onAddCrosshair} style={{ marginBottom: '10px' }}>
