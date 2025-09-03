@@ -62,6 +62,7 @@ export type CrosshairType = {
 export type UseCrosshairManagerProps = {
   onCrosshairAdd?: (crosshair: CrosshairType) => void;
   onCrosshairDelete?: (id: number) => void;
+  onCrosshairUpdate?: (crosshair: CrosshairType) => void;
 };
 
 export type UseCrosshairManagerReturn = {
@@ -70,6 +71,7 @@ export type UseCrosshairManagerReturn = {
   followerCrosshair: { x: number; y: number } | null;
   onAddCrosshair: () => void;
   onDeleteCrosshair: (id: number) => void;
+  onUpdateCrosshair: (crosshair: CrosshairType) => void;
   onChartClick: (x: number, y: number) => void;
   onChartMouseMove: (x: number, y: number) => void;
   onChartMouseLeave: () => void;
@@ -88,6 +90,14 @@ export const useCrosshairManager = (props?: UseCrosshairManagerProps): UseCrossh
     (id: number) => {
       setCrosshairs(prev => prev.filter(c => c.id !== id));
       props?.onCrosshairDelete?.(id);
+    },
+    [props],
+  );
+
+  const onUpdateCrosshair = useCallback(
+    (updatedCrosshair: CrosshairType) => {
+      setCrosshairs(prev => prev.map(c => (c.id === updatedCrosshair.id ? updatedCrosshair : c)));
+      props?.onCrosshairUpdate?.(updatedCrosshair);
     },
     [props],
   );
@@ -129,6 +139,7 @@ export const useCrosshairManager = (props?: UseCrosshairManagerProps): UseCrossh
     followerCrosshair,
     onAddCrosshair,
     onDeleteCrosshair,
+    onUpdateCrosshair,
     onChartClick,
     onChartMouseMove,
     onChartMouseLeave,
@@ -140,11 +151,13 @@ export const CrosshairControls = ({
   isAdding,
   onAddCrosshair,
   onDeleteCrosshair,
+  onUpdateCrosshair,
 }: {
   crosshairs: CrosshairType[];
   isAdding: boolean;
   onAddCrosshair: () => void;
   onDeleteCrosshair: (id: number) => void;
+  onUpdateCrosshair: (crosshair: CrosshairType) => void;
 }) => {
   const { crosshairControlsEnabled } = useRechartsInspectorState();
 
@@ -152,22 +165,56 @@ export const CrosshairControls = ({
     return null;
   }
 
+  const handleCoordinateChange = (crosshair: CrosshairType, field: 'x' | 'y', value: string) => {
+    const numValue = parseFloat(value);
+    if (!Number.isNaN(numValue)) {
+      onUpdateCrosshair({
+        ...crosshair,
+        [field]: numValue,
+      });
+    }
+  };
+
   return (
     <div>
       <button type="button" onClick={onAddCrosshair} style={{ marginBottom: '10px' }}>
         {isAdding ? 'Cancel' : 'Add crosshair'}
       </button>
       <h4>Crosshairs:</h4>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      <div style={{ padding: 0, margin: 0 }}>
         {crosshairs.map(crosshair => (
-          <li key={crosshair.id} style={{ marginBottom: '5px' }}>
-            ({crosshair.x.toFixed(0)}, {crosshair.y.toFixed(0)})
-            <button type="button" onClick={() => onDeleteCrosshair(crosshair.id)} style={{ marginLeft: '10px' }}>
+          <div key={crosshair.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '12px', height: '12px', backgroundColor: crosshair.color, borderRadius: '2px' }} />
+            <label htmlFor={`crosshair-x-${crosshair.id}`} style={{ fontSize: '12px', minWidth: '15px' }}>
+              X:
+            </label>
+            <input
+              id={`crosshair-x-${crosshair.id}`}
+              type="number"
+              value={crosshair.x.toFixed(1)}
+              onChange={e => handleCoordinateChange(crosshair, 'x', e.target.value)}
+              style={{ width: '60px', fontSize: '12px', padding: '2px 4px' }}
+            />
+            <label htmlFor={`crosshair-y-${crosshair.id}`} style={{ fontSize: '12px', minWidth: '15px' }}>
+              Y:
+            </label>
+            <input
+              id={`crosshair-y-${crosshair.id}`}
+              type="number"
+              value={crosshair.y.toFixed(1)}
+              onChange={e => handleCoordinateChange(crosshair, 'y', e.target.value)}
+              style={{ width: '60px', fontSize: '12px', padding: '2px 4px' }}
+            />
+            <button
+              type="button"
+              onClick={() => onDeleteCrosshair(crosshair.id)}
+              style={{ fontSize: '12px', padding: '2px 6px' }}
+            >
               Delete
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

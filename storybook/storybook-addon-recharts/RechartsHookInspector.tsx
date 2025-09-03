@@ -29,6 +29,7 @@ function Controls({
   isAdding,
   onAddCrosshair,
   onDeleteCrosshair,
+  onUpdateCrosshair,
 }: {
   defaultOpened?: string;
   position: Position;
@@ -39,6 +40,7 @@ function Controls({
   isAdding: boolean;
   onAddCrosshair: () => void;
   onDeleteCrosshair: (id: number) => void;
+  onUpdateCrosshair: (crosshair: CrosshairType) => void;
 }) {
   return createPortal(
     <>
@@ -50,6 +52,7 @@ function Controls({
         isAdding={isAdding}
         onAddCrosshair={onAddCrosshair}
         onDeleteCrosshair={onDeleteCrosshair}
+        onUpdateCrosshair={onUpdateCrosshair}
       />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
@@ -75,6 +78,7 @@ export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: strin
     crosshairs,
     isAdding,
     onAddCrosshair,
+    onUpdateCrosshair,
     onDeleteCrosshair,
     followerCrosshair,
     onChartClick,
@@ -109,6 +113,7 @@ export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: strin
         isAdding={isAdding}
         onAddCrosshair={onAddCrosshair}
         onDeleteCrosshair={onDeleteCrosshair}
+        onUpdateCrosshair={onUpdateCrosshair}
       />
       <RenderCrosshairs
         followerCrosshair={followerCrosshair}
