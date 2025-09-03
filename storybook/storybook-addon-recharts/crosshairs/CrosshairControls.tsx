@@ -5,15 +5,15 @@ import { Crosshair } from './Crosshair';
 // Array of 10 bright, contrasting colors
 const CROSSHAIR_COLORS = [
   '#FF0000', // Red
-  '#00FF00', // Lime
+  '#008000', // Dark Green (better contrast than lime)
   '#0000FF', // Blue
   '#FF00FF', // Magenta
-  '#00FFFF', // Cyan
-  '#FFFF00', // Yellow
+  '#008B8B', // Dark Cyan (better contrast than cyan)
+  '#DAA520', // Goldenrod (better contrast than yellow)
   '#FF8000', // Orange
   '#8000FF', // Purple
   '#FF0080', // Pink
-  '#80FF00', // Chartreuse
+  '#228B22', // Forest Green (better contrast than chartreuse)
 ];
 
 const getCrosshairColor = (index: number): string => {
