@@ -175,6 +175,13 @@ export const CrosshairControls = ({
     }
   };
 
+  const handleColorChange = (crosshair: CrosshairType, color: string) => {
+    onUpdateCrosshair({
+      ...crosshair,
+      color,
+    });
+  };
+
   return (
     <div>
       <button type="button" onClick={onAddCrosshair} style={{ marginBottom: '10px' }}>
@@ -184,7 +191,20 @@ export const CrosshairControls = ({
       <div style={{ padding: 0, margin: 0 }}>
         {crosshairs.map(crosshair => (
           <div key={crosshair.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '12px', height: '12px', backgroundColor: crosshair.color, borderRadius: '2px' }} />
+            <input
+              type="color"
+              value={crosshair.color}
+              onChange={e => handleColorChange(crosshair, e.target.value)}
+              style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '2px',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+              title="Change color"
+            />
             <label htmlFor={`crosshair-x-${crosshair.id}`} style={{ fontSize: '12px', minWidth: '15px' }}>
               X:
             </label>
