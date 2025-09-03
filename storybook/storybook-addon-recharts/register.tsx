@@ -3,7 +3,12 @@ import React, { useCallback, useEffect } from 'react';
 import { addons, types, useGlobals, useStorybookApi } from 'storybook/manager-api';
 import { IconButton } from 'storybook/internal/components';
 import hookIcon from './hookIcon.svg';
-import { DEFAULT_POSITION, PARAM_MANUAL_ANIMATIONS_KEY, PARAM_POSITION_KEY } from './constants';
+import {
+  DEFAULT_POSITION,
+  PARAM_CROSSHAIR_CONTROLS_KEY,
+  PARAM_MANUAL_ANIMATIONS_KEY,
+  PARAM_POSITION_KEY,
+} from './constants';
 
 const ADDON_ID = 'storybook/storybook-addon-recharts/tool';
 
@@ -20,6 +25,7 @@ function HookInspectorToolToggle() {
     if (!isActive) {
       updateGlobals({
         [PARAM_MANUAL_ANIMATIONS_KEY]: false, // Reset manual animations when closing the inspector
+        [PARAM_CROSSHAIR_CONTROLS_KEY]: false, // Reset crosshair controls when closing the inspector
       });
     }
   }, [isActive, updateGlobals]);

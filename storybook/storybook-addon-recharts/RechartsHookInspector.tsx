@@ -11,6 +11,13 @@ import { OffsetShower } from './inspectors/OffsetShower';
 import { PlotAreaShower } from './inspectors/PlotAreaShower';
 import { useRechartsInspectorState } from './RechartsInspectorDecorator';
 import { ManualAnimations } from './ManualAnimations';
+import {
+  CrosshairControls,
+  RenderCrosshairs,
+  useCrosshairManager,
+  CrosshairType,
+  Blanket,
+} from './crosshairs/CrosshairControls';
 
 function Controls({
   defaultOpened,
@@ -18,37 +25,37 @@ function Controls({
   setPosition,
   setEnabledOverlays,
   Component,
+  crosshairs,
+  isAdding,
+  onAddCrosshair,
+  onDeleteCrosshair,
+  onUpdateCrosshair,
 }: {
   defaultOpened?: string;
   position: Position;
   setPosition: (newPosition: Position) => void;
   setEnabledOverlays: (overlays: ReadonlyArray<string>) => void;
   Component: React.ComponentType<ChartInspectorProps>;
+  crosshairs: CrosshairType[];
+  isAdding: boolean;
+  onAddCrosshair: () => void;
+  onDeleteCrosshair: (id: number) => void;
+  onUpdateCrosshair: (crosshair: CrosshairType) => void;
 }) {
   return createPortal(
     <>
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
       <Component setEnabledOverlays={setEnabledOverlays} defaultOpened={defaultOpened} />
       <ManualAnimations />
+      <CrosshairControls
+        crosshairs={crosshairs}
+        isAdding={isAdding}
+        onAddCrosshair={onAddCrosshair}
+        onDeleteCrosshair={onDeleteCrosshair}
+        onUpdateCrosshair={onUpdateCrosshair}
+      />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
-  );
-}
-
-/**
- * Blanket component is a svg component that darkens the background a little bit.
- * @constructor
- */
-function Blanket() {
-  return (
-    <rect
-      x={0}
-      y={0}
-      width="100%"
-      height="100%"
-      fill="rgba(190, 190, 190, 0.4)"
-      style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000, pointerEvents: 'none' }}
-    />
   );
 }
 
@@ -66,6 +73,18 @@ export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: strin
       setPosition('NORTH');
     }
   }, [defaultOpened, openedFromStart, position, setPosition]);
+
+  const {
+    crosshairs,
+    isAdding,
+    onAddCrosshair,
+    onUpdateCrosshair,
+    onDeleteCrosshair,
+    followerCrosshair,
+    onChartClick,
+    onChartMouseMove,
+    onChartMouseLeave,
+  } = useCrosshairManager();
 
   if (position === 'hidden' || position == null) {
     return null;
@@ -90,6 +109,19 @@ export function RechartsHookInspector({ defaultOpened }: { defaultOpened?: strin
         setPosition={setPosition}
         Component={Component}
         setEnabledOverlays={setEnabledOverlays}
+        crosshairs={crosshairs}
+        isAdding={isAdding}
+        onAddCrosshair={onAddCrosshair}
+        onDeleteCrosshair={onDeleteCrosshair}
+        onUpdateCrosshair={onUpdateCrosshair}
+      />
+      <RenderCrosshairs
+        followerCrosshair={followerCrosshair}
+        crosshairs={crosshairs}
+        onChartClick={onChartClick}
+        onChartMouseMove={onChartMouseMove}
+        onChartMouseLeave={onChartMouseLeave}
+        isAdding={isAdding}
       />
       {overlaysThatNeedBlanket.some(overlay => enabledOverlays.includes(overlay)) && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
