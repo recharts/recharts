@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useRechartsInspectorState } from '../RechartsInspectorDecorator';
+import { Crosshair } from './Crosshair';
 
 /**
  * Blanket component is a svg component that darkens the background a little bit.
@@ -185,49 +186,9 @@ export const RenderCrosshairs = ({
         />
       )}
       {crosshairs.map(crosshair => (
-        <g key={crosshair.id}>
-          <line
-            x1={crosshair.x}
-            y1={0}
-            x2={crosshair.x}
-            y2="100%"
-            stroke="red"
-            strokeDasharray="4"
-            pointerEvents="none"
-          />
-          <line
-            x1={0}
-            y1={crosshair.y}
-            x2="100%"
-            y2={crosshair.y}
-            stroke="red"
-            strokeDasharray="4"
-            pointerEvents="none"
-          />
-        </g>
+        <Crosshair key={crosshair.id} x={crosshair.x} y={crosshair.y} />
       ))}
-      {followerCrosshair && (
-        <g>
-          <line
-            x1={followerCrosshair.x}
-            y1={0}
-            x2={followerCrosshair.x}
-            y2="100%"
-            stroke="blue"
-            strokeDasharray="4"
-            pointerEvents="none"
-          />
-          <line
-            x1={0}
-            y1={followerCrosshair.y}
-            x2="100%"
-            y2={followerCrosshair.y}
-            stroke="blue"
-            strokeDasharray="4"
-            pointerEvents="none"
-          />
-        </g>
-      )}
+      {followerCrosshair && <Crosshair key="follower" x={followerCrosshair.x} y={followerCrosshair.y} />}
     </>
   );
 };
