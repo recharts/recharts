@@ -2,6 +2,24 @@ import React, { useState, useCallback } from 'react';
 import { useRechartsInspectorState } from '../RechartsInspectorDecorator';
 import { Crosshair } from './Crosshair';
 
+// Array of 10 bright, contrasting colors
+const CROSSHAIR_COLORS = [
+  '#FF0000', // Red
+  '#00FF00', // Lime
+  '#0000FF', // Blue
+  '#FF00FF', // Magenta
+  '#00FFFF', // Cyan
+  '#FFFF00', // Yellow
+  '#FF8000', // Orange
+  '#8000FF', // Purple
+  '#FF0080', // Pink
+  '#80FF00', // Chartreuse
+];
+
+const getCrosshairColor = (index: number): string => {
+  return CROSSHAIR_COLORS[index % CROSSHAIR_COLORS.length];
+};
+
 /**
  * Blanket component is a svg component that darkens the background a little bit.
  * @constructor
@@ -38,6 +56,7 @@ export type CrosshairType = {
   id: number;
   x: number;
   y: number;
+  color: string;
 };
 
 export type UseCrosshairManagerProps = {
@@ -76,14 +95,19 @@ export const useCrosshairManager = (props?: UseCrosshairManagerProps): UseCrossh
   const onChartClick = useCallback(
     (x: number, y: number) => {
       if (isAdding) {
-        const newCrosshair = { id: Date.now(), x, y };
+        const newCrosshair = {
+          id: Date.now(),
+          x,
+          y,
+          color: getCrosshairColor(crosshairs.length),
+        };
         setCrosshairs(prev => [...prev, newCrosshair]);
         props?.onCrosshairAdd?.(newCrosshair);
         setIsAdding(false);
         setFollowerCrosshair(null);
       }
     },
-    [isAdding, props],
+    [isAdding, props, crosshairs.length],
   );
 
   const onChartMouseMove = useCallback(
@@ -186,9 +210,16 @@ export const RenderCrosshairs = ({
         />
       )}
       {crosshairs.map(crosshair => (
-        <Crosshair key={crosshair.id} x={crosshair.x} y={crosshair.y} />
+        <Crosshair key={crosshair.id} x={crosshair.x} y={crosshair.y} color={crosshair.color} />
       ))}
-      {followerCrosshair && <Crosshair key="follower" x={followerCrosshair.x} y={followerCrosshair.y} />}
+      {followerCrosshair && (
+        <Crosshair
+          key="follower"
+          x={followerCrosshair.x}
+          y={followerCrosshair.y}
+          color={getCrosshairColor(crosshairs.length)}
+        />
+      )}
     </>
   );
 };
