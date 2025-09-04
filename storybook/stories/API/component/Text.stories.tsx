@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsiveContainer, Surface, Text } from '../../../../src';
 import { TextProps } from '../props/TextProps';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -15,6 +16,7 @@ export const API = {
       <ResponsiveContainer width={500} height={300}>
         <Surface width={500} height={80}>
           <Text {...args}>{args.content}</Text>
+          <RechartsHookInspector />
         </Surface>
       </ResponsiveContainer>
     );
