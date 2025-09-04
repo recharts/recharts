@@ -36,3 +36,6 @@ const preview: Preview = {
 export default preview;
 
 export const decorators: Decorator[] = [];
+
+// Enable dev tools in the storybook:
+window.RECHARTS_DEV_TOOLS_ENABLED = true;
