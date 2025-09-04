@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
-import { Text, Props as TextProps, TextAnchor } from '../component/Text';
+import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import {
   adaptEventsOfChild,
   AxisDomain,
@@ -14,7 +14,7 @@ import {
   TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
+import { degreeToRadian, getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import { RechartsScale } from '../util/ChartUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -24,8 +24,8 @@ import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
-const RADIAN = Math.PI / 180;
 const eps = 1e-5;
+const COS_45 = Math.cos(degreeToRadian(45));
 
 /**
  * These are injected from Redux, are required, but cannot be set by user.
@@ -120,7 +120,7 @@ const getTickLineCoord = (
  * @return text-anchor
  */
 const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): TextAnchor => {
-  const cos = Math.cos(-data.coordinate * RADIAN);
+  const cos = Math.cos(degreeToRadian(-data.coordinate));
 
   if (cos > eps) {
     return orientation === 'outer' ? 'start' : 'end';
@@ -128,6 +128,24 @@ const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): T
   if (cos < -eps) {
     return orientation === 'outer' ? 'end' : 'start';
   }
+  return 'middle';
+};
+
+/**
+ * Get the text vertical anchor of each tick
+ * @param data Data of a tick
+ * @return text vertical anchor
+ */
+const getTickTextVerticalAnchor = (data: TickItem): TextVerticalAnchor => {
+  const cos = Math.cos(degreeToRadian(-data.coordinate));
+  const sin = Math.sin(degreeToRadian(-data.coordinate));
+
+  // handle top and bottom sectors: 90±45deg and 270±45deg
+  if (Math.abs(cos) <= COS_45) {
+    // sin > 0: top sector, sin < 0: bottom sector
+    return sin > 0 ? 'start' : 'end';
+  }
+
   return 'middle';
 };
 
@@ -196,9 +214,11 @@ const Ticks = (props: PropsWithTicks) => {
   const items = ticks.map((entry, i) => {
     const lineCoord = getTickLineCoord(entry, props);
     const textAnchor: TextAnchor = getTickTextAnchor(entry, props.orientation);
+    const verticalAnchor: TextVerticalAnchor = getTickTextVerticalAnchor(entry);
     const tickProps: TickItemTextProps = {
       ...axisProps,
       textAnchor,
+      verticalAnchor,
       stroke: 'none',
       fill: stroke,
       ...customTickProps,

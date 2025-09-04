@@ -45,11 +45,13 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
+export type TextVerticalAnchor = 'start' | 'middle' | 'end';
+
 interface TextProps {
   scaleToFit?: boolean;
   angle?: number;
   textAnchor?: TextAnchor;
-  verticalAnchor?: 'start' | 'middle' | 'end';
+  verticalAnchor?: TextVerticalAnchor;
   style?: CSSProperties;
   lineHeight?: number | string;
   breakAll?: boolean;
