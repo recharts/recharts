@@ -5,6 +5,7 @@ import { Surface, Text } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { getWordsByLines } from '../../src/component/Text';
 import * as DOMUtils from '../../src/util/DOMUtils';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Text />', () => {
   const mockRect = {
@@ -280,5 +281,51 @@ describe('getWordsByLines', () => {
     });
 
     expect(wordsByLines).toEqual([{ words: ['Ma…'], width: 7 }]);
+  });
+});
+
+describe('scaleToFit=true', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 50, height: 20 });
+  });
+
+  it('scales text to fit the width', () => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={200} scaleToFit>
+          This is really long text
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+    expect(text).toHaveAttribute('transform', 'scale(0.5714285714285714)');
+  });
+
+  it('does not scale text to fit if width is not provided', () => {
+    const { container } = render(
+      <Surface width={300} height={200}>
+        <Text scaleToFit>This is really long text</Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+    expect(text).toHaveAttribute('transform', 'scale(1)');
+  });
+
+  it('should not throw errors if no children are provided', () => {
+    // https://github.com/recharts/recharts/issues/6190
+    const { container } = render(
+      <Surface width={300} height={200}>
+        <Text width={200} scaleToFit />
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    expect(text).not.toBeInTheDocument();
   });
 });
