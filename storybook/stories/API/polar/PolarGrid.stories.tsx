@@ -35,6 +35,18 @@ const GeneralProps: Args = {
     description: 'Whether to display radial lines.',
     table: { type: { summary: 'boolean', defaultValue: true }, category: 'General' },
   },
+  fill: {
+    description: 'The x-coordinate of center.',
+    table: { type: { summary: 'string' }, category: 'General' },
+  },
+  fillOpacity: {
+    description: 'The x-coordinate of center.',
+    table: { type: { summary: 'number' }, category: 'General' },
+  },
+  strokeWidth: {
+    description: 'The x-coordinate of center.',
+    table: { type: { summary: 'number' }, category: 'General' },
+  },
 };
 
 export default {
@@ -68,5 +80,8 @@ export const Simple = {
   args: {
     polarAngles: [0, 30, 60, 90, 145, 180, 200, 270, 300],
     polarRadius: [10, 20, 40, 80],
+    strokeWidth: 1,
+    fill: 'none',
+    fillOpacity: 0.2,
   },
 };

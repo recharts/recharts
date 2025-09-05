@@ -8,8 +8,8 @@ export const degreeToRadian = (angle: number) => (angle * Math.PI) / 180;
 export const radianToDegree = (angleInRadian: number) => (angleInRadian * 180) / Math.PI;
 
 export const polarToCartesian = (cx: number, cy: number, radius: number, angle: number): Coordinate => ({
-  x: cx + Math.cos(-RADIAN * angle) * radius,
-  y: cy + Math.sin(-RADIAN * angle) * radius,
+  x: cx + Math.cos(degreeToRadian(-angle)) * radius,
+  y: cy + Math.sin(degreeToRadian(-angle)) * radius,
 });
 
 export const getMaxRadius = (

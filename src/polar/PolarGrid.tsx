@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
-import { SVGProps } from 'react';
+import { Fragment, SVGProps, useMemo } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
@@ -29,6 +29,7 @@ type ConcentricProps = Props & {
   radius: number;
   // The index of circle
   index: number;
+  // prevRadius: number;
 };
 
 const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: number[]) => {
@@ -38,9 +39,9 @@ const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: num
     const point = polarToCartesian(cx, cy, radius, angle);
 
     if (i) {
-      path += `L ${point.x},${point.y}`;
+      path += ` L${point.x},${point.y}`;
     } else {
-      path += `M ${point.x},${point.y}`;
+      path += `M${point.x},${point.y}`;
     }
   });
   path += 'Z';
@@ -77,8 +78,8 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius, index } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
-    ...svgPropertiesNoEvents(props),
     fill: 'none',
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
@@ -99,8 +100,8 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   const { radius, index } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
-    ...svgPropertiesNoEvents(props),
     fill: 'none',
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
@@ -117,16 +118,60 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
 const ConcentricGridPath: React.FC<Props> = props => {
   const { polarRadius, gridType } = props;
 
-  if (!polarRadius || !polarRadius.length) {
+  const sortedPolarRadius = useMemo(() => polarRadius?.slice().sort((a, b) => a - b), [polarRadius]);
+
+  if (!sortedPolarRadius || !sortedPolarRadius.length) {
     return null;
   }
 
   return (
     <g className="recharts-polar-grid-concentric">
-      {polarRadius.map((entry: number, i: number) => {
+      {sortedPolarRadius.map((entry: number, i: number) => {
         const key = i;
-        if (gridType === 'circle') return <ConcentricCircle key={key} {...props} radius={entry} index={i} />;
-        return <ConcentricPolygon key={key} {...props} radius={entry} index={i} />;
+        const prevRadius = sortedPolarRadius[i - 1] ?? 0;
+        const hasFillColor = props.fill && props.fill !== 'none';
+
+        if (gridType === 'circle') {
+          const widthOfBackground = entry - prevRadius - 1;
+          const backgroundProps = {
+            radius: entry - (entry - prevRadius) / 2,
+            strokeWidth: widthOfBackground,
+            stroke: props.fill,
+            fill: 'none',
+            strokeOpacity: props.fillOpacity,
+          };
+          return (
+            <Fragment key={key}>
+              {hasFillColor && <ConcentricCircle {...props} {...backgroundProps} index={i} />}
+            </Fragment>
+          );
+        }
+
+        const strokeWidth = props.strokeWidth ?? 1;
+        const widthOfBackground = entry - prevRadius;
+        const backgroundProps = {
+          radius: prevRadius + (widthOfBackground) / 2,
+          strokeWidth: widthOfBackground - strokeWidth,
+          stroke: props.fill,
+          fill: 'none',
+          strokeOpacity: props.fillOpacity,
+        };
+
+        return (
+          <Fragment key={key}>
+            {hasFillColor && <ConcentricPolygon {...props} {...backgroundProps} index={i} />}
+          </Fragment>
+        );
+      })}
+
+      {sortedPolarRadius.map((entry: number, i: number) => {
+        const key = i;
+
+        if (gridType === 'circle') {
+          return <ConcentricCircle key={key} {...props} fill="none" radius={entry} index={i} />;
+        }
+
+        return <ConcentricPolygon key={key} {...props} fill="none" radius={entry} index={i} />;
       })}
     </g>
   );
@@ -167,14 +212,14 @@ export const PolarGrid = ({
 
   return (
     <g className="recharts-polar-grid">
-      <PolarAngles
+      <ConcentricGridPath
         gridType={gridType}
         radialLines={radialLines}
         {...props}
         polarAngles={polarAngles}
         polarRadius={polarRadius}
       />
-      <ConcentricGridPath
+      <PolarAngles
         gridType={gridType}
         radialLines={radialLines}
         {...props}
