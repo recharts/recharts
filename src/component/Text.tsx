@@ -319,7 +319,7 @@ export const Text = forwardRef<SVGTextElement, Props>(
 
     const { dx, dy, angle, className, breakAll, ...textProps } = props;
 
-    if (!isNumOrStr(propsX) || !isNumOrStr(propsY)) {
+    if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
       return null;
     }
     const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
