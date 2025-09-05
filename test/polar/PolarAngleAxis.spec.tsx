@@ -1094,6 +1094,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'middle',
+        verticalAnchor: 'end',
         x: 250,
         y: 46,
       });
@@ -1112,6 +1113,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'start',
+        verticalAnchor: 'end',
         x: 394.2497833620557,
         y: 105.7502166379443,
       });
@@ -1130,6 +1132,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'start',
+        verticalAnchor: 'middle',
         x: 454,
         y: 250,
       });
@@ -1148,6 +1151,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'start',
+        verticalAnchor: 'start',
         x: 394.2497833620557,
         y: 394.2497833620557,
       });
@@ -1166,6 +1170,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'middle',
+        verticalAnchor: 'start',
         x: 250,
         y: 454,
       });
@@ -1184,6 +1189,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'end',
+        verticalAnchor: 'start',
         x: 105.7502166379443,
         y: 394.2497833620557,
       });
@@ -1202,6 +1208,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'end',
+        verticalAnchor: 'middle',
         x: 46,
         y: 250.00000000000003,
       });
@@ -1220,6 +1227,7 @@ describe('<PolarAngleAxis />', () => {
         radius: 196,
         stroke: 'none',
         textAnchor: 'end',
+        verticalAnchor: 'middle',
         x: 105.75021663794428,
         y: 105.7502166379443,
       });
