@@ -47,8 +47,12 @@ function useTooltipSyncEventsListener() {
           const { x, y, ...otherCoordinateProps } = action.payload.coordinate;
           const boundedCoordinate = {
             ...otherCoordinateProps,
-            x: Math.max(viewBox.x, Math.min(x, viewBox.x + viewBox.width)),
-            y: Math.max(viewBox.y, Math.min(y, viewBox.y + viewBox.height)),
+            ...(typeof x === 'number' && {
+              x: Math.max(viewBox.x, Math.min(x, viewBox.x + viewBox.width)),
+            }),
+            ...(typeof y === 'number' && {
+              y: Math.max(viewBox.y, Math.min(y, viewBox.y + viewBox.height)),
+            }),
           };
 
           const boundedAction = {
