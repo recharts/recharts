@@ -43,8 +43,29 @@ function useTooltipSyncEventsListener() {
         return;
       }
       if (syncMethod === 'index') {
-        dispatch(action);
-        // This is the default behaviour, we don't need to do anything else.
+        if (viewBox && action?.payload?.coordinate) {
+          const { x, y, ...otherCoordinateProps } = action.payload.coordinate;
+          const boundedCoordinate = {
+            ...otherCoordinateProps,
+            ...(typeof x === 'number' && {
+              x: Math.max(viewBox.x, Math.min(x, viewBox.x + viewBox.width)),
+            }),
+            ...(typeof y === 'number' && {
+              y: Math.max(viewBox.y, Math.min(y, viewBox.y + viewBox.height)),
+            }),
+          };
+
+          const boundedAction = {
+            ...action,
+            payload: {
+              ...action.payload,
+              coordinate: boundedCoordinate,
+            },
+          };
+          dispatch(boundedAction);
+        } else {
+          dispatch(action);
+        }
         return;
       }
 
