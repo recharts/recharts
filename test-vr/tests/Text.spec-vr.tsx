@@ -291,7 +291,7 @@ test('Text with complex style and lineHeight combinations', async ({ mount }) =>
   await expect(component).toHaveScreenshot();
 });
 
-test('Text with angle and textAnchor combinations', async ({ mount }) => {
+test('Text with angle and textAnchor combinations', async ({ mount, page }) => {
   const component = await mount(
     <Surface width={500} height={300}>
       <Text x={150} y={100} angle={45} textAnchor="start">
@@ -310,6 +310,7 @@ test('Text with angle and textAnchor combinations', async ({ mount }) => {
       <Crosshair x={350} y={200} color="red" />
     </Surface>,
   );
+  await page.waitForTimeout(500);
   await expect(component).toHaveScreenshot();
 });
 

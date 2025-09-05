@@ -12,8 +12,8 @@ export function Crosshair({
   color?: string;
 }) {
   const coordinateText = `${x.toFixed(1)}, ${y.toFixed(1)}`;
-  // Approximate text width calculation (roughly 6 pixels per character for 10px monospace)
-  const textWidth = coordinateText.length * 6;
+  // Approximate text width calculation (roughly 6.5 pixels per character for 10px bold monospace)
+  const textWidth = coordinateText.length * 6.5;
 
   return (
     <g className={className}>
@@ -52,7 +52,15 @@ export function Crosshair({
         pointerEvents="none"
       />
       {/* Coordinate text labels */}
-      <text x={x + 8} y={y - 12} fill={color} fontSize="10" fontFamily="monospace" pointerEvents="none">
+      <text
+        x={x + 8}
+        y={y - 12}
+        fill={color}
+        fontSize="10"
+        fontWeight="bold"
+        fontFamily="'Courier New', Courier, monospace"
+        pointerEvents="none"
+      >
         {coordinateText}
       </text>
     </g>
