@@ -264,6 +264,13 @@ const overridesConfig = [
       'no-console': 'off',
     },
   },
+  {
+    name: 'x/override-5',
+    files: ['eslint.config.mjs', 'prettier.config.mjs', 'stryker.config.mjs'],
+    rules: {
+      'import/no-default-export': 'off',
+    },
+  },
 ];
 
 const settings = [
