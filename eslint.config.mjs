@@ -63,13 +63,6 @@ const reactConfig = [
     rules: {
       'no-var': 'error',
       'no-unused-vars': 'off',
-      // "valid-jsdoc": [
-      //   "error",
-      //   {
-      //     requireReturnType: false,
-      //     requireParamType: false,
-      //   },
-      // ],
       'one-var': [
         'error',
         {
