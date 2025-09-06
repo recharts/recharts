@@ -1,14 +1,14 @@
 import path from 'node:path';
+
 import globals from 'globals';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import { configs } from 'eslint-config-airbnb-extended/legacy';
 import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
-
-import tseslint from 'typescript-eslint';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -279,6 +279,7 @@ const settings = [
     files: allFiles,
     settings: {
       'import/resolver': {
+        typescript: {},
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
