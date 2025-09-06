@@ -29,6 +29,22 @@ describe('<Text />', () => {
     expect(text?.children).toHaveLength(1);
   });
 
+  test('renders children that are numbers', () => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={300} style={{ fontFamily: 'Courier' }}>
+          {12345}
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+
+    expect(text.textContent).toBe('12345');
+  });
+
   test('Wraps long text if not enough width', () => {
     render(
       <Surface width={200} height={200}>

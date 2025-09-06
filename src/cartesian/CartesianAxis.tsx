@@ -2,13 +2,13 @@
  * @fileOverview Cartesian Axis
  */
 import * as React from 'react';
-import { ReactElement, ReactNode, Component, SVGProps } from 'react';
+import { ReactElement, Component, SVGProps } from 'react';
 
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
-import { Text } from '../component/Text';
+import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
 import { isNumber } from '../util/DataUtils';
 import {
@@ -42,6 +42,11 @@ export interface CartesianAxisProps {
   // The viewBox of svg
   viewBox?: CartesianViewBox;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  /**
+   * Additional props to spread to each tick Text element.
+   * Optional, the CartesianAxis component will provide its own defaults calculated from other props.
+   */
+  tickTextProps?: TextProps;
   axisLine?: boolean | SVGProps<SVGLineElement>;
   tickLine?: boolean | SVGProps<SVGLineElement>;
   mirror?: boolean;
@@ -177,26 +182,20 @@ export class CartesianAxis extends Component<Props, IState> {
     return { line: { x1, y1, x2, y2 }, tick: { x: tx, y: ty } };
   }
 
-  getTickTextAnchor() {
+  getTickTextAnchor(): TextAnchor {
     const { orientation, mirror } = this.props;
-    let textAnchor;
 
     switch (orientation) {
       case 'left':
-        textAnchor = mirror ? 'start' : 'end';
-        break;
+        return mirror ? 'start' : 'end';
       case 'right':
-        textAnchor = mirror ? 'end' : 'start';
-        break;
+        return mirror ? 'end' : 'start';
       default:
-        textAnchor = 'middle';
-        break;
+        return 'middle';
     }
-
-    return textAnchor;
   }
 
-  getTickVerticalAnchor() {
+  getTickVerticalAnchor(): TextVerticalAnchor {
     const { orientation, mirror } = this.props;
 
     switch (orientation) {
@@ -241,11 +240,12 @@ export class CartesianAxis extends Component<Props, IState> {
     return <line {...props} className={clsx('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
-  static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
+  static renderTickItem(option: Props['tick'], props: TextProps, value: string) {
     let tickItem;
     const combinedClassName = clsx(props.className, 'recharts-cartesian-axis-tick-value');
 
     if (React.isValidElement(option)) {
+      // @ts-expect-error element cloning is not typed
       tickItem = React.cloneElement(option, { ...props, className: combinedClassName });
     } else if (typeof option === 'function') {
       tickItem = option({ ...props, className: combinedClassName });
@@ -278,7 +278,7 @@ export class CartesianAxis extends Component<Props, IState> {
     letterSpacing: string,
     ticks: ReadonlyArray<CartesianTickItem> = [],
   ): React.ReactElement | null {
-    const { tickLine, stroke, tick, tickFormatter, unit, padding } = this.props;
+    const { tickLine, stroke, tick, tickFormatter, unit, padding, tickTextProps } = this.props;
     // @ts-expect-error some properties are optional in props but required in getTicks
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
@@ -292,7 +292,8 @@ export class CartesianAxis extends Component<Props, IState> {
     };
     const items = finalTicks.map((entry: CartesianTickItem, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
-      const tickProps = {
+      const tickProps: TextProps = {
+        // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
         textAnchor,
         verticalAnchor,
         ...axisProps,
@@ -305,6 +306,7 @@ export class CartesianAxis extends Component<Props, IState> {
         visibleTicksCount: finalTicks.length,
         tickFormatter,
         padding,
+        ...tickTextProps,
       };
 
       return (
