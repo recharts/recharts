@@ -18,7 +18,7 @@ import {
   selectAxisScale,
   selectTicksOfAxis,
   selectYAxisPosition,
-  selectYAxisSettings,
+  selectYAxisSettingsNoDefaults,
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
@@ -83,12 +83,18 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
    * from state and some from props and because there is a render step between these two, they might be showing different things.
    * https://github.com/recharts/recharts/issues/6257
    */
-  const synchronizedSettings = useAppSelector(state => selectYAxisSettings(state, yAxisId));
+  const synchronizedSettings = useAppSelector(state => selectYAxisSettingsNoDefaults(state, yAxisId));
 
   useLayoutEffect(() => {
     // No dynamic width calculation is done when width !== 'auto'
     // or when a function/react element is used for label
-    if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) {
+    if (
+      width !== 'auto' ||
+      !axisSize ||
+      isLabelContentAFunction(label) ||
+      isValidElement(label) ||
+      synchronizedSettings == null
+    ) {
       return;
     }
 

@@ -13,7 +13,7 @@ import {
   selectAxisScale,
   selectTicksOfAxis,
   selectXAxisPosition,
-  selectXAxisSettings,
+  selectXAxisSettingsNoDefaults,
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
@@ -75,7 +75,7 @@ const XAxisImpl = (props: Props) => {
    * from state and some from props and because there is a render step between these two, they might be showing different things.
    * https://github.com/recharts/recharts/issues/6257
    */
-  const synchronizedSettings = useAppSelector(state => selectXAxisSettings(state, xAxisId));
+  const synchronizedSettings = useAppSelector(state => selectXAxisSettingsNoDefaults(state, xAxisId));
 
   if (axisSize == null || position == null || synchronizedSettings == null) {
     return null;
