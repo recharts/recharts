@@ -17,5 +17,5 @@ const config = {
   ignoreStatic: true,
   mutate: ['src/cartesian/Bar.tsx'],
 };
-// eslint-disable-next-line import/no-default-export
+
 export default config;
