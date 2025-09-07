@@ -415,6 +415,43 @@ describe('<Brush />', () => {
       });
     });
 
+    test('Travellers should move when valid keyboard events are fired AFTER mouse interaction', async () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} />
+        </BarChart>,
+      );
+
+      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+
+      fireEvent.mouseDown(traveller);
+      fireEvent.mouseMove(traveller, { clientX: 30 });
+      fireEvent.mouseUp(traveller);
+
+      fireEvent.focus(traveller);
+
+      await waitFor(() => {
+        expect(container.querySelector('.recharts-brush-texts')).not.toBeNull();
+      });
+
+      const text = container.querySelector('.recharts-brush-texts text[text-anchor="end"]') as SVGGElement;
+      expect(text?.textContent).toBe('10');
+
+      fireEvent.keyDown(traveller, {
+        key: 'ArrowRight',
+      });
+      await waitFor(() => {
+        expect(text.textContent).toBe('20');
+      });
+
+      fireEvent.keyDown(traveller, {
+        key: 'ArrowLeft',
+      });
+      await waitFor(() => {
+        expect(text.textContent).toBe('10');
+      });
+    });
+
     const ControlledPanoramicBrush = () => {
       const [startIndex, setStartIndex] = useState<number | undefined>(3);
       const [endIndex, setEndIndex] = useState<number | undefined>(data.length - 1);
