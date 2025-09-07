@@ -36,15 +36,19 @@ const GeneralProps: Args = {
     table: { type: { summary: 'boolean', defaultValue: true }, category: 'General' },
   },
   fill: {
-    description: 'The x-coordinate of center.',
+    description: 'Fill color.',
     table: { type: { summary: 'string' }, category: 'General' },
   },
   fillOpacity: {
-    description: 'The x-coordinate of center.',
+    description: 'Fill opacity.',
     table: { type: { summary: 'number' }, category: 'General' },
   },
+  stroke: {
+    description: 'Stroke color.',
+    table: { type: { summary: 'string' }, category: 'General' },
+  },
   strokeWidth: {
-    description: 'The x-coordinate of center.',
+    description: 'Stroke width.',
     table: { type: { summary: 'number' }, category: 'General' },
   },
 };
@@ -80,6 +84,7 @@ export const Simple = {
   args: {
     polarAngles: [0, 30, 60, 90, 145, 180, 200, 270, 300],
     polarRadius: [10, 20, 40, 80],
+    stroke: '#ccc',
     strokeWidth: 1,
     fill: 'none',
     fillOpacity: 0.2,

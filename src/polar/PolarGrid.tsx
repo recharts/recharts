@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
-import { Fragment, SVGProps, useMemo } from 'react';
+import { SVGProps } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
@@ -27,9 +27,6 @@ export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 type ConcentricProps = Props & {
   // The radius of circle
   radius: number;
-  // The index of circle
-  index: number;
-  // prevRadius: number;
 };
 
 const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: number[]) => {
@@ -39,9 +36,9 @@ const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: num
     const point = polarToCartesian(cx, cy, radius, angle);
 
     if (i) {
-      path += ` L${point.x},${point.y}`;
+      path += `L ${point.x},${point.y}`;
     } else {
-      path += `M${point.x},${point.y}`;
+      path += `M ${point.x},${point.y}`;
     }
   });
   path += 'Z';
@@ -75,7 +72,7 @@ const PolarAngles: React.FC<Props> = props => {
 
 // Draw concentric circles
 const ConcentricCircle: React.FC<ConcentricProps> = props => {
-  const { cx, cy, radius, index } = props;
+  const { cx, cy, radius } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
     fill: 'none',
@@ -87,7 +84,6 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
     <circle
       {...concentricCircleProps}
       className={clsx('recharts-polar-grid-concentric-circle', props.className)}
-      key={`circle-${index}`}
       cx={cx}
       cy={cy}
       r={radius}
@@ -97,7 +93,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
 
 // Draw concentric polygons
 const ConcentricPolygon: React.FC<ConcentricProps> = props => {
-  const { radius, index } = props;
+  const { radius } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
     fill: 'none',
@@ -108,7 +104,6 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
     <path
       {...concentricPolygonProps}
       className={clsx('recharts-polar-grid-concentric-polygon', props.className)}
-      key={`path-${index}`}
       d={getPolygonPath(radius, props.cx, props.cy, props.polarAngles)}
     />
   );
@@ -118,60 +113,27 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
 const ConcentricGridPath: React.FC<Props> = props => {
   const { polarRadius, gridType } = props;
 
-  const sortedPolarRadius = useMemo(() => polarRadius?.slice().sort((a, b) => a - b), [polarRadius]);
-
-  if (!sortedPolarRadius || !sortedPolarRadius.length) {
+  if (!polarRadius || !polarRadius.length) {
     return null;
   }
 
+  const maxPolarRadius = Math.max(...polarRadius);
+  const renderBackground = props.fill && props.fill !== 'none';
+
   return (
     <g className="recharts-polar-grid-concentric">
-      {sortedPolarRadius.map((entry: number, i: number) => {
-        const key = i;
-        const prevRadius = sortedPolarRadius[i - 1] ?? 0;
-        const hasFillColor = props.fill && props.fill !== 'none';
+      {/* Render background as separate first child to do not cover strokes of smaller figures */}
+      {renderBackground && gridType === 'circle' && <ConcentricCircle {...props} radius={maxPolarRadius} />}
+      {renderBackground && gridType !== 'circle' && <ConcentricPolygon {...props} radius={maxPolarRadius} />}
 
-        if (gridType === 'circle') {
-          const widthOfBackground = entry - prevRadius - 1;
-          const backgroundProps = {
-            radius: entry - (entry - prevRadius) / 2,
-            strokeWidth: widthOfBackground,
-            stroke: props.fill,
-            fill: 'none',
-            strokeOpacity: props.fillOpacity,
-          };
-          return (
-            <Fragment key={key}>
-              {hasFillColor && <ConcentricCircle {...props} {...backgroundProps} index={i} />}
-            </Fragment>
-          );
-        }
-
-        const strokeWidth = props.strokeWidth ?? 1;
-        const widthOfBackground = entry - prevRadius;
-        const backgroundProps = {
-          radius: prevRadius + (widthOfBackground) / 2,
-          strokeWidth: widthOfBackground - strokeWidth,
-          stroke: props.fill,
-          fill: 'none',
-          strokeOpacity: props.fillOpacity,
-        };
-
-        return (
-          <Fragment key={key}>
-            {hasFillColor && <ConcentricPolygon {...props} {...backgroundProps} index={i} />}
-          </Fragment>
-        );
-      })}
-
-      {sortedPolarRadius.map((entry: number, i: number) => {
+      {polarRadius.map((entry: number, i: number) => {
         const key = i;
 
         if (gridType === 'circle') {
-          return <ConcentricCircle key={key} {...props} fill="none" radius={entry} index={i} />;
+          return <ConcentricCircle key={key} {...props} fill="none" radius={entry} />;
         }
 
-        return <ConcentricPolygon key={key} {...props} fill="none" radius={entry} index={i} />;
+        return <ConcentricPolygon key={key} {...props} fill="none" radius={entry} />;
       })}
     </g>
   );
