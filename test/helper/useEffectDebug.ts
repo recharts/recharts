@@ -75,5 +75,6 @@ export const useEffectDebug = (
     }
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(effectHook, dependencies);
 };
