@@ -1408,14 +1408,14 @@ describe('<LineChart /> - Pure Rendering', () => {
     const { container } = render(chart);
 
     expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(axisSpy).toHaveBeenCalledTimes(2);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseMove(container, { clientX: 200, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseLeave(container);
 
     expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(axisSpy).toHaveBeenCalledTimes(2);
   });
 
   // protect against the future where someone might mess up our clean rendering
@@ -1423,7 +1423,7 @@ describe('<LineChart /> - Pure Rendering', () => {
     const { container } = render(chart);
 
     expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(axisSpy).toHaveBeenCalledTimes(2);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
     assertNotNull(leftCursor);
@@ -1434,7 +1434,7 @@ describe('<LineChart /> - Pure Rendering', () => {
     fireEvent.mouseUp(window);
 
     expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(axisSpy).toHaveBeenCalledTimes(2);
   });
 });
 

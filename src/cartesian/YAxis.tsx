@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component, FunctionComponent, useEffect, useRef, useLayoutEffect, isValidElement } from 'react';
 import { clsx } from 'clsx';
-import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
 import {
   addYAxis,
@@ -18,6 +18,7 @@ import {
   selectAxisScale,
   selectTicksOfAxis,
   selectYAxisPosition,
+  selectYAxisSettingsNoDefaults,
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
@@ -73,14 +74,29 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const dispatch = useAppDispatch();
   const axisType = 'yAxis';
   const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId, isPanorama));
-  const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
+  const axisSize: Size | undefined = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
+  /*
+   * Here we select settings from the store and prefer to use them instead of the actual props
+   * so that the chart is consistent. If we used the props directly, some components will use axis settings
+   * from state and some from props and because there is a render step between these two, they might be showing different things.
+   * https://github.com/recharts/recharts/issues/6257
+   */
+  const synchronizedSettings = useAppSelector(state => selectYAxisSettingsNoDefaults(state, yAxisId));
 
   useLayoutEffect(() => {
     // No dynamic width calculation is done when width !== 'auto'
     // or when a function/react element is used for label
-    if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
+    if (
+      width !== 'auto' ||
+      !axisSize ||
+      isLabelContentAFunction(label) ||
+      isValidElement(label) ||
+      synchronizedSettings == null
+    ) {
+      return;
+    }
 
     const axisComponent = cartesianAxisRef.current;
     const tickNodes = axisComponent?.tickRefs?.current;
@@ -97,8 +113,9 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     });
 
     // if the width has changed, dispatch an action to update the width
-    if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth))
+    if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth)) {
       dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     cartesianAxisRef,
@@ -111,20 +128,23 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     width,
   ]);
 
-  if (axisSize == null || position == null) {
+  if (axisSize == null || position == null || synchronizedSettings == null) {
     return null;
   }
 
   const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+  const { id, ...restSynchronizedSettings } = synchronizedSettings;
 
   return (
     <CartesianAxis
       {...allOtherProps}
+      {...restSynchronizedSettings}
       ref={cartesianAxisRef}
       labelRef={labelRef}
       scale={scale}
       x={position.x}
       y={position.y}
+      tickTextProps={width === 'auto' ? { width: undefined } : { width }}
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}

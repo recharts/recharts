@@ -123,8 +123,12 @@ export const implicitXAxis: XAxisSettings = {
   unit: undefined,
 };
 
+export const selectXAxisSettingsNoDefaults = (state: RechartsRootState, axisId: AxisId): XAxisSettings | undefined => {
+  return state.cartesianAxis.xAxis[axisId];
+};
+
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
-  const axis = state.cartesianAxis.xAxis[axisId];
+  const axis = selectXAxisSettingsNoDefaults(state, axisId);
   if (axis == null) {
     return implicitXAxis;
   }
@@ -163,8 +167,12 @@ export const implicitYAxis: YAxisSettings = {
   width: DEFAULT_Y_AXIS_WIDTH,
 };
 
+export const selectYAxisSettingsNoDefaults = (state: RechartsRootState, axisId: AxisId): YAxisSettings | undefined => {
+  return state.cartesianAxis.yAxis[axisId];
+};
+
 export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
-  const axis = state.cartesianAxis.yAxis[axisId];
+  const axis = selectYAxisSettingsNoDefaults(state, axisId);
   if (axis == null) {
     return implicitYAxis;
   }
