@@ -743,17 +743,23 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 
   handleTravellerMoveKeyboard = (direction: 1 | -1, id: BrushTravellerId) => {
-    const { data, gap } = this.props;
+    const { data, gap, startIndex, endIndex } = this.props;
     // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
     const { scaleValues, startX, endX } = this.state;
     if (scaleValues == null) {
       return;
     }
-    // currentScaleValue refers to which coordinate the current traveller should be placed at.
-    const currentScaleValue = this.state[id];
 
-    const currentIndex = scaleValues.indexOf(currentScaleValue);
-    if (currentIndex === -1) {
+    // unless we search for the closest scaleValue to the current coordinate
+    // we need to move travelers via index when using the keyboard
+    let currentIndex: number = -1;
+    if (id === 'startX') {
+      currentIndex = startIndex;
+    } else if (id === 'endX') {
+      currentIndex = endIndex;
+    }
+
+    if (currentIndex < 0 || currentIndex >= data.length) {
       return;
     }
 
