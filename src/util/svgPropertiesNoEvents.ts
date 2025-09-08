@@ -319,14 +319,14 @@ export function isSvgElementPropKey(key: PropertyKey): boolean {
   return allowedSvgKeys.includes(key);
 }
 
+export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysType>>;
+
 /**
  * Filters an object to only include SVG properties. Removes all event handlers too.
  * @param obj - The object to filter
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
-export function svgPropertiesNoEvents<T extends Record<string, any>>(
-  obj: T,
-): Pick<T, Extract<keyof T, SVGElementPropKeysType>> {
+export function svgPropertiesNoEvents<T extends Record<string, any>>(obj: T): SVGPropsNoEvents<T> {
   const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key));
-  return Object.fromEntries(filteredEntries) as Pick<T, Extract<keyof T, SVGElementPropKeysType>>;
+  return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
 }

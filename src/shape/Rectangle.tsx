@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import * as React from 'react';
-import { SVGProps, useEffect, useRef, useState } from 'react';
+import { SVGProps, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -128,7 +128,8 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const prevHeightRef = useRef<number>(height);
   const prevXRef = useRef<number>(x);
   const prevYRef = useRef<number>(y);
-  const animationId = useAnimationId(rectangleProps, 'rectangle-');
+  const animationIdInput = useMemo(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
+  const animationId = useAnimationId(animationIdInput, 'rectangle-');
 
   if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
     return null;
