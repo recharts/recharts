@@ -1,6 +1,6 @@
-import { Coordinate, Size } from './types';
+import { Coordinate, RectangleCoordinate, RectanglePosition, Size } from './types';
 
-export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: Coordinate) => ({
+export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: Coordinate): RectanglePosition => ({
   x: Math.min(x1, x2),
   y: Math.min(y1, y2),
   width: Math.abs(x2 - x1),
@@ -12,7 +12,7 @@ export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: C
  * @param  {Object} coords     x1, x2, y1, and y2
  * @return {Object} object
  */
-export const rectWithCoords = ({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) =>
+export const rectWithCoords = ({ x1, y1, x2, y2 }: RectangleCoordinate): RectanglePosition =>
   rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
 
 export class ScaleHelper {
