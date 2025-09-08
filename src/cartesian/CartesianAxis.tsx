@@ -261,6 +261,124 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
   return tickItem;
 }
 
+type TicksProps = {
+  ticks?: ReadonlyArray<CartesianTickItem>;
+  tick?: Props['tick'];
+  tickLine?: Props['tickLine'];
+  stroke?: Props['stroke'];
+  tickFormatter?: Props['tickFormatter'];
+  unit?: Props['unit'];
+  padding?: Props['padding'];
+  tickTextProps?: Props['tickTextProps'];
+  orientation: Orientation;
+  mirror: boolean;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  tickSize: number;
+  tickMargin: number;
+  fontSize: string;
+  letterSpacing: string;
+  getTicksConfig: Omit<Props, 'ticks'>;
+  events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
+};
+
+function Ticks(props: TicksProps) {
+  const {
+    ticks = [],
+    tick,
+    tickLine,
+    stroke,
+    tickFormatter,
+    unit,
+    padding,
+    tickTextProps,
+    orientation,
+    mirror,
+    x,
+    y,
+    width,
+    height,
+    tickSize,
+    tickMargin,
+    fontSize,
+    letterSpacing,
+    getTicksConfig,
+    events,
+  } = props;
+  // @ts-expect-error some properties are optional in props but required in getTicks
+  const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
+  const textAnchor = getTickTextAnchor(orientation, mirror);
+  const verticalAnchor = getTickVerticalAnchor(orientation, mirror);
+  const axisProps = svgPropertiesNoEvents(getTicksConfig);
+  const customTickProps = filterProps(tick, false);
+  const tickLineProps = {
+    ...axisProps,
+    fill: 'none',
+    ...filterProps(tickLine, false),
+  };
+  const items = finalTicks.map((entry: CartesianTickItem, i) => {
+    const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
+      entry,
+      x,
+      y,
+      width,
+      height,
+      orientation,
+      tickSize,
+      mirror,
+      tickMargin,
+    );
+    const tickProps: TextProps = {
+      // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
+      textAnchor,
+      verticalAnchor,
+      ...axisProps,
+      stroke: 'none',
+      fill: stroke,
+      ...customTickProps,
+      ...tickCoord,
+      index: i,
+      payload: entry,
+      visibleTicksCount: finalTicks.length,
+      tickFormatter,
+      padding,
+      ...tickTextProps,
+    };
+
+    return (
+      <Layer
+        className="recharts-cartesian-axis-tick"
+        key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
+        {...adaptEventsOfChild(events, entry, i)}
+      >
+        {tickLine && (
+          // @ts-expect-error recharts scale is not compatible with SVG scale
+          <line
+            {...tickLineProps}
+            {...lineCoord}
+            className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
+          />
+        )}
+        {tick && (
+          <TickItem
+            option={tick}
+            tickProps={tickProps}
+            value={`${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`}
+          />
+        )}
+      </Layer>
+    );
+  });
+
+  if (items.length > 0) {
+    return <g className="recharts-cartesian-axis-ticks">{items}</g>;
+  }
+
+  return null;
+}
+
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
@@ -308,96 +426,12 @@ export class CartesianAxis extends Component<Props, IState> {
     );
   }
 
-  /**
-   * render the ticks
-   * @param {string} fontSize Fontsize to consider for tick spacing
-   * @param {string} letterSpacing Letter spacing to consider for tick spacing
-   * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
-   * @return {ReactElement | null} renderedTicks
-   */
-  renderTicks(
-    fontSize: string,
-    letterSpacing: string,
-    ticks: ReadonlyArray<CartesianTickItem> = [],
-  ): React.ReactElement | null {
-    const { tickLine, stroke, tick, tickFormatter, unit, padding, tickTextProps, orientation, mirror } = this.props;
-    // @ts-expect-error some properties are optional in props but required in getTicks
-    const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
-    const textAnchor = getTickTextAnchor(orientation, mirror);
-    const verticalAnchor = getTickVerticalAnchor(orientation, mirror);
-    const axisProps = svgPropertiesNoEvents(this.props);
-    const customTickProps = filterProps(tick, false);
-    const tickLineProps = {
-      ...axisProps,
-      fill: 'none',
-      ...filterProps(tickLine, false),
-    };
-    const items = finalTicks.map((entry: CartesianTickItem, i) => {
-      const { x, y, width, height, tickSize, tickMargin } = this.props;
-      const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
-        entry,
-        x,
-        y,
-        width,
-        height,
-        orientation,
-        tickSize,
-        mirror,
-        tickMargin,
-      );
-      const tickProps: TextProps = {
-        // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
-        textAnchor,
-        verticalAnchor,
-        ...axisProps,
-        stroke: 'none',
-        fill: stroke,
-        ...customTickProps,
-        ...tickCoord,
-        index: i,
-        payload: entry,
-        visibleTicksCount: finalTicks.length,
-        tickFormatter,
-        padding,
-        ...tickTextProps,
-      };
-
-      return (
-        <Layer
-          className="recharts-cartesian-axis-tick"
-          key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
-          {...adaptEventsOfChild(this.props, entry, i)}
-        >
-          {tickLine && (
-            // @ts-expect-error recharts scale is not compatible with SVG scale
-            <line
-              {...tickLineProps}
-              {...lineCoord}
-              className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
-            />
-          )}
-          {tick && (
-            <TickItem
-              option={tick}
-              tickProps={tickProps}
-              value={`${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`}
-            />
-          )}
-        </Layer>
-      );
-    });
-
-    return items.length > 0 ? <g className="recharts-cartesian-axis-ticks">{items}</g> : null;
-  }
-
   render() {
-    const { axisLine, width, height, className, hide } = this.props;
+    const { axisLine, width, height, className, hide, ticks, ...rest } = this.props;
 
     if (hide) {
       return null;
     }
-
-    const { ticks } = this.props;
 
     /*
      * This is different condition from what validateWidthHeight is doing;
@@ -438,7 +472,28 @@ export class CartesianAxis extends Component<Props, IState> {
           mirror={this.props.mirror}
           axisLine={axisLine}
         />
-        {this.renderTicks(this.state.fontSize, this.state.letterSpacing, ticks)}
+        <Ticks
+          ticks={ticks}
+          tick={this.props.tick}
+          tickLine={this.props.tickLine}
+          stroke={this.props.stroke}
+          tickFormatter={this.props.tickFormatter}
+          unit={this.props.unit}
+          padding={this.props.padding}
+          tickTextProps={this.props.tickTextProps}
+          orientation={this.props.orientation}
+          mirror={this.props.mirror}
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height}
+          tickSize={this.props.tickSize}
+          tickMargin={this.props.tickMargin}
+          fontSize={this.state.fontSize}
+          letterSpacing={this.state.letterSpacing}
+          getTicksConfig={this.props}
+          events={rest}
+        />
         <CartesianLabelContextProvider
           x={this.props.x}
           y={this.props.y}
