@@ -201,6 +201,33 @@ function getTickLineCoord(
   return { line: { x1, y1, x2, y2 }, tick: { x: tx, y: ty } };
 }
 
+function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: string }) {
+  const { option, tickProps, value } = props;
+  let tickItem;
+  const combinedClassName = clsx(tickProps.className, 'recharts-cartesian-axis-tick-value');
+
+  if (React.isValidElement(option)) {
+    // @ts-expect-error element cloning is not typed
+    tickItem = React.cloneElement(option, { ...tickProps, className: combinedClassName });
+  } else if (typeof option === 'function') {
+    tickItem = option({ ...tickProps, className: combinedClassName });
+  } else {
+    let className = 'recharts-cartesian-axis-tick-value';
+
+    if (typeof option !== 'boolean') {
+      className = clsx(className, option?.className);
+    }
+
+    tickItem = (
+      <Text {...tickProps} className={className}>
+        {value}
+      </Text>
+    );
+  }
+
+  return tickItem;
+}
+
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
@@ -275,32 +302,6 @@ export class CartesianAxis extends Component<Props, IState> {
     }
   }
 
-  static renderTickItem(option: Props['tick'], props: TextProps, value: string) {
-    let tickItem;
-    const combinedClassName = clsx(props.className, 'recharts-cartesian-axis-tick-value');
-
-    if (React.isValidElement(option)) {
-      // @ts-expect-error element cloning is not typed
-      tickItem = React.cloneElement(option, { ...props, className: combinedClassName });
-    } else if (typeof option === 'function') {
-      tickItem = option({ ...props, className: combinedClassName });
-    } else {
-      let className = 'recharts-cartesian-axis-tick-value';
-
-      if (typeof option !== 'boolean') {
-        className = clsx(className, option.className);
-      }
-
-      tickItem = (
-        <Text {...props} className={className}>
-          {value}
-        </Text>
-      );
-    }
-
-    return tickItem;
-  }
-
   /**
    * render the ticks
    * @param {string} fontSize Fontsize to consider for tick spacing
@@ -369,12 +370,13 @@ export class CartesianAxis extends Component<Props, IState> {
               className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
             />
           )}
-          {tick &&
-            CartesianAxis.renderTickItem(
-              tick,
-              tickProps,
-              `${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
-            )}
+          {tick && (
+            <TickItem
+              option={tick}
+              tickProps={tickProps}
+              value={`${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`}
+            />
+          )}
         </Layer>
       );
     });
