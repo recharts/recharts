@@ -27,8 +27,6 @@ export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 type ConcentricProps = Props & {
   // The radius of circle
   radius: number;
-  // The index of circle
-  index: number;
 };
 
 const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: number[]) => {
@@ -74,11 +72,11 @@ const PolarAngles: React.FC<Props> = props => {
 
 // Draw concentric circles
 const ConcentricCircle: React.FC<ConcentricProps> = props => {
-  const { cx, cy, radius, index } = props;
+  const { cx, cy, radius } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
-    ...svgPropertiesNoEvents(props),
     fill: 'none',
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
@@ -86,7 +84,6 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
     <circle
       {...concentricCircleProps}
       className={clsx('recharts-polar-grid-concentric-circle', props.className)}
-      key={`circle-${index}`}
       cx={cx}
       cy={cy}
       r={radius}
@@ -96,18 +93,17 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
 
 // Draw concentric polygons
 const ConcentricPolygon: React.FC<ConcentricProps> = props => {
-  const { radius, index } = props;
+  const { radius } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
-    ...svgPropertiesNoEvents(props),
     fill: 'none',
+    ...svgPropertiesNoEvents(props),
   };
 
   return (
     <path
       {...concentricPolygonProps}
       className={clsx('recharts-polar-grid-concentric-polygon', props.className)}
-      key={`path-${index}`}
       d={getPolygonPath(radius, props.cx, props.cy, props.polarAngles)}
     />
   );
@@ -121,12 +117,23 @@ const ConcentricGridPath: React.FC<Props> = props => {
     return null;
   }
 
+  const maxPolarRadius = Math.max(...polarRadius);
+  const renderBackground = props.fill && props.fill !== 'none';
+
   return (
     <g className="recharts-polar-grid-concentric">
+      {/* Render background as separate first child to do not cover strokes of smaller figures */}
+      {renderBackground && gridType === 'circle' && <ConcentricCircle {...props} radius={maxPolarRadius} />}
+      {renderBackground && gridType !== 'circle' && <ConcentricPolygon {...props} radius={maxPolarRadius} />}
+
       {polarRadius.map((entry: number, i: number) => {
         const key = i;
-        if (gridType === 'circle') return <ConcentricCircle key={key} {...props} radius={entry} index={i} />;
-        return <ConcentricPolygon key={key} {...props} radius={entry} index={i} />;
+
+        if (gridType === 'circle') {
+          return <ConcentricCircle key={key} {...props} fill="none" radius={entry} />;
+        }
+
+        return <ConcentricPolygon key={key} {...props} fill="none" radius={entry} />;
       })}
     </g>
   );
@@ -167,14 +174,14 @@ export const PolarGrid = ({
 
   return (
     <g className="recharts-polar-grid">
-      <PolarAngles
+      <ConcentricGridPath
         gridType={gridType}
         radialLines={radialLines}
         {...props}
         polarAngles={polarAngles}
         polarRadius={polarRadius}
       />
-      <ConcentricGridPath
+      <PolarAngles
         gridType={gridType}
         radialLines={radialLines}
         {...props}
