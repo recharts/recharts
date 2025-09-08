@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
-import { Props as RectangleProps } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -61,9 +61,10 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, SVGPropsNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
+import { WithoutId } from '../util/useUniqueId';
 
 type Rectangle = {
   x: number | null;
@@ -330,6 +331,43 @@ function BarLabelListProvider({
   );
 }
 
+function BarRectangleWithActiveState(props: {
+  shape: ActiveShape<BarProps, SVGPathElement>;
+  activeBar: ActiveShape<BarProps, SVGPathElement>;
+  baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+  entry: BarRectangleItem;
+  index: number;
+  dataKey: DataKey<any> | undefined;
+}) {
+  const { shape, activeBar, baseProps, entry, index, dataKey } = props;
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
+  /*
+   * Bars support stacking, meaning that there can be multiple bars at the same x value.
+   * With Tooltip shared=false we only want to highlight the currently active Bar, not all.
+   *
+   * Also, if the tooltip is shared, we want to highlight all bars at the same x value
+   * regardless of the dataKey.
+   *
+   * With shared Tooltip, the activeDataKey is undefined.
+   */
+  const isActive: boolean =
+    activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
+  const option = isActive ? activeBar : shape;
+  return <BarRectangle {...baseProps} {...entry} isActive={isActive} option={option} index={index} dataKey={dataKey} />;
+}
+
+function BarRectangleNeverActive(props: {
+  shape: ActiveShape<BarProps, SVGPathElement>;
+  baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+  entry: BarRectangleItem;
+  index: number;
+  dataKey: DataKey<any> | undefined;
+}) {
+  const { shape, baseProps, entry, index, dataKey } = props;
+  return <BarRectangle {...baseProps} {...entry} isActive={false} option={shape} index={index} dataKey={dataKey} />;
+}
+
 function BarRectangles({
   data,
   props,
@@ -339,9 +377,6 @@ function BarRectangles({
 }) {
   const { id, ...baseProps } = svgPropertiesNoEvents(props);
   const { shape, dataKey, activeBar } = props;
-
-  const activeIndex = useAppSelector(selectActiveTooltipIndex);
-  const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -364,28 +399,6 @@ function BarRectangles({
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
-        /*
-         * Bars support stacking, meaning that there can be multiple bars at the same x value.
-         * With Tooltip shared=false we only want to highlight the currently active Bar, not all.
-         *
-         * Also, if the tooltip is shared, we want to highlight all bars at the same x value
-         * regardless of the dataKey.
-         *
-         * With shared Tooltip, the activeDataKey is undefined.
-         */
-        const isActive: boolean =
-          activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
-        const option = isActive ? activeBar : shape;
-        // ts-expect-error event types are not compatible - this only fires with strictNullChecks on
-        const barRectangleProps: BarRectangleProps = {
-          ...baseProps,
-          ...entry,
-          isActive,
-          option,
-          index: i,
-          dataKey,
-        };
-
         return (
           <Layer
             className="recharts-bar-rectangle"
@@ -400,7 +413,27 @@ function BarRectangles({
             // eslint-disable-next-line react/no-array-index-key
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
           >
-            <BarRectangle {...barRectangleProps} />
+            {activeBar ? (
+              <BarRectangleWithActiveState
+                shape={shape}
+                activeBar={activeBar}
+                baseProps={baseProps}
+                entry={entry}
+                index={i}
+                dataKey={dataKey}
+              />
+            ) : (
+              /*
+               * If the `activeBar` prop is falsy, then let's call the variant without hooks.
+               * Using the `selectActiveTooltipIndex` selector is usually fast
+               * but in charts with large-ish amount of data even the few nanoseconds add up to a noticeable jank.
+               * If the activeBar is false then we don't need to know which index is active - because we won't use it anyway.
+               * So let's just skip the hooks altogether. That way, React can skip rendering the component,
+               * and can skip the tree reconciliation for its children too.
+               * Because we can't call hooks conditionally, we need to have a separate component for that.
+               */
+              <BarRectangleNeverActive shape={shape} baseProps={baseProps} entry={entry} index={i} dataKey={dataKey} />
+            )}
           </Layer>
         );
       })}
