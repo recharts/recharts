@@ -201,6 +201,22 @@ function getTickLineCoord(
   return { line: { x1, y1, x2, y2 }, tick: { x: tx, y: ty } };
 }
 
+/**
+ * @param orientation The orientation of the axis.
+ * @param mirror If true, the ticks are mirrored.
+ * @returns The text anchor of the tick.
+ */
+function getTickTextAnchor(orientation: Orientation, mirror: boolean): TextAnchor {
+  switch (orientation) {
+    case 'left':
+      return mirror ? 'start' : 'end';
+    case 'right':
+      return mirror ? 'end' : 'start';
+    default:
+      return 'middle';
+  }
+}
+
 function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: string }) {
   const { option, tickProps, value } = props;
   let tickItem;
@@ -275,19 +291,6 @@ export class CartesianAxis extends Component<Props, IState> {
     );
   }
 
-  getTickTextAnchor(): TextAnchor {
-    const { orientation, mirror } = this.props;
-
-    switch (orientation) {
-      case 'left':
-        return mirror ? 'start' : 'end';
-      case 'right':
-        return mirror ? 'end' : 'start';
-      default:
-        return 'middle';
-    }
-  }
-
   getTickVerticalAnchor(): TextVerticalAnchor {
     const { orientation, mirror } = this.props;
 
@@ -314,10 +317,10 @@ export class CartesianAxis extends Component<Props, IState> {
     letterSpacing: string,
     ticks: ReadonlyArray<CartesianTickItem> = [],
   ): React.ReactElement | null {
-    const { tickLine, stroke, tick, tickFormatter, unit, padding, tickTextProps } = this.props;
+    const { tickLine, stroke, tick, tickFormatter, unit, padding, tickTextProps, orientation, mirror } = this.props;
     // @ts-expect-error some properties are optional in props but required in getTicks
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
-    const textAnchor = this.getTickTextAnchor();
+    const textAnchor = getTickTextAnchor(orientation, mirror);
     const verticalAnchor = this.getTickVerticalAnchor();
     const axisProps = svgPropertiesNoEvents(this.props);
     const customTickProps = filterProps(tick, false);
@@ -327,7 +330,7 @@ export class CartesianAxis extends Component<Props, IState> {
       ...filterProps(tickLine, false),
     };
     const items = finalTicks.map((entry: CartesianTickItem, i) => {
-      const { x, y, width, height, orientation, tickSize, mirror, tickMargin } = this.props;
+      const { x, y, width, height, tickSize, tickMargin } = this.props;
       const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
         entry,
         x,
