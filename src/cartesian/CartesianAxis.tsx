@@ -217,6 +217,23 @@ function getTickTextAnchor(orientation: Orientation, mirror: boolean): TextAncho
   }
 }
 
+/**
+ * @param orientation The orientation of the axis.
+ * @param mirror If true, the ticks are mirrored.
+ * @returns The vertical text anchor of the tick.
+ */
+function getTickVerticalAnchor(orientation: Orientation, mirror: boolean): TextVerticalAnchor {
+  switch (orientation) {
+    case 'left':
+    case 'right':
+      return 'middle';
+    case 'top':
+      return mirror ? 'start' : 'end';
+    default:
+      return mirror ? 'end' : 'start';
+  }
+}
+
 function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: string }) {
   const { option, tickProps, value } = props;
   let tickItem;
@@ -291,20 +308,6 @@ export class CartesianAxis extends Component<Props, IState> {
     );
   }
 
-  getTickVerticalAnchor(): TextVerticalAnchor {
-    const { orientation, mirror } = this.props;
-
-    switch (orientation) {
-      case 'left':
-      case 'right':
-        return 'middle';
-      case 'top':
-        return mirror ? 'start' : 'end';
-      default:
-        return mirror ? 'end' : 'start';
-    }
-  }
-
   /**
    * render the ticks
    * @param {string} fontSize Fontsize to consider for tick spacing
@@ -321,7 +324,7 @@ export class CartesianAxis extends Component<Props, IState> {
     // @ts-expect-error some properties are optional in props but required in getTicks
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = getTickTextAnchor(orientation, mirror);
-    const verticalAnchor = this.getTickVerticalAnchor();
+    const verticalAnchor = getTickVerticalAnchor(orientation, mirror);
     const axisProps = svgPropertiesNoEvents(this.props);
     const customTickProps = filterProps(tick, false);
     const tickLineProps = {
