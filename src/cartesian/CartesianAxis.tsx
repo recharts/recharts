@@ -87,6 +87,50 @@ interface IState {
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale'> &
   CartesianAxisProps;
 
+function AxisLine(axisLineProps: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  orientation: Orientation;
+  mirror: boolean;
+  axisLine: boolean | SVGProps<SVGLineElement>;
+}) {
+  const { x, y, width, height, orientation, mirror, axisLine } = axisLineProps;
+
+  if (!axisLine) {
+    return null;
+  }
+
+  let props: SVGProps<SVGLineElement> = {
+    ...filterProps(axisLineProps, false),
+    ...filterProps(axisLine, false),
+    fill: 'none',
+  };
+
+  if (orientation === 'top' || orientation === 'bottom') {
+    const needHeight = +((orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror));
+    props = {
+      ...props,
+      x1: x,
+      y1: y + needHeight * height,
+      x2: x + width,
+      y2: y + needHeight * height,
+    };
+  } else {
+    const needWidth = +((orientation === 'left' && !mirror) || (orientation === 'right' && mirror));
+    props = {
+      ...props,
+      x1: x + needWidth * width,
+      y1: y,
+      x2: x + needWidth * width,
+      y2: y + height,
+    };
+  }
+
+  return <line {...props} className={clsx('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
+}
+
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
@@ -207,37 +251,6 @@ export class CartesianAxis extends Component<Props, IState> {
       default:
         return mirror ? 'end' : 'start';
     }
-  }
-
-  renderAxisLine() {
-    const { x, y, width, height, orientation, mirror, axisLine } = this.props;
-    let props: SVGProps<SVGLineElement> = {
-      ...filterProps(this.props, false),
-      ...filterProps(axisLine, false),
-      fill: 'none',
-    };
-
-    if (orientation === 'top' || orientation === 'bottom') {
-      const needHeight = +((orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror));
-      props = {
-        ...props,
-        x1: x,
-        y1: y + needHeight * height,
-        x2: x + width,
-        y2: y + needHeight * height,
-      };
-    } else {
-      const needWidth = +((orientation === 'left' && !mirror) || (orientation === 'right' && mirror));
-      props = {
-        ...props,
-        x1: x + needWidth * width,
-        y1: y,
-        x2: x + needWidth * width,
-        y2: y + height,
-      };
-    }
-
-    return <line {...props} className={clsx('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: TextProps, value: string) {
@@ -375,7 +388,15 @@ export class CartesianAxis extends Component<Props, IState> {
           }
         }}
       >
-        {axisLine && this.renderAxisLine()}
+        <AxisLine
+          x={this.props.x}
+          y={this.props.y}
+          width={width}
+          height={height}
+          orientation={this.props.orientation}
+          mirror={this.props.mirror}
+          axisLine={axisLine}
+        />
         {this.renderTicks(this.state.fontSize, this.state.letterSpacing, ticks)}
         <CartesianLabelContextProvider
           x={this.props.x}
