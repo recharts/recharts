@@ -1,18 +1,7 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, MockInstance, test, vi } from 'vitest';
-import {
-  Brush,
-  CartesianAxis,
-  CartesianGrid,
-  Customized,
-  Legend,
-  Line,
-  LineChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from '../../src';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { Brush, CartesianGrid, Customized, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -1383,21 +1372,19 @@ describe('<LineChart /> and various data sources', () => {
 });
 
 describe('<LineChart /> - Pure Rendering', () => {
-  const spy = vi.fn();
-
-  // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: MockInstance<() => React.ReactElement | null>;
+  const lineDotSpy = vi.fn();
+  const tickSpy = vi.fn();
 
   beforeEach(() => {
-    spy.mockClear();
-    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
+    lineDotSpy.mockClear();
+    tickSpy.mockClear();
   });
 
   const chart = (
     <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={spy} />
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={lineDotSpy} />
       <Tooltip />
-      <XAxis />
+      <XAxis tick={tickSpy} />
       <YAxis />
       <Brush />
     </LineChart>
@@ -1407,23 +1394,23 @@ describe('<LineChart /> - Pure Rendering', () => {
   test('should only render Line once when the mouse enters and moves', () => {
     const { container } = render(chart);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(2);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(3);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseMove(container, { clientX: 200, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseLeave(container);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(2);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(3);
   });
 
   // protect against the future where someone might mess up our clean rendering
   test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
     const { container } = render(chart);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(2);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(3);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
     assertNotNull(leftCursor);
@@ -1433,27 +1420,26 @@ describe('<LineChart /> - Pure Rendering', () => {
 
     fireEvent.mouseUp(window);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(2);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(3);
   });
 });
 
 describe('<LineChart /> - Pure Rendering with legend', () => {
-  const spy = vi.fn();
-  // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: MockInstance<() => React.ReactElement | null>;
+  const lineDotSpy = vi.fn();
+  const tickSpy = vi.fn();
 
   beforeEach(() => {
-    spy.mockClear();
-    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
+    lineDotSpy.mockClear();
+    tickSpy.mockClear();
   });
 
   const chart = (
     <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={spy} />
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" dot={lineDotSpy} />
       <Tooltip />
       <XAxis />
-      <YAxis />
+      <YAxis tick={tickSpy} />
       <Brush />
       <Legend />
     </LineChart>
@@ -1463,8 +1449,8 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   test('should only render Line once when the mouse enters and moves', () => {
     const { container } = render(chart);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(8);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
 
@@ -1472,16 +1458,16 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
 
     fireEvent.mouseLeave(container);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(8);
   });
 
   // protect against the future where someone might mess up our clean rendering
   test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
     const { container } = render(chart);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(8);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
     assertNotNull(leftCursor);
@@ -1489,8 +1475,8 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseMove(window, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
-    expect(spy).toHaveBeenCalledTimes(PageData.length);
-    expect(axisSpy).toHaveBeenCalledTimes(3);
+    expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
+    expect(tickSpy).toHaveBeenCalledTimes(8);
   });
 });
 

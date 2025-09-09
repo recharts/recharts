@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import * as React from 'react';
-import { ReactElement, Component, SVGProps } from 'react';
+import { ReactElement, SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
@@ -25,6 +25,7 @@ import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
+import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -76,9 +77,8 @@ export interface CartesianAxisProps {
   labelRef?: React.RefObject<Element>;
 }
 
-interface IState {
-  fontSize: string;
-  letterSpacing: string;
+export interface CartesianAxisRef {
+  getCalculatedWidth(): number;
 }
 
 /*
@@ -379,131 +379,128 @@ function Ticks(props: TicksProps) {
   return null;
 }
 
-export class CartesianAxis extends Component<Props, IState> {
-  static displayName = 'CartesianAxis';
+const CartesianAxisComponent = forwardRef<CartesianAxisRef, Props>((props, ref) => {
+  const { axisLine, width, height, className, hide, ticks, ...rest } = props;
+  const [fontSize, setFontSize] = useState('');
+  const [letterSpacing, setLetterSpacing] = useState('');
+  const tickRefs = useRef<Element[]>([]);
 
-  tickRefs: React.MutableRefObject<Element[]>;
+  useImperativeHandle(ref, () => ({
+    getCalculatedWidth: () => {
+      return getCalculatedYAxisWidth({
+        ticks: tickRefs.current,
+        label: props.labelRef?.current,
+        labelGapWithTick: 5,
+        tickSize: props.tickSize,
+        tickMargin: props.tickMargin,
+      });
+    },
+  }));
 
-  static defaultProps: Partial<Props> = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    viewBox: { x: 0, y: 0, width: 0, height: 0 },
-    // The orientation of axis
-    orientation: 'bottom',
-    // The ticks
-    ticks: [] as CartesianAxisProps['ticks'],
+  const layerRef = useCallback(
+    (el: SVGElement) => {
+      if (el) {
+        const tickNodes = el.getElementsByClassName('recharts-cartesian-axis-tick-value');
+        tickRefs.current = Array.from(tickNodes);
+        const tick: Element | undefined = tickNodes[0];
 
-    stroke: '#666',
-    tickLine: true,
-    axisLine: true,
-    tick: true,
-    mirror: false,
-
-    minTickGap: 5,
-    // The width or height of tick
-    tickSize: 6,
-    tickMargin: 2,
-    interval: 'preserveEnd',
-  };
-
-  constructor(props: Props) {
-    super(props);
-    this.tickRefs = React.createRef<Element[]>();
-    this.tickRefs.current = [];
-    this.state = { fontSize: '', letterSpacing: '' };
-  }
-
-  shouldComponentUpdate({ viewBox, ...restProps }: Props, nextState: IState) {
-    // props.viewBox is sometimes generated every time -
-    // check that specially as object equality is likely to fail
-    const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
-    return (
-      !shallowEqual(viewBox, viewBoxOld) ||
-      !shallowEqual(restProps, restPropsOld) ||
-      !shallowEqual(nextState, this.state)
-    );
-  }
-
-  render() {
-    const { axisLine, width, height, className, hide, ticks, ...rest } = this.props;
-
-    if (hide) {
-      return null;
-    }
-
-    /*
-     * This is different condition from what validateWidthHeight is doing;
-     * the CartesianAxis does allow width or height to be undefined.
-     */
-    if ((width != null && width <= 0) || (height != null && height <= 0)) {
-      return null;
-    }
-
-    return (
-      <Layer
-        className={clsx('recharts-cartesian-axis', className)}
-        ref={ref => {
-          if (ref) {
-            const tickNodes = ref.getElementsByClassName('recharts-cartesian-axis-tick-value');
-            this.tickRefs.current = Array.from(tickNodes);
-            const tick: Element | undefined = tickNodes[0];
-
-            if (tick) {
-              const calculatedFontSize = window.getComputedStyle(tick).fontSize;
-              const calculatedLetterSpacing = window.getComputedStyle(tick).letterSpacing;
-              if (calculatedFontSize !== this.state.fontSize || calculatedLetterSpacing !== this.state.letterSpacing) {
-                this.setState({
-                  fontSize: window.getComputedStyle(tick).fontSize,
-                  letterSpacing: window.getComputedStyle(tick).letterSpacing,
-                });
-              }
-            }
+        if (tick) {
+          const computedStyle = window.getComputedStyle(tick);
+          const calculatedFontSize = computedStyle.fontSize;
+          const calculatedLetterSpacing = computedStyle.letterSpacing;
+          if (calculatedFontSize !== fontSize || calculatedLetterSpacing !== letterSpacing) {
+            setFontSize(calculatedFontSize);
+            setLetterSpacing(calculatedLetterSpacing);
           }
-        }}
-      >
-        <AxisLine
-          x={this.props.x}
-          y={this.props.y}
-          width={width}
-          height={height}
-          orientation={this.props.orientation}
-          mirror={this.props.mirror}
-          axisLine={axisLine}
-        />
-        <Ticks
-          ticks={ticks}
-          tick={this.props.tick}
-          tickLine={this.props.tickLine}
-          stroke={this.props.stroke}
-          tickFormatter={this.props.tickFormatter}
-          unit={this.props.unit}
-          padding={this.props.padding}
-          tickTextProps={this.props.tickTextProps}
-          orientation={this.props.orientation}
-          mirror={this.props.mirror}
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          height={this.props.height}
-          tickSize={this.props.tickSize}
-          tickMargin={this.props.tickMargin}
-          fontSize={this.state.fontSize}
-          letterSpacing={this.state.letterSpacing}
-          getTicksConfig={this.props}
-          events={rest}
-        />
-        <CartesianLabelContextProvider
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          height={this.props.height}
-        >
-          <CartesianLabelFromLabelProp label={this.props.label} />
-          {this.props.children}
-        </CartesianLabelContextProvider>
-      </Layer>
-    );
+        }
+      }
+    },
+    [fontSize, letterSpacing],
+  );
+
+  if (hide) {
+    return null;
   }
-}
+
+  /*
+   * This is different condition from what validateWidthHeight is doing;
+   * the CartesianAxis does allow width or height to be undefined.
+   */
+  if ((width != null && width <= 0) || (height != null && height <= 0)) {
+    return null;
+  }
+
+  return (
+    <Layer className={clsx('recharts-cartesian-axis', className)} ref={layerRef}>
+      <AxisLine
+        x={props.x}
+        y={props.y}
+        width={width}
+        height={height}
+        orientation={props.orientation}
+        mirror={props.mirror}
+        axisLine={axisLine}
+      />
+      <Ticks
+        ticks={ticks}
+        tick={props.tick}
+        tickLine={props.tickLine}
+        stroke={props.stroke}
+        tickFormatter={props.tickFormatter}
+        unit={props.unit}
+        padding={props.padding}
+        tickTextProps={props.tickTextProps}
+        orientation={props.orientation}
+        mirror={props.mirror}
+        x={props.x}
+        y={props.y}
+        width={props.width}
+        height={props.height}
+        tickSize={props.tickSize}
+        tickMargin={props.tickMargin}
+        fontSize={fontSize}
+        letterSpacing={letterSpacing}
+        getTicksConfig={props}
+        events={rest}
+      />
+      <CartesianLabelContextProvider x={props.x} y={props.y} width={props.width} height={props.height}>
+        <CartesianLabelFromLabelProp label={props.label} />
+        {props.children}
+      </CartesianLabelContextProvider>
+    </Layer>
+  );
+});
+
+const MemoCartesianAxis = React.memo(CartesianAxisComponent, (prevProps, nextProps) => {
+  const { viewBox: prevViewBox, ...prevRestProps } = prevProps;
+  const { viewBox: nextViewBox, ...nextRestProps } = nextProps;
+  return shallowEqual(prevViewBox, nextViewBox) && shallowEqual(prevRestProps, nextRestProps);
+});
+
+export const CartesianAxis = MemoCartesianAxis;
+
+CartesianAxis.displayName = 'CartesianAxis';
+
+CartesianAxis.defaultProps = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  viewBox: { x: 0, y: 0, width: 0, height: 0 },
+  // The orientation of axis
+  orientation: 'bottom',
+  // The ticks
+  ticks: [] as CartesianAxisProps['ticks'],
+
+  stroke: '#666',
+  tickLine: true,
+  axisLine: true,
+  tick: true,
+  mirror: false,
+
+  minTickGap: 5,
+  // The width or height of tick
+  tickSize: 6,
+  tickMargin: 2,
+  interval: 'preserveEnd',
+};
