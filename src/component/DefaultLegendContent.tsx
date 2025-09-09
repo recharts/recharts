@@ -33,6 +33,7 @@ export interface LegendPayload {
   payload?: {
     strokeDasharray?: number | string;
     value?: any;
+    [key: string]: any
   };
   formatter?: Formatter;
   inactive?: boolean;
