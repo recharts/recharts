@@ -286,7 +286,7 @@ function BarBackground(props: BarBackgroundProps) {
           className: 'recharts-bar-background-rectangle',
         };
 
-        return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
+        return <BarRectangle key={`background-bar-${barRectangleProps.index}`} {...barRectangleProps} />;
       })}
     </>
   );
