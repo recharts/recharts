@@ -511,9 +511,9 @@ const MemoCartesianAxis = React.memo(CartesianAxisComponent, (prevProps, nextPro
   return shallowEqual(prevViewBox, nextViewBox) && shallowEqual(prevRestProps, nextRestProps);
 });
 
-export const CartesianAxis = (outsideProps: Props) => {
+export const CartesianAxis = React.forwardRef((outsideProps: Props, ref: React.Ref<CartesianAxisRef>) => {
   const props = resolveDefaultProps(outsideProps, defaultCartesianAxisProps);
-  return <MemoCartesianAxis {...props} />;
-};
+  return <MemoCartesianAxis {...props} ref={ref} />;
+});
 
 CartesianAxis.displayName = 'CartesianAxis';
