@@ -566,7 +566,11 @@ export function Label(outerProps: Props) {
 
 Label.displayName = 'Label';
 
-const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox | undefined, labelRef?: React.RefObject<Element>) => {
+const parseLabel = (
+  label: ImplicitLabelType | undefined,
+  viewBox: ViewBox | undefined,
+  labelRef?: React.RefObject<Element>,
+) => {
   if (!label) {
     return null;
   }
@@ -600,7 +604,7 @@ const parseLabel = (label: ImplicitLabelType, viewBox: ViewBox | undefined, labe
   return null;
 };
 
-export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
+export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType | undefined }) {
   const viewBox = useCartesianLabelContext();
 
   return parseLabel(label, viewBox) || null;

@@ -26,6 +26,7 @@ import { RechartsScale } from '../util/ChartUtils';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -73,21 +74,49 @@ export interface CartesianAxisProps {
    * This is NOT SVG scale attribute;
    * this is Recharts scale, based on d3-scale.
    */
-  scale: RechartsScale;
-  labelRef?: React.RefObject<Element>;
+  scale?: RechartsScale;
+  labelRef?: React.RefObject<Element> | null;
+
+  ref?: React.Ref<CartesianAxisRef>;
 }
 
 export interface CartesianAxisRef {
   getCalculatedWidth(): number;
 }
 
+export const defaultCartesianAxisProps = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  viewBox: { x: 0, y: 0, width: 0, height: 0 },
+  // The orientation of axis
+  orientation: 'bottom',
+  // The ticks
+  ticks: [] as CartesianAxisProps['ticks'],
+
+  stroke: '#666',
+  tickLine: true,
+  axisLine: true,
+  tick: true,
+  mirror: false,
+
+  minTickGap: 5,
+  // The width or height of tick
+  tickSize: 6,
+  tickMargin: 2,
+  interval: 'preserveEnd',
+} as const satisfies Partial<Props>;
+
 /*
  * `viewBox` and `scale` are SVG attributes.
  * Recharts however - unfortunately - has its own attributes named `viewBox` and `scale`
  * that are completely different data shape and different purpose.
  */
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale'> &
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale' | 'ref'> &
   CartesianAxisProps;
+
+type InternalProps = RequiresDefaultProps<Props, typeof defaultCartesianAxisProps>;
 
 function AxisLine(axisLineProps: {
   x: number;
@@ -97,15 +126,16 @@ function AxisLine(axisLineProps: {
   orientation: Orientation;
   mirror: boolean;
   axisLine: boolean | SVGProps<SVGLineElement>;
+  otherSvgProps?: SVGProps<SVGLineElement>;
 }) {
-  const { x, y, width, height, orientation, mirror, axisLine } = axisLineProps;
+  const { x, y, width, height, orientation, mirror, axisLine, otherSvgProps } = axisLineProps;
 
   if (!axisLine) {
     return null;
   }
 
   let props: SVGProps<SVGLineElement> = {
-    ...filterProps(axisLineProps, false),
+    ...otherSvgProps,
     ...filterProps(axisLine, false),
     fill: 'none',
   };
@@ -379,26 +409,29 @@ function Ticks(props: TicksProps) {
   return null;
 }
 
-const CartesianAxisComponent = forwardRef<CartesianAxisRef, Props>((props, ref) => {
+const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
   const { axisLine, width, height, className, hide, ticks, ...rest } = props;
   const [fontSize, setFontSize] = useState('');
   const [letterSpacing, setLetterSpacing] = useState('');
   const tickRefs = useRef<Element[]>([]);
 
-  useImperativeHandle(ref, () => ({
-    getCalculatedWidth: () => {
-      return getCalculatedYAxisWidth({
-        ticks: tickRefs.current,
-        label: props.labelRef?.current,
-        labelGapWithTick: 5,
-        tickSize: props.tickSize,
-        tickMargin: props.tickMargin,
-      });
-    },
-  }));
+  useImperativeHandle(
+    ref,
+    (): CartesianAxisRef => ({
+      getCalculatedWidth: (): number => {
+        return getCalculatedYAxisWidth({
+          ticks: tickRefs.current,
+          label: props.labelRef?.current,
+          labelGapWithTick: 5,
+          tickSize: props.tickSize,
+          tickMargin: props.tickMargin,
+        });
+      },
+    }),
+  );
 
   const layerRef = useCallback(
-    (el: SVGElement) => {
+    (el: SVGElement | null) => {
       if (el) {
         const tickNodes = el.getElementsByClassName('recharts-cartesian-axis-tick-value');
         tickRefs.current = Array.from(tickNodes);
@@ -440,6 +473,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, Props>((props, ref) 
         orientation={props.orientation}
         mirror={props.mirror}
         axisLine={axisLine}
+        otherSvgProps={svgPropertiesNoEvents(props)}
       />
       <Ticks
         ticks={ticks}
@@ -477,30 +511,9 @@ const MemoCartesianAxis = React.memo(CartesianAxisComponent, (prevProps, nextPro
   return shallowEqual(prevViewBox, nextViewBox) && shallowEqual(prevRestProps, nextRestProps);
 });
 
-export const CartesianAxis = MemoCartesianAxis;
+export const CartesianAxis = (outsideProps: Props) => {
+  const props = resolveDefaultProps(outsideProps, defaultCartesianAxisProps);
+  return <MemoCartesianAxis {...props} />;
+};
 
 CartesianAxis.displayName = 'CartesianAxis';
-
-CartesianAxis.defaultProps = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  viewBox: { x: 0, y: 0, width: 0, height: 0 },
-  // The orientation of axis
-  orientation: 'bottom',
-  // The ticks
-  ticks: [] as CartesianAxisProps['ticks'],
-
-  stroke: '#666',
-  tickLine: true,
-  axisLine: true,
-  tick: true,
-  mirror: false,
-
-  minTickGap: 5,
-  // The width or height of tick
-  tickSize: 6,
-  tickMargin: 2,
-  interval: 'preserveEnd',
-};
