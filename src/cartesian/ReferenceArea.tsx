@@ -16,6 +16,7 @@ import { RechartsScale } from '../util/ChartUtils';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
+import { RectanglePosition } from '../util/types';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -41,7 +42,7 @@ const getRect = (
   xAxisScale: RechartsScale | undefined,
   yAxisScale: RechartsScale | undefined,
   props: Props,
-) => {
+): RectanglePosition | null => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
 
   if (xAxisScale == null || yAxisScale == null) {

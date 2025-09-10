@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, FunctionComponent, useEffect, useRef, useLayoutEffect, isValidElement } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
-import { CartesianAxis } from './CartesianAxis';
+import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
 import {
   addYAxis,
   removeYAxis,
@@ -23,7 +23,6 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { isLabelContentAFunction } from '../component/Label';
 
 interface YAxisProps extends BaseAxisProps {
@@ -66,7 +65,7 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const { yAxisId, className, width, label } = props;
 
-  const cartesianAxisRef = useRef(null);
+  const cartesianAxisRef = useRef<CartesianAxisRef>(null);
   const labelRef = useRef(null);
 
   const viewBox = useAppSelector(selectAxisViewBox);
@@ -99,33 +98,27 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     }
 
     const axisComponent = cartesianAxisRef.current;
-    const tickNodes = axisComponent?.tickRefs?.current;
+    if (!axisComponent) {
+      return;
+    }
 
-    const { tickSize, tickMargin } = axisComponent.props;
-
-    // get calculated width based on the label width, ticks etc
-    const updatedYAxisWidth = getCalculatedYAxisWidth({
-      ticks: tickNodes,
-      label: labelRef.current,
-      labelGapWithTick: 5,
-      tickSize,
-      tickMargin,
-    });
+    const updatedYAxisWidth = axisComponent.getCalculatedWidth();
 
     // if the width has changed, dispatch an action to update the width
     if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth)) {
       dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    cartesianAxisRef,
-    cartesianAxisRef?.current?.tickRefs?.current, // required to do re-calculation when using brush
-    axisSize?.width,
+    // The dependency on cartesianAxisRef.current is not needed because useLayoutEffect will run after every render.
+    // The ref will be populated by then.
+    // To re-run this effect when ticks change, we can depend on the ticks array from the store.
+    cartesianTickItems,
     axisSize,
     dispatch,
     label,
     yAxisId,
     width,
+    synchronizedSettings,
   ]);
 
   if (axisSize == null || position == null || synchronizedSettings == null) {

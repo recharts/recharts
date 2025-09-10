@@ -90,6 +90,20 @@ export interface NullableCoordinate {
   y: number | null;
 }
 
+export type RectangleCoordinate = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+export type RectanglePosition = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 /**
  * @deprecated do not use: too many properties, mixing too many concepts, cartesian and polar together, everything optional.
  */

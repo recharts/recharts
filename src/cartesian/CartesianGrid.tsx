@@ -10,7 +10,7 @@ import { ChartOffsetInternal } from '../util/types';
 
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks, GetTicksInput } from './getTicks';
-import { CartesianAxis } from './CartesianAxis';
+import { defaultCartesianAxisProps } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffsetInternal } from '../context/chartLayoutContext';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
@@ -332,7 +332,7 @@ const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
 ) =>
   getCoordinatesOfGrid(
     getTicks({
-      ...CartesianAxis.defaultProps,
+      ...defaultCartesianAxisProps,
       ...xAxis,
       ticks: getTicksOfAxis(xAxis, true),
       viewBox: { x: 0, y: 0, width, height },
@@ -348,7 +348,7 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
 ) =>
   getCoordinatesOfGrid(
     getTicks({
-      ...CartesianAxis.defaultProps,
+      ...defaultCartesianAxisProps,
       ...yAxis,
       ticks: getTicksOfAxis(yAxis, true),
       viewBox: { x: 0, y: 0, width, height },

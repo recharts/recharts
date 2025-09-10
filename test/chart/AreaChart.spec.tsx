@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-import { beforeEach, describe, expect, it, MockInstance, test, vi } from 'vitest';
-import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxis } from '../../src';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { Area, AreaChart, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
@@ -531,21 +531,19 @@ describe('AreaChart', () => {
   });
 
   describe('<AreaChart /> - Pure Rendering', () => {
-    const spy = vi.fn();
-
-    // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy: MockInstance;
+    const areaDotSpy = vi.fn();
+    const tickSpy = vi.fn();
 
     beforeEach(() => {
-      spy.mockClear();
-      axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
+      areaDotSpy.mockClear();
+      tickSpy.mockClear();
     });
 
     const chart = (
       <AreaChart width={400} height={400} data={data}>
-        <Area isAnimationActive={false} type="monotone" label dataKey="uv" dot={spy} />
+        <Area isAnimationActive={false} type="monotone" label dataKey="uv" dot={areaDotSpy} />
         <Tooltip />
-        <XAxis />
+        <XAxis tick={tickSpy} />
         <YAxis />
         <Brush />
       </AreaChart>
@@ -555,23 +553,23 @@ describe('AreaChart', () => {
     test('should only render Area once when the mouse enters and moves', () => {
       const { container } = render(chart);
 
-      expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(2);
+      expect(areaDotSpy).toHaveBeenCalledTimes(data.length);
+      expect(tickSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseEnter(container, { clientX: 30, clientY: 200 });
       fireEvent.mouseMove(container, { clientX: 200, clientY: 200 });
       fireEvent.mouseLeave(container);
 
-      expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(2);
+      expect(areaDotSpy).toHaveBeenCalledTimes(data.length);
+      expect(tickSpy).toHaveBeenCalledTimes(3);
     });
 
     // protect against the future where someone might mess up our clean rendering
     test("should only render Area once when the brush moves but doesn't change start/end indices", () => {
       const { container } = render(chart);
 
-      expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(2);
+      expect(areaDotSpy).toHaveBeenCalledTimes(data.length);
+      expect(tickSpy).toHaveBeenCalledTimes(3);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
       assertNotNull(brushSlide);
@@ -579,8 +577,8 @@ describe('AreaChart', () => {
       fireEvent.mouseMove(brushSlide, { clientX: 200, clientY: 200 });
       fireEvent.mouseUp(window);
 
-      expect(spy).toHaveBeenCalledTimes(data.length);
-      expect(axisSpy).toHaveBeenCalledTimes(3);
+      expect(areaDotSpy).toHaveBeenCalledTimes(data.length);
+      expect(tickSpy).toHaveBeenCalledTimes(3);
     });
   });
 

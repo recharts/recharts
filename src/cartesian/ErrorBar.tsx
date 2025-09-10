@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Component, SVGProps } from 'react';
 import { Layer } from '../container/Layer';
-import { AnimationTiming, DataKey } from '../util/types';
+import { AnimationTiming, DataKey, RectangleCoordinate } from '../util/types';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
@@ -111,7 +111,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       return null;
     }
 
-    const lineCoordinates = [];
+    const lineCoordinates: Array<RectangleCoordinate> = [];
     let lowBound, highBound;
 
     if (Array.isArray(errorVal)) {
