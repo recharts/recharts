@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
-import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -286,7 +286,7 @@ function BarBackground(props: BarBackgroundProps) {
           className: 'recharts-bar-background-rectangle',
         };
 
-        return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
+        return <BarRectangle key={`background-bar-${barRectangleProps.index}`} {...barRectangleProps} />;
       })}
     </>
   );
