@@ -17,6 +17,7 @@ import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 import { externalEventsMiddleware } from './externalEventsMiddleware';
 import { touchEventMiddleware } from './touchEventsMiddleware';
 import { errorBarReducer } from './errorBarSlice';
+import { Global } from '../util/Global';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
@@ -53,7 +54,7 @@ export const createRechartsStore = (
         externalEventsMiddleware.middleware,
         touchEventMiddleware.middleware,
       ]),
-    devTools: !!window.RECHARTS_DEV_TOOLS_ENABLED && {
+    devTools: Global.devToolsEnabled && {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,
       },
@@ -64,9 +65,3 @@ export const createRechartsStore = (
 
 export type RechartsRootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = Dispatch<Action>;
-
-declare global {
-  interface Window {
-    RECHARTS_DEV_TOOLS_ENABLED?: boolean;
-  }
-}
