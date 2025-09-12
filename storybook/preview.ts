@@ -1,5 +1,6 @@
 import { Decorator, Preview } from '@storybook/react-vite';
 import './global.css';
+import { Global } from '../src';
 
 const preview: Preview = {
   parameters: {
@@ -38,4 +39,4 @@ export default preview;
 export const decorators: Decorator[] = [];
 
 // Enable dev tools in the storybook:
-window.RECHARTS_DEV_TOOLS_ENABLED = true;
+Global.devToolsEnabled = true;
