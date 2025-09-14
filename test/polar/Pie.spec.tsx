@@ -2,9 +2,9 @@ import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Label, LabelProps, Pie, PieChart, PieProps, Sector, SectorProps, Tooltip } from '../../src';
+import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
-import { PieSectorDataItem } from '../../src/polar/Pie';
+import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
 import {
@@ -467,8 +467,83 @@ describe('<Pie />', () => {
       expect(container.querySelectorAll('.customized-label')).toHaveLength(sectorsData.length);
     });
 
-    test('Render customized label when label is set to be a function that returns the label text', () => {
-      const MyCustomLabel = (props: LabelProps) => {
+    it('should pass props to the label function', () => {
+      // https://github.com/recharts/recharts/discussions/6306
+      const spy = vi.fn();
+      render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label={spy}
+            innerRadius={0}
+            outerRadius={200}
+            data={sectorsData}
+            dataKey="value"
+          />
+        </PieChart>,
+      );
+      const expectedProps: PieLabelRenderProps = {
+        cornerRadius: undefined,
+        cx: 255,
+        cy: 255,
+        endAngle: 360,
+        fill: '#808080',
+        index: 0,
+        innerRadius: 0,
+        maxRadius: 346.4823227814083,
+        midAngle: 180,
+        middleRadius: 100,
+        name: 'A',
+        outerRadius: 200,
+        paddingAngle: 0,
+        payload: {
+          cx: 250,
+          cy: 250,
+          endAngle: 72,
+          innerRadius: 50,
+          name: 'A',
+          outerRadius: 100,
+          startAngle: 0,
+          value: 40,
+        },
+        percent: 1,
+        startAngle: 0,
+        stroke: 'none',
+        textAnchor: 'end',
+        tooltipPayload: [
+          {
+            dataKey: 'value',
+            name: 'A',
+            payload: {
+              cx: 250,
+              cy: 250,
+              endAngle: 72,
+              innerRadius: 50,
+              name: 'A',
+              outerRadius: 100,
+              startAngle: 0,
+              value: 40,
+            },
+            type: undefined,
+            value: 40,
+          },
+        ],
+        tooltipPosition: {
+          x: 155,
+          y: 255,
+        },
+        value: 40,
+        x: 35,
+        y: 254.99999999999997,
+      };
+      expect(spy).toHaveBeenCalledTimes(sectorsData.length);
+      expect(spy).toHaveBeenNthCalledWith(1, expectedProps);
+    });
+
+    test('Render customized label when label is a function', () => {
+      const renderLabel: PieLabel = (props: PieLabelRenderProps) => {
         const { name, value } = props;
         return `${name}: ${value}`;
       };
@@ -478,7 +553,7 @@ describe('<Pie />', () => {
             isAnimationActive={false}
             cx={250}
             cy={250}
-            label={MyCustomLabel}
+            label={renderLabel}
             innerRadius={0}
             outerRadius={200}
             data={sectorsData}
@@ -491,8 +566,8 @@ describe('<Pie />', () => {
       expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
     });
 
-    test('Render customized label when label is set to be a react element', () => {
-      const renderLabel = (props: LabelProps) => {
+    test('Render customized label when label is a React component', () => {
+      const RenderLabel = (props: PieLabelRenderProps) => {
         const { x, y } = props;
         return (
           <text x={x} y={y} className="customized-label">
@@ -506,7 +581,7 @@ describe('<Pie />', () => {
             isAnimationActive={false}
             cx={250}
             cy={250}
-            label={renderLabel}
+            label={RenderLabel}
             innerRadius={0}
             outerRadius={200}
             data={sectorsData}

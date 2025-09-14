@@ -1,6 +1,11 @@
+import { SVGProps } from 'react';
 import { BasePolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import { DataKey, LegendType } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
+import { SVGPropsNoEvents } from '../../util/svgPropertiesNoEvents';
+import { WithoutId } from '../../util/useUniqueId';
+
+export type PiePresentationProps = SVGPropsNoEvents<WithoutId<SVGProps<SVGPathElement>>>;
 
 export interface PieSettings extends BasePolarGraphicalItemSettings {
   type: 'pie';
@@ -21,5 +26,5 @@ export interface PieSettings extends BasePolarGraphicalItemSettings {
   outerRadius: number | string | ((element: any) => number | string);
   maxRadius: number | undefined;
   cornerRadius: number | string | undefined;
-  presentationProps: Record<string, string | number>;
+  presentationProps: PiePresentationProps;
 }

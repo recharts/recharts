@@ -103,14 +103,14 @@ export const selectPieSectors: (
   state: RechartsRootState,
   id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => Readonly<PieSectorDataItem[]> | undefined = createSelector(
+) => ReadonlyArray<PieSectorDataItem> | undefined = createSelector(
   [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffsetInternal],
   (
     displayedData: ChartData | undefined,
     pieSettings: PieSettings,
     cells,
     offset: ChartOffsetInternal,
-  ): Readonly<PieSectorDataItem[]> | undefined => {
+  ): ReadonlyArray<PieSectorDataItem> | undefined => {
     if (pieSettings == null || displayedData == null) {
       return undefined;
     }
