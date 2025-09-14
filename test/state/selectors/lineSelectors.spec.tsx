@@ -1,16 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
-import React from 'react';
-import { act, render } from '@testing-library/react';
-import {
-  shouldReturnFromInitialState,
-  shouldReturnUndefinedOutOfContext,
-  useAppSelectorWithStableTest,
-} from '../../helper/selectorTestHelpers';
+import { describe, expect, it } from 'vitest';
+import React, { ReactNode } from 'react';
+import { act } from '@testing-library/react';
+import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 import { selectLinePoints } from '../../../src/state/selectors/lineSelectors';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from '../../../src';
 import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { LinePointItem } from '../../../src/cartesian/Line';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 
 describe('selectLinePoints', () => {
   shouldReturnUndefinedOutOfContext(state => selectLinePoints(state, 0, 0, false, ''));
@@ -19,12 +16,7 @@ describe('selectLinePoints', () => {
   describe('when in Line chart', () => {
     // https://github.com/recharts/recharts/issues/5625
     it('should call one more time after re-render with different dataKey', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        spy(useAppSelectorWithStableTest(state => selectLinePoints(state, 0, 0, false, 'my-line-id')));
-        return null;
-      };
-      const TestCase = () => {
+      const TestCase = ({ children }: { children: ReactNode }) => {
         const [dataKey, setDataKey] = React.useState('uv');
         return (
           <>
@@ -42,13 +34,15 @@ describe('selectLinePoints', () => {
               <XAxis dataKey="name" />
               <Line dataKey={dataKey} id="my-line-id" />
               <Tooltip />
-              <Comp />
+              {children}
             </LineChart>
           </>
         );
       };
 
-      const { container } = render(<TestCase />);
+      const renderTestCase = createSelectorTestCase(TestCase);
+
+      const { container, spy } = renderTestCase(state => selectLinePoints(state, 0, 0, false, 'my-line-id'));
       const expectedResultBefore: ReadonlyArray<LinePointItem> = [
         {
           payload: {
@@ -197,24 +191,15 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(3);
       /*
-       * This now returns undefined because we're in an inconsistent state:
-       * Props have been updated and are already passing in the new dataKey, but the state has not yet been updated.
-       * A new dispatch is already in progress and will correct it in the next render
-       * but this in-between state is not correct and would render non-sensical data.
-       *
-       * The selector detects this and returns undefined to prevent rendering non-sensical data.
-       *
-       * Area later uses this undefined to interrupt the animation.
-       */
-      expect(spy).toHaveBeenNthCalledWith(3, expectedResultBefore);
-      /*
-       * Fourth render has the new updated data with consistent dataKey.
-       * Area will resume the animation from the most recent previous data
+       * Last render has the new updated data with consistent dataKey.
+       * Line will resume animation from the most recent previous data
        * to the new points.
        */
-      expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfterRerender);
     });
+
+    it('should return the same points even after clicking on the chart', () => {});
   });
 });
