@@ -6,7 +6,6 @@ import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
-import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
@@ -23,6 +22,7 @@ import {
   ChartOffsetInternal,
   Coordinate,
   DataKey,
+  GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
@@ -39,19 +39,21 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
-import { PieSettings } from '../state/types/PieSettings';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { PiePresentationProps, PieSettings } from '../state/types/PieSettings';
+import { svgPropertiesNoEvents, SVGPropsNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import {
-  ImplicitLabelListType,
   LabelListFromLabelProp,
   PolarLabelListContextProvider,
   PolarLabelListEntry,
+  Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+
+type ChartDataInput = Record<string, unknown>;
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -76,28 +78,65 @@ type PieLabelLine =
   | SVGProps<SVGPathElement>
   | boolean;
 
-export type PieLabel = ImplicitLabelListType;
+interface PieLabelExtraProps {
+  stroke: string;
+  index: number;
+  textAnchor: string;
+}
 
-export type PieSectorData = {
-  cx: number;
-  cy: number;
-  dataKey?: string;
-  endAngle: number;
-  innerRadius: number;
-  midAngle?: number;
-  middleRadius?: number;
-  name?: string | number;
-  outerRadius: number;
-  paddingAngle?: number;
-  payload?: any;
-  percent?: number;
-  startAngle: number;
-  tooltipPayload?: ReadonlyArray<TooltipPayload>;
-  tooltipPosition: Coordinate;
-  value: number;
-};
+export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offset'> &
+  Omit<PieSectorDataItem, 'offset'> &
+  PieLabelExtraProps &
+  Coordinate;
 
-export type PieSectorDataItem = SectorProps & PieSectorData;
+type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
+
+/**
+ * The `label` prop in Pie accepts a variety of alternatives.
+ */
+export type PieLabel =
+  /*
+   * If label prop is false, labels don't show.
+   * If label prop is true, labels will be rendered with default props.
+   */
+  | boolean
+  /*
+   * If label prop is an object, and it contains a `position` prop,
+   * the object will become props to a <LabelList /> component.
+   */
+  | LabelListPropsWithPosition
+  /*
+   * If label prop is an object, and it does not have a `position` prop,
+   * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
+   * labelLine is a small line connecting the sector to the label.
+   */
+  | Partial<PieLabelRenderProps>
+  /*
+   * If label prop is a function, or a React component, it will be called once for each label.
+   * The result of each call will be rendered.
+   */
+  | ((props: PieLabelRenderProps) => ReactNode | ReactElement<SVGElement>)
+  /*
+   * If label prop is a ReactElement, it will get cloned and receive brand-new surprise props.
+   * I do not recommend this variant
+   */
+  | ReactElement<SVGElement>;
+
+export type PieSectorData = ChartDataInput &
+  GeometrySector & {
+    dataKey?: string;
+    midAngle?: number;
+    middleRadius?: number;
+    name?: string | number;
+    paddingAngle?: number;
+    payload?: any;
+    percent?: number;
+    tooltipPayload?: TooltipPayload;
+    tooltipPosition: Coordinate;
+    value: number;
+  };
+
+export type PieSectorDataItem = PiePresentationProps & PieCoordinate & PieSectorData;
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -115,12 +154,12 @@ interface InternalPieProps extends PieDef {
   maxRadius?: number;
   hide?: boolean;
   /** the input data */
-  data?: any[];
+  data?: ChartDataInput[];
   sectors: ReadonlyArray<PieSectorDataItem>;
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: ImplicitLabelListType;
+  label?: PieLabel;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -150,11 +189,11 @@ interface PieProps extends PieDef {
   maxRadius?: number;
   hide?: boolean;
   /** the input data */
-  data?: any[];
+  data?: ChartDataInput[];
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
-  label?: ImplicitLabelListType;
+  label?: PieLabel;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -165,17 +204,6 @@ interface PieProps extends PieDef {
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
   rootTabIndex?: number;
-}
-
-export interface PieLabelRenderProps extends PieDef {
-  name: string;
-  percent?: number;
-  stroke: string;
-  index?: number;
-  textAnchor: string;
-  x: number;
-  y: number;
-  [key: string]: any;
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -293,8 +321,9 @@ const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   return <Curve {...props} type="linear" className={className} />;
 };
 
-const renderLabelItem = (option: ImplicitLabelListType, props: any, value: any) => {
+const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: unknown) => {
   if (React.isValidElement(option)) {
+    // @ts-expect-error element cloning is not typed
     return React.cloneElement(option, props);
   }
   let label = value;
@@ -308,6 +337,7 @@ const renderLabelItem = (option: ImplicitLabelListType, props: any, value: any) 
   const className = clsx('recharts-pie-label-text', getClassNamePropertyIfExists(option));
   return (
     <Text {...props} alignmentBaseline="middle" className={className}>
+      {/* @ts-expect-error we pass unknown but Text expects string | number */}
       {label}
     </Text>
   );
@@ -339,7 +369,7 @@ function PieLabels({
   const labels = sectors.map((entry, i) => {
     const midAngle = (entry.startAngle + entry.endAngle) / 2;
     const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
-    const labelProps = {
+    const labelProps: PieLabelRenderProps = {
       ...pieProps,
       ...entry,
       stroke: 'none',
@@ -382,7 +412,7 @@ function PieLabelList({
 }) {
   const { label } = props;
   if (typeof label === 'object' && label != null && 'position' in label) {
-    return <LabelListFromLabelProp label={props.label} />;
+    return <LabelListFromLabelProp label={label} />;
   }
   return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
 }
@@ -473,13 +503,15 @@ export function computePieSectors({
   if (sum > 0) {
     let prev: PieSectorDataItem;
     sectors = displayedData.map((entry: any, i: number) => {
-      const val = getValueByDataKey(entry, dataKey, 0);
-      const name = getValueByDataKey(entry, nameKey, i);
-      const coordinate = parseCoordinateOfPie(pieSettings, offset, entry);
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      const val: number = getValueByDataKey(entry, dataKey, 0);
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      const name: string = getValueByDataKey(entry, nameKey, i);
+      const coordinate: PieCoordinate = parseCoordinateOfPie(pieSettings, offset, entry);
       const percent = (isNumber(val) ? val : 0) / sum;
       let tempStartAngle;
 
-      const entryWithCellInfo = { ...entry, ...(cells && cells[i] && cells[i].props) };
+      const entryWithCellInfo: ChartDataInput = { ...entry, ...(cells && cells[i] && cells[i].props) };
 
       if (i) {
         tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
@@ -494,9 +526,7 @@ export function computePieSectors({
 
       const tooltipPayload: TooltipPayload = [
         {
-          // @ts-expect-error getValueByDataKey does not validate the output type
           name,
-          // @ts-expect-error getValueByDataKey does not validate the output type
           value: val,
           payload: entryWithCellInfo,
           dataKey,
@@ -516,7 +546,7 @@ export function computePieSectors({
         tooltipPosition,
         ...entryWithCellInfo,
         ...coordinate,
-        value: getValueByDataKey(entry, dataKey),
+        value: val,
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
@@ -721,9 +751,12 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   );
 }
 
+type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPieProps>;
+
 export function Pie(outsideProps: Props) {
-  const { id: externalId, ...propsWithoutId } = resolveDefaultProps(outsideProps, defaultPieProps);
-  const presentationProps = svgPropertiesNoEvents(propsWithoutId);
+  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
+  const { id: externalId, ...propsWithoutId } = props;
+  const presentationProps: PiePresentationProps = svgPropertiesNoEvents(propsWithoutId);
 
   return (
     <RegisterGraphicalItemId id={externalId} type="pie">
@@ -751,8 +784,8 @@ export function Pie(outsideProps: Props) {
             innerRadius={propsWithoutId.innerRadius}
             outerRadius={propsWithoutId.outerRadius}
             cornerRadius={propsWithoutId.cornerRadius}
-            // @ts-expect-error we're passing DataKey and other internals as presentationProps
             presentationProps={presentationProps}
+            maxRadius={props.maxRadius}
           />
           <SetPiePayloadLegend {...propsWithoutId} id={id} />
           <PieImpl {...propsWithoutId} id={id} />

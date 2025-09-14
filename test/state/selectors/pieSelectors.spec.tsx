@@ -8,6 +8,7 @@ import { Pie, PieChart } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { RechartsRootState } from '../../../src/state/store';
+import { PieSectorDataItem } from '../../../src/polar/Pie';
 
 const cells: ReadonlyArray<ReactElement> = [];
 
@@ -43,7 +44,7 @@ describe('selectPieSectors', () => {
 
     it('should return new data', () => {
       const { container, spy } = renderTestCase(selector);
-      const expectedResultBefore: ReturnType<typeof selectPieSectors> = [
+      const expectedResultBefore: ReadonlyArray<PieSectorDataItem> = [
         {
           amt: 1400,
           cornerRadius: undefined,
@@ -70,7 +71,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page A',
               payload: {
@@ -116,7 +116,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page B',
               payload: {
@@ -162,7 +161,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page C',
               payload: {
@@ -208,7 +206,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page D',
               payload: {
@@ -254,7 +251,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page E',
               payload: {
@@ -300,7 +296,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page F',
               payload: {
@@ -346,7 +341,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'uv',
               name: 'Page G',
               payload: {
@@ -409,7 +403,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page A',
               payload: {
@@ -455,7 +448,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page B',
               payload: {
@@ -501,7 +493,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page C',
               payload: {
@@ -547,7 +538,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page D',
               payload: {
@@ -593,7 +583,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page E',
               payload: {
@@ -639,7 +628,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page F',
               payload: {
@@ -685,7 +673,6 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
-              // @ts-expect-error Pie sends more data than it should
               dataKey: 'pv',
               name: 'Page G',
               payload: {

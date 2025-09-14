@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { createContext, SVGProps, useContext } from 'react';
+import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
 import last from 'es-toolkit/compat/last';
 
-import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, Props as LabelProps } from './Label';
+import { LabelContentType, isLabelContentAFunction, Label, LabelPosition } from './Label';
 import { Layer } from '../container/Layer';
 import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
 import { isNullish } from '../util/DataUtils';
+import { LabelProps } from '../index';
 
 interface BaseLabelListEntry {
   /**
@@ -58,7 +59,11 @@ interface LabelListProps {
   formatter?: (label: React.ReactNode) => React.ReactNode;
 }
 
-export type Props = SVGProps<SVGTextElement> & LabelListProps;
+/**
+ * LabelList props do not allow refs because the same props are reused in multiple elements so we don't have a good single place to ref to.
+ */
+type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
+export type Props = SvgTextProps & LabelListProps;
 
 /**
  * This is the type accepted for the `label` prop on various graphical items.
