@@ -917,7 +917,7 @@ export function computeArea({
   };
 }
 
-export function Area(outsideProps: Props) {
+function AreaFn(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -948,4 +948,6 @@ export function Area(outsideProps: Props) {
     </RegisterGraphicalItemId>
   );
 }
+
+export const Area = React.memo(AreaFn);
 Area.displayName = 'Area';

@@ -123,3 +123,5 @@ export {
 export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';
 
 export type { ChartOffset, PlotArea } from './types';
+
+export type { MouseHandlerDataParam } from './synchronisation/types';

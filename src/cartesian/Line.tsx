@@ -770,7 +770,7 @@ export function computeLinePoints({
     .filter(Boolean);
 }
 
-export function Line(outsideProps: Props) {
+function LineFn(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultLineProps);
   const isPanorama = useIsPanorama();
   return (
@@ -796,4 +796,6 @@ export function Line(outsideProps: Props) {
     </RegisterGraphicalItemId>
   );
 }
+
+export const Line = React.memo(LineFn);
 Line.displayName = 'Line';

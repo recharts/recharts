@@ -1536,33 +1536,48 @@ export const selectAllYAxesOffsetSteps: (
   },
 );
 
-export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffsetInternal(state);
+const selectXAxisOffsetSteps = (state: RechartsRootState, axisId: AxisId) => {
   const axisSettings = selectXAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
   }
-  const allSteps = selectAllXAxesOffsetSteps(state, axisSettings.orientation, axisSettings.mirror);
-  const stepOfThisAxis = allSteps[axisId];
-  if (stepOfThisAxis == null) {
-    return { x: offset.left, y: 0 };
-  }
-  return { x: offset.left, y: stepOfThisAxis };
+  return selectAllXAxesOffsetSteps(state, axisSettings.orientation, axisSettings.mirror);
 };
 
-export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffsetInternal(state);
-  const axisSettings: YAxisSettings = selectYAxisSettings(state, axisId);
+export const selectXAxisPosition: (state: RechartsRootState, axisId: AxisId) => Coordinate | undefined = createSelector(
+  [selectChartOffsetInternal, selectXAxisSettings, selectXAxisOffsetSteps, (_: unknown, axisId: AxisId) => axisId],
+  (offset, axisSettings, allSteps, axisId) => {
+    if (axisSettings == null) {
+      return undefined;
+    }
+    const stepOfThisAxis = allSteps?.[axisId];
+    if (stepOfThisAxis == null) {
+      return { x: offset.left, y: 0 };
+    }
+    return { x: offset.left, y: stepOfThisAxis };
+  },
+);
+
+const selectYAxisOffsetSteps = (state: RechartsRootState, axisId: AxisId) => {
+  const axisSettings = selectYAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
   }
-  const allSteps = selectAllYAxesOffsetSteps(state, axisSettings.orientation, axisSettings.mirror);
-  const stepOfThisAxis = allSteps[axisId];
-  if (stepOfThisAxis == null) {
-    return { x: 0, y: offset.top };
-  }
-  return { x: stepOfThisAxis, y: offset.top };
+  return selectAllYAxesOffsetSteps(state, axisSettings.orientation, axisSettings.mirror);
 };
+export const selectYAxisPosition: (state: RechartsRootState, axisId: AxisId) => Coordinate | undefined = createSelector(
+  [selectChartOffsetInternal, selectYAxisSettings, selectYAxisOffsetSteps, (_: unknown, axisId: AxisId) => axisId],
+  (offset, axisSettings, allSteps, axisId) => {
+    if (axisSettings == null) {
+      return undefined;
+    }
+    const stepOfThisAxis = allSteps?.[axisId];
+    if (stepOfThisAxis == null) {
+      return { x: 0, y: offset.top };
+    }
+    return { x: stepOfThisAxis, y: offset.top };
+  },
+);
 
 export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size = createSelector(
   selectChartOffsetInternal,
