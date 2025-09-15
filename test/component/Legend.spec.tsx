@@ -1825,12 +1825,13 @@ describe('<Legend />', () => {
       it('should set legend item from `name` prop on Area, and update it after rerender', () => {
         const { container, rerender } = renderTestCase();
         expectLegendLabels(container, [{ fill: 'none', textContent: '%' }]);
-        rerender(
+        rerender(({ children }) => (
           <AreaChart width={500} height={500} data={numericalData}>
             <Legend />
             <Area dataKey="percent" name="Percent" />
-          </AreaChart>,
-        );
+            {children}
+          </AreaChart>
+        ));
         expectLegendLabels(container, [{ fill: 'none', textContent: 'Percent' }]);
       });
 

@@ -682,7 +682,7 @@ function ScatterImpl(props: Props) {
   );
 }
 
-export function Scatter(outsideProps: Props) {
+function ScatterFn(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultScatterProps);
   const isPanorama = useIsPanorama();
   return (
@@ -709,4 +709,7 @@ export function Scatter(outsideProps: Props) {
     </RegisterGraphicalItemId>
   );
 }
+
+export const Scatter = React.memo(ScatterFn);
+
 Scatter.displayName = 'Scatter';

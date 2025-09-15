@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { Component, ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
@@ -18,6 +18,8 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { shallowEqual } from '../util/ShallowEqual';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -42,14 +44,8 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
 
-type SetXAxisSettingsProps = XAxisSettings & { children: ReactNode };
-
-function SetXAxisSettings(props: SetXAxisSettingsProps): ReactNode {
+function SetXAxisSettings(settings: XAxisSettings): ReactNode {
   const dispatch = useAppDispatch();
-  const settings = useMemo(() => {
-    const { children, ...rest } = props;
-    return rest;
-  }, [props]);
 
   useEffect(() => {
     dispatch(addXAxis(settings));
@@ -57,7 +53,7 @@ function SetXAxisSettings(props: SetXAxisSettingsProps): ReactNode {
       dispatch(removeXAxis(settings));
     };
   }, [settings, dispatch]);
-  return props.children;
+  return null;
 }
 
 const XAxisImpl = (props: Props) => {
@@ -100,60 +96,72 @@ const XAxisImpl = (props: Props) => {
   );
 };
 
-const XAxisSettingsDispatcher = (props: Props) => {
+const xAxisDefaultProps = {
+  allowDataOverflow: implicitXAxis.allowDataOverflow,
+  allowDecimals: implicitXAxis.allowDecimals,
+  allowDuplicatedCategory: implicitXAxis.allowDuplicatedCategory,
+  height: implicitXAxis.height,
+  hide: false,
+  mirror: implicitXAxis.mirror,
+  orientation: implicitXAxis.orientation,
+  padding: implicitXAxis.padding,
+  reversed: implicitXAxis.reversed,
+  scale: implicitXAxis.scale,
+  tickCount: implicitXAxis.tickCount,
+  type: implicitXAxis.type,
+  xAxisId: 0,
+};
+
+const XAxisSettingsDispatcher = (outsideProps: Props) => {
+  const props = resolveDefaultProps(outsideProps, xAxisDefaultProps);
   return (
-    <SetXAxisSettings
-      interval={props.interval ?? 'preserveEnd'}
-      id={props.xAxisId}
-      scale={props.scale}
-      type={props.type}
-      padding={props.padding}
-      allowDataOverflow={props.allowDataOverflow}
-      domain={props.domain}
-      dataKey={props.dataKey}
-      allowDuplicatedCategory={props.allowDuplicatedCategory}
-      allowDecimals={props.allowDecimals}
-      tickCount={props.tickCount}
-      includeHidden={props.includeHidden ?? false}
-      reversed={props.reversed}
-      ticks={props.ticks}
-      height={props.height}
-      orientation={props.orientation}
-      mirror={props.mirror}
-      hide={props.hide}
-      unit={props.unit}
-      name={props.name}
-      angle={props.angle ?? 0}
-      minTickGap={props.minTickGap ?? 5}
-      tick={props.tick ?? true}
-      tickFormatter={props.tickFormatter}
-    >
+    <>
+      <SetXAxisSettings
+        interval={props.interval ?? 'preserveEnd'}
+        id={props.xAxisId}
+        scale={props.scale}
+        type={props.type}
+        padding={props.padding}
+        allowDataOverflow={props.allowDataOverflow}
+        domain={props.domain}
+        dataKey={props.dataKey}
+        allowDuplicatedCategory={props.allowDuplicatedCategory}
+        allowDecimals={props.allowDecimals}
+        tickCount={props.tickCount}
+        includeHidden={props.includeHidden ?? false}
+        reversed={props.reversed}
+        ticks={props.ticks}
+        height={props.height}
+        orientation={props.orientation}
+        mirror={props.mirror}
+        hide={props.hide}
+        unit={props.unit}
+        name={props.name}
+        angle={props.angle ?? 0}
+        minTickGap={props.minTickGap ?? 5}
+        tick={props.tick ?? true}
+        tickFormatter={props.tickFormatter}
+      />
       <XAxisImpl {...props} />
-    </SetXAxisSettings>
+    </>
   );
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class XAxis extends Component<Props> {
-  static displayName = 'XAxis';
+const XAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Props>): boolean => {
+  const { domain: prevDomain, ...prevRest } = prevProps;
+  const { domain: nextDomain, ...nextRest } = nextProps;
 
-  static defaultProps = {
-    allowDataOverflow: implicitXAxis.allowDataOverflow,
-    allowDecimals: implicitXAxis.allowDecimals,
-    allowDuplicatedCategory: implicitXAxis.allowDuplicatedCategory,
-    height: implicitXAxis.height,
-    hide: false,
-    mirror: implicitXAxis.mirror,
-    orientation: implicitXAxis.orientation,
-    padding: implicitXAxis.padding,
-    reversed: implicitXAxis.reversed,
-    scale: implicitXAxis.scale,
-    tickCount: implicitXAxis.tickCount,
-    type: implicitXAxis.type,
-    xAxisId: 0,
-  };
-
-  render() {
-    return <XAxisSettingsDispatcher {...this.props} />;
+  if (!shallowEqual(prevRest, nextRest)) {
+    return false;
   }
-}
+
+  if (Array.isArray(prevDomain) && prevDomain.length === 2 && Array.isArray(nextDomain) && nextDomain.length === 2) {
+    return prevDomain[0] === nextDomain[0] && prevDomain[1] === nextDomain[1];
+  }
+
+  return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
+};
+
+export const XAxis = React.memo(XAxisSettingsDispatcher, XAxisMemoComparator);
+
+XAxis.displayName = 'XAxis';

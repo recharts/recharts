@@ -1450,7 +1450,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     const { container } = render(chart);
 
     expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
-    expect(tickSpy).toHaveBeenCalledTimes(8);
+    expect(tickSpy).toHaveBeenCalledTimes(4);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
 
@@ -1459,7 +1459,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseLeave(container);
 
     expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
-    expect(tickSpy).toHaveBeenCalledTimes(8);
+    expect(tickSpy).toHaveBeenCalledTimes(4);
   });
 
   // protect against the future where someone might mess up our clean rendering
@@ -1467,7 +1467,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     const { container } = render(chart);
 
     expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
-    expect(tickSpy).toHaveBeenCalledTimes(8);
+    expect(tickSpy).toHaveBeenCalledTimes(4);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
     assertNotNull(leftCursor);
@@ -1476,7 +1476,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseUp(window);
 
     expect(lineDotSpy).toHaveBeenCalledTimes(PageData.length);
-    expect(tickSpy).toHaveBeenCalledTimes(8);
+    expect(tickSpy).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -1829,7 +1829,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(data2.length * 12);
+    expect(spy).toHaveBeenCalledTimes(data2.length * 6);
     expect(spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(spy).toHaveBeenNthCalledWith(2, data2[1]);
     expect(spy).toHaveBeenNthCalledWith(3, data2[2]);

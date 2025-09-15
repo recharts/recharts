@@ -15,7 +15,15 @@ type TestCaseResult<T> = {
   container: HTMLElement;
   spy: Mock<(selectorResult: T) => void>;
   debug: () => void;
-  rerender: (ui: ReactNode) => void;
+  /**
+   * Rerender the whole test case with a different component.
+   * @param NextComponent
+   */
+  rerender: (NextComponent: ComponentType<{ children: ReactNode }>) => void;
+  /**
+   * Rerender the same component as before. Useful for testing updates and stable references.
+   */
+  rerenderSameComponent: () => void;
   animationManager: MockAnimationManager;
   getByText: (text: string) => HTMLElement;
 };
@@ -40,7 +48,19 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       </AnimationManagerContext.Provider>,
     );
     assertUniqueHtmlIds(container);
-    return { container, spy, debug, rerender, animationManager, getByText };
+    const myRerender = (NextComponent: ComponentType<{ children: ReactNode }>): void => {
+      rerender(
+        <AnimationManagerContext.Provider value={animationManager.factory}>
+          <NextComponent>
+            <Comp />
+          </NextComponent>
+        </AnimationManagerContext.Provider>,
+      );
+    };
+    const rerenderSameComponent = () => {
+      myRerender(Component);
+    };
+    return { container, spy, debug, rerender: myRerender, rerenderSameComponent, animationManager, getByText };
   };
 }
 

@@ -789,7 +789,7 @@ export function computeBarRectangles({
     .filter(Boolean);
 }
 
-export function Bar(outsideProps: Props) {
+function BarFn(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -821,4 +821,6 @@ export function Bar(outsideProps: Props) {
     </RegisterGraphicalItemId>
   );
 }
+
+export const Bar = React.memo(BarFn);
 Bar.displayName = 'Bar';

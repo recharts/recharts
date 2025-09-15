@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from 'storybook/test';
 import { Args, StoryObj } from '@storybook/react-vite';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
 import {
   Line,
@@ -14,6 +14,7 @@ import {
   ReferenceLine,
   Brush,
   ReferenceArea,
+  MouseHandlerDataParam,
 } from '../../../../src';
 import { DataKey } from '../../../../src/util/types';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
@@ -513,110 +514,116 @@ export const WithCustomizedLabel = {
   },
 };
 
+type ZoomAndHighlightState = {
+  left: string | number;
+  right: string | number;
+  refAreaLeft: string | number;
+  refAreaRight: string | number;
+  top: string | number;
+  bottom: string | number;
+  top2: string | number;
+  bottom2: string | number;
+  animation: boolean;
+};
+
+const initialState: ZoomAndHighlightState = {
+  left: 'dataMin',
+  right: 'dataMax',
+  refAreaLeft: '',
+  refAreaRight: '',
+  top: 'dataMax+1',
+  bottom: 'dataMin-1',
+  top2: 'dataMax+20',
+  bottom2: 'dataMin-20',
+  animation: true,
+};
+
+const getAxisYDomain = (
+  from: string | number,
+  to: string | number,
+  ref: keyof Impressions,
+  offset: number,
+): (number | string)[] => {
+  if (from && to) {
+    const refData = impressionsData.slice(Number(from) - 1, Number(to));
+    let [bottom, top] = [refData[0][ref], refData[0][ref]];
+    refData.forEach(d => {
+      if (d[ref] > top) top = d[ref];
+      if (d[ref] < bottom) bottom = d[ref];
+    });
+
+    return [(bottom | 0) - offset, (top | 0) + offset];
+  }
+  return [initialState.bottom, initialState.top];
+};
+
 export const HighlightAndZoom = {
   render: (args: Args) => {
-    const initialState = {
-      data: impressionsData,
-      left: 'dataMin',
-      right: 'dataMax',
-      refAreaLeft: '',
-      refAreaRight: '',
-      top: 'dataMax+1',
-      bottom: 'dataMin-1',
-      top2: 'dataMax+20',
-      bottom2: 'dataMin-20',
-      animation: true,
-    };
+    const [zoomGraph, setZoomGraph] = useState<ZoomAndHighlightState>(initialState);
 
-    const getAxisYDomain = (
-      from: string | undefined,
-      to: string | undefined,
-      ref: keyof Impressions,
-      offset: number,
-    ): (number | string)[] => {
-      if (from && to) {
-        const refData = impressionsData.slice(Number(from) - 1, Number(to));
-        let [bottom, top] = [refData[0][ref], refData[0][ref]];
-        refData.forEach(d => {
-          if (d[ref] > top) top = d[ref];
-          if (d[ref] < bottom) bottom = d[ref];
-        });
+    const zoom = useCallback(() => {
+      setZoomGraph((prev: ZoomAndHighlightState): ZoomAndHighlightState => {
+        let { refAreaLeft, refAreaRight } = prev;
 
-        return [(bottom | 0) - offset, (top | 0) + offset];
-      }
-      return [initialState.bottom, initialState.top];
-    };
+        if (refAreaLeft === refAreaRight || refAreaRight === '') {
+          return {
+            ...prev,
+            refAreaLeft: '',
+            refAreaRight: '',
+          };
+        }
 
-    const [zoomGraph, setZoomGraph] = useState(initialState);
+        if (refAreaLeft && refAreaRight && refAreaLeft > refAreaRight)
+          [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft];
 
-    const zoom = () => {
-      let { refAreaLeft, refAreaRight } = zoomGraph;
-      const { data } = zoomGraph;
+        const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
+        const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
 
-      if (refAreaLeft === refAreaRight || refAreaRight === '') {
-        setZoomGraph(prev => ({
+        return {
           ...prev,
           refAreaLeft: '',
           refAreaRight: '',
-        }));
-        return;
-      }
+          left: refAreaLeft,
+          right: refAreaRight,
+          bottom,
+          top,
+          bottom2,
+          top2,
+        };
+      });
+    }, [setZoomGraph]);
 
-      // xAxis domain
-      if (refAreaLeft && refAreaRight && refAreaLeft > refAreaRight)
-        [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft];
+    const zoomOut = useCallback(() => {
+      setZoomGraph(initialState);
+    }, [setZoomGraph]);
 
-      // yAxis domain
-      const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
-      const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
+    const onMouseDown = useCallback(
+      (e: MouseHandlerDataParam) => setZoomGraph(prev => ({ ...prev, refAreaLeft: e.activeLabel })),
+      [setZoomGraph],
+    );
 
-      // @ts-expect-error this storybook needs types
-      setZoomGraph(prev => ({
-        ...prev,
-        refAreaLeft: '',
-        refAreaRight: '',
-        data: data?.slice(),
-        left: refAreaLeft,
-        right: refAreaRight,
-        bottom,
-        top,
-        bottom2,
-        top2,
-      }));
-    };
+    const onMouseMove = useCallback(
+      (e: MouseHandlerDataParam) => {
+        setZoomGraph(prev => {
+          if (prev.refAreaLeft) {
+            return { ...prev, refAreaRight: e.activeLabel };
+          }
+          return prev;
+        });
+      },
+      [setZoomGraph],
+    );
 
-    const zoomOut = () => {
-      const { data } = zoomGraph;
-      setZoomGraph(prev => ({
-        ...prev,
-        data: data?.slice(),
-        refAreaLeft: '',
-        refAreaRight: '',
-        left: 'dataMin',
-        right: 'dataMax',
-        top: 'dataMax+1',
-        bottom: 'dataMin',
-        top2: 'dataMax+50',
-        bottom2: 'dataMin+50',
-      }));
-    };
-
-    const { data, left, right, refAreaLeft, refAreaRight, top, bottom, top2, bottom2 } = zoomGraph;
+    const { left, right, refAreaLeft, refAreaRight, top, bottom, top2, bottom2 } = zoomGraph;
 
     return (
       <div className="highlight-bar-charts" style={{ userSelect: 'none', width: '100%' }}>
-        <button type="button" className="btn update" onClick={() => zoomOut()}>
+        <button type="button" className="btn update" onClick={zoomOut}>
           Zoom Out
         </button>
 
         <ResponsiveContainer minHeight={500}>
-          <LineChart
-            {...args}
-            data={data}
-            onMouseDown={e => setZoomGraph(prev => ({ ...prev, refAreaLeft: e.activeLabel }))}
-            onMouseMove={e => zoomGraph.refAreaLeft && setZoomGraph(prev => ({ ...prev, refAreaRight: e.activeLabel }))}
-            onMouseUp={() => zoom()}
-          >
+          <LineChart {...args} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={zoom}>
             <CartesianGrid yAxisId="1" strokeDasharray="3 3" />
             <XAxis allowDataOverflow dataKey="name" domain={left && right ? [left, right] : undefined} type="number" />
             <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" />
@@ -636,6 +643,7 @@ export const HighlightAndZoom = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    data: impressionsData,
     width: 800,
     height: 400,
   },

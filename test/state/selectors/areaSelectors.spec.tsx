@@ -22,7 +22,7 @@ describe('selectArea', () => {
     ));
 
     it('should return points and baseline and inRange, and stay stable after re-render', () => {
-      const { spy, rerender } = renderTestCase(state => selectArea(state, 0, 0, false, 'area-0'));
+      const { spy, rerenderSameComponent } = renderTestCase(state => selectArea(state, 0, 0, false, 'area-0'));
       const expectedResult: ComputedArea = {
         baseLine: 365,
         isRange: false,
@@ -95,17 +95,15 @@ describe('selectArea', () => {
           },
         ],
       };
-      expect(spy).toHaveBeenCalledWith(expectedResult);
+      expect(spy).toHaveBeenLastCalledWith(expectedResult);
       expect(spy).toHaveBeenCalledTimes(2);
 
-      rerender(
-        <AreaChart width={400} height={400} data={PageData}>
-          <XAxis dataKey="name" />
-          <Area dataKey="uv" />
-        </AreaChart>,
-      );
+      rerenderSameComponent();
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenLastCalledWith(expectedResult);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
     });
   });
 

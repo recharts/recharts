@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { Component, FunctionComponent, useEffect, useRef, useLayoutEffect, isValidElement } from 'react';
+import { FunctionComponent, isValidElement, useEffect, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
 import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
 import {
   addYAxis,
   removeYAxis,
+  updateYAxisWidth,
   YAxisOrientation,
   YAxisPadding,
   YAxisSettings,
-  updateYAxisWidth,
   YAxisWidth,
 } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -24,6 +24,8 @@ import {
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { isLabelContentAFunction } from '../component/Label';
+import { shallowEqual } from '../util/ShallowEqual';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -147,7 +149,24 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   );
 };
 
-const YAxisSettingsDispatcher = (props: Props) => {
+export const yAxisDefaultProps = {
+  allowDataOverflow: implicitYAxis.allowDataOverflow,
+  allowDecimals: implicitYAxis.allowDecimals,
+  allowDuplicatedCategory: implicitYAxis.allowDuplicatedCategory,
+  hide: false,
+  mirror: implicitYAxis.mirror,
+  orientation: implicitYAxis.orientation,
+  padding: implicitYAxis.padding,
+  reversed: implicitYAxis.reversed,
+  scale: implicitYAxis.scale,
+  tickCount: implicitYAxis.tickCount,
+  type: implicitYAxis.type,
+  width: implicitYAxis.width,
+  yAxisId: 0,
+} as const satisfies Partial<Props>;
+
+const YAxisSettingsDispatcher = (outsideProps: Props) => {
+  const props = resolveDefaultProps(outsideProps, yAxisDefaultProps);
   return (
     <>
       <SetYAxisSettings
@@ -181,29 +200,20 @@ const YAxisSettingsDispatcher = (props: Props) => {
   );
 };
 
-export const YAxisDefaultProps: Partial<Props> = {
-  allowDataOverflow: implicitYAxis.allowDataOverflow,
-  allowDecimals: implicitYAxis.allowDecimals,
-  allowDuplicatedCategory: implicitYAxis.allowDuplicatedCategory,
-  hide: false,
-  mirror: implicitYAxis.mirror,
-  orientation: implicitYAxis.orientation,
-  padding: implicitYAxis.padding,
-  reversed: implicitYAxis.reversed,
-  scale: implicitYAxis.scale,
-  tickCount: implicitYAxis.tickCount,
-  type: implicitYAxis.type,
-  width: implicitYAxis.width,
-  yAxisId: 0,
+const YAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Props>): boolean => {
+  const { domain: prevDomain, ...prevRest } = prevProps;
+  const { domain: nextDomain, ...nextRest } = nextProps;
+  if (!shallowEqual(prevRest, nextRest)) {
+    return false;
+  }
+
+  if (Array.isArray(prevDomain) && prevDomain.length === 2 && Array.isArray(nextDomain) && nextDomain.length === 2) {
+    return prevDomain[0] === nextDomain[0] && prevDomain[1] === nextDomain[1];
+  }
+
+  return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class YAxis extends Component<Props> {
-  static displayName = 'YAxis';
+export const YAxis = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
 
-  static defaultProps = YAxisDefaultProps;
-
-  render() {
-    return <YAxisSettingsDispatcher {...this.props} />;
-  }
-}
+YAxis.displayName = 'YAxis';

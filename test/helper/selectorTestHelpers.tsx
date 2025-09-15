@@ -4,6 +4,7 @@ import { expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
+import { createSelectorTestCase } from './createSelectorTestCase';
 
 export function shouldReturnUndefinedOutOfContext(selector: Selector<RechartsRootState, unknown, never>): void {
   it('should return undefined when called out of Recharts context', () => {
@@ -31,6 +32,38 @@ export function shouldReturnFromInitialState<T>(
     expect(shouldBeStable).toEqual(expectedReturn);
     expect(shouldBeStable).toBe(result);
   });
+}
+
+/**
+ * Do not use in production code! This is a test utility.
+ * This function will render a component inside a Recharts chart, and call the selector passed in.
+ * It will then re-render the same component, and call the selector again.
+ * If the selector is stable, it should return the same result (triple equals) both times.
+ * If it does not, the test will fail.
+ *
+ * This is a performance optimization: if a selector returns a new object every time, even if the data is the same,
+ * React will think the data has changed and re-render components that use that selector.
+ *
+ * @param renderTestCase
+ * @param selector
+ */
+export function assertStableBetweenRenders<T>(
+  renderTestCase: ReturnType<typeof createSelectorTestCase>,
+  selector: Selector<RechartsRootState, T, never>,
+) {
+  const { spy, rerenderSameComponent } = renderTestCase(selector);
+
+  const calledTimes = spy.mock.calls.length;
+  const firstRenderLastCall = spy.mock.calls[spy.mock.calls.length - 1][0];
+
+  rerenderSameComponent();
+
+  const newCalledTimes = spy.mock.calls.length;
+  expect(newCalledTimes).toBeGreaterThan(calledTimes);
+  const secondRenderLastCall = spy.mock.calls[spy.mock.calls.length - 1][0];
+
+  expect(secondRenderLastCall).toEqual(firstRenderLastCall);
+  expect(secondRenderLastCall).toBe(firstRenderLastCall);
 }
 
 /**

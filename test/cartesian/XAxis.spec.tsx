@@ -29,6 +29,7 @@ import {
   selectTicksOfAxis,
   selectTicksOfGraphicalItem,
   selectXAxisPosition,
+  selectXAxisSettings,
 } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -48,6 +49,7 @@ import { selectChartOffsetInternal } from '../../src/state/selectors/selectChart
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 describe('<XAxis />', () => {
   const data = [
@@ -2195,6 +2197,55 @@ describe('<XAxis />', () => {
         foo: implicitXAxis,
         bar: implicitXAxis,
       });
+    });
+
+    it('should return stable reference when chart re-renders', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={100} height={100}>
+          <XAxis xAxisId="foo" scale="log" type="number" />
+          {children}
+        </BarChart>
+      ));
+
+      const { spy, rerenderSameComponent } = renderTestCase(state => selectXAxisSettings(state, 'foo'));
+
+      const expectedSettings: XAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
+        name: undefined,
+        unit: undefined,
+        hide: false,
+        mirror: false,
+        orientation: 'bottom',
+        height: 30,
+        ticks: undefined,
+        includeHidden: false,
+        tickCount: 5,
+        allowDecimals: true,
+        id: 'foo',
+        scale: 'log',
+        type: 'number',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          left: 0,
+          right: 0,
+        },
+        reversed: false,
+      };
+      expectLastCalledWith(spy, expectedSettings);
+
+      rerenderSameComponent();
+      expectLastCalledWith(spy, expectedSettings);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      // now assert that the 2nd and 3rd call have identical references (toBe)
+      expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
     });
   });
 
