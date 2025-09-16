@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent } from 'react';
+import { PureComponent, ReactNode } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
@@ -12,7 +12,7 @@ import { COLOR_PANEL } from '../util/Constants';
 import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
+import { AnimationDuration, AnimationTiming, DataKey, Margin, RectanglePosition } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -95,8 +95,8 @@ export const computeNode = ({
   depth: number;
   node: TreemapNode;
   index: number;
-  dataKey: DataKey<any>;
-  nameKey: DataKey<any>;
+  dataKey: DataKey<unknown>;
+  nameKey: DataKey<unknown>;
   nestedActiveTooltipIndex: TooltipIndex | undefined;
 }): TreemapNode => {
   const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(index, nestedActiveTooltipIndex);
@@ -118,7 +118,7 @@ export const computeNode = ({
   let nodeValue: number;
 
   if (children && children.length) {
-    nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
+    nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify dataKey
     nodeValue = isNan(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
@@ -136,10 +136,20 @@ export const computeNode = ({
   };
 };
 
-const filterRect = (node: TreemapNode) => ({ x: node.x, y: node.y, width: node.width, height: node.height });
+const filterRect = (node: TreemapNode): RectanglePosition => ({
+  x: node.x,
+  y: node.y,
+  width: node.width,
+  height: node.height,
+});
+
+type TreemapNodeWithArea = TreemapNode & { area: number };
 
 // Compute the area for each child based on value & scale.
-const getAreaOfChildren = (children: ReadonlyArray<TreemapNode>, areaValueRatio: number) => {
+const getAreaOfChildren = (
+  children: ReadonlyArray<TreemapNode>,
+  areaValueRatio: number,
+): ReadonlyArray<TreemapNodeWithArea> => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
   return children.map((child: TreemapNode) => {
@@ -153,11 +163,11 @@ const getAreaOfChildren = (children: ReadonlyArray<TreemapNode>, areaValueRatio:
 };
 
 // Computes the score for the specified row, as the worst aspect ratio.
-const getWorstScore = (row: any, parentSize: number, aspectRatio: number) => {
+const getWorstScore = (row: AreaArray<TreemapNodeWithArea>, parentSize: number, aspectRatio: number): number => {
   const parentArea = parentSize * parentSize;
   const rowArea = row.area * row.area;
   const { min, max } = row.reduce(
-    (result: any, child: any) => ({
+    (result: { min: number; max: number }, child: TreemapNodeWithArea) => ({
       min: Math.min(result.min, child.area),
       max: Math.max(result.max, child.area),
     }),
@@ -169,7 +179,12 @@ const getWorstScore = (row: any, parentSize: number, aspectRatio: number) => {
     : Infinity;
 };
 
-const horizontalPosition = (row: any, parentSize: number, parentRect: TreemapNode, isFlush: boolean) => {
+const horizontalPosition = (
+  row: AreaArray<TreemapNodeWithArea>,
+  parentSize: number,
+  parentRect: RectanglePosition,
+  isFlush: boolean,
+): RectanglePosition => {
   let rowHeight = parentSize ? Math.round(row.area / parentSize) : 0;
 
   if (isFlush || rowHeight > parentRect.height) {
@@ -196,7 +211,12 @@ const horizontalPosition = (row: any, parentSize: number, parentRect: TreemapNod
   };
 };
 
-const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode, isFlush: boolean): TreemapNode => {
+const verticalPosition = (
+  row: AreaArray<TreemapNodeWithArea>,
+  parentSize: number,
+  parentRect: RectanglePosition,
+  isFlush: boolean,
+): RectanglePosition => {
   let rowWidth = parentSize ? Math.round(row.area / parentSize) : 0;
 
   if (isFlush || rowWidth > parentRect.width) {
@@ -224,7 +244,12 @@ const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode,
   };
 };
 
-const position = (row: any, parentSize: number, parentRect: TreemapNode, isFlush: boolean): TreemapNode => {
+const position = (
+  row: AreaArray<TreemapNodeWithArea>,
+  parentSize: number,
+  parentRect: RectanglePosition,
+  isFlush: boolean,
+): RectanglePosition => {
   if (parentSize === parentRect.width) {
     return horizontalPosition(row, parentSize, parentRect, isFlush);
   }
@@ -232,20 +257,23 @@ const position = (row: any, parentSize: number, parentRect: TreemapNode, isFlush
   return verticalPosition(row, parentSize, parentRect, isFlush);
 };
 
+type AreaArray<T> = Array<T> & { area: number };
+
 // Recursively arranges the specified node's children into squarified rows.
 const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   const { children } = node;
 
   if (children && children.length) {
-    let rect = filterRect(node) as any;
-    // maybe a bug
-    const row = [] as any;
+    let rect: RectanglePosition = filterRect(node);
+    // @ts-expect-error we can't create an array with static property on a single line so typescript will complain.
+    const row: AreaArray<TreemapNodeWithArea> = [];
     let best = Infinity; // the best row score so far
     let child, score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
     const scaleChildren = getAreaOfChildren(children, (rect.width * rect.height) / node[NODE_VALUE_KEY]);
     const tempChildren = scaleChildren.slice();
 
+    // why are we setting static properties on an array?
     row.area = 0;
 
     while (tempChildren.length > 0) {
@@ -283,6 +311,8 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   return node;
 };
 
+type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
+
 export interface Props {
   width?: number;
 
@@ -295,11 +325,11 @@ export interface Props {
    */
   animationId?: number;
 
-  style?: any;
+  style?: React.CSSProperties;
 
   aspectRatio?: number;
 
-  content?: React.ReactElement | ((props: TreemapNode) => React.ReactElement);
+  content?: TreemapContentType;
 
   fill?: string;
 
@@ -311,23 +341,31 @@ export interface Props {
 
   dataKey?: DataKey<any>;
 
-  children?: any;
+  children?: ReactNode;
 
-  // optional values flat/nest, flat show whole treemap, nest only show depth=1 node
+  /**
+   * The type of treemap to render.
+   *
+   * - 'flat': Renders the entire treemap at once, with all leaf nodes visible.
+   * - 'nest': Renders an interactive, nested treemap. Clicking on a parent node will "zoom in" to show its children,
+   *   and a breadcrumb navigation will be displayed to allow navigating back up the hierarchy.
+   *
+   * @default 'flat'
+   */
   type?: 'flat' | 'nest';
 
   colorPanel?: [];
 
   // customize nest index content
-  nestIndexContent?: React.ReactElement | ((item: any, i: number) => any);
+  nestIndexContent?: React.ReactElement | ((item: TreemapNode, i: number) => ReactNode);
 
   onAnimationStart?: () => void;
 
   onAnimationEnd?: () => void;
 
-  onMouseEnter?: (node: TreemapNode, e: any) => void;
+  onMouseEnter?: (node: TreemapNode, e: React.MouseEvent) => void;
 
-  onMouseLeave?: (node: TreemapNode, e: any) => void;
+  onMouseLeave?: (node: TreemapNode, e: React.MouseEvent) => void;
 
   onClick?: (node: TreemapNode) => void;
 
@@ -377,7 +415,7 @@ const defaultState: State = {
 };
 
 type ContentItemProps = {
-  content: any;
+  content: TreemapContentType;
   nodeProps: TreemapNode;
   type: string;
   colorPanel: string[];
@@ -579,7 +617,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     return null;
   }
 
-  handleMouseEnter(node: TreemapNode, e: any) {
+  handleMouseEnter(node: TreemapNode, e: React.MouseEvent) {
     e.persist();
     const { onMouseEnter } = this.props;
 
@@ -588,7 +626,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
   }
 
-  handleMouseLeave(node: TreemapNode, e: any) {
+  handleMouseLeave(node: TreemapNode, e: React.MouseEvent) {
     e.persist();
     const { onMouseLeave } = this.props;
 
@@ -668,7 +706,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     });
   }
 
-  renderItem(content: any, nodeProps: TreemapNode, isLeaf: boolean): React.ReactElement {
+  renderItem(content: TreemapContentType, nodeProps: TreemapNode, isLeaf: boolean): React.ReactElement {
     const {
       isAnimationActive,
       animationBegin,
@@ -799,8 +837,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       <div className="recharts-treemap-nest-index-wrapper" style={{ marginTop: '8px', textAlign: 'center' }}>
         {nestIndex.map((item: TreemapNode, i: number) => {
           // TODO need to verify nameKey type
-          const name = get(item, nameKey as string, 'root');
-          let content = null;
+          const name: string = get(item, nameKey as string, 'root');
+          let content: ReactNode = null;
           if (React.isValidElement(nestIndexContent)) {
             content = React.cloneElement(nestIndexContent, item, i);
           }
