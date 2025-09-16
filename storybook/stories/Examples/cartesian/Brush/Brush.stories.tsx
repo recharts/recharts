@@ -90,3 +90,21 @@ export const PanoramicBrush = {
     );
   },
 };
+
+export const NoChartBrush = {
+  render: (_args: Args) => {
+    return (
+      <ComposedChart width={600} height={300} data={pageData}>
+        <Brush>
+          <LineChart>
+            <ReferenceLine key="test" stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+            <CartesianGrid strokeDasharray="1 1" verticalPoints={[10, 20, 30]} horizontalPoints={[10, 20, 30]} />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>
+        </Brush>
+        <RechartsHookInspector />
+      </ComposedChart>
+    );
+  },
+};

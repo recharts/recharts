@@ -510,7 +510,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       const scaleValues = prevScale
         .domain()
         .map(entry => prevScale(entry))
-        .filter(Boolean);
+        .filter(value => value != null);
 
       return {
         prevData: data,
