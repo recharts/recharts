@@ -325,9 +325,9 @@ export interface Props {
 
   onAnimationEnd?: () => void;
 
-  onMouseEnter?: (node: TreemapNode, e: any) => void;
+  onMouseEnter?: (node: TreemapNode, e: React.MouseEvent) => void;
 
-  onMouseLeave?: (node: TreemapNode, e: any) => void;
+  onMouseLeave?: (node: TreemapNode, e: React.MouseEvent) => void;
 
   onClick?: (node: TreemapNode) => void;
 
@@ -579,7 +579,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     return null;
   }
 
-  handleMouseEnter(node: TreemapNode, e: any) {
+  handleMouseEnter(node: TreemapNode, e: React.MouseEvent) {
     e.persist();
     const { onMouseEnter } = this.props;
 
@@ -588,7 +588,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
   }
 
-  handleMouseLeave(node: TreemapNode, e: any) {
+  handleMouseLeave(node: TreemapNode, e: React.MouseEvent) {
     e.persist();
     const { onMouseLeave } = this.props;
 

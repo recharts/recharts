@@ -321,3 +321,416 @@ describe('addToTreemapNodeIndex + treemapPayloadSearcher tandem', () => {
     expect(treemapPayloadSearcher(computedRootNode, activeIndex2)).toBe(level2);
   });
 });
+
+describe('<Treemap /> mouse events', () => {
+  const data = [
+    { name: 'A', size: 24593 },
+    { name: 'B', size: 1302 },
+    { name: 'C', size: 652 },
+    { name: 'D', size: 636 },
+    { name: 'E', size: 6703 },
+  ];
+
+  test('renders a treemap with basic data', () => {
+    const { container } = render(<Treemap width={500} height={250} data={data} nameKey="name" dataKey="size" />);
+
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(data.length);
+  });
+
+  it('should call onMouseEnter with correct arguments', () => {
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
+    const onClick = vi.fn();
+
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={data}
+        nameKey="name"
+        dataKey="size"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+        isAnimationActive={false}
+      />,
+    );
+
+    const firstNode = container.querySelectorAll('.recharts-treemap-depth-1 g')[0];
+    expect(firstNode).toBeInTheDocument();
+
+    fireEvent.mouseEnter(firstNode);
+    expect(onMouseEnter).toHaveBeenCalled();
+    expect(onMouseEnter).toHaveBeenCalledTimes(1);
+    expect(onMouseEnter.mock.calls[0]).toHaveLength(2);
+    const arg1 = onMouseEnter.mock.calls[0][0];
+    // when I use `toHaveBeenLastCalledWith` then vitest fails with OOME when trying to match the synthetic event object
+    // expect(onMouseEnter).toHaveBeenLastCalledWith({
+    expect(arg1).toEqual({
+      width: 363,
+      height: 250,
+      name: 'A',
+      size: 24593,
+      children: null,
+      value: 24593,
+      depth: 1,
+      index: 0,
+      tooltipIndex: 'children[0]',
+      area: 90719.61872159594,
+      x: 0,
+      y: 0,
+      root: {
+        children: [
+          {
+            name: 'A',
+            size: 24593,
+            children: null,
+            value: 24593,
+            depth: 1,
+            index: 0,
+            tooltipIndex: 'children[0]',
+            area: 90719.61872159594,
+            x: 0,
+            y: 0,
+            width: 363,
+            height: 250,
+          },
+          {
+            name: 'B',
+            size: 1302,
+            children: null,
+            value: 1302,
+            depth: 1,
+            index: 1,
+            tooltipIndex: 'children[1]',
+            area: 4802.868441244172,
+            x: 363,
+            y: 0,
+            height: 70,
+            width: 69,
+          },
+          {
+            name: 'C',
+            size: 652,
+            children: null,
+            value: 652,
+            depth: 1,
+            index: 2,
+            tooltipIndex: 'children[2]',
+            area: 2405.1230596706605,
+            x: 432,
+            y: 0,
+            height: 70,
+            width: 34,
+          },
+          {
+            name: 'D',
+            size: 636,
+            children: null,
+            value: 636,
+            depth: 1,
+            index: 3,
+            tooltipIndex: 'children[3]',
+            area: 2346.1016348934663,
+            x: 466,
+            y: 0,
+            height: 70,
+            width: 34,
+          },
+          {
+            name: 'E',
+            size: 6703,
+            children: null,
+            value: 6703,
+            depth: 1,
+            index: 4,
+            tooltipIndex: 'children[4]',
+            area: 24726.28814259576,
+            x: 363,
+            y: 70,
+            height: 180,
+            width: 137,
+          },
+        ],
+        x: 0,
+        y: 0,
+        width: 500,
+        height: 250,
+        name: '',
+        value: 33886,
+        depth: 0,
+        index: 0,
+        tooltipIndex: '',
+      },
+    });
+    const arg2 = onMouseEnter.mock.calls[0][1];
+    expect(arg2.type).toBe('mouseenter');
+    expect(arg2.target).toBeInstanceOf(SVGElement);
+    expect(arg2.target.tagName).toBe('g');
+    expect(arg2.target.classList.toString()).toEqual('recharts-layer');
+
+    expect(onMouseLeave).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('should call onMouseLeave when moving between nodes', () => {
+    const onMouseLeave = vi.fn();
+    const onMouseEnter = vi.fn();
+
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={data}
+        nameKey="name"
+        dataKey="size"
+        onMouseLeave={onMouseLeave}
+        onMouseEnter={onMouseEnter}
+        isAnimationActive={false}
+      />,
+    );
+
+    const nodes = container.querySelectorAll('.recharts-treemap-depth-1 g');
+    expect(nodes[0]).toBeInTheDocument();
+    expect(nodes[1]).toBeInTheDocument();
+
+    fireEvent.mouseEnter(nodes[0]);
+    expect(onMouseEnter).toHaveBeenCalledTimes(1);
+
+    fireEvent.mouseLeave(nodes[0]);
+    expect(onMouseLeave).toHaveBeenCalledTimes(1);
+
+    fireEvent.mouseEnter(nodes[1]);
+    expect(onMouseEnter).toHaveBeenCalledTimes(2);
+
+    // should still be called only once
+    expect(onMouseLeave).toHaveBeenCalledTimes(1);
+
+    // should be called with two arguments
+    expect(onMouseLeave.mock.calls[0]).toHaveLength(2);
+    const arg1 = onMouseLeave.mock.calls[0][0];
+    expect(arg1).toEqual({
+      area: 90719.61872159594,
+      children: null,
+      depth: 1,
+      height: 250,
+      index: 0,
+      name: 'A',
+      size: 24593,
+      tooltipIndex: 'children[0]',
+      value: 24593,
+      width: 363,
+      x: 0,
+      y: 0,
+      root: {
+        children: [
+          {
+            name: 'A',
+            size: 24593,
+            children: null,
+            value: 24593,
+            depth: 1,
+            index: 0,
+            tooltipIndex: 'children[0]',
+            area: 90719.61872159594,
+            x: 0,
+            y: 0,
+            width: 363,
+            height: 250,
+          },
+          {
+            name: 'B',
+            size: 1302,
+            children: null,
+            value: 1302,
+            depth: 1,
+            index: 1,
+            tooltipIndex: 'children[1]',
+            area: 4802.868441244172,
+            x: 363,
+            y: 0,
+            height: 70,
+            width: 69,
+          },
+          {
+            name: 'C',
+            size: 652,
+            children: null,
+            value: 652,
+            depth: 1,
+            index: 2,
+            tooltipIndex: 'children[2]',
+            area: 2405.1230596706605,
+            x: 432,
+            y: 0,
+            height: 70,
+            width: 34,
+          },
+          {
+            name: 'D',
+            size: 636,
+            children: null,
+            value: 636,
+            depth: 1,
+            index: 3,
+            tooltipIndex: 'children[3]',
+            area: 2346.1016348934663,
+            x: 466,
+            y: 0,
+            height: 70,
+            width: 34,
+          },
+          {
+            name: 'E',
+            size: 6703,
+            children: null,
+            value: 6703,
+            depth: 1,
+            index: 4,
+            tooltipIndex: 'children[4]',
+            area: 24726.28814259576,
+            x: 363,
+            y: 70,
+            height: 180,
+            width: 137,
+          },
+        ],
+        x: 0,
+        y: 0,
+        width: 500,
+        height: 250,
+        name: '',
+        value: 33886,
+        depth: 0,
+        index: 0,
+        tooltipIndex: '',
+      },
+    });
+    const arg2 = onMouseLeave.mock.calls[0][1];
+    expect(arg2.type).toBe('mouseleave');
+    expect(arg2.target).toBeInstanceOf(SVGElement);
+    expect(arg2.target.tagName).toBe('g');
+    expect(arg2.target.classList.toString()).toEqual('recharts-layer');
+  });
+
+  it('should call onClick with correct arguments', () => {
+    const onClick = vi.fn();
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={data}
+        nameKey="name"
+        dataKey="size"
+        onClick={onClick}
+        isAnimationActive={false}
+      />,
+    );
+
+    const firstNode = container.querySelectorAll('.recharts-treemap-depth-1 g')[0];
+    expect(firstNode).toBeInTheDocument();
+
+    fireEvent.click(firstNode);
+    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0]).toHaveLength(1); // this doesn't pass the event? why?
+    const arg1 = onClick.mock.calls[0][0];
+    expect(arg1).toEqual({
+      area: 90719.61872159594,
+      children: null,
+      depth: 1,
+      height: 250,
+      index: 0,
+      name: 'A',
+      root: {
+        children: [
+          {
+            area: 90719.61872159594,
+            children: null,
+            depth: 1,
+            height: 250,
+            index: 0,
+            name: 'A',
+            size: 24593,
+            tooltipIndex: 'children[0]',
+            value: 24593,
+            width: 363,
+            x: 0,
+            y: 0,
+          },
+          {
+            area: 4802.868441244172,
+            children: null,
+            depth: 1,
+            height: 70,
+            index: 1,
+            name: 'B',
+            size: 1302,
+            tooltipIndex: 'children[1]',
+            value: 1302,
+            width: 69,
+            x: 363,
+            y: 0,
+          },
+          {
+            area: 2405.1230596706605,
+            children: null,
+            depth: 1,
+            height: 70,
+            index: 2,
+            name: 'C',
+            size: 652,
+            tooltipIndex: 'children[2]',
+            value: 652,
+            width: 34,
+            x: 432,
+            y: 0,
+          },
+          {
+            area: 2346.1016348934663,
+            children: null,
+            depth: 1,
+            height: 70,
+            index: 3,
+            name: 'D',
+            size: 636,
+            tooltipIndex: 'children[3]',
+            value: 636,
+            width: 34,
+            x: 466,
+            y: 0,
+          },
+          {
+            area: 24726.28814259576,
+            children: null,
+            depth: 1,
+            height: 180,
+            index: 4,
+            name: 'E',
+            size: 6703,
+            tooltipIndex: 'children[4]',
+            value: 6703,
+            width: 137,
+            x: 363,
+            y: 70,
+          },
+        ],
+        depth: 0,
+        height: 250,
+        index: 0,
+        name: '',
+        tooltipIndex: '',
+        value: 33886,
+        width: 500,
+        x: 0,
+        y: 0,
+      },
+      size: 24593,
+      tooltipIndex: 'children[0]',
+      value: 24593,
+      width: 363,
+      x: 0,
+      y: 0,
+    });
+  });
+});
