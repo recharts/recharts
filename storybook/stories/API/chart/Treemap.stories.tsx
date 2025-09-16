@@ -62,7 +62,6 @@ const TreemapPropArgTypes: StorybookArgs = {
       type: {
         summary: 'Number',
       },
-      defaultValue: null,
       category: 'General',
     },
   },
