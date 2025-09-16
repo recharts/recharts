@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent, ReactNode } from 'react';
+import { PureComponent, ReactNode, useCallback } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
@@ -558,6 +558,112 @@ const defaultTreemapMargin: Margin = {
   left: 0,
 };
 
+function TreemapItem({
+  content,
+  nodeProps,
+  isLeaf,
+  treemapProps,
+  onNestClick,
+}: {
+  content: TreemapContentType;
+  nodeProps: TreemapNode;
+  isLeaf: boolean;
+  treemapProps: Props;
+  onNestClick: (node: TreemapNode) => void;
+}): ReactNode {
+  const {
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    isUpdateAnimationActive,
+    type,
+    colorPanel,
+    dataKey,
+    onAnimationStart,
+    onAnimationEnd,
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  } = treemapProps;
+  const { width, height, x, y } = nodeProps;
+  const translateX = -x - width;
+  const translateY = 0;
+
+  const onMouseEnter = (e: React.MouseEvent) => {
+    if ((isLeaf || type === 'nest') && typeof onMouseEnterFromProps === 'function') {
+      onMouseEnterFromProps(nodeProps, e);
+    }
+  };
+
+  const onMouseLeave = (e: React.MouseEvent) => {
+    if ((isLeaf || type === 'nest') && typeof onMouseLeaveFromProps === 'function') {
+      onMouseLeaveFromProps(nodeProps, e);
+    }
+  };
+
+  const onClick = () => {
+    if (type === 'nest') {
+      onNestClick(nodeProps);
+    }
+    if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
+      onItemClickFromProps(nodeProps);
+    }
+  };
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+  }, [onAnimationStart]);
+
+  return (
+    <CSSTransitionAnimate
+      animationId={`treemap-${nodeProps.tooltipIndex}`}
+      from={`translate(${translateX}px, ${translateY}px)`}
+      to="translate(0, 0)"
+      attributeName="transform"
+      begin={animationBegin}
+      easing={animationEasing}
+      isActive={isAnimationActive}
+      duration={animationDuration}
+      onAnimationStart={handleAnimationStart}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      {style => (
+        <Layer
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+          style={{ ...style, transformOrigin: `${x} ${y}` }}
+        >
+          <ContentItemWithEvents
+            content={content}
+            dataKey={dataKey}
+            nodeProps={{
+              ...nodeProps,
+              isAnimationActive,
+              isUpdateAnimationActive: !isUpdateAnimationActive,
+              width,
+              height,
+              x,
+              y,
+            }}
+            type={type}
+            colorPanel={colorPanel}
+          />
+        </Layer>
+      )}
+    </CSSTransitionAnimate>
+  );
+}
+
 type InternalTreemapProps = Props & {
   dispatch: AppDispatch;
 };
@@ -617,43 +723,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     return null;
   }
 
-  handleMouseEnter(node: TreemapNode, e: React.MouseEvent) {
-    e.persist();
-    const { onMouseEnter } = this.props;
-
-    if (onMouseEnter) {
-      onMouseEnter(node, e);
-    }
-  }
-
-  handleMouseLeave(node: TreemapNode, e: React.MouseEvent) {
-    e.persist();
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave(node, e);
-    }
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-  };
-
-  handleClick(node: TreemapNode) {
+  handleClick = (node: TreemapNode) => {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
       const { width, height, dataKey, nameKey, aspectRatio } = this.props;
@@ -681,7 +751,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     if (onClick) {
       onClick(node);
     }
-  }
+  };
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
@@ -706,91 +776,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     });
   }
 
-  renderItem(content: TreemapContentType, nodeProps: TreemapNode, isLeaf: boolean): React.ReactElement {
-    const {
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      isUpdateAnimationActive,
-      type,
-      colorPanel,
-      dataKey,
-    } = this.props;
-    const { isAnimationFinished } = this.state;
-    const { width, height, x, y, depth } = nodeProps;
-    const translateX = parseInt(`${(Math.random() * 2 - 1) * width}`, 10);
-    let event = {} as any;
-    if (isLeaf || type === 'nest') {
-      event = {
-        onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
-        onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
-        onClick: this.handleClick.bind(this, nodeProps),
-      };
-    }
-
-    if (!isAnimationActive) {
-      return (
-        <Layer {...event}>
-          <ContentItemWithEvents
-            content={content}
-            dataKey={dataKey}
-            nodeProps={{
-              ...nodeProps,
-              isAnimationActive: false,
-              isUpdateAnimationActive: false,
-              width,
-              height,
-              x,
-              y,
-            }}
-            type={type}
-            colorPanel={colorPanel}
-          />
-        </Layer>
-      );
-    }
-
-    return (
-      <CSSTransitionAnimate
-        animationId={`treemap-${nodeProps.tooltipIndex}`}
-        from={`translate(${translateX}px, ${translateX}px)`}
-        to="translate(0, 0)"
-        attributeName="transform"
-        begin={animationBegin}
-        easing={animationEasing}
-        isActive={isAnimationActive}
-        duration={animationDuration}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-        {style => (
-          <Layer {...event} style={style}>
-            {/* when animation is in progress , only render depth=1 nodes */}
-            {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
-            {depth > 2 && !isAnimationFinished ? null : (
-              <ContentItemWithEvents
-                content={content}
-                dataKey={dataKey}
-                nodeProps={{
-                  ...nodeProps,
-                  isAnimationActive,
-                  isUpdateAnimationActive: !isUpdateAnimationActive,
-                  width,
-                  height,
-                  x,
-                  y,
-                }}
-                type={type}
-                colorPanel={colorPanel}
-              />
-            )}
-          </Layer>
-        )}
-      </CSSTransitionAnimate>
-    );
-  }
-
   renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
     const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
@@ -810,7 +795,13 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}-${nodeProps.name}`}
         className={`recharts-treemap-depth-${node.depth}`}
       >
-        {this.renderItem(content, nodeProps, isLeaf)}
+        <TreemapItem
+          isLeaf={isLeaf}
+          content={content}
+          nodeProps={nodeProps}
+          treemapProps={this.props}
+          onNestClick={this.handleClick}
+        />
         {node.children && node.children.length
           ? node.children.map((child: TreemapNode) => this.renderNode(node, child))
           : null}
@@ -840,6 +831,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           const name: string = get(item, nameKey as string, 'root');
           let content: ReactNode = null;
           if (React.isValidElement(nestIndexContent)) {
+            // the cloned content is ignored at all times - let's remove it?
             content = React.cloneElement(nestIndexContent, item, i);
           }
           if (typeof nestIndexContent === 'function') {
