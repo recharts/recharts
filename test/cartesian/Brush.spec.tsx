@@ -226,6 +226,39 @@ describe('<Brush />', () => {
     });
   });
 
+  test('Should not filter out the value 0 in scaleValues and cause indices to be off by 1', async () => {
+    const { container } = render(
+      <ComposedChart width={200} height={100} data={data.slice(0, 6)} margin={{ left: 0, right: 0, top: 0, bottom: 0 }}>
+        <Brush>
+          <LineChart>
+            <Line dataKey="name" dot isAnimationActive={false} />
+          </LineChart>
+        </Brush>
+      </ComposedChart>,
+    );
+    const traveller = container.querySelectorAll('.recharts-brush-traveller')[1] as SVGGElement;
+    expect(traveller).toBeDefined();
+    fireEvent.focus(traveller);
+
+    const text = container.querySelector('.recharts-brush-texts text[text-anchor="start"]') as SVGGElement;
+    expect(text.textContent).toBe('5');
+
+    fireEvent.keyDown(traveller, {
+      key: 'ArrowLeft',
+    });
+    await waitFor(() => {
+      expect(text.textContent).toBe('4');
+    });
+    fireEvent.keyDown(traveller, {
+      key: 'ArrowRight',
+    });
+
+    await waitFor(() => {
+      // there are 6 data points, left and then right should have index 5
+      expect(text.textContent).toBe('5');
+    });
+  });
+
   test("Don't render any travellers or slide when data is empty in simple Brush", () => {
     const { container } = render(
       <BarChart width={400} height={100} data={[]}>
