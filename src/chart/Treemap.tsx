@@ -343,7 +343,15 @@ export interface Props {
 
   children?: ReactNode;
 
-  // optional values flat/nest, flat show whole treemap, nest only show depth=1 node
+  /**
+   * The type of treemap to render.
+   *
+   * - 'flat': Renders the entire treemap at once, with all leaf nodes visible.
+   * - 'nest': Renders an interactive, nested treemap. Clicking on a parent node will "zoom in" to show its children,
+   *   and a breadcrumb navigation will be displayed to allow navigating back up the hierarchy.
+   *
+   * @default 'flat'
+   */
   type?: 'flat' | 'nest';
 
   colorPanel?: [];
