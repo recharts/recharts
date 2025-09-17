@@ -63,6 +63,10 @@ jobs:
         with:
           name: 'github-pages-artifact'
 
+      - name: Extract artifact
+        run: |
+          tar -xf artifact.tar
+
       - name: Commit everything
         run: |
             git config --global user.name 'github-actions[bot]'
