@@ -1,0 +1,170 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.page-index {
+  .block {
+    width: 1000px;
+    padding: 50px 0;
+    margin: 0 auto;
+    border-top: 1px solid #e6e6e6;
+
+    .block-title {
+      font-size: 40px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+  }
+
+  .desc {
+    width: 1000px;
+    margin: 0 auto;
+    padding-top: 60px;
+
+    > p,
+    > a {
+      text-align: center;
+    }
+
+    .title {
+      font-size: 64px;
+      font-family: $font-family-logo;
+      color: $brand-info;
+    }
+
+    .subtitle {
+      margin: 20px 0;
+      font-size: 24px;
+      color: $gray-light;
+    }
+
+    .github-button {
+      visibility: hidden;
+    }
+
+    iframe {
+      display: block;
+      margin: 16px auto 0;
+      border: none;
+    }
+
+    .install-btn {
+      width: 280px;
+      margin: 0 auto;
+    }
+  }
+
+  .examples {
+    width: 1000px;
+    margin: 0 auto;
+    margin-top: 30px;
+
+    > .ex-code {
+      width: 540px;
+      margin: 0 auto;
+    }
+  }
+
+  .features {
+    text-align: center;
+    margin-top: 60px;
+
+    .feat {
+      width: 1000px;
+      margin: 0 auto;
+      @include clearfix;
+
+      > li {
+        float: left;
+        vertical-align: top;
+        width: 250px;
+        margin: 40px;
+
+        i {
+          font-size: 48px;
+        }
+
+        strong {
+          font-size: $font-size-xxl;
+          font-weight: 700;
+          display: block;
+          margin: 8px auto;
+        }
+
+        .text {
+          font-size: $font-size-lg;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+
+  .like {
+    padding-top: 42px;
+    margin-bottom: 20px;
+    text-align: center;
+    i {
+      font-size: 48px;
+    }
+
+    .text {
+      padding-top: 20px;
+      font-size: $font-size-xxxl;
+    }
+
+    .btn {
+      padding: 40px 0;
+    }
+
+    .getting-started-btn {
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 25px;
+    }
+  }
+
+  .who {
+    .users-desc {
+      text-align: center;
+      padding-top: 20px;
+      line-height: 20px;
+
+      a {
+        color: $brand-primary;
+      }
+    }
+
+    .users {
+      @include clearfix();
+      width: 1000px;
+      margin: auto;
+
+      .user {
+        float: left;
+        width: 20%;
+        text-align: center;
+        height: 90px;
+
+        > a {
+          position: relative;
+          display: block;
+          max-width: 150px;
+          width: 80%;
+          height: 100%;
+          padding: 20px 0;
+          margin: 0 auto;
+
+          img {
+            position: absolute;
+            width: 100%;
+            height: auto;
+            left: 0;
+            top: 50%;
+            transform: translate(0, -50%);
+          }
+        }
+      }
+    }
+  }
+}
