@@ -51,6 +51,7 @@ jobs:
         with:
           repository: recharts/recharts.github.io
           ref: gh-pages
+          token: ${{ secrets.RECHARTS_GITHUB_IO_TOKEN }}
 
       - name: Delete existing files
         run: |
