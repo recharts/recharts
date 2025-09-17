@@ -7,15 +7,12 @@ permissions:
   pull-requests: write
 
 on:
-  workflow_dispatch:
-
-#on:
-#  pull_request:
-#    branches:
-#      - main
-#  push:
-#    branches:
-#      - main
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 env:
   NODE_VERSION: 20.x

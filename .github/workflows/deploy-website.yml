@@ -3,9 +3,7 @@ name: Deploy Website
 # this workflow only runs manually
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
+
 env:
   NODE_VERSION: 20.x
 
