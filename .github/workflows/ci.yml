@@ -6,13 +6,13 @@ permissions:
   contents: read
   pull-requests: write
 
-on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
+#on:
+#  pull_request:
+#    branches:
+#      - main
+#  push:
+#    branches:
+#      - main
 
 env:
   NODE_VERSION: 20.x
