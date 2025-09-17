@@ -33,7 +33,7 @@ jobs:
 
       - name: Build
         working-directory: www
-        run: npm run build
+        run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` npm run build
 
       - name: Publish artifact
         id: publish-gh-pages
