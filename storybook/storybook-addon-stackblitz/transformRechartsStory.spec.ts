@@ -70,4 +70,11 @@ return (
     const actual = transformRechartsStory(source);
     expect(actual).toBe(expected);
   });
+
+  it('should transform Brush example', () => {
+    const source = `{\n  render: (args: Args) => <ResponsiveContainer width="100%" height={400}>\n      <ComposedChart data={pageData}>\n        <Line dataKey="uv" />\n        <Brush {...args} />\n        <RechartsHookInspector />\n      </ComposedChart>\n    </ResponsiveContainer>,\n  args: getStoryArgsFromArgsTypesObject(GeneralProps),\n  play: async ({\n    canvasElement\n  }: {\n    canvasElement: HTMLElement;\n  }) => {\n    const canvas = within(canvasElement);\n    const slider = await canvas.findAllByRole('slider');\n    const leftSlider = slider[0];\n    expect(leftSlider).toBeTruthy();\n    fireEvent.mouseDown(leftSlider);\n    fireEvent.mouseMove(leftSlider, {\n      clientX: 200\n    });\n    fireEvent.mouseUp(leftSlider);\n  }\n}`;
+    const expected = `export default () => <ResponsiveContainer width="100%" height={400}>\n      <ComposedChart data={pageData}>\n        <Line dataKey="uv" />\n        <Brush  />\n      </ComposedChart>\n    </ResponsiveContainer>`;
+    const actual = transformRechartsStory(source);
+    expect(actual).toBe(expected);
+  });
 });
