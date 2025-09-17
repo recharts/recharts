@@ -66,6 +66,7 @@ jobs:
       - name: Extract artifact
         run: |
           tar -xf artifact.tar
+          rm artifact.tar
 
       - name: Commit everything
         run: |
