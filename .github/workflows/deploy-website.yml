@@ -1,0 +1,81 @@
+name: Deploy Website
+
+# this workflow only runs manually
+on:
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 20.x
+
+permissions:
+  contents: read
+
+# this job will run 'npm run build' in the 'www' repository
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+        with:
+          repository: recharts/recharts
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          # Cache depends on the lock file within the checked-out path
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Install dependencies
+        working-directory: www
+        run: npm ci
+
+      - name: Build
+        working-directory: www
+        run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` npm run build
+
+      - name: Publish artifact
+        id: publish-gh-pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'www/docs'
+          name: 'github-pages-artifact'
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recharts.github.io Repository
+        uses: actions/checkout@v4
+        with:
+          repository: recharts/recharts.github.io
+          ref: gh-pages
+          token: ${{ secrets.RECHARTS_GITHUB_IO_TOKEN }}
+
+      - name: Delete existing files
+        run: |
+          rm -rf *
+          git clean -fdx
+
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: 'github-pages-artifact'
+
+      - name: Extract artifact
+        run: |
+          tar -xf artifact.tar
+          rm artifact.tar
+
+      - name: Commit everything
+        run: |
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add .
+            git commit -m "Deploy new version to GitHub Pages" || echo "No changes to commit"
+
+      - name: Push
+        run: |
+          git push origin gh-pages
