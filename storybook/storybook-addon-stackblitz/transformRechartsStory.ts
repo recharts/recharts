@@ -15,25 +15,55 @@ export function transformRechartsStory(code: string): string {
   const arrowIndex = cleanedCode.indexOf('=>', fnStart);
   if (arrowIndex === -1) return cleanedCode;
 
-  // Find the opening brace '{' after the arrow
-  const bodyStart = cleanedCode.indexOf('{', arrowIndex);
-  if (bodyStart === -1) return cleanedCode;
-
-  // Now, find the matching closing brace for the function body
-  let braceCount = 1;
-  let i = bodyStart + 1;
-  while (i < cleanedCode.length && braceCount > 0) {
-    if (cleanedCode[i] === '{') braceCount++;
-    else if (cleanedCode[i] === '}') braceCount--;
-    i++;
+  // Find the first non-whitespace character after the arrow
+  const bodyStartIndex = arrowIndex + 2;
+  let firstCharAfterArrow = '';
+  let firstCharIndex = -1;
+  for (let i = bodyStartIndex; i < cleanedCode.length; i++) {
+    if (cleanedCode[i].trim() !== '') {
+      firstCharAfterArrow = cleanedCode[i];
+      firstCharIndex = i;
+      break;
+    }
   }
-  if (braceCount !== 0) return cleanedCode;
+
+  let i: number;
+
+  if (firstCharAfterArrow === '{') {
+    // Function with a block body
+    let braceCount = 1;
+    i = firstCharIndex + 1;
+    while (i < cleanedCode.length && braceCount > 0) {
+      if (cleanedCode[i] === '{') braceCount++;
+      else if (cleanedCode[i] === '}') braceCount--;
+      i++;
+    }
+    if (braceCount !== 0) return cleanedCode;
+  } else {
+    // Concise body, ends at a comma
+    const closingBracketIndex = cleanedCode.lastIndexOf('>');
+    const commaIndex = cleanedCode.indexOf(',', closingBracketIndex + 1);
+    if (commaIndex === -1) {
+      // Assume it ends at the end of the object
+      i = cleanedCode.lastIndexOf('}');
+    } else {
+      i = commaIndex;
+    }
+  }
 
   // Extract the function string
   let result = cleanedCode.slice(fnStart, i).trim();
 
+  const argsIndex = result.indexOf(',\n  args:');
+  if (argsIndex > -1) {
+    result = result.substring(0, argsIndex);
+  }
+
   // Strip all arguments from the default function: (args: Record<string, any>) => { ... } -> () => { ... }
   result = result.replace(/^\(.*?\)\s*=>/, '() =>');
+
+  // Remove {...args} from JSX, e.g. <Brush {...args} /> -> <Brush />
+  result = result.replace(/\{\.\.\.args\}/g, '');
 
   return `export default ${result}`;
 }
