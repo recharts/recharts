@@ -9,6 +9,9 @@ on:
 env:
   NODE_VERSION: 20.x
 
+permissions:
+  contents: read
+
 # this job will run 'npm run build' in the 'www' repository
 jobs:
   build:
