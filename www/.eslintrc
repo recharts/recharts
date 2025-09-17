@@ -1,0 +1,110 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "eslint-config-airbnb",
+    "plugin:prettier/recommended",
+    "plugin:react/jsx-runtime",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "mocha": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["react"],
+  "ignorePatterns": ["src/docs/**/*.js"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "semi": true,
+        "singleQuote": true,
+        "tabWidth": 2,
+        "useTabs": false,
+        "trailingComma": "all"
+      }
+    ],
+    "import/extensions": "off",
+    "valid-jsdoc": "error",
+    "react/no-did-update-set-state": "warn",
+    "react/sort-comp": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/jsx-filename-extension": ["off", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
+
+    "no-var": "error",
+
+    // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
+    "padded-blocks": "off",
+    "react/jsx-no-bind": "error",
+
+    "strict": "off",
+    "no-unused-vars": "off",
+    "one-var": ["error", { "uninitialized": "always" }],
+    "one-var-declaration-per-line": ["error", "initializations"],
+    "no-mixed-operators": "off",
+    "no-plusplus": "off",
+    "import/prefer-default-export": "off",
+    "react/forbid-prop-types": "off",
+    "no-bitwise": "off",
+    "object-property-newline": "off",
+    "react/no-unused-prop-types": "off",
+    "class-methods-use-this": "error",
+    "import/no-named-as-default": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js", "./vite.config.ts"]
+      }
+    ],
+    "max-len": ["warn", 120],
+    // Errors introduced while upgrading eslint & plugins
+    "no-restricted-properties": "error",
+    "prefer-destructuring": "error",
+    "object-curly-newline": "off",
+    "function-paren-newline": "off",
+    "react/require-default-props": "off",
+    "no-restricted-globals": "error",
+    "comma-dangle": "off",
+    "react/default-props-match-prop-types": "off",
+    // prettier already handles react/jsx-wrap-multilines
+    "react/jsx-wrap-multilines": "off",
+    "react/no-array-index-key": "warn",
+    "no-multi-assign": "off",
+    "react/no-access-state-in-setstate": "off",
+    "react/destructuring-assignment": ["off"],
+    "react/jsx-closing-tag-location": "error",
+    "react/no-unused-state": "error",
+    "react/prefer-stateless-function": "error",
+    "import/no-cycle": "warn",
+    "react/jsx-props-no-spreading": "off",
+    "react/state-in-constructor": "off",
+    "react/prop-types": "off",
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["\\?raw$"]
+      }
+    ],
+    "react/static-property-placement": "off",
+    "react/jsx-one-expression-per-line": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
+}

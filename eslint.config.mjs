@@ -1,5 +1,5 @@
 import path from 'node:path';
-
+import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
@@ -284,6 +284,8 @@ const settings = [
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
+  // Temporarily ignore the website until we have eslint bumped to 9.x and up to speed
+  globalIgnores(['www']),
   // Custom Ignores
   ...customIgnores,
   // Language Options

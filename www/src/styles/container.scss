@@ -1,0 +1,225 @@
+header {
+  width: 100%;
+  background-color: #fcfcfc;
+  box-shadow: 0 0 4px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .header-wrapper {
+    min-width: 1200px;
+    height: 60px;
+    line-height: 60px;
+    margin: 0 auto;
+    @include clearfix;
+  }
+
+  .logo {
+    float: left;
+    width: 132px;
+    margin: 0 60px 0 20px;
+    font-family: $font-family-code;
+    font-weight: 300;
+    font-size: $font-size-xl;
+    white-space: nowrap;
+
+    > a {
+      color: $brand-info;
+    }
+  }
+
+  nav {
+    @include clearfix;
+    height: 60px;
+    line-height: 60px;
+  }
+
+  .nav {
+    > li {
+      float: left;
+      padding: 0 20px;
+
+      > a {
+        display: inline-block;
+        height: 61px;
+        font-size: $font-size-lg;
+
+        &.active {
+          color: $brand-primary;
+          border-bottom: 2px solid $brand-primary;
+          cursor: default;
+        }
+      }
+    }
+
+    > .github-wrapper,
+    > .language-switch-wrapper {
+      float: right;
+    }
+
+    .language-switch {
+      .switch-item {
+        cursor: pointer;
+        &.active {
+          cursor: default;
+          color: $brand-primary;
+        }
+      }
+    }
+  }
+}
+
+footer {
+  text-align: center;
+  padding-top: 12px;
+  padding-bottom: 36px;
+
+  > p {
+    margin: 6px 0;
+  }
+}
+
+.page {
+  min-height: 400px;
+
+  > .sidebar {
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    width: 280px;
+    padding-top: 30px;
+    padding-left: 20px;
+    overflow: auto;
+    z-index: 1;
+    background: #fff;
+
+    .sidebar-cate {
+      > h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+
+      > h4 {
+        margin: 16px 0;
+        font-size: 18px;
+      }
+
+      > .menu {
+        > li {
+          padding-left: 10px;
+          line-height: 1.5;
+          font-size: $font-size-lg;
+
+          a.active {
+            color: $brand-primary;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 30px;
+      }
+    }
+
+  }
+
+  > .content {
+    min-width: 1200px;
+    padding-left: 300px;
+
+    h1,
+    .page-title {
+      padding-top: 30px;
+      margin-bottom: 30px;
+      margin: 0;
+      font-size: 30px;
+      color: $gray-dark;
+    }
+
+    h2,
+    .sub-title {
+      height: 40px;
+      line-height: 40px;
+      margin: 20px 0;
+      font-size: 24px;
+      border-bottom: 1px solid $gray-lighter;
+    }
+
+    p,
+    .paragraph-title {
+      margin: 20px 0;
+    }
+  }
+}
+
+.page-guide, .page-api, .page-examples {
+  min-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-examples {
+  iframe {
+    display: block;
+    width: 100%;
+    height: 600px;
+    border: none;
+    margin: 0;
+  }
+}
+
+.page-api {
+  table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: $font-size-lg;
+
+    td, th {
+      padding: 6px 13px;
+      border: 1px solid #ddd;
+      border-top: 1px solid rgba(0,0,0,.06);
+      border-left: 0 none;
+      border-right: 0 none;
+      display: table-cell;
+      vertical-align: top;
+    }
+
+    tr {
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    thead  {
+      th {
+        text-align: left;
+      }
+    }
+
+    td {
+      color: $brand-second;
+      font-family: $font-family-code;
+      font-size: 90%;
+    }
+
+    td+td {
+      color: #bf2a5c;
+    }
+
+    td+td+td {
+      color: #666;
+      font-size: 90%;
+    }
+
+    td+td+td+td {
+      color: rgba(51,51,51,.9);
+      font-size: 95%;
+      min-width: 250px;
+      line-height: 1.5;
+      font-family: $font-family-base;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+.new-menu-tag-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .new-menu-tag {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -10px;
+    width: 10px;
+    height: 10px;;
+    text-align: center;
+    color: #fff;
+    background-color: #bf2a5c;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+}

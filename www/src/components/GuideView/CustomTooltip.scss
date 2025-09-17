@@ -1,0 +1,25 @@
+.recharts-tooltip-wrapper {
+  .custom-tooltip {
+    width: 200px;
+    margin: 0;
+    line-height: 24px;
+    border: 1px solid #f5f5f5;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+
+    .label {
+      margin: 0;
+      color: #666;
+      font-weight: 700;
+    }
+    .desc {
+      margin: 0;
+      color: #999;
+    }
+    .intro {
+      border-top: 1px solid #f5f5f5;
+      margin: 0;
+
+    }
+  }
+}
