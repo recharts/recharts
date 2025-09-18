@@ -1,8 +1,13 @@
 name: Deploy Website
 
-# this workflow only runs manually
 on:
+  # this workflow runs manually
   workflow_dispatch:
+  # this workflow also runs when the "npm publish" workflow completes successfully
+  workflow_run:
+    workflows: ["npm publish", "Debug Actions"]
+    types:
+      - completed
 
 env:
   NODE_VERSION: 20.x
