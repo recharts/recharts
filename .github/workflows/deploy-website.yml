@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   # this workflow also runs when the "npm publish" workflow completes successfully
   workflow_run:
-    workflows: ["npm publish", "Debug Actions"]
+    workflows: ["Debug Actions"]
     types:
       - completed
 
