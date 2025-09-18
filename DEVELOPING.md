@@ -7,7 +7,7 @@ $ npm install
 $ npm run build
 ```
 
-If you want to know the guidelines we follow then read (CONTRIBUTING.md)[/CONTRIBUTING.md].
+If you want to know the guidelines we follow then read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Running tests
 
