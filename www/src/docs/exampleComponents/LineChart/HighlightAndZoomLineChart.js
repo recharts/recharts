@@ -27,7 +27,7 @@ const initialData = [
 const getAxisYDomain = (from, to, ref, offset) => {
   const refData = initialData.slice(from - 1, to);
   let [bottom, top] = [refData[0][ref], refData[0][ref]];
-  refData.forEach((d) => {
+  refData.forEach(d => {
     if (d[ref] > top) top = d[ref];
     if (d[ref] < bottom) bottom = d[ref];
   });
@@ -56,7 +56,7 @@ const Example = () => {
     const { data } = state;
 
     if (refAreaLeft === refAreaRight || refAreaRight === '') {
-      setState((prevState) => ({
+      setState(prevState => ({
         ...prevState,
         refAreaLeft: '',
         refAreaRight: '',
@@ -71,7 +71,7 @@ const Example = () => {
     const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
     const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
 
-    setState((prevState) => ({
+    setState(prevState => ({
       ...prevState,
       refAreaLeft: '',
       refAreaRight: '',
@@ -87,7 +87,7 @@ const Example = () => {
 
   const zoomOut = () => {
     const { data } = state;
-    setState((prevState) => ({
+    setState(prevState => ({
       ...prevState,
       data: data.slice(),
       refAreaLeft: '',
@@ -114,10 +114,8 @@ const Example = () => {
           width={800}
           height={400}
           data={data}
-          onMouseDown={(e) => setState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel }))}
-          onMouseMove={(e) =>
-            state.refAreaLeft && setState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel }))
-          }
+          onMouseDown={e => setState(prevState => ({ ...prevState, refAreaLeft: e.activeLabel }))}
+          onMouseMove={e => state.refAreaLeft && setState(prevState => ({ ...prevState, refAreaRight: e.activeLabel }))}
           onMouseUp={zoom}
         >
           <CartesianGrid strokeDasharray="3 3" />

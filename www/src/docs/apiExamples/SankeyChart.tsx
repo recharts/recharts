@@ -1,6 +1,4 @@
 import { Sankey, Tooltip, Layer, Rectangle, useChartWidth } from 'recharts';
-// TODO export this type from recharts
-// eslint-disable-next-line import/no-unresolved
 import { NodeProps } from 'recharts/types/chart/Sankey';
 import { ReactNode } from 'react';
 
@@ -57,7 +55,7 @@ const example = () => (
     width={960}
     height={500}
     data={data0}
-    // @ts-ignore Recharts type does not allow null but it should! TODO fix
+    // @ts-expect-error Recharts type does not allow null but it should! TODO fix
     node={MyCustomNode}
     nodePadding={50}
     margin={{

@@ -36,7 +36,7 @@ export default function Example() {
         <YAxis dataKey="value" />
         <Tooltip />
         <Legend />
-        {series.map((s) => (
+        {series.map(s => (
           <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
         ))}
       </LineChart>

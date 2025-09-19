@@ -7,7 +7,7 @@ import APIExamples from '../docs/apiExamples';
 import Highlight from '../utils/Highlight.tsx';
 import NewMenuTag from '../components/Shared/NewMenuTag';
 import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
-import apiCates, { NEW_APIS } from '../docs/apiCates.ts';
+import apiCates from '../docs/apiCates.ts';
 import './APIView.scss';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -217,8 +217,7 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
                 {items.map(compName => (
                   <li key={compName}>
                     <Link className={page === compName ? 'active' : ''} to={`/${locale}/api/${compName}`}>
-                      {/* @ts-ignore */}
-                      <NewMenuTag name={compName} isNew={NEW_APIS.indexOf(compName) >= 0} />
+                      <NewMenuTag name={compName} isNew={false} />
                     </Link>
                   </li>
                 ))}

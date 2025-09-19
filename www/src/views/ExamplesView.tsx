@@ -78,7 +78,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
 
   handleRunCode = () => {
     if (this.editorRef.current) {
-      // @ts-ignore
+      // @ts-expect-error property getValue not found in type
       const newCode = this.editorRef.current.getValue();
       if (newCode === this.state.exampleCode) {
         sendEvent({
@@ -132,7 +132,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
             defaultLanguage="javascript"
             options={{ tabSize: 2 }}
             onMount={editor => {
-              // @ts-ignore
+              // @ts-expect-error current is readonly
               // noinspection JSConstantReassignment
               this.editorRef.current = editor;
             }}

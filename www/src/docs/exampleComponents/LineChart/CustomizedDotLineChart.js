@@ -46,8 +46,8 @@ const data = [
   },
 ];
 
-const CustomizedDot = (props) => {
-  const { cx, cy, stroke, payload, value } = props;
+const CustomizedDot = props => {
+  const { cx, cy, value } = props;
 
   if (value > 2500) {
     return (

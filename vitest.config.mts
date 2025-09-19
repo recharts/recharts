@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
@@ -7,7 +6,7 @@ import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error storybookTest import not found
-// eslint-disable-next-line import/no-unresolved
+
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
 // @ts-expect-error does not like import.meta

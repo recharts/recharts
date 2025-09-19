@@ -1,4 +1,3 @@
-/* eslint-disable react/no-multi-comp */
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -55,7 +54,7 @@ const CustomizedLabel = ({ x, y, stroke, value }) => {
   );
 };
 
-const CustomizedAxisTick = ({ x, y, stroke, payload }) => {
+const CustomizedAxisTick = ({ x, y, payload }) => {
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">

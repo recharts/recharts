@@ -47,8 +47,8 @@ const data = [
   },
 ];
 
-const minX = Math.min(...data.map((d) => d.x));
-const minY = Math.min(...data.map((d) => d.y));
+const minX = Math.min(...data.map(d => d.x));
+const minY = Math.min(...data.map(d => d.y));
 
 export default function Example() {
   return (
