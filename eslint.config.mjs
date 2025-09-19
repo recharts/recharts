@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
