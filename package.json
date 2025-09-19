@@ -35,7 +35,7 @@
     "test-mutation": "stryker run",
     "test-watch": "vitest --config vitest.config.mts --project unit",
     "lint": "eslint .",
-    "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
+    "autofix": "eslint . --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack -o umd/Recharts.js",
     "prettier": "prettier . --write",
     "tsc": "tsc",
