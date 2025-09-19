@@ -10,7 +10,7 @@ import { useOffset } from 'recharts';
 
 function MyChart() {
   const offset = useOffset();
-  return // ...
+  return; // ...
 }
 ```
 
@@ -23,6 +23,7 @@ Plot area is the area where the data is rendered, and shows the actual data poin
 The space between the plot area and the edges of the chart is used for axes, legends, and other supporting elements.
 
 The offset includes:
+
 - Margins
 - Width and height of the axes
 - Width and height of the legend
@@ -35,11 +36,12 @@ The offset is independent of charts position on the page, meaning it does not ch
 It is also independent of the scale and zoom, meaning that as the user zooms in and out,
 the numbers will not change as the chart gets visually larger or smaller.
 
-<Canvas of={ComponentStories.UseOffset} layout='padded' />
+<Canvas of={ComponentStories.UseOffset} layout="padded" />
 
 ## Parent Component
 
 This hook can be used within any chart:
+
 - `<AreaChart/>`
 - `<BarChart/>`
 - `<ComposedChart/>`

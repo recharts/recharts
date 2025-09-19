@@ -10,8 +10,5 @@
     "skipLibCheck": true,
     "target": "es2023"
   },
-  "include": [
-    "./**/*",
-    "../types.d.ts"
-  ]
+  "include": ["./**/*", "../types.d.ts"]
 }

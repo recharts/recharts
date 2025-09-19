@@ -1,7 +1,5 @@
 {
-  "plugins": [
-    "babel-plugin-dev-expression"
-  ],
+  "plugins": ["babel-plugin-dev-expression"],
   "presets": [
     [
       "@babel/preset-env",

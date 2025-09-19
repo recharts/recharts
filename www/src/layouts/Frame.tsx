@@ -61,7 +61,7 @@ class Frame extends Component<FrameProps> {
             </h1>
             <nav>
               <ul className="nav" id="nav">
-                {modules.map((entry) => (
+                {modules.map(entry => (
                   <li key={entry}>
                     <NavLink to={`/${locale}/${entry}`}>{localeGet(locale, 'frame', entry)}</NavLink>
                   </li>

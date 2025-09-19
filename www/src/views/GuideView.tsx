@@ -36,7 +36,7 @@ class GuideView extends PureComponent<RouteComponentProps> {
           <div className="sidebar-cate">
             <h2>{localeGet(locale, 'guide', 'guide')}</h2>
             <ul className="menu">
-              {allGuides.map((entry) => (
+              {allGuides.map(entry => (
                 <li key={entry}>
                   <Link to={`/${locale}/guide/${entry}`} className={entry === page ? 'active' : ''}>
                     {localeGet(locale, 'guide', entry)}

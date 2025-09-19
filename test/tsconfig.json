@@ -10,9 +10,5 @@
     "target": "es2023",
     "types": ["vitest/globals"]
   },
-  "include": [
-    "./**/*",
-    "../types.d.ts",
-    "./helper/toBeRechartsScale.ts"
-  ]
+  "include": ["./**/*", "../types.d.ts", "./helper/toBeRechartsScale.ts"]
 }

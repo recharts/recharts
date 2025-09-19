@@ -1,5 +1,5 @@
 import { pageData as data } from './data/Page';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar, Legend  } from '../../src';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar, Legend } from '../../src';
 
 export const getIntroOfPage = (label) =>{
 if (label === 'Page A') {
@@ -54,12 +54,13 @@ export const TriangleBar = (...args) => {
     fill, x, y, width, height,
   } = args[0];
 
-  return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
+return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
 };
 
-
 # Customize
+
 ## Labels of line, area, bar, axis can be customized
+
 For example, we can create a bar with customized label and customized axis tick.
 
 ```tsx
@@ -87,42 +88,39 @@ const renderBarChart = (
 ```
 
 <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-  <XAxis dataKey="name" tick={<CustomizedAxisTick/>} />
+  <XAxis dataKey="name" tick={<CustomizedAxisTick />} />
   <YAxis />
-  <Bar dataKey="uv" barSize={30} fill="#8884d8"
-       label={renderCustomBarLabel}/>
+  <Bar dataKey="uv" barSize={30} fill="#8884d8" label={renderCustomBarLabel} />
 </BarChart>
 
 ## The shape of bar can be customized
+
 The props shape of `<Bar />` can be set to be a function or a react element to render customized shape.
 
 ```tsx
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
-const getPath = (x, y, width, height) => (
+const getPath = (x, y, width, height) =>
   `M${x},${y + height}
    C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
-   C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
-   Z`
-);
+   C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${x + width}, ${y + height}
+   Z`;
 
-const TriangleBar = (props) => {
-const {
-fill, x, y, width, height,
-} = props;
+const TriangleBar = props => {
+  const { fill, x, y, width, height } = props;
 
-return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
+  return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
 };
 const renderBarChart = (
-<BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-  <XAxis dataKey="name" tick={<CustomizedAxisTick/>} />
-  <YAxis />
-  <Bar dataKey="uv" fill="#8884d8"
-       shape={<TriangleBar />} />
-</BarChart>
+  <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
+    <XAxis dataKey="name" tick={<CustomizedAxisTick />} />
+    <YAxis />
+    <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} />
+  </BarChart>
 );
 ```
 
 ## The content of tooltip can be customized
+
 Sometimes we may want tooltip to display much more information.
 
 ```tsx
@@ -169,27 +167,27 @@ const renderBarChart = (
 ```
 
 <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-  <XAxis dataKey="name" tick={<CustomizedAxisTick/>} />
+  <XAxis dataKey="name" tick={<CustomizedAxisTick />} />
   <YAxis />
-  <Tooltip content={<CustomTooltip />}/>
-  <Bar dataKey="uv" fill="#8884d8"
-       shape={<TriangleBar />} />
+  <Tooltip content={<CustomTooltip />} />
+  <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} />
 </BarChart>
 
 ## The style of each chart element can be customized
+
 Except tooltip and legend, all the element in a chart is drawn by svg element. So you can change the attributes of each chart element conveniently.
 
 ```tsx
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const renderBarChart = (
-<BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-  <XAxis dataKey="name" stroke="#8884d8" />
-  <YAxis />
-  <Tooltip />
-  <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-  <Bar dataKey="uv" fill="#8884d8" barSize={30} />
-</BarChart>
+  <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
+    <XAxis dataKey="name" stroke="#8884d8" />
+    <YAxis />
+    <Tooltip />
+    <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+    <Bar dataKey="uv" fill="#8884d8" barSize={30} />
+  </BarChart>
 );
 ```
 
@@ -202,20 +200,31 @@ const renderBarChart = (
 </BarChart>
 
 ## The style of tooltip, legend can be customized
+
 Though tooltip, legend are drawn by svg elements, you may change the style of tooltip, legend by the apis we offer. of cource, you can change the style in css too.
 
 ```tsx
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 const renderBarChart = (
-<BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-  <XAxis dataKey="name" stroke="#8884d8" />
-  <YAxis />
-  <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
-  <Legend width={100} wrapperStyle={{ top: 40, right: 20, backgroundColor: '#f5f5f5', border: '1px solid #d5d5d5', borderRadius: 3, lineHeight: '40px' }} />
-  <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-  <Bar dataKey="uv" fill="#8884d8" barSize={30} />
-</BarChart>
+  <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
+    <XAxis dataKey="name" stroke="#8884d8" />
+    <YAxis />
+    <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
+    <Legend
+      width={100}
+      wrapperStyle={{
+        top: 40,
+        right: 20,
+        backgroundColor: '#f5f5f5',
+        border: '1px solid #d5d5d5',
+        borderRadius: 3,
+        lineHeight: '40px',
+      }}
+    />
+    <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+    <Bar dataKey="uv" fill="#8884d8" barSize={30} />
+  </BarChart>
 );
 ```
 
@@ -223,7 +232,17 @@ const renderBarChart = (
   <XAxis dataKey="name" stroke="#8884d8" />
   <YAxis />
   <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
-  <Legend width={100} wrapperStyle={{ top: 40, right: 20, backgroundColor: '#f5f5f5', border: '1px solid #d5d5d5', borderRadius: 3, lineHeight: '40px' }} />
+  <Legend
+    width={100}
+    wrapperStyle={{
+      top: 40,
+      right: 20,
+      backgroundColor: '#f5f5f5',
+      border: '1px solid #d5d5d5',
+      borderRadius: 3,
+      lineHeight: '40px',
+    }}
+  />
   <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
   <Bar dataKey="uv" fill="#8884d8" barSize={30} />
 </BarChart>

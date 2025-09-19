@@ -82,7 +82,7 @@ Alternatively, the UI playwright mode is available as well:
 
 ```sh
 $ npm run test-vr:ui
-````
+```
 
 If you want to record new snapshots or update the old ones, you can run:
 

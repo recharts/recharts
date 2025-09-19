@@ -12,32 +12,27 @@ Anything that a user can do with a mouse, a user should also be able to do using
 To see how this works, try the following chart. You can press the TAB key until you reach the chart. When you see a black border appear around the chart, the chart is "in focus". Once in focus, you can press the left or right arrow key to navigate between individual points. As you navigate, the tooltip will appear at each point, providing access to underlying data.
 
 <ResponsiveContainer width="100%" height={400}>
-    <LineChart
-        data={pageData}
-        title="Line chart showing UV values for pages"
-    >
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Brush />
-    </LineChart>
+  <LineChart data={pageData} title="Line chart showing UV values for pages">
+    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+    <Brush />
+  </LineChart>
 </ResponsiveContainer>
 
 This chart also contains a "brush", a range slider that lets you control what appears on the X-axis. You can tab to the "travellers" on the brush, and use the left/right arrow keys to adjust them.
 
 The code to generate this example is:
+
 ```jsx
 <ResponsiveContainer width="100%" height={400}>
-    <LineChart
-        data={pageData}
-        title="Line chart showing UV values for pages"
-    >
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-    </LineChart>
+  <LineChart data={pageData} title="Line chart showing UV values for pages">
+    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+  </LineChart>
 </ResponsiveContainer>
 ```
 
@@ -46,13 +41,15 @@ Note that we no longer need to explicitly set `accessibilityLayer` since it's en
 ## Supported Charts
 
 Accessibility support is available for all chart types in Recharts, including:
+
 - **Cartesian Charts**: AreaChart, BarChart, LineChart, ComposedChart, ScatterChart
-- **Polar Charts**: PieChart, RadarChart, RadialBarChart  
+- **Polar Charts**: PieChart, RadarChart, RadialBarChart
 - **Other Charts**: FunnelChart, Treemap, Sankey, SunburstChart
 
 All charts support keyboard navigation and screen reader accessibility when `accessibilityLayer` is enabled (which it is by default).
 
 ## Screen reader support
+
 The accessibility layer works with the tooltip to provide feedback to screen reader users.
 
 When using the default tooltip, it automatically works with screen reader users. The default tooltip becomes a "live region", which means that screen readers will read the contents as they update. This gives blind users access to the underlying data in a chart.
@@ -62,6 +59,7 @@ If you are building a custom tooltip, you can turn it into a live region by usin
 ## Technical notes
 
 When `accessibilityLayer` is enabled (which it is by default), it will:
+
 1. Set `role="application"` on the chart. This can be overridden by passing your own `role` prop.
 2. Set `tabIndex={0}` to add the chart to the tab order. This can be overridden by passing your own `tabIndex` prop.
 

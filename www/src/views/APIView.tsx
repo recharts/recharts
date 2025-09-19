@@ -148,7 +148,7 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
       <div>
         <h4 className="sub-title">{localeGet(locale, 'api', 'parent')}</h4>
         <ul className="props-list">
-          {components.map((entry) => (
+          {components.map(entry => (
             <li key={entry} className="api-component-item">
               {entry.indexOf('svg') < 0 ? (
                 <code>
@@ -214,7 +214,7 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
             <div className="sidebar-cate" key={name}>
               <h4>{localeGet(locale, 'api', name)}</h4>
               <ul className="menu">
-                {items.map((compName) => (
+                {items.map(compName => (
                   <li key={compName}>
                     <Link className={page === compName ? 'active' : ''} to={`/${locale}/api/${compName}`}>
                       {/* @ts-ignore */}
