@@ -4,9 +4,9 @@
   "description": "the website of recharts",
   "private": true,
   "scripts": {
-    "build": "vite build && npm run sync-examples",
+    "build": "vite build",
     "preview": "vite preview",
-    "start": "npm run sync-examples-dev && vite",
+    "start": "vite",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
