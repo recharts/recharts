@@ -6,8 +6,6 @@
   "scripts": {
     "build": "vite build && npm run sync-examples",
     "preview": "vite preview",
-    "sync-examples": "rm -rf docs/examples/ && cp -r src/docs/exampleComponents/ docs/examples/",
-    "sync-examples-dev": "rm -rf public/examples/ && cp -r src/docs/exampleComponents/ public/examples/",
     "start": "npm run sync-examples-dev && vite",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
