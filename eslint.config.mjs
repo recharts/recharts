@@ -28,6 +28,14 @@ const customIgnores = [
     name: 'x/ignores',
     ignores: ['!.storybook'],
   },
+  {
+    name: 'playwright',
+    ignores: ['./test-vr/playwright-report', './test-vr/screenshots', './test-vr/playwright'],
+  },
+  {
+    name: 'webpack',
+    ignores: ['./webpack.config.js'],
+  },
 ];
 
 const languageOptions = [
