@@ -44,7 +44,7 @@ jobs:
     name: Build, Test, Pack
     runs-on: ubuntu-latest
     container:
-        # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
+      # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
       # Make sure to grab the latest version of the Playwright image
       # https://playwright.dev/docs/docker#pull-the-image
       image: mcr.microsoft.com/playwright:v1.55.0-jammy
