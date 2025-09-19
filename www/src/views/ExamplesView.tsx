@@ -129,8 +129,14 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
           <Editor
             key={`editor-${exampleResult.exampleName}`}
             value={this.state.exampleCode}
-            defaultLanguage="javascript"
+            defaultLanguage="typescript"
             options={{ tabSize: 2 }}
+            beforeMount={monaco => {
+              monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+                jsx: monaco.languages.typescript.JsxEmit.React, // enables TSX/JSX
+                allowJs: true,
+              });
+            }}
             onMount={editor => {
               // @ts-ignore
               // noinspection JSConstantReassignment

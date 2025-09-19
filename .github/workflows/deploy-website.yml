@@ -1,8 +1,13 @@
 name: Deploy Website
 
-# this workflow only runs manually
 on:
+  # this workflow runs manually
   workflow_dispatch:
+  # this workflow also runs when the "npm publish" workflow completes successfully
+  workflow_run:
+    workflows: ['npm publish']
+    types:
+      - completed
 
 env:
   NODE_VERSION: 20.x
@@ -71,10 +76,10 @@ jobs:
 
       - name: Commit everything
         run: |
-            git config --global user.name 'github-actions[bot]'
-            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add .
-            git commit -m "Deploy new version to GitHub Pages" || echo "No changes to commit"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Deploy new version to GitHub Pages" || echo "No changes to commit"
 
       - name: Push
         run: |
