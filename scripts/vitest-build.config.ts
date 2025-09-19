@@ -8,6 +8,6 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     setupFiles: [],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook', 'www'],
   },
 });
