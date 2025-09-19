@@ -292,8 +292,6 @@ const settings = [
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
-  // Temporarily ignore the website until we have eslint bumped to 9.x and up to speed
-  globalIgnores(['www']),
   // Custom Ignores
   ...customIgnores,
   // Language Options
