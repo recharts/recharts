@@ -117,7 +117,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
   return (
     <TargetBlankLink
       href="#stackblitz-open-project"
-      onClick={(e) => {
+      onClick={e => {
         e.preventDefault();
         sendEvent({
           category: 'StackBlitz',

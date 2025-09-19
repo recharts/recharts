@@ -1,7 +1,7 @@
 header {
   width: 100%;
   background-color: #fcfcfc;
-  box-shadow: 0 0 4px rgba(0,0,0,0.25);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -120,7 +120,6 @@ footer {
         margin-bottom: 30px;
       }
     }
-
   }
 
   > .content {
@@ -152,7 +151,9 @@ footer {
   }
 }
 
-.page-guide, .page-api, .page-examples {
+.page-guide,
+.page-api,
+.page-examples {
   min-width: 1200px;
   margin: 0 auto;
 }
@@ -178,10 +179,11 @@ footer {
     border-spacing: 0;
     font-size: $font-size-lg;
 
-    td, th {
+    td,
+    th {
       padding: 6px 13px;
       border: 1px solid #ddd;
-      border-top: 1px solid rgba(0,0,0,.06);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
       border-left: 0 none;
       border-right: 0 none;
       display: table-cell;
@@ -193,7 +195,7 @@ footer {
       border-top: 1px solid #ccc;
     }
 
-    thead  {
+    thead {
       th {
         text-align: left;
       }
@@ -205,17 +207,17 @@ footer {
       font-size: 90%;
     }
 
-    td+td {
+    td + td {
       color: #bf2a5c;
     }
 
-    td+td+td {
+    td + td + td {
       color: #666;
       font-size: 90%;
     }
 
-    td+td+td+td {
-      color: rgba(51,51,51,.9);
+    td + td + td + td {
+      color: rgba(51, 51, 51, 0.9);
       font-size: 95%;
       min-width: 250px;
       line-height: 1.5;

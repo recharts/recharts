@@ -26,7 +26,7 @@ type ExampleComponent = {
 
 const parseExampleComponent = (compName: string): ExampleComponent | null => {
   const typeList = Object.keys(allExamples);
-  const res = typeList.filter((key) => {
+  const res = typeList.filter(key => {
     const entry: ComponentExamples = allExamples[key];
 
     return !!entry.examples[compName];
@@ -104,7 +104,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
     const { examples } = allExamples[type];
     const typeNameList = Object.keys(examples);
 
-    const items = typeNameList.map((name) => (
+    const items = typeNameList.map(name => (
       <li key={name}>
         <Link to={`/${locale}/examples/${name}`} className={page === name ? 'active' : ''}>
           {name}
@@ -131,7 +131,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
             value={this.state.exampleCode}
             defaultLanguage="javascript"
             options={{ tabSize: 2 }}
-            onMount={(editor) => {
+            onMount={editor => {
               // @ts-ignore
               // noinspection JSConstantReassignment
               this.editorRef.current = editor;
@@ -182,7 +182,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
         <div className="sidebar">
           <h2>Examples</h2>
 
-          {categoryNames.map((cate) => (
+          {categoryNames.map(cate => (
             <div className="sidebar-cate" key={cate}>
               <h4>{cate}</h4>
               {this.renderMenuList(cate, locale)}

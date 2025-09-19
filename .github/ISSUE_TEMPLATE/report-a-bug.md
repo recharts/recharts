@@ -4,7 +4,6 @@ about: Report a problem or unexpected behavior
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 ## What is the current behavior?

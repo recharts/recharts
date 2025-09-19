@@ -2,17 +2,21 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis, Tooltip } from '../../src
 import { pageData as data } from './data/Page';
 
 # Recharts
+
 A composable charting library built on React components
-<LineChart width={500}
-           height={300}
-           data={data}
-           accessibilityLayer
-           margin={{
-             top: 5,
-             right: 5,
-             bottom: 5,
-             left: 0,
-           }}>
+
+<LineChart
+  width={500}
+  height={300}
+  data={data}
+  accessibilityLayer
+  margin={{
+    top: 5,
+    right: 5,
+    bottom: 5,
+    left: 0,
+  }}
+>
   <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
   <XAxis dataKey="name" />
   <YAxis />
@@ -31,15 +35,19 @@ A composable charting library built on React components
     <Tooltip/>
   </LineChart>
 ```
-<iframe src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
-        frameBorder="0"
-        scrolling="0"
-        width="150"
-        height="20"
-        title="GitHub" />
-[![Size](https://badgen.net/bundlephobia/minzip/recharts)](https://bundlephobia.com/package/recharts)
-[![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
-[![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=main&service=github)](https://coveralls.io/github/recharts/recharts?branch=main)
-[![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
-[![npm downloads](https://img.shields.io/npm/dm/recharts.svg?style=flat-square)](https://www.npmjs.com/package/recharts)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE)
+
+<iframe
+  src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
+  frameBorder="0"
+  scrolling="0"
+  width="150"
+  height="20"
+  title="GitHub"
+/>
+[![Size](https://badgen.net/bundlephobia/minzip/recharts)](https://bundlephobia.com/package/recharts) [![Build
+Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
+[![Coverage
+Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=main&service=github)](https://coveralls.io/github/recharts/recharts?branch=main)
+[![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts) [![npm
+downloads](https://img.shields.io/npm/dm/recharts.svg?style=flat-square)](https://www.npmjs.com/package/recharts) [![MIT
+License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE)

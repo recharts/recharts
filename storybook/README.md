@@ -28,6 +28,7 @@ Acceptance criteria for API stories:
      /** The type of easing function to use for animations */
      export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
   ```
+
   - Some args are documented in the `storybook/stories/API/props/*.ts`.
 - should default to be as simple as possible (i.e. no complex interaction effects, no custom components, no custom styling, default behaviour)
 

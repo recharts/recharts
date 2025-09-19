@@ -15,14 +15,13 @@
   box-sizing: border-box;
 }
 
-
 // Body reset
 
 html {
   font-size: 10px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased !important
+  -webkit-font-smoothing: antialiased !important;
 }
 
 body {
@@ -41,7 +40,6 @@ textarea {
   font-size: inherit;
   line-height: inherit;
 }
-
 
 // Links
 
@@ -63,7 +61,6 @@ a {
   }
 }
 
-
 // Figures
 //
 // We reset this here because previously Normalize had no `figure` margins. This
@@ -73,14 +70,14 @@ figure {
   margin: 0;
 }
 
-
 // Images
 
 img {
   vertical-align: middle;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -88,8 +85,25 @@ code {
   font-size: $font-size-base;
 }
 
-div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote,
-th, td {
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+p,
+blockquote,
+th,
+td {
   margin: 0;
   padding: 0;
 }

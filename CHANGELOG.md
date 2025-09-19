@@ -1,10 +1,14 @@
 ## ⚠️ Next versions change notes are available only on the [GitHub Releases](https://github.com/recharts/recharts/releases) page ⚠️
 
 ## 2.2.0 (Dec 8, 2022)
+
 ### feat
-- Support keyboard navigation in pie chart (#2923) 
+
+- Support keyboard navigation in pie chart (#2923)
 - Allow reversing the tooltip direction (#3056)
+
 ### fix
+
 - fix rounding leading to hairline gaps (#3075)
 - fix: do not override zero brush end index (#3076)
 - fix: allow dragging brush when the mouse is outside (#3072)
@@ -14,6 +18,7 @@
 ## 2.1.16 (Oct 29, 2022)
 
 ### fix
+
 - Fix incorrect date in CHAGELOG (#3016)
 - Let formatter function run even when value is falsy (#3026)
 - Fix(Sankey): update tooltip active state by trigger type(hover/click) (#3021)
@@ -22,15 +27,18 @@
 ## 2.1.15 (Oct 12, 2022)
 
 ### fix
+
 - Fix scroll on hover
 - DefaultTooltipContent.tsx Solving type error for entry.value and entry.name
 
 ### chore
+
 - Revert D3 version
 
-
 ## 2.1.14 (Sep 7, 2022)
+
 ### fix
+
 - Add inactiveShape prop to Pie component (#2900)
 - Revert "chore: move type deps into devDependencies (#2843)" (#2942)
 - Fix typing of default tooltip formatter (#2924)
@@ -63,61 +71,61 @@ fix config for jest is to add the following configuration
 const path = require('path');
 // took from d3/package.json
 const d3Pkgs = [
-	'd3',
-	'd3-array',
-	'd3-axis',
-	'd3-brush',
-	'd3-chord',
-	'd3-color',
-	'd3-contour',
-	'd3-delaunay',
-	'd3-dispatch',
-	'd3-drag',
-	'd3-dsv',
-	'd3-ease',
-	'd3-fetch',
-	'd3-force',
-	'd3-format',
-	'd3-geo',
-	'd3-hierarchy',
-	'd3-interpolate',
-	'd3-path',
-	'd3-polygon',
-	'd3-quadtree',
-	'd3-random',
-	'd3-scale',
-	'd3-scale-chromatic',
-	'd3-selection',
-	'd3-shape',
-	'd3-time',
-	'd3-time-format',
-	'd3-timer',
-	'd3-transition',
-	'd3-zoom',
+  'd3',
+  'd3-array',
+  'd3-axis',
+  'd3-brush',
+  'd3-chord',
+  'd3-color',
+  'd3-contour',
+  'd3-delaunay',
+  'd3-dispatch',
+  'd3-drag',
+  'd3-dsv',
+  'd3-ease',
+  'd3-fetch',
+  'd3-force',
+  'd3-format',
+  'd3-geo',
+  'd3-hierarchy',
+  'd3-interpolate',
+  'd3-path',
+  'd3-polygon',
+  'd3-quadtree',
+  'd3-random',
+  'd3-scale',
+  'd3-scale-chromatic',
+  'd3-selection',
+  'd3-shape',
+  'd3-time',
+  'd3-time-format',
+  'd3-timer',
+  'd3-transition',
+  'd3-zoom',
 ];
 
 // option 1 map module to an bundled version of the package which is es5
 const moduleNameMapper = d3Pkgs.reduce((acc, pkg) => {
-	acc[`^${pkg}$`] = path.join(require.resolve(pkg), `../../dist/${pkg}.min.js`);
-	return acc;
+  acc[`^${pkg}$`] = path.join(require.resolve(pkg), `../../dist/${pkg}.min.js`);
+  return acc;
 }, {});
 
 module.exports = {
-	moduleNameMapper: {
-		// option 1
-		// ...moduleNameMapper
-	},
-	transform: {
-		// match mjs js jsx ts tsx
-		'^.+\\.m?[jt]sx?$': 'babel-jest',
-	},
-	// stop ignore node_modules transform since d3 and others start to put es6 as main of packages
-	transformIgnorePatterns: [
-		// option 2, stop ignore transform on es6 packages
-		`/node_modules/(?!${d3Pkgs.join('|')}|internmap|d3-delaunay|delaunator|robust-predicates)`,
-		// option 3, stop ignore transform on all node_modules
-		// `/node_modules/(?!.*)`,
-	],
+  moduleNameMapper: {
+    // option 1
+    // ...moduleNameMapper
+  },
+  transform: {
+    // match mjs js jsx ts tsx
+    '^.+\\.m?[jt]sx?$': 'babel-jest',
+  },
+  // stop ignore node_modules transform since d3 and others start to put es6 as main of packages
+  transformIgnorePatterns: [
+    // option 2, stop ignore transform on es6 packages
+    `/node_modules/(?!${d3Pkgs.join('|')}|internmap|d3-delaunay|delaunator|robust-predicates)`,
+    // option 3, stop ignore transform on all node_modules
+    // `/node_modules/(?!.*)`,
+  ],
 };
 ```
 
@@ -125,7 +133,7 @@ module.exports = {
 
 ### feat
 
--  Adds react `^18.0.0`  as valid peerDependency (#2820)
+- Adds react `^18.0.0` as valid peerDependency (#2820)
 
 ## 2.1.10 (May 19, 2022)
 
@@ -208,6 +216,7 @@ module.exports = {
 
 - Fixes undefined field reference when optional variables not supplied (#2630)
 - Fix fragment children (#2481)
+
 ## 2.1.1 (aug 21, 2021)
 
 ### fix
@@ -224,7 +233,9 @@ module.exports = {
 
 - Fix for recharts issue #1787
 - Add chart type to tooltip payload
+
 ## 2.0.10 (jul 13, 2021)
+
 ### feat
 
 - Feat: Allow automated axis padding for "gap" and "no-gap" for barcharts with continuous axis #2457
@@ -268,7 +279,6 @@ module.exports = {
 
 - update react-resize-detector to 6.6.0, fix #2431
 
-
 ## 2.0.7 (Feb 18, 2021)
 
 ### fix
@@ -289,7 +299,7 @@ module.exports = {
 
 ### feat
 
--  defer when syncing to other charts
+- defer when syncing to other charts
 
 ### fix
 
@@ -302,7 +312,6 @@ module.exports = {
 
 - add maxLines prop to Text component
 
-
 ### fix
 
 - Add `payload` to `Payload` interface
@@ -312,8 +321,6 @@ module.exports = {
 ### deps
 
 - Upgrade react-resize-detector(4.x => 5.x) types to match the library
-
-
 
 ## 2.0.3 (Jan 13, 2021)
 
@@ -336,11 +343,9 @@ module.exports = {
 - fix types error
 - fix(package.json): disable side effects explicitly
 
-
 ### feat
 
 - Add aria-hidden to measurementSpan
-
 
 ## 2.0.0 (Dec 29, 2020)
 
@@ -371,19 +376,17 @@ module.exports = {
 - update react-smooth to 1.0.6 to fix bug after upgrading d3
 - upgrade d3 packages
 
-
 ## 2.0.0-beta.8 (Nov 16, 2020)
 
 ### fix
 
--  Add color change for inactive legend label
+- Add color change for inactive legend label
 - fix stackOffset="sign" in #2292, and add props stackOffset="positive" to fix #1667
 
 ### refactor
 
 - update `filterSvgElements` and `renderByOrder`
 - Replace core-js polyfill and remove babel-polyfill
-
 
 ## 2.0.0-beta.7 (Sep 08, 2020)
 
@@ -399,7 +402,7 @@ module.exports = {
 
 - Pass tickFormatter as a prop to customized tick component
 - Allow array value for last data element in Funnel to set bottom width instead of forcing 0
--  Add payloadIndex to cursor props
+- Add payloadIndex to cursor props
 
 ## 2.0.0-beta.6 (May 12, 2020)
 
@@ -433,7 +436,6 @@ module.exports = {
 - add payload to formatter and labelFormatter in Tooltip
 - allow domain of axis to change the order of categories
 
-
 ## 2.0.0-beta.4 (Mar 17, 2020)
 
 ### fix
@@ -449,7 +451,6 @@ module.exports = {
 ### chore
 
 - add types
-
 
 ## 2.0.0-beta.3 (Mar 13, 2020)
 
@@ -528,7 +529,6 @@ module.exports = {
 - Fixed Text Component crash
 - Fixed eslint errors in src/
 
-
 ### feat
 
 - Add props of <Brush /> to always show text
@@ -573,7 +573,6 @@ module.exports = {
 - fix the order of tooltip items when not specify itemSorter
 - Fix typo in example of RadialBarChart
 
-
 ## 1.6.1 (May 20, 2019)
 
 ### fix
@@ -605,7 +604,7 @@ module.exports = {
 
 ### feat
 
-- allow aria-* attributes and "role", "focusable", "tabIndex" of charts, fix #1226, fix #1584
+- allow aria-\* attributes and "role", "focusable", "tabIndex" of charts, fix #1226, fix #1584
 - add new props "paylodUniqBy" to Tooltip and Legend
 
 ## 1.4.4(Feb 15, 2019)
@@ -634,7 +633,6 @@ module.exports = {
 - Update lodash version to 4.17.5 and install webpack-dev-server@3.1.14 dev dependency
 - Updated package.json to mark effectful modules
 - chore: update version of sinon, from 4.x to 7.x
-
 
 ## 1.4.2(Dec 21, 2018)
 
@@ -675,7 +673,7 @@ module.exports = {
 
 ### fix
 
-- use lodash _.values instead of Object.values
+- use lodash \_.values instead of Object.values
 - perfer YAxis which has finite domain and nice ticks when a chart has many YAxes
 - fix <Area /> for expected length height attribute
 
@@ -740,7 +738,7 @@ module.exports = {
 - Allow reference areas which extend past the canvas bounds
 - Allow to add more classes in tooltips
 - Reference line segment by specifying a pair of
- endpoints
+  endpoints
 
 ## 1.0.1(Jul 05, 2018)
 
@@ -757,7 +755,7 @@ module.exports = {
 - Clip dots of <Line />
 - Move style spread to after default styles to allow overriding
 - Fixing range area chart bottom bound. Base line needed to be filterted for connecting
- null
+  null
 - Fix tooltips that disappear while mouse still over a scatter point
 
 ### refactor
@@ -768,7 +766,7 @@ module.exports = {
 ### feat
 
 - Add touchStart & touchEnd event handling
-- Add explicit prop `defaultShowTooltip`  to activate tooltip
+- Add explicit prop `defaultShowTooltip` to activate tooltip
 - Position the 'top' label outside the element for negative heights
 
 ## 1.0.0-beta.10(Jan 31, 2018)
@@ -781,7 +779,7 @@ module.exports = {
 
 ### refactor
 
-- Replace flatmap of reduce to _.flatmap in getDomainOfDataByKey
+- Replace flatmap of reduce to \_.flatmap in getDomainOfDataByKey
 
 ### feat
 
@@ -799,11 +797,11 @@ module.exports = {
 
 - Add props `useTranslate3d` to control whether use translate3d or translate in <Tooltip />
 - Add props `verticalFill` and `horizontalFill` in `<CartesianGrid />` to show grid background
-- Add  `visibleTicksCount` in props of customized tick of `<CartesianAxis />`
+- Add `visibleTicksCount` in props of customized tick of `<CartesianAxis />`
 
 ### fix
 
-- Replace lodash _.get with simple Array.prototype.find
+- Replace lodash \_.get with simple Array.prototype.find
 - Prevent texts from being selected when dragging the brush
 - Add try...catch... when getTotalLength is called by a svg path to fix IE bug
 
@@ -848,7 +846,7 @@ module.exports = {
 
 - fix Label when content is a function and return simple string
 - add name to propTypes of Scatter
-- fix ** error of lib/
+- fix \*\* error of lib/
 
 ## 1.0.0-beta.3(Nov 23, 2017)
 
@@ -866,7 +864,7 @@ module.exports = {
 - Fix position of `<Label />`
 - Fix exception of AreaChart when all the values are null
 - Fix the orders of polar angle ticks in RadarChart
-- Replace ** width Math.pow
+- Replace \*\* width Math.pow
 
 ## 1.0.0-beta.2(Nov 17, 2017)
 
@@ -924,7 +922,6 @@ module.exports = {
 
 - Fix typo initilaState -> initialState
 
-
 ## 1.0.0-alpha.5(Sep 16, 2017)
 
 ### fix
@@ -942,7 +939,6 @@ module.exports = {
   By allowing type: String on 'minHeight', 'minWidth', 'maxHeight' property, developers can use length in different units like em, pt etc.
 - Render curve with fill first in Area
 
-
 ### dep
 
 - remove react-transition-group in peer dependencies
@@ -955,6 +951,7 @@ module.exports = {
 - Fix error 'Cannot read property 'map' of undefined' in Pie
 - Fix bug of parsing the width of Brush
 - Don't render any path when width === 0 || height === 0 in Rectangle
+
 ### refactor
 
 - Avoid calculating ticks if tick is set to false
@@ -1042,7 +1039,6 @@ module.exports = {
 - fix spelling error of fillOpacity
 - fix bug of axis when has duplicated ticks
 
-
 ## 0.22.1 (Apr 13, 2017)
 
 ### feat
@@ -1059,7 +1055,7 @@ module.exports = {
 
 ### feat
 
-- Add event handlers to component  Dot
+- Add event handlers to component Dot
 - Support embedded chart as a panoram in Brush
 - Add props reversed to `XAxis` and `YAxis` to reverse the range of axis
 
@@ -1132,6 +1128,7 @@ module.exports = {
 ## 0.20.4 (Jan 17, 2017)
 
 ### fix
+
 - Animate of Tooltip may crash browser sometimes, use style transition to do the animation of tooltip
 
 ## 0.20.3 (Jan 17, 2017)
@@ -1171,9 +1168,8 @@ module.exports = {
 
 ### fix
 
-- Fix bug of `isChildrenEqual`  when component has child `null`
+- Fix bug of `isChildrenEqual` when component has child `null`
 - Adjust `barGap` when `bandSize` is too small to display bars
-
 
 ### feat
 
@@ -1209,7 +1205,7 @@ module.exports = {
 
 ### fix
 
--  Adding missing event propTypes
+- Adding missing event propTypes
 - support x, y of `Text` are number or text
 - fix proptypes of Scatter to allow that the props `data` can be a array of array
 - fix server side render check `isSsr`
@@ -1324,6 +1320,7 @@ module.exports = {
 - Add angle property to PRESENTATION_ATTRIBUTES (#307)
 
 ### Dev
+
 - chore: update istanbul plugin and add yarn.lock
 
 ## 0.15.2 (Oct 13, 2016)
@@ -1484,7 +1481,7 @@ module.exports = {
 
 ### feat
 
-- Support Tooltip  of RadarChart
+- Support Tooltip of RadarChart
 
 ### fix
 
@@ -1665,7 +1662,7 @@ module.exports = {
 
 ### refactor
 
-- Refactor *ticks* specified in `XAxis`, `YAxis`
+- Refactor _ticks_ specified in `XAxis`, `YAxis`
 - Use area of `Symbol` to show the size of number in ScatterChart
 - Refactor the `activeShape` in `Scatter`
 
@@ -1775,6 +1772,7 @@ module.exports = {
 ## 0.8.3 (February 25, 2016)
 
 ### refactor
+
 - refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart.
 - Simplify ComposedChart, remove duplicated code
 - use `filterEventAttributes` to add events props
@@ -1783,31 +1781,36 @@ module.exports = {
 ## 0.8.2 (February 24, 2016)
 
 ### fix
+
 - rollback last fix of Line animation from value
 
 ## 0.8.1 (February 24, 2016)
 
 ### fix
+
 - fix the bug of Line animation from value
 
 ## 0.8.0 (February 22, 2016)
 
 ### feat
+
 - implement ReferenceDot in cartesian charts
 - support alwaysShow of ReferenceLine and ReferenceDot
 
 ### refactor
+
 - refactor domain of CartesianAxis and PolarRadiusAxis
 - refactor this props name in ReferenceLine
 
 ### fix
+
 - fix the bug of calculate extent in RadarChart
 - fix some bugs of server side rendering when document is called
-
 
 ## 0.7.0 (February 17, 2016)
 
 ### UI
+
 - feat: support dasharray line animation
 - refactor(CartesianAxis, PolarAngleAxis, PolarRadiusAxis):rename label to tick
 - feat(label): add label of CartesianAxis, PolarRadiusAxis, ReferenceLine
@@ -1818,6 +1821,7 @@ module.exports = {
 ## 0.6.3 (February 10, 2016)
 
 ### UI
+
 - refactor(Legend): refactor the location of legend
 - fix(CartesianChart,CartesianAxis): 1. fix the bug of dataStartIndex && dataEndIndex when the length of data was changed 2. fix the default value of tickFormatter
 - fix(cartesian/Line.js): fix Line animation bug
@@ -1825,16 +1829,19 @@ module.exports = {
 ## 0.6.2 (February 9, 2016)
 
 ### UI
+
 - feat: use lodash `isEqual` write new pureRender
 
 ## 0.6.1 (February 5, 2016)
 
 ### UI
+
 - fix(Pie, RadialBarChart): fix the default value of cx, cy, innerRadius, outerRadius
 
 ## 0.6.0 (February 5, 2016)
 
 ### UI
+
 - refactor: rename AdaptionWrapper to ResponsiveContainer
 - refactor: delete some repeated codes, and use polarToCartesian in PolarUtils
 - fix: update the defaultProps of cx, cy, innerRadius, outerRadius
@@ -1844,35 +1851,42 @@ module.exports = {
 ## 0.5.2 (February 4, 2016)
 
 ### UI
+
 - fix(RadarChart): fix the bug of unreasonable default value for radius in PolarAngleAxis
 
 ### Docs
+
 - chore: change main and jsnext:main in package.json
 
 ## 0.5.1 (February 4, 2016)
 
 ### UI
+
 - feat: support percentage string in the props(cx, cy, innerRadius, outerRadius) of RadarChart, PieChart, RadialChart
 - fix(PolarRadiusAxis): add props domain
 - refactor(CartesianAxis): remove unneeded props domain
 
 ### Docs
+
 - chore: optimize npm script commands
 - chore: update pkg
 
 ## 0.5.0 (February 3, 2016)
 
 ### UI
+
 - feat(AdaptionWrapper): add AdaptionWrapper to make charts adapt to the size of parent dom
 - refactor: directory structure adjustment
 - fix(LineChart, CartesianChart): 1.fix the bug of margin when only part of the attributes are specified 2.fix the bug of number axis when domain is specified 3.fix the bug of category number when no dataKey is specified 4.format the code in README.md
 - refactor(treemap): support tree structure data; changed props that pass to shape
 
 ### Test
+
 - test: 1.rename some test files 2.add test case of LodashUtil
 - test(treemap): modified treemap test
 
 ### Docs
+
 - deps: add dependence oui-dom-utils
 - chore(README.md): add syntax highlighting to the readme
 - chore(package.json): add keyword react-component
@@ -1880,15 +1894,19 @@ module.exports = {
 ## 0.4.9 (February 2, 2016)
 
 ### UI
+
 - refactor(CartesianAxis, PolarAngleAxis): change props name "orient" to "orientation"
 - refactor(Line, Bar, Pie): refactor animation using new react-smooth
 - refactor(Pie, RidalBar): remove the props clockWise, and add the props endAngle
+
 ### Test
+
 - test(Line, Bar, Radar, Scatter): add test case
 
 ## 0.4.7 (February 1, 2016)
 
 ### UI
+
 - refactor(RadarChart, Radar, PolarAngleAxis, PolarRadiusAxis): refactor the components of Radar
 - refactor(classNames): refactor the method of package a className
 - refactor(Pie): add nameKey in Pie
@@ -1896,15 +1914,18 @@ module.exports = {
 ## 0.4.6 (January 29, 2016)
 
 ### UI
+
 - refactor(Legend): refactor the legend in all the charts, change the location method of legend
 - feat(radar): add new RadarChart with the new component used in Chart, like PolarAngleAxis PolarRadiusAxis PolarGrid Polygon ex
 
 ### Test
+
 - feat(test): add test for charts, chartWrappers, components, and shapes
 
 ## 0.4.5 (January 29, 2016)
 
 ### UI
+
 - fix(Curve): fix the bug of curve defined function
 - fix(ComposedChart): fix the bug of bar position when a line and a bar display a same group of data.
 - chore(webpack.config.js): add react, react-dom, react-dom-server to external
@@ -1913,22 +1934,26 @@ module.exports = {
 ## 0.4.4 (January 28, 2016)
 
 ### Dev
+
 - chore(webpack.config.js): add build command
 
 ## 0.4.3 (January 28, 2016)
 
 ### UI
+
 - deps(recharts-scale, react-smooth): update version of recharts-scale and react-smooth
 - refactor(Bar, RadialBar, TreemapChart, Tooltip): rename the props customContent
 
 ## 0.4.2 (January 28, 2016)
 
 ### UI
+
 - Add support of stack value in BarChart, AreaChart, ComposedChart
 
 ## 0.4.1 (January 27, 2016)
 
 ### UI
+
 - Change name of the props in Tooltip, Legend
 - Fix the bug of customized label element in CartesianAxis
 - Remove repeated, meaningless constructor functions
@@ -1936,5 +1961,5 @@ module.exports = {
 ## 0.4.0 (January 26, 2016)
 
 ### UI
-- Refactor some components, include CartesianAxis, Legend, Tooltip etc, to unify some props name.
 
+- Refactor some components, include CartesianAxis, Legend, Tooltip etc, to unify some props name.

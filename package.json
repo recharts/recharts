@@ -39,6 +39,7 @@
     "lint-storybook": "eslint \"./storybook/**/*.{ts,tsx}\"",
     "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack -o umd/Recharts.js",
+    "prettier": "prettier . --write",
     "tsc": "tsc",
     "storybook-doctor": "npx storybook doctor --config-dir storybook",
     "storybook": "npx storybook dev -p 6006 -c storybook",
