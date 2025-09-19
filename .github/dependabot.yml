@@ -32,3 +32,19 @@ updates:
         patterns:
           - '@typescript-eslint*'
           - 'eslint-plugin-typescript*'
+
+  - package-ecosystem: 'npm'
+    directory: '/www'
+    schedule:
+      interval: 'daily'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    versioning-strategy: auto
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 10
+    groups:
+      babel:
+        patterns:
+          - '@babel*'
