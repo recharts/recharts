@@ -52,13 +52,15 @@ class IndexView extends PureComponent<RouteComponentProps> {
     const locale = getLocaleType(this.props);
 
     const exCode = `
-  <LineChart width={500} height={300} data={data}>
+<ResponsiveContainer aspect={0.05} height={300}>
+  <LineChart data={data}>
     <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
     <XAxis dataKey="name"/>
     <YAxis/>
     <Line type="monotone" dataKey="uv" stroke="#8884d8" />
     <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
   </LineChart>
+</ResponsiveContainer>
     `;
 
     return (

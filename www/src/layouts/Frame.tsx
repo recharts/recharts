@@ -17,7 +17,19 @@ type FrameProps = RouteComponentProps & {
   children: ReactNode;
 };
 
-class Frame extends Component<FrameProps> {
+type FrameState = {
+  isMobileNavOpen: boolean;
+};
+
+class Frame extends Component<FrameProps, FrameState> {
+  state = {
+    isMobileNavOpen: false,
+  };
+
+  toggleMobileNav = () => {
+    this.setState({ isMobileNavOpen: !this.state.isMobileNavOpen });
+  };
+
   renderLocaleSwitch(curLocale: string) {
     const { location } = this.props;
     const pathName = location.pathname || '/';
@@ -47,6 +59,7 @@ class Frame extends Component<FrameProps> {
 
   render() {
     const { children } = this.props;
+    const { isMobileNavOpen } = this.state;
     const locale = getLocaleType(this.props);
 
     return (
@@ -59,7 +72,17 @@ class Frame extends Component<FrameProps> {
                 &lt;Recharts /&gt;
               </Link>
             </h1>
-            <nav>
+            <button
+              type="button"
+              className="mobile-nav-toggle"
+              onClick={this.toggleMobileNav}
+              aria-label="Toggle navigation"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            <nav className={isMobileNavOpen ? 'mobile-nav-open' : ''}>
               <ul className="nav" id="nav">
                 {modules.map(entry => (
                   <li key={entry}>

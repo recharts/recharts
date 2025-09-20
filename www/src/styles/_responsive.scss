@@ -1,0 +1,160 @@
+@use 'variables';
+@use 'mixins';
+
+.mobile-nav-toggle {
+  display: none;
+}
+
+@media (max-width: 991px) {
+  header {
+    .header-wrapper {
+      min-width: 100%;
+      padding: 0 20px;
+    }
+
+    .logo {
+      margin: 0;
+    }
+
+    nav {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      background-color: #fcfcfc;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+      height: auto;
+      line-height: normal;
+      z-index: 1001;
+
+      &.mobile-nav-open {
+        display: block;
+      }
+
+      .nav {
+        > li {
+          float: none;
+          display: block;
+          text-align: left;
+          padding: 0;
+
+          > a {
+            padding: 10px 20px;
+            display: block;
+            height: auto;
+
+            &.active {
+              border-bottom: none;
+            }
+          }
+        }
+
+        > .github-wrapper,
+        > .language-switch-wrapper {
+          float: none;
+        }
+
+        > .language-switch-wrapper {
+          padding: 10px 20px;
+        }
+      }
+    }
+
+    .mobile-nav-toggle {
+      display: block;
+      position: absolute;
+      right: 20px;
+      top: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      outline: none;
+
+      &:focus {
+        outline: 2px solid variables.$brand-info;
+        outline-offset: 2px;
+      }
+
+      span {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background-color: variables.$brand-info;
+        margin-bottom: 5px;
+        transition: transform 0.3s, opacity 0.3s;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .page {
+    > .sidebar {
+      display: none; // Initially hide sidebar on mobile
+    }
+
+    > .content {
+      min-width: 100%;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  .page-guide,
+  .page-api,
+  .page-examples {
+    min-width: 100%;
+    margin: 0;
+    padding: 0 20px;
+
+    .page-index {
+      .block,
+      .desc,
+      .examples,
+      .features .feat,
+      .who .users {
+        width: 100%;
+      }
+
+      .desc {
+        .title {
+          font-size: 48px;
+        }
+
+        .subtitle {
+          font-size: 20px;
+        }
+      }
+
+      .examples {
+        > .ex-code {
+          width: 100%;
+        }
+      }
+
+      .features {
+        .feat {
+          > li {
+            float: none;
+            width: 100%;
+            margin: 40px 0;
+          }
+        }
+      }
+
+      .who {
+        .users {
+          .user {
+            width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+          }
+        }
+      }
+    }
+  }
+}
