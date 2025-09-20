@@ -780,6 +780,7 @@ function AllNodeElements({
       {modifiedNodes.map((modifiedNode, i) => {
         return (
           <NodeElement
+            key={`recharts-sankey-node-${modifiedNode.index}`}
             props={modifiedNode}
             nodeContent={nodeContent}
             i={i}
