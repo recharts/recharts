@@ -5,7 +5,7 @@ import { RouteComponentProps } from '../routes/withRouter.tsx';
 export const defaultLocale = 'en-US';
 
 export const localeGet = (locale: SupportedLocale, component: string, path: string) =>
-  // @ts-ignore
+  // @ts-expect-error no index signature
   Locale?.[locale]?.[component]?.[path];
 
 const isSupportedLocale = (locale: string): locale is SupportedLocale => {

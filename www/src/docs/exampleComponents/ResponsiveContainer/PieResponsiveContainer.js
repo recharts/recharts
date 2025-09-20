@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, PieChart, Pie, Legend } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie } from 'recharts';
 
 const data = [
   { name: 'Group A', value: 400 },

@@ -45,12 +45,12 @@ const data = [
 
 export default function Example() {
   const renderTooltipWithoutRange = ({ payload, content, ...rest }) => {
-    const newPayload = payload.filter((x) => x.dataKey !== 'a');
+    const newPayload = payload.filter(x => x.dataKey !== 'a');
     return <Tooltip payload={newPayload} {...rest} />;
   };
 
   const renderLegendWithoutRange = ({ payload, content, ...rest }) => {
-    const newPayload = payload.filter((x) => x.dataKey !== 'a');
+    const newPayload = payload.filter(x => x.dataKey !== 'a');
     return <DefaultLegendContent payload={newPayload} {...rest} />;
   };
 

@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LabelList,
-  ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from 'recharts';
 
 const data = [
   {
@@ -57,8 +46,8 @@ const data = [
   },
 ];
 
-const renderCustomizedLabel = (props) => {
-  const { x, y, width, height, value } = props;
+const renderCustomizedLabel = props => {
+  const { x, y, width, value } = props;
   const radius = 10;
 
   return (

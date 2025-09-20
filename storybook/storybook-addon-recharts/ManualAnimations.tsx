@@ -61,7 +61,6 @@ function SingleAnimationControl({
   return (
     <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
       <label htmlFor={inputId}>{label}</label>
-      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
       <button type="button" onClick={onRewind} title="Rewind to start">
         <RewindIcon />
       </button>
@@ -76,7 +75,6 @@ function SingleAnimationControl({
         style={{ width: 200, marginLeft: 8 }}
       />
       <span style={{ marginLeft: 8, width: 40 }}>{Math.round(progress * 100)}%</span>
-      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
       <button type="button" onClick={onFastForward} title="Fast-forward to end">
         <FastForwardIcon />
       </button>

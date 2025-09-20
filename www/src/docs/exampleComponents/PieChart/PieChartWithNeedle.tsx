@@ -65,7 +65,7 @@ export default function Example() {
         fill="#8884d8"
         stroke="none"
       >
-        {chartData.map((entry) => (
+        {chartData.map(entry => (
           <Cell key={`cell-${entry.name}`} fill={entry.color} />
         ))}
       </Pie>

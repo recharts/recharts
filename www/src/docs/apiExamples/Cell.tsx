@@ -21,7 +21,6 @@ const example = () => (
       </defs>
     </svg>
     <PieChart width={730} height={250}>
-      {/* @ts-ignore */}
       <Pie data={data} cx="50%" cy="50%" outerRadius={80} label>
         {data.map((_entry, index) => (
           <Cell key={`cell-${index}`} fill={colors[index]} />

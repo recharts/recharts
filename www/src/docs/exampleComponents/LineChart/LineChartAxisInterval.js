@@ -47,7 +47,7 @@ const data = [
 ];
 
 const Example = () => {
-  const chart = (interval) => (
+  const chart = interval => (
     <ResponsiveContainer height={250} width="100%">
       <LineChart data={data} margin={{ right: 25, top: 10 }}>
         <CartesianGrid strokeDasharray="3 3" />

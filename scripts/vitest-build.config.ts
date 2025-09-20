@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
@@ -9,6 +8,6 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     setupFiles: [],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook', 'www'],
   },
 });

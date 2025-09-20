@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const getIntroOfPage = (label) => {
+const getIntroOfPage = label => {
   if (label === 'Page A') {
     return "Page A is about men's clothing";
   }

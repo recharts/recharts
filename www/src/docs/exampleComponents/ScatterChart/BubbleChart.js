@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
 
 const data01 = [
   { hour: '12a', index: 1, value: 170 },
@@ -60,17 +60,17 @@ const parseDomain = () => [
   Math.max(
     Math.max.apply(
       null,
-      data01.map((entry) => entry.value),
+      data01.map(entry => entry.value),
     ),
     Math.max.apply(
       null,
-      data02.map((entry) => entry.value),
+      data02.map(entry => entry.value),
     ),
   ),
 ];
 
 const Example = () => {
-  const renderTooltip = (props) => {
+  const renderTooltip = props => {
     const { active, payload } = props;
 
     if (active && payload && payload.length) {

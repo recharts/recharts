@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer } from 'recharts';
 
 const Example = () => {
   const [data] = useState([
@@ -48,7 +48,7 @@ const Example = () => {
   ]);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleClick = (data, index) => {
+  const handleClick = (_, index) => {
     setActiveIndex(index);
   };
 
