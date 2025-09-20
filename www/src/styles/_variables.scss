@@ -1,4 +1,5 @@
 @charset "utf-8";
+@use "sass:color";
 
 // Base variables
 // --------------------------------------------------
@@ -9,11 +10,11 @@ $black: #000 !default;
 $white: #fff !default;
 
 $gray-base: #666 !default;
-$gray-dark: darken($gray-base, 20%) !default; // #333
-$gray-light: lighten($gray-base, 20%) !default; // #999
-$gray-lighter: lighten($gray-base, 40%) !default; // #ccc
-$gray-lightest: lighten($gray-base, 53.3333%) !default; // #eee
-$whitesmoke: lighten($gray-base, 56%) !default; // #f5f5f5
+$gray-dark: color.adjust($gray-base, $lightness: -20%, $space: hsl) !default; // #333
+$gray-light: color.adjust($gray-base, $lightness: 20%, $space: hsl) !default; // #999
+$gray-lighter: color.adjust($gray-base, $lightness: 40%, $space: hsl) !default; // #ccc
+$gray-lightest: color.adjust($gray-base, $lightness: 53.3333%, $space: hsl) !default; // #eee
+$whitesmoke: color.adjust($gray-base, $lightness: 56%, $space: hsl) !default; // #f5f5f5
 
 $brand-primary: #1281ca !default;
 $brand-second: #2e96ea !default;
