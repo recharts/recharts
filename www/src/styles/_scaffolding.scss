@@ -1,3 +1,7 @@
+@use "variables";
+
+@use "sass:color";
+
 //
 // Scaffolding
 // --------------------------------------------------
@@ -25,10 +29,10 @@ html {
 }
 
 body {
-  font-family: $font-family-base;
-  font-size: $font-size-base;
-  color: $text-color-body;
-  background-color: $white;
+  font-family: variables.$font-family-base;
+  font-size: variables.$font-size-base;
+  color: variables.$text-color-body;
+  background-color: variables.$white;
 }
 
 // Reset fonts for relevant elements
@@ -44,12 +48,12 @@ textarea {
 // Links
 
 a {
-  color: $link-color;
+  color: variables.$link-color;
   text-decoration: none;
 
   &:hover,
   &:focus {
-    color: $link-color-hover;
+    color: variables.$link-color-hover;
     text-decoration: none;
   }
 
@@ -82,7 +86,7 @@ ol {
 }
 
 code {
-  font-size: $font-size-base;
+  font-size: variables.$font-size-base;
 }
 
 div,
@@ -112,16 +116,16 @@ td {
 
 a.button {
   display: inline-block;
-  font-family: $font-family-code;
+  font-family: variables.$font-family-code;
   font-weight: 700;
   color: #fff;
-  background-color: $brand-primary;
-  border-bottom: 2px solid $brand-second;
+  background-color: variables.$brand-primary;
+  border-bottom: 2px solid variables.$brand-second;
   padding: 12px 14px;
   border-radius: 4px;
   transition: all 0.15s ease;
 
   &:hover {
-    background-color: darken($brand-primary, 3%);
+    background-color: color.adjust(variables.$brand-primary, $lightness: -3%, $space: hsl);
   }
 }

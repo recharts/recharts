@@ -1,5 +1,5 @@
-@import '../styles/variables';
-@import '../styles/mixins';
+@use '../styles/variables';
+@use '../styles/mixins';
 
 .page.page-examples {
   .example-wrapper {
@@ -62,7 +62,7 @@
           cursor: pointer;
 
           &:hover {
-            color: $brand-primary;
+            color: variables.$brand-primary;
           }
         }
       }
@@ -80,7 +80,7 @@
       margin-top: 20px;
 
       .example-code-sandbox-link {
-        color: $brand-primary;
+        color: variables.$brand-primary;
         font-weight: 700;
         font-size: 14px;
       }

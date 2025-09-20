@@ -1,5 +1,5 @@
-@import '../styles/variables';
-@import '../styles/mixins';
+@use '../styles/variables';
+@use '../styles/mixins';
 
 .page-index {
   .block {
@@ -27,14 +27,14 @@
 
     .title {
       font-size: 64px;
-      font-family: $font-family-logo;
-      color: $brand-info;
+      font-family: variables.$font-family-logo;
+      color: variables.$brand-info;
     }
 
     .subtitle {
       margin: 20px 0;
       font-size: 24px;
-      color: $gray-light;
+      color: variables.$gray-light;
     }
 
     .github-button {
@@ -71,7 +71,7 @@
     .feat {
       width: 1000px;
       margin: 0 auto;
-      @include clearfix;
+      @include mixins.clearfix;
 
       > li {
         float: left;
@@ -84,14 +84,14 @@
         }
 
         strong {
-          font-size: $font-size-xxl;
+          font-size: variables.$font-size-xxl;
           font-weight: 700;
           display: block;
           margin: 8px auto;
         }
 
         .text {
-          font-size: $font-size-lg;
+          font-size: variables.$font-size-lg;
           line-height: 1.5;
         }
       }
@@ -108,7 +108,7 @@
 
     .text {
       padding-top: 20px;
-      font-size: $font-size-xxxl;
+      font-size: variables.$font-size-xxxl;
     }
 
     .btn {
@@ -131,12 +131,12 @@
       line-height: 20px;
 
       a {
-        color: $brand-primary;
+        color: variables.$brand-primary;
       }
     }
 
     .users {
-      @include clearfix();
+      @include mixins.clearfix();
       width: 1000px;
       margin: auto;
 

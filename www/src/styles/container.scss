@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 header {
   width: 100%;
   background-color: #fcfcfc;
@@ -11,25 +14,25 @@ header {
     height: 60px;
     line-height: 60px;
     margin: 0 auto;
-    @include clearfix;
+    @include mixins.clearfix;
   }
 
   .logo {
     float: left;
     width: 132px;
     margin: 0 60px 0 20px;
-    font-family: $font-family-code;
+    font-family: variables.$font-family-code;
     font-weight: 300;
-    font-size: $font-size-xl;
+    font-size: variables.$font-size-xl;
     white-space: nowrap;
 
     > a {
-      color: $brand-info;
+      color: variables.$brand-info;
     }
   }
 
   nav {
-    @include clearfix;
+    @include mixins.clearfix;
     height: 60px;
     line-height: 60px;
   }
@@ -42,11 +45,11 @@ header {
       > a {
         display: inline-block;
         height: 61px;
-        font-size: $font-size-lg;
+        font-size: variables.$font-size-lg;
 
         &.active {
-          color: $brand-primary;
-          border-bottom: 2px solid $brand-primary;
+          color: variables.$brand-primary;
+          border-bottom: 2px solid variables.$brand-primary;
           cursor: default;
         }
       }
@@ -62,7 +65,7 @@ header {
         cursor: pointer;
         &.active {
           cursor: default;
-          color: $brand-primary;
+          color: variables.$brand-primary;
         }
       }
     }
@@ -108,10 +111,10 @@ footer {
         > li {
           padding-left: 10px;
           line-height: 1.5;
-          font-size: $font-size-lg;
+          font-size: variables.$font-size-lg;
 
           a.active {
-            color: $brand-primary;
+            color: variables.$brand-primary;
           }
         }
       }
@@ -132,7 +135,7 @@ footer {
       margin-bottom: 30px;
       margin: 0;
       font-size: 30px;
-      color: $gray-dark;
+      color: variables.$gray-dark;
     }
 
     h2,
@@ -141,7 +144,7 @@ footer {
       line-height: 40px;
       margin: 20px 0;
       font-size: 24px;
-      border-bottom: 1px solid $gray-lighter;
+      border-bottom: 1px solid variables.$gray-lighter;
     }
 
     p,
@@ -177,7 +180,7 @@ footer {
     word-break: keep-all;
     border-collapse: collapse;
     border-spacing: 0;
-    font-size: $font-size-lg;
+    font-size: variables.$font-size-lg;
 
     td,
     th {
@@ -202,8 +205,8 @@ footer {
     }
 
     td {
-      color: $brand-second;
-      font-family: $font-family-code;
+      color: variables.$brand-second;
+      font-family: variables.$font-family-code;
       font-size: 90%;
     }
 
@@ -221,7 +224,7 @@ footer {
       font-size: 95%;
       min-width: 250px;
       line-height: 1.5;
-      font-family: $font-family-base;
+      font-family: variables.$font-family-base;
     }
   }
 }
