@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { resolve } from 'path';
 
 export default defineConfig(({ mode }) => ({
@@ -16,16 +14,6 @@ export default defineConfig(({ mode }) => ({
           ['@babel/plugin-proposal-class-properties', { loose: true }],
         ],
       },
-    }),
-    viteTsconfigPaths(),
-    /*
-     * Put the Codecov Vite plugin after all other plugins
-     * https://docs.codecov.com/docs/vite-quick-start
-     */
-    codecovVitePlugin({
-      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-      bundleName: 'recharts.org',
-      uploadToken: process.env.CODECOV_TOKEN,
     }),
   ],
   server: {
@@ -47,12 +35,6 @@ export default defineConfig(({ mode }) => ({
       sass: {
         includePaths: [resolve(__dirname, './src/styles'), resolve(__dirname, './node_module/simple-line-icons/sass')],
       },
-    },
-  },
-  test: {
-    coverage: {
-      provider: 'v8',
-      include: ['src', 'test'],
     },
   },
   resolve: {

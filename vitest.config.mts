@@ -19,10 +19,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp', 'www'],
+    exclude: ['**/node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
     coverage: {
       provider: 'v8',
-      include: ['src', 'test'],
+      include: ['src', 'test', 'www'],
     },
     restoreMocks: true,
     projects: [
