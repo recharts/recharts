@@ -21,16 +21,12 @@
     "@babel/plugin-proposal-decorators": "^7.28.0",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
-    "@codecov/vite-plugin": "^1.9.1",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@types/react-helmet": "^6.1.11",
     "@vitejs/plugin-react": "^4.7.0",
-    "@vitest/coverage-v8": "^3.2.4",
-    "sass": "^1.93.0",
-    "typescript": "^5.9.2",
+    "sass": "^1.92.1",
     "vite": "^6.3.6",
-    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^3.2.4"
   },
   "dependencies": {
