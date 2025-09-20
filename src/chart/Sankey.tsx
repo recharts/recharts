@@ -780,6 +780,7 @@ function AllNodeElements({
       {modifiedNodes.map((modifiedNode, i) => {
         return (
           <NodeElement
+            key={`node-${modifiedNode.index}-${modifiedNode.x}-${modifiedNode.y}`}
             props={modifiedNode}
             nodeContent={nodeContent}
             i={i}
