@@ -325,4 +325,41 @@ describe('<ResponsiveContainer />', () => {
     expect(elementsInside[1]).toHaveAttribute('height', '200');
     expect(elementsInside[1]).toHaveAttribute('width', '400');
   });
+
+  it('should not re-create ResizeObserver when onResize function instance changes', () => {
+    const onResize1 = vi.fn();
+    const { rerender } = render(
+      <ResponsiveContainer onResize={onResize1}>
+        <div />
+      </ResponsiveContainer>,
+    );
+
+    // The mock implementation returns an object with a `disconnect` mock function.
+    // Let's grab that specific instance.
+    const initialObserverInstance = resizeObserverMock.mock.results[0].value;
+    expect(initialObserverInstance.disconnect).not.toHaveBeenCalled();
+    expect(resizeObserverMock).toHaveBeenCalledTimes(1);
+
+    // Re-render with a new function instance.
+    const onResize2 = vi.fn();
+    rerender(
+      <ResponsiveContainer onResize={onResize2}>
+        <div />
+      </ResponsiveContainer>,
+    );
+
+    // Assert that the observer was NOT disconnected and a new one was NOT created.
+    expect(initialObserverInstance.disconnect).not.toHaveBeenCalled();
+    expect(resizeObserverMock).toHaveBeenCalledTimes(1);
+
+    // Simulate a resize.
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
+
+    // Assert that the NEW callback was called, and the old one was not.
+    expect(onResize1).not.toHaveBeenCalled();
+    expect(onResize2).toHaveBeenCalledTimes(1);
+    expect(onResize2).toHaveBeenCalledWith(100, 100);
+  });
 });
