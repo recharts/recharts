@@ -8,6 +8,7 @@ import Highlight from '../utils/Highlight.tsx';
 import NewMenuTag from '../components/Shared/NewMenuTag';
 import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
 import apiCates from '../docs/apiCates.ts';
+import { SidebarNav } from '../components/Shared/SidebarNav';
 import './APIView.scss';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -208,23 +209,18 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
     return (
       <div className="page page-api">
         <Helmet title={page} />
-        <div className="sidebar">
-          <h2>API</h2>
-          {apiCates.map(({ name, items }) => (
-            <div className="sidebar-cate" key={name}>
-              <h4>{localeGet(locale, 'api', name)}</h4>
-              <ul className="menu">
-                {items.map(compName => (
-                  <li key={compName}>
-                    <Link className={page === compName ? 'active' : ''} to={`/${locale}/api/${compName}`}>
-                      <NewMenuTag name={compName} isNew={false} />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <SidebarNav
+          title="API"
+          activePage={page}
+          categories={apiCates.map(category => ({
+            name: localeGet(locale, 'api', category.name),
+            items: category.items.map(compName => ({
+              name: compName,
+              url: `/${locale}/api/${compName}`,
+            })),
+          }))}
+          renderItem={item => <NewMenuTag name={item.name} isNew={false} />}
+        />
         <div className="content">
           <h3 className="page-title">{page}</h3>
           {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}

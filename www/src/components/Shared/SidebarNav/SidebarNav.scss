@@ -1,0 +1,37 @@
+@use '../../../styles/variables';
+
+.sidebar {
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  h4 {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    a {
+      display: block;
+      padding: 5px 0;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        color: variables.$brand-primary;
+      }
+
+      &.active {
+        color: variables.$brand-primary;
+        font-weight: 700;
+      }
+    }
+  }
+}
