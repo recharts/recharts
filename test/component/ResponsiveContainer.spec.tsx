@@ -325,4 +325,157 @@ describe('<ResponsiveContainer />', () => {
     expect(elementsInside[1]).toHaveAttribute('height', '200');
     expect(elementsInside[1]).toHaveAttribute('width', '400');
   });
+
+  it('should not re-create ResizeObserver when onResize function instance changes', () => {
+    const onResize1 = vi.fn();
+    const { rerender } = render(
+      <ResponsiveContainer onResize={onResize1}>
+        <div />
+      </ResponsiveContainer>,
+    );
+
+    // The mock implementation returns an object with a `disconnect` mock function.
+    // Let's grab that specific instance.
+    const initialObserverInstance = resizeObserverMock.mock.results[0].value;
+    expect(initialObserverInstance.disconnect).not.toHaveBeenCalled();
+    expect(resizeObserverMock).toHaveBeenCalledTimes(1);
+
+    // Re-render with a new function instance.
+    const onResize2 = vi.fn();
+    rerender(
+      <ResponsiveContainer onResize={onResize2}>
+        <div />
+      </ResponsiveContainer>,
+    );
+
+    // Assert that the observer was NOT disconnected and a new one was NOT created.
+    expect(initialObserverInstance.disconnect).not.toHaveBeenCalled();
+    expect(resizeObserverMock).toHaveBeenCalledTimes(1);
+
+    // Simulate a resize.
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
+
+    // Assert that the NEW callback was called, and the old one was not.
+    expect(onResize1).not.toHaveBeenCalled();
+    expect(onResize2).toHaveBeenCalledTimes(1);
+    expect(onResize2).toHaveBeenCalledWith(100, 100);
+  });
+
+  it('should warn when width and height are both fixed numbers', () => {
+    render(
+      <ResponsiveContainer width={100} height={100}>
+        <div />
+      </ResponsiveContainer>,
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('The width(100) and height(100) are both fixed numbers'),
+    );
+  });
+
+  it('should warn when aspect is not greater than zero', () => {
+    render(
+      <ResponsiveContainer aspect={-1} width="100%" height={100}>
+        <div />
+      </ResponsiveContainer>,
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith('The aspect(-1) must be greater than zero.');
+  });
+
+  it('should respect maxHeight when aspect ratio is used', () => {
+    render(
+      <ResponsiveContainer aspect={2} width={400} maxHeight={150}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(screen.getByTestId('inside')).toHaveAttribute('width', '400');
+    expect(screen.getByTestId('inside')).toHaveAttribute('height', '150');
+  });
+
+  it('should not re-render child if container size has not changed', () => {
+    const childRenderSpy = vi.fn();
+    function Child(props: any) {
+      childRenderSpy(props);
+      return <div data-testid="child" {...props} />;
+    }
+
+    render(
+      <ResponsiveContainer>
+        <Child />
+      </ResponsiveContainer>,
+    );
+
+    childRenderSpy.mockClear();
+
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
+
+    expect(childRenderSpy).toHaveBeenCalledTimes(1);
+    childRenderSpy.mockClear();
+
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
+
+    expect(childRenderSpy).not.toHaveBeenCalled();
+
+    // What if size is slightly different but rounds to the same?
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100.4, height: 100.4 } }]);
+    });
+    expect(childRenderSpy).not.toHaveBeenCalled();
+
+    // And now with a different rounded value
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 101, height: 101 } }]);
+    });
+    expect(childRenderSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should expose container div via forwardRef', () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(
+      <ResponsiveContainer ref={ref}>
+        <div />
+      </ResponsiveContainer>,
+    );
+
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+    expect(ref.current.classList.contains('recharts-responsive-container')).toBe(true);
+  });
+
+  it('Renders with id attribute when passed as a number', () => {
+    const { container } = render(
+      <ResponsiveContainer id={123}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(container.querySelector('.recharts-responsive-container')).toHaveAttribute('id', '123');
+  });
+
+  it('Renders with minHeight and minWidth as percentages when provided', () => {
+    const { container } = render(
+      <ResponsiveContainer minWidth="50%" minHeight="50%">
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
+      minWidth: '50%',
+      minHeight: '50%',
+    });
+  });
+
+  it('should render with custom className', () => {
+    const { container } = render(
+      <ResponsiveContainer className="my-custom-class">
+        <div />
+      </ResponsiveContainer>,
+    );
+    expect(container.querySelector('.recharts-responsive-container')).toHaveClass('my-custom-class');
+  });
 });

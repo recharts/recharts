@@ -97,6 +97,10 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     ref,
   ) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    /*
+     * We are using a ref to avoid re-creating the ResizeObserver when the onResize function changes.
+     * The ref is updated on every render, so the latest onResize function is always available in the effect.
+     */
     const onResizeRef = useRef<Props['onResize']>();
     onResizeRef.current = onResize;
     useImperativeHandle(ref, () => containerRef.current);

@@ -191,3 +191,24 @@ test('should respect minWidth with aspect ratio', async ({ mount }) => {
   );
   await expect(component).toHaveScreenshot();
 });
+
+test('should create a square chart that overflows a wide screen', async ({ mount, page }) => {
+  // Set a wide viewport to test the landscape scenario
+  await page.setViewportSize({ width: 800, height: 400 });
+
+  const component = await mount(
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <p>Square chart in a wide viewport</p>
+      <ResponsiveContainer width="100%" height="100%" aspect={1}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false} />
+          <ChartSizeDimensions />
+        </LineChart>
+      </ResponsiveContainer>
+      <p>Should overflow vertically.</p>
+    </div>,
+  );
+  await expect(component).toHaveScreenshot();
+});
