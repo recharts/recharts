@@ -17,21 +17,56 @@ import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
 export interface Props {
+  /**
+   * The aspect ratio of the chart. It is calculated as `width / height`.
+   * If specified, the height will be calculated by the width and this ratio.
+   */
   aspect?: number;
+  /**
+   * The width of the container. If a percentage string is specified, it is calculated responsive to the width of the parent element.
+   * @default '100%'
+   */
   width?: string | number;
+  /**
+   * The height of the container. If a percentage string is specified, it is calculated responsive to the height of the parent element.
+   * @default '100%'
+   */
   height?: string | number;
+  /**
+   * The minimum width of the container. It can be a percentage string or a number.
+   * @default 0
+   */
   minWidth?: string | number;
+  /** The minimum height of the container. It can be a percentage string or a number. */
   minHeight?: string | number;
+  /**
+   * The initial width and height of the container.
+   * @default { width: -1, height: -1 }
+   */
   initialDimension?: {
     width: number;
     height: number;
   };
+  /** The maximum height of the container. It can be a number. */
   maxHeight?: number;
+  /** The content of the container. It should be a single chart element. */
   children: ReactElement;
+  /**
+   * The debounce time for resizing events.
+   * @default 0
+   */
   debounce?: number;
+  /** The id of the container. */
   id?: string | number;
+  /** The class name of the container. */
   className?: string | number;
+  /** The style of the container. */
   style?: Omit<CSSProperties, keyof Props>;
+  /**
+   * A callback function that will be called when the container is resized.
+   * @param width The new width of the container.
+   * @param height The new height of the container.
+   */
   onResize?: (width: number, height: number) => void;
 }
 
