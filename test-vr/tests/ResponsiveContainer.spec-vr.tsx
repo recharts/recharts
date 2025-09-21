@@ -12,7 +12,7 @@ test('ResponsiveContainer with hardcoded width and height', async ({ mount }) =>
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+          <Line type="monotone" dataKey="uv" stroke="#8884d8" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -30,7 +30,7 @@ test('should render at 100% width and height of a fixed-size parent', async ({ m
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -48,7 +48,7 @@ test('should render at 50% width and height of a fixed-size parent', async ({ mo
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -69,7 +69,7 @@ test('should respect dimensions of a flexbox parent', async ({ mount }) => {
           <LineChart data={pageData}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Line dataKey="uv" />
+            <Line dataKey="uv" isAnimationActive={false} />
             <ChartSizeDimensions />
           </LineChart>
         </ResponsiveContainer>
@@ -91,7 +91,7 @@ test('should respect dimensions of a grid parent', async ({ mount }) => {
           <LineChart data={pageData}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Line dataKey="uv" />
+            <Line dataKey="uv" isAnimationActive={false} />
             <ChartSizeDimensions />
           </LineChart>
         </ResponsiveContainer>
@@ -110,7 +110,7 @@ test('should handle mixed fixed and percentage sizing', async ({ mount }) => {
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -128,7 +128,7 @@ test('should calculate height based on aspect ratio', async ({ mount }) => {
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -146,7 +146,7 @@ test('should respect width in a tall container when aspect is set', async ({ mou
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -164,7 +164,7 @@ test('aspect ratio should be overridden by maxHeight', async ({ mount }) => {
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
@@ -182,7 +182,7 @@ test('should respect minWidth with aspect ratio', async ({ mount }) => {
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
+          <Line dataKey="uv" isAnimationActive={false} />
           <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
