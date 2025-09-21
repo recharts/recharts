@@ -1,0 +1,11 @@
+// This file defines the z-index values for the entire application
+// to manage stacking contexts and avoid conflicts.
+
+// The mobile sidebar content drawer.
+$z-index-sidebar-content: 1020;
+
+// The main site header. It should be above the sidebar components.
+$z-index-header: 1030;
+
+// The main navigation menu when opened on mobile. This should be on top of everything.
+$z-index-main-nav: 1040;

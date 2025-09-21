@@ -1,5 +1,6 @@
 @use "mixins";
-@use "variables";
+@use 'variables';
+@use 'zindex';
 
 header {
   width: 100%;

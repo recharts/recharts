@@ -1,5 +1,6 @@
 @use 'variables';
 @use 'mixins';
+@use 'zindex';
 
 .mobile-nav-toggle {
   display: none;
@@ -26,7 +27,7 @@
       box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
       height: auto;
       line-height: normal;
-      z-index: 1001;
+      z-index: zindex.$z-index-main-nav;
 
       &.mobile-nav-open {
         display: block;
@@ -93,10 +94,6 @@
   }
 
   .page {
-    > .sidebar {
-      display: none; // Initially hide sidebar on mobile
-    }
-
     > .content {
       min-width: 100%;
       padding-left: 20px;
