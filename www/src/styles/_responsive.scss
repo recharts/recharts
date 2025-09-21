@@ -110,49 +110,49 @@
     min-width: 100%;
     margin: 0;
     padding: 0 20px;
+  }
 
-    .page-index {
-      .block,
-      .desc,
-      .examples,
-      .features .feat,
-      .who .users {
+  .page-index {
+    .block,
+    .desc,
+    .examples,
+    .features .feat,
+    .who .users {
+      width: 100%;
+    }
+
+    .desc {
+      .title {
+        font-size: 48px;
+      }
+
+      .subtitle {
+        font-size: 20px;
+      }
+    }
+
+    .examples {
+      > .ex-code {
         width: 100%;
       }
+    }
 
-      .desc {
-        .title {
-          font-size: 48px;
-        }
-
-        .subtitle {
-          font-size: 20px;
-        }
-      }
-
-      .examples {
-        > .ex-code {
+    .features {
+      .feat {
+        > li {
+          float: none;
           width: 100%;
+          margin: 40px 0;
         }
       }
+    }
 
-      .features {
-        .feat {
-          > li {
-            float: none;
-            width: 100%;
-            margin: 40px 0;
-          }
-        }
-      }
-
-      .who {
-        .users {
-          .user {
-            width: 50%;
-            height: auto;
-            margin-bottom: 20px;
-          }
+    .who {
+      .users {
+        .user {
+          width: 50%;
+          height: auto;
+          margin-bottom: 20px;
         }
       }
     }

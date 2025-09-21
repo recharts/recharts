@@ -57,8 +57,7 @@ class IndexView extends PureComponent<RouteComponentProps> {
   <YAxis/>
   <Line type="monotone" dataKey="uv" stroke="#8884d8" />
   <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-</LineChart>
-    `;
+</LineChart>`;
 
     return (
       <div className="page page-index">
