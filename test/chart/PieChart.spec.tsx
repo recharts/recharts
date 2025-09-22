@@ -208,7 +208,7 @@ describe('<PieChart />', () => {
       <PieChart width={800} height={400}>
         <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>
           {data.map((entry, index) => (
-            <Cell {...entry} key={`cell-${entry.name}`} strokeWidth={index + 1} />
+            <Cell key={`cell-${entry.name}`} {...entry} strokeWidth={index + 1} />
           ))}
         </Pie>
       </PieChart>,
