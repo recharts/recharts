@@ -15,7 +15,7 @@ import {
 import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { calculateChartDimensions } from './responsiveContainerUtils';
+import { calculateChartDimensions, getInnerDivStyle } from './responsiveContainerUtils';
 
 export interface Props {
   /**
@@ -221,7 +221,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
          * I learned this trick from the `react-virtualized` library: https://github.com/bvaughn/react-virtualized-auto-sizer/blob/master/src/AutoSizer.ts
          * See https://github.com/recharts/recharts/issues/172 and also https://github.com/bvaughn/react-virtualized/issues/68
          */}
-        <div style={{ width: 0, height: 0, overflow: 'visible' }}>{chartContent}</div>
+        <div style={getInnerDivStyle()}>{chartContent}</div>
       </div>
     );
   },

@@ -1,4 +1,4 @@
-import { calculateChartDimensions } from '../../src/component/responsiveContainerUtils';
+import { calculateChartDimensions, getInnerDivStyle } from '../../src/component/responsiveContainerUtils';
 
 describe('calculateChartDimensions', () => {
   it('should handle percentage width and height', () => {
@@ -48,5 +48,16 @@ describe('calculateChartDimensions', () => {
   it('should ignore negative aspect ratio', () => {
     const dimensions = calculateChartDimensions(200, 100, { width: '100%', height: '100%', aspect: -2 });
     expect(dimensions).toEqual({ calculatedWidth: 200, calculatedHeight: 100 });
+  });
+});
+
+describe('getInnerDivStyle', () => {
+  it('should return shrinkable object', () => {
+    const style = getInnerDivStyle();
+    expect(style).toEqual({
+      width: 0,
+      height: 0,
+      overflow: 'visible',
+    });
   });
 });

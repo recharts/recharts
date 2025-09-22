@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { isPercent } from '../util/DataUtils';
 
 export const calculateChartDimensions = (
@@ -37,3 +38,9 @@ export const calculateChartDimensions = (
 
   return { calculatedWidth, calculatedHeight };
 };
+
+export const getInnerDivStyle = (): CSSProperties => ({
+  width: 0,
+  height: 0,
+  overflow: 'visible',
+});
