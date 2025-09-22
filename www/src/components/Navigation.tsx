@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
@@ -29,9 +29,12 @@ function DesktopNav() {
 function MobileNavToggle({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" className="mobile-nav-toggle mobile-only" onClick={onClick} aria-label="Toggle navigation">
-      <span />
-      <span />
-      <span />
+      <span>Menu</span>
+      <div className="hamburger-icon">
+        <span />
+        <span />
+        <span />
+      </div>
     </button>
   );
 }
@@ -111,6 +114,18 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
 
 function MobileNav() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (isMobileNavOpen) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [isMobileNavOpen]);
 
   const handleClose = () => {
     setIsMobileNavOpen(false);

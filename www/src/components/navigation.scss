@@ -17,13 +17,16 @@
   padding: 20px;
   outline: none;
   z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
   &:focus {
     outline: 2px solid variables.$brand-info;
     outline-offset: 2px;
   }
 
-  span {
+  .hamburger-icon span {
     display: block;
     width: 24px;
     height: 3px;
@@ -121,4 +124,8 @@
       }
     }
   }
+}
+
+body.no-scroll {
+  overflow: hidden;
 }
