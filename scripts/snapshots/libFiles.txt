@@ -60,6 +60,7 @@
   "lib/component/Text.js",
   "lib/component/Tooltip.js",
   "lib/component/TooltipBoundingBox.js",
+  "lib/component/responsiveContainerUtils.js",
   "lib/container",
   "lib/container/ClipPathProvider.js",
   "lib/container/Layer.js",
