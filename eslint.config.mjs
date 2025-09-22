@@ -132,15 +132,14 @@ const reactConfig = [
   {
     name: 'x/react',
     rules: {
-      // 'react/jsx-key': [
-      //   'error',
-      //   {
-      //     checkFragmentShorthand: true,
-      //     checkKeyMustBeforeSpread: true,
-      //     warnOnDuplicates: true,
-      //   },
-      // ],
-      'react/jsx-key': 'warn',
+      'react/jsx-key': [
+        'error',
+        {
+          checkFragmentShorthand: true,
+          checkKeyMustBeforeSpread: true,
+          warnOnDuplicates: true,
+        },
+      ],
       'react/no-did-update-set-state': 'warn',
       'react/jsx-no-constructed-context-values': 'warn',
       'react/no-unused-class-component-methods': 'off',
