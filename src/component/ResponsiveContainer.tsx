@@ -26,10 +26,12 @@ export interface Props {
   aspect?: number;
   /**
    * The width of the container. If a percentage string is specified, it is calculated responsive to the width of the parent element.
+   * @default '100%'
    */
   width?: Percent | number;
   /**
    * The height of the container. If a percentage string is specified, it is calculated responsive to the height of the parent element.
+   * @default '100%'
    */
   height?: Percent | number;
   /**
