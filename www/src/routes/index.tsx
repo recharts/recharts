@@ -8,7 +8,7 @@ function RedirectToDefaultExample() {
   return <Navigate to={`/${locale}/examples/SimpleLineChart`} replace />;
 }
 
-export default function routes() {
+export function routes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to={`/${defaultLocale}`} />} />
