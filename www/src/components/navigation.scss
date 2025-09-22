@@ -1,0 +1,170 @@
+@use '../styles/variables' as variables;
+
+@media (max-width: variables.$mobile-breakpoint) {
+  nav.mobile-only {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+  }
+}
+
+.mobile-nav-toggle {
+  position: absolute;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0 20px;
+  outline: none;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &:focus {
+    outline: 2px solid variables.$brand-info;
+  }
+
+  .hamburger-icon span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background-color: variables.$brand-info;
+    margin-bottom: 5px;
+    transition: transform 0.3s, opacity 0.3s;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (min-width: variables.$mobile-breakpoint) {
+  nav.desktop-only {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex: 1;
+
+    .navigation-items {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      gap: 40px;
+
+      a {
+        display: inline-block;
+        height: 61px;
+        font-size: variables.$font-size-lg;
+
+        &.active {
+          color: variables.$brand-primary;
+          border-bottom: 2px solid variables.$brand-primary;
+          cursor: default;
+        }
+      }
+    }
+  }
+}
+
+.slide-right-mobile-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  max-width: 500px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  padding: 60px 0 20px;
+  overflow-y: auto;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .navigation-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    line-height: 2em;
+
+    a {
+      display: block;
+      padding: 8px 20px;
+      font-size: variables.$font-size-lg;
+
+      &.active {
+        color: variables.$brand-primary;
+        text-decoration: underline;
+      }
+    }
+
+    .collapsible {
+      .collapsible-trigger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: variables.$font-size-lg;
+        padding: 8px 20px;
+        cursor: pointer;
+        text-align: left;
+
+        i {
+          transition: transform 0.2s ease-in-out;
+        }
+      }
+
+      &.expanded .collapsible-trigger i {
+        transform: rotate(-90deg);
+      }
+
+      .collapsible-content .sidebar-cate {
+        a {
+          display: block;
+          padding: 8px 20px;
+        }
+
+        h4 {
+          margin: 0;
+          font-size: variables.$font-size-lg;
+        }
+      }
+    }
+  }
+}
+
+body.no-scroll {
+  overflow: hidden;
+}

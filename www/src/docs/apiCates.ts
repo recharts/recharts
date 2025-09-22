@@ -1,4 +1,4 @@
-export default [
+export const apiCates = [
   {
     name: 'charts',
     items: [
@@ -48,5 +48,3 @@ export default [
     items: ['Cross', 'Curve', 'Dot', 'Polygon', 'Rectangle', 'Sector', 'Trapezoid'],
   },
 ];
-
-export const NEW_APIS = [];

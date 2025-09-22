@@ -5,17 +5,13 @@ import { Runner } from 'react-runner';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import { Editor } from '@monaco-editor/react';
-import { Link } from 'react-router';
 import { allExamples } from '../docs/exampleComponents';
-import { getLocaleType } from '../utils/LocaleUtils.ts';
 import './ExampleView.scss';
 import 'simple-line-icons/scss/simple-line-icons.scss';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { StackBlitzLink } from '../components/Shared/StackBlitzLink.tsx';
 import { sendEvent } from '../components/analytics.ts';
 import { ComponentExamples } from '../docs/exampleComponents/types.ts';
-
-const categoryNames = Object.keys(allExamples).sort((a, b) => allExamples[a].order - allExamples[b].order);
 
 type ExampleComponent = {
   cateName: string;
@@ -99,22 +95,6 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
     }
   };
 
-  renderMenuList(type: string, locale: string) {
-    const page = this.getPage();
-    const { examples } = allExamples[type];
-    const typeNameList = Object.keys(examples);
-
-    const items = typeNameList.map(name => (
-      <li key={name}>
-        <Link to={`/${locale}/examples/${name}`} className={page === name ? 'active' : ''}>
-          {name}
-        </Link>
-      </li>
-    ));
-
-    return <ul className="menu">{items}</ul>;
-  }
-
   renderEditor(exampleResult: ExampleComponent) {
     return exampleResult && this.state.exampleCode ? (
       <div className="monaco-editor-wrapper">
@@ -180,21 +160,10 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
     const page = this.getPage();
 
     const exampleResult = parseExampleComponent(page);
-    const locale = getLocaleType(this.props);
 
     return (
       <div className="page page-examples">
         <Helmet title={page} />
-        <div className="sidebar">
-          <h2>Examples</h2>
-
-          {categoryNames.map(cate => (
-            <div className="sidebar-cate" key={cate}>
-              <h4>{cate}</h4>
-              {this.renderMenuList(cate, locale)}
-            </div>
-          ))}
-        </div>
         <div className="content">
           <h3 className="page-title">{page}</h3>
           {exampleResult ? (

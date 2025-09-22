@@ -1,0 +1,747 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getAllNavigationItems > should return all navigation items 1`] = `
+[
+  {
+    "categories": [
+      {
+        "displayName": "",
+        "items": [
+          {
+            "displayName": "Installation",
+            "key": "installation",
+            "url": "/en-US/guide/installation",
+          },
+          {
+            "displayName": "Getting Started",
+            "key": "getting-started",
+            "url": "/en-US/guide/getting-started",
+          },
+          {
+            "displayName": "Customize",
+            "key": "customize",
+            "url": "/en-US/guide/customize",
+          },
+          {
+            "displayName": "Active Index",
+            "key": "activeIndex",
+            "url": "/en-US/guide/activeIndex",
+          },
+        ],
+        "key": "guide",
+      },
+    ],
+    "displayName": "Guide",
+    "key": "guide",
+    "url": "/en-US/guide",
+  },
+  {
+    "categories": [
+      {
+        "displayName": "Charts",
+        "items": [
+          {
+            "displayName": "AreaChart",
+            "key": "AreaChart",
+            "url": "/en-US/api/AreaChart",
+          },
+          {
+            "displayName": "BarChart",
+            "key": "BarChart",
+            "url": "/en-US/api/BarChart",
+          },
+          {
+            "displayName": "LineChart",
+            "key": "LineChart",
+            "url": "/en-US/api/LineChart",
+          },
+          {
+            "displayName": "ComposedChart",
+            "key": "ComposedChart",
+            "url": "/en-US/api/ComposedChart",
+          },
+          {
+            "displayName": "PieChart",
+            "key": "PieChart",
+            "url": "/en-US/api/PieChart",
+          },
+          {
+            "displayName": "RadarChart",
+            "key": "RadarChart",
+            "url": "/en-US/api/RadarChart",
+          },
+          {
+            "displayName": "RadialBarChart",
+            "key": "RadialBarChart",
+            "url": "/en-US/api/RadialBarChart",
+          },
+          {
+            "displayName": "ScatterChart",
+            "key": "ScatterChart",
+            "url": "/en-US/api/ScatterChart",
+          },
+          {
+            "displayName": "FunnelChart",
+            "key": "FunnelChart",
+            "url": "/en-US/api/FunnelChart",
+          },
+          {
+            "displayName": "Treemap",
+            "key": "Treemap",
+            "url": "/en-US/api/Treemap",
+          },
+          {
+            "displayName": "SankeyChart",
+            "key": "SankeyChart",
+            "url": "/en-US/api/SankeyChart",
+          },
+        ],
+        "key": "charts",
+      },
+      {
+        "displayName": "General Components",
+        "items": [
+          {
+            "displayName": "ResponsiveContainer",
+            "key": "ResponsiveContainer",
+            "url": "/en-US/api/ResponsiveContainer",
+          },
+          {
+            "displayName": "Legend",
+            "key": "Legend",
+            "url": "/en-US/api/Legend",
+          },
+          {
+            "displayName": "Tooltip",
+            "key": "Tooltip",
+            "url": "/en-US/api/Tooltip",
+          },
+          {
+            "displayName": "Cell",
+            "key": "Cell",
+            "url": "/en-US/api/Cell",
+          },
+          {
+            "displayName": "Text",
+            "key": "Text",
+            "url": "/en-US/api/Text",
+          },
+          {
+            "displayName": "Label",
+            "key": "Label",
+            "url": "/en-US/api/Label",
+          },
+          {
+            "displayName": "LabelList",
+            "key": "LabelList",
+            "url": "/en-US/api/LabelList",
+          },
+          {
+            "displayName": "Customized",
+            "key": "Customized",
+            "url": "/en-US/api/Customized",
+          },
+        ],
+        "key": "general-components",
+      },
+      {
+        "displayName": "Cartesian Components",
+        "items": [
+          {
+            "displayName": "Area",
+            "key": "Area",
+            "url": "/en-US/api/Area",
+          },
+          {
+            "displayName": "Bar",
+            "key": "Bar",
+            "url": "/en-US/api/Bar",
+          },
+          {
+            "displayName": "Line",
+            "key": "Line",
+            "url": "/en-US/api/Line",
+          },
+          {
+            "displayName": "Scatter",
+            "key": "Scatter",
+            "url": "/en-US/api/Scatter",
+          },
+          {
+            "displayName": "XAxis",
+            "key": "XAxis",
+            "url": "/en-US/api/XAxis",
+          },
+          {
+            "displayName": "YAxis",
+            "key": "YAxis",
+            "url": "/en-US/api/YAxis",
+          },
+          {
+            "displayName": "ZAxis",
+            "key": "ZAxis",
+            "url": "/en-US/api/ZAxis",
+          },
+          {
+            "displayName": "Brush",
+            "key": "Brush",
+            "url": "/en-US/api/Brush",
+          },
+          {
+            "displayName": "CartesianAxis",
+            "key": "CartesianAxis",
+            "url": "/en-US/api/CartesianAxis",
+          },
+          {
+            "displayName": "CartesianGrid",
+            "key": "CartesianGrid",
+            "url": "/en-US/api/CartesianGrid",
+          },
+          {
+            "displayName": "ReferenceLine",
+            "key": "ReferenceLine",
+            "url": "/en-US/api/ReferenceLine",
+          },
+          {
+            "displayName": "ReferenceDot",
+            "key": "ReferenceDot",
+            "url": "/en-US/api/ReferenceDot",
+          },
+          {
+            "displayName": "ReferenceArea",
+            "key": "ReferenceArea",
+            "url": "/en-US/api/ReferenceArea",
+          },
+          {
+            "displayName": "ErrorBar",
+            "key": "ErrorBar",
+            "url": "/en-US/api/ErrorBar",
+          },
+          {
+            "displayName": "Funnel",
+            "key": "Funnel",
+            "url": "/en-US/api/Funnel",
+          },
+        ],
+        "key": "cartesian-components",
+      },
+      {
+        "displayName": "Polar Components",
+        "items": [
+          {
+            "displayName": "Pie",
+            "key": "Pie",
+            "url": "/en-US/api/Pie",
+          },
+          {
+            "displayName": "Radar",
+            "key": "Radar",
+            "url": "/en-US/api/Radar",
+          },
+          {
+            "displayName": "RadialBar",
+            "key": "RadialBar",
+            "url": "/en-US/api/RadialBar",
+          },
+          {
+            "displayName": "PolarAngleAxis",
+            "key": "PolarAngleAxis",
+            "url": "/en-US/api/PolarAngleAxis",
+          },
+          {
+            "displayName": "PolarGrid",
+            "key": "PolarGrid",
+            "url": "/en-US/api/PolarGrid",
+          },
+          {
+            "displayName": "PolarRadiusAxis",
+            "key": "PolarRadiusAxis",
+            "url": "/en-US/api/PolarRadiusAxis",
+          },
+        ],
+        "key": "polar-components",
+      },
+      {
+        "displayName": "Shapes",
+        "items": [
+          {
+            "displayName": "Cross",
+            "key": "Cross",
+            "url": "/en-US/api/Cross",
+          },
+          {
+            "displayName": "Curve",
+            "key": "Curve",
+            "url": "/en-US/api/Curve",
+          },
+          {
+            "displayName": "Dot",
+            "key": "Dot",
+            "url": "/en-US/api/Dot",
+          },
+          {
+            "displayName": "Polygon",
+            "key": "Polygon",
+            "url": "/en-US/api/Polygon",
+          },
+          {
+            "displayName": "Rectangle",
+            "key": "Rectangle",
+            "url": "/en-US/api/Rectangle",
+          },
+          {
+            "displayName": "Sector",
+            "key": "Sector",
+            "url": "/en-US/api/Sector",
+          },
+          {
+            "displayName": "Trapezoid",
+            "key": "Trapezoid",
+            "url": "/en-US/api/Trapezoid",
+          },
+        ],
+        "key": "shapes",
+      },
+    ],
+    "displayName": "API",
+    "key": "api",
+    "url": "/en-US/api",
+  },
+  {
+    "categories": [
+      {
+        "displayName": "LineChart",
+        "items": [
+          {
+            "displayName": "SimpleLineChart",
+            "key": "SimpleLineChart",
+            "url": "/en-US/examples/SimpleLineChart",
+          },
+          {
+            "displayName": "TinyLineChart",
+            "key": "TinyLineChart",
+            "url": "/en-US/examples/TinyLineChart",
+          },
+          {
+            "displayName": "DashedLineChart",
+            "key": "DashedLineChart",
+            "url": "/en-US/examples/DashedLineChart",
+          },
+          {
+            "displayName": "VerticalLineChart",
+            "key": "VerticalLineChart",
+            "url": "/en-US/examples/VerticalLineChart",
+          },
+          {
+            "displayName": "BiaxialLineChart",
+            "key": "BiaxialLineChart",
+            "url": "/en-US/examples/BiaxialLineChart",
+          },
+          {
+            "displayName": "VerticalLineChartWithSpecifiedDomain",
+            "key": "VerticalLineChartWithSpecifiedDomain",
+            "url": "/en-US/examples/VerticalLineChartWithSpecifiedDomain",
+          },
+          {
+            "displayName": "LineChartConnectNulls",
+            "key": "LineChartConnectNulls",
+            "url": "/en-US/examples/LineChartConnectNulls",
+          },
+          {
+            "displayName": "LineChartWithXAxisPadding",
+            "key": "LineChartWithXAxisPadding",
+            "url": "/en-US/examples/LineChartWithXAxisPadding",
+          },
+          {
+            "displayName": "LineChartWithReferenceLines",
+            "key": "LineChartWithReferenceLines",
+            "url": "/en-US/examples/LineChartWithReferenceLines",
+          },
+          {
+            "displayName": "CustomizedDotLineChart",
+            "key": "CustomizedDotLineChart",
+            "url": "/en-US/examples/CustomizedDotLineChart",
+          },
+          {
+            "displayName": "CustomizedLabelLineChart",
+            "key": "CustomizedLabelLineChart",
+            "url": "/en-US/examples/CustomizedLabelLineChart",
+          },
+          {
+            "displayName": "SynchronizedLineChart",
+            "key": "SynchronizedLineChart",
+            "url": "/en-US/examples/SynchronizedLineChart",
+          },
+          {
+            "displayName": "HighlightAndZoomLineChart",
+            "key": "HighlightAndZoomLineChart",
+            "url": "/en-US/examples/HighlightAndZoomLineChart",
+          },
+          {
+            "displayName": "LineChartHasMultiSeries",
+            "key": "LineChartHasMultiSeries",
+            "url": "/en-US/examples/LineChartHasMultiSeries",
+          },
+          {
+            "displayName": "LineChartAxisInterval",
+            "key": "LineChartAxisInterval",
+            "url": "/en-US/examples/LineChartAxisInterval",
+          },
+          {
+            "displayName": "LineChartNegativeValuesWithReferenceLines",
+            "key": "LineChartNegativeValuesWithReferenceLines",
+            "url": "/en-US/examples/LineChartNegativeValuesWithReferenceLines",
+          },
+        ],
+        "key": "LineChart",
+      },
+      {
+        "displayName": "AreaChart",
+        "items": [
+          {
+            "displayName": "SimpleAreaChart",
+            "key": "SimpleAreaChart",
+            "url": "/en-US/examples/SimpleAreaChart",
+          },
+          {
+            "displayName": "StackedAreaChart",
+            "key": "StackedAreaChart",
+            "url": "/en-US/examples/StackedAreaChart",
+          },
+          {
+            "displayName": "AreaChartConnectNulls",
+            "key": "AreaChartConnectNulls",
+            "url": "/en-US/examples/AreaChartConnectNulls",
+          },
+          {
+            "displayName": "CardinalAreaChart",
+            "key": "CardinalAreaChart",
+            "url": "/en-US/examples/CardinalAreaChart",
+          },
+          {
+            "displayName": "PercentAreaChart",
+            "key": "PercentAreaChart",
+            "url": "/en-US/examples/PercentAreaChart",
+          },
+          {
+            "displayName": "SynchronizedAreaChart",
+            "key": "SynchronizedAreaChart",
+            "url": "/en-US/examples/SynchronizedAreaChart",
+          },
+          {
+            "displayName": "TinyAreaChart",
+            "key": "TinyAreaChart",
+            "url": "/en-US/examples/TinyAreaChart",
+          },
+          {
+            "displayName": "AreaChartFillByValue",
+            "key": "AreaChartFillByValue",
+            "url": "/en-US/examples/AreaChartFillByValue",
+          },
+        ],
+        "key": "AreaChart",
+      },
+      {
+        "displayName": "BarChart",
+        "items": [
+          {
+            "displayName": "TinyBarChart",
+            "key": "TinyBarChart",
+            "url": "/en-US/examples/TinyBarChart",
+          },
+          {
+            "displayName": "SimpleBarChart",
+            "key": "SimpleBarChart",
+            "url": "/en-US/examples/SimpleBarChart",
+          },
+          {
+            "displayName": "StackedBarChart",
+            "key": "StackedBarChart",
+            "url": "/en-US/examples/StackedBarChart",
+          },
+          {
+            "displayName": "MixBarChart",
+            "key": "MixBarChart",
+            "url": "/en-US/examples/MixBarChart",
+          },
+          {
+            "displayName": "CustomShapeBarChart",
+            "key": "CustomShapeBarChart",
+            "url": "/en-US/examples/CustomShapeBarChart",
+          },
+          {
+            "displayName": "PositiveAndNegativeBarChart",
+            "key": "PositiveAndNegativeBarChart",
+            "url": "/en-US/examples/PositiveAndNegativeBarChart",
+          },
+          {
+            "displayName": "BrushBarChart",
+            "key": "BrushBarChart",
+            "url": "/en-US/examples/BrushBarChart",
+          },
+          {
+            "displayName": "BarChartWithCustomizedEvent",
+            "key": "BarChartWithCustomizedEvent",
+            "url": "/en-US/examples/BarChartWithCustomizedEvent",
+          },
+          {
+            "displayName": "BarChartWithMinHeight",
+            "key": "BarChartWithMinHeight",
+            "url": "/en-US/examples/BarChartWithMinHeight",
+          },
+          {
+            "displayName": "BarChartStackedBySign",
+            "key": "BarChartStackedBySign",
+            "url": "/en-US/examples/BarChartStackedBySign",
+          },
+          {
+            "displayName": "BiaxialBarChart",
+            "key": "BiaxialBarChart",
+            "url": "/en-US/examples/BiaxialBarChart",
+          },
+          {
+            "displayName": "BarChartHasBackground",
+            "key": "BarChartHasBackground",
+            "url": "/en-US/examples/BarChartHasBackground",
+          },
+          {
+            "displayName": "BarChartWithMultiXAxis",
+            "key": "BarChartWithMultiXAxis",
+            "url": "/en-US/examples/BarChartWithMultiXAxis",
+          },
+          {
+            "displayName": "BarChartNoPadding",
+            "key": "BarChartNoPadding",
+            "url": "/en-US/examples/BarChartNoPadding",
+          },
+        ],
+        "key": "BarChart",
+      },
+      {
+        "displayName": "ComposedChart",
+        "items": [
+          {
+            "displayName": "LineBarAreaComposedChart",
+            "key": "LineBarAreaComposedChart",
+            "url": "/en-US/examples/LineBarAreaComposedChart",
+          },
+          {
+            "displayName": "SameDataComposedChart",
+            "key": "SameDataComposedChart",
+            "url": "/en-US/examples/SameDataComposedChart",
+          },
+          {
+            "displayName": "VerticalComposedChart",
+            "key": "VerticalComposedChart",
+            "url": "/en-US/examples/VerticalComposedChart",
+          },
+          {
+            "displayName": "ComposedChartWithAxisLabels",
+            "key": "ComposedChartWithAxisLabels",
+            "url": "/en-US/examples/ComposedChartWithAxisLabels",
+          },
+          {
+            "displayName": "ScatterAndLineOfBestFit",
+            "key": "ScatterAndLineOfBestFit",
+            "url": "/en-US/examples/ScatterAndLineOfBestFit",
+          },
+          {
+            "displayName": "BandedChart",
+            "key": "BandedChart",
+            "url": "/en-US/examples/BandedChart",
+          },
+        ],
+        "key": "ComposedChart",
+      },
+      {
+        "displayName": "ScatterChart",
+        "items": [
+          {
+            "displayName": "SimpleScatterChart",
+            "key": "SimpleScatterChart",
+            "url": "/en-US/examples/SimpleScatterChart",
+          },
+          {
+            "displayName": "ThreeDimScatterChart",
+            "key": "ThreeDimScatterChart",
+            "url": "/en-US/examples/ThreeDimScatterChart",
+          },
+          {
+            "displayName": "JointLineScatterChart",
+            "key": "JointLineScatterChart",
+            "url": "/en-US/examples/JointLineScatterChart",
+          },
+          {
+            "displayName": "BubbleChart",
+            "key": "BubbleChart",
+            "url": "/en-US/examples/BubbleChart",
+          },
+          {
+            "displayName": "ScatterChartWithLabels",
+            "key": "ScatterChartWithLabels",
+            "url": "/en-US/examples/ScatterChartWithLabels",
+          },
+          {
+            "displayName": "MultipleYAxesScatterChart",
+            "key": "MultipleYAxesScatterChart",
+            "url": "/en-US/examples/MultipleYAxesScatterChart",
+          },
+          {
+            "displayName": "ScatterChartWithCells",
+            "key": "ScatterChartWithCells",
+            "url": "/en-US/examples/ScatterChartWithCells",
+          },
+        ],
+        "key": "ScatterChart",
+      },
+      {
+        "displayName": "PieChart",
+        "items": [
+          {
+            "displayName": "TwoLevelPieChart",
+            "key": "TwoLevelPieChart",
+            "url": "/en-US/examples/TwoLevelPieChart",
+          },
+          {
+            "displayName": "StraightAnglePieChart",
+            "key": "StraightAnglePieChart",
+            "url": "/en-US/examples/StraightAnglePieChart",
+          },
+          {
+            "displayName": "TwoSimplePieChart",
+            "key": "TwoSimplePieChart",
+            "url": "/en-US/examples/TwoSimplePieChart",
+          },
+          {
+            "displayName": "CustomActiveShapePieChart",
+            "key": "CustomActiveShapePieChart",
+            "url": "/en-US/examples/CustomActiveShapePieChart",
+          },
+          {
+            "displayName": "PieChartWithCustomizedLabel",
+            "key": "PieChartWithCustomizedLabel",
+            "url": "/en-US/examples/PieChartWithCustomizedLabel",
+          },
+          {
+            "displayName": "PieChartWithPaddingAngle",
+            "key": "PieChartWithPaddingAngle",
+            "url": "/en-US/examples/PieChartWithPaddingAngle",
+          },
+          {
+            "displayName": "PieChartWithNeedle",
+            "key": "PieChartWithNeedle",
+            "url": "/en-US/examples/PieChartWithNeedle",
+          },
+        ],
+        "key": "PieChart",
+      },
+      {
+        "displayName": "RadarChart",
+        "items": [
+          {
+            "displayName": "SimpleRadarChart",
+            "key": "SimpleRadarChart",
+            "url": "/en-US/examples/SimpleRadarChart",
+          },
+          {
+            "displayName": "SpecifiedDomainRadarChart",
+            "key": "SpecifiedDomainRadarChart",
+            "url": "/en-US/examples/SpecifiedDomainRadarChart",
+          },
+        ],
+        "key": "RadarChart",
+      },
+      {
+        "displayName": "RadialBarChart",
+        "items": [
+          {
+            "displayName": "SimpleRadialBarChart",
+            "key": "SimpleRadialBarChart",
+            "url": "/en-US/examples/SimpleRadialBarChart",
+          },
+        ],
+        "key": "RadialBarChart",
+      },
+      {
+        "displayName": "TreeMap",
+        "items": [
+          {
+            "displayName": "SimpleTreemap",
+            "key": "SimpleTreemap",
+            "url": "/en-US/examples/SimpleTreemap",
+          },
+          {
+            "displayName": "CustomContentTreemap",
+            "key": "CustomContentTreemap",
+            "url": "/en-US/examples/CustomContentTreemap",
+          },
+        ],
+        "key": "TreeMap",
+      },
+      {
+        "displayName": "Tooltip",
+        "items": [
+          {
+            "displayName": "CustomContentOfTooltip",
+            "key": "CustomContentOfTooltip",
+            "url": "/en-US/examples/CustomContentOfTooltip",
+          },
+        ],
+        "key": "Tooltip",
+      },
+      {
+        "displayName": "Legend",
+        "items": [
+          {
+            "displayName": "LegendEffectOpacity",
+            "key": "LegendEffectOpacity",
+            "url": "/en-US/examples/LegendEffectOpacity",
+          },
+        ],
+        "key": "Legend",
+      },
+      {
+        "displayName": "ResponsiveContainer",
+        "items": [
+          {
+            "displayName": "AreaResponsiveContainer",
+            "key": "AreaResponsiveContainer",
+            "url": "/en-US/examples/AreaResponsiveContainer",
+          },
+          {
+            "displayName": "ComposedResponsiveContainer",
+            "key": "ComposedResponsiveContainer",
+            "url": "/en-US/examples/ComposedResponsiveContainer",
+          },
+          {
+            "displayName": "PieResponsiveContainer",
+            "key": "PieResponsiveContainer",
+            "url": "/en-US/examples/PieResponsiveContainer",
+          },
+        ],
+        "key": "ResponsiveContainer",
+      },
+    ],
+    "displayName": "Examples",
+    "key": "examples",
+    "url": "/en-US/examples",
+  },
+  {
+    "displayName": "Storybook",
+    "key": "storybook",
+    "url": "/en-US/storybook",
+  },
+  {
+    "displayName": "Wiki",
+    "key": "wiki",
+    "targetBlank": true,
+    "url": "https://github.com/recharts/recharts/wiki",
+  },
+  {
+    "displayName": "GitHub",
+    "key": "github",
+    "targetBlank": true,
+    "url": "https://github.com/recharts/recharts",
+  },
+]
+`;

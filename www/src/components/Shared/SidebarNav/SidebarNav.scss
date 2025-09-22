@@ -1,0 +1,45 @@
+@use '../../../styles/variables' as variables;
+
+.sidebar {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  width: 280px;
+  padding-top: 30px;
+  padding-left: 20px;
+  overflow: auto;
+  z-index: 1;
+  background: #fff;
+
+  h4 {
+    font-size: 18px;
+    margin: 16px 0;
+  }
+
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding-left: 10px;
+      line-height: 1.5;
+      font-size: variables.$font-size-lg;
+    }
+
+    a {
+      display: block;
+      text-decoration: none;
+
+      &:hover {
+        color: variables.$brand-primary;
+      }
+
+      &.active {
+        text-decoration: underline;
+        color: variables.$brand-primary;
+        font-weight: 700;
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useParams } from 'react-router';
 import Locale, { SupportedLocale, supportedLocales } from '../locale';
 import { RouteComponentProps } from '../routes/withRouter.tsx';
 
@@ -14,6 +15,15 @@ const isSupportedLocale = (locale: string): locale is SupportedLocale => {
 
 export const getLocaleType = (props: RouteComponentProps): SupportedLocale => {
   const localeFromParams = props.params?.locale;
+  if (localeFromParams && isSupportedLocale(localeFromParams)) {
+    return localeFromParams;
+  }
+  return defaultLocale;
+};
+
+export const useLocale = () => {
+  const params = useParams();
+  const localeFromParams = params?.locale;
   if (localeFromParams && isSupportedLocale(localeFromParams)) {
     return localeFromParams;
   }

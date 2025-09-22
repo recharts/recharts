@@ -1,7 +1,9 @@
-@use 'variables';
 @use 'normalize';
-@use 'mixins';
 @use 'scaffolding';
 @use 'highlight';
 @use 'container';
 @use 'responsive';
+
+.no-wrap {
+  white-space: nowrap;
+}
