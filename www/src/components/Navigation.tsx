@@ -38,23 +38,70 @@ function MobileNavToggle({ onClick }: { onClick: () => void }) {
 
 function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const allNavigationItems = useAllNavigationItems();
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const toggle = (key: string) => {
+    setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   return (
     <>
       <div className={`mobile-nav-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
       <div className={`slide-right-mobile-nav ${isOpen ? 'open' : ''}`}>
         <ul className="navigation-items">
-          {allNavigationItems.map(navItem => (
-            <li key={navItem.key}>
-              {navItem.targetBlank ? (
-                <TargetBlankLink href={navItem.url}>{navItem.displayName}</TargetBlankLink>
-              ) : (
-                <NavLink to={navItem.url} onClick={onClose}>
-                  {navItem.displayName}
-                </NavLink>
-              )}
-            </li>
-          ))}
+          {allNavigationItems.map(navItem => {
+            const { categories } = navItem;
+            const hasSubItems = categories != null && categories.length > 0;
+            const isExpanded = expanded[navItem.key];
+
+            if (hasSubItems) {
+              return (
+                <li key={navItem.key} className={`collapsible ${isExpanded ? 'expanded' : ''}`}>
+                  <a
+                    href="#"
+                    role="button"
+                    className="collapsible-trigger"
+                    onClick={e => {
+                      e.preventDefault();
+                      toggle(navItem.key);
+                    }}
+                  >
+                    {navItem.displayName}
+                  </a>
+                  {isExpanded && (
+                    <div className="collapsible-content">
+                      {categories.map(({ key, displayName, items }) => (
+                        <div className="sidebar-cate" key={key}>
+                          {displayName && <h4>{displayName}</h4>}
+                          <ul className="menu">
+                            {items.map(item => (
+                              <li key={item.key}>
+                                <NavLink to={item.url} onClick={onClose}>
+                                  {item.displayName}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              );
+            }
+
+            return (
+              <li key={navItem.key}>
+                {navItem.targetBlank ? (
+                  <TargetBlankLink href={navItem.url}>{navItem.displayName}</TargetBlankLink>
+                ) : (
+                  <NavLink to={navItem.url} onClick={onClose}>
+                    {navItem.displayName}
+                  </NavLink>
+                )}
+              </li>
+            );
+          })}
         </ul>
         <LocaleSwitch />
       </div>
