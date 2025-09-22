@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
+import 'simple-line-icons/scss/simple-line-icons.scss';
 import { useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.scss';
@@ -69,7 +70,8 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                       toggle(navItem.key);
                     }}
                   >
-                    {navItem.displayName}
+                    <span>{navItem.displayName}</span>
+                    <i className="icon-arrow-left" />
                   </a>
                   {isExpanded && (
                     <div className="collapsible-content">

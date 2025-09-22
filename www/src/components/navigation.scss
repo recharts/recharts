@@ -98,7 +98,7 @@
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
-  padding: 60px 20px 20px;
+  padding: 60px 0 20px;
   overflow-y: auto;
 
   &.open {
@@ -115,7 +115,8 @@
     line-height: 2em;
 
     a {
-      padding: 8px 0;
+      display: block;
+      padding: 8px 20px;
       font-size: variables.$font-size-lg;
 
       &.active {
@@ -137,6 +138,12 @@
 
       &.expanded .collapsible-trigger i {
         transform: rotate(-90deg);
+      }
+
+      .collapsible-content .sidebar-cate h4 {
+        padding: 8px 20px;
+        margin: 0;
+        font-size: variables.$font-size-lg;
       }
     }
   }
