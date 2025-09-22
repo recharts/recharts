@@ -1,14 +1,20 @@
-@use 'variables';
+@use 'variables' as variables;
 @use 'mixins';
 @use 'zindex';
 
-$mobile-breakpoint: 991px;
-
-.mobile-nav-toggle {
+.mobile-only {
   display: none;
 }
 
-@media (max-width: $mobile-breakpoint) {
+@media (max-width: variables.$mobile-breakpoint) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
   .page {
     > .content {
       min-width: 100%;

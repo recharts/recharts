@@ -12,7 +12,7 @@ export function LocaleSwitch() {
   const curLocale = useLocale();
 
   return (
-    <span className="language-switch no-wrap">
+    <span className="language-switch no-wrap desktop-only">
       {locales.map(({ locale, text }, index) => {
         const isActive = locale === curLocale;
         const linkPath = pathName.indexOf(curLocale) >= 0 ? pathName.replace(curLocale, locale) : `/${locale}`;

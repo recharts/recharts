@@ -16,7 +16,7 @@ export function SidebarNav() {
   }
 
   return (
-    <div className="sidebar">
+    <div className="sidebar desktop-only">
       <h2>{currentNavItem.displayName}</h2>
       {currentNavItem.categories.map(({ key, displayName, items }) => (
         <div className="sidebar-cate" key={key}>
