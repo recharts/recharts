@@ -61,18 +61,10 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             if (hasSubItems) {
               return (
                 <li key={navItem.key} className={`collapsible ${isExpanded ? 'expanded' : ''}`}>
-                  <a
-                    href="#"
-                    role="button"
-                    className="collapsible-trigger"
-                    onClick={e => {
-                      e.preventDefault();
-                      toggle(navItem.key);
-                    }}
-                  >
+                  <button type="button" className="collapsible-trigger" onClick={() => toggle(navItem.key)}>
                     <span>{navItem.displayName}</span>
                     <i className="icon-arrow-left" />
-                  </a>
+                  </button>
                   {isExpanded && (
                     <div className="collapsible-content">
                       {categories.map(({ key, displayName, items }) => (

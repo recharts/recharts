@@ -130,6 +130,14 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: variables.$font-size-lg;
+        padding: 8px 20px;
+        cursor: pointer;
+        text-align: left;
 
         i {
           transition: transform 0.2s ease-in-out;
