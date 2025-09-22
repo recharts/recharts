@@ -15,6 +15,7 @@ import {
 import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
+import { calculateChartDimensions } from './responsiveContainerUtils';
 
 export interface Props {
   /**
@@ -166,24 +167,12 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
 
       warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
-      let calculatedWidth: number = isPercent(width) ? containerWidth : (width as number);
-      let calculatedHeight: number = isPercent(height) ? containerHeight : (height as number);
-
-      if (aspect && aspect > 0) {
-        // Preserve the desired aspect ratio
-        if (calculatedWidth) {
-          // Will default to using width for aspect ratio
-          calculatedHeight = calculatedWidth / aspect;
-        } else if (calculatedHeight) {
-          // But we should also take height into consideration
-          calculatedWidth = calculatedHeight * aspect;
-        }
-
-        // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
-        if (maxHeight && calculatedHeight > maxHeight) {
-          calculatedHeight = maxHeight;
-        }
-      }
+      const { calculatedWidth, calculatedHeight } = calculateChartDimensions(containerWidth, containerHeight, {
+        width,
+        height,
+        aspect,
+        maxHeight,
+      });
 
       warn(
         calculatedWidth > 0 || calculatedHeight > 0,
