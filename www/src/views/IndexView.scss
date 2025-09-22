@@ -3,8 +3,8 @@
 
 .page-index {
   .block {
-    width: 1000px;
-    padding: 50px 0;
+    max-width: 1000px;
+    padding: 50px 20px;
     margin: 0 auto;
     border-top: 1px solid #e6e6e6;
 
@@ -16,9 +16,9 @@
   }
 
   .desc {
-    width: 1000px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding-top: 60px;
+    padding: 60px 20px 0;
 
     > p,
     > a {
@@ -54,12 +54,13 @@
   }
 
   .examples {
-    width: 1000px;
+    max-width: 1000px;
     margin: 0 auto;
     margin-top: 30px;
+    padding: 0 20px;
 
     > .ex-code {
-      width: 540px;
+      max-width: 540px;
       margin: 0 auto;
     }
   }
@@ -69,7 +70,7 @@
     margin-top: 60px;
 
     .feat {
-      width: 1000px;
+      max-width: 1000px;
       margin: 0 auto;
       @include mixins.clearfix;
 
@@ -137,7 +138,7 @@
 
     .users {
       @include mixins.clearfix();
-      width: 1000px;
+      max-width: 1000px;
       margin: auto;
 
       .user {

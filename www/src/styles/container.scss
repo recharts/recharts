@@ -10,17 +10,18 @@ header {
   z-index: 1000;
 
   .header-wrapper {
-    min-width: 1200px;
+    max-width: 1200px;
     height: 60px;
     line-height: 60px;
     margin: 0 auto;
+    padding: 0 20px;
     @include mixins.clearfix;
   }
 
   .logo {
     float: left;
     width: 132px;
-    margin: 0 60px 0 20px;
+    margin: 0;
     font-family: variables.$font-family-code;
     font-weight: 300;
     font-size: variables.$font-size-xl;
@@ -126,7 +127,6 @@ footer {
   }
 
   > .content {
-    min-width: 1200px;
     padding-left: 300px;
 
     h1,
@@ -157,8 +157,9 @@ footer {
 .page-guide,
 .page-api,
 .page-examples {
-  min-width: 1200px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 .page-examples {
