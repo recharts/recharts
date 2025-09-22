@@ -64,7 +64,7 @@ const PolarAngles: React.FC<Props> = props => {
         const start = polarToCartesian(cx, cy, innerRadius, entry);
         const end = polarToCartesian(cx, cy, outerRadius, entry);
 
-        return <line {...polarAnglesProps} key={`line-${entry}`} x1={start.x} y1={start.y} x2={end.x} y2={end.y} />;
+        return <line key={`line-${entry}`} {...polarAnglesProps} x1={start.x} y1={start.y} x2={end.x} y2={end.y} />;
       })}
     </g>
   );

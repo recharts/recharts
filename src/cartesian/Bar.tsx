@@ -401,6 +401,9 @@ function BarRectangles({
       {data.map((entry: BarRectangleItem, i: number) => {
         return (
           <Layer
+            // https://github.com/recharts/recharts/issues/5415
+            // eslint-disable-next-line react/no-array-index-key
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
@@ -409,9 +412,6 @@ function BarRectangles({
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
             onClick={onClickFromContext(entry, i)}
-            // https://github.com/recharts/recharts/issues/5415
-            // eslint-disable-next-line react/no-array-index-key
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
           >
             {activeBar ? (
               <BarRectangleWithActiveState
