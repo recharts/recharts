@@ -327,6 +327,8 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 
         return (
           <Layer
+            // eslint-disable-next-line react/no-array-index-key
+            key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             className="recharts-scatter-symbol"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             // @ts-expect-error the types need a bit of attention
@@ -335,8 +337,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
-            // eslint-disable-next-line react/no-array-index-key
-            key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           >
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
           </Layer>

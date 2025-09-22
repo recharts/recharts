@@ -120,6 +120,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
         return (
           <Label
+            key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             {...filterProps(entry, true)}
             {...others}
             {...idProps}
@@ -134,7 +135,6 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
             value={value}
             textBreakAll={textBreakAll}
             viewBox={entry.viewBox}
-            key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             index={index}
           />
         );

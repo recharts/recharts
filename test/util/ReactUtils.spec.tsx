@@ -253,7 +253,10 @@ describe('ReactUtils', () => {
     });
 
     test('Array', () => {
-      const children = [<li key="1">1</li>, <>{[<li key="2">2</li>, <li key="3">3</li>]}</>];
+      const children = [
+        <li key="1">1</li>,
+        <React.Fragment key="array-test-wrapper">{[<li key="2">2</li>, <li key="3">3</li>]}</React.Fragment>,
+      ];
 
       const result = toArray(children);
       expect(result.length).toEqual(3);
@@ -262,7 +265,7 @@ describe('ReactUtils', () => {
 
     test('Ignores `undefined` and `null`', () => {
       const children = [
-        <>
+        <React.Fragment key="null-undefined-test">
           {null}
           <li key="1" />
           {null}
@@ -270,7 +273,7 @@ describe('ReactUtils', () => {
           <li key="2" />
           {undefined}
           <li key="3" />
-        </>,
+        </React.Fragment>,
       ];
       const result = toArray(children);
       expect(result.length).toEqual(3);
@@ -287,13 +290,13 @@ describe('ReactUtils', () => {
       };
 
       const children = [
-        <>
+        <React.Fragment key="iterable-test-container">
           {[<li key="1">1</li>]}
           <li key="2">2</li>
           {null}
           {new Set([<li key="3">3</li>, <li key="4">4</li>])}
           {iterable}
-        </>,
+        </React.Fragment>,
       ];
       const result = toArray(children);
       expect(result.length).toEqual(6);
@@ -302,19 +305,19 @@ describe('ReactUtils', () => {
 
     test('Fragment', () => {
       const children = [
-        <>
+        <React.Fragment key="nested-fragment-root">
           <li key="1">1</li>
-          <>
+          <React.Fragment key="nested-fragment-level1">
             <li key="2">2</li>
             <li key="3">3</li>
-          </>
-          <>
-            <>
+          </React.Fragment>
+          <React.Fragment key="nested-fragment-level2">
+            <React.Fragment key="nested-fragment-deep">
               <li key="4">4</li>
               <li key="5">5</li>
-            </>
-          </>
-        </>,
+            </React.Fragment>
+          </React.Fragment>
+        </React.Fragment>,
       ];
 
       const result = toArray(children);
@@ -326,10 +329,10 @@ describe('ReactUtils', () => {
   describe('findAllByType', () => {
     test('findAllByType returns children that matched the type', () => {
       const children = [
-        <div />,
+        <div key="div-1" />,
         <Line key="a" />,
         null,
-        <Bar dataKey="A" />,
+        <Bar key="bar-1" dataKey="A" />,
         undefined,
         <Line key="b" />,
         <Line key="c" />,
@@ -342,15 +345,15 @@ describe('ReactUtils', () => {
     test('findAllByType includes children inside of the fragment', () => {
       const children = [
         <Line key="a" />,
-        <div />,
-        <>
+        <div key="div-2" />,
+        <React.Fragment key="findAllByType-fragment-test">
           <Line key="b" />
           <Line key="c" />
-          <Bar dataKey="A" />
-          <>
+          <Bar key="bar-2" dataKey="A" />
+          <React.Fragment key="findAllByType-nested-fragment">
             <Line key="d" />
-          </>
-        </>,
+          </React.Fragment>
+        </React.Fragment>,
       ];
       const lineChildren = findAllByType(children, Line);
       expect(lineChildren.length).toEqual(4);

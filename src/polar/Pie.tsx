@@ -453,6 +453,8 @@ function PieSectors(props: PieSectorsProps) {
 
         return (
           <Layer
+            // eslint-disable-next-line react/no-array-index-key
+            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
             tabIndex={-1}
             className="recharts-pie-sector"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
@@ -462,8 +464,6 @@ function PieSectors(props: PieSectorsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
-            // eslint-disable-next-line react/no-array-index-key
-            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
           >
             <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
           </Layer>

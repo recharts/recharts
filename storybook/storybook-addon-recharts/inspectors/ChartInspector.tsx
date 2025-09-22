@@ -42,7 +42,7 @@ export function ChartInspector({ setEnabledOverlays, allInspectors, defaultOpene
       <table style={tableStyle}>
         <tbody>
           {enabledInspectors.map(([name, Component]) => (
-            <tr style={tableStyle}>
+            <tr key={name} style={tableStyle}>
               <th style={tableStyle}>{name}</th>
               <td style={tableStyle}>
                 <Component />

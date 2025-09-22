@@ -149,7 +149,6 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           onMouseEnter,
           onMouseLeave,
           onClick,
-          key: `sector-${i}`,
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
@@ -157,7 +156,12 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           option: isActive ? activeShape : shape,
         };
 
-        return <RadialBarSector {...radialBarSectorProps} />;
+        return (
+          <RadialBarSector
+            key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+            {...radialBarSectorProps}
+          />
+        );
       })}
       <LabelListFromLabelProp label={allOtherRadialBarProps.label} />
       {allOtherRadialBarProps.children}
@@ -342,13 +346,17 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
         ...backgroundProps,
         ...adaptEventsOfChild(this.props, entry, i),
         index: i,
-        key: `sector-${i}`,
         className: clsx('recharts-radial-bar-background-sector', backgroundProps?.className),
         option: background,
         isActive: false,
       };
 
-      return <RadialBarSector {...props} />;
+      return (
+        <RadialBarSector
+          key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+          {...props}
+        />
+      );
     });
   }
 
