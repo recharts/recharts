@@ -1,4 +1,3 @@
-import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const data = [
@@ -46,7 +45,7 @@ const data = [
   },
 ];
 
-const CustomizedDot = props => {
+const CustomizedDot = (props: any) => {
   const { cx, cy, value } = props;
 
   if (value > 2500) {
@@ -83,7 +82,7 @@ const CustomizedDotLineChart = () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={<CustomizedDot />} />
+        <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={CustomizedDot} />
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
       </LineChart>
     </ResponsiveContainer>

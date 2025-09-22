@@ -6,10 +6,7 @@
   "scripts": {
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite",
-    "check-types": "tsc --noEmit",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "start": "vite"
   },
   "repository": {
     "type": "git",

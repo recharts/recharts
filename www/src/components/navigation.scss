@@ -1,0 +1,69 @@
+@use '../styles/variables' as variables;
+
+nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+
+  .navigation-items {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    gap: 40px;
+
+    a {
+      display: inline-block;
+      height: 61px;
+      font-size: variables.$font-size-lg;
+
+      &.active {
+        color: variables.$brand-primary;
+        border-bottom: 2px solid variables.$brand-primary;
+        cursor: default;
+      }
+    }
+  }
+
+  .mobile-nav-toggle {
+    display: none;
+  }
+
+}
+
+@media (max-width: 991px) {
+  nav.mobile-nav-toggle {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    outline: none;
+
+    &:focus {
+      outline: 2px solid variables.$brand-info;
+      outline-offset: 2px;
+    }
+
+    span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background-color: variables.$brand-info;
+      margin-bottom: 5px;
+      transition: transform 0.3s, opacity 0.3s;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .navigation-items {
+    display: none;
+  }
+}

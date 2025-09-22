@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import { IndexView, GuideView, APIView, ExamplesView, Storybook } from '../views';
-import Frame from '../layouts/Frame';
+import { Frame } from '../layouts/Frame';
 import { defaultLocale } from '../utils/LocaleUtils.ts';
 
 function RedirectToDefaultExample() {

@@ -1,61 +1,30 @@
-import { ReactNode } from 'react';
-import { Link } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import './SidebarNav.scss';
+import { NavItem, useAllNavigationItems } from '../../../navigation.ts';
 
-/**
- * Represents a single navigation link in the sidebar menu.
- */
-export type NavItem = {
-  /** The unique identifier for the item, used for display text and keys. */
-  name: string;
-  /** The URL path for the navigation link. */
-  url: string;
-};
+function useCurrentNavItem(): NavItem | undefined {
+  const allNavigationItems = useAllNavigationItems();
+  const location = useLocation();
+  return allNavigationItems.find(item => location.pathname.includes(item.url));
+}
 
-/**
- * Represents a category of navigation links in the sidebar.
- */
-export type NavCategory = {
-  /** The title of the category, displayed as a heading. Can be an empty string for an uncategorized list. */
-  name: string;
-  /** An array of NavItem objects belonging to this category. */
-  items: NavItem[];
-};
+export function SidebarNav() {
+  const currentNavItem = useCurrentNavItem();
 
-/**
- * Props for the SidebarNav component.
- */
-type SidebarNavProps = {
-  /** The main title displayed at the top of the sidebar. */
-  title: string;
-  /** An array of category objects that structure the navigation links. */
-  categories: NavCategory[];
-  /** The name of the currently active page, used to highlight the correct link in the menu. */
-  activePage: string;
-  /**
-   * A function that renders the content of a navigation link.
-   * This allows for custom elements like tags or specific text formatting.
-   * @param item The navigation item to render.
-   * @returns A ReactNode to be displayed inside the link.
-   */
-  renderItem: (item: NavItem) => ReactNode;
-};
-
-export function SidebarNav(props: SidebarNavProps) {
-  const { title, categories, activePage, renderItem } = props;
+  if (currentNavItem == null || !currentNavItem.categories?.length) {
+    return null;
+  }
 
   return (
     <div className="sidebar">
-      <h2>{title}</h2>
-      {categories.map(({ name: categoryName, items }) => (
-        <div className="sidebar-cate" key={categoryName || 'default'}>
-          {categoryName && <h4>{categoryName}</h4>}
+      <h2>{currentNavItem.displayName}</h2>
+      {currentNavItem.categories.map(({ key, displayName, items }) => (
+        <div className="sidebar-cate" key={key}>
+          {displayName && <h4>{displayName}</h4>}
           <ul className="menu">
             {items.map(item => (
-              <li key={item.name}>
-                <Link className={activePage === item.name ? 'active' : ''} to={item.url}>
-                  {renderItem(item)}
-                </Link>
+              <li key={item.key}>
+                <NavLink to={item.url}>{item.displayName}</NavLink>
               </li>
             ))}
           </ul>

@@ -2,78 +2,6 @@
 @use 'variables';
 @use 'zindex';
 
-header {
-  width: 100%;
-  background-color: #fcfcfc;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-
-  .header-wrapper {
-    max-width: 1200px;
-    height: 60px;
-    line-height: 60px;
-    margin: 0 auto;
-    padding: 0 20px;
-    @include mixins.clearfix;
-  }
-
-  .logo {
-    float: left;
-    width: 132px;
-    margin: 0;
-    font-family: variables.$font-family-code;
-    font-weight: 300;
-    font-size: variables.$font-size-xl;
-    white-space: nowrap;
-
-    > a {
-      color: variables.$brand-info;
-    }
-  }
-
-  nav {
-    @include mixins.clearfix;
-    height: 60px;
-    line-height: 60px;
-  }
-
-  .nav {
-    > li {
-      float: left;
-      padding: 0 20px;
-
-      > a {
-        display: inline-block;
-        height: 61px;
-        font-size: variables.$font-size-lg;
-
-        &.active {
-          color: variables.$brand-primary;
-          border-bottom: 2px solid variables.$brand-primary;
-          cursor: default;
-        }
-      }
-    }
-
-    > .github-wrapper,
-    > .language-switch-wrapper {
-      float: right;
-    }
-
-    .language-switch {
-      .switch-item {
-        cursor: pointer;
-        &.active {
-          cursor: default;
-          color: variables.$brand-primary;
-        }
-      }
-    }
-  }
-}
-
 footer {
   text-align: center;
   padding-top: 12px;
@@ -86,47 +14,6 @@ footer {
 
 .page {
   min-height: 400px;
-
-  > .sidebar {
-    position: fixed;
-    top: 60px;
-    bottom: 0;
-    width: 280px;
-    padding-top: 30px;
-    padding-left: 20px;
-    overflow: auto;
-    z-index: 1;
-    background: #fff;
-
-    .sidebar-cate {
-      > h2 {
-        margin-bottom: 20px;
-        font-size: 24px;
-      }
-
-      > h4 {
-        margin: 16px 0;
-        font-size: 18px;
-      }
-
-      > .menu {
-        > li {
-          padding-left: 10px;
-          line-height: 1.5;
-          font-size: variables.$font-size-lg;
-
-          a.active {
-            color: variables.$brand-primary;
-          }
-        }
-      }
-
-      &:last-child {
-        margin-bottom: 30px;
-      }
-    }
-  }
-
   > .content {
     padding-left: 300px;
 

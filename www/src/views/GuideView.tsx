@@ -1,10 +1,9 @@
 import { ComponentType, PureComponent } from 'react';
 import { Installation, GettingStarted, Customize } from '../components/GuideView';
-import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
+import { getLocaleType } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ActiveIndex } from '../components/GuideView/ActiveIndex.tsx';
-import { SidebarNav } from '../components/Shared/SidebarNav';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -32,20 +31,6 @@ class GuideView extends PureComponent<RouteComponentProps> {
 
     return (
       <div className="page page-guide">
-        <SidebarNav
-          title={localeGet(locale, 'guide', 'guide')}
-          activePage={page}
-          categories={[
-            {
-              name: '',
-              items: allGuides.map(entry => ({
-                name: entry,
-                url: `/${locale}/guide/${entry}`,
-              })),
-            },
-          ]}
-          renderItem={item => localeGet(locale, 'guide', item.name)}
-        />
         <div className="content">
           <Guide locale={locale} page={page} />
         </div>

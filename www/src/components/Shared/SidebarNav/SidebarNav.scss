@@ -1,15 +1,19 @@
-@use '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 .sidebar {
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  width: 280px;
+  padding-top: 30px;
+  padding-left: 20px;
+  overflow: auto;
+  z-index: 1;
+  background: #fff;
 
   h4 {
-    font-size: 16px;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    font-size: 18px;
+    margin: 16px 0;
   }
 
   .menu {
@@ -17,18 +21,22 @@
     padding: 0;
     margin: 0;
 
+    li {
+      padding-left: 10px;
+      line-height: 1.5;
+      font-size: variables.$font-size-lg;
+    }
+
     a {
       display: block;
-      padding: 5px 0;
-      color: #333;
       text-decoration: none;
-      font-size: 14px;
 
       &:hover {
         color: variables.$brand-primary;
       }
 
       &.active {
+        text-decoration: underline;
         color: variables.$brand-primary;
         font-weight: 700;
       }

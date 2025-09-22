@@ -1,0 +1,29 @@
+@use '../styles/variables' as variables;
+
+header {
+  width: 100%;
+  background-color: #fcfcfc;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 60px;
+  line-height: 60px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+
+  .logo {
+    width: 132px;
+    margin: 0;
+    font-family: variables.$font-family-code;
+    font-weight: 300;
+    font-size: variables.$font-size-xl;
+    white-space: nowrap;
+
+    > a {
+      color: variables.$brand-info;
+    }
+  }
+}

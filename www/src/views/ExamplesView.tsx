@@ -6,16 +6,12 @@ import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import { Editor } from '@monaco-editor/react';
 import { allExamples } from '../docs/exampleComponents';
-import { getLocaleType } from '../utils/LocaleUtils.ts';
 import './ExampleView.scss';
 import 'simple-line-icons/scss/simple-line-icons.scss';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { StackBlitzLink } from '../components/Shared/StackBlitzLink.tsx';
 import { sendEvent } from '../components/analytics.ts';
-import { SidebarNav } from '../components/Shared/SidebarNav';
 import { ComponentExamples } from '../docs/exampleComponents/types.ts';
-
-const categoryNames = Object.keys(allExamples).sort((a, b) => allExamples[a].order - allExamples[b].order);
 
 type ExampleComponent = {
   cateName: string;
@@ -164,23 +160,10 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
     const page = this.getPage();
 
     const exampleResult = parseExampleComponent(page);
-    const locale = getLocaleType(this.props);
 
     return (
       <div className="page page-examples">
         <Helmet title={page} />
-        <SidebarNav
-          title="Examples"
-          activePage={page}
-          categories={categoryNames.map(cate => ({
-            name: cate,
-            items: Object.keys(allExamples[cate].examples).map(name => ({
-              name,
-              url: `/${locale}/examples/${name}`,
-            })),
-          }))}
-          renderItem={item => item.name}
-        />
         <div className="content">
           <h3 className="page-title">{page}</h3>
           {exampleResult ? (

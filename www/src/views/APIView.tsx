@@ -5,10 +5,7 @@ import { Link } from 'react-router';
 import API from '../docs/api';
 import APIExamples from '../docs/apiExamples';
 import Highlight from '../utils/Highlight.tsx';
-import NewMenuTag from '../components/Shared/NewMenuTag';
 import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
-import apiCates from '../docs/apiCates.ts';
-import { SidebarNav } from '../components/Shared/SidebarNav';
 import './APIView.scss';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -209,18 +206,6 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
     return (
       <div className="page page-api">
         <Helmet title={page} />
-        <SidebarNav
-          title="API"
-          activePage={page}
-          categories={apiCates.map(category => ({
-            name: localeGet(locale, 'api', category.name),
-            items: category.items.map(compName => ({
-              name: compName,
-              url: `/${locale}/api/${compName}`,
-            })),
-          }))}
-          renderItem={item => <NewMenuTag name={item.name} isNew={false} />}
-        />
         <div className="content">
           <h3 className="page-title">{page}</h3>
           {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
