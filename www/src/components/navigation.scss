@@ -14,7 +14,7 @@
   cursor: pointer;
   background: none;
   border: none;
-  padding: 20px;
+  padding: 0 20px;
   outline: none;
   z-index: 1001;
   display: flex;
@@ -23,7 +23,6 @@
 
   &:focus {
     outline: 2px solid variables.$brand-info;
-    outline-offset: 2px;
   }
 
   .hamburger-icon span {
@@ -121,6 +120,23 @@
 
       &.active {
         color: variables.$brand-primary;
+      }
+    }
+
+    .collapsible {
+      .collapsible-trigger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        i {
+          transition: transform 0.2s ease-in-out;
+        }
+      }
+
+      &.expanded .collapsible-trigger i {
+        transform: rotate(-90deg);
       }
     }
   }
