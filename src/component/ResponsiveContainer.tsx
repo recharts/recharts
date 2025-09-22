@@ -1,21 +1,22 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
 import {
-  ReactElement,
-  forwardRef,
   cloneElement,
-  useState,
-  useImperativeHandle,
-  useRef,
-  useEffect,
-  useMemo,
   CSSProperties,
+  forwardRef,
+  ReactElement,
   useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getInnerDivStyle } from './responsiveContainerUtils';
+import { Percent } from '../util/types';
 
 export interface Props {
   /**
@@ -25,14 +26,12 @@ export interface Props {
   aspect?: number;
   /**
    * The width of the container. If a percentage string is specified, it is calculated responsive to the width of the parent element.
-   * @default '100%'
    */
-  width?: string | number;
+  width?: Percent | number;
   /**
    * The height of the container. If a percentage string is specified, it is calculated responsive to the height of the parent element.
-   * @default '100%'
    */
-  height?: string | number;
+  height?: Percent | number;
   /**
    * The minimum width of the container. It can be a percentage string or a number.
    * @default 0
@@ -79,8 +78,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         width: -1,
         height: -1,
       },
-      width = '100%',
-      height = '100%',
+      width,
+      height,
       /*
        * default min-width to 0 if not specified - 'auto' causes issues with flexbox
        * https://github.com/recharts/recharts/issues/172
@@ -211,17 +210,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
       >
-        {/*
-         * This zero-size, overflow-visible is required to allow the chart to shrink.
-         * Without it, the chart itself will fill the ResponsiveContainer, and while it allows the chart to grow,
-         * it would always keep the container at the size of the chart,
-         * and ResizeObserver would never fire.
-         * With this zero-size element, the chart itself never actually fills the container,
-         * it just so happens that it is visible because it overflows.
-         * I learned this trick from the `react-virtualized` library: https://github.com/bvaughn/react-virtualized-auto-sizer/blob/master/src/AutoSizer.ts
-         * See https://github.com/recharts/recharts/issues/172 and also https://github.com/bvaughn/react-virtualized/issues/68
-         */}
-        <div style={getInnerDivStyle()}>{chartContent}</div>
+        <div style={getInnerDivStyle({ width, height })}>{chartContent}</div>
       </div>
     );
   },

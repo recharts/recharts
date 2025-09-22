@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
 import { isPercent } from '../util/DataUtils';
 
+import { Percent } from '../util/types';
+
 export const calculateChartDimensions = (
   containerWidth: number,
   containerHeight: number,
@@ -39,8 +41,48 @@ export const calculateChartDimensions = (
   return { calculatedWidth, calculatedHeight };
 };
 
-export const getInnerDivStyle = (): CSSProperties => ({
+const bothOverflow: CSSProperties = {
   width: 0,
   height: 0,
   overflow: 'visible',
-});
+};
+const overflowX: CSSProperties = {
+  width: 0,
+  overflowX: 'visible',
+};
+const overflowY: CSSProperties = {
+  height: 0,
+  overflowY: 'visible',
+};
+const noStyle: CSSProperties = {};
+
+/**
+ * This zero-size, overflow-visible is required to allow the chart to shrink.
+ * Without it, the chart itself will fill the ResponsiveContainer, and while it allows the chart to grow,
+ * it would always keep the container at the size of the chart,
+ * and ResizeObserver would never fire.
+ * With this zero-size element, the chart itself never actually fills the container,
+ * it just so happens that it is visible because it overflows.
+ * I learned this trick from the `react-virtualized` library: https://github.com/bvaughn/react-virtualized-auto-sizer/blob/master/src/AutoSizer.ts
+ * See https://github.com/recharts/recharts/issues/172 and also https://github.com/bvaughn/react-virtualized/issues/68
+ *
+ * Also, we don't need to apply the zero-size style if the dimension is a fixed number (or undefined),
+ * because in that case the chart can't shrink in that dimension anyway.
+ * This fixes defining the dimensions using aspect ratio: https://github.com/recharts/recharts/issues/6245
+ */
+export const getInnerDivStyle = (props: { width?: Percent | number; height?: Percent | number }): CSSProperties => {
+  const { width, height } = props;
+  const isWidthPercent = isPercent(width);
+  const isHeightPercent = isPercent(height);
+
+  if (isWidthPercent && isHeightPercent) {
+    return bothOverflow;
+  }
+  if (isWidthPercent) {
+    return overflowX;
+  }
+  if (isHeightPercent) {
+    return overflowY;
+  }
+  return noStyle;
+};

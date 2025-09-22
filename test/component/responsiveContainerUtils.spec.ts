@@ -52,12 +52,33 @@ describe('calculateChartDimensions', () => {
 });
 
 describe('getInnerDivStyle', () => {
-  it('should return shrinkable object', () => {
-    const style = getInnerDivStyle();
+  it('should return shrinkable object if both width and height are percentages', () => {
+    const style = getInnerDivStyle({ width: '20%', height: '10%' });
     expect(style).toEqual({
       width: 0,
       height: 0,
       overflow: 'visible',
     });
+  });
+
+  it('should return shrinkable object if width is percentage and height is fixed', () => {
+    const style = getInnerDivStyle({ width: '20%', height: 100 });
+    expect(style).toEqual({
+      width: 0,
+      overflowX: 'visible',
+    });
+  });
+
+  it('should return shrinkable object if width is fixed and height is percentage', () => {
+    const style = getInnerDivStyle({ width: 200, height: '10%' });
+    expect(style).toEqual({
+      height: 0,
+      overflowY: 'visible',
+    });
+  });
+
+  it('should return empty object if both width and height are fixed', () => {
+    const style = getInnerDivStyle({ width: 200, height: 100 });
+    expect(style).toEqual({});
   });
 });

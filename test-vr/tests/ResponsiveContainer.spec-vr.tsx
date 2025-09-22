@@ -141,7 +141,7 @@ test('should calculate height based on aspect ratio', async ({ mount }) => {
 test('should respect width in a tall container when aspect is set', async ({ mount }) => {
   const component = await mount(
     <div style={{ width: 300, height: 800 }}>
-      <p>Aspect Ratio in Tall Container</p>
+      <p>Aspect Ratio=1 in Tall Container</p>
       <ResponsiveContainer width="100%" aspect={1}>
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
@@ -159,7 +159,7 @@ test('should respect width in a tall container when aspect is set', async ({ mou
 test('aspect ratio should be overridden by maxHeight', async ({ mount }) => {
   const component = await mount(
     <div style={{ width: 800 }}>
-      <p>Aspect Ratio with maxHeight</p>
+      <p>Aspect Ratio=1 with maxHeight=250</p>
       <ResponsiveContainer width="100%" aspect={1} maxHeight={250}>
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
