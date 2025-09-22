@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import 'simple-line-icons/scss/simple-line-icons.scss';
 import { useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
@@ -69,7 +69,12 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                     <div className="collapsible-content">
                       {categories.map(({ key, displayName, items }) => (
                         <div className="sidebar-cate" key={key}>
-                          {displayName && <h4>{displayName}</h4>}
+                          {displayName && items?.length > 0 && (
+                            <Link to={items[0].url} onClick={onClose}>
+                              <h4>{displayName}</h4>
+                            </Link>
+                          )}
+                          {displayName && (!items || items.length === 0) && <h4>{displayName}</h4>}
                           <ul className="menu">
                             {items.map(item => (
                               <li key={item.key}>
