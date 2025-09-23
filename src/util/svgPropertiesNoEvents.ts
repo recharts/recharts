@@ -1,3 +1,5 @@
+import { isValidElement, ReactElement } from 'react';
+
 const SVGElementPropKeys = [
   'aria-activedescendant',
   'aria-atomic',
@@ -337,7 +339,45 @@ export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
  * @param obj - The object to filter
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
-export function svgPropertiesNoEvents<T extends Record<string, any>>(obj: T): SVGPropsNoEvents<T> {
+function svgPropertiesNoEventsFilter<T extends Record<string, any>>(obj: T): SVGPropsNoEvents<T> {
   const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key) || isDataAttribute(key));
   return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
+}
+
+type UnknownButNotObject =
+  | null
+  | undefined
+  | string
+  | number
+  | boolean
+  | symbol
+  | ((...args: any[]) => any)
+  | Array<any>;
+
+/**
+ * Overloaded function to filter SVG properties from various input types.
+ * The input types can be:
+ * - A record of string keys to any values, in which case it returns a record of only SVG properties
+ * - A React element, in which case it returns the props of the element filtered to only SVG properties
+ * - Anything else, in which case it returns null
+ */
+export function svgPropertiesNoEvents<P extends Record<string, any>>(input: ReactElement<P>): SVGPropsNoEvents<P>;
+export function svgPropertiesNoEvents<T extends Record<string, any>>(input: T): SVGPropsNoEvents<T>;
+export function svgPropertiesNoEvents(input: unknown): null;
+export function svgPropertiesNoEvents<T extends Record<string, any>>(
+  input: ReactElement<T> | T | UnknownButNotObject,
+): SVGPropsNoEvents<T> | null {
+  if (input == null) {
+    return null;
+  }
+
+  if (isValidElement(input)) {
+    return svgPropertiesNoEventsFilter(input.props);
+  }
+
+  if (typeof input === 'object' && !Array.isArray(input)) {
+    return svgPropertiesNoEventsFilter(input);
+  }
+
+  return null;
 }

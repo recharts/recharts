@@ -1,4 +1,5 @@
-import { CSSProperties } from 'react';
+import * as React from 'react';
+import { CSSProperties, ReactElement } from 'react';
 import { describe, it, expect } from 'vitest';
 import { svgPropertiesNoEvents } from '../../src/util/svgPropertiesNoEvents';
 
@@ -138,7 +139,7 @@ describe('svgPropertiesNoEvents', () => {
     });
   });
 
-  test('should include data-* attributes', () => {
+  it('should include data-* attributes', () => {
     const input = {
       'data-test': 'test-value',
       'data-id': '123',
@@ -151,7 +152,7 @@ describe('svgPropertiesNoEvents', () => {
     });
   });
 
-  test('should exclude symbols and numbers as keys', () => {
+  it('should exclude symbols and numbers as keys', () => {
     const sym = Symbol('test');
     const input: { [key: PropertyKey]: any } = {
       [sym]: 'symbol-value',
@@ -161,4 +162,82 @@ describe('svgPropertiesNoEvents', () => {
     const result = svgPropertiesNoEvents(input);
     expect(result).toEqual({ cx: 10 });
   });
+
+  it('should filter element props if given a ReactElement', () => {
+    type InputType = {
+      'aria-label'?: string;
+      className?: string;
+      color?: string;
+      height?: string;
+      id?: string;
+      lang?: string;
+      max: number;
+      media?: string;
+      method?: string;
+      min?: number;
+      name?: string;
+      style?: CSSProperties;
+      // Non-SVG properties
+      onClick?: () => void;
+      onMouseOver?: () => void;
+      custom?: string;
+    };
+    const myProps: InputType = {
+      'aria-label': 'test',
+      className: 'svg-class',
+      color: 'red',
+      height: '100px',
+      id: 'svg-id',
+      lang: 'en',
+      max: 10,
+      media: 'all',
+      method: 'get',
+      min: 0,
+      name: 'svg-name',
+      style: { fill: 'blue' },
+      // Non-SVG properties
+      onClick: () => {},
+      onMouseOver: () => {},
+      custom: 'not-a-svg-prop',
+    };
+    type ExpectedInputType = {
+      'aria-label'?: string;
+      className?: string;
+      color?: string;
+      height?: string;
+      id?: string;
+      lang?: string;
+      // property that used to be required in the input type, continues being required
+      max: number;
+      media?: string;
+      method?: string;
+      min?: number;
+      name?: string;
+      style?: CSSProperties;
+    };
+    const element: ReactElement<InputType> = <svg {...myProps} />;
+    const result: ExpectedInputType = svgPropertiesNoEvents(element);
+    expect(result).toEqual({
+      'aria-label': 'test',
+      className: 'svg-class',
+      color: 'red',
+      height: '100px',
+      id: 'svg-id',
+      lang: 'en',
+      max: 10,
+      media: 'all',
+      method: 'get',
+      min: 0,
+      name: 'svg-name',
+      style: { fill: 'blue' },
+    });
+  });
+
+  it.each([null, undefined, true, false, [], 'string', 1, Symbol.for('key')] as const)(
+    'should return null when passed %s',
+    input => {
+      const result: null = svgPropertiesNoEvents(input);
+      expect(result).toBeNull();
+    },
+  );
 });
