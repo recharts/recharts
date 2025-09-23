@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
+import { MouseEvent, ReactElement, Ref, SVGProps, useCallback, useMemo, useRef } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { shallowEqual } from '../util/ShallowEqual';
 import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
-import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
@@ -26,7 +25,6 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
-import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
 const interpolationGenerator = (a: number, b: number) => {
@@ -479,25 +477,6 @@ type Props = SVGProps<SVGSVGElement> & SankeyProps;
 
 type SankeyElementType = 'node' | 'link';
 
-interface State {
-  nodes: SankeyNode[];
-  links: SankeyLink[];
-  modifiedNodes: NodeProps[];
-  modifiedLinks: LinkProps[];
-  sort?: boolean;
-
-  prevData?: SankeyData;
-  prevWidth?: number;
-  prevHeight?: number;
-  prevMargin?: Partial<Margin>;
-  prevIterations?: number;
-  prevNodeWidth?: number;
-  prevNodePadding?: number;
-  prevSort?: boolean;
-
-  tooltipPortal?: HTMLElement | null;
-}
-
 // Why is margin not a Sankey prop? No clue. Probably it should be
 const defaultSankeyMargin: Margin = {
   top: 0,
@@ -639,8 +618,8 @@ function AllSankeyLinkElements({
   onClick,
   dataKey,
 }: {
-  modifiedLinks: LinkProps[];
-  links: SankeyLink[];
+  modifiedLinks: ReadonlyArray<LinkProps>;
+  links: ReadonlyArray<SankeyLink>;
   linkContent: SankeyLinkOptions;
   onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
   onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
@@ -768,7 +747,7 @@ function AllNodeElements({
   onClick,
   dataKey,
 }: {
-  modifiedNodes: NodeProps[];
+  modifiedNodes: ReadonlyArray<NodeProps>;
   nodeContent: SankeyNodeOptions;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
@@ -795,171 +774,161 @@ function AllNodeElements({
   );
 }
 
-export class Sankey extends PureComponent<Props, State> {
-  static displayName = 'Sankey';
+function SankeyImpl(
+  props: Props & { links: ReadonlyArray<SankeyLink>; modifiedNodes: NodeProps[]; modifiedLinks: LinkProps[] },
+) {
+  const { className, style, children, links, ...others } = props;
+  const { link, dataKey, node, onMouseEnter, onMouseLeave, onClick, modifiedNodes, modifiedLinks } = props;
 
-  static defaultProps = {
-    nameKey: 'name',
-    dataKey: 'value',
-    nodePadding: 10,
-    nodeWidth: 10,
-    linkCurvature: 0.5,
-    iterations: 32,
-    margin: { top: 5, right: 5, bottom: 5, left: 5 },
-    sort: true,
-  };
+  const tooltipPortal: Ref<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
 
-  state: State = {
-    nodes: [],
-    links: [],
-    modifiedLinks: [],
-    modifiedNodes: [],
-  };
+  const attrs = svgPropertiesNoEvents(others);
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort, linkCurvature } = nextProps;
+  const width = useChartWidth();
+  const height = useChartHeight();
 
-    if (
-      data !== prevState.prevData ||
-      width !== prevState.prevWidth ||
-      height !== prevState.prevHeight ||
-      !shallowEqual(margin, prevState.prevMargin) ||
-      iterations !== prevState.prevIterations ||
-      nodeWidth !== prevState.prevNodeWidth ||
-      nodePadding !== prevState.prevNodePadding ||
-      sort !== prevState.sort
-    ) {
-      const contentWidth = width - ((margin && margin.left) || 0) - ((margin && margin.right) || 0);
-      const contentHeight = height - ((margin && margin.top) || 0) - ((margin && margin.bottom) || 0);
-      const { links, nodes } = computeData({
-        data,
-        width: contentWidth,
-        height: contentHeight,
-        iterations,
-        nodeWidth,
-        nodePadding,
-        sort,
-      });
+  const handleMouseEnter = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseEnter) {
+        onMouseEnter(item, type, e);
+      }
+    },
+    [onMouseEnter],
+  );
 
-      const top = get(margin, 'top') || 0;
-      const left = get(margin, 'left') || 0;
-      const modifiedLinks = links.map((link: SankeyLink, i) => {
-        return buildLinkProps({ link, nodes, i, top, left, linkContent: nextProps.link, linkCurvature });
-      });
+  const handleMouseLeave = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseLeave) {
+        onMouseLeave(item, type, e);
+      }
+    },
+    [onMouseLeave],
+  );
 
-      const modifiedNodes = nodes.map((node: SankeyNode, i) => {
-        return buildNodeProps({
-          node,
-          nodeContent: nextProps.node,
-          i,
-          top,
-          left,
-        });
-      });
+  const handleClick = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onClick) {
+        onClick(item, type, e);
+      }
+    },
+    [onClick],
+  );
 
-      return {
-        ...prevState,
-        nodes,
-        links,
-        modifiedLinks,
-        modifiedNodes,
-        prevData: data,
-        prevWidth: iterations,
-        prevHeight: height,
-        prevMargin: margin,
-        prevNodePadding: nodePadding,
-        prevNodeWidth: nodeWidth,
-        prevIterations: iterations,
-        prevSort: sort,
-      };
-    }
-
-    return null;
-  }
-
-  handleMouseEnter(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseEnter } = this.props;
-    if (onMouseEnter) {
-      onMouseEnter(item, type, e);
-    }
-  }
-
-  handleMouseLeave(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave(item, type, e);
-    }
-  }
-
-  handleClick(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onClick } = this.props;
-
-    if (onClick) onClick(item, type, e);
-  }
-
-  render() {
-    const { width, height, className, style, children, ...others } = this.props;
-
-    if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-      return null;
-    }
-
-    const { links, modifiedNodes, modifiedLinks } = this.state;
-    const attrs = svgPropertiesNoEvents(others);
-
-    return (
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-        <ReportChartSize width={width} height={height} />
-        <ReportChartMargin margin={defaultSankeyMargin} />
-        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-          <RechartsWrapper
-            className={className}
-            style={style}
-            width={width}
-            height={height}
-            ref={(node: HTMLDivElement) => {
-              if (this.state.tooltipPortal == null) {
-                this.setState({ tooltipPortal: node });
-              }
-            }}
-            onMouseEnter={undefined}
-            onMouseLeave={undefined}
-            onClick={undefined}
-            onMouseMove={undefined}
-            onMouseDown={undefined}
-            onMouseUp={undefined}
-            onContextMenu={undefined}
-            onDoubleClick={undefined}
-            onTouchStart={undefined}
-            onTouchMove={undefined}
-            onTouchEnd={undefined}
-          >
-            <Surface {...attrs} width={width} height={height}>
-              {children}
-              <AllSankeyLinkElements
-                links={links}
-                modifiedLinks={modifiedLinks}
-                linkContent={this.props.link}
-                dataKey={this.props.dataKey}
-                onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
-                onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
-                onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
-              />
-              <AllNodeElements
-                modifiedNodes={modifiedNodes}
-                nodeContent={this.props.node}
-                dataKey={this.props.dataKey}
-                onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
-                onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
-                onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
-              />
-            </Surface>
-          </RechartsWrapper>
-        </TooltipPortalContext.Provider>
-      </RechartsStoreProvider>
-    );
-  }
+  return (
+    <TooltipPortalContext.Provider value={tooltipPortal.current}>
+      <RechartsWrapper
+        className={className}
+        style={style}
+        width={width}
+        height={height}
+        ref={tooltipPortal}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        onClick={undefined}
+        onMouseMove={undefined}
+        onMouseDown={undefined}
+        onMouseUp={undefined}
+        onContextMenu={undefined}
+        onDoubleClick={undefined}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
+      >
+        <Surface {...attrs} width={width} height={height}>
+          {children}
+          <AllSankeyLinkElements
+            links={links}
+            modifiedLinks={modifiedLinks}
+            linkContent={link}
+            dataKey={dataKey}
+            onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
+            onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
+            onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
+          />
+          <AllNodeElements
+            modifiedNodes={modifiedNodes}
+            nodeContent={node}
+            dataKey={dataKey}
+            onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
+            onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
+            onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
+          />
+        </Surface>
+      </RechartsWrapper>
+    </TooltipPortalContext.Provider>
+  );
 }
+
+export function Sankey(props: Props) {
+  const { data, width, height, className, link, node } = props;
+
+  const margin = useMemo(() => ({ ...Sankey.defaultProps.margin, ...props.margin }), [props.margin]);
+  const iterations = props.iterations ?? Sankey.defaultProps.iterations;
+  const nodeWidth = props.nodeWidth ?? Sankey.defaultProps.nodeWidth;
+  const nodePadding = props.nodePadding ?? Sankey.defaultProps.nodePadding;
+  const sort = props.sort ?? Sankey.defaultProps.sort;
+  const linkCurvature = props.linkCurvature ?? Sankey.defaultProps.linkCurvature;
+
+  const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
+    if (!data || !width || !height || width <= 0 || height <= 0) {
+      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [] };
+    }
+    const contentWidth = width - margin.left - margin.right;
+    const contentHeight = height - margin.top - margin.bottom;
+    const computed = computeData({
+      data,
+      width: contentWidth,
+      height: contentHeight,
+      iterations,
+      nodeWidth,
+      nodePadding,
+      sort,
+    });
+
+    const top = margin.top || 0;
+    const left = margin.left || 0;
+    const newModifiedLinks = computed.links.map((l, i) => {
+      return buildLinkProps({ link: l, nodes: computed.nodes, i, top, left, linkContent: link, linkCurvature });
+    });
+
+    const newModifiedNodes = computed.nodes.map((n, i) => {
+      return buildNodeProps({
+        node: n,
+        nodeContent: node,
+        i,
+        top,
+        left,
+      });
+    });
+
+    return {
+      nodes: computed.nodes,
+      links: computed.links,
+      modifiedLinks: newModifiedLinks,
+      modifiedNodes: newModifiedNodes,
+    };
+  }, [data, width, height, margin, iterations, nodeWidth, nodePadding, sort, link, node, linkCurvature]);
+
+  return (
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
+      <ReportChartSize width={width} height={height} />
+      <ReportChartMargin margin={defaultSankeyMargin} />
+      <SankeyImpl {...props} links={links} modifiedLinks={modifiedLinks} modifiedNodes={modifiedNodes} />
+    </RechartsStoreProvider>
+  );
+}
+
+Sankey.displayName = 'Sankey';
+
+Sankey.defaultProps = {
+  nameKey: 'name',
+  dataKey: 'value',
+  nodePadding: 10,
+  nodeWidth: 10,
+  linkCurvature: 0.5,
+  iterations: 32,
+  margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  sort: true,
+};

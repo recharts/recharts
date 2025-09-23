@@ -60,7 +60,7 @@ describe('<Sankey />', () => {
       );
       expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
       expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 1000, height: 500 });
-      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+      expect(viewBoxSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should set width and height in context', () => {
@@ -78,8 +78,8 @@ describe('<Sankey />', () => {
       );
       expect(widthSpy).toHaveBeenLastCalledWith(100);
       expect(heightSpy).toHaveBeenLastCalledWith(50);
-      expect(widthSpy).toHaveBeenCalledTimes(3);
-      expect(heightSpy).toHaveBeenCalledTimes(3);
+      expect(widthSpy).toHaveBeenCalledTimes(2);
+      expect(heightSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should not throw if axes are provided - they are not an allowed child anyway', () => {
