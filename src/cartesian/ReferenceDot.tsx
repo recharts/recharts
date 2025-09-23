@@ -7,13 +7,13 @@ import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLab
 import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
-import { filterProps } from '../util/ReactUtils';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface ReferenceDotProps {
   r?: number;
@@ -75,10 +75,11 @@ function ReportReferenceDot(props: ReferenceDotSettings): null {
   return null;
 }
 
-const renderDot = (option: Props['shape'], props: any) => {
+const renderDot = (option: Props['shape'], props: DotProps) => {
   let dot;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error element cloning is not typed
     dot = React.cloneElement(option, props);
   } else if (typeof option === 'function') {
     dot = option(props);
@@ -105,9 +106,9 @@ function ReferenceDotImpl(props: Props) {
 
   const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 
-  const dotProps = {
+  const dotProps: DotProps = {
     clipPath,
-    ...filterProps(props, true),
+    ...svgPropertiesAndEvents(props),
     cx,
     cy,
   };

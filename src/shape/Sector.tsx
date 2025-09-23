@@ -2,10 +2,10 @@ import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
 import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
@@ -250,5 +250,5 @@ export const Sector: React.FC<Props> = sectorProps => {
     path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
 
-  return <path {...filterProps(props, true)} className={layerClass} d={path} />;
+  return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
 };

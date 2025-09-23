@@ -47,6 +47,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export interface LinePointItem {
   readonly value: number;
@@ -344,8 +345,8 @@ function StaticCurve({
   strokeDasharray?: string;
 }) {
   const { type, layout, connectNulls, needClip, ...others } = props;
-  const curveProps = {
-    ...filterProps(others, true),
+  const curveProps: CurveProps = {
+    ...svgPropertiesAndEvents(others),
     fill: 'none',
     className: 'recharts-line-curve',
     clipPath: needClip ? `url(#clipPath-${clipPathId})` : undefined,

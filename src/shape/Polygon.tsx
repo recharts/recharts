@@ -5,7 +5,7 @@ import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
 import { Coordinate } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;
@@ -94,16 +94,20 @@ export const Polygon: React.FC<Props> = props => {
     return (
       <g className={layerClass}>
         <path
-          {...filterProps(others, true)}
+          {...svgPropertiesAndEvents(others)}
           fill={rangePath.slice(-1) === 'Z' ? others.fill : 'none'}
           stroke="none"
           d={rangePath}
         />
         {hasStroke ? (
-          <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(points, connectNulls)} />
+          <path {...svgPropertiesAndEvents(others)} fill="none" d={getSinglePolygonPath(points, connectNulls)} />
         ) : null}
         {hasStroke ? (
-          <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(baseLinePoints, connectNulls)} />
+          <path
+            {...svgPropertiesAndEvents(others)}
+            fill="none"
+            d={getSinglePolygonPath(baseLinePoints, connectNulls)}
+          />
         ) : null}
       </g>
     );
@@ -113,7 +117,7 @@ export const Polygon: React.FC<Props> = props => {
 
   return (
     <path
-      {...filterProps(others, true)}
+      {...svgPropertiesAndEvents(others)}
       fill={singlePath.slice(-1) === 'Z' ? others.fill : 'none'}
       className={layerClass}
       d={singlePath}

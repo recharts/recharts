@@ -5,13 +5,13 @@ import * as React from 'react';
 import { SVGProps, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { interpolate } from '../util/DataUtils';
 import { useAnimationId } from '../util/useAnimationId';
 import { getTransitionVal } from '../animation/util';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export type RectRadius = [number, number, number, number];
 
@@ -137,8 +137,14 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
 
   const layerClass = clsx('recharts-rectangle', className);
   if (!isUpdateAnimationActive) {
+    const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props);
     return (
-      <path {...filterProps(props, true)} className={layerClass} d={getRectanglePath(x, y, width, height, radius)} />
+      <path
+        {...otherPathProps}
+        radius={typeof radius === 'number' ? radius : undefined}
+        className={layerClass}
+        d={getRectanglePath(x, y, width, height, radius)}
+      />
     );
   }
 
@@ -184,9 +190,13 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
         } else {
           animationStyle = { strokeDasharray: from };
         }
+
+        const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props);
+
         return (
           <path
-            {...filterProps(props, true)}
+            {...otherPathProps}
+            radius={typeof radius === 'number' ? radius : undefined}
             className={layerClass}
             d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
             ref={pathRef}

@@ -12,7 +12,6 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { Text } from './Text';
-import { filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, DataKey, CartesianViewBoxRequired, PolarViewBoxRequired } from '../util/types';
@@ -20,6 +19,7 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export type LabelContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -504,7 +504,7 @@ export function Label(outerProps: Props) {
   const cartesianViewBox = useCartesianLabelContext();
 
   /*
-   * I am not proud about this solution but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
+   * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
    * What we should really do is split Label into two components: CartesianLabel and PolarLabel and then handle their respective viewBoxes separately.
    * Also other components should set its own viewBox in a context so that we can fix https://github.com/recharts/recharts/issues/6156
    */
@@ -541,7 +541,7 @@ export function Label(outerProps: Props) {
   }
 
   const isPolarLabel = isPolar(viewBox);
-  const attrs = filterProps(props, true);
+  const attrs = svgPropertiesAndEvents(props);
 
   if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
     return renderRadialLabel(props, position, label, attrs, viewBox);

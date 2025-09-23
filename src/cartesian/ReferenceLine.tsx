@@ -12,7 +12,6 @@ import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { CartesianViewBox } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { filterProps } from '../util/ReactUtils';
 import { useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -25,6 +24,7 @@ import {
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -65,10 +65,11 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
  */
 export type Props = Omit<SVGProps<SVGLineElement>, 'viewBox'> & ReferenceLineProps;
 
-const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
+const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLineElement>) => {
   let line;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error element cloning is not typed
     line = React.cloneElement(option, props);
   } else if (typeof option === 'function') {
     line = option(props);
@@ -198,9 +199,9 @@ function ReferenceLineImpl(props: Props) {
 
   const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 
-  const lineProps = {
+  const lineProps: SVGProps<SVGLineElement> = {
     clipPath,
-    ...filterProps(props, true),
+    ...svgPropertiesAndEvents(props),
     x1,
     y1,
     x2,

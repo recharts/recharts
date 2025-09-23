@@ -7,7 +7,6 @@ import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
-import { filterProps } from '../util/ReactUtils';
 
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -17,6 +16,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { RectanglePosition } from '../util/types';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -68,10 +68,11 @@ const getRect = (
   return rectWithPoints(p1, p2);
 };
 
-const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
+const renderRect = (option: ReferenceAreaProps['shape'], props: RectangleProps) => {
   let rect;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error element cloning is not typed
     rect = React.cloneElement(option, props);
   } else if (typeof option === 'function') {
     rect = option(props);
@@ -124,7 +125,7 @@ function ReferenceAreaImpl(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
-      {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
+      {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
       <CartesianLabelContextProvider {...rect}>
         <CartesianLabelFromLabelProp label={props.label} />
         {props.children}

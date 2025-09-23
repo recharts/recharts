@@ -41,6 +41,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface RadarPoint {
   x: number;
@@ -350,11 +351,11 @@ function StaticPolygon({
   } else {
     radar = (
       <Polygon
-        {...filterProps(props, true)}
+        {...svgPropertiesAndEvents(props)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         points={points}
-        baseLinePoints={isRange ? baseLinePoints : null}
+        baseLinePoints={isRange ? baseLinePoints : undefined}
         connectNulls={connectNulls}
       />
     );
