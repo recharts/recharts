@@ -1,4 +1,8 @@
-import { calculateChartDimensions, getInnerDivStyle } from '../../src/component/responsiveContainerUtils';
+import {
+  calculateChartDimensions,
+  getDefaultWidthAndHeight,
+  getInnerDivStyle,
+} from '../../src/component/responsiveContainerUtils';
 
 describe('calculateChartDimensions', () => {
   it('should handle percentage width and height', () => {
@@ -80,5 +84,49 @@ describe('getInnerDivStyle', () => {
   it('should return empty object if both width and height are fixed', () => {
     const style = getInnerDivStyle({ width: 200, height: 100 });
     expect(style).toEqual({});
+  });
+});
+
+describe('getDefaultWidthAndHeight', () => {
+  it('should return 100% for both width and height if neither is provided', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: undefined, height: undefined, aspect: undefined });
+    expect(width).toBe('100%');
+    expect(height).toBe('100%');
+  });
+
+  it('should return provided width and default height if only width is provided', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: 300, height: undefined, aspect: undefined });
+    expect(width).toBe(300);
+    expect(height).toBe('100%');
+  });
+
+  it('should return 100% width and provided height if only height is provided but aspect is not', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: undefined, height: 150, aspect: undefined });
+    expect(width).toBe('100%');
+    expect(height).toBe(150);
+  });
+
+  it('should return provided width and height if both are provided', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: 300, height: 150, aspect: undefined });
+    expect(width).toBe(300);
+    expect(height).toBe(150);
+  });
+
+  it('should return default width and height if aspect is provided without width and height', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: undefined, height: undefined, aspect: 2 });
+    expect(width).toBe('100%');
+    expect(height).toBe('100%');
+  });
+
+  it('should return provided width and no height if aspect is provided with width', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: 300, height: undefined, aspect: 2 });
+    expect(width).toBe(300);
+    expect(height).toBe(undefined);
+  });
+
+  it('should return undefined width and provided height if aspect is provided with height', () => {
+    const { width, height } = getDefaultWidthAndHeight({ width: undefined, height: 150, aspect: 2 });
+    expect(width).toBe(undefined);
+    expect(height).toBe(150);
   });
 });

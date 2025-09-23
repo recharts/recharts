@@ -86,3 +86,27 @@ export const getInnerDivStyle = (props: { width?: Percent | number; height?: Per
   }
   return noStyle;
 };
+
+export function getDefaultWidthAndHeight({
+  width,
+  height,
+  aspect,
+}: {
+  width: Percent | number | undefined;
+  height: Percent | number | undefined;
+  aspect: number | undefined;
+}): { width: Percent | number; height: Percent | number } {
+  let calculatedWidth = width;
+  let calculatedHeight = height;
+
+  if (calculatedWidth === undefined && calculatedHeight === undefined) {
+    calculatedWidth = '100%';
+    calculatedHeight = '100%';
+  } else if (calculatedWidth === undefined) {
+    calculatedWidth = aspect && aspect > 0 ? undefined : '100%';
+  } else if (calculatedHeight === undefined) {
+    calculatedHeight = aspect && aspect > 0 ? undefined : '100%';
+  }
+
+  return { width: calculatedWidth, height: calculatedHeight };
+}

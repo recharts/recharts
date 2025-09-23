@@ -212,3 +212,25 @@ test('should create a square chart that overflows a wide screen', async ({ mount
   );
   await expect(component).toHaveScreenshot();
 });
+
+test('should create a square chart without width or height specified', async ({ mount, page }) => {
+  // Set a tall viewport to test the no-dimensions scenario
+  await page.setViewportSize({ width: 200, height: 500 });
+
+  // This scenario unfortunately doesn't work well still - the chart has 0x0 and overlaps the text below it.
+  const component = await mount(
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <p>Square chart with no width or height specified</p>
+      <ResponsiveContainer aspect={1}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false} />
+          <ChartSizeDimensions />
+        </LineChart>
+      </ResponsiveContainer>
+      <p>Should fill the smaller dimension of the parent (width in this case).</p>
+    </div>,
+  );
+  await expect(component).toHaveScreenshot();
+});

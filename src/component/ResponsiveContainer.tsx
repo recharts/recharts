@@ -15,7 +15,7 @@ import {
 import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { calculateChartDimensions, getInnerDivStyle } from './responsiveContainerUtils';
+import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
 import { Percent } from '../util/types';
 
 export interface Props {
@@ -78,8 +78,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         width: -1,
         height: -1,
       },
-      width,
-      height,
+      width: widthFromProps,
+      height: heightFromProps,
       /*
        * default min-width to 0 if not specified - 'auto' causes issues with flexbox
        * https://github.com/recharts/recharts/issues/172
@@ -96,6 +96,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
+    const { width, height } = getDefaultWidthAndHeight({ width: widthFromProps, height: heightFromProps, aspect });
     const containerRef = useRef<HTMLDivElement>(null);
     /*
      * We are using a ref to avoid re-creating the ResizeObserver when the onResize function changes.
