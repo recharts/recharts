@@ -908,9 +908,9 @@ export interface SankeyLink {
   target: number;
   source: number;
   value: number;
-  sy?: number;
-  dy?: number;
-  ty?: number;
+  sy: number;
+  dy: number;
+  ty: number;
 }
 
 export type Size = { width: number; height: number };
