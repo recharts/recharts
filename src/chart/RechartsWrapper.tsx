@@ -26,7 +26,7 @@ export type RechartsWrapperProps = Nullable<ExternalMouseEvents> & {
   ref?: Ref<HTMLDivElement>;
 };
 
-export const RechartsWrapper = forwardRef(
+export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapperProps>(
   (
     {
       children,
@@ -46,7 +46,7 @@ export const RechartsWrapper = forwardRef(
       style,
       width,
     }: RechartsWrapperProps,
-    ref: Ref<HTMLDivElement>,
+    ref: Ref<HTMLDivElement | null>,
   ) => {
     const dispatch = useAppDispatch();
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);

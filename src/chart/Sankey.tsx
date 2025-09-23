@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
+import { MouseEvent, ReactElement, Ref, SVGProps, useCallback, useMemo, useRef } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { shallowEqual } from '../util/ShallowEqual';
 import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
-import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
+import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
+import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
@@ -26,8 +25,9 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
-import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -39,10 +39,14 @@ const centerY = (node: SankeyNode) => node.y + node.dy / 2;
 
 const getValue = (entry: LinkDataItem | SankeyNode): number => (entry && entry.value) || 0;
 
-const getSumOfIds = (links: LinkDataItem[], ids: number[]): number =>
+const getSumOfIds = (links: ReadonlyArray<LinkDataItem>, ids: number[]): number =>
   ids.reduce((result, id) => result + getValue(links[id]), 0);
 
-const getSumWithWeightedSource = (tree: SankeyNode[], links: SankeyLink[], ids: number[]) =>
+const getSumWithWeightedSource = (
+  tree: ReadonlyArray<SankeyNode>,
+  links: ReadonlyArray<LinkDataItemDy>,
+  ids: number[],
+) =>
   ids.reduce((result, id) => {
     const link = links[id];
     const sourceNode = tree[link.source];
@@ -50,7 +54,11 @@ const getSumWithWeightedSource = (tree: SankeyNode[], links: SankeyLink[], ids: 
     return result + centerY(sourceNode) * getValue(links[id]);
   }, 0);
 
-const getSumWithWeightedTarget = (tree: SankeyNode[], links: SankeyLink[], ids: number[]) =>
+const getSumWithWeightedTarget = (
+  tree: ReadonlyArray<SankeyNode>,
+  links: ReadonlyArray<LinkDataItemDy>,
+  ids: ReadonlyArray<number>,
+): number =>
   ids.reduce((result: number, id: number) => {
     const link = links[id];
     const targetNode = tree[link.target];
@@ -120,7 +128,7 @@ const getNodesTree = (
       updateDepthOfTargets(tree, node);
     }
   }
-  const maxDepth = maxBy(tree, (entry: SankeyNode) => entry.depth).depth;
+  const maxDepth = maxBy(tree, (entry: SankeyNode) => entry.depth)?.depth ?? 0;
 
   if (maxDepth >= 1) {
     const childWidth = (width - nodeWidth) / maxDepth;
@@ -154,12 +162,14 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
   return result;
 };
 
+type LinkDataItemDy = LinkDataItem & { dy: number };
+
 const updateYOfTree = (
   depthTree: SankeyNode[][],
   height: number,
   nodePadding: number,
-  links: LinkDataItem[],
-): SankeyLink[] => {
+  links: ReadonlyArray<LinkDataItem>,
+): Array<LinkDataItemDy> => {
   const yRatio: number = Math.min(
     ...depthTree.map(nodes => (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)),
   );
@@ -173,7 +183,7 @@ const updateYOfTree = (
     }
   }
 
-  return links.map(link => ({ ...link, dy: getValue(link) * yRatio }));
+  return links.map((link: LinkDataItem): LinkDataItemDy => ({ ...link, dy: getValue(link) * yRatio }));
 };
 
 const resolveCollisions = (depthTree: SankeyNode[][], height: number, nodePadding: number, sort = true) => {
@@ -213,7 +223,12 @@ const resolveCollisions = (depthTree: SankeyNode[][], height: number, nodePaddin
   }
 };
 
-const relaxLeftToRight = (tree: SankeyNode[], depthTree: SankeyNode[][], links: SankeyLink[], alpha: number) => {
+const relaxLeftToRight = (
+  tree: ReadonlyArray<SankeyNode>,
+  depthTree: SankeyNode[][],
+  links: ReadonlyArray<LinkDataItemDy>,
+  alpha: number,
+) => {
   for (let i = 0, maxDepth = depthTree.length; i < maxDepth; i++) {
     const nodes = depthTree[i];
 
@@ -230,7 +245,16 @@ const relaxLeftToRight = (tree: SankeyNode[], depthTree: SankeyNode[][], links: 
     }
   }
 };
-const relaxRightToLeft = (tree: SankeyNode[], depthTree: SankeyNode[][], links: SankeyLink[], alpha: number) => {
+
+const relaxRightToLeft = (
+  tree: ReadonlyArray<SankeyNode>,
+  /*
+   * depthTree array is modified by this method!
+   */
+  depthTree: SankeyNode[][],
+  links: ReadonlyArray<LinkDataItemDy>,
+  alpha: number,
+) => {
   for (let i = depthTree.length - 1; i >= 0; i--) {
     const nodes = depthTree[i];
 
@@ -248,7 +272,7 @@ const relaxRightToLeft = (tree: SankeyNode[], depthTree: SankeyNode[][], links: 
   }
 };
 
-const updateYOfLinks = (tree: SankeyNode[], links: SankeyLink[]): void => {
+const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
   for (let i = 0, len = tree.length; i < len; i++) {
     const node = tree[i];
     let sy = 0;
@@ -261,6 +285,7 @@ const updateYOfLinks = (tree: SankeyNode[], links: SankeyLink[]): void => {
       const link = links[node.targetLinks[j]];
 
       if (link) {
+        // @ts-expect-error we should refactor this to immutable
         link.sy = sy;
         sy += link.dy;
       }
@@ -270,6 +295,7 @@ const updateYOfLinks = (tree: SankeyNode[], links: SankeyLink[]): void => {
       const link = links[node.sourceLinks[j]];
 
       if (link) {
+        // @ts-expect-error we should refactor this to immutable
         link.ty = ty;
         ty += link.dy;
       }
@@ -294,51 +320,53 @@ const computeData = ({
   nodePadding: number;
   sort: boolean;
 }): {
-  nodes: SankeyNode[];
-  links: SankeyLink[];
+  nodes: ReadonlyArray<SankeyNode>;
+  links: ReadonlyArray<SankeyLink>;
 } => {
   const { links } = data;
   const { tree } = getNodesTree(data, width, nodeWidth);
   const depthTree = getDepthTree(tree);
-  const newLinks = updateYOfTree(depthTree, height, nodePadding, links);
+  const linksWithDy: Array<LinkDataItemDy> = updateYOfTree(depthTree, height, nodePadding, links);
 
   resolveCollisions(depthTree, height, nodePadding, sort);
 
   let alpha = 1;
   for (let i = 1; i <= iterations; i++) {
-    relaxRightToLeft(tree, depthTree, newLinks, (alpha *= 0.99));
+    relaxRightToLeft(tree, depthTree, linksWithDy, (alpha *= 0.99));
 
     resolveCollisions(depthTree, height, nodePadding, sort);
 
-    relaxLeftToRight(tree, depthTree, newLinks, alpha);
+    relaxLeftToRight(tree, depthTree, linksWithDy, alpha);
 
     resolveCollisions(depthTree, height, nodePadding, sort);
   }
 
-  updateYOfLinks(tree, newLinks);
+  updateYOfLinks(tree, linksWithDy);
+  // @ts-expect-error updateYOfLinks modifies the links array to add sy and ty in place
+  const newLinks: ReadonlyArray<SankeyLink> = linksWithDy;
 
   return { nodes: tree, links: newLinks };
 };
 
-const getCoordinateOfTooltip = (item: NodeProps | LinkProps, type: SankeyElementType) => {
-  if (type === 'node') {
-    return { x: +item.x + +item.width / 2, y: +item.y + +item.height / 2 };
-  }
+const getNodeCoordinateOfTooltip = (item: NodeProps) => {
+  return { x: +item.x + +item.width / 2, y: +item.y + +item.height / 2 };
+};
 
-  return (
-    'sourceX' in item && {
-      x: (item.sourceX + item.targetX) / 2,
-      y: (item.sourceY + item.targetY) / 2,
-    }
-  );
+const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => {
+  return 'sourceX' in item
+    ? {
+        x: (item.sourceX + item.targetX) / 2,
+        y: (item.sourceY + item.targetY) / 2,
+      }
+    : undefined;
 };
 
 type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown };
 const getPayloadOfTooltip = (
   item: { payload: SankeyNode | SankeyLink },
   type: SankeyElementType,
-  nameKey: DataKey<any>,
-): SankeyTooltipPayload => {
+  nameKey: DataKey<any> | undefined,
+): SankeyTooltipPayload | undefined => {
   const { payload } = item;
   if (type === 'node') {
     return {
@@ -358,7 +386,7 @@ const getPayloadOfTooltip = (
     };
   }
 
-  return null;
+  return undefined;
 };
 
 export const sankeyPayloadSearcher: TooltipPayloadSearcher<any, any> = (
@@ -479,25 +507,6 @@ type Props = SVGProps<SVGSVGElement> & SankeyProps;
 
 type SankeyElementType = 'node' | 'link';
 
-interface State {
-  nodes: SankeyNode[];
-  links: SankeyLink[];
-  modifiedNodes: NodeProps[];
-  modifiedLinks: LinkProps[];
-  sort?: boolean;
-
-  prevData?: SankeyData;
-  prevWidth?: number;
-  prevHeight?: number;
-  prevMargin?: Partial<Margin>;
-  prevIterations?: number;
-  prevNodeWidth?: number;
-  prevNodePadding?: number;
-  prevSort?: boolean;
-
-  tooltipPortal?: HTMLElement | null;
-}
-
 // Why is margin not a Sankey prop? No clue. Probably it should be
 const defaultSankeyMargin: Margin = {
   top: 0,
@@ -506,7 +515,7 @@ const defaultSankeyMargin: Margin = {
   left: 0,
 };
 
-function renderLinkItem(option: SankeyLinkOptions, props: LinkProps) {
+function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -542,10 +551,10 @@ const buildLinkProps = ({
   linkCurvature,
 }: {
   link: SankeyLink;
-  nodes: SankeyNode[];
+  nodes: ReadonlyArray<SankeyNode>;
   top: number;
   left: number;
-  linkContent: SankeyLinkOptions;
+  linkContent: SankeyLinkOptions | undefined;
   i: number;
   linkCurvature: number;
 }): LinkProps => {
@@ -589,13 +598,13 @@ function SankeyLinkElement({
 }: {
   props: LinkProps;
   i: number;
-  linkContent: SankeyLinkOptions;
+  linkContent: SankeyLinkOptions | undefined;
   onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
   onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
   onClick: (linkProps: LinkProps, e: MouseEvent) => void;
   dataKey: DataKey<any>;
 }) {
-  const activeCoordinate = getCoordinateOfTooltip(props, 'link');
+  const activeCoordinate = getLinkCoordinateOfTooltip(props);
   const activeIndex = `link-${i}`;
 
   const dispatch = useAppDispatch();
@@ -639,9 +648,9 @@ function AllSankeyLinkElements({
   onClick,
   dataKey,
 }: {
-  modifiedLinks: LinkProps[];
-  links: SankeyLink[];
-  linkContent: SankeyLinkOptions;
+  modifiedLinks: ReadonlyArray<LinkProps>;
+  links: ReadonlyArray<SankeyLink>;
+  linkContent: SankeyLinkOptions | undefined;
   onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
   onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
   onClick: (linkProps: LinkProps, e: MouseEvent) => void;
@@ -668,7 +677,7 @@ function AllSankeyLinkElements({
   );
 }
 
-function renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
+function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -690,7 +699,7 @@ const buildNodeProps = ({
   i,
 }: {
   node: SankeyNode;
-  nodeContent: SankeyNodeOptions;
+  nodeContent: SankeyNodeOptions | undefined;
   top: number;
   left: number;
   i: number;
@@ -718,7 +727,7 @@ function NodeElement({
   dataKey,
 }: {
   props: NodeProps;
-  nodeContent: SankeyNodeOptions;
+  nodeContent: SankeyNodeOptions | undefined;
   i: number;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
@@ -727,7 +736,7 @@ function NodeElement({
 }) {
   const dispatch = useAppDispatch();
 
-  const activeCoordinate = getCoordinateOfTooltip(props, 'node');
+  const activeCoordinate = getNodeCoordinateOfTooltip(props);
   const activeIndex = `node-${i}`;
 
   const events = {
@@ -768,8 +777,8 @@ function AllNodeElements({
   onClick,
   dataKey,
 }: {
-  modifiedNodes: NodeProps[];
-  nodeContent: SankeyNodeOptions;
+  modifiedNodes: ReadonlyArray<NodeProps>;
+  nodeContent: SankeyNodeOptions | undefined;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
   onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
@@ -795,171 +804,182 @@ function AllNodeElements({
   );
 }
 
-export class Sankey extends PureComponent<Props, State> {
-  static displayName = 'Sankey';
+const sankeyDefaultProps = {
+  nameKey: 'name',
+  dataKey: 'value',
+  nodePadding: 10,
+  nodeWidth: 10,
+  linkCurvature: 0.5,
+  iterations: 32,
+  margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  sort: true,
+} as const satisfies Partial<Props>;
 
-  static defaultProps = {
-    nameKey: 'name',
-    dataKey: 'value',
-    nodePadding: 10,
-    nodeWidth: 10,
-    linkCurvature: 0.5,
-    iterations: 32,
-    margin: { top: 5, right: 5, bottom: 5, left: 5 },
-    sort: true,
-  };
+type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
 
-  state: State = {
-    nodes: [],
-    links: [],
-    modifiedLinks: [],
-    modifiedNodes: [],
-  };
+function SankeyImpl(
+  props: PropsWithResolvedDefaults & {
+    links: ReadonlyArray<SankeyLink>;
+    modifiedNodes: NodeProps[];
+    modifiedLinks: LinkProps[];
+  },
+) {
+  const { className, style, children, links, ...others } = props;
+  const { link, dataKey, node, onMouseEnter, onMouseLeave, onClick, modifiedNodes, modifiedLinks } = props;
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort, linkCurvature } = nextProps;
+  const tooltipPortal: Ref<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
 
-    if (
-      data !== prevState.prevData ||
-      width !== prevState.prevWidth ||
-      height !== prevState.prevHeight ||
-      !shallowEqual(margin, prevState.prevMargin) ||
-      iterations !== prevState.prevIterations ||
-      nodeWidth !== prevState.prevNodeWidth ||
-      nodePadding !== prevState.prevNodePadding ||
-      sort !== prevState.sort
-    ) {
-      const contentWidth = width - ((margin && margin.left) || 0) - ((margin && margin.right) || 0);
-      const contentHeight = height - ((margin && margin.top) || 0) - ((margin && margin.bottom) || 0);
-      const { links, nodes } = computeData({
-        data,
-        width: contentWidth,
-        height: contentHeight,
-        iterations,
-        nodeWidth,
-        nodePadding,
-        sort,
-      });
+  const attrs = svgPropertiesNoEvents(others);
 
-      const top = get(margin, 'top') || 0;
-      const left = get(margin, 'left') || 0;
-      const modifiedLinks = links.map((link: SankeyLink, i) => {
-        return buildLinkProps({ link, nodes, i, top, left, linkContent: nextProps.link, linkCurvature });
-      });
+  const width = useChartWidth();
+  const height = useChartHeight();
 
-      const modifiedNodes = nodes.map((node: SankeyNode, i) => {
-        return buildNodeProps({
-          node,
-          nodeContent: nextProps.node,
-          i,
-          top,
-          left,
-        });
-      });
+  const handleMouseEnter = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseEnter) {
+        onMouseEnter(item, type, e);
+      }
+    },
+    [onMouseEnter],
+  );
 
-      return {
-        ...prevState,
-        nodes,
-        links,
-        modifiedLinks,
-        modifiedNodes,
-        prevData: data,
-        prevWidth: iterations,
-        prevHeight: height,
-        prevMargin: margin,
-        prevNodePadding: nodePadding,
-        prevNodeWidth: nodeWidth,
-        prevIterations: iterations,
-        prevSort: sort,
-      };
-    }
+  const handleMouseLeave = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseLeave) {
+        onMouseLeave(item, type, e);
+      }
+    },
+    [onMouseLeave],
+  );
 
+  const handleClick = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onClick) {
+        onClick(item, type, e);
+      }
+    },
+    [onClick],
+  );
+
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
 
-  handleMouseEnter(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseEnter } = this.props;
-    if (onMouseEnter) {
-      onMouseEnter(item, type, e);
-    }
-  }
-
-  handleMouseLeave(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave(item, type, e);
-    }
-  }
-
-  handleClick(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onClick } = this.props;
-
-    if (onClick) onClick(item, type, e);
-  }
-
-  render() {
-    const { width, height, className, style, children, ...others } = this.props;
-
-    if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-      return null;
-    }
-
-    const { links, modifiedNodes, modifiedLinks } = this.state;
-    const attrs = svgPropertiesNoEvents(others);
-
-    return (
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-        <ReportChartSize width={width} height={height} />
-        <ReportChartMargin margin={defaultSankeyMargin} />
-        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-          <RechartsWrapper
-            className={className}
-            style={style}
-            width={width}
-            height={height}
-            ref={(node: HTMLDivElement) => {
-              if (this.state.tooltipPortal == null) {
-                this.setState({ tooltipPortal: node });
-              }
-            }}
-            onMouseEnter={undefined}
-            onMouseLeave={undefined}
-            onClick={undefined}
-            onMouseMove={undefined}
-            onMouseDown={undefined}
-            onMouseUp={undefined}
-            onContextMenu={undefined}
-            onDoubleClick={undefined}
-            onTouchStart={undefined}
-            onTouchMove={undefined}
-            onTouchEnd={undefined}
-          >
-            <Surface {...attrs} width={width} height={height}>
-              {children}
-              <AllSankeyLinkElements
-                links={links}
-                modifiedLinks={modifiedLinks}
-                linkContent={this.props.link}
-                dataKey={this.props.dataKey}
-                onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
-                onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
-                onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
-              />
-              <AllNodeElements
-                modifiedNodes={modifiedNodes}
-                nodeContent={this.props.node}
-                dataKey={this.props.dataKey}
-                onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
-                onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
-                onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
-              />
-            </Surface>
-          </RechartsWrapper>
-        </TooltipPortalContext.Provider>
-      </RechartsStoreProvider>
-    );
-  }
+  return (
+    <TooltipPortalContext.Provider value={tooltipPortal.current}>
+      <RechartsWrapper
+        className={className}
+        style={style}
+        width={width}
+        height={height}
+        ref={tooltipPortal}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        onClick={undefined}
+        onMouseMove={undefined}
+        onMouseDown={undefined}
+        onMouseUp={undefined}
+        onContextMenu={undefined}
+        onDoubleClick={undefined}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
+      >
+        <Surface {...attrs} width={width} height={height}>
+          {children}
+          <AllSankeyLinkElements
+            links={links}
+            modifiedLinks={modifiedLinks}
+            linkContent={link}
+            dataKey={dataKey}
+            onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
+            onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
+            onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
+          />
+          <AllNodeElements
+            modifiedNodes={modifiedNodes}
+            nodeContent={node}
+            dataKey={dataKey}
+            onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
+            onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
+            onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
+          />
+        </Surface>
+      </RechartsWrapper>
+    </TooltipPortalContext.Provider>
+  );
 }
+
+export function Sankey(outsideProps: Props) {
+  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
+  const {
+    data,
+    width,
+    height,
+    className,
+    link,
+    node,
+    iterations,
+    nodeWidth,
+    nodePadding,
+    sort,
+    linkCurvature,
+    margin,
+  } = props;
+
+  const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
+    if (!data || !width || !height || width <= 0 || height <= 0) {
+      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [] };
+    }
+    const contentWidth = width - (margin.left ?? 0) - (margin.right ?? 0);
+    const contentHeight = height - (margin.top ?? 0) - (margin.bottom ?? 0);
+    const computed = computeData({
+      data,
+      width: contentWidth,
+      height: contentHeight,
+      iterations,
+      nodeWidth,
+      nodePadding,
+      sort,
+    });
+
+    const top = margin.top || 0;
+    const left = margin.left || 0;
+    const newModifiedLinks = computed.links.map((l, i) => {
+      return buildLinkProps({ link: l, nodes: computed.nodes, i, top, left, linkContent: link, linkCurvature });
+    });
+
+    const newModifiedNodes = computed.nodes.map((n, i) => {
+      return buildNodeProps({
+        node: n,
+        nodeContent: node,
+        i,
+        top,
+        left,
+      });
+    });
+
+    return {
+      nodes: computed.nodes,
+      links: computed.links,
+      modifiedLinks: newModifiedLinks,
+      modifiedNodes: newModifiedNodes,
+    };
+  }, [data, width, height, margin, iterations, nodeWidth, nodePadding, sort, link, node, linkCurvature]);
+
+  if (!isPositiveNumber(width) || !isPositiveNumber(height) || !data || !data.links || !data.nodes) {
+    return null;
+  }
+
+  return (
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
+      <ReportChartSize width={width} height={height} />
+      <ReportChartMargin margin={defaultSankeyMargin} />
+      <SankeyImpl {...props} links={links} modifiedLinks={modifiedLinks} modifiedNodes={modifiedNodes} />
+    </RechartsStoreProvider>
+  );
+}
+
+Sankey.displayName = 'Sankey';
