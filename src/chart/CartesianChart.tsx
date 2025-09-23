@@ -9,7 +9,6 @@ import { CartesianChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -44,10 +43,6 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
   const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
   const { width, height, ...otherCategoricalProps } = rootChartProps;
-
-  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-    return null;
-  }
 
   const {
     chartName,
@@ -85,7 +80,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         syncMethod={rootChartProps.syncMethod}
         className={rootChartProps.className}
       />
-      <CategoricalChart {...otherCategoricalProps} width={width} height={height} ref={ref} />
+      <CategoricalChart {...otherCategoricalProps} ref={ref} />
     </RechartsStoreProvider>
   );
 });

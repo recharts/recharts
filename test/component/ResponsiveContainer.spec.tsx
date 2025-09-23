@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { Mock, MockInstance, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { assertNotNull } from '../helper/assertNotNull';
+import { useResponsiveContainerContext } from '../../src/component/ResponsiveContainer';
 
 declare global {
   interface Window {
@@ -46,10 +48,15 @@ describe('<ResponsiveContainer />', () => {
     window.ResizeObserver = resizeObserverMock;
   });
 
+  const DimensionSpy = ({ style = {} }: { style?: CSSProperties }) => {
+    const { width, height } = useResponsiveContainerContext();
+    return <div data-testid="inside" style={{ ...style, width, height }} />;
+  };
+
   it('Render a wrapper container in ResponsiveContainer', () => {
     const { container } = render(
       <ResponsiveContainer>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -63,7 +70,7 @@ describe('<ResponsiveContainer />', () => {
   it('Renders with minHeight and minWidth when provided', () => {
     const { container } = render(
       <ResponsiveContainer minWidth={200} minHeight={100}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -76,9 +83,13 @@ describe('<ResponsiveContainer />', () => {
   it('Renders the component inside', () => {
     render(
       <ResponsiveContainer minWidth={200} minHeight={100}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
+
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
 
     expect(screen.getByTestId('inside')).toBeTruthy();
   });
@@ -86,23 +97,21 @@ describe('<ResponsiveContainer />', () => {
   it('Handles zero height correctly', () => {
     render(
       <ResponsiveContainer height={0} aspect={2} width={300}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    expect(screen.getByTestId('inside')).toHaveAttribute('width', '300');
-    expect(screen.getByTestId('inside')).toHaveAttribute('height', '150');
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '300px', height: '150px' });
   });
 
   it('Handles zero width correctly', () => {
     render(
       <ResponsiveContainer height={300} aspect={2} width={0}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    expect(screen.getByTestId('inside')).toHaveAttribute('width', '600');
-    expect(screen.getByTestId('inside')).toHaveAttribute('height', '300');
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '600px', height: '300px' });
   });
 
   // Note that we force height and width here which will trigger a warning.
@@ -111,29 +120,27 @@ describe('<ResponsiveContainer />', () => {
   it('Preserves aspect ratio when oversized', () => {
     render(
       <ResponsiveContainer aspect={2} height={100} width={300}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    expect(screen.getByTestId('inside')).toHaveAttribute('width', '300');
-    expect(screen.getByTestId('inside')).toHaveAttribute('height', '150');
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '300px', height: '150px' });
   });
 
   it('Preserves aspect ratio when undersized', () => {
     render(
       <ResponsiveContainer aspect={2} height={300} width={100}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    expect(screen.getByTestId('inside')).toHaveAttribute('width', '100');
-    expect(screen.getByTestId('inside')).toHaveAttribute('height', '50');
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '50px' });
   });
 
   it('Renders without an id attribute when not passed', () => {
     const { container } = render(
       <ResponsiveContainer>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -143,7 +150,7 @@ describe('<ResponsiveContainer />', () => {
   it('Renders with id attribute when passed', () => {
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr">
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -151,81 +158,86 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should resize when ResizeObserver notify a change', () => {
-    const { container } = render(
-      <ResponsiveContainer id="testing-id-attr" width="100%" height={200}>
-        <div data-testid="inside" />
+    render(
+      <ResponsiveContainer width="100%" height={200}>
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    const element = container.querySelector('.recharts-responsive-container');
-    expect(element).not.toHaveAttribute('width');
-    expect(element).not.toHaveAttribute('height');
+    const testDivBefore = screen.getByTestId('inside');
+    assertNotNull(testDivBefore);
+    expect(testDivBefore).toHaveStyle({ width: '0px', height: '200px' });
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
-    const testDiv = screen.getByTestId('inside');
-
-    expect(testDiv).toHaveAttribute('width', '100');
-    expect(testDiv).toHaveAttribute('height', '200');
+    const testDivAfter = screen.getByTestId('inside');
+    assertNotNull(testDivAfter);
+    expect(testDivAfter).toHaveStyle({ width: '100px', height: '200px' });
   });
 
   it('should resize when debounced', () => {
     vi.useFakeTimers();
-    const { container } = render(
-      <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
-        <div data-testid="inside" />
+    render(
+      <ResponsiveContainer width="100%" height={200} debounce={200}>
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    const element = container.querySelector('.recharts-responsive-container');
+    const testDivBefore = screen.getByTestId('inside');
+    assertNotNull(testDivBefore);
+    expect(testDivBefore).toHaveStyle({ width: '0px', height: '200px' });
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
     });
-    expect(element).not.toHaveAttribute('width');
-    expect(element).not.toHaveAttribute('height');
 
+    const testDivInBetween = screen.getByTestId('inside');
+    assertNotNull(testDivInBetween);
+    // should still be the same since we haven't advanced the timers yet
+    expect(testDivInBetween).toHaveStyle({ width: '0px', height: '200px' });
+
+    // advance time by 100ms, should still be the same
     act(() => {
-      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
-      vi.advanceTimersByTime(200);
+      vi.advanceTimersByTime(100);
     });
-    const testDiv = screen.getByTestId('inside');
+    const testDivAfter100ms = screen.getByTestId('inside');
+    assertNotNull(testDivAfter100ms);
+    expect(testDivAfter100ms).toHaveStyle({ width: '0px', height: '200px' });
 
-    expect(testDiv).toHaveAttribute('width', '100');
-    expect(testDiv).toHaveAttribute('height', '200');
+    // advance time by another 100ms (total of 200ms) and now it should resize
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    const testDivAfter = screen.getByTestId('inside');
+    assertNotNull(testDivAfter);
+    // should have resized now
+    expect(testDivAfter).toHaveStyle({ width: '50px', height: '200px' });
   });
 
   it('should call onResize when ResizeObserver notifies one or many changes', () => {
     const onResize = vi.fn();
 
-    const { container } = render(
+    render(
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
-
-    const element = container.querySelector('.recharts-responsive-container');
-    expect(element).not.toHaveAttribute('width');
-    expect(element).not.toHaveAttribute('height');
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
-    const testDiv = screen.getByTestId('inside');
-
-    expect(testDiv).toHaveAttribute('width', '100');
-    expect(testDiv).toHaveAttribute('height', '200');
-
     expect(onResize).toHaveBeenCalledTimes(1);
+    expect(onResize).toHaveBeenLastCalledWith(100, 100);
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 200, height: 200 } }]);
     });
 
     expect(onResize).toHaveBeenCalledTimes(2);
+    expect(onResize).toHaveBeenLastCalledWith(200, 200);
   });
 
   it('should have a min-width of 0 when no minWidth is set', () => {
@@ -233,7 +245,7 @@ describe('<ResponsiveContainer />', () => {
 
     const { container } = render(
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -249,7 +261,7 @@ describe('<ResponsiveContainer />', () => {
     // rgb(255,0,0) to rgb(0,0,255) as expected
     const { container } = render(
       <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }} data-testid="container">
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
     const responsiveContainer = container.getElementsByClassName('recharts-responsive-container');
@@ -261,7 +273,7 @@ describe('<ResponsiveContainer />', () => {
   it('should accept and render the style prop and any other specified outside of it', () => {
     const { container } = render(
       <ResponsiveContainer style={{ backgroundColor: 'red', color: 'red' }} width={100} height={100}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -278,7 +290,7 @@ describe('<ResponsiveContainer />', () => {
 
     const { container } = render(
       <ResponsiveContainer width="100%" height={200} minWidth={200} onResize={onResize}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -287,18 +299,19 @@ describe('<ResponsiveContainer />', () => {
     expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
   });
 
-  it('should render multiple children if TS is ignored', () => {
+  it('should render multiple children, even when nested', () => {
     const onResize = vi.fn();
 
     mockGetBoundingClientRect({ height: 200, width: 400 });
 
     const { container } = render(
-      // @ts-expect-error should render these even though ResponsiveContainer throws a type error
       <ResponsiveContainer width="100%" height={200} minWidth={200} onResize={onResize}>
-        <div data-testid="inside" style={{ backgroundColor: 'blue' }} />
-        <div data-testid="inside" />
-        <div data-testid="inside" />
-        <div data-testid="inside" />
+        <div>
+          <DimensionSpy style={{ backgroundColor: 'blue' }} />
+          <DimensionSpy />
+          <DimensionSpy />
+          <DimensionSpy />
+        </div>
       </ResponsiveContainer>,
     );
 
@@ -306,24 +319,22 @@ describe('<ResponsiveContainer />', () => {
     expect(responsiveContainerDiv).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
 
     const elementsInside = screen.getAllByTestId('inside');
-
     expect(elementsInside).toHaveLength(4);
-    expect(elementsInside[0]).toHaveStyle({
+
+    // all elements are using the same style besides their own style
+    const expectedStyle = {
       width: '400px',
       height: '200px',
+    };
+
+    expect(elementsInside[0]).toHaveStyle({
+      ...expectedStyle,
       'background-color': 'rgb(0, 0, 255)',
     });
-    expect(elementsInside[0]).toHaveAttribute('height', '200');
-    expect(elementsInside[0]).toHaveAttribute('width', '400');
 
-    // all elements are cloned with the same style props besides their own style
-    expect(elementsInside[1]).toHaveStyle({
-      width: '400px',
-      height: '200px',
-      'background-color': 'rgba(0, 0, 0, 0)',
-    });
-    expect(elementsInside[1]).toHaveAttribute('height', '200');
-    expect(elementsInside[1]).toHaveAttribute('width', '400');
+    expect(elementsInside[1]).toHaveStyle(expectedStyle);
+    expect(elementsInside[2]).toHaveStyle(expectedStyle);
+    expect(elementsInside[3]).toHaveStyle(expectedStyle);
   });
 
   it('should not re-create ResizeObserver when onResize function instance changes', () => {
@@ -386,30 +397,33 @@ describe('<ResponsiveContainer />', () => {
   it('should respect maxHeight when aspect ratio is used', () => {
     render(
       <ResponsiveContainer aspect={2} width={400} maxHeight={150}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
-    expect(screen.getByTestId('inside')).toHaveAttribute('width', '400');
-    expect(screen.getByTestId('inside')).toHaveAttribute('height', '150');
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '400px', height: '150px' });
   });
 
   it('should not re-render child if container size has not changed', () => {
     const childRenderSpy = vi.fn();
-    function Child(props: any) {
-      childRenderSpy(props);
-      return <div data-testid="child" {...props} />;
+    function Child(): ReactNode {
+      const { width, height } = useResponsiveContainerContext();
+      childRenderSpy(width, height);
+      return null;
     }
-
+    console.log('render 1');
     render(
       <ResponsiveContainer>
         <Child />
       </ResponsiveContainer>,
     );
 
+    expect(childRenderSpy).toHaveBeenCalledTimes(1);
+    expect(childRenderSpy).toHaveBeenLastCalledWith(0, 0);
     childRenderSpy.mockClear();
 
     act(() => {
+      console.log('render 2');
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
@@ -417,6 +431,7 @@ describe('<ResponsiveContainer />', () => {
     childRenderSpy.mockClear();
 
     act(() => {
+      console.log('render 3');
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
@@ -424,12 +439,14 @@ describe('<ResponsiveContainer />', () => {
 
     // What if size is slightly different but rounds to the same?
     act(() => {
+      console.log('render 4');
       notifyResizeObserverChange([{ contentRect: { width: 100.4, height: 100.4 } }]);
     });
     expect(childRenderSpy).not.toHaveBeenCalled();
 
     // And now with a different rounded value
     act(() => {
+      console.log('render 5');
       notifyResizeObserverChange([{ contentRect: { width: 101, height: 101 } }]);
     });
     expect(childRenderSpy).toHaveBeenCalledTimes(1);
@@ -450,7 +467,7 @@ describe('<ResponsiveContainer />', () => {
   it('Renders with id attribute when passed as a number', () => {
     const { container } = render(
       <ResponsiveContainer id={123}>
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 
@@ -460,7 +477,7 @@ describe('<ResponsiveContainer />', () => {
   it('Renders with minHeight and minWidth as percentages when provided', () => {
     const { container } = render(
       <ResponsiveContainer minWidth="50%" minHeight="50%">
-        <div data-testid="inside" />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
 

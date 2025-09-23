@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import * as React from 'react';
+import { ReactNode, useEffect } from 'react';
 import { LayoutType, Margin } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { setChartSize, setLayout, setMargin } from './layoutSlice';
+import { setLayout, setMargin } from './layoutSlice';
 import { useAppDispatch } from './hooks';
+import { ReportChartSize } from '../context/chartLayoutContext';
 
 /**
  * "Main" props are props that are only accepted on the main chart,
@@ -15,7 +17,7 @@ type MainChartProps = {
   margin: Partial<Margin>;
 };
 
-export function ReportMainChartProps({ layout, width, height, margin }: MainChartProps): null {
+export function ReportMainChartProps({ layout, width, height, margin }: MainChartProps): ReactNode {
   const dispatch = useAppDispatch();
 
   /*
@@ -34,9 +36,8 @@ export function ReportMainChartProps({ layout, width, height, margin }: MainChar
   useEffect(() => {
     if (!isPanorama) {
       dispatch(setLayout(layout));
-      dispatch(setChartSize({ width, height }));
       dispatch(setMargin(margin));
     }
   }, [dispatch, isPanorama, layout, width, height, margin]);
-  return null;
+  return <ReportChartSize width={width} height={height} />;
 }

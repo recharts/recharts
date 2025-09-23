@@ -1,11 +1,12 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
 import {
-  cloneElement,
+  createContext,
   CSSProperties,
   forwardRef,
-  ReactElement,
+  ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -16,7 +17,7 @@ import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
-import { Percent } from '../util/types';
+import { Percent, Size } from '../util/types';
 
 export interface Props {
   /**
@@ -51,8 +52,11 @@ export interface Props {
   };
   /** The maximum height of the container. It can be a number. */
   maxHeight?: number;
-  /** The content of the container. It should be a single chart element. */
-  children: ReactElement;
+  /**
+   * The content of the container.
+   * It can contain multiple charts, and then they will all share the same dimensions.
+   */
+  children: ReactNode;
   /**
    * The debounce time for resizing events.
    * @default 0
@@ -72,6 +76,40 @@ export interface Props {
   onResize?: (width: number, height: number) => void;
 }
 
+const ResponsiveContainerContext = createContext<Size>({ width: -1, height: -1 });
+
+function ResponsiveContainerContextProvider({
+  children,
+  width,
+  height,
+}: {
+  children: ReactNode;
+  width: number;
+  height: number;
+}) {
+  const size = useMemo(() => ({ width, height }), [width, height]);
+  if (width <= 0 || height <= 0) {
+    /*
+     * Don't render the container if width or height is non-positive because
+     * in that case the chart will not be rendered properly anyway.
+     * We will instead wait for the next resize event to provide the correct dimensions.
+     */
+    return null;
+  }
+  return <ResponsiveContainerContext.Provider value={size}>{children}</ResponsiveContainerContext.Provider>;
+}
+
+export const useResponsiveContainerContext = () => useContext(ResponsiveContainerContext);
+
+/**
+ * The `ResponsiveContainer` component is a container that adjusts its width and height based on the size of its parent element.
+ * It is used to create responsive charts that adapt to different screen sizes.
+ *
+ * This component uses the `ResizeObserver` API to monitor changes to the size of its parent element.
+ * If you need to support older browsers that do not support this API, you may need to include a polyfill.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+ */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
   (
     {
@@ -152,59 +190,39 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       };
     }, [setContainerSize, debounce]);
 
-    const chartContent = useMemo(() => {
-      const { containerWidth, containerHeight } = sizes;
+    const { containerWidth, containerHeight } = sizes;
 
-      if (containerWidth < 0 || containerHeight < 0) {
-        return null;
-      }
-
-      warn(
-        isPercent(width) || isPercent(height),
-        `The width(%s) and height(%s) are both fixed numbers,
+    warn(
+      isPercent(width) || isPercent(height),
+      `The width(%s) and height(%s) are both fixed numbers,
        maybe you don't need to use a ResponsiveContainer.`,
-        width,
-        height,
-      );
+      width,
+      height,
+    );
 
-      warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
+    warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
-      const { calculatedWidth, calculatedHeight } = calculateChartDimensions(containerWidth, containerHeight, {
-        width,
-        height,
-        aspect,
-        maxHeight,
-      });
+    const { calculatedWidth, calculatedHeight } = calculateChartDimensions(containerWidth, containerHeight, {
+      width,
+      height,
+      aspect,
+      maxHeight,
+    });
 
-      warn(
-        calculatedWidth > 0 || calculatedHeight > 0,
-        `The width(%s) and height(%s) of chart should be greater than 0,
+    warn(
+      calculatedWidth > 0 || calculatedHeight > 0,
+      `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
        height and width.`,
-        calculatedWidth,
-        calculatedHeight,
-        width,
-        height,
-        minWidth,
-        minHeight,
-        aspect,
-      );
-
-      return React.Children.map(children, child => {
-        return cloneElement(child, {
-          width: calculatedWidth,
-          height: calculatedHeight,
-          // calculate the actual size and override it.
-          style: {
-            width: calculatedWidth,
-            height: calculatedHeight,
-            // keep components style
-            ...child.props.style,
-          },
-        });
-      });
-    }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
+      calculatedWidth,
+      calculatedHeight,
+      width,
+      height,
+      minWidth,
+      minHeight,
+      aspect,
+    );
 
     return (
       <div
@@ -213,7 +231,11 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
       >
-        <div style={getInnerDivStyle({ width, height })}>{chartContent}</div>
+        <div style={getInnerDivStyle({ width, height })}>
+          <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
+            {children}
+          </ResponsiveContainerContextProvider>
+        </div>
       </div>
     );
   },

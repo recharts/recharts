@@ -7,6 +7,7 @@ import { selectChartOffsetInternal, selectChartViewBox } from '../state/selector
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
+import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 
 export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   const panorama = useIsPanorama();
@@ -111,9 +112,31 @@ export const useChartLayout = () => useAppSelector(selectChartLayout);
 export const ReportChartSize = (props: Size): null => {
   const dispatch = useAppDispatch();
 
+  const { width: widthFromProps, height: heightFromProps } = props;
+  const responsiveContainerCalculations = useResponsiveContainerContext();
+
+  let width = widthFromProps;
+  let height = heightFromProps;
+
+  if (responsiveContainerCalculations) {
+    /*
+     * In case we receive width and height from ResponsiveContainer,
+     * we will always prefer those.
+     * Only in case ResponsiveContainer does not provide width or height,
+     * we will fall back to the explicitly provided width and height.
+     *
+     * This to me feels backwards - we should allow override by the more specific props on individual charts, right?
+     * But this is 3.x behaviour, so let's keep it for backwards compatibility.
+     *
+     * We can change this in 4.x if we want to.
+     */
+    width = responsiveContainerCalculations.width > 0 ? responsiveContainerCalculations.width : widthFromProps;
+    height = responsiveContainerCalculations.height > 0 ? responsiveContainerCalculations.height : heightFromProps;
+  }
+
   useEffect(() => {
-    dispatch(setChartSize(props));
-  }, [dispatch, props]);
+    dispatch(setChartSize({ width, height }));
+  }, [dispatch, width, height]);
 
   return null;
 };
