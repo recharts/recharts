@@ -26,6 +26,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -859,15 +860,33 @@ function SankeyImpl(
   );
 }
 
-export function Sankey(props: Props) {
-  const { data, width, height, className, link, node } = props;
+const sankeyDefaultProps = {
+  nameKey: 'name',
+  dataKey: 'value',
+  nodePadding: 10,
+  nodeWidth: 10,
+  linkCurvature: 0.5,
+  iterations: 32,
+  margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  sort: true,
+} as const satisfies Partial<Props>;
 
-  const margin = useMemo(() => ({ ...Sankey.defaultProps.margin, ...props.margin }), [props.margin]);
-  const iterations = props.iterations ?? Sankey.defaultProps.iterations;
-  const nodeWidth = props.nodeWidth ?? Sankey.defaultProps.nodeWidth;
-  const nodePadding = props.nodePadding ?? Sankey.defaultProps.nodePadding;
-  const sort = props.sort ?? Sankey.defaultProps.sort;
-  const linkCurvature = props.linkCurvature ?? Sankey.defaultProps.linkCurvature;
+export function Sankey(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, sankeyDefaultProps);
+  const {
+    data,
+    width,
+    height,
+    className,
+    link,
+    node,
+    iterations,
+    nodeWidth,
+    nodePadding,
+    sort,
+    linkCurvature,
+    margin,
+  } = props;
 
   const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
@@ -921,14 +940,3 @@ export function Sankey(props: Props) {
 }
 
 Sankey.displayName = 'Sankey';
-
-Sankey.defaultProps = {
-  nameKey: 'name',
-  dataKey: 'value',
-  nodePadding: 10,
-  nodeWidth: 10,
-  linkCurvature: 0.5,
-  iterations: 32,
-  margin: { top: 5, right: 5, bottom: 5, left: 5 },
-  sort: true,
-};
