@@ -150,7 +150,7 @@ export const isValidSpreadableProp = (
  * Filters the props object to only include valid SVG attributes or event handlers.
  * @deprecated do not use this function, as it is not type-safe and may lead to unexpected behavior. Returns `any`.
  * Instead, use:
- * - `excludeEventProps` to exclude event handlers
+ * - `svgPropertiesAndEvents` to exclude non-SVG attributes, and include event handlers
  * - `svgPropertiesNoEvents` to exclude non-SVG attributes, and exclude event handlers too
  * @param props - The props object to filter, which can be a Record, Component, FunctionComponent, boolean, or unknown.
  * @param includeEvents - A boolean indicating whether to include event handlers in the filtered props.

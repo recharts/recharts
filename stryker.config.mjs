@@ -15,7 +15,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/cartesian/Bar.tsx'],
+  mutate: ['src/util/ReactUtils.ts'],
 };
 
 export default config;

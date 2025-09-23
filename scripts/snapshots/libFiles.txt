@@ -232,6 +232,7 @@
   "lib/util/stacks",
   "lib/util/stacks/getStackSeriesIdentifier.js",
   "lib/util/stacks/stackTypes.js",
+  "lib/util/svgPropertiesAndEvents.js",
   "lib/util/svgPropertiesNoEvents.js",
   "lib/util/tooltip",
   "lib/util/tooltip/translate.js",

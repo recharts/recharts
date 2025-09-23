@@ -167,6 +167,62 @@ describe('ReactUtils', () => {
       };
       expect(result).toEqual(expected);
     });
+
+    test('should filter out function properties that are not event handlers when includeEvents is true', () => {
+      const input = {
+        cx: '50%',
+        cy: '50%',
+        fill: '#808080',
+        stroke: '#fff',
+        onClick: vi.fn(),
+        customFunction: () => 'hello',
+        anotherFunction: vi.fn(),
+      };
+      const result = filterProps(input, true);
+      const expected = {
+        cx: '50%',
+        cy: '50%',
+        fill: '#808080',
+        stroke: '#fff',
+        onClick: input.onClick,
+      };
+      expect(result).toEqual(expected);
+    });
+
+    test('should maintain data-* attributes when includeEvents is true', () => {
+      expect(filterProps({ 'data-x': 'foo', onClick: vi.fn() }, true)).toEqual({
+        'data-x': 'foo',
+        onClick: expect.any(Function),
+      });
+    });
+
+    test('should correctly filter with svgElementType, data-* attributes, and events when includeEvents is true', () => {
+      const input = {
+        x: 10,
+        y: 20,
+        width: 100,
+        height: 50,
+        fill: 'red',
+        'data-test': 'value',
+        onClick: vi.fn(),
+        onMouseEnter: vi.fn(),
+        customProp: 'should be filtered',
+        points: '10 10 20 20', // Specific to polyline
+      };
+      const result = filterProps(input, true, 'polyline');
+      const expected = {
+        x: 10,
+        y: 20,
+        width: 100,
+        height: 50,
+        fill: 'red',
+        'data-test': 'value',
+        onClick: input.onClick,
+        onMouseEnter: input.onMouseEnter,
+        points: '10 10 20 20',
+      };
+      expect(result).toEqual(expected);
+    });
   });
 
   describe('isValidSpreadableProp', () => {

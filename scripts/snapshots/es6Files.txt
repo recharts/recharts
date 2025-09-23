@@ -232,6 +232,7 @@
   "es6/util/stacks",
   "es6/util/stacks/getStackSeriesIdentifier.js",
   "es6/util/stacks/stackTypes.js",
+  "es6/util/svgPropertiesAndEvents.js",
   "es6/util/svgPropertiesNoEvents.js",
   "es6/util/tooltip",
   "es6/util/tooltip/translate.js",

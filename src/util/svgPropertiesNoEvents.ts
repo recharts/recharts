@@ -319,7 +319,18 @@ export function isSvgElementPropKey(key: PropertyKey): boolean {
   return allowedSvgKeys.includes(key);
 }
 
-export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysType>>;
+export type DataAttributeKeyType = `data-${string}`;
+
+export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysType | DataAttributeKeyType>>;
+
+/**
+ * Checks if the property is a data attribute.
+ * @param key The property key.
+ * @returns True if the key starts with 'data-', false otherwise.
+ */
+export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
+  return typeof key === 'string' && key.startsWith('data-');
+}
 
 /**
  * Filters an object to only include SVG properties. Removes all event handlers too.
@@ -327,6 +338,6 @@ export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysTyp
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
 export function svgPropertiesNoEvents<T extends Record<string, any>>(obj: T): SVGPropsNoEvents<T> {
-  const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key));
+  const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key) || isDataAttribute(key));
   return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
 }

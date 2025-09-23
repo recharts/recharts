@@ -3,6 +3,10 @@ import { describe, it, expect } from 'vitest';
 import { svgPropertiesNoEvents } from '../../src/util/svgPropertiesNoEvents';
 
 describe('svgPropertiesNoEvents', () => {
+  it('should return an empty object when called with an empty object', () => {
+    expect(svgPropertiesNoEvents({})).toEqual({});
+  });
+
   it('should allow only SVG properties and exclude event handlers', () => {
     const input = {
       'aria-label': 'test',
@@ -68,7 +72,7 @@ describe('svgPropertiesNoEvents', () => {
       height?: string;
       id?: string;
       lang?: string;
-      max?: number;
+      max: number;
       media?: string;
       method?: string;
       min?: number;
@@ -104,18 +108,20 @@ describe('svgPropertiesNoEvents', () => {
       height?: string;
       id?: string;
       lang?: string;
-      max?: number;
+      // property that used to be required in the input type, continues being required
+      max: number;
       media?: string;
       method?: string;
       min?: number;
       name?: string;
       style?: CSSProperties;
     };
+    const output: ExpectedOutputType = svgPropertiesNoEvents(input);
+
     // @ts-expect-error this should be a type error because `width` is not in the input, so it should not be in the output either
-    const w = svgPropertiesNoEvents(input).width;
+    const w = output.width;
     expect(w).toBeUndefined(); // width is not in the input, so it should not be in the output
 
-    const output: ExpectedOutputType = svgPropertiesNoEvents(input);
     expect(output).toEqual({
       'aria-label': 'test',
       className: 'svg-class',
@@ -130,5 +136,29 @@ describe('svgPropertiesNoEvents', () => {
       name: 'svg-name',
       style: { fill: 'blue' },
     });
+  });
+
+  test('should include data-* attributes', () => {
+    const input = {
+      'data-test': 'test-value',
+      'data-id': '123',
+      nonDataProp: 'value',
+    };
+    const result = svgPropertiesNoEvents(input);
+    expect(result).toEqual({
+      'data-test': 'test-value',
+      'data-id': '123',
+    });
+  });
+
+  test('should exclude symbols and numbers as keys', () => {
+    const sym = Symbol('test');
+    const input: { [key: PropertyKey]: any } = {
+      [sym]: 'symbol-value',
+      6: 'number-value',
+      cx: 10,
+    };
+    const result = svgPropertiesNoEvents(input);
+    expect(result).toEqual({ cx: 10 });
   });
 });
