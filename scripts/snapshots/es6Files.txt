@@ -60,6 +60,7 @@
   "es6/component/Text.js",
   "es6/component/Tooltip.js",
   "es6/component/TooltipBoundingBox.js",
+  "es6/component/responsiveContainerUtils.js",
   "es6/container",
   "es6/container/ClipPathProvider.js",
   "es6/container/Layer.js",

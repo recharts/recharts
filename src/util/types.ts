@@ -1053,3 +1053,5 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   title?: string;
   width?: number;
 }
+
+export type Percent = `${number}%`;

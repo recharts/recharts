@@ -60,6 +60,7 @@
   "types/component/Text.d.ts",
   "types/component/Tooltip.d.ts",
   "types/component/TooltipBoundingBox.d.ts",
+  "types/component/responsiveContainerUtils.d.ts",
   "types/container",
   "types/container/ClipPathProvider.d.ts",
   "types/container/Layer.d.ts",

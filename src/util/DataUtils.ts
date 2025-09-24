@@ -1,4 +1,5 @@
 import get from 'es-toolkit/compat/get';
+import { Percent } from './types';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -16,7 +17,7 @@ export const isNan = (value: unknown): boolean => {
   return typeof value == 'number' && value != +value;
 };
 
-export const isPercent = (value: string | number | undefined): value is `${number}%` =>
+export const isPercent = (value: string | number | undefined): value is Percent =>
   typeof value === 'string' && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number =>

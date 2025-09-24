@@ -8,6 +8,6 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     setupFiles: [],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook', 'www'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'test', 'storybook', 'www', '.stryker-tmp'],
   },
 });

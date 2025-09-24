@@ -141,7 +141,7 @@ test('should calculate height based on aspect ratio', async ({ mount }) => {
 test('should respect width in a tall container when aspect is set', async ({ mount }) => {
   const component = await mount(
     <div style={{ width: 300, height: 800 }}>
-      <p>Aspect Ratio in Tall Container</p>
+      <p>Aspect Ratio=1 in Tall Container</p>
       <ResponsiveContainer width="100%" aspect={1}>
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
@@ -159,7 +159,7 @@ test('should respect width in a tall container when aspect is set', async ({ mou
 test('aspect ratio should be overridden by maxHeight', async ({ mount }) => {
   const component = await mount(
     <div style={{ width: 800 }}>
-      <p>Aspect Ratio with maxHeight</p>
+      <p>Aspect Ratio=1 with maxHeight=250</p>
       <ResponsiveContainer width="100%" aspect={1} maxHeight={250}>
         <LineChart data={pageData}>
           <XAxis dataKey="name" />
@@ -208,6 +208,28 @@ test('should create a square chart that overflows a wide screen', async ({ mount
         </LineChart>
       </ResponsiveContainer>
       <p>Should overflow vertically.</p>
+    </div>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('should create a square chart without width or height specified', async ({ mount, page }) => {
+  // Set a tall viewport to test the no-dimensions scenario
+  await page.setViewportSize({ width: 200, height: 500 });
+
+  // This scenario unfortunately doesn't work well still - the chart has 0x0 and overlaps the text below it.
+  const component = await mount(
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <p>Square chart with no width or height specified</p>
+      <ResponsiveContainer aspect={1}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false} />
+          <ChartSizeDimensions />
+        </LineChart>
+      </ResponsiveContainer>
+      <p>Should fill the smaller dimension of the parent (width in this case).</p>
     </div>,
   );
   await expect(component).toHaveScreenshot();
