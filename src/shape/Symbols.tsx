@@ -14,8 +14,8 @@ import {
 } from 'victory-vendor/d3-shape';
 import { clsx } from 'clsx';
 import { SymbolType } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { upperFirst } from '../util/DataUtils';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 type SizeType = 'area' | 'diameter';
 
@@ -99,17 +99,21 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
    * Calculate the path of curve
    * @return {String} path
    */
-  const getPath = () => {
+  const getPath = (): string | undefined => {
     const symbolFactory = getSymbolFactory(realType);
     const symbol = shapeSymbol()
       .type(symbolFactory)
       .size(calculateAreaSize(size, sizeType, realType));
 
-    return symbol();
+    const s = symbol();
+    if (s === null) {
+      return undefined;
+    }
+    return s;
   };
 
   const { className, cx, cy } = props;
-  const filteredProps = filterProps(props, true);
+  const filteredProps = svgPropertiesAndEvents(props);
 
   if (cx === +cx && cy === +cy && size === +size) {
     return (

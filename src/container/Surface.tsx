@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
 import { clsx } from 'clsx';
-import { filterProps } from '../util/ReactUtils';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface SurfaceProps {
   width: number;
@@ -31,7 +31,7 @@ export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
 
   return (
     <svg
-      {...filterProps(others, true, 'svg')}
+      {...svgPropertiesAndEvents(others)}
       className={layerClass}
       width={width}
       height={height}

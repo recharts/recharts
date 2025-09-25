@@ -16,13 +16,12 @@ import {
   PresentationAttributesAdaptChildEvent,
   TickItem,
 } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -110,7 +109,7 @@ const renderAxisLine = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElem
   const axisLineProps = {
     ...svgPropertiesNoEvents(others),
     fill: 'none',
-    ...filterProps(axisLine, false),
+    ...svgPropertiesNoEvents(axisLine),
     x1: point0.x,
     y1: point0.y,
     x2: point1.x,
@@ -143,7 +142,7 @@ const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement
   const { angle, tickFormatter, stroke, tick, ...others } = props;
   const textAnchor = getTickTextAnchor(props.orientation);
   const axisProps = svgPropertiesNoEvents(others);
-  const customTickProps = filterProps(tick, false);
+  const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
 
   const items = ticks.map((entry, i) => {
     const coord = getTickValueCoord(entry, props.angle, props.cx, props.cy);

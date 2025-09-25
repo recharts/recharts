@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactNode, SVGAttributes } from 'react';
 import { clsx } from 'clsx';
-import { filterProps } from '../util/ReactUtils';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface LayerProps {
   className?: string;
@@ -15,7 +15,7 @@ export const Layer = React.forwardRef<SVGGElement, Props>((props: Props, ref) =>
   const layerClass = clsx('recharts-layer', className);
 
   return (
-    <g className={layerClass} {...filterProps(others, true)} ref={ref}>
+    <g className={layerClass} {...svgPropertiesAndEvents(others)} ref={ref}>
       {children}
     </g>
   );

@@ -6,7 +6,6 @@ import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
@@ -25,7 +24,7 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
@@ -571,8 +570,10 @@ const buildLinkProps = ({
 
   const linkProps: LinkProps = {
     sourceX,
+    // @ts-expect-error the linkContent from below is contributing unknown props
     targetX,
     sourceY,
+    // @ts-expect-error the linkContent from below is contributing unknown props
     targetY,
     sourceControlX,
     targetControlX,
@@ -581,7 +582,7 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
-    ...filterProps(linkContent, false),
+    ...svgPropertiesNoEventsFromUnknown(linkContent),
   };
 
   return linkProps;
@@ -705,8 +706,9 @@ const buildNodeProps = ({
   i: number;
 }) => {
   const { x, y, dx, dy } = node;
+  // @ts-expect-error nodeContent is passing in unknown props
   const nodeProps: NodeProps = {
-    ...filterProps(nodeContent, false),
+    ...svgPropertiesNoEventsFromUnknown(nodeContent),
     x: x + left,
     y: y + top,
     width: dx,

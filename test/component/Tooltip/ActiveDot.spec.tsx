@@ -11,6 +11,7 @@ import {
   radarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { ActiveDotProps } from '../../../src/util/types';
 
 const commonChartProps = {
   width: 400,
@@ -333,7 +334,7 @@ describe('ActiveDot', () => {
 
     it('should render custom Dot component, give it props, and render what it returned', () => {
       const spy = vi.fn();
-      const MyCustomDot = (props: unknown) => {
+      const MyCustomDot = (props: ActiveDotProps) => {
         spy(props);
         return <g data-testid="my-custom-dot" />;
       };

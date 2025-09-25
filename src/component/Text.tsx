@@ -4,9 +4,9 @@ import { CSSProperties, SVGProps, useMemo, forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
-import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -353,7 +353,7 @@ export const Text = forwardRef<SVGTextElement, Props>(
 
     return (
       <text
-        {...filterProps(textProps, true)}
+        {...svgPropertiesAndEvents(textProps)}
         ref={ref}
         x={x}
         y={y}

@@ -1,3 +1,5 @@
+import { isValidElement } from 'react';
+
 const SVGElementPropKeys = [
   'aria-activedescendant',
   'aria-atomic',
@@ -319,14 +321,61 @@ export function isSvgElementPropKey(key: PropertyKey): boolean {
   return allowedSvgKeys.includes(key);
 }
 
-export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysType>>;
+export type DataAttributeKeyType = `data-${string}`;
+
+export type SVGPropsNoEvents<T> = Pick<T, Extract<keyof T, SVGElementPropKeysType | DataAttributeKeyType>>;
+
+/**
+ * Checks if the property is a data attribute.
+ * @param key The property key.
+ * @returns True if the key starts with 'data-', false otherwise.
+ */
+export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
+  return typeof key === 'string' && key.startsWith('data-');
+}
 
 /**
  * Filters an object to only include SVG properties. Removes all event handlers too.
  * @param obj - The object to filter
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
-export function svgPropertiesNoEvents<T extends Record<string, any>>(obj: T): SVGPropsNoEvents<T> {
-  const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key));
+export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(
+  obj: T | boolean,
+): SVGPropsNoEvents<T> | null {
+  const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key) || isDataAttribute(key));
   return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
+}
+
+/**
+ * Function to filter SVG properties from various input types.
+ * The input types can be:
+ * - A record of string keys to any values, in which case it returns a record of only SVG properties
+ * - A React element, in which case it returns the props of the element filtered to only SVG properties
+ * - Anything else, in which case it returns null
+ *
+ * This function has a wide-open return type, because it will read and filter the props of an arbitrary React element.
+ * This can be SVG, HTML, whatnot, with arbitrary values, so we can't type it more specifically.
+ *
+ * If you wish to have a type-safe version, use svgPropertiesNoEvents directly with a typed object.
+ *
+ * @param input - The input to filter, which can be a record, a React element, or other types.
+ * @returns A record of SVG properties if the input is a record or React element, otherwise null.
+ */
+export function svgPropertiesNoEventsFromUnknown(
+  input: unknown,
+): Partial<Record<SVGElementPropKeysType, unknown>> | null {
+  if (input == null) {
+    return null;
+  }
+
+  if (isValidElement(input) && typeof input.props === 'object' && input.props !== null) {
+    const p: Partial<Record<PropertyKey, unknown>> = input.props;
+    return svgPropertiesNoEvents(p);
+  }
+
+  if (typeof input === 'object' && !Array.isArray(input)) {
+    return svgPropertiesNoEvents(input);
+  }
+
+  return null;
 }

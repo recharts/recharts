@@ -5,7 +5,7 @@ import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
 import { isNumber } from '../util/DataUtils';
-import { filterProps } from '../util/ReactUtils';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface CrossProps {
   x?: number;
@@ -41,7 +41,7 @@ export const Cross: React.FC<Props> = ({
 
   return (
     <path
-      {...filterProps(props, true)}
+      {...svgPropertiesAndEvents(props)}
       className={clsx('recharts-cross', className)}
       d={getPath(x, y, width, height, top, left)}
     />

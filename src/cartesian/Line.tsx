@@ -13,10 +13,11 @@ import {
 } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish } from '../util/DataUtils';
-import { filterProps, isClipDot } from '../util/ReactUtils';
+import { isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
+  ActiveDotProps,
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
@@ -47,6 +48,8 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 
 export interface LinePointItem {
   readonly value: number;
@@ -214,10 +217,11 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
   return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
 };
 
-function renderDotItem(option: ActiveDotType, props: any) {
+function renderDotItem(option: ActiveDotType, props: ActiveDotProps) {
   let dotItem;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error when cloning, the event handler types do not match
     dotItem = React.cloneElement(option, props);
   } else if (typeof option === 'function') {
     dotItem = option(props);
@@ -256,16 +260,16 @@ function Dots({
 
   /*
    * Exclude ID from the props passed to the Dots component
-   * because then the ID would be applied to multiple dots and it would no longer be unique.
+   * because then the ID would be applied to multiple dots, and it would no longer be unique.
    */
   const { id, ...propsWithoutId } = props;
 
   const clipDot = isClipDot(dot);
   const lineProps = svgPropertiesNoEvents(propsWithoutId);
-  const customDotProps = filterProps(dot, true);
+  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
 
   const dots = points.map((entry, i) => {
-    const dotProps = {
+    const dotProps: ActiveDotProps = {
       key: `dot-${i}`,
       r: 3,
       ...lineProps,
@@ -276,6 +280,7 @@ function Dots({
       dataKey,
       value: entry.value,
       payload: entry.payload,
+      // @ts-expect-error we're passing extra property 'points' that the props are not expecting
       points,
     };
 
@@ -344,8 +349,8 @@ function StaticCurve({
   strokeDasharray?: string;
 }) {
   const { type, layout, connectNulls, needClip, ...others } = props;
-  const curveProps = {
-    ...filterProps(others, true),
+  const curveProps: CurveProps = {
+    ...svgPropertiesAndEvents(others),
     fill: 'none',
     className: 'recharts-line-curve',
     clipPath: needClip ? `url(#clipPath-${clipPathId})` : undefined,
@@ -597,7 +602,7 @@ class LineWithState extends Component<InternalProps> {
 
     const layerClass = clsx('recharts-line', className);
     const clipPathId = id;
-    const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
+    const { r, strokeWidth } = getRadiusAndStrokeWidthFromDot(dot);
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
 

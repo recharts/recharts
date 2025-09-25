@@ -5,12 +5,12 @@ import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration, AnimationTiming } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
 import { interpolate } from '../util/DataUtils';
 import { getTransitionVal } from '../animation/util';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
@@ -57,7 +57,7 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
   const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
   const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = trapezoidProps;
 
-  const pathRef = useRef<SVGPathElement>();
+  const pathRef = useRef<SVGPathElement | null>(null);
   const [totalLength, setTotalLength] = useState(-1);
 
   const prevUpperWidthRef = useRef<number>(upperWidth);
@@ -99,7 +99,7 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
     return (
       <g>
         <path
-          {...filterProps(trapezoidProps, true)}
+          {...svgPropertiesAndEvents(trapezoidProps)}
           className={layerClass}
           d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
         />
@@ -144,7 +144,7 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
         const animationStyle = t > 0 ? { transition, strokeDasharray: to } : { strokeDasharray: from };
         return (
           <path
-            {...filterProps(trapezoidProps, true)}
+            {...svgPropertiesAndEvents(trapezoidProps)}
             className={layerClass}
             d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
             ref={pathRef}

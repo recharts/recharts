@@ -4,11 +4,11 @@ import last from 'es-toolkit/compat/last';
 
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition } from './Label';
 import { Layer } from '../container/Layer';
-import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface BaseLabelListEntry {
   /**
@@ -121,7 +121,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
         return (
           <Label
             key={`label-${index}`} // eslint-disable-line react/no-array-index-key
-            {...filterProps(entry, true)}
+            {...svgPropertiesAndEvents(entry)}
             {...others}
             {...idProps}
             /*

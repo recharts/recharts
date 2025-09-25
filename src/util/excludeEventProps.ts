@@ -171,14 +171,3 @@ export function isEventKey(key: PropertyKey): key is EventKeysType {
   const allowedEventKeys: ReadonlyArray<string> = EventKeys;
   return allowedEventKeys.includes(key);
 }
-
-/**
- * Filters out event properties from the given object.
- * This function is useful for cleaning up props before passing them to a React component,
- * @param obj - The object containing properties to filter.
- * @returns A new object containing only the properties that are not event handlers.
- */
-export function excludeEventProps<T extends Record<PropertyKey, any>>(obj: T): Omit<T, EventKeysType> {
-  const filteredEntries = Object.entries(obj).filter(([key]) => !isEventKey(key));
-  return Object.fromEntries(filteredEntries) as Omit<T, EventKeysType>;
-}

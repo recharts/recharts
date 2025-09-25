@@ -585,20 +585,6 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 };
 
-const SVGContainerPropKeys = ['viewBox', 'children'];
-
-const PolyElementKeys = ['points', 'pathLength'];
-
-/** svg element types that have specific attribute filtration requirements */
-export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
-
-/** map of svg element types to unique svg attributes that belong to that element */
-export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
-  svg: SVGContainerPropKeys,
-  polygon: PolyElementKeys,
-  polyline: PolyElementKeys,
-};
-
 /** The type of easing function to use for animations */
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
 /** Specifies the duration of animation, the unit of this option is ms. */
@@ -924,7 +910,7 @@ export type ActiveDotProps = DotProps & {
   dataKey: DataKey<any>;
   cx: number;
   cy: number;
-  r: number;
+  r: number | string;
   fill: string;
   strokeWidth: number;
   stroke: string;
@@ -943,17 +929,25 @@ export type ActiveDotType =
    */
   | boolean
   /**
-   * activeDot can be a custom React Component
+   * activeDot can be a custom React Component.
+   * It should return an SVG element because we are in SVG context - HTML won't work here.
+   * Unfortunately, if you write a regular old functional component and have it return SVG element,
+   * its default, inferred return type is `JSX.Element` and so if this return type was `SVGElement`
+   * then it would look like a type error (even when doing the right thing).
+   * So instead here we have JSX.Element return type which is invalid in runtime
+   * (remember, we are in SVG context so HTML elements won't work, we need SVGElement).
+   * But better than forcing everyone to re-type their components I guess.
    */
-  | ((props: ActiveDotProps) => ReactElement<SVGElement>)
+  | ((props: ActiveDotProps) => JSX.Element)
   /**
    * activeDot can be an object; props from here will be appended to the default active dot
    */
   | Partial<ActiveDotProps>
   /**
    * activeDot can be an element; it will get cloned and will receive new extra props.
+   * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
-  | ReactElement<SVGElement>;
+  | ReactElement<SVGProps<SVGElement>>;
 
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
