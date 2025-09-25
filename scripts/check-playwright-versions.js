@@ -26,7 +26,7 @@ function getPackageJsonVersion(packageName) {
   return version.replace(/[^0-9.]/g, '');
 }
 
-const dockerImageRegex = /mcr.microsoft.com\/playwright:v([0-9.]+)-jammy/;
+const dockerImageRegex = /mcr\.microsoft\.com\/playwright:v([0-9.]+)-jammy/;
 
 function getDockerfileVersion() {
   const dockerfilePath = path.join(projectRoot, 'test-vr', 'playwright-ct.Dockerfile');
@@ -75,3 +75,5 @@ function main() {
 }
 
 main();
+
+exports.dockerImageRegex = dockerImageRegex;

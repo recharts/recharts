@@ -9,6 +9,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { dockerImageRegex } = require('./check-playwright-versions');
 
 const projectRoot = path.join(__dirname, '..');
 
@@ -26,7 +27,7 @@ function getPlaywrightVersion() {
 function updateFileVersion(filePath, newVersion) {
   const fullPath = path.join(projectRoot, filePath);
   const originalContent = fs.readFileSync(fullPath, 'utf8');
-  const regex = /(mcr.microsoft.com\/playwright:v)[0-9.]+(-jammy)/;
+  const regex = dockerImageRegex;
 
   if (!regex.test(originalContent)) {
     console.warn(`Warning: Could not find playwright version string in ${filePath}. Skipping update.`);
