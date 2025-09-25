@@ -25,7 +25,7 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
@@ -581,7 +581,7 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
-    ...filterProps(linkContent, false),
+    ...svgPropertiesNoEventsFromUnknown(linkContent),
   };
 
   return linkProps;
@@ -706,7 +706,7 @@ const buildNodeProps = ({
 }) => {
   const { x, y, dx, dy } = node;
   const nodeProps: NodeProps = {
-    ...filterProps(nodeContent, false),
+    ...svgPropertiesNoEventsFromUnknown(nodeContent),
     x: x + left,
     y: y + top,
     width: dx,

@@ -13,7 +13,7 @@ import {
   ImplicitLabelListType,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   BarPositionPosition,
@@ -61,7 +61,11 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgPropertiesNoEvents, SVGPropsNoEvents } from '../util/svgPropertiesNoEvents';
+import {
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+  SVGPropsNoEvents,
+} from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
@@ -251,7 +255,7 @@ function BarBackground(props: BarBackgroundProps) {
     return null;
   }
 
-  const backgroundProps = filterProps(backgroundFromProps, false);
+  const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
 
   return (
     <>
@@ -273,7 +277,6 @@ function BarBackground(props: BarBackgroundProps) {
           option: backgroundFromProps,
           isActive: String(i) === activeIndex,
           ...rest,
-          // @ts-expect-error BarRectangle props do not accept `fill` property.
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,
@@ -286,7 +289,7 @@ function BarBackground(props: BarBackgroundProps) {
           className: 'recharts-bar-background-rectangle',
         };
 
-        return <BarRectangle key={`background-bar-${barRectangleProps.index}`} {...barRectangleProps} />;
+        return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
       })}
     </>
   );
@@ -354,7 +357,17 @@ function BarRectangleWithActiveState(props: {
   const isActive: boolean =
     activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
   const option = isActive ? activeBar : shape;
-  return <BarRectangle {...baseProps} {...entry} isActive={isActive} option={option} index={index} dataKey={dataKey} />;
+  return (
+    <BarRectangle
+      {...baseProps}
+      name={String(baseProps.name)}
+      {...entry}
+      isActive={isActive}
+      option={option}
+      index={index}
+      dataKey={dataKey}
+    />
+  );
 }
 
 function BarRectangleNeverActive(props: {
@@ -365,7 +378,17 @@ function BarRectangleNeverActive(props: {
   dataKey: DataKey<any> | undefined;
 }) {
   const { shape, baseProps, entry, index, dataKey } = props;
-  return <BarRectangle {...baseProps} {...entry} isActive={false} option={shape} index={index} dataKey={dataKey} />;
+  return (
+    <BarRectangle
+      {...baseProps}
+      name={String(baseProps.name)}
+      {...entry}
+      isActive={false}
+      option={shape}
+      index={index}
+      dataKey={dataKey}
+    />
+  );
 }
 
 function BarRectangles({

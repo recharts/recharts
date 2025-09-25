@@ -20,10 +20,9 @@ import {
   Coordinate,
   RectangleCoordinate,
 } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -126,7 +125,7 @@ function AxisLine(axisLineProps: {
   orientation: Orientation;
   mirror: boolean;
   axisLine: boolean | SVGProps<SVGLineElement>;
-  otherSvgProps?: SVGProps<SVGLineElement>;
+  otherSvgProps: SVGProps<SVGLineElement> | null;
 }) {
   const { x, y, width, height, orientation, mirror, axisLine, otherSvgProps } = axisLineProps;
 
@@ -136,7 +135,7 @@ function AxisLine(axisLineProps: {
 
   let props: SVGProps<SVGLineElement> = {
     ...otherSvgProps,
-    ...filterProps(axisLine, false),
+    ...svgPropertiesNoEvents(axisLine),
     fill: 'none',
   };
 
@@ -310,7 +309,7 @@ type TicksProps = {
   tickMargin: number;
   fontSize: string;
   letterSpacing: string;
-  getTicksConfig: Omit<Props, 'ticks'>;
+  getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
 };
 
@@ -342,11 +341,15 @@ function Ticks(props: TicksProps) {
   const textAnchor = getTickTextAnchor(orientation, mirror);
   const verticalAnchor = getTickVerticalAnchor(orientation, mirror);
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
-  const customTickProps = filterProps(tick, false);
-  const tickLineProps = {
+  const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
+  let tickLinePropsObject: SVGProps<SVGLineElement> = {};
+  if (typeof tickLine === 'object') {
+    tickLinePropsObject = tickLine;
+  }
+  const tickLineProps: SVGProps<SVGLineElement> = {
     ...axisProps,
     fill: 'none',
-    ...filterProps(tickLine, false),
+    ...tickLinePropsObject,
   };
   const items = finalTicks.map((entry: CartesianTickItem, i) => {
     const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
@@ -384,7 +387,6 @@ function Ticks(props: TicksProps) {
         {...adaptEventsOfChild(events, entry, i)}
       >
         {tickLine && (
-          // @ts-expect-error recharts scale is not compatible with SVG scale
           <line
             {...tickLineProps}
             {...lineCoord}

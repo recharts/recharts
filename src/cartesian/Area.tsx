@@ -19,6 +19,7 @@ import {
   StackId,
 } from '../util/ChartUtils';
 import {
+  ActiveDotProps,
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
@@ -28,7 +29,7 @@ import {
   TickItem,
   TooltipType,
 } from '../util/types';
-import { filterProps, isClipDot } from '../util/ReactUtils';
+import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
@@ -52,6 +53,8 @@ import { AreaSettings } from '../state/types/AreaSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
+import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -185,10 +188,11 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   };
 }
 
-const renderDotItem = (option: ActiveDotType, props: any) => {
+const renderDotItem = (option: ActiveDotType, props: ActiveDotProps) => {
   let dotItem;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error when cloning, the event handler types do not match
     dotItem = React.cloneElement(option, props);
   } else if (typeof option === 'function') {
     dotItem = option(props);
@@ -227,10 +231,10 @@ function Dots({
 
   const clipDot = isClipDot(dot);
   const areaProps = svgPropertiesNoEvents(props);
-  const customDotProps = filterProps(dot, true);
+  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
 
   const dots = points.map((entry: AreaPointItem, i: number) => {
-    const dotProps = {
+    const dotProps: ActiveDotProps = {
       key: `dot-${i}`,
       r: 3,
       ...areaProps,
@@ -241,6 +245,7 @@ function Dots({
       dataKey,
       value: entry.value,
       payload: entry.payload,
+      // @ts-expect-error we're passing extra property 'points' that the props are not expecting
       points,
     };
 
@@ -649,7 +654,7 @@ class AreaWithState extends PureComponent<InternalProps> {
 
     const layerClass = clsx('recharts-area', className);
     const clipPathId = id;
-    const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
+    const { r, strokeWidth } = getRadiusAndStrokeWidthFromDot(dot);
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
 

@@ -9,7 +9,7 @@ import {
   LabelListFromLabelProp,
   ImplicitLabelListType,
 } from '../component/LabelList';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -55,7 +55,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
 
@@ -204,7 +204,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
   }
 
   const scatterProps = svgPropertiesNoEvents(props);
-  const customLineProps = filterProps(line, false);
+  const customLineProps = svgPropertiesNoEventsFromUnknown(line);
   let linePoints, lineItem;
 
   if (lineType === 'joint') {
@@ -217,7 +217,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
       { x: xmax, y: linearExp(xmax) },
     ];
   }
-  const lineProps = {
+  const lineProps: CurveProps = {
     ...scatterProps,
     fill: 'none',
     stroke: scatterProps && scatterProps.fill,

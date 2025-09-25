@@ -9,7 +9,7 @@ import { Layer } from '../container/Layer';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
@@ -43,7 +43,11 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PiePresentationProps, PieSettings } from '../state/types/PieSettings';
-import { svgPropertiesNoEvents, SVGPropsNoEvents } from '../util/svgPropertiesNoEvents';
+import {
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+  SVGPropsNoEvents,
+} from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import {
   LabelListFromLabelProp,
@@ -357,8 +361,8 @@ function PieLabels({
     return null;
   }
   const pieProps = svgPropertiesNoEvents(props);
-  const customLabelProps = filterProps(label, false);
-  const customLabelLineProps = filterProps(labelLine, false);
+  const customLabelProps = svgPropertiesNoEventsFromUnknown(label);
+  const customLabelLineProps = svgPropertiesNoEventsFromUnknown(labelLine);
   const offsetRadius =
     (typeof label === 'object' &&
       'offsetRadius' in label &&

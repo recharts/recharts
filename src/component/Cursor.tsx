@@ -9,11 +9,11 @@ import { Rectangle } from '../shape/Rectangle';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
-import { filterProps } from '../util/ReactUtils';
 import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipPayload } from '../state/tooltipSlice';
+import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 /**
  * If set false, no cursor will be drawn when tooltip is active.
@@ -84,7 +84,7 @@ export function CursorInternal(props: CursorConnectedProps) {
     pointerEvents: 'none',
     ...offset,
     ...restProps,
-    ...filterProps(cursor, false),
+    ...svgPropertiesNoEventsFromUnknown(cursor),
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
     className: clsx('recharts-tooltip-cursor', extraClassName),

@@ -7,7 +7,7 @@ import { Series } from 'victory-vendor/d3-shape';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   ImplicitLabelListType,
@@ -55,7 +55,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
@@ -330,7 +330,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
       return null;
     }
     const { cornerRadius } = this.props;
-    const backgroundProps = filterProps(this.props.background, false);
+    const backgroundProps = svgPropertiesNoEventsFromUnknown(this.props.background);
     return sectors.map((entry, i) => {
       const { value, background, ...rest } = entry;
 

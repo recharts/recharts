@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import invariant from 'tiny-invariant';
-import { ActiveShape } from './types';
+import { ActiveShape, DataKey } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { BarProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
@@ -44,7 +44,9 @@ export type BarRectangleProps = {
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   width?: number;
   height?: number;
-} & Omit<BarProps, 'onAnimationStart' | 'onAnimationEnd'>;
+  index: number;
+  dataKey: DataKey<any>;
+} & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 export function BarRectangle(props: BarRectangleProps) {
   return (

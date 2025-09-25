@@ -1,3 +1,4 @@
+import { isValidElement, SVGProps } from 'react';
 import { EventKeysType, isEventKey } from './excludeEventProps';
 import {
   DataAttributeKeyType,
@@ -20,4 +21,20 @@ export function svgPropertiesAndEvents<T extends Record<PropertyKey, any>>(obj: 
     ([key]) => isSvgElementPropKey(key) || isDataAttribute(key) || isEventKey(key),
   );
   return Object.fromEntries(filteredEntries) as SVGPropsAndEvents<T>;
+}
+
+export function svgPropertiesAndEventsFromUnknown(input: unknown): SVGProps<unknown> | null {
+  if (input == null) {
+    return null;
+  }
+
+  if (isValidElement(input)) {
+    return svgPropertiesAndEvents(input.props);
+  }
+
+  if (typeof input === 'object' && !Array.isArray(input)) {
+    return svgPropertiesAndEvents(input);
+  }
+
+  return null;
 }

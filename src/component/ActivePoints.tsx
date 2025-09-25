@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
 import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useActiveTooltipDataPoints } from '../hooks';
 import { isNullish } from '../util/DataUtils';
+import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 export interface PointType {
   readonly x: number | null;
@@ -47,7 +47,7 @@ const renderActivePoint = ({
     stroke: '#fff',
     payload: point.payload,
     value: point.value,
-    ...filterProps(activeDot, false),
+    ...svgPropertiesNoEventsFromUnknown(activeDot),
     ...adaptEventHandlers(activeDot),
   };
 

@@ -13,7 +13,6 @@ import {
   ScaleType,
   TickItem,
 } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import { degreeToRadian, getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import { RechartsScale } from '../util/ChartUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
@@ -22,7 +21,7 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -159,7 +158,7 @@ const AxisLine = (props: PropsWithTicks) => {
   const axisLineProps = {
     ...svgPropertiesNoEvents(props),
     fill: 'none',
-    ...filterProps(axisLine, false),
+    ...svgPropertiesNoEvents(axisLine),
   };
 
   if (axisLineType === 'circle') {
@@ -204,11 +203,11 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement =
 const Ticks = (props: PropsWithTicks) => {
   const { tick, tickLine, tickFormatter, stroke, ticks } = props;
   const axisProps = svgPropertiesNoEvents(props);
-  const customTickProps = filterProps(tick, false);
+  const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   const tickLineProps = {
     ...axisProps,
     fill: 'none',
-    ...filterProps(tickLine, false),
+    ...svgPropertiesNoEvents(tickLine),
   };
 
   const items = ticks.map((entry, i) => {

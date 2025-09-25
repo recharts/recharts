@@ -11,7 +11,7 @@ interface DotProps {
   className?: string;
   cx?: number;
   cy?: number;
-  r?: number;
+  r?: number | string;
   clipDot?: boolean;
 }
 

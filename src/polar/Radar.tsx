@@ -27,7 +27,6 @@ import {
   CartesianLabelListContextProvider,
 } from '../component/LabelList';
 import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration, ActiveDotType } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
@@ -41,7 +40,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 
 interface RadarPoint {
   x: number;
@@ -235,14 +234,15 @@ function Dots({ points, props }: { points: ReadonlyArray<RadarPoint>; props: Pro
   const { id, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
-  const customDotProps = filterProps(dot, true);
+  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
 
   const dots = points.map((entry, i) => {
-    const dotProps = {
+    const dotProps: DotProps = {
       key: `dot-${i}`,
       r: 3,
       ...baseProps,
       ...customDotProps,
+      // @ts-expect-error we're passing in a dataKey that Dot did not ask for
       dataKey,
       cx: entry.x,
       cy: entry.y,
@@ -250,7 +250,6 @@ function Dots({ points, props }: { points: ReadonlyArray<RadarPoint>; props: Pro
       payload: entry,
     };
 
-    // @ts-expect-error r type is not compatible
     return renderDotItem(dot, dotProps);
   });
 

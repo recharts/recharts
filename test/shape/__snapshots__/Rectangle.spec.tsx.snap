@@ -18,7 +18,6 @@ exports[`<Rectangle /> > Should render 1 rectangle in simple Rectangle when radi
         50,135Z"
       fill="#ff7300"
       height="100"
-      radius="5,10,8,15"
       width="80"
       x="50"
       y="50"
