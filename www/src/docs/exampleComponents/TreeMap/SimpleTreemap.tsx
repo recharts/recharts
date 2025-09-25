@@ -1,4 +1,3 @@
-import React from 'react';
 import { Treemap, ResponsiveContainer } from 'recharts';
 
 const data = [
