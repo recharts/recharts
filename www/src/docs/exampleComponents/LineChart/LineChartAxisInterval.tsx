@@ -1,5 +1,5 @@
-import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { AxisInterval } from 'recharts/types/util/types';
 
 const data = [
   {
@@ -47,7 +47,7 @@ const data = [
 ];
 
 const Example = () => {
-  const chart = interval => (
+  const chart = (interval: AxisInterval) => (
     <ResponsiveContainer height={250} width="100%">
       <LineChart data={data} margin={{ right: 25, top: 10 }}>
         <CartesianGrid strokeDasharray="3 3" />
