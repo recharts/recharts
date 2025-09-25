@@ -1,5 +1,5 @@
-import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ReactNode } from 'react';
 
 const data = [
   {
@@ -76,13 +76,13 @@ const data = [
   },
 ];
 
-const monthTickFormatter = tick => {
+const monthTickFormatter = (tick: string | number | Date): string => {
   const date = new Date(tick);
 
-  return date.getMonth() + 1;
+  return String(date.getMonth() + 1);
 };
 
-const renderQuarterTick = tickProps => {
+const renderQuarterTick = (tickProps: any): ReactNode => {
   const { x, y, payload, width, visibleTicksCount } = tickProps;
   const { value, offset } = payload;
   const date = new Date(value);
@@ -124,6 +124,7 @@ const Example = () => {
           axisLine={false}
           tickLine={false}
           interval={0}
+          // @ts-expect-error recharts doesn't like the null return type
           tick={renderQuarterTick}
           height={1}
           scale="band"
