@@ -1,3 +1,14 @@
+/**
+ * @fileoverview This script checks that the version of Playwright is consistent across multiple project files.
+ * It compares the versions specified in:
+ * - package.json (for 'playwright' and '@playwright/experimental-ct-react')
+ * - test-vr/playwright-ct.Dockerfile
+ * - .github/workflows/ci.yml
+ *
+ * If the versions are all the same, it exits with code 0.
+ * If any version is different, it logs the discrepancies and exits with code 1.
+ * This script is intended to be used in CI to prevent version mismatches.
+ */
 const fs = require('fs');
 const path = require('path');
 

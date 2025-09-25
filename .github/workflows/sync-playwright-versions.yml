@@ -1,0 +1,61 @@
+# This workflow automates the synchronization of Playwright versions for Dependabot pull requests.
+# When Dependabot updates Playwright in package.json, this workflow:
+# 1. Detects the version mismatch between package.json and other configuration files (Dockerfile, ci.yml).
+# 2. Runs a script to update the versions in those files to match package.json.
+# 3. Commits the changes to the Dependabot branch with a [dependabot-skip] message to avoid update loops.
+name: Sync Playwright Versions
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    # Only run this job for pull requests created by the dependabot user.
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Checkout the head of the PR to be able to push changes back.
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # This script exits with an error if versions are out of sync.
+      # We use continue-on-error so we can act on the failure in the next step.
+      - name: Check for version mismatch
+        id: check_versions
+        run: npm run check-playwright-versions
+        continue-on-error: true
+
+      # This step runs only if the check_versions step failed.
+      - name: Update files if versions are mismatched
+        if: steps.check_versions.outcome == 'failure'
+        id: update_files
+        run: node scripts/sync-playwright-versions.js
+
+      # If the files were updated, commit and push them to the PR branch.
+      - name: Commit and push changes
+        if: steps.update_files.outcome == 'success'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          # Check if there are changes to commit before creating a commit.
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "fix(ci): sync playwright versions [dependabot-skip]"
+            git push
+          fi
