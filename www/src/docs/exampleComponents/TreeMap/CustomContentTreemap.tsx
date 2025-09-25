@@ -1,5 +1,5 @@
-import React from 'react';
 import { Treemap, ResponsiveContainer } from 'recharts';
+import { TreemapNode } from 'recharts/types/chart/Treemap';
 
 const data = [
   {
@@ -136,8 +136,8 @@ const data = [
 
 const COLORS = ['#8889DD', '#9597E4', '#8DC77B', '#A5D297', '#E2CF45', '#F8C12D'];
 
-const CustomizedContent = props => {
-  const { root, depth, x, y, width, height, index, colors, name } = props;
+const CustomizedContent = (props: TreemapNode) => {
+  const { root, depth, x, y, width, height, index, name } = props;
 
   return (
     <g>
@@ -147,7 +147,7 @@ const CustomizedContent = props => {
         width={width}
         height={height}
         style={{
-          fill: depth < 2 ? colors[Math.floor((index / root.children.length) * 6)] : '#ffffff00',
+          fill: depth < 2 ? COLORS[Math.floor((index / root.children.length) * 6)] : '#ffffff00',
           stroke: '#fff',
           strokeWidth: 2 / (depth + 1e-10),
           strokeOpacity: 1 / (depth + 1e-10),
@@ -177,7 +177,7 @@ const Example = () => {
         dataKey="size"
         stroke="#fff"
         fill="#8884d8"
-        content={<CustomizedContent colors={COLORS} />}
+        content={CustomizedContent}
       />
     </ResponsiveContainer>
   );
