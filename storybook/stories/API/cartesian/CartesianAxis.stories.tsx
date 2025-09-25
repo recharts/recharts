@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { CartesianAxis, ResponsiveContainer, Surface } from '../../../../src';
+import { CartesianAxis, Surface } from '../../../../src';
 import { ticks } from '../../data';
 
 const GeneralProps: Args = {
@@ -178,28 +178,26 @@ export const API = {
   render: (args: Record<string, any>) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
-      <ResponsiveContainer width="100%" height={surfaceHeight}>
-        <Surface
-          width={surfaceWidth}
-          height={surfaceHeight}
+      <Surface
+        width={surfaceWidth}
+        height={surfaceHeight}
+        viewBox={{
+          x: 0,
+          y: 0,
+          width: surfaceWidth,
+          height: surfaceHeight,
+        }}
+      >
+        <CartesianAxis
           viewBox={{
             x: 0,
             y: 0,
             width: surfaceWidth,
             height: surfaceHeight,
           }}
-        >
-          <CartesianAxis
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: surfaceWidth,
-              height: surfaceHeight,
-            }}
-            {...args}
-          />
-        </Surface>
-      </ResponsiveContainer>
+          {...args}
+        />
+      </Surface>
     );
   },
   args: {

@@ -112,6 +112,14 @@ export const useChartLayout = () => useAppSelector(selectChartLayout);
 export const ReportChartSize = (props: Size): null => {
   const dispatch = useAppDispatch();
 
+  /*
+   * Skip dispatching properties in panorama chart for two reasons:
+   * 1. The root chart should be deciding on these properties, and
+   * 2. Brush reads these properties from redux store, and so they must remain stable
+   *      to avoid circular dependency and infinite re-rendering.
+   */
+  const isPanorama = useIsPanorama();
+
   const { width: widthFromProps, height: heightFromProps } = props;
   const responsiveContainerCalculations = useResponsiveContainerContext();
 
@@ -135,8 +143,10 @@ export const ReportChartSize = (props: Size): null => {
   }
 
   useEffect(() => {
-    dispatch(setChartSize({ width, height }));
-  }, [dispatch, width, height]);
+    if (!isPanorama) {
+      dispatch(setChartSize({ width, height }));
+    }
+  }, [dispatch, isPanorama, width, height]);
 
   return null;
 };

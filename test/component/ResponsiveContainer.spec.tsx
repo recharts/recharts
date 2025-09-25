@@ -164,9 +164,13 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>,
     );
 
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 10, height: 10 } }]);
+    });
+
     const testDivBefore = screen.getByTestId('inside');
     assertNotNull(testDivBefore);
-    expect(testDivBefore).toHaveStyle({ width: '0px', height: '200px' });
+    expect(testDivBefore).toHaveStyle({ width: '10px', height: '200px' });
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
@@ -185,9 +189,14 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>,
     );
 
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 10, height: 10 } }]);
+      vi.advanceTimersByTime(300);
+    });
+
     const testDivBefore = screen.getByTestId('inside');
     assertNotNull(testDivBefore);
-    expect(testDivBefore).toHaveStyle({ width: '0px', height: '200px' });
+    expect(testDivBefore).toHaveStyle({ width: '10px', height: '200px' });
 
     act(() => {
       notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
@@ -196,7 +205,7 @@ describe('<ResponsiveContainer />', () => {
     const testDivInBetween = screen.getByTestId('inside');
     assertNotNull(testDivInBetween);
     // should still be the same since we haven't advanced the timers yet
-    expect(testDivInBetween).toHaveStyle({ width: '0px', height: '200px' });
+    expect(testDivInBetween).toHaveStyle({ width: '10px', height: '200px' });
 
     // advance time by 100ms, should still be the same
     act(() => {
@@ -204,7 +213,7 @@ describe('<ResponsiveContainer />', () => {
     });
     const testDivAfter100ms = screen.getByTestId('inside');
     assertNotNull(testDivAfter100ms);
-    expect(testDivAfter100ms).toHaveStyle({ width: '0px', height: '200px' });
+    expect(testDivAfter100ms).toHaveStyle({ width: '10px', height: '200px' });
 
     // advance time by another 100ms (total of 200ms) and now it should resize
     act(() => {
@@ -411,19 +420,20 @@ describe('<ResponsiveContainer />', () => {
       childRenderSpy(width, height);
       return null;
     }
-    console.log('render 1');
     render(
       <ResponsiveContainer>
         <Child />
       </ResponsiveContainer>,
     );
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 10, height: 10 } }]);
+    });
 
     expect(childRenderSpy).toHaveBeenCalledTimes(1);
-    expect(childRenderSpy).toHaveBeenLastCalledWith(0, 0);
+    expect(childRenderSpy).toHaveBeenLastCalledWith(10, 10);
     childRenderSpy.mockClear();
 
     act(() => {
-      console.log('render 2');
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
@@ -431,7 +441,6 @@ describe('<ResponsiveContainer />', () => {
     childRenderSpy.mockClear();
 
     act(() => {
-      console.log('render 3');
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
@@ -439,14 +448,12 @@ describe('<ResponsiveContainer />', () => {
 
     // What if size is slightly different but rounds to the same?
     act(() => {
-      console.log('render 4');
       notifyResizeObserverChange([{ contentRect: { width: 100.4, height: 100.4 } }]);
     });
     expect(childRenderSpy).not.toHaveBeenCalled();
 
     // And now with a different rounded value
     act(() => {
-      console.log('render 5');
       notifyResizeObserverChange([{ contentRect: { width: 101, height: 101 } }]);
     });
     expect(childRenderSpy).toHaveBeenCalledTimes(1);

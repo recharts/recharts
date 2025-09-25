@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, Surface, Text } from '../../../../src';
+import { Surface, Text } from '../../../../src';
 import { TextProps } from '../props/TextProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
@@ -13,12 +13,10 @@ export default {
 export const API = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={300}>
-        <Surface width={500} height={80}>
-          <Text {...args}>{args.content}</Text>
-          <RechartsHookInspector />
-        </Surface>
-      </ResponsiveContainer>
+      <Surface width={500} height={300}>
+        <Text {...args}>{args.content}</Text>
+        <RechartsHookInspector />
+      </Surface>
     );
   },
   args: {
