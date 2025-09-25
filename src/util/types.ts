@@ -15,7 +15,6 @@ import {
   PointerEvent,
   ReactElement,
   ReactNode,
-  ReactSVGElement,
   SVGProps,
   SyntheticEvent,
   TouchEvent,
@@ -584,20 +583,6 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   // Transition Events
   onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
-};
-
-const SVGContainerPropKeys = ['viewBox', 'children'];
-
-const PolyElementKeys = ['points', 'pathLength'];
-
-/** svg element types that have specific attribute filtration requirements */
-export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
-
-/** map of svg element types to unique svg attributes that belong to that element */
-export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
-  svg: SVGContainerPropKeys,
-  polygon: PolyElementKeys,
-  polyline: PolyElementKeys,
 };
 
 /** The type of easing function to use for animations */
