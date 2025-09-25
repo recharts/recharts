@@ -20,9 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    // TODO once we have moved everything to TypeScript, we can turn off the JS extension
-    "allowJs": true,
-
     "types": ["vite/client"]
   },
   "include": ["src"]
