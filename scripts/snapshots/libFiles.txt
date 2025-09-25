@@ -217,6 +217,7 @@
   "lib/util/excludeEventProps.js",
   "lib/util/getChartPointer.js",
   "lib/util/getEveryNthWithCondition.js",
+  "lib/util/getRadiusAndStrokeWidthFromDot.js",
   "lib/util/getSliced.js",
   "lib/util/isDomainSpecifiedByUser.js",
   "lib/util/isWellBehavedNumber.js",

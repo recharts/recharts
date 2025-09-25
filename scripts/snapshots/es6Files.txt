@@ -217,6 +217,7 @@
   "es6/util/excludeEventProps.js",
   "es6/util/getChartPointer.js",
   "es6/util/getEveryNthWithCondition.js",
+  "es6/util/getRadiusAndStrokeWidthFromDot.js",
   "es6/util/getSliced.js",
   "es6/util/isDomainSpecifiedByUser.js",
   "es6/util/isWellBehavedNumber.js",
