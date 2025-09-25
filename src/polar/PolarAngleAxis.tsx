@@ -216,9 +216,12 @@ const Ticks = (props: PropsWithTicks) => {
     const verticalAnchor: TextVerticalAnchor = getTickTextVerticalAnchor(entry);
     const tickProps: TickItemTextProps = {
       ...axisProps,
+      // @ts-expect-error customTickProps is contributing unknown props
       textAnchor,
       verticalAnchor,
+      // @ts-expect-error customTickProps is contributing unknown props
       stroke: 'none',
+      // @ts-expect-error customTickProps is contributing unknown props
       fill: stroke,
       ...customTickProps,
       index: i,

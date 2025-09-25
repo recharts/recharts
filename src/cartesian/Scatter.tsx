@@ -219,7 +219,9 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
   }
   const lineProps: CurveProps = {
     ...scatterProps,
+    // @ts-expect-error customLineProps is contributing unknown props
     fill: 'none',
+    // @ts-expect-error customLineProps is contributing unknown props
     stroke: scatterProps && scatterProps.fill,
     ...customLineProps,
     points: linePoints,

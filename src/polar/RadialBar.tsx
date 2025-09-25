@@ -341,6 +341,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
       const props: RadialBarSectorProps = {
         cornerRadius: parseCornerRadius(cornerRadius),
         ...rest,
+        // @ts-expect-error backgroundProps is contributing unknown props
         fill: '#eee',
         ...background,
         ...backgroundProps,

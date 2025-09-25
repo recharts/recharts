@@ -277,6 +277,7 @@ function BarBackground(props: BarBackgroundProps) {
           option: backgroundFromProps,
           isActive: String(i) === activeIndex,
           ...rest,
+          // @ts-expect-error backgroundProps is contributing unknown props
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,

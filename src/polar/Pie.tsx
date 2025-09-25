@@ -6,7 +6,7 @@ import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
-import { Curve } from '../shape/Curve';
+import { Curve, Props as CurveProps } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
@@ -313,8 +313,9 @@ function getClassNamePropertyIfExists(u: unknown): string {
   return '';
 }
 
-const renderLabelLineItem = (option: PieLabelLine, props: any) => {
+const renderLabelLineItem = (option: PieLabelLine, props: CurveProps) => {
   if (React.isValidElement(option)) {
+    // @ts-expect-error we can't know if the type of props matches the element
     return React.cloneElement(option, props);
   }
   if (typeof option === 'function') {
@@ -376,16 +377,19 @@ function PieLabels({
     const labelProps: PieLabelRenderProps = {
       ...pieProps,
       ...entry,
+      // @ts-expect-error customLabelProps is contributing unknown props
       stroke: 'none',
       ...customLabelProps,
       index: i,
       textAnchor: getTextAnchor(endPoint.x, entry.cx),
       ...endPoint,
     };
-    const lineProps = {
+    const lineProps: CurveProps = {
       ...pieProps,
       ...entry,
+      // @ts-expect-error customLabelLineProps is contributing unknown props
       fill: 'none',
+      // @ts-expect-error customLabelLineProps is contributing unknown props
       stroke: entry.fill,
       ...customLabelLineProps,
       index: i,

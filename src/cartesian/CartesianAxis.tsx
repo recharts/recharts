@@ -368,7 +368,9 @@ function Ticks(props: TicksProps) {
       textAnchor,
       verticalAnchor,
       ...axisProps,
+      // @ts-expect-error customTickProps is contributing unknown props
       stroke: 'none',
+      // @ts-expect-error customTickProps is contributing unknown props
       fill: stroke,
       ...customTickProps,
       ...tickCoord,

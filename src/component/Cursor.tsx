@@ -90,7 +90,11 @@ export function CursorInternal(props: CursorConnectedProps) {
     className: clsx('recharts-tooltip-cursor', extraClassName),
   };
 
-  return isValidElement(cursor) ? cloneElement(cursor, cursorProps) : createElement(cursorComp, cursorProps);
+  if (isValidElement(cursor)) {
+    // @ts-expect-error we don't know if cursorProps are correct for this element
+    return cloneElement(cursor, cursorProps);
+  }
+  return createElement(cursorComp, cursorProps);
 }
 
 /*
