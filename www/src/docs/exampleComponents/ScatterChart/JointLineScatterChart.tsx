@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   ScatterChart,
   Scatter,
@@ -41,7 +40,7 @@ const Example = () => {
         <CartesianGrid />
         <XAxis type="number" dataKey="x" name="stature" unit="cm" />
         <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-        <ZAxis type="number" range={[100]} />
+        <ZAxis type="number" range={[100, 100]} />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         <Legend />
         <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
