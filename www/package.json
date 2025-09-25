@@ -38,7 +38,7 @@
     "react-ga4": "^2.1.0",
     "react-helmet": "^6.1.0",
     "react-monaco-editor": "^0.59.0",
-    "react-router": "^7.9.1",
+    "react-router": "^7.9.2",
     "react-runner": "^1.0.5",
     "recharts": "^3.2.1",
     "simple-line-icons": "^2.5.5"
