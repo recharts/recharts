@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   ComposedChart,
   Line,
@@ -10,7 +9,10 @@ import {
   Legend,
   DefaultLegendContent,
   ResponsiveContainer,
+  DefaultLegendContentProps,
+  DefaultTooltipContent,
 } from 'recharts';
+import { TooltipContentProps } from 'recharts/types/component/Tooltip';
 
 const data = [
   {
@@ -26,6 +28,7 @@ const data = [
   {
     name: 'Page C',
     a: [150, 423],
+    b: 229,
   },
   {
     name: 'Page D',
@@ -43,17 +46,17 @@ const data = [
   },
 ];
 
+const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps<string | number, string>) => {
+  const newPayload = payload.filter(x => x.dataKey !== 'a');
+  return <DefaultTooltipContent payload={newPayload} {...rest} />;
+};
+
+const renderLegendWithoutRange = ({ payload, content, ref, ...rest }: DefaultLegendContentProps) => {
+  const newPayload = payload?.filter(x => x.dataKey !== 'a');
+  return <DefaultLegendContent payload={newPayload} {...rest} />;
+};
+
 export default function Example() {
-  const renderTooltipWithoutRange = ({ payload, content, ...rest }) => {
-    const newPayload = payload.filter(x => x.dataKey !== 'a');
-    return <Tooltip payload={newPayload} {...rest} />;
-  };
-
-  const renderLegendWithoutRange = ({ payload, content, ...rest }) => {
-    const newPayload = payload.filter(x => x.dataKey !== 'a');
-    return <DefaultLegendContent payload={newPayload} {...rest} />;
-  };
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart
