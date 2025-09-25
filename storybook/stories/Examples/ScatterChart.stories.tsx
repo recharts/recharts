@@ -10,6 +10,7 @@ import {
   Scatter,
   ScatterChart,
   Tooltip,
+  TooltipContentProps,
   XAxis,
   YAxis,
   ZAxis,
@@ -231,7 +232,7 @@ export const BubbleChart = {
     const domain = parseDomain();
     const range = [16, 225] as const;
 
-    const renderTooltip = (props: any) => {
+    const renderTooltip = (props: TooltipContentProps<string | number, string>) => {
       const { active, payload } = props;
 
       if (active && payload && payload.length) {
