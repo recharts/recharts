@@ -1,5 +1,16 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LegendPayload,
+} from 'recharts';
+import { DataKey } from 'recharts/types/util/types';
 
 const data = [
   {
@@ -47,7 +58,7 @@ const data = [
 ];
 
 const Example = () => {
-  const [hoveringDataKey, setHoveringDataKey] = React.useState(null);
+  const [hoveringDataKey, setHoveringDataKey] = React.useState<DataKey<any> | undefined>(undefined);
 
   let pvOpacity = 1;
   let uvOpacity = 1;
@@ -60,12 +71,12 @@ const Example = () => {
     uvOpacity = 0.5;
   }
 
-  const handleMouseEnter = (payload /*: LegendPayload */) => {
+  const handleMouseEnter = (payload: LegendPayload) => {
     setHoveringDataKey(payload.dataKey);
   };
 
   const handleMouseLeave = () => {
-    setHoveringDataKey(null);
+    setHoveringDataKey(undefined);
   };
 
   return (
