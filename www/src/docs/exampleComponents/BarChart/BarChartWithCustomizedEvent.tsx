@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Bar, BarChart, Cell, ResponsiveContainer } from 'recharts';
+import { BarRectangleItem } from 'recharts/types/cartesian/Bar';
 
 const Example = () => {
   const [data] = useState([
@@ -48,7 +49,7 @@ const Example = () => {
   ]);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleClick = (_, index) => {
+  const handleClick = (_: BarRectangleItem, index: number) => {
     setActiveIndex(index);
   };
 
@@ -60,7 +61,7 @@ const Example = () => {
       <ResponsiveContainer width="100%" height={100}>
         <BarChart width={150} height={40} data={data}>
           <Bar dataKey="uv" onClick={handleClick}>
-            {data.map((entry, index) => (
+            {data.map((_entry, index) => (
               <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
             ))}
           </Bar>
