@@ -1,5 +1,13 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  TooltipContentProps,
+} from 'recharts';
 
 const data = [
   {
@@ -46,15 +54,15 @@ const data = [
   },
 ];
 
-const toPercent = (decimal, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
+const toPercent = (decimal: number, fixed: number = 0): string => `${(decimal * 100).toFixed(fixed)}%`;
 
-const getPercent = (value, total) => {
+const getPercent = (value: number, total: number): string => {
   const ratio = total > 0 ? value / total : 0;
 
   return toPercent(ratio, 2);
 };
 
-const renderTooltipContent = o => {
+const renderTooltipContent = (o: TooltipContentProps<number | string, string>) => {
   const { payload, label } = o;
   const total = payload.reduce((result, entry) => result + entry.value, 0);
 
