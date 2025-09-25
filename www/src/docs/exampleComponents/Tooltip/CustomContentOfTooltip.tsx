@@ -1,5 +1,14 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  TooltipContentProps,
+} from 'recharts';
 
 const data = [
   {
@@ -46,7 +55,7 @@ const data = [
   },
 ];
 
-const getIntroOfPage = label => {
+const getIntroOfPage = (label: string | number | undefined) => {
   if (label === 'Page A') {
     return "Page A is about men's clothing";
   }
@@ -68,7 +77,7 @@ const getIntroOfPage = label => {
   return '';
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps<string | number, string>) => {
   const isVisible = active && payload && payload.length;
   return (
     <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
