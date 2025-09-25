@@ -1,7 +1,11 @@
 import * as React from 'react';
-import { CSSProperties, ReactElement, SVGProps } from 'react';
+import { CSSProperties, ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../../src/util/svgPropertiesNoEvents';
+import {
+  SVGElementPropKeysType,
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+} from '../../src/util/svgPropertiesNoEvents';
 
 describe('svgPropertiesNoEvents', () => {
   it('should return an empty object when called with an empty object', () => {
@@ -203,7 +207,7 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       custom: 'not-a-svg-prop',
     };
     const element: ReactElement<InputType> = <svg {...myProps} />;
-    const result: SVGProps<unknown> = svgPropertiesNoEventsFromUnknown(element);
+    const result: Partial<Record<SVGElementPropKeysType, unknown>> = svgPropertiesNoEventsFromUnknown(element);
     expect(result).toEqual({
       'aria-label': 'test',
       className: 'svg-class',
@@ -223,7 +227,7 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
   it.each([null, undefined, true, false, [], 'string', 1, Symbol.for('key')] as const)(
     'should return null when passed %s',
     input => {
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toBeNull();
     },
   );
@@ -231,19 +235,19 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
   describe('type matching ActiveDotType', () => {
     it('should return null type when passed a boolean', () => {
       const input = true;
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toBeNull();
     });
 
     it('should return null type when passed a function', () => {
       const input = () => {};
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toBeNull();
     });
 
     it('should return SVGProps type when passed a non-specific ReactElement', () => {
       const input = <circle cx={10} cy={10} r={5} />;
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toEqual({
         cx: 10,
         cy: 10,
@@ -253,7 +257,7 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
 
     it('should return SVGProps type when passed a non-specific ReactElement', () => {
       const input = <circle cx={10} cy={10} r={5} />;
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toEqual({
         cx: 10,
         cy: 10,
@@ -270,7 +274,7 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
         custom?: string;
       };
       const input: InputType = { cx: 10, cy: 10, r: 5 };
-      const result: SVGProps<unknown> | null = svgPropertiesNoEventsFromUnknown(input);
+      const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
       expect(result).toEqual({ cx: 10, cy: 10, r: 5 });
     });
 
@@ -288,11 +292,11 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
         return svgPropertiesNoEventsFromUnknown(i);
       }
       const input1: InputType = { cx: 10, cy: 10, r: 5 };
-      const result1: SVGProps<unknown> = noInfer(input1);
+      const result1: Partial<Record<SVGElementPropKeysType, unknown>> = noInfer(input1);
       expect(result1).toEqual({ cx: 10, cy: 10, r: 5 });
 
       const input2: InputType = true;
-      const result2: SVGProps<unknown> = noInfer(input2);
+      const result2: Partial<Record<SVGElementPropKeysType, unknown>> = noInfer(input2);
       expect(result2).toBeNull();
     });
   });
