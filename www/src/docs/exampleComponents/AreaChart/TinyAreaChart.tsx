@@ -1,4 +1,3 @@
-import React from 'react';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 
 const data = [
