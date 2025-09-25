@@ -32,6 +32,7 @@
     "check-types-test": "tsc --project test/tsconfig.json",
     "check-types-storybook": "tsc --project storybook/tsconfig.json",
     "check-types-website": "tsc --project www/tsconfig.json",
+    "check-playwright-versions": "node scripts/check-playwright-versions.js",
     "test": "vitest run --config vitest.config.mts --project unit",
     "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit",
     "test-mutation": "stryker run",
