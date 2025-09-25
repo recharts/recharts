@@ -1,5 +1,15 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LabelList,
+  ResponsiveContainer,
+  LabelProps,
+} from 'recharts';
 
 const data = [
   {
@@ -46,15 +56,25 @@ const data = [
   },
 ];
 
-const renderCustomizedLabel = props => {
+const renderCustomizedLabel = (props: LabelProps) => {
   const { x, y, width, value } = props;
+
+  if (x == null || y == null || width == null) {
+    return null;
+  }
   const radius = 10;
 
   return (
     <g>
-      <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#8884d8" />
-      <text x={x + width / 2} y={y - radius} fill="#fff" textAnchor="middle" dominantBaseline="middle">
-        {value.split(' ')[1]}
+      <circle cx={Number(x) + Number(width) / 2} cy={Number(y) - radius} r={radius} fill="#8884d8" />
+      <text
+        x={Number(x) + Number(width) / 2}
+        y={Number(y) - radius}
+        fill="#fff"
+        textAnchor="middle"
+        dominantBaseline="middle"
+      >
+        {String(value).split(' ')[1]}
       </text>
     </g>
   );
