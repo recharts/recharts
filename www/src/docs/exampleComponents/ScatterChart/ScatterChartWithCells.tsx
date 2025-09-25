@@ -1,4 +1,3 @@
-import React from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
 const data = [
@@ -28,7 +27,7 @@ export default function App() {
       <YAxis type="number" dataKey="y" name="weight" unit="kg" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter name="A school" data={data} fill="#8884d8">
-        {data.map((entry, index) => (
+        {data.map((_entry, index) => (
           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
         ))}
       </Scatter>
