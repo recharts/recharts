@@ -32,6 +32,10 @@ updates:
         patterns:
           - '@typescript-eslint*'
           - 'eslint-plugin-typescript*'
+      playwright:
+        patterns:
+          - 'playwright'
+          - '@playwright/experimental-ct-react'
 
   - package-ecosystem: 'npm'
     directory: '/www'

@@ -75,6 +75,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Check Playwright versions
+        run: npm run check-playwright-versions
+
       - name: Install dependencies for the website
         working-directory: www
         run: npm ci
