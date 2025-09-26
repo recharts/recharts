@@ -21,6 +21,13 @@ describe('useTooltipChartSynchronisation', () => {
   });
 
   describe('when syncId is set and Tooltip is present', () => {
+    const viewBox = {
+      height: 390,
+      width: 790,
+      x: 5,
+      y: 5,
+    };
+
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <BarChart width={800} height={400} data={PageData} syncId="my-sync-id">
         <Bar dataKey="uv" />
@@ -45,6 +52,7 @@ describe('useTooltipChartSynchronisation', () => {
           dataKey: undefined,
           index: null,
           label: undefined,
+          sourceViewBox: viewBox,
         }),
         expect.any(Symbol),
       );
@@ -66,6 +74,7 @@ describe('useTooltipChartSynchronisation', () => {
           dataKey: undefined, // unsure if this is used for anything at all
           index: '1',
           label: '1',
+          sourceViewBox: viewBox,
         }),
         expect.any(Symbol),
       );
@@ -83,6 +92,7 @@ describe('useTooltipChartSynchronisation', () => {
           dataKey: undefined,
           index: null,
           label: undefined,
+          sourceViewBox: viewBox,
         }),
         expect.any(Symbol),
       );
@@ -115,6 +125,12 @@ describe('useTooltipChartSynchronisation', () => {
           dataKey: undefined,
           index: '1',
           label: 'Page B',
+          sourceViewBox: {
+            height: 360,
+            width: 790,
+            x: 5,
+            y: 5,
+          },
         }),
         expect.any(Symbol),
       );
