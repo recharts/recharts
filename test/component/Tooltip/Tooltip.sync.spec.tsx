@@ -694,6 +694,13 @@ describe('Tooltip synchronization', () => {
   });
 
   describe('in two LineCharts where first one has Tooltip active=true and the other has no active prop', () => {
+    const viewBox = {
+      height: 360,
+      width: 390,
+      x: 5,
+      y: 5,
+    };
+
     const renderTestCase = createSynchronisedSelectorTestCase(
       ({ children }) => (
         <LineChart width={400} height={400} data={PageData} syncId="example-sync-id" className="BookOne">
@@ -785,14 +792,16 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       expect(spyB).toHaveBeenLastCalledWith({
         active: false,
         coordinate: undefined,
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(1);
 
@@ -804,8 +813,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       // chart B is now receiving synchronisation
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -816,6 +826,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -826,8 +837,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       // thanks to the active=true prop, the synchronised state remains on the chart B even though the active is on chart A
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -838,6 +850,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -852,8 +865,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '1',
         label: 'Page B',
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(3);
+      expect(spyA).toHaveBeenCalledTimes(4);
       expect(spyB).toHaveBeenLastCalledWith({
         // Thanks to mouse events, synchronisation on this chart is now turned off so that it can start sending events to other charts
         active: false,
@@ -864,6 +878,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(3);
     });

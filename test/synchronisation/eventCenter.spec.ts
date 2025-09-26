@@ -18,6 +18,12 @@ describe('eventCenter', () => {
         dataKey: 'key',
         index: '9',
         label: 'foo',
+        sourceViewBox: {
+          height: 100,
+          width: 100,
+          x: 0,
+          y: 0,
+        },
       }),
       symbol,
     );
@@ -31,6 +37,12 @@ describe('eventCenter', () => {
         dataKey: 'key',
         index: '9',
         label: 'foo',
+        sourceViewBox: {
+          height: 100,
+          width: 100,
+          x: 0,
+          y: 0,
+        },
       }),
       symbol,
     );
