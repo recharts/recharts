@@ -819,108 +819,16 @@ const sankeyDefaultProps = {
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
 
-function SankeyImpl(
-  props: PropsWithResolvedDefaults & {
-    links: ReadonlyArray<SankeyLink>;
-    modifiedNodes: NodeProps[];
-    modifiedLinks: LinkProps[];
-  },
-) {
-  const { className, style, children, links, ...others } = props;
-  const { link, dataKey, node, onMouseEnter, onMouseLeave, onClick, modifiedNodes, modifiedLinks } = props;
-
-  const tooltipPortal: Ref<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
-
-  const attrs = svgPropertiesNoEvents(others);
-
-  const width = useChartWidth();
-  const height = useChartHeight();
-
-  const handleMouseEnter = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
-      if (onMouseEnter) {
-        onMouseEnter(item, type, e);
-      }
-    },
-    [onMouseEnter],
-  );
-
-  const handleMouseLeave = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
-      if (onMouseLeave) {
-        onMouseLeave(item, type, e);
-      }
-    },
-    [onMouseLeave],
-  );
-
-  const handleClick = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
-      if (onClick) {
-        onClick(item, type, e);
-      }
-    },
-    [onClick],
-  );
-
-  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-    return null;
-  }
-
-  return (
-    <TooltipPortalContext.Provider value={tooltipPortal.current}>
-      <RechartsWrapper
-        className={className}
-        style={style}
-        width={width}
-        height={height}
-        ref={tooltipPortal}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
-        onClick={undefined}
-        onMouseMove={undefined}
-        onMouseDown={undefined}
-        onMouseUp={undefined}
-        onContextMenu={undefined}
-        onDoubleClick={undefined}
-        onTouchStart={undefined}
-        onTouchMove={undefined}
-        onTouchEnd={undefined}
-      >
-        <Surface {...attrs} width={width} height={height}>
-          {children}
-          <AllSankeyLinkElements
-            links={links}
-            modifiedLinks={modifiedLinks}
-            linkContent={link}
-            dataKey={dataKey}
-            onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
-            onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
-            onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
-          />
-          <AllNodeElements
-            modifiedNodes={modifiedNodes}
-            nodeContent={node}
-            dataKey={dataKey}
-            onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
-            onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
-            onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
-          />
-        </Surface>
-      </RechartsWrapper>
-    </TooltipPortalContext.Provider>
-  );
-}
-
-export function Sankey(outsideProps: Props) {
-  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
+function SankeyImpl(props: PropsWithResolvedDefaults) {
+  const { className, style, children, ...others } = props;
   const {
-    data,
-    width,
-    height,
-    className,
     link,
+    dataKey,
     node,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
+    data,
     iterations,
     nodeWidth,
     nodePadding,
@@ -928,6 +836,13 @@ export function Sankey(outsideProps: Props) {
     linkCurvature,
     margin,
   } = props;
+
+  const tooltipPortal: Ref<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
+
+  const attrs = svgPropertiesNoEvents(others);
+
+  const width = useChartWidth();
+  const height = useChartHeight();
 
   const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
@@ -969,17 +884,95 @@ export function Sankey(outsideProps: Props) {
     };
   }, [data, width, height, margin, iterations, nodeWidth, nodePadding, sort, link, node, linkCurvature]);
 
+  const handleMouseEnter = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseEnter) {
+        onMouseEnter(item, type, e);
+      }
+    },
+    [onMouseEnter],
+  );
+
+  const handleMouseLeave = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onMouseLeave) {
+        onMouseLeave(item, type, e);
+      }
+    },
+    [onMouseLeave],
+  );
+
+  const handleClick = useCallback(
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+      if (onClick) {
+        onClick(item, type, e);
+      }
+    },
+    [onClick],
+  );
+
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !data || !data.links || !data.nodes) {
     return null;
   }
 
   return (
+    <>
+      <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
+      <TooltipPortalContext.Provider value={tooltipPortal.current}>
+        <RechartsWrapper
+          className={className}
+          style={style}
+          width={width}
+          height={height}
+          ref={tooltipPortal}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onClick={undefined}
+          onMouseMove={undefined}
+          onMouseDown={undefined}
+          onMouseUp={undefined}
+          onContextMenu={undefined}
+          onDoubleClick={undefined}
+          onTouchStart={undefined}
+          onTouchMove={undefined}
+          onTouchEnd={undefined}
+        >
+          <Surface {...attrs} width={width} height={height}>
+            {children}
+            <AllSankeyLinkElements
+              links={links}
+              modifiedLinks={modifiedLinks}
+              linkContent={link}
+              dataKey={dataKey}
+              onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
+              onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
+              onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
+            />
+            <AllNodeElements
+              modifiedNodes={modifiedNodes}
+              nodeContent={node}
+              dataKey={dataKey}
+              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
+              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
+              onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
+            />
+          </Surface>
+        </RechartsWrapper>
+      </TooltipPortalContext.Provider>
+    </>
+  );
+}
+
+export function Sankey(outsideProps: Props) {
+  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
+  const { width, height, className } = props;
+
+  return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-      <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={defaultSankeyMargin} />
-      <SankeyImpl {...props} links={links} modifiedLinks={modifiedLinks} modifiedNodes={modifiedNodes} />
+      <SankeyImpl {...props} />
     </RechartsStoreProvider>
   );
 }

@@ -10,7 +10,6 @@ import { Margin, PolarChartProps, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -66,10 +65,6 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
 
   const { width, height, layout, ...otherCategoricalProps } = polarChartProps;
 
-  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-    return null;
-  }
-
   const { chartName, defaultTooltipEventType, validateTooltipEventTypes, tooltipPayloadSearcher } = props;
 
   const options: ChartOptions = {
@@ -103,7 +98,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
         innerRadius={polarChartProps.innerRadius}
         outerRadius={polarChartProps.outerRadius}
       />
-      <CategoricalChart width={width} height={height} {...otherCategoricalProps} ref={ref} />
+      <CategoricalChart {...otherCategoricalProps} ref={ref} />
     </RechartsStoreProvider>
   );
 });

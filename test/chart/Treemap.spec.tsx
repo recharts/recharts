@@ -269,8 +269,8 @@ describe('<Treemap />', () => {
       });
       expect(sizeSpy).toHaveBeenLastCalledWith({ width: 100, height: 50 });
       expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
-      expect(sizeSpy).toHaveBeenCalledTimes(3);
-      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+      expect(sizeSpy).toHaveBeenCalledTimes(1);
+      expect(viewBoxSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should not throw if axes are provided - they are not an allowed child', () => {

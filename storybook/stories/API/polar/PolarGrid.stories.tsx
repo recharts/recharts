@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { PolarGrid, ResponsiveContainer, Surface } from '../../../../src';
+import { PolarGrid, Surface } from '../../../../src';
 
 const GeneralProps: Args = {
   cx: {
@@ -65,20 +65,18 @@ const [surfaceWidth, surfaceHeight] = [500, 500];
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={surfaceHeight}>
-        <Surface
-          width={surfaceWidth}
-          height={surfaceHeight}
-          viewBox={{
-            x: 0,
-            y: 0,
-            width: surfaceWidth,
-            height: surfaceHeight,
-          }}
-        >
-          <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} {...args} />
-        </Surface>
-      </ResponsiveContainer>
+      <Surface
+        width={surfaceWidth}
+        height={surfaceHeight}
+        viewBox={{
+          x: 0,
+          y: 0,
+          width: surfaceWidth,
+          height: surfaceHeight,
+        }}
+      >
+        <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} {...args} />
+      </Surface>
     );
   },
   args: {

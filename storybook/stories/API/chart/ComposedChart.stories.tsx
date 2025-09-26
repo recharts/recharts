@@ -144,9 +144,9 @@ export const LineBarAreaScatterTimeScale = {
       });
     };
     return (
-      <ResponsiveContainer width="100%" height={500}>
-        <div style={{ width: '600px', margin: 'auto' }}>
-          <p>A ComposedChart of time scale</p>
+      <div style={{ width: '600px' }}>
+        <p>A ComposedChart of time scale</p>
+        <ResponsiveContainer width="100%" height={500}>
           <div className="composed-chart-wrapper">
             <Composed
               width={600}
@@ -177,8 +177,8 @@ export const LineBarAreaScatterTimeScale = {
               <RechartsHookInspector />
             </Composed>
           </div>
-        </div>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </div>
     );
   },
   args: {
