@@ -13,7 +13,7 @@ import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { AnimationDuration, AnimationTiming, DataKey, Margin, RectanglePosition } from '../util/types';
-import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
@@ -938,15 +938,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
 function TreemapDispatchInject(props: Props) {
   const dispatch = useAppDispatch();
-  return <TreemapWithState {...props} dispatch={dispatch} />;
+  const width = useChartWidth();
+  const height = useChartHeight();
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
+    return null;
+  }
+  return <TreemapWithState {...props} width={width} height={height} dispatch={dispatch} />;
 }
 
 export function Treemap(props: Props) {
   const { width, height } = props;
-
-  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
-    return null;
-  }
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>

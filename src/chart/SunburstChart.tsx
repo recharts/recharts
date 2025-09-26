@@ -8,7 +8,7 @@ import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
@@ -181,8 +181,6 @@ const SunburstChartImpl = ({
   className,
   data,
   children,
-  width,
-  height,
   padding = 2,
   dataKey = 'value',
   nameKey = 'name',
@@ -191,9 +189,9 @@ const SunburstChartImpl = ({
   fill = '#333',
   stroke = '#FFF',
   textOptions = defaultTextProps,
-  outerRadius = Math.min(width, height) / 2,
-  cx = width / 2,
-  cy = height / 2,
+  outerRadius: outerRadiusFromProps,
+  cx: cxFromProps,
+  cy: cyFromProps,
   startAngle = 0,
   endAngle = 360,
   onClick,
@@ -201,6 +199,13 @@ const SunburstChartImpl = ({
   onMouseLeave,
 }: SunburstChartProps) => {
   const dispatch = useAppDispatch();
+
+  const width = useChartWidth();
+  const height = useChartHeight();
+
+  const outerRadius = outerRadiusFromProps ?? Math.min(width, height) / 2;
+  const cx = cxFromProps ?? width / 2;
+  const cy = cyFromProps ?? height / 2;
 
   const rScale = scaleLinear([0, data[dataKey]], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
