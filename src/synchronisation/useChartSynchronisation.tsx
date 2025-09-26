@@ -45,12 +45,12 @@ function useTooltipSyncEventsListener() {
       if (syncMethod === 'index') {
         if (viewBox && action?.payload?.coordinate && action.payload.sourceViewBox) {
           const { x, y, ...otherCoordinateProps } = action.payload.coordinate;
-          const { sourceViewBox } = action.payload;
+          const { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight } = action.payload.sourceViewBox;
 
           const scaledCoordinate = {
             ...otherCoordinateProps,
-            x: viewBox.x + ((x - sourceViewBox.x) / sourceViewBox.width) * viewBox.width,
-            y: viewBox.y + ((y - sourceViewBox.y) / sourceViewBox.height) * viewBox.height,
+            x: viewBox.x + (sourceWidth ? (x - sourceX) / sourceWidth : 0) * viewBox.width,
+            y: viewBox.y + (sourceHeight ? (y - sourceY) / sourceHeight : 0) * viewBox.height,
           };
 
           dispatch({
