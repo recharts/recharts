@@ -484,6 +484,7 @@ describe('Tooltip synchronization', () => {
           dataKey: 'uv',
           index: '1',
           label: 'Page B',
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
@@ -526,6 +527,7 @@ describe('Tooltip synchronization', () => {
           index: '1',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
@@ -565,6 +567,7 @@ describe('Tooltip synchronization', () => {
           index: '2',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
@@ -975,6 +978,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </LineChart>
       ),
       mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.4, 2.19],
+      },
     },
     {
       name: 'AreaChart to AreaChart',
@@ -997,6 +1004,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </AreaChart>
       ),
       mouseHoverSelector: areaChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'BarChart to BarChart',
@@ -1019,6 +1030,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </BarChart>
       ),
       mouseHoverSelector: barChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [2.03, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'ComposedChart to ComposedChart',
@@ -1041,6 +1056,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </ComposedChart>
       ),
       mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'RadarChart to RadarChart',
@@ -1065,6 +1084,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </RadarChart>
       ),
       mouseHoverSelector: radarChartMouseHoverTooltipSelector,
+      syncDisabled: true,
     },
     {
       name: 'RadialBarChart to RadialBarChart',
@@ -1089,10 +1109,11 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </RadialBarChart>
       ),
       mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
+      syncDisabled: true,
     },
   ])(
     'when using syncMethod=index with different chart dimensions: $name',
-    ({ smallChart: SmallChart, largeChart: LargeChart, mouseHoverSelector }) => {
+    ({ smallChart: SmallChart, largeChart: LargeChart, mouseHoverSelector, syncCoordinates }) => {
       const renderBoundingTestCase = createSynchronisedSelectorTestCase(SmallChart, LargeChart);
 
       it('should bound coordinates within chart container when x exceeds maxX', () => {
@@ -1166,6 +1187,56 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         // We verify that the spy was called which indicates the synchronization mechanism is working
         expect(spyA.mock.calls.length).toBeGreaterThan(0);
         expect(spyB.mock.calls.length).toBeGreaterThan(0);
+      });
+
+      it.skipIf(!syncCoordinates)('should scale coordinates from small to large chart proportionally', () => {
+        const { wrapperA, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        showTooltipOnCoordinate(wrapperA, mouseHoverSelector, { clientX: 100, clientY: 100 });
+
+        const smallChartCoord = spyA.mock.lastCall[0];
+        const largeChartCoord = spyB.mock.lastCall[0];
+
+        expect(smallChartCoord).toBeDefined();
+        expect(largeChartCoord).toBeDefined();
+
+        const actualXRatio = largeChartCoord.x / smallChartCoord.x;
+        const actualYRatio = largeChartCoord.y / smallChartCoord.y;
+
+        const {
+          forwardRatio: [expectedXRatio, expectedYRatio],
+        } = syncCoordinates;
+
+        expect(actualXRatio).toBeCloseTo(expectedXRatio, 1);
+        expect(actualYRatio).toBeCloseTo(expectedYRatio, 1);
+      });
+
+      it.skipIf(!syncCoordinates)('should scale coordinates from large to small chart proportionally', () => {
+        const { wrapperB, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        showTooltipOnCoordinate(wrapperB, mouseHoverSelector, { clientX: 300, clientY: 200 });
+
+        const smallChartCoord = spyA.mock.lastCall[0];
+        const largeChartCoord = spyB.mock.lastCall[0];
+
+        expect(smallChartCoord).toBeDefined();
+        expect(largeChartCoord).toBeDefined();
+
+        // Test reverse scaling (large to small)
+        // The ratio should be the inverse of the forward scaling
+        const actualXRatio = largeChartCoord.x / smallChartCoord.x;
+        const actualYRatio = largeChartCoord.y / smallChartCoord.y;
+
+        const {
+          reverseRatio: [expectedXRatio, expectedYRatio],
+        } = syncCoordinates;
+
+        expect(actualXRatio).toBeCloseTo(expectedXRatio, 1);
+        expect(actualYRatio).toBeCloseTo(expectedYRatio, 1);
       });
     },
   );
