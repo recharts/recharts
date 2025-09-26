@@ -4,6 +4,7 @@ import {
   ClipboardEvent,
   Component,
   CompositionEvent,
+  CSSProperties,
   DragEvent,
   FocusEvent,
   FormEvent,
@@ -992,13 +993,13 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   barCategoryGap?: number | string;
   barGap?: number | string;
   barSize?: number | string;
-  children?: any;
+  children?: ReactNode;
   className?: string;
   compact?: boolean;
   data?: any[];
   dataKey?: DataKey<any>;
   desc?: string;
-  height?: number;
+  height?: number | Percent;
   id?: string;
   layout?: CartesianLayout;
   margin?: Partial<Margin>;
@@ -1006,13 +1007,14 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   reverseStackOrder?: boolean;
   role?: string;
   stackOffset?: StackOffsetType;
-  style?: any;
+  style?: CSSProperties;
   syncId?: number | string;
   syncMethod?: SyncMethod;
   tabIndex?: number;
   throttleDelay?: number;
   title?: string;
-  width?: number;
+  width?: number | Percent;
+  aspectRatio?: number;
 }
 
 export interface PolarChartProps extends Partial<ExternalMouseEvents> {
@@ -1020,7 +1022,7 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   barCategoryGap?: number | string;
   barGap?: number | string;
   barSize?: number | string;
-  children?: any;
+  children?: ReactNode;
   className?: string;
   cx?: number | string;
   cy?: number | string;
@@ -1028,7 +1030,7 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   dataKey?: DataKey<any>;
   desc?: string;
   endAngle?: number;
-  height?: number;
+  height?: number | Percent;
   id?: string;
   innerRadius?: number | string;
   layout?: PolarLayout;
@@ -1039,13 +1041,14 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   role?: string;
   stackOffset?: StackOffsetType;
   startAngle?: number;
-  style?: any;
+  style?: CSSProperties;
   syncId?: number | string;
   syncMethod?: SyncMethod;
   tabIndex?: number;
   throttleDelay?: number;
   title?: string;
-  width?: number;
+  width?: number | Percent;
+  aspectRatio?: number;
 }
 
 export type Percent = `${number}%`;

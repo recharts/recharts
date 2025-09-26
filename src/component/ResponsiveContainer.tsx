@@ -14,10 +14,10 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
-import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 export interface Props {
   /**
@@ -101,16 +101,7 @@ function ResponsiveContainerContextProvider({
 
 export const useResponsiveContainerContext = () => useContext(ResponsiveContainerContext);
 
-/**
- * The `ResponsiveContainer` component is a container that adjusts its width and height based on the size of its parent element.
- * It is used to create responsive charts that adapt to different screen sizes.
- *
- * This component uses the `ResizeObserver` API to monitor changes to the size of its parent element.
- * If you need to support older browsers that do not support this API, you may need to include a polyfill.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
- */
-export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
+const SizeDetectorContainer = forwardRef<HTMLDivElement, Props>(
   (
     {
       aspect,
@@ -118,8 +109,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         width: -1,
         height: -1,
       },
-      width: widthFromProps,
-      height: heightFromProps,
+      width,
+      height,
       /*
        * default min-width to 0 if not specified - 'auto' causes issues with flexbox
        * https://github.com/recharts/recharts/issues/172
@@ -133,10 +124,9 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       className,
       onResize,
       style = {},
-    },
+    }: Props,
     ref,
   ) => {
-    const { width, height } = getDefaultWidthAndHeight({ width: widthFromProps, height: heightFromProps, aspect });
     const containerRef = useRef<HTMLDivElement>(null);
     /*
      * We are using a ref to avoid re-creating the ResizeObserver when the onResize function changes.
@@ -192,14 +182,6 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
 
     const { containerWidth, containerHeight } = sizes;
 
-    warn(
-      isPercent(width) || isPercent(height),
-      `The width(%s) and height(%s) are both fixed numbers,
-       maybe you don't need to use a ResponsiveContainer.`,
-      width,
-      height,
-    );
-
     warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
     const { calculatedWidth, calculatedHeight } = calculateChartDimensions(containerWidth, containerHeight, {
@@ -240,3 +222,58 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     );
   },
 );
+
+/**
+ * The `ResponsiveContainer` component is a container that adjusts its width and height based on the size of its parent element.
+ * It is used to create responsive charts that adapt to different screen sizes.
+ *
+ * This component uses the `ResizeObserver` API to monitor changes to the size of its parent element.
+ * If you need to support older browsers that do not support this API, you may need to include a polyfill.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+ */
+export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const responsiveContainerContext = useResponsiveContainerContext();
+  if (isPositiveNumber(responsiveContainerContext.width) && isPositiveNumber(responsiveContainerContext.height)) {
+    /*
+     * If we detect that we are already inside another ResponsiveContainer,
+     * we do not attempt to add another layer of responsiveness.
+     */
+    return props.children;
+  }
+
+  const { width, height } = getDefaultWidthAndHeight({
+    width: props.width,
+    height: props.height,
+    aspect: props.aspect,
+  });
+
+  /*
+   * Let's try to get the calculated dimensions without having the div container set up.
+   * Sometimes this does produce fixed, positive dimensions. If so, we can skip rendering the div and monitoring its size.
+   */
+  const { calculatedWidth, calculatedHeight } = calculateChartDimensions(undefined, undefined, {
+    width,
+    height,
+    aspect: props.aspect,
+    maxHeight: props.maxHeight,
+  });
+
+  if (isPositiveNumber(calculatedWidth) && isPositiveNumber(calculatedHeight)) {
+    /*
+     * If it just so happens that the combination of width, height, and aspect ratio
+     * results in fixed, positive dimensions, then we don't need to monitor the container's size.
+     * We can just provide these fixed dimensions to the context.
+     */
+    return (
+      <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
+        {props.children}
+      </ResponsiveContainerContextProvider>
+    );
+  }
+  /*
+   * Static analysis did not produce fixed dimensions,
+   * so we need to render a special div and monitor its size.
+   */
+  return <SizeDetectorContainer {...props} width={width} height={height} ref={ref} />;
+});
