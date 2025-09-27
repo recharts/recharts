@@ -21,9 +21,10 @@ import {
 } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { ChartCoordinate, DataKey, Margin } from '../util/types';
+import { ChartCoordinate, DataKey, Margin, Percent } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
+import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 export interface SunburstData {
   [key: string]: any;
@@ -47,8 +48,9 @@ interface TextOptions {
 export interface SunburstChartProps {
   className?: string;
   data: SunburstData;
-  width?: number;
-  height?: number;
+  width?: number | Percent;
+  height?: number | Percent;
+  aspectRatio?: number;
   padding?: number;
   dataKey?: string;
   nameKey?: DataKey<any>;
@@ -346,10 +348,12 @@ const SunburstChartImpl = ({
 
 export const SunburstChart = (props: SunburstChartProps) => {
   return (
-    <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
-      <ReportChartSize width={props.width} height={props.height} />
-      <ReportChartMargin margin={defaultSunburstMargin} />
-      <SunburstChartImpl {...props} />
-    </RechartsStoreProvider>
+    <ResponsiveContainer width={props.width} height={props.height} aspect={props.aspectRatio}>
+      <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
+        <ReportChartSize width={props.width} height={props.height} />
+        <ReportChartMargin margin={defaultSunburstMargin} />
+        <SunburstChartImpl {...props} />
+      </RechartsStoreProvider>
+    </ResponsiveContainer>
   );
 };

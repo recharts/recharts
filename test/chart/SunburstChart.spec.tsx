@@ -13,7 +13,7 @@ import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
-    const { container } = render(<SunburstChart data={exampleSunburstData} />);
+    const { container } = render(<SunburstChart width={500} height={500} data={exampleSunburstData} />);
 
     const sectors = container.querySelectorAll('.recharts-sector');
 
@@ -31,6 +31,8 @@ describe('<Sunburst />', () => {
 
     const { container } = render(
       <SunburstChart
+        width={500}
+        height={500}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

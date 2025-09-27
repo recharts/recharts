@@ -179,7 +179,7 @@ export const SankeyChartCase: CartesianChartTestCase = {
 export const SunburstChartCase: CartesianChartTestCase = {
   ChartElement: props => {
     const { data, ...rest } = props;
-    return <SunburstChart {...rest} data={exampleSunburstData} />;
+    return <SunburstChart width={500} height={500} {...rest} data={exampleSunburstData} />;
   },
   testName: 'Sunburst',
 };

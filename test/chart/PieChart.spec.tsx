@@ -335,7 +335,7 @@ describe('<PieChart />', () => {
 
   test("Don't renders any sectors when width or height is smaller than 0", () => {
     const { container } = render(
-      <PieChart width={0} height={400}>
+      <PieChart width={-10} height={400}>
         <Pie
           dataKey="value"
           isAnimationActive={false}

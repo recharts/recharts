@@ -565,9 +565,9 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             .toHaveLength(verticalPoints.length);
         });
 
-        test.each([0, -1, NaN, -Infinity])("Don't render any lines when width is %s", w => {
+        test.each([0, -1, -Infinity])("Don't render any lines when width is %s", w => {
           const { container } = render(
-            <ChartElement width={w} height={500}>
+            <ChartElement width={500} height={500}>
               <CartesianGrid
                 width={w}
                 height={500}
@@ -579,9 +579,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(container.querySelectorAll('line')).toHaveLength(0);
         });
 
-        test.each([0, -1, NaN, -Infinity])("Don't render any lines when height is %s", h => {
+        test('uses offset.width and offset.height when width and height are NaN', () => {
           const { container } = render(
-            <ChartElement width={500} height={h}>
+            <ChartElement margin={chartMargin} width={500} height={400}>
+              <CartesianGrid
+                width={NaN}
+                height={NaN}
+                verticalPoints={verticalPoints}
+                horizontalPoints={horizontalPoints}
+              />
+            </ChartElement>,
+          );
+          expect.soft(container.querySelectorAll('line')).toHaveLength(9);
+          expect
+            .soft(container.querySelectorAll('.recharts-cartesian-grid-horizontal line'))
+            .toHaveLength(horizontalPoints.length);
+          expect
+            .soft(container.querySelectorAll('.recharts-cartesian-grid-vertical line'))
+            .toHaveLength(verticalPoints.length);
+        });
+
+        test.each([0, -1, -Infinity])("Don't render any lines when height is %s", h => {
+          const { container } = render(
+            <ChartElement width={500} height={500}>
               <CartesianGrid
                 width={500}
                 height={h}
