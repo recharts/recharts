@@ -1,4 +1,19 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Label, LabelList } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Label,
+  LabelList,
+  LineChart,
+  Rectangle,
+  PieChart,
+  Pie,
+  RadialBar,
+  RadialBarChart,
+  PolarAngleAxis,
+} from 'recharts';
 import { localeGet } from '../../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../../locale';
 import { ApiExample } from '../api/types.ts';
@@ -48,125 +63,61 @@ const data = [
   },
 ];
 
-const example = (locale: SupportedLocale) => (
-  <div>
+const cartesianPositions = (locale: SupportedLocale) => (
+  <>
     <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
-    <div className="cartesian-label-position">
-      <svg width={600} height={400}>
-        <rect x={100} y={100} width={400} height={200} stroke="#000" fill="none" />
-        <g>
-          <text x={300} y={90} textAnchor="middle">
-            top
-          </text>
-        </g>
-        <g>
-          <text x={90} y={200} textAnchor="end">
-            left
-          </text>
-        </g>
-        <g>
-          <text x={510} y={200} textAnchor="start">
-            right
-          </text>
-        </g>
-        <g>
-          <text x={300} y={200} textAnchor="middle">
-            center
-          </text>
-        </g>
-        <g>
-          <text x={300} y={310} textAnchor="middle" dominantBaseline="hanging">
-            bottom
-          </text>
-        </g>
-        <g>
-          <text x={110} y={200}>
-            insideLeft
-          </text>
-        </g>
-        <g>
-          <text x={490} y={200} textAnchor="end">
-            insideRight
-          </text>
-        </g>
-        <g>
-          <text x={300} y={110} textAnchor="middle" dominantBaseline="hanging">
-            insideTop
-          </text>
-        </g>
-        <g>
-          <text x={300} y={290} textAnchor="middle">
-            insideBottom
-          </text>
-        </g>
-        <g>
-          <text x={110} y={110} dominantBaseline="hanging">
-            insideTopLeft
-          </text>
-        </g>
-        <g>
-          <text x={490} y={110} textAnchor="end" dominantBaseline="hanging">
-            insideTopRight
-          </text>
-        </g>
-        <g>
-          <text x={110} y={290}>
-            insideBottomLeft
-          </text>
-        </g>
-        <g>
-          <text x={490} y={290} textAnchor="end">
-            insideBottomRight
-          </text>
-        </g>
-      </svg>
-    </div>
-    <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'polar-title')}</p>
-    <div className="poral-label-position">
-      <svg width={700} height={400}>
-        <path
-          d="M225,256.7L300,126.8A200,200,0,0,0,100,126.8L175,256.7A50,50,0,0,1,225,256.7"
-          fill="none"
-          stroke="#666"
-        />
-        <g>
-          <text x={200} y={300} textAnchor="middle" dominantBaseline="middle">
-            center
-          </text>
-        </g>
-        <g>
-          <text x={200} y={90} textAnchor="start" dominantBaseline="middle">
-            outside
-          </text>
-        </g>
-        <g>
-          <text x={200} y={175} textAnchor="middle" dominantBaseline="middle">
-            inside
-          </text>
-        </g>
+    <LineChart width={600} height={400} margin={{ top: 100, right: 100, bottom: 100, left: 100 }}>
+      <Rectangle x={100} y={100} width={400} height={200} stroke="#000" fill="none" />
+      <Label position="top">top</Label>
+      <Label position="bottom">bottom</Label>
+      <Label position="left">left</Label>
+      <Label position="right">right</Label>
+      <Label position="center">center</Label>
+      <Label position="insideLeft">insideLeft</Label>
+      <Label position="insideRight">insideRight</Label>
+      <Label position="insideTop">insideTop</Label>
+      <Label position="insideBottom">insideBottom</Label>
+      <Label position="insideTopLeft">insideTopLeft</Label>
+      <Label position="insideTopRight">insideTopRight</Label>
+      <Label position="insideBottomLeft">insideBottomLeft</Label>
+      <Label position="insideBottomRight">insideBottomRight</Label>
+    </LineChart>
+  </>
+);
 
-        <path d="M400,300A200,200,0,0,1,600,100L600,60A240,240,0,0,0,360,300Z" fill="none" stroke="#666" />
-        <defs>
-          <path id="textPathLabelDemoInsideStart" d="M383.34,261.8A220,220,0,0,1,600,80" />
-        </defs>
-        <defs>
-          <path id="textPathLabelDemoInsideEnd" d="M561.8,83.34A220,220,0,0,0,380,300" />
-        </defs>
-        <defs>
-          <path id="textPathLabelDemoEnd" d="M638.2,83.34A220,220,0,0,1,820,300" />
-        </defs>
-        <text dominantBaseline="central">
-          <textPath xlinkHref="#textPathLabelDemoInsideStart">insideStart</textPath>
-        </text>
-        <text dominantBaseline="central" textAnchor="start">
-          <textPath xlinkHref="#textPathLabelDemoInsideEnd">insideEnd</textPath>
-        </text>
-        <text dominantBaseline="central" textAnchor="start">
-          <textPath xlinkHref="#textPathLabelDemoEnd">End</textPath>
-        </text>
-      </svg>
-    </div>
-  </div>
+const piePositions = (locale: SupportedLocale) => (
+  <>
+    <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'polar-title')}</p>
+    <PieChart width={700} height={400}>
+      <Pie
+        data={[{ x: 100 }, { x: 200 }]}
+        innerRadius={50}
+        paddingAngle={10}
+        cornerRadius={9}
+        dataKey="x"
+        fill="none"
+        stroke="black"
+      >
+        <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
+        <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
+        <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
+      </Pie>
+    </PieChart>
+  </>
+);
+
+const radialBarPositions = (locale: SupportedLocale) => (
+  <>
+    <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'radialbar-title')}</p>
+    <RadialBarChart data={[{ x: 100 }, { x: 200 }]} width={900} height={400} innerRadius={50}>
+      <RadialBar dataKey="x" fill="none" stroke="black">
+        <LabelList fill="black" position="insideStart" valueAccessor={() => 'insideStart'} />
+        <LabelList fill="black" position="insideEnd" valueAccessor={() => 'insideEnd'} />
+        <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
+      </RadialBar>
+      <PolarAngleAxis type="number" domain={[0, 250]} tick={false} />
+    </RadialBarChart>
+  </>
 );
 
 const chartExample = () => (
@@ -178,16 +129,16 @@ const chartExample = () => (
       top: 15,
       right: 30,
       left: 20,
-      bottom: 5,
+      bottom: 15,
     }}
   >
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="name">
-      <Label value="Pages of my website" offset={0} position="insideBottom" />
+      <Label value="insideBottom" offset={-10} position="insideBottom" />
     </XAxis>
     <YAxis
       label={{
-        value: 'pv of page',
+        value: 'insideLeft',
         angle: -90,
         position: 'insideLeft',
         textAnchor: 'middle',
@@ -201,28 +152,71 @@ const chartExample = () => (
 
 const labelExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
-    code: '',
+    demo: cartesianPositions,
+    code: `<LineChart width={600} height={400} margin={{ top: 100, right: 100, bottom: 100, left: 100 }}>
+    <Rectangle x={100} y={100} width={400} height={200} stroke="#000" fill="none" />
+    <Label position="top">top</Label>
+    <Label position="bottom">bottom</Label>
+    <Label position="left">left</Label>
+    <Label position="right">right</Label>
+    <Label position="center">center</Label>
+    <Label position="insideLeft">insideLeft</Label>
+    <Label position="insideRight">insideRight</Label>
+    <Label position="insideTop">insideTop</Label>
+    <Label position="insideBottom">insideBottom</Label>
+    <Label position="insideTopLeft">insideTopLeft</Label>
+    <Label position="insideTopRight">insideTopRight</Label>
+    <Label position="insideBottomLeft">insideBottomLeft</Label>
+    <Label position="insideBottomRight">insideBottomRight</Label>
+</LineChart>`,
+  },
+  {
+    demo: piePositions,
+    code: `<PieChart width={700} height={400}>
+  <Pie data={[{ x: 100 }, { x: 200 }]} innerRadius={50} paddingAngle={10} dataKey="x" fill="none" stroke="black">
+    <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
+    <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
+    <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
+  </Pie>
+</PieChart>`,
+  },
+  {
+    demo: radialBarPositions,
+    code: `<RadialBarChart data={[{ x: 100 }, { x: 200 }]} width={900} height={400} innerRadius={50}>
+  <RadialBar dataKey="x" fill="none" stroke="black">
+    <LabelList fill="black" position="insideStart" valueAccessor={() => 'insideStart'} />
+    <LabelList fill="black" position="insideEnd" valueAccessor={() => 'insideEnd'} />
+    <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
+  </RadialBar>
+  <PolarAngleAxis type="number" domain={[0, 250]} tick={false} />
+</RadialBarChart>`,
   },
   {
     demo: chartExample,
     code: `
-<BarChart
-  width={730}
-  height={250}
-  data={data}
-  margin={{ top: 15, right: 30, left: 20, bottom: 5 }}
->
-  <CartesianGrid strokeDasharray="3 3" />
-  <XAxis dataKey="name">
-    <Label value="Pages of my website" offset={0} position="insideBottom" />
-  </XAxis>
-  <YAxis label={{ value: 'pv of page', angle: -90, position: 'insideLeft' }} />
-  <Bar dataKey="pv" fill="#8884d8">
-    <LabelList dataKey="name" position="top" />
-  </Bar>
-</BarChart>
-    `,
+  <BarChart
+    width={730}
+    height={250}
+    data={data}
+    margin={{ top: 15, right: 30, left: 20, bottom: 15 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="name">
+      <Label value="insideBottom" offset={-10} position="insideBottom" />
+    </XAxis>
+    <YAxis
+      label={{
+        value: 'insideLeft',
+        angle: -90,
+        position: 'insideLeft',
+        textAnchor: 'middle',
+      }}
+    />
+    <Bar dataKey="pv" fill="#8884d8">
+      <LabelList dataKey="name" position="top" />
+    </Bar>
+  </BarChart>
+      `,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
 ];
