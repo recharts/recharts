@@ -173,7 +173,7 @@ const labelExamples: ReadonlyArray<ApiExample> = [
   {
     demo: piePositions,
     code: `<PieChart width={700} height={400}>
-  <Pie data={[{ x: 100 }, { x: 200 }]} innerRadius={50} paddingAngle={10} dataKey="x" fill="none" stroke="black">
+  <Pie data={[{ x: 100 }, { x: 200 }]} innerRadius={50} paddingAngle={10} cornerRadius={10} dataKey="x" fill="none" stroke="black">
     <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
     <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
     <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
