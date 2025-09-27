@@ -9,8 +9,14 @@ describe('API Examples', () => {
       });
 
       examples.forEach((example, index) => {
-        it(`example ${index + 1} should have a demo source code`, () => {
-          expect(example.code.length).toBeGreaterThan(0);
+        describe(`example ${index + 1}`, () => {
+          it(`should have a demo source code`, () => {
+            expect(example.code.length).toBeGreaterThan(0);
+          });
+
+          it('should have an example that renders something and does not crash', () => {
+            expect(() => example.demo('en-US')).not.toThrow();
+          });
         });
       });
     });
