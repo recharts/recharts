@@ -18,6 +18,7 @@ import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { isNumber } from '../util/DataUtils';
 
 export interface Props {
   /**
@@ -259,11 +260,15 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref
     maxHeight: props.maxHeight,
   });
 
-  if (isPositiveNumber(calculatedWidth) && isPositiveNumber(calculatedHeight)) {
+  if (isNumber(calculatedWidth) && isNumber(calculatedHeight)) {
     /*
      * If it just so happens that the combination of width, height, and aspect ratio
-     * results in fixed, positive dimensions, then we don't need to monitor the container's size.
+     * results in fixed dimensions, then we don't need to monitor the container's size.
      * We can just provide these fixed dimensions to the context.
+     *
+     * Note that here we are not checking for positive numbers;
+     * if the user provides a zero or negative width/height, we will just pass that along
+     * as whatever size we detect won't be helping anyway.
      */
     return (
       <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>

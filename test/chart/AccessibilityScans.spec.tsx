@@ -218,7 +218,7 @@ describe('Static scanning for accessibility markup issues', () => {
   });
 
   test('Sunburst', async () => {
-    const { container } = render(<SunburstChart data={exampleSunburstData} />);
+    const { container } = render(<SunburstChart width={500} height={500} data={exampleSunburstData} />);
 
     expect((await axe(container)).violations).toHaveLength(0);
   });
