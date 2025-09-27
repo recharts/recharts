@@ -105,7 +105,8 @@ const map = {
   },
   label: {
     'cartesian-title': 'The "position" in view box of Cartesian Coordinates',
-    'polar-title': 'The "position" in view box of Polar Coordinates',
+    'polar-title': 'The "position" in view box of PieChart',
+    'radialbar-title': 'The "position" in view box of RadialBarChart',
   },
 };
 

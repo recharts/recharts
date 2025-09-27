@@ -100,6 +100,7 @@ const map = {
   label: {
     'cartesian-title': '笛卡尔坐标系中 "position" 的参数含义',
     'polar-title': '极坐标系中 "position" 的参数含义',
+    'radialbar-title': '径向坐标系中 "position" 的参数含义',
   },
 };
 
