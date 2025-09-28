@@ -110,7 +110,10 @@ export const selectChartLayout = (state: RechartsRootState): LayoutType => state
 
 export const useChartLayout = () => useAppSelector(selectChartLayout);
 
-export const ReportChartSize = (props: { width: number | Percent; height: number | Percent }): null => {
+export const ReportChartSize = (props: {
+  width: number | Percent | undefined;
+  height: number | Percent | undefined;
+}): null => {
   const dispatch = useAppDispatch();
 
   /*
