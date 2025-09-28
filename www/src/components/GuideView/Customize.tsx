@@ -92,18 +92,18 @@ const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
         </Highlight>
         <Highlight className="jsx">
           {`const renderBarChart = (
-  <BarChart width={600} height={300} data={data}>
+  <BarChart width="100%" aspectRatio={1.618} data={data}>
     <XAxis dataKey="name" tick={renderCustomAxisTick} />
-    <YAxis />
+    <YAxis width="auto" />
     <Bar dataKey="uv" barSize={30} fill="#8884d8"
       label={renderCustomBarLabel}/>
   </BarChart>
 );`}
         </Highlight>
 
-        <BarChart width={600} height={300} data={data} margin={margin}>
+        <BarChart width="100%" aspectRatio={1.618} data={data} margin={margin}>
           <XAxis dataKey="name" tick={renderCustomAxisTick} />
-          <YAxis />
+          <YAxis width="auto" />
           <Bar dataKey="uv" barSize={30} fill="#8884d8" label={renderCustomBarLabel} />
         </BarChart>
       </div>
@@ -133,18 +133,18 @@ const TriangleBar = (props) => {
         </Highlight>
         <Highlight className="jsx">
           {`const renderBarChart = (
-  <BarChart width={600} height={300} data={data}>
+  <BarChart width="100%" aspectRatio={1.618} data={data}>
     <XAxis dataKey="name" tick={renderCustomAxisTick} />
-    <YAxis />
+    <YAxis width="auto" />
     <Bar dataKey="uv" fill="#8884d8"
       shape={<TriangleBar />} />
   </BarChart>
 );`}
         </Highlight>
 
-        <BarChart width={600} height={300} data={data} margin={margin}>
+        <BarChart width="100%" aspectRatio={1.618} data={data} margin={margin}>
           <XAxis dataKey="name" tick={renderCustomAxisTick} />
-          <YAxis />
+          <YAxis width="auto" />
           <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} />
         </BarChart>
       </div>
@@ -189,9 +189,9 @@ function CustomTooltip({ payload, label, active }) {
         </Highlight>
         <Highlight className="jsx">
           {`const renderBarChart = (
-  <BarChart width={600} height={300} data={data}>
+  <BarChart width="100%" aspectRatio={1.618} data={data}>
     <XAxis dataKey="name" tick={renderCustomAxisTick} />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip content={<CustomTooltip />}/>
     <Bar dataKey="uv" fill="#8884d8"
       shape={<TriangleBar />} />
@@ -199,9 +199,9 @@ function CustomTooltip({ payload, label, active }) {
 );`}
         </Highlight>
 
-        <BarChart width={600} height={300} data={data} margin={margin}>
+        <BarChart width="100%" aspectRatio={1.618} data={data} margin={margin}>
           <XAxis dataKey="name" tick={renderCustomAxisTick} />
-          <YAxis />
+          <YAxis width="auto" />
           <Tooltip content={CustomTooltip} />
           <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} />
         </BarChart>
@@ -215,9 +215,9 @@ function CustomTooltip({ payload, label, active }) {
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 const renderBarChart = (
-  <BarChart width={600} height={300} data={data}>
+  <BarChart width="100%" aspectRatio={1.618} data={data}>
     <XAxis dataKey="name" stroke="#8884d8" />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip />
     <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
     <Bar dataKey="uv" fill="#8884d8" barSize={30} />
@@ -225,7 +225,7 @@ const renderBarChart = (
 );`}
         </Highlight>
 
-        <BarChart width={600} height={300} data={data} margin={margin}>
+        <BarChart width="100%" aspectRatio={1.618} data={data} margin={margin}>
           <XAxis dataKey="name" stroke="red" />
           <YAxis stroke="red" />
           <Tooltip />
@@ -242,9 +242,9 @@ const renderBarChart = (
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 const renderBarChart = (
-  <BarChart width={600} height={300} data={data}>
+  <BarChart width="100%" aspectRatio={1.618} data={data}>
     <XAxis dataKey="name" stroke="#8884d8" />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
     <Legend width={100} wrapperStyle={{ top: 40, right: 20, backgroundColor: '#f5f5f5', border: '1px solid #d5d5d5', borderRadius: 3, lineHeight: '40px' }} />
     <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
@@ -253,9 +253,9 @@ const renderBarChart = (
 );`}
         </Highlight>
 
-        <BarChart width={600} height={300} data={data} margin={margin}>
+        <BarChart width="100%" aspectRatio={1.618} data={data} margin={margin}>
           <XAxis dataKey="name" stroke="#8884d8" />
-          <YAxis />
+          <YAxis width="auto" />
           <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
           <Legend
             width={100}
