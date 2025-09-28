@@ -1,4 +1,5 @@
 import { PieChart, Pie } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data01 = [
   { name: 'Group A', value: 400 },
@@ -18,31 +19,49 @@ const data02 = [
   { name: 'Group F', value: 4800 },
 ];
 
-const example = () => (
-  <PieChart width={730} height={250}>
-    <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
+  <PieChart
+    style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
+    responsive
+    margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+  >
+    <Pie
+      data={data01}
+      dataKey="value"
+      nameKey="name"
+      cx="50%"
+      cy="50%"
+      outerRadius="50%"
+      fill="#8884d8"
+      isAnimationActive={isAnimationActive}
+    />
     <Pie
       data={data02}
       dataKey="value"
       nameKey="name"
       cx="50%"
       cy="50%"
-      innerRadius={60}
-      outerRadius={80}
+      innerRadius="60%"
+      outerRadius="80%"
       fill="#82ca9d"
       label
+      isAnimationActive={isAnimationActive}
     />
   </PieChart>
 );
 
 const exampleCode = `
-<PieChart width={730} height={250}>
-  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
-  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
+<PieChart
+  style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
+  responsive
+  margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+>
+  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius="50%" fill="#8884d8" />
+  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius="60%" outerRadius="80%" fill="#82ca9d" label />
 </PieChart>
 `;
 
-export default [
+export const pieChartApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

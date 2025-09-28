@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Label, LabelList } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -27,15 +28,15 @@ const data = [
   },
 ];
 
-const chartExample = () => (
+const chartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={data}
     margin={{
       top: 15,
-      right: 30,
-      left: 20,
+      right: 0,
+      left: 0,
       bottom: 5,
     }}
   >
@@ -44,6 +45,7 @@ const chartExample = () => (
       <Label value="Pages of my website" offset={0} position="insideBottom" />
     </XAxis>
     <YAxis
+      width="auto"
       label={{
         value: 'pv of page',
         angle: -90,
@@ -51,30 +53,33 @@ const chartExample = () => (
         textAnchor: 'middle',
       }}
     />
-    <Bar dataKey="pv" fill="#8884d8">
+    <Bar dataKey="pv" fill="#8884d8" isAnimationActive={isAnimationActive}>
       <LabelList dataKey="name" position="insideTop" angle={45} />
     </Bar>
-    <Bar dataKey="uv" fill="#82ca9d">
+    <Bar dataKey="uv" fill="#82ca9d" isAnimationActive={isAnimationActive}>
       <LabelList dataKey="uv" position="top" />
     </Bar>
   </BarChart>
 );
 
-export default [
+export const labelListApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: chartExample,
     code: `
 <BarChart
-  width={730}
-  height={250}
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
   data={data}
-  margin={{ top: 15, right: 30, left: 20, bottom: 5 }}
+  margin={{ top: 15, right: 0, left: 0, bottom: 5 }}
 >
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis dataKey="name">
     <Label value="Pages of my website" offset={0} position="insideBottom" />
   </XAxis>
-  <YAxis label={{ value: 'pv of page', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+  <YAxis
+    width="auto"
+    label={{ value: 'pv of page', angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
+  />
   <Bar dataKey="pv" fill="#8884d8">
     <LabelList dataKey="name" position="insideTop" angle="45"  />
   </Bar>

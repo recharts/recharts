@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data01 = [
   { x: 100, y: 200, z: 200 },
@@ -18,10 +19,10 @@ const data02 = [
   { x: 210, y: 220, z: 230 },
 ];
 
-const example = () => (
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
   <ScatterChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     margin={{
       top: 20,
       right: 20,
@@ -31,19 +32,19 @@ const example = () => (
   >
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
     <ZAxis dataKey="z" type="number" range={[64, 144]} name="score" unit="km" />
     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
     <Legend />
-    <Scatter name="A school" data={data01} fill="#8884d8" />
-    <Scatter name="B school" data={data02} fill="#82ca9d" />
+    <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
   </ScatterChart>
 );
 
 const exampleCode = `
 <ScatterChart
-  width={730}
-  height={250}
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
   margin={{
     top: 20,
     right: 20,
@@ -53,7 +54,7 @@ const exampleCode = `
 >
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-  <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+  <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
   <ZAxis dataKey="z" type="number" range={[64, 144]} name="score" unit="km" />
   <Tooltip cursor={{ strokeDasharray: '3 3' }} />
   <Legend />
@@ -62,7 +63,7 @@ const exampleCode = `
 </ScatterChart>
 `;
 
-export default [
+export const scatterChartApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

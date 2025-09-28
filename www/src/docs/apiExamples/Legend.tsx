@@ -1,4 +1,5 @@
 import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -45,33 +46,36 @@ const data = [
   },
 ];
 
-const example = () => (
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
   <LineChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={data}
     margin={{
       top: 5,
-      right: 30,
-      left: 20,
+      right: 0,
+      left: 0,
       bottom: 5,
     }}
   >
     <XAxis dataKey="name" />
-    <YAxis />
+    <YAxis width="auto" />
     <CartesianGrid strokeDasharray="3 3" />
     <Tooltip />
     <Legend verticalAlign="top" height={36} />
-    <Line name="pv of pages" type="monotone" dataKey="pv" stroke="#8884d8" />
-    <Line name="uv of pages" type="monotone" dataKey="uv" stroke="#82ca9d" />
+    <Line name="pv of pages" type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={isAnimationActive} />
+    <Line name="uv of pages" type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={isAnimationActive} />
   </LineChart>
 );
 
 const exampleCode = `
-<LineChart width={730} height={250} data={data}
-  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+<LineChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive data={data}
+  margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
+>
   <XAxis dataKey="name" />
-  <YAxis />
+  <YAxis width="auto" />
   <CartesianGrid strokeDasharray="3 3" />
   <Tooltip />
   <Legend verticalAlign="top" height={36}/>
@@ -80,7 +84,7 @@ const exampleCode = `
 </LineChart>
 `;
 
-export default [
+export const legendApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

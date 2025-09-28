@@ -14,3 +14,5 @@ umd
 npm-debug.log
 storybook/public
 storybook-static
+./www/docs
+./www/node_modules

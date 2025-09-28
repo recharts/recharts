@@ -1,45 +1,44 @@
-import AreaChart from './AreaChart';
-import BarChart from './BarChart';
-import ComposedChart from './ComposedChart';
-import LineChart from './LineChart';
-import PieChart from './PieChart';
-import ScatterChart from './ScatterChart';
-import RadarChart from './RadarChart';
-import RadialBarChart from './RadialBarChart';
-import SankeyChart from './SankeyChart';
-import Treemap from './Treemap';
-import ResponsiveContainer from './ResponsiveContainer';
-import Cell from './Cell';
-import Legend from './Legend';
-import ReferenceArea from './ReferenceArea';
-import ReferenceDot from './ReferenceDot';
-import ReferenceLine from './ReferenceLine';
-import ErrorBar from './ErrorBar';
-import Label from './Label';
-import LabelList from './LabelList';
-import FunnelChart from './FunnelChart';
-import { ApiExample } from '../api/types.ts';
+import { areaChartApiExamples } from './AreaChart';
+import { barChartApiExamples } from './BarChart';
+import { composedChartApiExamples } from './ComposedChart';
+import { lineChartApiExamples } from './LineChart';
+import { pieChartApiExamples } from './PieChart';
+import { scatterChartApiExamples } from './ScatterChart';
+import { radarChartApiExamples } from './RadarChart';
+import { radialBarApiExamples } from './RadialBarChart';
+import { sankeyApiExamples } from './SankeyChart';
+import { treemapApiExamples } from './Treemap';
+import { responsiveContainerApiExamples } from './ResponsiveContainer';
+import { cellApiExamples } from './Cell';
+import { legendApiExamples } from './Legend';
+import { referenceAreaApiExamples } from './ReferenceArea';
+import { referenceDotApiExamples } from './ReferenceDot';
+import { referenceLineApiExamples } from './ReferenceLine';
+import { errorBarApiExamples } from './ErrorBar';
+import { labelApiExamples } from './Label.tsx';
+import { labelListApiExamples } from './LabelList';
+import { funnelApiExamples } from './FunnelChart';
+import { ApiExample } from '../api/types';
 
-const allApiExamples: Record<string, ReadonlyArray<ApiExample>> = {
-  AreaChart,
-  BarChart,
-  LineChart,
-  ComposedChart,
-  PieChart,
-  RadarChart,
-  ScatterChart,
-  RadialBarChart,
-  Treemap,
-  ResponsiveContainer,
-  Cell,
-  Legend,
-  ReferenceLine,
-  ReferenceDot,
-  ReferenceArea,
-  ErrorBar,
-  Label,
-  LabelList,
-  FunnelChart,
-  SankeyChart,
+export const allApiExamples: Record<string, ReadonlyArray<ApiExample>> = {
+  AreaChart: areaChartApiExamples,
+  BarChart: barChartApiExamples,
+  LineChart: lineChartApiExamples,
+  ComposedChart: composedChartApiExamples,
+  PieChart: pieChartApiExamples,
+  RadarChart: radarChartApiExamples,
+  ScatterChart: scatterChartApiExamples,
+  RadialBarChart: radialBarApiExamples,
+  Treemap: treemapApiExamples,
+  ResponsiveContainer: responsiveContainerApiExamples,
+  Cell: cellApiExamples,
+  Legend: legendApiExamples,
+  ReferenceLine: referenceLineApiExamples,
+  ReferenceDot: referenceDotApiExamples,
+  ReferenceArea: referenceAreaApiExamples,
+  ErrorBar: errorBarApiExamples,
+  Label: labelApiExamples,
+  LabelList: labelListApiExamples,
+  FunnelChart: funnelApiExamples,
+  SankeyChart: sankeyApiExamples,
 };
-export default allApiExamples;

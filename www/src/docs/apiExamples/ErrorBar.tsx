@@ -1,4 +1,5 @@
 import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter, ErrorBar } from 'recharts';
+import { ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -52,48 +53,61 @@ const data = [
   },
 ];
 
-const example = () => (
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
   <ScatterChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     margin={{
       top: 20,
-      right: 20,
-      bottom: 0,
-      left: 20,
+      right: 0,
+      bottom: 20,
+      left: 0,
     }}
   >
     <CartesianGrid />
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
     <Tooltip />
-    <Scatter name="A school" data={data} fill="#ff7300">
-      <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="green" direction="y" />
-      <ErrorBar dataKey="errorX" width={0} strokeWidth={1} stroke="blue" opacity={0.8} direction="x" />
+    <Scatter name="A school" data={data} fill="#ff7300" isAnimationActive={isAnimationActive}>
+      <ErrorBar
+        dataKey="errorY"
+        width={4}
+        strokeWidth={2}
+        stroke="green"
+        direction="y"
+        isAnimationActive={isAnimationActive}
+      />
+      <ErrorBar
+        dataKey="errorX"
+        width={0}
+        strokeWidth={1}
+        stroke="blue"
+        opacity={0.8}
+        direction="x"
+        isAnimationActive={isAnimationActive}
+      />
     </Scatter>
     <Legend />
   </ScatterChart>
 );
 
-const exampleCode = `
-<ScatterChart
-  width={730}
-  height={250}
-  margin={{ top: 20, right: 20, bottom: 0, left: 20 }}
+const exampleCode = `<ScatterChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
 >
   <CartesianGrid />
   <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-  <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+  <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
   <Tooltip />
   <Scatter name="A school" data={data} fill="#ff7300">
     <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="green" direction="y" />
     <ErrorBar dataKey="errorX" width={0} strokeWidth={1} stroke="blue" opacity={0.8} direction="x" />
   </Scatter>
   <Legend/>
-</ScatterChart>
-`;
+</ScatterChart>`;
 
-export default [
+export const errorBarApiExamples = [
   {
     demo: example,
     code: exampleCode,

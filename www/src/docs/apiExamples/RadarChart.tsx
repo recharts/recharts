@@ -1,4 +1,5 @@
 import { RadarChart, Radar, PolarAngleAxis, PolarRadiusAxis, Legend, PolarGrid } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -39,19 +40,37 @@ const data = [
   },
 ];
 
-const example = () => (
-  <RadarChart outerRadius={90} width={730} height={250} data={data}>
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
+  <RadarChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive data={data}>
     <PolarGrid />
     <PolarAngleAxis dataKey="subject" />
     <PolarRadiusAxis angle={30} domain={[0, 150]} />
-    <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-    <Radar name="Lily" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+    <Radar
+      name="Mike"
+      dataKey="A"
+      stroke="#8884d8"
+      fill="#8884d8"
+      fillOpacity={0.6}
+      isAnimationActive={isAnimationActive}
+    />
+    <Radar
+      name="Lily"
+      dataKey="B"
+      stroke="#82ca9d"
+      fill="#82ca9d"
+      fillOpacity={0.6}
+      isAnimationActive={isAnimationActive}
+    />
     <Legend />
   </RadarChart>
 );
 
 const exampleCode = `
-<RadarChart outerRadius={90} width={730} height={250} data={data}>
+<RadarChart
+  style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }}
+  responsive
+  data={data}
+>
   <PolarGrid />
   <PolarAngleAxis dataKey="subject" />
   <PolarRadiusAxis angle={30} domain={[0, 150]} />
@@ -61,7 +80,7 @@ const exampleCode = `
 </RadarChart>
 `;
 
-export default [
+export const radarChartApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

@@ -1,4 +1,5 @@
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -38,23 +39,25 @@ const data = [
   },
 ];
 
-const example = () => (
-  <BarChart width={730} height={250} data={data}>
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
+  <BarChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="name" />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip />
     <Legend />
-    <Bar dataKey="pv" fill="#8884d8" />
-    <Bar dataKey="uv" fill="#82ca9d" />
+    <Bar dataKey="pv" fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <Bar dataKey="uv" fill="#82ca9d" isAnimationActive={isAnimationActive} />
   </BarChart>
 );
 
 const exampleCode = `
-<BarChart width={730} height={250} data={data}>
+<BarChart
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive data={data}>
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis dataKey="name" />
-  <YAxis />
+    <YAxis width="auto" />
   <Tooltip />
   <Legend />
   <Bar dataKey="pv" fill="#8884d8" />
@@ -74,10 +77,10 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const rangeExample = () => (
+const rangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={rangeData}
     margin={{
       top: 20,
@@ -87,22 +90,27 @@ const rangeExample = () => (
     }}
   >
     <XAxis dataKey="day" />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip />
-    <Bar dataKey="temperature" fill="#8884d8" />
+    <Bar dataKey="temperature" fill="#8884d8" isAnimationActive={isAnimationActive} />
   </BarChart>
 );
 
 const rangeExampleCode = `
-<BarChart width={730} height={250} data={rangeData} margin={{top: 20, right: 20, bottom: 20, left: 20}} >
+<BarChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  data={rangeData}
+  margin={{top: 20, right: 20, bottom: 20, left: 20}}
+>
   <XAxis dataKey="day" />
-  <YAxis />
+  <YAxis width="auto" />
   <Tooltip />
   <Bar dataKey="temperature" fill="#8884d8" />
 </BarChart>
 `;
 
-export default [
+export const barChartApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

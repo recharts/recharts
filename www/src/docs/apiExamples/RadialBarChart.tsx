@@ -1,4 +1,5 @@
 import { RadialBarChart, RadialBar, Legend, Tooltip } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -38,24 +39,31 @@ const data = [
     fill: '#d0ed57',
   },
   {
-    name: 'unknow',
+    name: 'unknown',
     uv: 6.67,
     pv: 4800,
     fill: '#ffc658',
   },
 ];
 
-const example = () => (
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
   <RadialBarChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '500px', aspectRatio: 2 }}
+    responsive
     innerRadius="10%"
-    outerRadius="80%"
+    outerRadius="100%"
+    cx="30%"
+    cy="75%"
     data={data}
     startAngle={180}
     endAngle={0}
   >
-    <RadialBar label={{ fill: '#666', position: 'insideStart' }} background dataKey="uv" />
+    <RadialBar
+      label={{ fill: '#666', position: 'insideStart' }}
+      background
+      dataKey="uv"
+      isAnimationActive={isAnimationActive}
+    />
     <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" align="right" />
     <Tooltip />
   </RadialBarChart>
@@ -63,10 +71,12 @@ const example = () => (
 
 const exampleCode = `
 <RadialBarChart
-  width={730}
-  height={250}
+  style={{ width: '100%', maxWidth: '500px', aspectRatio: 2 }}
+  responsive
   innerRadius="10%"
-  outerRadius="80%"
+  outerRadius="100%"
+  cx="30%"
+  cy="75%"
   data={data}
   startAngle={180}
   endAngle={0}
@@ -77,7 +87,7 @@ const exampleCode = `
 </RadialBarChart>
 `;
 
-export default [
+export const radialBarApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

@@ -1,4 +1,5 @@
 import { ResponsiveContainer, AreaChart, ReferenceLine, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -45,36 +46,41 @@ const data = [
   },
 ];
 
-const example = () => (
-  <div style={{ width: 730, height: 250 }}>
-    <ResponsiveContainer width={700} height="80%">
-      <AreaChart
-        data={data}
-        margin={{
-          top: 20,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <XAxis dataKey="name" />
-        <YAxis />
-        <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
-        <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
-        <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
-        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-      </AreaChart>
-    </ResponsiveContainer>
-  </div>
+const example: ApiExampleDemo = ({ isAnimationActive }) => (
+  <ResponsiveContainer width="100%" aspect={1.618} maxHeight={500}>
+    <AreaChart
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip />
+      <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
+      <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
+      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
+    </AreaChart>
+  </ResponsiveContainer>
 );
 
 const exampleCode = `
-  <ResponsiveContainer width={700} height="80%">
-    <AreaChart data={data}
-      margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+  <ResponsiveContainer width="80%" aspect={1.618}>
+    <AreaChart
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
       <XAxis dataKey="name" />
-      <YAxis />
+      <YAxis width="auto" />
       <CartesianGrid strokeDasharray="3 3" />
       <Tooltip />
       <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
@@ -84,7 +90,7 @@ const exampleCode = `
   </ResponsiveContainer>
 `;
 
-export default [
+export const responsiveContainerApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

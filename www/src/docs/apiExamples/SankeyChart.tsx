@@ -1,6 +1,6 @@
-import { Sankey, Tooltip, Layer, Rectangle, useChartWidth } from 'recharts';
-import { NodeProps } from 'recharts/types/chart/Sankey';
-import { ReactNode } from 'react';
+import { ResponsiveContainer, Sankey, Tooltip } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
+import { MyCustomSankeyNode } from './MyCustomSankeyNode.tsx';
 
 const data0 = {
   nodes: [
@@ -18,14 +18,32 @@ const data0 = {
   ],
 };
 
-function MyCustomNode({ x, y, width, height, index, payload }: NodeProps): ReactNode {
+const example: ApiExampleDemo = () => (
+  <ResponsiveContainer width="100%" aspect={2}>
+    <Sankey
+      data={data0}
+      // @ts-expect-error Recharts type does not allow null but it should! TODO fix
+      node={MyCustomSankeyNode}
+      nodePadding={50}
+      margin={{
+        bottom: 30,
+      }}
+      link={{ stroke: '#77c878' }}
+    >
+      <Tooltip />
+    </Sankey>
+  </ResponsiveContainer>
+);
+
+const exampleCode = `
+function MyCustomSankeyNode({ x, y, width, height, index, payload }: NodeProps): ReactNode {
   const containerWidth = useChartWidth();
   if (containerWidth == null) {
-    return null; // Return null if used outside of a chart context
+    return null; // Return null if used outside a chart context
   }
   const isOut = x + width + 6 > containerWidth;
   return (
-    <Layer key={`CustomNode${index}`}>
+    <Layer key={\`CustomNode\${index}\`}>
       <Rectangle x={x} y={y} width={width} height={height} fill="#5192ca" fillOpacity="1" />
       <text
         textAnchor={isOut ? 'end' : 'start'}
@@ -44,52 +62,31 @@ function MyCustomNode({ x, y, width, height, index, payload }: NodeProps): React
         stroke="#333"
         strokeOpacity="0.5"
       >
-        {`${payload.value}k`}
+        {\`\${payload.value}k\`}
       </text>
     </Layer>
   );
 }
 
-const example = () => (
+<ResponsiveContainer width="100%" aspect={2}>
   <Sankey
-    width={960}
-    height={500}
     data={data0}
-    // @ts-expect-error Recharts type does not allow null but it should! TODO fix
-    node={MyCustomNode}
+    node={MyCustomSankeyNode}
     nodePadding={50}
     margin={{
-      left: 200,
+     left: 200,
       right: 200,
       top: 100,
-      bottom: 100,
+      bottom: 100
     }}
     link={{ stroke: '#77c878' }}
   >
     <Tooltip />
   </Sankey>
-);
-
-const exampleCode = `
-<Sankey
-  width={960}
-  height={500}
-  data={data0}
-  node={<MyCustomNode />}
-  nodePadding={50}
-  margin={{
-   left: 200,
-    right: 200,
-    top: 100,
-    bottom: 100
-  }}
-  link={{ stroke: '#77c878' }}
->
-  <Tooltip />
-</Sankey>
+</ResponsiveContainer>
 `;
 
-export default [
+export const sankeyApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: example,
     code: exampleCode,

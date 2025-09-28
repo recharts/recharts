@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
+import { resolve } from 'path';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -63,6 +64,26 @@ export default defineConfig({
 
     /* Port to use for Playwright component endpoint. */
     ctPort: 3100,
+
+    ctViteConfig: {
+      resolve: {
+        alias: {
+          /*
+           * This is needed to make sure that when we run the website locally,
+           * we are using the local version of recharts from ../src with latest changes.
+           * This also gives us hot module reload for free!
+           */
+          recharts: resolve(__dirname, '../src'),
+          /*
+           * Ensure that we are using the same React instance
+           * to avoid issues with hooks and context.
+           */
+          react: resolve(__dirname, '../node_modules/react'),
+          'react-dom': resolve(__dirname, '../node_modules/react-dom'),
+          'react-is': resolve(__dirname, '../node_modules/react-is'),
+        },
+      },
+    },
   },
 
   /* Configure projects for major browsers */
