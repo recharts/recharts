@@ -16,6 +16,19 @@ const dirname: string = typeof __dirname !== 'undefined' ? __dirname : path.dirn
 // eslint-disable-next-line import/no-default-export
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      recharts: path.resolve(__dirname, 'src'),
+      /*
+       * Ensure that we are using the same React instance
+       * to avoid issues with hooks and context.
+       */
+      react: path.resolve(__dirname, 'node_modules', 'react'),
+      'react-dom': path.resolve(__dirname, 'node_modules', 'react-dom'),
+      'react-is': path.resolve(__dirname, 'node_modules', 'react-is'),
+      '@testing-library/react': path.resolve(__dirname, 'node_modules', '@testing-library/react'),
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
