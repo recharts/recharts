@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNode, useEffect } from 'react';
-import { LayoutType, Margin } from '../util/types';
+import { LayoutType, Margin, Percent } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { setLayout, setMargin } from './layoutSlice';
 import { useAppDispatch } from './hooks';
@@ -11,8 +11,8 @@ import { ReportChartSize } from '../context/chartLayoutContext';
  * as opposed to the small panorama chart inside a Brush.
  */
 type MainChartProps = {
-  width: number;
-  height: number;
+  width: number | Percent;
+  height: number | Percent;
   layout: LayoutType;
   margin: Partial<Margin>;
 };

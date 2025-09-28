@@ -91,12 +91,12 @@ describe('<ResponsiveContainer />', () => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
-    expect(screen.getByTestId('inside')).toBeTruthy();
+    expect(screen.getByTestId('inside')).toBeInTheDocument();
   });
 
-  it('Handles zero height correctly', () => {
+  it('should ignore height completely if aspect+width are defined', () => {
     render(
-      <ResponsiveContainer height={0} aspect={2} width={300}>
+      <ResponsiveContainer height={Math.random() * 1000} aspect={2} width={300}>
         <DimensionSpy />
       </ResponsiveContainer>,
     );
@@ -104,7 +104,7 @@ describe('<ResponsiveContainer />', () => {
     expect(screen.getByTestId('inside')).toHaveStyle({ width: '300px', height: '150px' });
   });
 
-  it('Handles zero width correctly', () => {
+  it('should calculate width from aspect+height if width=0', () => {
     render(
       <ResponsiveContainer height={300} aspect={2} width={0}>
         <DimensionSpy />
@@ -281,13 +281,13 @@ describe('<ResponsiveContainer />', () => {
 
   it('should accept and render the style prop and any other specified outside of it', () => {
     const { container } = render(
-      <ResponsiveContainer style={{ backgroundColor: 'red', color: 'red' }} width={100} height={100}>
+      <ResponsiveContainer style={{ backgroundColor: 'red', color: 'red' }} width="100%" height={100}>
         <DimensionSpy />
       </ResponsiveContainer>,
     );
 
     expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
-      width: '100px',
+      width: '100%',
       height: '100px',
       'background-color': 'rgb(255,0,0)',
       color: 'rgb(255,0,0)',
@@ -383,15 +383,14 @@ describe('<ResponsiveContainer />', () => {
     expect(onResize2).toHaveBeenCalledWith(100, 100);
   });
 
-  it('should warn when width and height are both fixed numbers', () => {
-    render(
+  it('should render children straight, without any detector divs, when width and height are both fixed numbers', () => {
+    const { container } = render(
       <ResponsiveContainer width={100} height={100}>
-        <div />
+        <DimensionSpy />
       </ResponsiveContainer>,
     );
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('The width(100) and height(100) are both fixed numbers'),
-    );
+    expect(container.querySelector('.recharts-responsive-container')).not.toBeInTheDocument();
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
   });
 
   it('should warn when aspect is not greater than zero', () => {

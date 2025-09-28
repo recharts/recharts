@@ -31,6 +31,7 @@ import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
+import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -327,6 +328,11 @@ export interface Props {
 
   style?: React.CSSProperties;
 
+  /**
+   * This is aspect ratio of both the chart, and the individual treemap rectangles.
+   * If you define both width and height on the treemap, this prop will be ignored for the main chart,
+   * but will still be used for the rectangles.
+   */
   aspectRatio?: number;
 
   content?: TreemapContentType;
@@ -947,13 +953,15 @@ function TreemapDispatchInject(props: Props) {
 }
 
 export function Treemap(props: Props) {
-  const { width, height } = props;
+  const { width, height, aspectRatio } = props;
 
   return (
-    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
-      <ReportChartSize width={width} height={height} />
-      <ReportChartMargin margin={defaultTreemapMargin} />
-      <TreemapDispatchInject {...props} />
-    </RechartsStoreProvider>
+    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
+      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
+        <ReportChartSize width={width} height={height} />
+        <ReportChartMargin margin={defaultTreemapMargin} />
+        <TreemapDispatchInject {...props} />
+      </RechartsStoreProvider>
+    </ResponsiveContainer>
   );
 }

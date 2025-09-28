@@ -7,10 +7,10 @@ export const calculateChartDimensions = (
   containerWidth: number,
   containerHeight: number,
   props: {
-    width?: string | number;
-    height?: string | number;
-    aspect?: number;
-    maxHeight?: number;
+    width: Percent | number;
+    height: Percent | number;
+    aspect: number;
+    maxHeight: number;
   },
 ) => {
   const { width = '100%', height = '100%', aspect, maxHeight } = props;

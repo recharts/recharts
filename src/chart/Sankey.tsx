@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MouseEvent, ReactElement, Ref, SVGProps, useCallback, useMemo, useRef } from 'react';
+import { MouseEvent, ReactElement, ReactNode, Ref, SVGProps, useCallback, useMemo, useRef } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
@@ -7,7 +7,7 @@ import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
+import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate, Percent } from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -27,6 +27,7 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -482,8 +483,9 @@ type SankeyLinkOptions =
 interface SankeyProps {
   nameKey?: DataKey<any>;
   dataKey?: DataKey<any>;
-  width?: number;
-  height?: number;
+  width?: number | Percent;
+  height?: number | Percent;
+  aspectRatio?: number;
   data: SankeyData;
   nodePadding?: number;
   nodeWidth?: number;
@@ -494,7 +496,7 @@ interface SankeyProps {
   link?: SankeyLinkOptions;
   style?: React.CSSProperties;
   className?: string;
-  children?: any;
+  children?: ReactNode;
   margin?: Partial<Margin>;
   onClick?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
@@ -965,15 +967,17 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
 
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
-  const { width, height, className } = props;
+  const { width, height, className, aspectRatio } = props;
 
   return (
-    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-      <ReportChartSize width={width} height={height} />
-      <ReportChartMargin margin={defaultSankeyMargin} />
-      <SankeyImpl {...props} />
-    </RechartsStoreProvider>
+    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
+      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+        <ReportChartSize width={width} height={height} />
+        <ReportChartMargin margin={defaultSankeyMargin} />
+        <SankeyImpl {...props} />
+      </RechartsStoreProvider>
+    </ResponsiveContainer>
   );
 }
 
