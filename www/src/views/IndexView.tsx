@@ -51,7 +51,7 @@ class IndexView extends PureComponent<RouteComponentProps> {
   render() {
     const locale = getLocaleType(this.props);
 
-    const exCode = `<LineChart width="100%" aspect={1.618} data={data}>
+    const exCode = `<LineChart width="100%" aspectRatio={1.618} data={data}>
   <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
   <XAxis dataKey="name"/>
   <YAxis/>
