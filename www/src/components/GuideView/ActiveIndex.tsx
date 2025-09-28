@@ -52,7 +52,7 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
           GitHub issue #5999 for discussion.
         </TargetBlankLink>
       </p>
-      <PieChart width={400} height={400}>
+      <PieChart width="100%" aspectRatio={1} maxHeight={400}>
         <Pie
           activeShape={{
             fill: 'red',
@@ -69,7 +69,7 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
       <Highlight className="jsx">
         {`import { Pie, PieChart, Tooltip } from 'recharts';
 
-<PieChart width={400} height={400}>
+<PieChart width="100%" aspectRatio={1} maxHeight={400}>
 <Pie
   activeShape={{
     fill: 'red',
@@ -102,8 +102,8 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
         </TargetBlankLink>
       </p>
       <BarChart
-        width={550}
-        height={240}
+        width="100%"
+        aspectRatio={1.618}
         data={[
           { name: 'Page A', uv: 590 },
           { name: 'Page B', uv: 290 },
