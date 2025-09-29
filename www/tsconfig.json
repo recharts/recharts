@@ -20,7 +20,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "recharts": ["../types/index.d.ts"],
+      // TODO we should export all public types from the main entry point, and then remove all deep imports
+      "recharts/types/*": ["../types/*"],
+    }
   },
-  "include": ["src"]
+  "include": ["./src"],
+  "exclude": ["node_modules", "docs"]
 }
