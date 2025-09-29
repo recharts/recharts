@@ -123,7 +123,7 @@ function useTooltipSyncEventsListener() {
         dataKey: action.payload.dataKey,
         index: String(activeTick.index),
         label: action.payload.label,
-        sourceViewBox: viewBox,
+        sourceViewBox: action.payload.sourceViewBox,
       });
       dispatch(syncAction);
     };

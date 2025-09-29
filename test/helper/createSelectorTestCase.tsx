@@ -75,17 +75,21 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
 export function createSynchronisedSelectorTestCase(
   ComponentA: ComponentType<{ children: ReactNode }>,
   ComponentB: ComponentType<{ children: ReactNode }>,
+  ComponentC?: ComponentType<{ children: ReactNode }>,
 ) {
   return function renderTestCase<T>(selector: Selector<RechartsRootState, T, never> = emptySelector): {
     container: Element;
     wrapperA: Element;
     wrapperB: Element;
+    wrapperC: Element | null;
     spyA: Mock<(selectorResult: T) => void>;
     spyB: Mock<(selectorResult: T) => void>;
+    spyC: Mock<(selectorResult: T) => void>;
     debug: () => void;
   } {
     const spyA: Mock<(selectorResult: T) => void> = vi.fn();
     const spyB: Mock<(selectorResult: T) => void> = vi.fn();
+    const spyC: Mock<(selectorResult: T) => void> = vi.fn();
 
     const CompA = (): null => {
       spyA(useAppSelectorWithStableTest(selector));
@@ -94,6 +98,11 @@ export function createSynchronisedSelectorTestCase(
 
     const CompB = (): null => {
       spyB(useAppSelectorWithStableTest(selector));
+      return null;
+    };
+
+    const CompC = (): null => {
+      spyC(useAppSelectorWithStableTest(selector));
       return null;
     };
 
@@ -109,13 +118,21 @@ export function createSynchronisedSelectorTestCase(
             <CompB />
           </ComponentB>
         </div>
+        {ComponentC && (
+          <div id="wrapperC">
+            <ComponentC>
+              <CompC />
+            </ComponentC>
+          </div>
+        )}
       </>,
     );
 
     assertUniqueHtmlIds(container);
     const wrapperA = container.querySelector('#wrapperA')!;
     const wrapperB = container.querySelector('#wrapperB')!;
+    const wrapperC = container.querySelector('#wrapperC')!;
 
-    return { container, spyA, spyB, debug, wrapperA, wrapperB };
+    return { container, spyA, spyB, spyC, debug, wrapperA, wrapperB, wrapperC };
   };
 }

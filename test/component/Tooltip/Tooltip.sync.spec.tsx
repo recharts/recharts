@@ -57,6 +57,7 @@ import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRec
 import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syncSelectors';
 import { selectTooltipPayloadSearcher } from '../../../src/state/selectors/selectTooltipPayloadSearcher';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { selectChartViewBox } from '../../../src/state/selectors/selectChartOffsetInternal';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -1748,6 +1749,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA.mock.calls.length).toBeGreaterThan(0);
       expect(spyB.mock.calls.length).toBeGreaterThan(0);
     });
+
     it('should handle extreme coordinate values', () => {
       const renderExtremeTestCase = createSynchronisedSelectorTestCase(
         ({ children }) => (
@@ -1788,6 +1790,69 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(50);
       expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should preserve original sourceViewBox when forwarding through multiple charts', () => {
+      const renderTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={200} height={200}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={400} height={300}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="pv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={600} height={400}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="amt" />
+            {children}
+          </LineChart>
+        ),
+      );
+
+      const {
+        spyA: viewBoxSpyA,
+        spyB: viewBoxSpyB,
+        spyC: viewBoxSpyC,
+      } = renderTestCase(state => selectChartViewBox(state));
+
+      const chartAViewBox = viewBoxSpyA.mock.lastCall[0];
+      const chartBViewBox = viewBoxSpyB.mock.lastCall[0];
+      const chartCViewBox = viewBoxSpyC.mock.lastCall[0];
+
+      // Sanity check
+      expect(chartAViewBox).not.toEqual(chartBViewBox);
+      expect(chartBViewBox).not.toEqual(chartCViewBox);
+
+      const { wrapperA, spyA, spyB, spyC } = renderTestCase(state => selectSynchronisedTooltipState(state));
+
+      showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 });
+
+      // Chart A should have no synchronised interaction (it's the sender)
+      const syncStateA = spyA.mock.lastCall[0];
+      expect(syncStateA.active).toBe(false);
+
+      // Charts B and C should receive Chart A's viewBox as sourceViewBox
+      const syncStateB = spyB.mock.lastCall[0];
+      expect(syncStateB.active).toBe(true);
+      expect(syncStateB.sourceViewBox).toEqual(chartAViewBox);
+
+      const syncStateC = spyC.mock.lastCall[0];
+      expect(syncStateC.active).toBe(true);
+      expect(syncStateC.sourceViewBox).toEqual(chartAViewBox);
     });
   });
 });
