@@ -33,7 +33,7 @@
     "d3-scale": "^4.0.2",
     "d3-shape": "^2.0.0",
     "highlight.js": "^11.11.1",
-    "monaco-editor": "^0.52.2",
+    "monaco-editor": "^0.53.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-ga4": "^2.1.0",
