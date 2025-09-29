@@ -1093,6 +1093,7 @@ describe('Tooltip visibility', () => {
           index: null,
           coordinate: undefined,
           label: undefined,
+          sourceViewBox: undefined,
         },
         settings: {
           axisId: 0,
@@ -1179,6 +1180,7 @@ describe('Tooltip visibility', () => {
           index: null,
           coordinate: undefined,
           label: undefined,
+          sourceViewBox: undefined,
         },
         settings: {
           axisId: 0,

@@ -1688,6 +1688,7 @@ describe('Tooltip integration', () => {
           index: null,
           coordinate: undefined,
           label: undefined,
+          sourceViewBox: undefined,
         },
         tooltipItemPayloads: [
           {
