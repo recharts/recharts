@@ -62,7 +62,7 @@ const MyChart = () => (
 );`}
         </Highlight>
 
-        <LineChart width={600} height={300} data={data}>
+        <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data}>
           <Line dataKey="uv" />
         </LineChart>
       </div>
@@ -75,7 +75,7 @@ const MyChart = () => (
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 const MyChart = () => (
-  <LineChart width={600} height={300} data={data}>
+  <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data}>
     <CartesianGrid />
     <Line dataKey="uv" />
     <XAxis dataKey="name" />
@@ -85,7 +85,7 @@ const MyChart = () => (
 );`}
         </Highlight>
 
-        <LineChart width={600} height={300} data={data}>
+        <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data}>
           <CartesianGrid />
           <Line dataKey="uv" />
           <XAxis dataKey="name" />
@@ -102,7 +102,7 @@ const MyChart = () => (
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 const MyChart = () => (
-  <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+  <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
     <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
     <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
     <XAxis dataKey="name" />
@@ -113,8 +113,8 @@ const MyChart = () => (
         </Highlight>
 
         <LineChart
-          width={600}
-          height={300}
+          style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }}
+          responsive
           data={data}
           margin={{
             top: 20,
@@ -139,7 +139,7 @@ const MyChart = () => (
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}, ...];
 
 const MyChart = () => (
-  <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+  <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
     <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
     <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
     <XAxis dataKey="name" />
@@ -151,8 +151,8 @@ const MyChart = () => (
         </Highlight>
 
         <LineChart
-          width={600}
-          height={300}
+          style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }}
+          responsive
           data={data}
           margin={{
             top: 20,
@@ -200,7 +200,7 @@ const renderCustomAxisTick = ({ x, y, payload }) => {
 };
 
 const renderLineChart = (
-  <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+  <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
     <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
     <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
     <XAxis dataKey="name" tick={renderCustomAxisTick} />
@@ -213,8 +213,8 @@ const renderLineChart = (
         </Highlight>
 
         <LineChart
-          width={600}
-          height={300}
+          style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }}
+          responsive
           data={data}
           margin={{
             top: 20,

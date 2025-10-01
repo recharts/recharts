@@ -14,6 +14,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Bar, BarChart, Tooltip, XAxis } from '../../src';
 import { PageData } from '../_data';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockTouchingElement } from '../helper/mockTouchingElement';
 
 /**
  * These three charts accept the same named events - but they only trigger them when user interacts with the graphics.
@@ -107,7 +108,7 @@ describe('chart wrapper events', () => {
     });
   });
 
-  describe.each(onlyCompact(allCharts))('$testName', ({ ChartElement }) => {
+  describe.each(onlyCompact(allCharts))('$testName', ({ ChartElement, tooltipIndex }) => {
     it('should not call onClick when user clicks on the chart', () => {
       const { container } = render(<ChartElement onClick={spies.onClick} />);
       fireEvent.click(container.querySelector('.recharts-surface'), { clientX: 10, clientY: 10 });
@@ -131,6 +132,8 @@ describe('chart wrapper events', () => {
     });
 
     it('should not call onTouchStart, onTouchMove, or onTouchEnd', () => {
+      mockTouchingElement(tooltipIndex, 'uv');
+
       const { container } = render(
         <ChartElement
           onTouchStart={spies.onTouchStart}
@@ -138,8 +141,8 @@ describe('chart wrapper events', () => {
           onTouchEnd={spies.onTouchEnd}
         />,
       );
-      fireEvent.touchStart(container.querySelector('.recharts-surface'), { clientX: 10, clientY: 10 });
-      fireEvent.touchMove(container.querySelector('.recharts-surface'), { clientX: 20, clientY: 20 });
+      fireEvent.touchStart(container.querySelector('.recharts-surface'), { touches: [{ clientX: 20, clientY: 20 }] });
+      fireEvent.touchMove(container.querySelector('.recharts-surface'), { touches: [{ clientX: 20, clientY: 20 }] });
       fireEvent.touchEnd(container.querySelector('.recharts-surface'));
       expect(spies.onTouchStart).not.toHaveBeenCalled();
       expect(spies.onTouchMove).not.toHaveBeenCalled();

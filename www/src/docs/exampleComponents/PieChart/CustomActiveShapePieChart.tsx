@@ -88,6 +88,7 @@ export default function Example() {
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={400} height={400}>
         <Pie
+          // @ts-expect-error the parameter type doesn't match
           activeShape={renderActiveShape}
           data={data}
           cx="50%"

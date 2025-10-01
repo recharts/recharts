@@ -1014,7 +1014,16 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   throttleDelay?: number;
   title?: string;
   width?: number | Percent;
-  aspectRatio?: number;
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
+   * @default false
+   */
+  responsive?: boolean;
 }
 
 export interface PolarChartProps extends Partial<ExternalMouseEvents> {
@@ -1048,7 +1057,16 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   throttleDelay?: number;
   title?: string;
   width?: number | Percent;
-  aspectRatio?: number;
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
+   * @default false
+   */
+  responsive?: boolean;
 }
 
 export type Percent = `${number}%`;

@@ -19,6 +19,7 @@ import {
   Treemap,
 } from '../../src';
 import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } from '../_data';
+import { TooltipIndex } from '../../src/state/tooltipSlice';
 
 /**
  * This is for parameterized tests - for when you have a bunch of tests and you want to run the same tests
@@ -46,6 +47,7 @@ export type CartesianChartTestCase = {
     onTouchEnd?: (param: unknown) => void;
   }>;
   testName: string;
+  tooltipIndex: TooltipIndex;
 };
 
 export type PolarChartTestCase = {
@@ -53,10 +55,11 @@ export type PolarChartTestCase = {
   testName: string;
 };
 
-function makeCompact({ ChartElement, testName }: CartesianChartTestCase) {
+function makeCompact({ ChartElement, testName, tooltipIndex }: CartesianChartTestCase) {
   const compactTestCase: CartesianChartTestCase = {
     ChartElement: props => <ChartElement {...props} compact />,
     testName: `compact ${testName}`,
+    tooltipIndex,
   };
   return compactTestCase;
 }
@@ -94,21 +97,25 @@ export function onlyCompact(testCases: ReadonlyArray<CartesianChartTestCase>): R
 export const ComposedChartCase: CartesianChartTestCase = {
   ChartElement: props => <ComposedChart width={500} height={500} {...props} />,
   testName: 'ComposedChart',
+  tooltipIndex: '0',
 };
 
 export const AreaChartCase: CartesianChartTestCase = {
   ChartElement: props => <AreaChart width={500} height={500} {...props} />,
   testName: 'AreaChart',
+  tooltipIndex: '0',
 };
 
 export const BarChartCase: CartesianChartTestCase = {
   ChartElement: props => <BarChart width={500} height={500} {...props} />,
   testName: 'BarChart',
+  tooltipIndex: '0',
 };
 
 export const LineChartCase: CartesianChartTestCase = {
   ChartElement: props => <LineChart width={500} height={500} {...props} />,
   testName: 'LineChart',
+  tooltipIndex: '0',
 };
 
 export const ScatterChartCase: CartesianChartTestCase = {
@@ -118,6 +125,7 @@ export const ScatterChartCase: CartesianChartTestCase = {
     </ScatterChart>
   ),
   testName: 'ScatterChart',
+  tooltipIndex: '0',
 };
 
 export const PieChartCase: PolarChartTestCase = {
@@ -150,6 +158,7 @@ export const RadialBarChartCase: PolarChartTestCase = {
 export const FunnelChartCase: CartesianChartTestCase = {
   ChartElement: props => <FunnelChart width={500} height={500} {...props} />,
   testName: 'FunnelChart',
+  tooltipIndex: '0',
 };
 
 export const TreemapChartCase: CartesianChartTestCase = {
@@ -166,6 +175,7 @@ export const TreemapChartCase: CartesianChartTestCase = {
     />
   ),
   testName: 'Treemap',
+  tooltipIndex: 'children[0]children[0]',
 };
 
 export const SankeyChartCase: CartesianChartTestCase = {
@@ -174,6 +184,7 @@ export const SankeyChartCase: CartesianChartTestCase = {
     return <Sankey width={400} height={400} {...rest} data={exampleSankeyData} />;
   },
   testName: 'Sankey',
+  tooltipIndex: '0',
 };
 
 export const SunburstChartCase: CartesianChartTestCase = {
@@ -182,6 +193,7 @@ export const SunburstChartCase: CartesianChartTestCase = {
     return <SunburstChart width={500} height={500} {...rest} data={exampleSunburstData} />;
   },
   testName: 'Sunburst',
+  tooltipIndex: '0',
 };
 
 /**

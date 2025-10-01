@@ -10,7 +10,6 @@ import { Margin, PolarChartProps, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -26,6 +25,7 @@ const defaultProps = {
   reverseStackOrder: false,
   syncMethod: 'index',
   layout: 'radial',
+  responsive: false,
 } as const satisfies Partial<PolarChartProps>;
 
 /**
@@ -64,7 +64,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
 ) {
   const polarChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
-  const { width, height, aspectRatio, layout, ...otherCategoricalProps } = polarChartProps;
+  const { layout, ...otherCategoricalProps } = polarChartProps;
 
   const { chartName, defaultTooltipEventType, validateTooltipEventTypes, tooltipPayloadSearcher } = props;
 
@@ -77,31 +77,29 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
   };
 
   return (
-    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
-        <ChartDataContextProvider chartData={polarChartProps.data} />
-        <ReportMainChartProps width={width} height={height} layout={layout} margin={polarChartProps.margin} />
-        <ReportChartProps
-          accessibilityLayer={polarChartProps.accessibilityLayer}
-          barCategoryGap={polarChartProps.barCategoryGap}
-          maxBarSize={polarChartProps.maxBarSize}
-          stackOffset={polarChartProps.stackOffset}
-          barGap={polarChartProps.barGap}
-          barSize={polarChartProps.barSize}
-          syncId={polarChartProps.syncId}
-          syncMethod={polarChartProps.syncMethod}
-          className={polarChartProps.className}
-        />
-        <ReportPolarOptions
-          cx={polarChartProps.cx}
-          cy={polarChartProps.cy}
-          startAngle={polarChartProps.startAngle}
-          endAngle={polarChartProps.endAngle}
-          innerRadius={polarChartProps.innerRadius}
-          outerRadius={polarChartProps.outerRadius}
-        />
-        <CategoricalChart {...otherCategoricalProps} ref={ref} />
-      </RechartsStoreProvider>
-    </ResponsiveContainer>
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
+      <ChartDataContextProvider chartData={polarChartProps.data} />
+      <ReportMainChartProps layout={layout} margin={polarChartProps.margin} />
+      <ReportChartProps
+        accessibilityLayer={polarChartProps.accessibilityLayer}
+        barCategoryGap={polarChartProps.barCategoryGap}
+        maxBarSize={polarChartProps.maxBarSize}
+        stackOffset={polarChartProps.stackOffset}
+        barGap={polarChartProps.barGap}
+        barSize={polarChartProps.barSize}
+        syncId={polarChartProps.syncId}
+        syncMethod={polarChartProps.syncMethod}
+        className={polarChartProps.className}
+      />
+      <ReportPolarOptions
+        cx={polarChartProps.cx}
+        cy={polarChartProps.cy}
+        startAngle={polarChartProps.startAngle}
+        endAngle={polarChartProps.endAngle}
+        innerRadius={polarChartProps.innerRadius}
+        outerRadius={polarChartProps.outerRadius}
+      />
+      <CategoricalChart {...otherCategoricalProps} ref={ref} />
+    </RechartsStoreProvider>
   );
 });

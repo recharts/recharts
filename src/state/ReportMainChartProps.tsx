@@ -1,23 +1,19 @@
-import * as React from 'react';
 import { ReactNode, useEffect } from 'react';
-import { LayoutType, Margin, Percent } from '../util/types';
+import { LayoutType, Margin } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { setLayout, setMargin } from './layoutSlice';
 import { useAppDispatch } from './hooks';
-import { ReportChartSize } from '../context/chartLayoutContext';
 
 /**
  * "Main" props are props that are only accepted on the main chart,
  * as opposed to the small panorama chart inside a Brush.
  */
 type MainChartProps = {
-  width: number | Percent;
-  height: number | Percent;
   layout: LayoutType;
   margin: Partial<Margin>;
 };
 
-export function ReportMainChartProps({ layout, width, height, margin }: MainChartProps): ReactNode {
+export function ReportMainChartProps({ layout, margin }: MainChartProps): ReactNode {
   const dispatch = useAppDispatch();
 
   /*
@@ -38,6 +34,6 @@ export function ReportMainChartProps({ layout, width, height, margin }: MainChar
       dispatch(setLayout(layout));
       dispatch(setMargin(margin));
     }
-  }, [dispatch, isPanorama, layout, width, height, margin]);
-  return <ReportChartSize width={width} height={height} />;
+  }, [dispatch, isPanorama, layout, margin]);
+  return null;
 }
