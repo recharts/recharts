@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { ChartCoordinate, Coordinate, DataKey } from '../util/types';
+import { Coordinate, DataKey } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
 
 /**
@@ -70,7 +70,7 @@ export type TooltipPayloadConfiguration = {
 
 export type ActiveTooltipProps = {
   activeIndex: TooltipIndex;
-  activeCoordinate: ChartCoordinate | undefined;
+  activeCoordinate: Coordinate | undefined;
 };
 
 /**
@@ -251,7 +251,7 @@ export const initialState: TooltipState = {
 export type TooltipActionPayload = {
   activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
-  activeCoordinate?: ChartCoordinate | undefined;
+  activeCoordinate?: Coordinate | undefined;
 };
 
 const tooltipSlice = createSlice({
