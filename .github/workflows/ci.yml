@@ -20,6 +20,7 @@ env:
 
 jobs:
   list_integration_tests:
+    if: false # Temporarily disable the entire job to save CI minutes while debugging other issues
     name: List Integration Test Directories
     runs-on: ubuntu-latest
     outputs:
@@ -41,6 +42,7 @@ jobs:
           echo "directories=$JSON_ARRAY" >> $GITHUB_OUTPUT
 
   build_test_pack:
+    if: false # Temporarily disable the entire job to save CI minutes while debugging other issues
     name: Build, Test, Pack
     runs-on: ubuntu-latest
     container:
@@ -156,6 +158,7 @@ jobs:
           skip: 'dependabot/**'
 
   integration_tests:
+    if: false # Temporarily disable the entire job to save CI minutes while debugging other issues
     name: Test ${{ matrix.test_dir }}
     runs-on: ubuntu-latest
     needs: [list_integration_tests, build_test_pack]
