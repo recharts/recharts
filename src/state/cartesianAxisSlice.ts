@@ -76,6 +76,7 @@ export type YAxisSettings = CartesianAxisSettings & {
   padding: YAxisPadding;
   width: YAxisWidth;
   orientation: YAxisOrientation;
+  widthHistory?: number[];
 };
 
 /**
@@ -126,10 +127,19 @@ const cartesianAxisSlice = createSlice({
     },
     updateYAxisWidth(state, action: PayloadAction<{ id: AxisId; width: number }>) {
       const { id, width } = action.payload;
-      if (state.yAxis[id]) {
+      const axis = state.yAxis[id];
+      if (axis) {
+        const history = axis.widthHistory || [];
+        // An oscillation is detected when the new width is the same as the width before the last one.
+        // This is a simple A -> B -> A pattern. If the next width is B, we ignore it.
+        if (history.length === 3 && history[0] === history[2] && width === history[1] && width !== axis.width) {
+          return;
+        }
+        const newHistory = [...history, width].slice(-3);
         state.yAxis[id] = {
           ...state.yAxis[id],
           width,
+          widthHistory: newHistory,
         };
       }
     },

@@ -417,7 +417,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   const { axisLine, width, height, className, hide, ticks, ...rest } = props;
   const [fontSize, setFontSize] = useState('');
   const [letterSpacing, setLetterSpacing] = useState('');
-  const tickRefs = useRef<Element[]>([]);
+  const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
 
   useImperativeHandle(
     ref,
@@ -438,7 +438,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
     (el: SVGElement | null) => {
       if (el) {
         const tickNodes = el.getElementsByClassName('recharts-cartesian-axis-tick-value');
-        tickRefs.current = Array.from(tickNodes);
+        tickRefs.current = tickNodes;
         const tick: Element | undefined = tickNodes[0];
 
         if (tick) {
