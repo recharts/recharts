@@ -200,7 +200,7 @@ jobs:
       id-token: write
       pull-requests: write
     runs-on: ubuntu-latest
-    needs: [build_test_pack]
+#    needs: [build_test_pack]
     env:
       # GH_TOKEN is needed to use `gh` CLI to comment on the PR
       GH_TOKEN: ${{ github.token }}
