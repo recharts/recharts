@@ -73,7 +73,7 @@ export default defineConfig({
            * to avoid issues with hooks and context.
            */
           react: '/recharts/node_modules/react',
-          'react-dom': './recharts/node_modules/react-dom',
+          'react-dom': '/recharts/node_modules/react-dom',
           'react-is': '/recharts/node_modules/react-is',
         },
       },
