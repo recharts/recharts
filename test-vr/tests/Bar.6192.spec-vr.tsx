@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { ResponsiveContainer, ComposedChart, XAxis, YAxis, Bar, Legend, Area, CartesianGrid } from '../../src';
+import { ComposedChart, XAxis, YAxis, Bar, Legend, Area, CartesianGrid } from '../../src';
 
 test('ComposedChart with stacked Area and Bar', async ({ mount }) => {
   const data = [
@@ -272,42 +272,42 @@ test('ComposedChart with stacked Area and Bar', async ({ mount }) => {
 
   const component = await mount(
     <div style={{ height: '20rem', backgroundColor: 'black' }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart
-          data={data}
-          stackOffset="sign"
-          margin={{
-            top: 5,
-            right: 0,
-            left: -20,
-            bottom: 5,
-          }}
-        >
-          <defs>
-            <linearGradient id="fillKD" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="gold" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="gold" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid stroke="#ffffff" strokeOpacity="0.2" />
-          <XAxis dataKey="day" strokeOpacity="0" tick={{ fill: '#ffffff', fillOpacity: '0.6' }} tickLine={false} />
-          <YAxis strokeOpacity="0" tick={{ fill: '#ffffff', fillOpacity: '0.6' }} tickLine={false} />
-          <Area
-            name="Av"
-            dataKey="kd"
-            fill="url(#fillKD)"
-            type="monotoneX"
-            stroke="gold"
-            strokeWidth={2}
-            dot={false}
-            connectNulls
-            pointerEvents="none"
-          />
-          <Bar name="Wi" dataKey="wins" fill="#ffffff" opacity={0.8} stackId="date" cursor="pointer" />
-          <Bar name="Lo" dataKey="losses" fill="red" opacity={0.8} stackId="date" cursor="pointer" />
-          <Legend verticalAlign="bottom" wrapperStyle={{ left: 0, width: '100%' }} />
-        </ComposedChart>
-      </ResponsiveContainer>
+      <ComposedChart
+        width="100%"
+        height="100%"
+        data={data}
+        stackOffset="sign"
+        margin={{
+          top: 5,
+          right: 0,
+          left: -20,
+          bottom: 5,
+        }}
+      >
+        <defs>
+          <linearGradient id="fillKD" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="gold" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="gold" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid stroke="#ffffff" strokeOpacity="0.2" />
+        <XAxis dataKey="day" strokeOpacity="0" tick={{ fill: '#ffffff', fillOpacity: '0.6' }} tickLine={false} />
+        <YAxis strokeOpacity="0" tick={{ fill: '#ffffff', fillOpacity: '0.6' }} tickLine={false} />
+        <Area
+          name="Av"
+          dataKey="kd"
+          fill="url(#fillKD)"
+          type="monotoneX"
+          stroke="gold"
+          strokeWidth={2}
+          dot={false}
+          connectNulls
+          pointerEvents="none"
+        />
+        <Bar name="Wi" dataKey="wins" fill="#ffffff" opacity={0.8} stackId="date" cursor="pointer" />
+        <Bar name="Lo" dataKey="losses" fill="red" opacity={0.8} stackId="date" cursor="pointer" />
+        <Legend verticalAlign="bottom" wrapperStyle={{ left: 0, width: '100%' }} />
+      </ComposedChart>
     </div>,
   );
   await expect(component).toHaveScreenshot();

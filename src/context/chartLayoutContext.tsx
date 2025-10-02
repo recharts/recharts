@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CartesianViewBoxRequired, ChartOffsetInternal, LayoutType, Margin, Size } from '../util/types';
+import { CartesianViewBoxRequired, ChartOffsetInternal, LayoutType, Margin, Percent } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setMargin } from '../state/layoutSlice';
@@ -8,6 +8,7 @@ import { selectChartHeight, selectChartWidth } from '../state/selectors/containe
 import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   const panorama = useIsPanorama();
@@ -109,7 +110,10 @@ export const selectChartLayout = (state: RechartsRootState): LayoutType => state
 
 export const useChartLayout = () => useAppSelector(selectChartLayout);
 
-export const ReportChartSize = (props: Size): null => {
+export const ReportChartSize = (props: {
+  width: number | Percent | undefined;
+  height: number | Percent | undefined;
+}): null => {
   const dispatch = useAppDispatch();
 
   /*
@@ -143,7 +147,7 @@ export const ReportChartSize = (props: Size): null => {
   }
 
   useEffect(() => {
-    if (!isPanorama) {
+    if (!isPanorama && isPositiveNumber(width) && isPositiveNumber(height)) {
       dispatch(setChartSize({ width, height }));
     }
   }, [dispatch, isPanorama, width, height]);

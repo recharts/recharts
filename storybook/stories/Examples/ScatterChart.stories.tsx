@@ -299,49 +299,37 @@ export const BubbleChart = {
             <MyTooltip />
             <RechartsHookInspector />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Monday" />
             <Bubbles data={data02} />
             <MyTooltip />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Tuesday" />
             <Bubbles data={data01} />
             <MyTooltip />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Wednesday" />
             <Bubbles data={data02} />
             <MyTooltip />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Thursday" />
             <Bubbles data={data01} />
             <MyTooltip />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Friday" />
             <Bubbles data={data02} />
             <MyTooltip />
           </ScatterChart>
-        </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
             <BubbleAxes day="Saturday" showXTicks />
             <Bubbles data={data01} />
