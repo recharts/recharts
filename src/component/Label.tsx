@@ -604,10 +604,16 @@ const parseLabel = (
   return null;
 };
 
-export function CartesianLabelFromLabelProp({ label }: { label: ImplicitLabelType | undefined }) {
+export function CartesianLabelFromLabelProp({
+  label,
+  labelRef,
+}: {
+  label: ImplicitLabelType | undefined;
+  labelRef?: React.RefObject<Element>;
+}) {
   const viewBox = useCartesianLabelContext();
 
-  return parseLabel(label, viewBox) || null;
+  return parseLabel(label, viewBox, labelRef) || null;
 }
 
 export function PolarLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
