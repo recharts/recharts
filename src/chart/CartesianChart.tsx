@@ -9,7 +9,6 @@ import { CartesianChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -22,6 +21,7 @@ const defaultProps = {
   margin: defaultMargin,
   reverseStackOrder: false,
   syncMethod: 'index',
+  responsive: false,
 } as const satisfies Partial<CartesianChartProps>;
 
 /**
@@ -43,8 +43,6 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
 ) {
   const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
-  const { width, height, aspectRatio, ...otherCategoricalProps } = rootChartProps;
-
   const {
     chartName,
     defaultTooltipEventType,
@@ -62,28 +60,21 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
   };
 
   return (
-    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={categoricalChartProps.id ?? chartName}>
-        <ChartDataContextProvider chartData={categoricalChartProps.data} />
-        <ReportMainChartProps
-          width={width}
-          height={height}
-          layout={rootChartProps.layout}
-          margin={rootChartProps.margin}
-        />
-        <ReportChartProps
-          accessibilityLayer={rootChartProps.accessibilityLayer}
-          barCategoryGap={rootChartProps.barCategoryGap}
-          maxBarSize={rootChartProps.maxBarSize}
-          stackOffset={rootChartProps.stackOffset}
-          barGap={rootChartProps.barGap}
-          barSize={rootChartProps.barSize}
-          syncId={rootChartProps.syncId}
-          syncMethod={rootChartProps.syncMethod}
-          className={rootChartProps.className}
-        />
-        <CategoricalChart {...otherCategoricalProps} ref={ref} />
-      </RechartsStoreProvider>
-    </ResponsiveContainer>
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={categoricalChartProps.id ?? chartName}>
+      <ChartDataContextProvider chartData={categoricalChartProps.data} />
+      <ReportMainChartProps layout={rootChartProps.layout} margin={rootChartProps.margin} />
+      <ReportChartProps
+        accessibilityLayer={rootChartProps.accessibilityLayer}
+        barCategoryGap={rootChartProps.barCategoryGap}
+        maxBarSize={rootChartProps.maxBarSize}
+        stackOffset={rootChartProps.stackOffset}
+        barGap={rootChartProps.barGap}
+        barSize={rootChartProps.barSize}
+        syncId={rootChartProps.syncId}
+        syncMethod={rootChartProps.syncMethod}
+        className={rootChartProps.className}
+      />
+      <CategoricalChart {...rootChartProps} ref={ref} />
+    </RechartsStoreProvider>
   );
 });

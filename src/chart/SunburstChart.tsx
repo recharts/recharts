@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { clsx } from 'clsx';
 import get from 'es-toolkit/compat/get';
@@ -24,7 +24,6 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartCoordinate, DataKey, Margin, Percent } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 export interface SunburstData {
   [key: string]: any;
@@ -50,7 +49,16 @@ export interface SunburstChartProps {
   data: SunburstData;
   width?: number | Percent;
   height?: number | Percent;
-  aspectRatio?: number;
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
+   * @default false
+   */
+  responsive?: boolean;
   padding?: number;
   dataKey?: string;
   nameKey?: DataKey<any>;
@@ -79,6 +87,7 @@ export interface SunburstChartProps {
   onMouseLeave?: (node: SunburstData, e: React.MouseEvent) => void;
 
   onClick?: (node: SunburstData) => void;
+  style?: CSSProperties;
 }
 
 interface DrawArcOptions {
@@ -199,6 +208,8 @@ const SunburstChartImpl = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
+  responsive = false,
+  style,
 }: SunburstChartProps) => {
   const dispatch = useAppDispatch();
 
@@ -314,8 +325,9 @@ const SunburstChartImpl = ({
       <RechartsWrapper
         className={className}
         width={width}
-        // Sunburst doesn't support `style` property, why?
         height={height}
+        responsive={responsive}
+        style={style}
         ref={(node: HTMLDivElement) => {
           if (tooltipPortal == null && node != null) {
             setTooltipPortal(node);
@@ -348,12 +360,10 @@ const SunburstChartImpl = ({
 
 export const SunburstChart = (props: SunburstChartProps) => {
   return (
-    <ResponsiveContainer width={props.width} height={props.height} aspect={props.aspectRatio}>
-      <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
-        <ReportChartSize width={props.width} height={props.height} />
-        <ReportChartMargin margin={defaultSunburstMargin} />
-        <SunburstChartImpl {...props} />
-      </RechartsStoreProvider>
-    </ResponsiveContainer>
+    <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
+      <ReportChartSize width={props.width} height={props.height} />
+      <ReportChartMargin margin={defaultSunburstMargin} />
+      <SunburstChartImpl {...props} />
+    </RechartsStoreProvider>
   );
 };

@@ -37,7 +37,7 @@ test('custom aspect ratio', async ({ mount }) => {
   const component = await mount(
     <Treemap
       width={500}
-      height={250}
+      height={500}
       data={exampleTreemapData}
       isAnimationActive={false}
       nameKey="name"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent, ReactNode, useCallback } from 'react';
+import { PureComponent, ReactNode, useCallback, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
@@ -21,7 +21,7 @@ import {
   Percent,
   RectanglePosition,
 } from '../util/types';
-import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { ReportChartMargin, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
@@ -39,7 +39,6 @@ import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const NODE_VALUE_KEY = 'value';
@@ -343,9 +342,9 @@ export interface Props {
   style?: React.CSSProperties;
 
   /**
-   * This is aspect ratio of both the chart, and the individual treemap rectangles.
-   * If you define both width and height on the treemap, this prop will be ignored for the main chart,
-   * but will still be used for the rectangles.
+   * This is aspect ratio of the individual treemap rectangles.
+   * If you want to define aspect ratio of the chart itself, set it via the `style` prop:
+   * e.g. `<Treemap style={{ aspectRatio: 4 / 3 }}>`
    */
   aspectRatio?: number;
 
@@ -411,7 +410,6 @@ interface State {
   prevHeight?: number;
   prevDataKey: DataKey<any>;
   prevAspectRatio: number;
-  tooltipPortal: HTMLElement | null;
 }
 
 const defaultTreeMapProps = {
@@ -424,8 +422,6 @@ const defaultTreeMapProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear',
-  // width: '100%',
-  // height: '100%',
 } as const satisfies Partial<Props>;
 
 const defaultState: State = {
@@ -433,7 +429,6 @@ const defaultState: State = {
   formatRoot: null,
   currentRoot: null,
   nestIndex: [],
-  tooltipPortal: null,
   prevAspectRatio: defaultTreeMapProps.aspectRatio,
   prevDataKey: defaultTreeMapProps.dataKey,
 };
@@ -875,7 +870,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     );
   }
 
-  handleTouchMove = (_state: never, e: React.TouchEvent<SVGElement>) => {
+  handleTouchMove = (e: React.TouchEvent<SVGElement>) => {
     const touchEvent = e.touches[0];
     const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
     if (!target || !target.getAttribute || this.state.formatRoot == null) {
@@ -910,46 +905,27 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const attrs = svgPropertiesNoEvents(others);
 
     return (
-      <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+      <>
         <SetTooltipEntrySettings
           fn={getTooltipEntrySettings}
           args={{ props: this.props, currentRoot: this.state.currentRoot }}
         />
-        <RechartsWrapper
-          className={className}
-          style={style}
+        <Surface
+          {...attrs}
           width={width}
-          height={height}
-          ref={(node: HTMLDivElement) => {
-            if (this.state.tooltipPortal == null) {
-              this.setState({ tooltipPortal: node });
-            }
-          }}
-          onMouseEnter={undefined}
-          onMouseLeave={undefined}
-          onClick={undefined}
-          onMouseMove={undefined}
-          onMouseDown={undefined}
-          onMouseUp={undefined}
-          onContextMenu={undefined}
-          onDoubleClick={undefined}
-          onTouchStart={undefined}
+          height={type === 'nest' ? height - 30 : height}
           onTouchMove={this.handleTouchMove}
-          onTouchEnd={undefined}
         >
-          <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-            {this.renderAllNodes()}
-            {children}
-          </Surface>
-          {type === 'nest' && this.renderNestIndex()}
-        </RechartsWrapper>
-      </TooltipPortalContext.Provider>
+          {this.renderAllNodes()}
+          {children}
+        </Surface>
+        {type === 'nest' && this.renderNestIndex()}
+      </>
     );
   }
 }
 
-function TreemapDispatchInject(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
+function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof defaultTreeMapProps>) {
   const dispatch = useAppDispatch();
   const width = useChartWidth();
   const height = useChartHeight();
@@ -959,16 +935,48 @@ function TreemapDispatchInject(outsideProps: Props) {
   return <TreemapWithState {...props} width={width} height={height} dispatch={dispatch} />;
 }
 
-export function Treemap(props: Props) {
-  const { width, height, aspectRatio } = props;
+export function Treemap(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
+  const { className, style, width, height } = props;
+
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
-    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
-        <ReportChartSize width={width} height={height} />
-        <ReportChartMargin margin={defaultTreemapMargin} />
-        <TreemapDispatchInject {...props} />
-      </RechartsStoreProvider>
-    </ResponsiveContainer>
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
+      <ReportChartMargin margin={defaultTreemapMargin} />
+      <RechartsWrapper
+        dispatchTouchEvents={false}
+        className={className}
+        style={style}
+        width={width}
+        height={height}
+        /*
+         * Treemap has a bug where it doesn't include strokeWidth in its dimension calculation
+         * which makes the actual chart exactly {strokeWidth} larger than asked for.
+         * It's not a huge deal usually, but it makes the responsive option cycle infinitely.
+         */
+        responsive={false}
+        ref={(node: HTMLDivElement) => {
+          if (tooltipPortal == null && node != null) {
+            setTooltipPortal(node);
+          }
+        }}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        onClick={undefined}
+        onMouseMove={undefined}
+        onMouseDown={undefined}
+        onMouseUp={undefined}
+        onContextMenu={undefined}
+        onDoubleClick={undefined}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
+      >
+        <TooltipPortalContext.Provider value={tooltipPortal}>
+          <TreemapDispatchInject {...props} />
+        </TooltipPortalContext.Provider>
+      </RechartsWrapper>
+    </RechartsStoreProvider>
   );
 }

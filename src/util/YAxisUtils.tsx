@@ -2,11 +2,13 @@ type IGetBoundingClient = Pick<Element, 'getBoundingClientRect'>;
 
 /**
  * Calculates the width of the Y-axis based on the tick labels and the axis label.
- * @param {Object} params - The parameters object.
- * @param {React.RefObject<any>} params.cartesianAxisRef - The ref to the CartesianAxis component.
- * @param {React.RefObject<Element>} params.labelRef - The ref to the label element.
- * @param {number} [params.labelGapWithTick=5] - The gap between the label and the tick.
- * @returns {number} The calculated width of the Y-axis.
+ * @param params - The parameters object.
+ * @param [params.ticks] - An array-like object of tick elements, each with a `getBoundingClientRect` method.
+ * @param [params.label] - The axis label element, with a `getBoundingClientRect` method.
+ * @param [params.labelGapWithTick=5] - The gap between the label and the tick.
+ * @param [params.tickSize=0] - The length of the tick line.
+ * @param [params.tickMargin=0] - The margin between the tick line and the tick text.
+ * @returns The calculated width of the Y-axis.
  */
 export const getCalculatedYAxisWidth = ({
   ticks,
@@ -15,7 +17,7 @@ export const getCalculatedYAxisWidth = ({
   tickSize = 0,
   tickMargin = 0,
 }: {
-  ticks: ReadonlyArray<IGetBoundingClient> | undefined;
+  ticks: ArrayLike<IGetBoundingClient> | undefined;
   label: IGetBoundingClient | null | undefined;
   labelGapWithTick: number | undefined;
   tickSize: number | undefined;
@@ -24,7 +26,7 @@ export const getCalculatedYAxisWidth = ({
   // find the max width of the tick labels
   let maxTickWidth = 0;
   if (ticks) {
-    ticks.forEach((tickNode: Element) => {
+    Array.from(ticks).forEach((tickNode: Element) => {
       if (tickNode) {
         const bbox = tickNode.getBoundingClientRect();
 

@@ -83,24 +83,18 @@ class IndexView extends PureComponent<RouteComponentProps> {
         </div>
 
         <div className="examples">
+          <LineChart
+            style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600, margin: 'auto' }}
+            responsive
+            data={data}
+          >
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <XAxis dataKey="name" />
+            <YAxis width="auto" />
+            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+            <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+          </LineChart>
           <div className="ex-code">
-            <LineChart
-              width={500}
-              height={300}
-              data={data}
-              margin={{
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 0,
-              }}
-            >
-              <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-              <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-            </LineChart>
             <Highlight className="jsx">{exCode}</Highlight>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MouseEvent, ReactElement, ReactNode, Ref, SVGProps, useCallback, useMemo, useRef } from 'react';
+import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
@@ -27,7 +27,6 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -485,7 +484,16 @@ interface SankeyProps {
   dataKey?: DataKey<any>;
   width?: number | Percent;
   height?: number | Percent;
-  aspectRatio?: number;
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
+   * @default false
+   */
+  responsive?: boolean;
   data: SankeyData;
   nodePadding?: number;
   nodeWidth?: number;
@@ -817,6 +825,7 @@ const sankeyDefaultProps = {
   iterations: 32,
   margin: { top: 5, right: 5, bottom: 5, left: 5 },
   sort: true,
+  responsive: false,
 } as const satisfies Partial<Props>;
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
@@ -838,8 +847,6 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
     linkCurvature,
     margin,
   } = props;
-
-  const tooltipPortal: Ref<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
 
   const attrs = svgPropertiesNoEvents(others);
 
@@ -920,64 +927,68 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
   return (
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-      <TooltipPortalContext.Provider value={tooltipPortal.current}>
-        <RechartsWrapper
-          className={className}
-          style={style}
-          width={width}
-          height={height}
-          ref={tooltipPortal}
-          onMouseEnter={undefined}
-          onMouseLeave={undefined}
-          onClick={undefined}
-          onMouseMove={undefined}
-          onMouseDown={undefined}
-          onMouseUp={undefined}
-          onContextMenu={undefined}
-          onDoubleClick={undefined}
-          onTouchStart={undefined}
-          onTouchMove={undefined}
-          onTouchEnd={undefined}
-        >
-          <Surface {...attrs} width={width} height={height}>
-            {children}
-            <AllSankeyLinkElements
-              links={links}
-              modifiedLinks={modifiedLinks}
-              linkContent={link}
-              dataKey={dataKey}
-              onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
-              onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
-              onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
-            />
-            <AllNodeElements
-              modifiedNodes={modifiedNodes}
-              nodeContent={node}
-              dataKey={dataKey}
-              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
-              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
-              onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
-            />
-          </Surface>
-        </RechartsWrapper>
-      </TooltipPortalContext.Provider>
+      <Surface {...attrs} width={width} height={height}>
+        {children}
+        <AllSankeyLinkElements
+          links={links}
+          modifiedLinks={modifiedLinks}
+          linkContent={link}
+          dataKey={dataKey}
+          onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
+          onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
+          onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
+        />
+        <AllNodeElements
+          modifiedNodes={modifiedNodes}
+          nodeContent={node}
+          dataKey={dataKey}
+          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
+          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
+          onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
+        />
+      </Surface>
     </>
   );
 }
 
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
-  const { width, height, className, aspectRatio } = props;
+  const { width, height, style, responsive, className } = props;
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
-    <ResponsiveContainer width={width} height={height} aspect={aspectRatio}>
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
-        <ReportChartSize width={width} height={height} />
-        <ReportChartMargin margin={defaultSankeyMargin} />
-        <SankeyImpl {...props} />
-      </RechartsStoreProvider>
-    </ResponsiveContainer>
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <ReportChartSize width={width} height={height} />
+      <ReportChartMargin margin={defaultSankeyMargin} />
+      <RechartsWrapper
+        className={className}
+        style={style}
+        width={width}
+        height={height}
+        responsive={responsive}
+        ref={(node: HTMLDivElement | null) => {
+          if (node && !tooltipPortal) {
+            setTooltipPortal(node);
+          }
+        }}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        onClick={undefined}
+        onMouseMove={undefined}
+        onMouseDown={undefined}
+        onMouseUp={undefined}
+        onContextMenu={undefined}
+        onDoubleClick={undefined}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
+      >
+        <TooltipPortalContext.Provider value={tooltipPortal}>
+          <SankeyImpl {...props} />
+        </TooltipPortalContext.Provider>
+      </RechartsWrapper>
+    </RechartsStoreProvider>
   );
 }
 

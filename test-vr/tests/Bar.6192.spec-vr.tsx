@@ -275,6 +275,7 @@ test('ComposedChart with stacked Area and Bar', async ({ mount }) => {
       <ComposedChart
         width="100%"
         height="100%"
+        responsive
         data={data}
         stackOffset="sign"
         margin={{
