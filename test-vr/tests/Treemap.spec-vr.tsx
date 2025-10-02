@@ -36,11 +36,8 @@ test('nested treemap', async ({ mount }) => {
 test('custom aspect ratio', async ({ mount }) => {
   const component = await mount(
     <Treemap
-      style={{
-        width: '500px',
-        aspectRatio: 1,
-      }}
-      responsive
+      width={500}
+      height={500}
       data={exampleTreemapData}
       isAnimationActive={false}
       nameKey="name"

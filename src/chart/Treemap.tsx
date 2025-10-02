@@ -348,17 +348,6 @@ export interface Props {
    */
   aspectRatio?: number;
 
-  /**
-   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
-   * If false, then it renders the chart at the specified width and height and will stay that way
-   * even if the container size changes.
-   *
-   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
-   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
-   * @default false
-   */
-  responsive?: boolean;
-
   content?: TreemapContentType;
 
   fill?: string;
@@ -433,7 +422,6 @@ const defaultTreeMapProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear',
-  responsive: false,
 } as const satisfies Partial<Props>;
 
 const defaultState: State = {
@@ -913,7 +901,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   };
 
   render() {
-    const { width, height, className, style, children, type, responsive, ...others } = this.props;
+    const { width, height, className, style, children, type, ...others } = this.props;
     const attrs = svgPropertiesNoEvents(others);
 
     return (
@@ -949,7 +937,7 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
 
 export function Treemap(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
-  const { className, style, width, height, responsive = false } = props;
+  const { className, style, width, height } = props;
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
@@ -962,7 +950,12 @@ export function Treemap(outsideProps: Props) {
         style={style}
         width={width}
         height={height}
-        responsive={responsive}
+        /*
+         * Treemap has a bug where it doesn't include strokeWidth in its dimension calculation
+         * which makes the actual chart exactly {strokeWidth} larger than asked for.
+         * It's not a huge deal usually, but it makes the responsive option cycle infinitely.
+         */
+        responsive={false}
         ref={(node: HTMLDivElement) => {
           if (tooltipPortal == null && node != null) {
             setTooltipPortal(node);

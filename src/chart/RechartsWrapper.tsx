@@ -11,7 +11,6 @@ import {
   useState,
 } from 'react';
 import { clsx } from 'clsx';
-import throttle from 'es-toolkit/compat/throttle';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
@@ -100,8 +99,6 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
     });
   }, []);
 
-  const debounce = 0;
-
   const innerRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (typeof ref === 'function') {
@@ -110,16 +107,10 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
       if (node != null) {
         const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
         setContainerSize(containerWidth, containerHeight);
-        let callback = (entries: ResizeObserverEntry[]) => {
+        const callback = (entries: ResizeObserverEntry[]) => {
           const { width, height } = entries[0].contentRect;
           setContainerSize(width, height);
         };
-        if (debounce > 0) {
-          callback = throttle(callback, debounce, {
-            trailing: true,
-            leading: false,
-          });
-        }
         const observer = new ResizeObserver(callback);
         observer.observe(node);
         if (observerRef.current != null) {
@@ -138,7 +129,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
         observer.disconnect();
       }
     };
-  }, [setContainerSize, debounce]);
+  }, [setContainerSize]);
 
   return (
     <>
