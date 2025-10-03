@@ -1,4 +1,5 @@
 import { ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, Bar, Line } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -45,23 +46,31 @@ const data = [
   },
 ];
 
-const example = () => (
-  <ComposedChart width={730} height={250} data={data}>
+export const ComposedChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
+  <ComposedChart
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
+    data={data}
+  >
     <CartesianGrid stroke="#f5f5f5" />
     <XAxis dataKey="name" />
-    <YAxis />
+    <YAxis width="auto" />
     <Legend />
     <Tooltip />
-    <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-    <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-    <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+    <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" isAnimationActive={isAnimationActive} />
+    <Bar dataKey="pv" barSize={20} fill="#413ea0" isAnimationActive={isAnimationActive} />
+    <Line type="monotone" dataKey="uv" stroke="#ff7300" isAnimationActive={isAnimationActive} />
   </ComposedChart>
 );
 
 const exampleCode = `
-<ComposedChart width={730} height={250} data={data}>
+<ComposedChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  data={data}
+>
   <XAxis dataKey="name" />
-  <YAxis />
+  <YAxis width="auto" />
   <Tooltip />
   <Legend />
   <CartesianGrid stroke="#f5f5f5" />
@@ -71,9 +80,9 @@ const exampleCode = `
 </ComposedChart>
 `;
 
-export default [
+export const composedChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ComposedChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

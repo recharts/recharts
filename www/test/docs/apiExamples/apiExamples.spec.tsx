@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import allApiExamples from '../../../src/docs/apiExamples';
+import { allApiExamples } from '../../../src/docs/apiExamples';
 
 describe('API Examples', () => {
   Object.entries(allApiExamples).forEach(([componentName, examples]) => {

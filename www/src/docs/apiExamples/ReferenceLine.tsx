@@ -1,4 +1,5 @@
 import { AreaChart, ReferenceLine, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -45,20 +46,20 @@ const data = [
   },
 ];
 
-const example = () => (
+export const ReferenceLineExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={data}
     margin={{
       top: 20,
-      right: 30,
+      right: 0,
       left: 0,
       bottom: 0,
     }}
   >
     <XAxis dataKey="name" />
-    <YAxis />
+    <YAxis width="auto" />
     <CartesianGrid strokeDasharray="3 3" />
     <Tooltip />
     <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
@@ -72,27 +73,37 @@ const example = () => (
         { x: 'Page C', y: 4000 },
       ]}
     />
-    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
   </AreaChart>
 );
 
-const exampleCode = `
-  <AreaChart width={730} height={250} data={data}
-    margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-    <XAxis dataKey="name" />
-    <YAxis />
-    <CartesianGrid strokeDasharray="3 3" />
-    <Tooltip />
-    <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
-    <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
-    <ReferenceLine label="Segment" stroke="green" strokeDasharray="3 3" segment={[{ x: 'Page A', y: 0 }, { x: 'Page C', y: 4000 }]} />
-    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-  </AreaChart>
-`;
+const exampleCode = `<AreaChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  data={data}
+  margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+ >
+  <XAxis dataKey="name" />
+  <YAxis width="auto" />
+  <CartesianGrid strokeDasharray="3 3" />
+  <Tooltip />
+  <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
+  <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
+  <ReferenceLine
+    label="Segment"
+    stroke="green"
+    strokeDasharray="3 3"
+    segment={[
+      { x: 'Page A', y: 0 },
+      { x: 'Page C', y: 4000 },
+    ]}
+  />
+  <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+</AreaChart>`;
 
-export default [
+export const referenceLineApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ReferenceLineExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

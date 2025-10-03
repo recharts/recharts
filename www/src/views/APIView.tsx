@@ -3,7 +3,7 @@ import { PureComponent } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import API from '../docs/api';
-import APIExamples from '../docs/apiExamples';
+import { allApiExamples } from '../docs/apiExamples';
 import Highlight from '../utils/Highlight.tsx';
 import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
 import './APIView.scss';
@@ -55,7 +55,9 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
 
             return (
               <li key={`example-${i}`}>
-                {item.demo ? <div className="iframe-wrapper">{item.demo(locale)}</div> : null}
+                {item.demo ? (
+                  <div className="iframe-wrapper">{item.demo({ locale, isAnimationActive: true })}</div>
+                ) : null}
                 {item.code ? (
                   <div className="code">
                     {item.dataCode ? (
@@ -200,7 +202,7 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
     }
 
     const api: ApiDoc = API[page];
-    const apiExamples = APIExamples[page];
+    const apiExamples = allApiExamples[page];
     const locale = getLocaleType(this.props);
 
     return (

@@ -1,22 +1,21 @@
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
   Label,
   LabelList,
   LineChart,
-  Rectangle,
-  PieChart,
   Pie,
+  PieChart,
+  PolarAngleAxis,
   RadialBar,
   RadialBarChart,
-  PolarAngleAxis,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { localeGet } from '../../utils/LocaleUtils.ts';
-import { SupportedLocale } from '../../locale';
-import { ApiExample } from '../api/types.ts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
+import { PlotAreaRectangle } from './PlotAreaRectangle.tsx';
 
 const data = [
   {
@@ -63,40 +62,47 @@ const data = [
   },
 ];
 
-const cartesianPositions = (locale: SupportedLocale) => (
-  <>
-    <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
-    <LineChart width={600} height={400} margin={{ top: 100, right: 100, bottom: 100, left: 100 }}>
-      <Rectangle x={100} y={100} width={400} height={200} stroke="#000" fill="none" />
-      <Label position="top">top</Label>
-      <Label position="bottom">bottom</Label>
-      <Label position="left">left</Label>
-      <Label position="right">right</Label>
-      <Label position="center">center</Label>
-      <Label position="insideLeft">insideLeft</Label>
-      <Label position="insideRight">insideRight</Label>
-      <Label position="insideTop">insideTop</Label>
-      <Label position="insideBottom">insideBottom</Label>
-      <Label position="insideTopLeft">insideTopLeft</Label>
-      <Label position="insideTopRight">insideTopRight</Label>
-      <Label position="insideBottomLeft">insideBottomLeft</Label>
-      <Label position="insideBottomRight">insideBottomRight</Label>
-    </LineChart>
-  </>
-);
+export const LabelCartesianPositions: ApiExampleDemo = ({ locale }) => {
+  return (
+    <>
+      <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
+      <LineChart
+        style={{ width: '100%', maxWidth: '500px', maxHeight: '200px', aspectRatio: 1 }}
+        responsive
+        margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
+      >
+        <PlotAreaRectangle />
+        <Label position="top">top</Label>
+        <Label position="bottom">bottom</Label>
+        <Label position="left">left</Label>
+        <Label position="right">right</Label>
+        <Label position="center">center</Label>
+        <Label position="insideLeft">insideLeft</Label>
+        <Label position="insideRight">insideRight</Label>
+        <Label position="insideTop">insideTop</Label>
+        <Label position="insideBottom">insideBottom</Label>
+        <Label position="insideTopLeft">insideTopLeft</Label>
+        <Label position="insideTopRight">insideTopRight</Label>
+        <Label position="insideBottomLeft">insideBottomLeft</Label>
+        <Label position="insideBottomRight">insideBottomRight</Label>
+      </LineChart>
+    </>
+  );
+};
 
-const piePositions = (locale: SupportedLocale) => (
+export const LabelPiePositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   <>
     <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'polar-title')}</p>
-    <PieChart width={700} height={400}>
+    <PieChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
       <Pie
         data={[{ x: 100 }, { x: 200 }]}
-        innerRadius={50}
+        innerRadius="30%"
         paddingAngle={10}
         cornerRadius={9}
         dataKey="x"
         fill="none"
         stroke="black"
+        isAnimationActive={isAnimationActive}
       >
         <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
         <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
@@ -106,11 +112,16 @@ const piePositions = (locale: SupportedLocale) => (
   </>
 );
 
-const radialBarPositions = (locale: SupportedLocale) => (
+export const LabelRadialBarPositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   <>
     <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'radialbar-title')}</p>
-    <RadialBarChart data={[{ x: 100 }, { x: 200 }]} width={900} height={400} innerRadius={50}>
-      <RadialBar dataKey="x" fill="none" stroke="black">
+    <RadialBarChart
+      data={[{ x: 100 }, { x: 200 }]}
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      innerRadius="30%"
+    >
+      <RadialBar dataKey="x" fill="none" stroke="black" isAnimationActive={isAnimationActive}>
         <LabelList fill="black" position="insideStart" valueAccessor={() => 'insideStart'} />
         <LabelList fill="black" position="insideEnd" valueAccessor={() => 'insideEnd'} />
         <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
@@ -120,15 +131,15 @@ const radialBarPositions = (locale: SupportedLocale) => (
   </>
 );
 
-const chartExample = () => (
+export const LabelBarChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={data}
     margin={{
       top: 15,
-      right: 30,
-      left: 20,
+      right: 0,
+      left: 0,
       bottom: 15,
     }}
   >
@@ -137,6 +148,7 @@ const chartExample = () => (
       <Label value="insideBottom" offset={-10} position="insideBottom" />
     </XAxis>
     <YAxis
+      width="auto"
       label={{
         value: 'insideLeft',
         angle: -90,
@@ -144,7 +156,7 @@ const chartExample = () => (
         textAnchor: 'middle',
       }}
     />
-    <Bar dataKey="pv" fill="#8884d8">
+    <Bar dataKey="pv" fill="#8884d8" isAnimationActive={isAnimationActive}>
       <LabelList dataKey="name" position="top" />
     </Bar>
   </BarChart>
@@ -152,9 +164,32 @@ const chartExample = () => (
 
 const labelExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: cartesianPositions,
-    code: `<LineChart width={600} height={400} margin={{ top: 100, right: 100, bottom: 100, left: 100 }}>
-    <Rectangle x={100} y={100} width={400} height={200} stroke="#000" fill="none" />
+    demo: LabelCartesianPositions,
+    code: `const MyRectangle = () => {
+  const plotArea = usePlotArea();
+  if (plotArea == null) {
+    return null;
+  }
+  return (
+    <Rectangle
+      x={plotArea.x}
+      y={plotArea.y}
+      width={plotArea.width}
+      height={plotArea.height}
+      stroke="#000"
+      fill="none"
+    />
+  );
+};
+return (
+<>
+  <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
+  <LineChart
+    style={{ width: '100%', maxWidth: '500px', maxHeight: '200px', aspectRatio: 1 }}
+    responsive
+    margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
+  >
+    <MyRectangle />
     <Label position="top">top</Label>
     <Label position="bottom">bottom</Label>
     <Label position="left">left</Label>
@@ -168,22 +203,40 @@ const labelExamples: ReadonlyArray<ApiExample> = [
     <Label position="insideTopRight">insideTopRight</Label>
     <Label position="insideBottomLeft">insideBottomLeft</Label>
     <Label position="insideBottomRight">insideBottomRight</Label>
-</LineChart>`,
+  </LineChart>
+</>
+);`,
   },
   {
-    demo: piePositions,
-    code: `<PieChart width={700} height={400}>
-  <Pie data={[{ x: 100 }, { x: 200 }]} innerRadius={50} paddingAngle={10} cornerRadius={10} dataKey="x" fill="none" stroke="black">
-    <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
-    <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
-    <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
+    demo: LabelPiePositions,
+    code: `<PieChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+>
+  <Pie
+    data={[{ x: 100 }, { x: 200 }]}
+    innerRadius="30%"
+    paddingAngle={10}
+    cornerRadius={9}
+    dataKey="x"
+    fill="none"
+    stroke="black"
+  >
+    <LabelList position="center" valueAccessor={() => 'center'} fill="black" />
+    <LabelList position="inside" valueAccessor={() => 'inside'} fill="black" />
+    <LabelList position="outside" valueAccessor={() => 'outside'} fill="black" />
   </Pie>
 </PieChart>`,
   },
   {
-    demo: radialBarPositions,
-    code: `<RadialBarChart data={[{ x: 100 }, { x: 200 }]} width={900} height={400} innerRadius={50}>
-  <RadialBar dataKey="x" fill="none" stroke="black">
+    demo: LabelRadialBarPositions,
+    code: `<RadialBarChart
+  data={[{ x: 100 }, { x: 200 }]}
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  innerRadius="30%"
+>
+  <RadialBar dataKey="x" fill="none" stroke="black" isAnimationActive={isAnimationActive}>
     <LabelList fill="black" position="insideStart" valueAccessor={() => 'insideStart'} />
     <LabelList fill="black" position="insideEnd" valueAccessor={() => 'insideEnd'} />
     <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
@@ -192,32 +245,36 @@ const labelExamples: ReadonlyArray<ApiExample> = [
 </RadialBarChart>`,
   },
   {
-    demo: chartExample,
-    code: `
-  <BarChart
-    width={730}
-    height={250}
-    data={data}
-    margin={{ top: 15, right: 30, left: 20, bottom: 15 }}
-  >
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name">
-      <Label value="insideBottom" offset={-10} position="insideBottom" />
-    </XAxis>
-    <YAxis
-      label={{
-        value: 'insideLeft',
-        angle: -90,
-        position: 'insideLeft',
-        textAnchor: 'middle',
-      }}
-    />
-    <Bar dataKey="pv" fill="#8884d8">
-      <LabelList dataKey="name" position="top" />
-    </Bar>
-  </BarChart>
-      `,
+    demo: LabelBarChartExample,
+    code: `<BarChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  data={data}
+  margin={{
+    top: 15,
+    right: 0,
+    left: 0,
+    bottom: 15,
+  }}
+>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis dataKey="name">
+    <Label value="insideBottom" offset={-10} position="insideBottom" />
+  </XAxis>
+  <YAxis
+    width="auto"
+    label={{
+      value: 'insideLeft',
+      angle: -90,
+      position: 'insideLeft',
+      textAnchor: 'middle',
+    }}
+  />
+  <Bar dataKey="pv" fill="#8884d8">
+    <LabelList dataKey="name" position="top" />
+  </Bar>
+</BarChart>`,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
 ];
-export default labelExamples;
+export const labelApiExamples: ReadonlyArray<ApiExample> = labelExamples;

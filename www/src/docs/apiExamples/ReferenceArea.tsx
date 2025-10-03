@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ReferenceArea } from 'recharts';
+import { ApiExampleDemo } from '../api/types.ts';
 
 const data01 = [
   { x: 100, y: 200, z: 200 },
@@ -18,37 +19,36 @@ const data02 = [
   { x: 210, y: 220, z: 230 },
 ];
 
-const example = () => (
+export const ReferenceAreaExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <ScatterChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     margin={{
       top: 20,
-      right: 20,
+      right: 0,
       bottom: 10,
-      left: 10,
+      left: 0,
     }}
   >
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
     <ZAxis dataKey="z" type="number" range={[16, 100]} name="score" unit="km" />
     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
     <Legend />
-    <Scatter name="A school" data={data01} fill="#8884d8" />
-    <Scatter name="B school" data={data02} fill="#82ca9d" />
+    <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
     <ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke="red" strokeOpacity={0.3} />
   </ScatterChart>
 );
 
-const exampleCode = `
-<ScatterChart
-  width={730}
-  height={250}
-  margin={{ top: 20, right: 20, bottom: 10, left: 10 }}
+const exampleCode = `<ScatterChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
 >
   <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-  <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+  <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
   <ZAxis dataKey="z" type="number" range={[4, 20]} name="score" unit="km" />
   <CartesianGrid strokeDasharray="3 3" />
   <Tooltip cursor={{ strokeDasharray: '3 3' }} />
@@ -56,12 +56,11 @@ const exampleCode = `
   <Scatter name="A school" data={data01} fill="#8884d8" />
   <Scatter name="B school" data={data02} fill="#82ca9d" />
   <ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke="red" strokeOpacity={0.3} />
-</ScatterChart>
-`;
+</ScatterChart>`;
 
-export default [
+export const referenceAreaApiExamples = [
   {
-    demo: example,
+    demo: ReferenceAreaExample,
     code: exampleCode,
     dataCode: `
     const data01 = ${JSON.stringify(data01, null, 2)};

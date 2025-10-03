@@ -1,4 +1,5 @@
 import { ScatterChart, XAxis, YAxis, Scatter, CartesianGrid, Tooltip, ReferenceDot } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 type DataEntry = {
   x: number;
@@ -31,48 +32,46 @@ const getMeanValue = (o: ReadonlyArray<DataEntry>) => {
   );
 };
 
-const example = () => {
+export const ReferenceDotExample: ApiExampleDemo = ({ isAnimationActive }) => {
   const mean = getMeanValue(data);
 
   return (
     <ScatterChart
-      width={730}
-      height={250}
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
       margin={{
         top: 20,
-        right: 20,
+        right: 0,
         bottom: 20,
-        left: 20,
+        left: 0,
       }}
     >
       <CartesianGrid />
       <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-      <YAxis dataKey="y" type="number" name="weight" unit="kg" />
-      <Scatter name="A school" data={data} fill="#8884d8" />
+      <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
+      <Scatter name="A school" data={data} fill="#8884d8" isAnimationActive={isAnimationActive} />
       {mean && <ReferenceDot {...mean} r={20} fill="red" stroke="none" />}
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
     </ScatterChart>
   );
 };
 
-const exampleCode = `
-<ScatterChart
-  width={730}
-  height={250}
-  margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+const exampleCode = `<ScatterChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
 >
     <CartesianGrid />
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
     <Scatter name="A school" data={data} fill="#8884d8" />
     { mean && <ReferenceDot {...mean} r={20} fill="red" stroke="none" /> }
     <Tooltip cursor={{strokeDasharray: '3 3'}} />
-  </ScatterChart>
-`;
+  </ScatterChart>`;
 
-export default [
+export const referenceDotApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ReferenceDotExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

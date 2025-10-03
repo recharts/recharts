@@ -670,7 +670,6 @@ export const ChangingDataKey = {
           <ZAxis range={[200, 200]} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
           <Scatter
             name="Animated Scatter"
             lineType="joint"

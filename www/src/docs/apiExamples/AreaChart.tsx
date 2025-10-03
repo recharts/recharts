@@ -1,5 +1,5 @@
 import { AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area } from 'recharts';
-import { ApiExample } from '../api/types.ts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -46,17 +46,12 @@ const data = [
   },
 ];
 
-const example = () => (
+export const AreaChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={data}
-    margin={{
-      top: 10,
-      right: 30,
-      left: 0,
-      bottom: 0,
-    }}
+    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
   >
     <defs>
       <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -70,16 +65,34 @@ const example = () => (
     </defs>
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="name" />
-    <YAxis />
+    <YAxis width="auto" />
     <Tooltip />
-    <Area type="monotone" dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
-    <Area type="monotone" dataKey="pv" stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" />
+    <Area
+      type="monotone"
+      dataKey="uv"
+      stroke="#8884d8"
+      fillOpacity={1}
+      fill="url(#colorUv)"
+      isAnimationActive={isAnimationActive}
+    />
+    <Area
+      type="monotone"
+      dataKey="pv"
+      stroke="#82ca9d"
+      fillOpacity={1}
+      fill="url(#colorPv)"
+      isAnimationActive={isAnimationActive}
+    />
   </AreaChart>
 );
 
 const exampleCode = `
-<AreaChart width={730} height={250} data={data}
-  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+<AreaChart
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
+  data={data}
+  margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+>
   <defs>
     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
       <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
@@ -91,7 +104,7 @@ const exampleCode = `
     </linearGradient>
   </defs>
   <XAxis dataKey="name" />
-  <YAxis />
+  <YAxis width='auto' />
   <CartesianGrid strokeDasharray="3 3" />
   <Tooltip />
   <Area type="monotone" dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
@@ -111,51 +124,53 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const rangeExample = () => (
+export const AreaChartRangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
-    width={730}
-    height={250}
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
     data={rangeData}
     margin={{
       top: 20,
-      right: 20,
+      right: 0,
       bottom: 20,
-      left: 20,
+      left: 0,
     }}
   >
     <XAxis dataKey="day" />
-    <YAxis />
-    <Area dataKey="temperature" stroke="#8884d8" fill="#8884d8" />
+    <YAxis width="auto" />
+    <Area dataKey="temperature" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
     <Tooltip />
   </AreaChart>
 );
 
 const rangeExampleCode = `
 <AreaChart
-  width={730}
-  height={250}
+  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+  responsive
   data={rangeData}
   margin={{
-    top: 20, right: 20, bottom: 20, left: 20
+    top: 20,
+    right: 0,
+    bottom: 20,
+    left: 0,
   }}
 >
   <XAxis dataKey="day" />
-  <YAxis />
+  <YAxis width='auto' />
   <Area dataKey="temperature" stroke="#8884d8" fill="#8884d8" />
   <Tooltip />
 </AreaChart>
 `;
 
-const AreaChartExamples: ReadonlyArray<ApiExample> = [
+export const areaChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: AreaChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
   {
-    demo: rangeExample,
+    demo: AreaChartRangeExample,
     dataCode: `const rangeData = ${JSON.stringify(rangeData, null, 2)}`,
     code: rangeExampleCode,
   },
 ];
-export default AreaChartExamples;

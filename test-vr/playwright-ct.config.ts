@@ -63,6 +63,21 @@ export default defineConfig({
 
     /* Port to use for Playwright component endpoint. */
     ctPort: 3100,
+
+    ctViteConfig: {
+      resolve: {
+        alias: {
+          recharts: '/recharts/src',
+          /*
+           * Ensure that we are using the same React instance
+           * to avoid issues with hooks and context.
+           */
+          react: '/recharts/node_modules/react',
+          'react-dom': '/recharts/node_modules/react-dom',
+          'react-is': '/recharts/node_modules/react-is',
+        },
+      },
+    },
   },
 
   /* Configure projects for major browsers */

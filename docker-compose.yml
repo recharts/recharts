@@ -9,4 +9,5 @@ services:
       sh -c "npx playwright show-report /recharts/test-vr/playwright-report --host 0.0.0.0 --port 9323"
     volumes:
       - ./src:/recharts/src
+      - ./www:/recharts/www
       - ./test-vr:/recharts/test-vr

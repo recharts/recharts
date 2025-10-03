@@ -1,4 +1,5 @@
-import { Treemap } from 'recharts';
+import { ResponsiveContainer, Treemap } from 'recharts';
+import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
   {
@@ -133,25 +134,38 @@ const data = [
   },
 ];
 
-const example = () => (
-  <Treemap width={730} height={250} data={data} dataKey="size" aspectRatio={4 / 3} stroke="#fff" fill="#8884d8" />
+export const TreemapExample: ApiExampleDemo = ({ isAnimationActive }) => (
+  <ResponsiveContainer width="100%" aspect={4 / 3}>
+    <Treemap
+      width={730}
+      height={250}
+      data={data}
+      dataKey="size"
+      aspectRatio={4 / 3}
+      stroke="#fff"
+      fill="#8884d8"
+      isAnimationActive={isAnimationActive}
+    />
+  </ResponsiveContainer>
 );
 
 const exampleCode = `
-<Treemap
-  width={730}
-  height={250}
-  data={data}
-  dataKey="size"
-  aspectRatio={4 / 3}
-  stroke="#fff"
-  fill="#8884d8"
-/>
+<ResponsiveContainer width="100%" aspect={4 / 3}>
+  <Treemap
+    width={730}
+    height={250}
+    data={data}
+    dataKey="size"
+    aspectRatio={4 / 3}
+    stroke="#fff"
+    fill="#8884d8"
+  />
+</ResponsiveContainer>
 `;
 
-export default [
+export const treemapApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: TreemapExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

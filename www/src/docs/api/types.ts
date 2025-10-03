@@ -26,8 +26,10 @@ export type ApiDoc = {
   childrenComponents?: ReadonlyArray<string>;
 };
 
+export type ApiExampleDemo = (props: { locale: SupportedLocale; isAnimationActive: boolean }) => ReactNode;
+
 export type ApiExample = {
-  demo: (locale: SupportedLocale) => ReactNode;
+  demo: ApiExampleDemo;
   code: string;
   dataCode?: string;
 };
