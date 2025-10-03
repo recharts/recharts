@@ -126,7 +126,7 @@ const reactConfig = [
       'import/no-cycle': 'error',
       'import/no-default-export': 'error',
       'import/no-import-module-exports': 'error',
-      'import/no-relative-packages': 'error',
+      'import/no-relative-packages': 'off',
     },
   },
   {
@@ -299,6 +299,21 @@ const overridesConfig = [
        * This is a good recommendation, but we have so many that I will leave this as a warning for now.
        */
       'import/no-default-export': 'warn',
+    },
+  },
+  {
+    name: 'default-export-override',
+    /*
+     * Files in the ./www/docs/exampleComponents, that are not `index.ts`,
+     * must have only default export, because they are passed to react-runner
+     * which requires default export.
+     */
+    basePath: './www/src/docs/exampleComponents',
+    files: ['**/*.tsx', '**/*.ts'],
+    ignores: ['**/index.ts'],
+    rules: {
+      'import/no-default-export': 'off',
+      'import/prefer-default-export': 'error',
     },
   },
 ];
