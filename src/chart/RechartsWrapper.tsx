@@ -25,6 +25,7 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
+import { isPercent } from '../util/DataUtils';
 
 type Nullable<T> = {
   [P in keyof T]: T[P] | undefined;
@@ -139,10 +140,56 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
   );
 });
 
-const StaticDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
-  const { width: widthFromProps, height: heightFromProps, style } = props;
-  const width = getNumberOrZero(widthFromProps ?? style?.width);
-  const height = getNumberOrZero(heightFromProps ?? style?.height);
+const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
+  const { width, height } = props;
+  const [sizes, setSizes] = useState<{
+    containerWidth: number;
+    containerHeight: number;
+  }>({
+    containerWidth: getNumberOrZero(width),
+    containerHeight: getNumberOrZero(height),
+  });
+
+  const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
+    setSizes(prevState => {
+      const roundedWidth = Math.round(newWidth);
+      const roundedHeight = Math.round(newHeight);
+      if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
+        return prevState;
+      }
+
+      return { containerWidth: roundedWidth, containerHeight: roundedHeight };
+    });
+  }, []);
+
+  const innerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (typeof ref === 'function') {
+        ref(node);
+      }
+      if (node != null) {
+        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        setContainerSize(containerWidth, containerHeight);
+      }
+    },
+    [ref, setContainerSize],
+  );
+  return (
+    <>
+      <ReportChartSize width={sizes.containerWidth} height={sizes.containerHeight} />
+      <div ref={innerRef} {...props} />
+    </>
+  );
+});
+
+type StaticDivProps = HTMLAttributes<HTMLDivElement> & {
+  width: number;
+  height: number;
+};
+
+const StaticDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: StaticDivProps, ref): ReactNode => {
+  const { width, height } = props;
+
   return (
     <>
       <ReportChartSize width={width} height={height} />
@@ -151,8 +198,16 @@ const StaticDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDiv
   );
 });
 
+const NonResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
+  const { width, height } = props;
+  if (isPercent(width) || isPercent(height)) {
+    return <ReadSizeOnceDiv {...props} ref={ref} />;
+  }
+  return <StaticDiv {...props} ref={ref} />;
+});
+
 function getWrapperDivComponent(responsive: boolean) {
-  return responsive === true ? ResponsiveDiv : StaticDiv;
+  return responsive === true ? ResponsiveDiv : NonResponsiveDiv;
 }
 
 export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapperProps>(
@@ -314,12 +369,20 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       <TooltipPortalContext.Provider value={tooltipPortal}>
         <LegendPortalContext.Provider value={legendPortal}>
           <WrapperDiv
-            width={width}
-            height={height}
+            width={width ?? style?.width}
+            height={height ?? style?.height}
             className={clsx('recharts-wrapper', className)}
             style={{
               position: 'relative',
               cursor: 'default',
+              /*
+               * Some charts may render outside their boundaries,
+               * maybe because of a bug or because of rounding errors.
+               * If that happens, and the chart is responsive, it would keep growing forever
+               * to accommodate the chart that always renders a little bit too large.
+               * Let's have overflow hidden here so that the chart size stabilises.
+               */
+              overflow: 'hidden',
               width,
               height,
               ...style,
