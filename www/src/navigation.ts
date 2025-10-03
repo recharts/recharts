@@ -88,7 +88,7 @@ function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       displayName: cate,
       items: Object.keys(allExamples[cate].examples).map(name => ({
         key: name,
-        displayName: name,
+        displayName: allExamples[cate].examples[name].name,
         url: `/${locale}/examples/${name}`,
       })),
     }),

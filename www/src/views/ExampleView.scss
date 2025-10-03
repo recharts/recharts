@@ -1,89 +1,70 @@
 @use '../styles/variables';
 @use '../styles/mixins';
 
-.page.page-examples {
-  .example-wrapper {
-    padding-right: 20px;
-    height: calc(100vh - 230px); // 230px = 60px(nav) + 68px(page title) + 102px(footer)
+.page.page-examples .example-wrapper {
+  height: calc(100vh - 230px); // 230px = 60px(nav) + 68px(page title) + 102px(footer)
 
-    .example-inner-wrapper {
+  .example-inner-wrapper {
+    display: flex;
+    justify-content: stretch;
+    align-items: flex-start;
+    flex-direction: row;
+    width: 100%;
+    gap: 2em;
+    border: 1px solid #f5f5f5;
+  }
+
+  .monaco-editor-wrapper {
+    .monaco-editor-toolbar {
+      background-color: #f6f6f6;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 10px;
       display: flex;
-      width: 100%;
-      height: calc(100vh - 300px);
-      border: 1px solid #f5f5f5;
-    }
+      justify-content: space-between;
 
-    @media screen and (max-width: 1600px) {
-      .example-inner-wrapper {
-        flex-direction: column;
+      .monaco-editor-toolbar-item {
+        display: inline-block;
+        cursor: pointer;
 
-        .example-chart-wrapper,
-        .monaco-editor-wrapper,
-        .monaco-editor {
-          height: 50%;
-        }
-
-        .monaco-editor-wrapper {
-          width: 100%;
+        &:hover {
+          color: variables.$brand-primary;
         }
       }
     }
 
-    .example-chart-wrapper {
-      flex: 1;
-      height: 100%;
-      padding: 20px 10px;
-      border-right: 1px solid #f5f5f5;
-      overflow: scroll;
-      display: flex;
-      align-items: center;
-
-      .example-chart-responsive-container {
-        height: 100%;
-        width: 100%;
-        max-width: 800px;
-        max-height: 600px;
-        margin: auto;
-      }
-    }
-
-    .monaco-editor-wrapper {
+    #monaco-editor-container {
       width: 720px;
-      height: 100%;
+      height: calc(100vh - 40px);
+      resize: both;
+      overflow: auto;
+    }
+  }
 
-      .monaco-editor-toolbar {
-        background-color: #f6f6f6;
-        height: 40px;
-        line-height: 40px;
-        padding: 0 10px;
+  .example-link-wrapper {
+    text-align: center;
+    margin: 0;
 
-        .monaco-editor-toolbar-item {
-          display: inline-block;
-          cursor: pointer;
+    .example-code-sandbox-link {
+      color: variables.$brand-primary;
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+}
 
-          &:hover {
-            color: variables.$brand-primary;
-          }
-        }
-      }
-      #monaco-editor-container {
-        width: 100%;
-        height: calc(100% - 40px);
-        resize: vertical;
-        overflow: auto;
-      }
+@media screen and (max-width: 1600px) {
+  .page.page-examples .example-wrapper {
+    .example-inner-wrapper {
+      flex-direction: column;
+      align-items: stretch;
     }
 
-    .example-link-wrapper {
-      text-align: center;
-      margin: 0;
-      margin-top: 20px;
-
-      .example-code-sandbox-link {
-        color: variables.$brand-primary;
-        font-weight: 700;
-        font-size: 14px;
-      }
+    .monaco-editor-wrapper #monaco-editor-container {
+      width: 100%;
+      height: calc(min(100vh, 500px) - 40px);
+      resize: vertical;
+      overflow: auto;
     }
   }
 }
