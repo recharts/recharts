@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { allExamples } from '../../../src/docs/exampleComponents';
-// eslint-disable-next-line import/no-relative-packages
 import { mockGetBoundingClientRect } from '../../../../test/helper/mockGetBoundingClientRect';
 
 class MockResizeObserver {
@@ -42,5 +41,29 @@ describe('Example Components', () => {
         });
       });
     });
+  });
+
+  it('should all have unique names', () => {
+    const names = new Set<string>();
+    Object.values(allExamples).forEach(({ examples }) => {
+      Object.values(examples).forEach(example => {
+        expect(names.has(example.name)).toBe(false);
+        names.add(example.name);
+      });
+    });
+
+    expect(names.size).toBeGreaterThan(0);
+  });
+
+  it('should all have unique keys', () => {
+    const keys = new Set<string>();
+    Object.entries(allExamples).forEach(([_componentName, { examples }]) => {
+      Object.entries(examples).forEach(([key]) => {
+        expect(keys.has(key)).toBe(false);
+        keys.add(key);
+      });
+    });
+
+    expect(keys.size).toBeGreaterThan(0);
   });
 });
