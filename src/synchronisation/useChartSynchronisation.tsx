@@ -43,26 +43,23 @@ function useTooltipSyncEventsListener() {
         return;
       }
       if (syncMethod === 'index') {
-        if (viewBox && action?.payload?.coordinate) {
+        if (viewBox && action?.payload?.coordinate && action.payload.sourceViewBox) {
           const { x, y, ...otherCoordinateProps } = action.payload.coordinate;
-          const boundedCoordinate = {
+          const { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight } = action.payload.sourceViewBox;
+
+          const scaledCoordinate = {
             ...otherCoordinateProps,
-            ...(typeof x === 'number' && {
-              x: Math.max(viewBox.x, Math.min(x, viewBox.x + viewBox.width)),
-            }),
-            ...(typeof y === 'number' && {
-              y: Math.max(viewBox.y, Math.min(y, viewBox.y + viewBox.height)),
-            }),
+            x: viewBox.x + (sourceWidth ? (x - sourceX) / sourceWidth : 0) * viewBox.width,
+            y: viewBox.y + (sourceHeight ? (y - sourceY) / sourceHeight : 0) * viewBox.height,
           };
 
-          const boundedAction = {
+          dispatch({
             ...action,
             payload: {
               ...action.payload,
-              coordinate: boundedCoordinate,
+              coordinate: scaledCoordinate,
             },
-          };
-          dispatch(boundedAction);
+          });
         } else {
           dispatch(action);
         }
@@ -106,6 +103,7 @@ function useTooltipSyncEventsListener() {
             dataKey: undefined,
             index: null,
             label: undefined,
+            sourceViewBox: undefined,
           }),
         );
         return;
@@ -125,6 +123,7 @@ function useTooltipSyncEventsListener() {
         dataKey: action.payload.dataKey,
         index: String(activeTick.index),
         label: action.payload.label,
+        sourceViewBox: action.payload.sourceViewBox,
       });
       dispatch(syncAction);
     };
@@ -208,6 +207,8 @@ export function useTooltipChartSynchronisation(
   const syncMethod = useAppSelector(selectSyncMethod);
   const tooltipState = useAppSelector(selectSynchronisedTooltipState);
   const isReceivingSynchronisation = tooltipState?.active;
+  const viewBox = useViewBox();
+
   useEffect(() => {
     if (isReceivingSynchronisation) {
       /*
@@ -237,6 +238,7 @@ export function useTooltipChartSynchronisation(
       dataKey: activeDataKey,
       index: activeIndex,
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
+      sourceViewBox: viewBox,
     });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [
@@ -249,6 +251,7 @@ export function useTooltipChartSynchronisation(
     syncId,
     syncMethod,
     isTooltipActive,
+    viewBox,
   ]);
 }
 

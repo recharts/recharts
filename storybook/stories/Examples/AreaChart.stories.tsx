@@ -374,19 +374,28 @@ export const SynchronisedAreaChart = {
   render: (args: Args) => {
     return (
       <div style={{ width: '100%' }}>
-        <h4>A demo of synchronized AreaCharts</h4>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart {...args}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-            <Tooltip />
-            <RechartsHookInspector />
-          </AreaChart>
-        </ResponsiveContainer>
-        <p>Maybe some other content</p>
-
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'row' }}>
+          <ResponsiveContainer width="30%" height={200}>
+            <AreaChart {...args}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+              <Tooltip />
+              <RechartsHookInspector />
+            </AreaChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer width="70%" height={200}>
+            <AreaChart {...args}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+              <Tooltip />
+              <RechartsHookInspector />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart {...args}>
             <CartesianGrid strokeDasharray="3 3" />

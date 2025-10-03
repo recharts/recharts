@@ -1571,6 +1571,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
         syncInteraction: {
           ...noInteraction,
           label: undefined,
+          sourceViewBox: undefined,
         },
         tooltipItemPayloads: [
           {
@@ -1640,6 +1641,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
         syncInteraction: {
           ...noInteraction,
           label: undefined,
+          sourceViewBox: undefined,
         },
         tooltipItemPayloads: [
           {

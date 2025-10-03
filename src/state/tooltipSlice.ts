@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { Coordinate, DataKey } from '../util/types';
+import { CartesianViewBoxRequired, Coordinate, DataKey } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
 
 /**
@@ -161,6 +161,12 @@ export type TooltipSyncState = TooltipInteractionState & {
    * To allow that, we need the label to be stored in the sync state.
    */
   label: string | undefined;
+  /**
+   * ViewBox of the chart that sent the sync event.
+   * Used to scale coordinates between charts of different sizes so tooltips
+   * show up in the right place on all synchronized charts.
+   */
+  sourceViewBox: CartesianViewBoxRequired | undefined;
 };
 
 export const noInteraction: TooltipInteractionState = {
@@ -237,6 +243,7 @@ export const initialState: TooltipState = {
     dataKey: undefined,
     label: undefined,
     coordinate: undefined,
+    sourceViewBox: undefined,
   },
   tooltipItemPayloads: [],
   settings: {

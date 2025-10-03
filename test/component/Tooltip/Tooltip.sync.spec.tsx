@@ -57,6 +57,7 @@ import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRec
 import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syncSelectors';
 import { selectTooltipPayloadSearcher } from '../../../src/state/selectors/selectTooltipPayloadSearcher';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { selectChartViewBox } from '../../../src/state/selectors/selectChartOffsetInternal';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -484,6 +485,7 @@ describe('Tooltip synchronization', () => {
           dataKey: 'uv',
           index: '1',
           label: 'Page B',
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
@@ -526,6 +528,7 @@ describe('Tooltip synchronization', () => {
           index: '1',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
@@ -565,6 +568,7 @@ describe('Tooltip synchronization', () => {
           index: '2',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
+          sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
         }),
       );
       const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
@@ -691,6 +695,13 @@ describe('Tooltip synchronization', () => {
   });
 
   describe('in two LineCharts where first one has Tooltip active=true and the other has no active prop', () => {
+    const viewBox = {
+      height: 360,
+      width: 390,
+      x: 5,
+      y: 5,
+    };
+
     const renderTestCase = createSynchronisedSelectorTestCase(
       ({ children }) => (
         <LineChart width={400} height={400} data={PageData} syncId="example-sync-id" className="BookOne">
@@ -782,14 +793,16 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       expect(spyB).toHaveBeenLastCalledWith({
         active: false,
         coordinate: undefined,
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(1);
 
@@ -801,8 +814,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       // chart B is now receiving synchronisation
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -813,6 +827,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -823,8 +838,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyA).toHaveBeenCalledTimes(3);
       // thanks to the active=true prop, the synchronised state remains on the chart B even though the active is on chart A
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -835,6 +851,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -849,8 +866,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '1',
         label: 'Page B',
+        sourceViewBox: viewBox,
       });
-      expect(spyA).toHaveBeenCalledTimes(3);
+      expect(spyA).toHaveBeenCalledTimes(4);
       expect(spyB).toHaveBeenLastCalledWith({
         // Thanks to mouse events, synchronisation on this chart is now turned off so that it can start sending events to other charts
         active: false,
@@ -861,6 +879,7 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
+        sourceViewBox: viewBox,
       });
       expect(spyB).toHaveBeenCalledTimes(3);
     });
@@ -975,6 +994,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </LineChart>
       ),
       mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.4, 2.19],
+      },
     },
     {
       name: 'AreaChart to AreaChart',
@@ -997,6 +1020,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </AreaChart>
       ),
       mouseHoverSelector: areaChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'BarChart to BarChart',
@@ -1019,6 +1046,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </BarChart>
       ),
       mouseHoverSelector: barChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [2.03, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'ComposedChart to ComposedChart',
@@ -1041,6 +1072,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </ComposedChart>
       ),
       mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+      syncCoordinates: {
+        forwardRatio: [1.88, 2.19],
+        reverseRatio: [2.37, 2.19],
+      },
     },
     {
       name: 'RadarChart to RadarChart',
@@ -1065,6 +1100,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </RadarChart>
       ),
       mouseHoverSelector: radarChartMouseHoverTooltipSelector,
+      syncDisabled: true,
     },
     {
       name: 'RadialBarChart to RadialBarChart',
@@ -1089,10 +1125,11 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         </RadialBarChart>
       ),
       mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
+      syncDisabled: true,
     },
   ])(
     'when using syncMethod=index with different chart dimensions: $name',
-    ({ smallChart: SmallChart, largeChart: LargeChart, mouseHoverSelector }) => {
+    ({ smallChart: SmallChart, largeChart: LargeChart, mouseHoverSelector, syncCoordinates }) => {
       const renderBoundingTestCase = createSynchronisedSelectorTestCase(SmallChart, LargeChart);
 
       it('should bound coordinates within chart container when x exceeds maxX', () => {
@@ -1166,6 +1203,56 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         // We verify that the spy was called which indicates the synchronization mechanism is working
         expect(spyA.mock.calls.length).toBeGreaterThan(0);
         expect(spyB.mock.calls.length).toBeGreaterThan(0);
+      });
+
+      it.skipIf(!syncCoordinates)('should scale coordinates from small to large chart proportionally', () => {
+        const { wrapperA, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        showTooltipOnCoordinate(wrapperA, mouseHoverSelector, { clientX: 100, clientY: 100 });
+
+        const smallChartCoord = spyA.mock.lastCall[0];
+        const largeChartCoord = spyB.mock.lastCall[0];
+
+        expect(smallChartCoord).toBeDefined();
+        expect(largeChartCoord).toBeDefined();
+
+        const actualXRatio = largeChartCoord.x / smallChartCoord.x;
+        const actualYRatio = largeChartCoord.y / smallChartCoord.y;
+
+        const {
+          forwardRatio: [expectedXRatio, expectedYRatio],
+        } = syncCoordinates;
+
+        expect(actualXRatio).toBeCloseTo(expectedXRatio, 1);
+        expect(actualYRatio).toBeCloseTo(expectedYRatio, 1);
+      });
+
+      it.skipIf(!syncCoordinates)('should scale coordinates from large to small chart proportionally', () => {
+        const { wrapperB, spyA, spyB } = renderBoundingTestCase(state =>
+          selectActiveCoordinate(state, 'axis', 'hover', undefined),
+        );
+
+        showTooltipOnCoordinate(wrapperB, mouseHoverSelector, { clientX: 300, clientY: 200 });
+
+        const smallChartCoord = spyA.mock.lastCall[0];
+        const largeChartCoord = spyB.mock.lastCall[0];
+
+        expect(smallChartCoord).toBeDefined();
+        expect(largeChartCoord).toBeDefined();
+
+        // Test reverse scaling (large to small)
+        // The ratio should be the inverse of the forward scaling
+        const actualXRatio = largeChartCoord.x / smallChartCoord.x;
+        const actualYRatio = largeChartCoord.y / smallChartCoord.y;
+
+        const {
+          reverseRatio: [expectedXRatio, expectedYRatio],
+        } = syncCoordinates;
+
+        expect(actualXRatio).toBeCloseTo(expectedXRatio, 1);
+        expect(actualYRatio).toBeCloseTo(expectedYRatio, 1);
       });
     },
   );
@@ -1662,6 +1749,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA.mock.calls.length).toBeGreaterThan(0);
       expect(spyB.mock.calls.length).toBeGreaterThan(0);
     });
+
     it('should handle extreme coordinate values', () => {
       const renderExtremeTestCase = createSynchronisedSelectorTestCase(
         ({ children }) => (
@@ -1702,6 +1790,69 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(50);
       expect(lastCallA.y).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should preserve original sourceViewBox when forwarding through multiple charts', () => {
+      const renderTestCase = createSynchronisedSelectorTestCase(
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={200} height={200}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="uv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={400} height={300}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="pv" />
+            {children}
+          </LineChart>
+        ),
+        ({ children }) => (
+          <LineChart syncId="threeChartTest" data={PageData} width={600} height={400}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line dataKey="amt" />
+            {children}
+          </LineChart>
+        ),
+      );
+
+      const {
+        spyA: viewBoxSpyA,
+        spyB: viewBoxSpyB,
+        spyC: viewBoxSpyC,
+      } = renderTestCase(state => selectChartViewBox(state));
+
+      const chartAViewBox = viewBoxSpyA.mock.lastCall[0];
+      const chartBViewBox = viewBoxSpyB.mock.lastCall[0];
+      const chartCViewBox = viewBoxSpyC.mock.lastCall[0];
+
+      // Sanity check
+      expect(chartAViewBox).not.toEqual(chartBViewBox);
+      expect(chartBViewBox).not.toEqual(chartCViewBox);
+
+      const { wrapperA, spyA, spyB, spyC } = renderTestCase(state => selectSynchronisedTooltipState(state));
+
+      showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 });
+
+      // Chart A should have no synchronised interaction (it's the sender)
+      const syncStateA = spyA.mock.lastCall[0];
+      expect(syncStateA.active).toBe(false);
+
+      // Charts B and C should receive Chart A's viewBox as sourceViewBox
+      const syncStateB = spyB.mock.lastCall[0];
+      expect(syncStateB.active).toBe(true);
+      expect(syncStateB.sourceViewBox).toEqual(chartAViewBox);
+
+      const syncStateC = spyC.mock.lastCall[0];
+      expect(syncStateC.active).toBe(true);
+      expect(syncStateC.sourceViewBox).toEqual(chartAViewBox);
     });
   });
 });
