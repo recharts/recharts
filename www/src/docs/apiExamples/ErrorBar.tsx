@@ -53,7 +53,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const ErrorBarExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <ScatterChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -109,7 +109,7 @@ const exampleCode = `<ScatterChart
 
 export const errorBarApiExamples = [
   {
-    demo: example,
+    demo: ErrorBarExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

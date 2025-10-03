@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const ResponsiveContainerExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <ResponsiveContainer width="100%" aspect={1.618} maxHeight={500}>
     <AreaChart
       data={data}
@@ -92,7 +92,7 @@ const exampleCode = `
 
 export const responsiveContainerApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ResponsiveContainerExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

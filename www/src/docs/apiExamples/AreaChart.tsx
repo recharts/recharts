@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const AreaChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -124,7 +124,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const rangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const AreaChartRangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -164,12 +164,12 @@ const rangeExampleCode = `
 
 export const areaChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: AreaChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
   {
-    demo: rangeExample,
+    demo: AreaChartRangeExample,
     dataCode: `const rangeData = ${JSON.stringify(rangeData, null, 2)}`,
     code: rangeExampleCode,
   },

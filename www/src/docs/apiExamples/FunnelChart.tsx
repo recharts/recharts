@@ -9,7 +9,7 @@ const data = [
   { value: 26, name: 'Order', fill: '#a4de6c' },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const FunnelChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <FunnelChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -45,7 +45,7 @@ const exampleCode = `
 
 export const funnelApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: FunnelChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

@@ -11,7 +11,7 @@ const data = [
 ];
 const colors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 'url(#pattern-checkers)'];
 
-const pieExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const CellPieExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive>
     <defs>
       <pattern id="pattern-checkers" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -42,7 +42,7 @@ const pieExampleCode = `<PieChart style={{ width: '100%', maxWidth: '500px', max
   </PieChart>
 `;
 
-const barExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const CellBarExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
     <Bar dataKey="value" isAnimationActive={isAnimationActive}>
       {data.map((_entry, index) => (
@@ -70,12 +70,12 @@ const barExampleCode = `
 
 export const cellApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: pieExample,
+    demo: CellPieExample,
     code: pieExampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
   {
-    demo: barExample,
+    demo: CellBarExample,
     code: barExampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

@@ -19,7 +19,7 @@ const data02 = [
   { name: 'Group F', value: 4800 },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const PieChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <PieChart
     style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
     responsive
@@ -63,7 +63,7 @@ const exampleCode = `
 
 export const pieChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: PieChartExample,
     code: exampleCode,
     dataCode: `
     const data01 = ${JSON.stringify(data01, null, 2)};

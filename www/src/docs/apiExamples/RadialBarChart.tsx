@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const RadialBarChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <RadialBarChart
     style={{ width: '100%', maxWidth: '500px', aspectRatio: 2 }}
     responsive
@@ -89,7 +89,7 @@ const exampleCode = `
 
 export const radialBarApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: RadialBarChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

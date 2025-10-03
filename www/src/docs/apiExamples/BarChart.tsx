@@ -39,7 +39,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const BarChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
     <CartesianGrid strokeDasharray="3 3" />
     <XAxis dataKey="name" />
@@ -77,7 +77,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const rangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const BarChartRangeExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -112,12 +112,12 @@ const rangeExampleCode = `
 
 export const barChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: BarChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
   {
-    demo: rangeExample,
+    demo: BarChartRangeExample,
     code: rangeExampleCode,
     dataCode: `const data = ${JSON.stringify(rangeData, null, 2)}`,
   },

@@ -7,7 +7,7 @@ WORKDIR /recharts
 # Copy package.json and lock files first to leverage Docker layer caching
 COPY package.json package-lock.json* ./
 RUN mkdir -p /recharts/www
-COPY www/package.json www/package-lock.json* ./recharts/www/
+COPY www/package.json www/package-lock.json* /recharts/www/
 
 # Install project dependencies
 RUN npm install

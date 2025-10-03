@@ -40,7 +40,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const RadarChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <RadarChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive data={data}>
     <PolarGrid />
     <PolarAngleAxis dataKey="subject" />
@@ -82,7 +82,7 @@ const exampleCode = `
 
 export const radarChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: RadarChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

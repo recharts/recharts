@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const ReferenceLineExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <AreaChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -103,7 +103,7 @@ const exampleCode = `<AreaChart
 
 export const referenceLineApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ReferenceLineExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

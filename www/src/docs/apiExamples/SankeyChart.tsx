@@ -1,6 +1,6 @@
-import { ResponsiveContainer, Sankey, Tooltip } from 'recharts';
+import { ResponsiveContainer, Sankey, Tooltip, useChartWidth, Layer, Rectangle } from 'recharts';
 import { ApiExample, ApiExampleDemo } from '../api/types.ts';
-import { MyCustomSankeyNode } from './MyCustomSankeyNode.tsx';
+// import { NodeProps } from 'recharts/types/chart/Sankey';
 
 const data0 = {
   nodes: [
@@ -18,7 +18,39 @@ const data0 = {
   ],
 };
 
-const example: ApiExampleDemo = () => (
+function MyCustomSankeyNode({ x, y, width, height, index, payload }: any) {
+  const containerWidth = useChartWidth();
+  if (containerWidth == null) {
+    return null; // Return null if used outside a chart context
+  }
+  const isOut = x + width + 6 > containerWidth;
+  return (
+    <Layer key={`CustomNode${index}`}>
+      <Rectangle x={x} y={y} width={width} height={height} fill="#5192ca" fillOpacity="1" />
+      <text
+        textAnchor={isOut ? 'end' : 'start'}
+        x={isOut ? x - 6 : x + width + 6}
+        y={y + height / 2}
+        fontSize="14"
+        stroke="#333"
+      >
+        {payload.name}
+      </text>
+      <text
+        textAnchor={isOut ? 'end' : 'start'}
+        x={isOut ? x - 6 : x + width + 6}
+        y={y + height / 2 + 13}
+        fontSize="12"
+        stroke="#333"
+        strokeOpacity="0.5"
+      >
+        {`${payload.value}k`}
+      </text>
+    </Layer>
+  );
+}
+
+export const SankeyCustomNodeExample: ApiExampleDemo = () => (
   <ResponsiveContainer width="100%" aspect={2}>
     <Sankey
       data={data0}
@@ -88,7 +120,7 @@ function MyCustomSankeyNode({ x, y, width, height, index, payload }: NodeProps):
 
 export const sankeyApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: SankeyCustomNodeExample,
     code: exampleCode,
     dataCode: `
     const data0 = ${JSON.stringify(data0, null, 2)};

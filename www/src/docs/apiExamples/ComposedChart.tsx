@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const ComposedChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <ComposedChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -82,7 +82,7 @@ const exampleCode = `
 
 export const composedChartApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ComposedChartExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

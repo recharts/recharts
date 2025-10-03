@@ -134,7 +134,7 @@ const data = [
   },
 ];
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => (
+export const TreemapExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <ResponsiveContainer width="100%" aspect={4 / 3}>
     <Treemap
       width={730}
@@ -165,7 +165,7 @@ const exampleCode = `
 
 export const treemapApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: TreemapExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },

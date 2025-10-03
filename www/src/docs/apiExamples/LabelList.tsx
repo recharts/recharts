@@ -28,7 +28,7 @@ const data = [
   },
 ];
 
-const chartExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const LabelListChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -64,7 +64,7 @@ const chartExample: ApiExampleDemo = ({ isAnimationActive }) => (
 
 export const labelListApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: chartExample,
+    demo: LabelListChartExample,
     code: `
 <BarChart
   style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

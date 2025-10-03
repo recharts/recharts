@@ -62,7 +62,7 @@ const data = [
   },
 ];
 
-const cartesianPositions: ApiExampleDemo = ({ locale }) => {
+export const LabelCartesianPositions: ApiExampleDemo = ({ locale }) => {
   return (
     <>
       <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
@@ -90,7 +90,7 @@ const cartesianPositions: ApiExampleDemo = ({ locale }) => {
   );
 };
 
-const piePositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
+export const LabelPiePositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   <>
     <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'polar-title')}</p>
     <PieChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
@@ -112,7 +112,7 @@ const piePositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   </>
 );
 
-const radialBarPositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
+export const LabelRadialBarPositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   <>
     <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'radialbar-title')}</p>
     <RadialBarChart
@@ -131,7 +131,7 @@ const radialBarPositions: ApiExampleDemo = ({ locale, isAnimationActive }) => (
   </>
 );
 
-const barChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
+export const LabelBarChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -164,7 +164,7 @@ const barChartExample: ApiExampleDemo = ({ isAnimationActive }) => (
 
 const labelExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: cartesianPositions,
+    demo: LabelCartesianPositions,
     code: `const MyRectangle = () => {
   const plotArea = usePlotArea();
   if (plotArea == null) {
@@ -208,7 +208,7 @@ return (
 );`,
   },
   {
-    demo: piePositions,
+    demo: LabelPiePositions,
     code: `<PieChart
   style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
   responsive
@@ -229,7 +229,7 @@ return (
 </PieChart>`,
   },
   {
-    demo: radialBarPositions,
+    demo: LabelRadialBarPositions,
     code: `<RadialBarChart
   data={[{ x: 100 }, { x: 200 }]}
   style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
@@ -245,7 +245,7 @@ return (
 </RadialBarChart>`,
   },
   {
-    demo: barChartExample,
+    demo: LabelBarChartExample,
     code: `<BarChart
   style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
   responsive

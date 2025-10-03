@@ -32,7 +32,7 @@ const getMeanValue = (o: ReadonlyArray<DataEntry>) => {
   );
 };
 
-const example: ApiExampleDemo = ({ isAnimationActive }) => {
+export const ReferenceDotExample: ApiExampleDemo = ({ isAnimationActive }) => {
   const mean = getMeanValue(data);
 
   return (
@@ -71,7 +71,7 @@ const exampleCode = `<ScatterChart
 
 export const referenceDotApiExamples: ReadonlyArray<ApiExample> = [
   {
-    demo: example,
+    demo: ReferenceDotExample,
     code: exampleCode,
     dataCode: `const data = ${JSON.stringify(data, null, 2)}`,
   },
