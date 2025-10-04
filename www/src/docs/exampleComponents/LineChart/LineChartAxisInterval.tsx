@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { AxisInterval } from 'recharts/types/util/types';
 
 const data = [
@@ -46,17 +46,20 @@ const data = [
   },
 ];
 
-const Example = () => {
+const LineChartAxisInterval = () => {
   const chart = (interval: AxisInterval) => (
-    <ResponsiveContainer height={250} width="100%">
-      <LineChart data={data} margin={{ right: 25, top: 10 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" interval={interval} />
-        <YAxis interval={interval} />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ left: 0, right: 0, top: 10 }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" interval={interval} />
+      <YAxis interval={interval} width="auto" />
+      <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    </LineChart>
   );
 
   return (
@@ -70,4 +73,4 @@ const Example = () => {
   );
 };
 
-export default Example;
+export default LineChartAxisInterval;

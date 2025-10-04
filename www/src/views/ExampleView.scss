@@ -2,8 +2,6 @@
 @use '../styles/mixins';
 
 .page.page-examples .example-wrapper {
-  height: calc(100vh - 230px); // 230px = 60px(nav) + 68px(page title) + 102px(footer)
-
   .example-inner-wrapper {
     display: flex;
     justify-content: stretch;
@@ -26,6 +24,7 @@
       .monaco-editor-toolbar-item {
         display: inline-block;
         cursor: pointer;
+        line-height: 36px;
 
         &:hover {
           color: variables.$brand-primary;

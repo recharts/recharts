@@ -1,15 +1,4 @@
-import {
-  Area,
-  AreaChart,
-  Brush,
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, Brush, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
   {
@@ -58,73 +47,64 @@ const data = [
 
 export default function Example() {
   return (
-    <div style={{ width: '100%' }}>
-      <h4>A demo of synchronized AreaCharts</h4>
+    <>
+      <LineChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '20vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      </LineChart>
 
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          width={500}
-          height={200}
-          data={data}
-          syncId="anyId"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        </LineChart>
-      </ResponsiveContainer>
-      <p>Maybe some other content</p>
+      <LineChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '20vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+        <Brush />
+      </LineChart>
 
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          width={500}
-          height={200}
-          data={data}
-          syncId="anyId"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
-          <Brush />
-        </LineChart>
-      </ResponsiveContainer>
-
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart
-          width={500}
-          height={200}
-          data={data}
-          syncId="anyId"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
+      <AreaChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '20vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+      </AreaChart>
+    </>
   );
 }

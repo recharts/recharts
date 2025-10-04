@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-// eslint-disable-next-line import/no-relative-packages
+
 import { ResponsiveContainerExample } from '../../../www/src/docs/apiExamples/ResponsiveContainer';
 
 test('ResponsiveContainerExample', async ({ mount }) => {

@@ -1,4 +1,4 @@
-import { Line, LineChart, ResponsiveContainer } from 'recharts';
+import { Line, LineChart } from 'recharts';
 
 const data = [
   {
@@ -47,10 +47,12 @@ const data = [
 
 export default function Example() {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart width={300} height={100} data={data}>
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '100px', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+    >
+      <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
+    </LineChart>
   );
 }

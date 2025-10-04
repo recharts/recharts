@@ -1,4 +1,4 @@
-import LineChartExamples from './LineChart';
+import { lineChartExamples } from './LineChart';
 import AreaChartExamples from './AreaChart';
 import BarChartExamples from './BarChart';
 import ComposedChartExamples from './ComposedChart';
@@ -13,7 +13,7 @@ import ResponsiveContainerExamples from './ResponsiveContainer';
 import { AllExamples } from './types.ts';
 
 export const allExamples: AllExamples = {
-  LineChart: { examples: LineChartExamples, order: 1 },
+  LineChart: { examples: lineChartExamples, order: 1 },
   AreaChart: { examples: AreaChartExamples, order: 2 },
   BarChart: { examples: BarChartExamples, order: 3 },
   ComposedChart: { examples: ComposedChartExamples, order: 4 },
