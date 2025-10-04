@@ -1,4 +1,4 @@
-import { BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar } from 'recharts';
 
 const data = [
   {
@@ -45,14 +45,16 @@ const data = [
   },
 ];
 
-const Example = () => {
+const TinyBarChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart width={150} height={40} data={data}>
-        <Bar dataKey="uv" fill="#8884d8" />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarChart
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '100px', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+    >
+      <Bar dataKey="uv" fill="#8884d8" />
+    </BarChart>
   );
 };
 
-export default Example;
+export default TinyBarChart;

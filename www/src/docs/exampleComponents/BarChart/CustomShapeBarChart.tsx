@@ -60,22 +60,22 @@ const TriangleBar = (props: BarProps) => {
   return <path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke="none" fill={fill} />;
 };
 
-export default function App() {
+export default function CustomShapeBarChart() {
   return (
     <BarChart
-      width={500}
-      height={300}
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
       data={data}
       margin={{
         top: 20,
-        right: 30,
-        left: 20,
+        right: 0,
+        left: 0,
         bottom: 5,
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
-      <YAxis />
+      <YAxis width="auto" />
       <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} label={{ position: 'top' }}>
         {data.map((_entry, index) => (
           <Cell key={`cell-${index}`} fill={colors[index % 20]} />

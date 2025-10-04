@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Bar, BarChart, Cell, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, Cell } from 'recharts';
 import { BarRectangleItem } from 'recharts/types/cartesian/Bar';
 
-const Example = () => {
+const BarChartWithCustomizedEvent = () => {
   const [data] = useState([
     {
       name: 'Page A',
@@ -56,20 +56,22 @@ const Example = () => {
   const activeItem = data[activeIndex];
 
   return (
-    <div style={{ width: '100%' }}>
+    <>
       <p>Click each rectangle </p>
-      <ResponsiveContainer width="100%" height={100}>
-        <BarChart width={150} height={40} data={data}>
-          <Bar dataKey="uv" onClick={handleClick}>
-            {data.map((_entry, index) => (
-              <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <BarChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+      >
+        <Bar dataKey="uv" onClick={handleClick}>
+          {data.map((_entry, index) => (
+            <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
+          ))}
+        </Bar>
+      </BarChart>
       <p className="content">{`Uv of "${activeItem.name}": ${activeItem.uv}`}</p>
-    </div>
+    </>
   );
 };
 
-export default Example;
+export default BarChartWithCustomizedEvent;
