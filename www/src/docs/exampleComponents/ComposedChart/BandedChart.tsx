@@ -8,7 +8,6 @@ import {
   Tooltip,
   Legend,
   DefaultLegendContent,
-  ResponsiveContainer,
   DefaultLegendContentProps,
   DefaultTooltipContent,
 } from 'recharts';
@@ -56,28 +55,26 @@ const renderLegendWithoutRange = ({ payload, content, ref, ...rest }: DefaultLeg
   return <DefaultLegendContent payload={newPayload} {...rest} />;
 };
 
-export default function Example() {
+export default function BandedChart() {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart
-        width={500}
-        height={400}
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip content={renderTooltipWithoutRange} />
-        <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
-        <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
-        <Legend content={renderLegendWithoutRange} />
-      </ComposedChart>
-    </ResponsiveContainer>
+    <ComposedChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip content={renderTooltipWithoutRange} />
+      <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
+      <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
+      <Legend content={renderLegendWithoutRange} />
+    </ComposedChart>
   );
 }

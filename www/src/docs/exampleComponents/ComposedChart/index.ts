@@ -12,7 +12,7 @@ import scatterAndLineOfBestFitSource from './ScatterAndLineOfBestFit?raw';
 import bandedChartSource from './BandedChart?raw';
 import { ChartExample } from '../types.ts';
 
-const composedChartExamples: Record<string, ChartExample> = {
+export const composedChartExamples: Record<string, ChartExample> = {
   LineBarAreaComposedChart: {
     Component: LineBarAreaComposedChart,
     sourceCode: lineBarAreaComposedChartSource,
@@ -44,5 +44,3 @@ const composedChartExamples: Record<string, ChartExample> = {
     name: 'Banded Chart',
   },
 };
-
-export default composedChartExamples;

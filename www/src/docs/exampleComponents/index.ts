@@ -1,7 +1,7 @@
 import { lineChartExamples } from './LineChart';
 import { areaChartExamples } from './AreaChart';
 import { barChartExamples } from './BarChart';
-import ComposedChartExamples from './ComposedChart';
+import { composedChartExamples } from './ComposedChart';
 import ScatterChartExamples from './ScatterChart';
 import PieChartExamples from './PieChart';
 import RadarChartExamples from './RadarChart';
@@ -16,7 +16,7 @@ export const allExamples: AllExamples = {
   LineChart: { examples: lineChartExamples, order: 1 },
   AreaChart: { examples: areaChartExamples, order: 2 },
   BarChart: { examples: barChartExamples, order: 3 },
-  ComposedChart: { examples: ComposedChartExamples, order: 4 },
+  ComposedChart: { examples: composedChartExamples, order: 4 },
   ScatterChart: { examples: ScatterChartExamples, order: 5 },
   PieChart: { examples: PieChartExamples, order: 6 },
   RadarChart: { examples: RadarChartExamples, order: 7 },
