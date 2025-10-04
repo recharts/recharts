@@ -1,5 +1,5 @@
 import { lineChartExamples } from './LineChart';
-import AreaChartExamples from './AreaChart';
+import { areaChartExamples } from './AreaChart';
 import BarChartExamples from './BarChart';
 import ComposedChartExamples from './ComposedChart';
 import ScatterChartExamples from './ScatterChart';
@@ -14,7 +14,7 @@ import { AllExamples } from './types.ts';
 
 export const allExamples: AllExamples = {
   LineChart: { examples: lineChartExamples, order: 1 },
-  AreaChart: { examples: AreaChartExamples, order: 2 },
+  AreaChart: { examples: areaChartExamples, order: 2 },
   BarChart: { examples: BarChartExamples, order: 3 },
   ComposedChart: { examples: ComposedChartExamples, order: 4 },
   ScatterChart: { examples: ScatterChartExamples, order: 5 },

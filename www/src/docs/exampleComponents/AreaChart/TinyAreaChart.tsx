@@ -1,4 +1,4 @@
-import { Area, AreaChart, ResponsiveContainer } from 'recharts';
+import { Area, AreaChart } from 'recharts';
 
 const data = [
   {
@@ -45,24 +45,21 @@ const data = [
   },
 ];
 
-const Example = () => {
+const TinyAreaChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart
-        width={200}
-        height={60}
-        data={data}
-        margin={{
-          top: 5,
-          right: 0,
-          left: 0,
-          bottom: 5,
-        }}
-      >
-        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-      </AreaChart>
-    </ResponsiveContainer>
+    <AreaChart
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '100px', aspectRatio: 1.618 }}
+      data={data}
+      margin={{
+        top: 5,
+        right: 0,
+        left: 0,
+        bottom: 5,
+      }}
+    >
+      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+    </AreaChart>
   );
 };
 
-export default Example;
+export default TinyAreaChart;

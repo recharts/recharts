@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 const data = [
   {
@@ -61,34 +61,39 @@ const gradientOffset = () => {
 
 const off = gradientOffset();
 
-const Example = () => {
+const AreaChartFillByValue = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart
-        width={500}
-        height={400}
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <defs>
-          <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset={off} stopColor="green" stopOpacity={1} />
-            <stop offset={off} stopColor="red" stopOpacity={1} />
-          </linearGradient>
-        </defs>
-        <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
-      </AreaChart>
-    </ResponsiveContainer>
+    <AreaChart
+      style={{
+        width: '100%',
+        maxWidth: '700px',
+        maxHeight: '70vh',
+        aspectRatio: 1.618,
+      }}
+      responsive
+      data={data}
+      margin={{
+        top: 10,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip />
+      <defs>
+        <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="green" stopOpacity={1} />
+          <stop offset={off} stopColor="green" stopOpacity={0.1} />
+          <stop offset={off} stopColor="red" stopOpacity={0.1} />
+          <stop offset="1" stopColor="red" stopOpacity={1} />
+        </linearGradient>
+      </defs>
+      <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+    </AreaChart>
   );
 };
 
-export default Example;
+export default AreaChartFillByValue;
