@@ -1,13 +1,5 @@
-import {
-  ResponsiveContainer,
-  Scatter,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-  ZAxis,
-  TooltipContentProps,
-} from 'recharts';
+import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps } from 'recharts';
+import { ReactNode } from 'react';
 
 const data01 = [
   { hour: '12a', index: 1, value: 170 },
@@ -139,66 +131,62 @@ const MyTooltip = () => (
 
 const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} fill="#8884d8" />;
 
-const Example = () => {
+const DayChart = ({ children }: { children: ReactNode }) => (
+  <ScatterChart
+    margin={margin}
+    style={{ width: '100%', minWidth: '700px', maxWidth: '900px', height: '60px' }}
+    responsive
+  >
+    {children}
+  </ScatterChart>
+);
+
+const BubbleChart = () => {
   return (
-    <div style={{ width: '100%' }}>
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Sunday" />
-          <Bubbles data={data01} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+    <div style={{ width: '100%', maxWidth: '900px' }}>
+      <DayChart>
+        <BubbleAxes day="Sunday" />
+        <Bubbles data={data01} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Monday" />
-          <Bubbles data={data02} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Monday" />
+        <Bubbles data={data02} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Tuesday" />
-          <Bubbles data={data01} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Tuesday" />
+        <Bubbles data={data01} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Wednesday" />
-          <Bubbles data={data02} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Wednesday" />
+        <Bubbles data={data02} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Thursday" />
-          <Bubbles data={data01} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Thursday" />
+        <Bubbles data={data01} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Friday" />
-          <Bubbles data={data02} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Friday" />
+        <Bubbles data={data02} />
+        <MyTooltip />
+      </DayChart>
 
-      <ResponsiveContainer width="100%" height={60}>
-        <ScatterChart margin={margin}>
-          <BubbleAxes day="Saturday" showXTicks />
-          <Bubbles data={data01} />
-          <MyTooltip />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <DayChart>
+        <BubbleAxes day="Saturday" showXTicks />
+        <Bubbles data={data01} />
+        <MyTooltip />
+      </DayChart>
     </div>
   );
 };
 
-export default Example;
+export default BubbleChart;

@@ -2,7 +2,7 @@ import { lineChartExamples } from './LineChart';
 import { areaChartExamples } from './AreaChart';
 import { barChartExamples } from './BarChart';
 import { composedChartExamples } from './ComposedChart';
-import ScatterChartExamples from './ScatterChart';
+import { scatterChartExamples } from './ScatterChart';
 import PieChartExamples from './PieChart';
 import RadarChartExamples from './RadarChart';
 import RadialBarChartExamples from './RadialBarChart';
@@ -17,7 +17,7 @@ export const allExamples: AllExamples = {
   AreaChart: { examples: areaChartExamples, order: 2 },
   BarChart: { examples: barChartExamples, order: 3 },
   ComposedChart: { examples: composedChartExamples, order: 4 },
-  ScatterChart: { examples: ScatterChartExamples, order: 5 },
+  ScatterChart: { examples: scatterChartExamples, order: 5 },
   PieChart: { examples: PieChartExamples, order: 6 },
   RadarChart: { examples: RadarChartExamples, order: 7 },
   RadialBarChart: { examples: RadialBarChartExamples, order: 8 },

@@ -14,7 +14,7 @@ import multipleYAxesScatterChartSource from './MultipleYAxesScatterChart?raw';
 import scatterChartWithCellsSource from './ScatterChartWithCells?raw';
 import { ChartExample } from '../types.ts';
 
-const scatterChartExamples: Record<string, ChartExample> = {
+export const scatterChartExamples: Record<string, ChartExample> = {
   SimpleScatterChart: {
     Component: SimpleScatterChart,
     sourceCode: simpleScatterChartSource,
@@ -51,5 +51,3 @@ const scatterChartExamples: Record<string, ChartExample> = {
     name: 'Scatter Chart With Cells',
   },
 };
-
-export default scatterChartExamples;
