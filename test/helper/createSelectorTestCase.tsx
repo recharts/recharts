@@ -20,6 +20,7 @@ type TestCaseResult<T> = {
    * @param NextComponent
    */
   rerender: (NextComponent: ComponentType<{ children: ReactNode }>) => void;
+  unmount: () => void;
   /**
    * Rerender the same component as before. Useful for testing updates and stable references.
    */
@@ -40,7 +41,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       return null;
     };
 
-    const { container, debug, rerender, getByText } = render(
+    const { container, debug, rerender, getByText, unmount } = render(
       <AnimationManagerContext.Provider value={animationManager.factory}>
         <Component>
           <Comp />
@@ -60,7 +61,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     const rerenderSameComponent = () => {
       myRerender(Component);
     };
-    return { container, spy, debug, rerender: myRerender, rerenderSameComponent, animationManager, getByText };
+    return { container, spy, debug, rerender: myRerender, rerenderSameComponent, animationManager, getByText, unmount };
   };
 }
 
