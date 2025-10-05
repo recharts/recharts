@@ -12,7 +12,7 @@ export function ChartSizing() {
   const locale = useLocale();
   return (
     <article>
-      <h1>Chart size and layout</h1>
+      <h1>Chart size</h1>
       <p>Recharts chart needs width or height specified to render a chart.</p>
       <p>Chart without any sizes does not render anything:</p>
       <LineChart data={data}>
@@ -125,9 +125,12 @@ export function ChartSizing() {
       <h2>Automatic resizing on older Recharts versions</h2>
       <p>
         The <code>responsive</code> prop is only available in Recharts 3.3 and later. If you are using an older version
-        of Recharts, you can use the
-        <Link to={`/${locale}/api/ResponsiveContainer`}>ResponsiveContainer</Link> component to achieve similar effect.
-        It is not quite as flexible as the <code>responsive</code> prop, but it works.
+        of Recharts, you can use the{' '}
+        <code>
+          <Link to={`/${locale}/api/ResponsiveContainer`}>ResponsiveContainer</Link>
+        </code>{' '}
+        component to achieve similar effect. It is not quite as flexible as the <code>responsive</code> prop, but it
+        works.
       </p>
       <p>
         See the <Link to={`/${locale}/api/ResponsiveContainer`}>API docs</Link> for more details and examples.

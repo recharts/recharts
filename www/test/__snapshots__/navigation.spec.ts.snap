@@ -28,7 +28,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/guide/activeIndex",
           },
           {
-            "displayName": "Chart sizes and layout",
+            "displayName": "Chart size",
             "key": "sizes",
             "url": "/en-US/guide/sizes",
           },
