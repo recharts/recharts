@@ -1,4 +1,4 @@
-import { Pie, PieChart, ResponsiveContainer } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 
 const data01 = [
   { name: 'Group A', value: 400 },
@@ -20,13 +20,29 @@ const data02 = [
   { name: 'D2', value: 50 },
 ];
 
-export default function Example() {
+export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
-        <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={60} fill="#8884d8" />
-        <Pie data={data02} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={90} fill="#82ca9d" label />
-      </PieChart>
-    </ResponsiveContainer>
+    <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }} responsive>
+      <Pie
+        data={data01}
+        dataKey="value"
+        cx="50%"
+        cy="50%"
+        outerRadius="50%"
+        fill="#8884d8"
+        isAnimationActive={isAnimationActive}
+      />
+      <Pie
+        data={data02}
+        dataKey="value"
+        cx="50%"
+        cy="50%"
+        innerRadius="60%"
+        outerRadius="80%"
+        fill="#82ca9d"
+        label
+        isAnimationActive={isAnimationActive}
+      />
+    </PieChart>
   );
 }

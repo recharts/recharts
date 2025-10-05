@@ -1,4 +1,5 @@
-import { Pie, PieChart, ResponsiveContainer, Sector, SectorProps } from 'recharts';
+import { Pie, PieChart, Sector, SectorProps, Tooltip } from 'recharts';
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 type Coordinate = {
   x: number;
@@ -83,22 +84,37 @@ const renderActiveShape = ({
   );
 };
 
-export default function Example() {
+export default function CustomActiveShapePieChart({
+  isAnimationActive = true,
+  defaultIndex = undefined,
+}: {
+  isAnimationActive?: boolean;
+  defaultIndex?: TooltipIndex;
+}) {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
-        <Pie
-          // @ts-expect-error the parameter type doesn't match
-          activeShape={renderActiveShape}
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <PieChart
+      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
+      responsive
+      margin={{
+        top: 50,
+        right: 120,
+        bottom: 0,
+        left: 120,
+      }}
+    >
+      <Pie
+        // @ts-expect-error the parameter type doesn't match
+        activeShape={renderActiveShape}
+        data={data}
+        cx="50%"
+        cy="50%"
+        innerRadius="60%"
+        outerRadius="80%"
+        fill="#8884d8"
+        dataKey="value"
+        isAnimationActive={isAnimationActive}
+      />
+      <Tooltip content={() => null} defaultIndex={defaultIndex} />
+    </PieChart>
   );
 }

@@ -1,4 +1,4 @@
-import { Pie, PieChart, ResponsiveContainer } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 
 const data = [
   { name: 'Group A', value: 400 },
@@ -9,22 +9,21 @@ const data = [
   { name: 'Group F', value: 189 },
 ];
 
-export default function Example() {
+export default function StraightAnglePieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
-        <Pie
-          dataKey="value"
-          startAngle={180}
-          endAngle={0}
-          data={data}
-          cx="50%"
-          cy="50%"
-          outerRadius={80}
-          fill="#8884d8"
-          label
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 2 }} responsive>
+      <Pie
+        dataKey="value"
+        startAngle={180}
+        endAngle={0}
+        data={data}
+        cx="50%"
+        cy="100%"
+        outerRadius="120%"
+        fill="#8884d8"
+        label
+        isAnimationActive={isAnimationActive}
+      />
+    </PieChart>
   );
 }

@@ -3,7 +3,7 @@ import { areaChartExamples } from './AreaChart';
 import { barChartExamples } from './BarChart';
 import { composedChartExamples } from './ComposedChart';
 import { scatterChartExamples } from './ScatterChart';
-import PieChartExamples from './PieChart';
+import { pieChartExamples } from './PieChart';
 import RadarChartExamples from './RadarChart';
 import RadialBarChartExamples from './RadialBarChart';
 import TreeMapExamples from './TreeMap';
@@ -18,7 +18,7 @@ export const allExamples: AllExamples = {
   BarChart: { examples: barChartExamples, order: 3 },
   ComposedChart: { examples: composedChartExamples, order: 4 },
   ScatterChart: { examples: scatterChartExamples, order: 5 },
-  PieChart: { examples: PieChartExamples, order: 6 },
+  PieChart: { examples: pieChartExamples, order: 6 },
   RadarChart: { examples: RadarChartExamples, order: 7 },
   RadialBarChart: { examples: RadialBarChartExamples, order: 8 },
   TreeMap: { examples: TreeMapExamples, order: 9 },
