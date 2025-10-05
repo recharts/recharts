@@ -15,7 +15,20 @@ type RootSurfaceProps = {
   otherAttributes: Record<string, unknown>;
 };
 
-const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
+const FULL_WIDTH_AND_HEIGHT = {
+  width: '100%',
+  height: '100%',
+  /*
+   * display: block is necessary here because the default for an SVG is display: inline,
+   * which in some browsers (Chrome) adds a little bit of extra space above and below the SVG
+   * to make space for the descender of letters like "g" and "y". This throws off the height calculation
+   * and causes the container to grow indefinitely on each render with responsive=true.
+   * Display: block removes that extra space.
+   *
+   * Interestingly, Firefox does not have this problem, but it doesn't hurt to add the style anyway.
+   */
+  display: 'block',
+};
 
 const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: RootSurfaceProps, ref) => {
   const width = useChartWidth();

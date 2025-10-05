@@ -389,15 +389,13 @@ export const SharedTooltipInRadialBarChart = {
 export const TallTooltipInNarrowChart = {
   render: (args: Args) => {
     return (
-      <ResponsiveContainer width="100%" height={50}>
-        <LineChart data={pageData}>
-          <Tooltip {...args} />
-          <Line dataKey="uv" fill="green" />
-          <Line dataKey="pv" fill="red" />
-          <Line dataKey="amt" fill="amt" />
-          <RechartsHookInspector />
-        </LineChart>
-      </ResponsiveContainer>
+      <LineChart width="100%" height={50} responsive data={pageData}>
+        <Tooltip {...args} />
+        <Line dataKey="uv" fill="green" />
+        <Line dataKey="pv" fill="red" />
+        <Line dataKey="amt" fill="amt" />
+        <RechartsHookInspector />
+      </LineChart>
     );
   },
   args: {
