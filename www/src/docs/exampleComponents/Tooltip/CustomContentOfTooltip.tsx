@@ -1,14 +1,5 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  TooltipContentProps,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, TooltipContentProps } from 'recharts';
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 const data = [
   {
@@ -92,29 +83,33 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps<string | 
   );
 };
 
-const Example = () => {
+const CustomContentOfTooltip = ({
+  isAnimationActive = true,
+  defaultIndex,
+}: {
+  isAnimationActive?: boolean;
+  defaultIndex?: TooltipIndex;
+}) => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip content={CustomTooltip} />
-        <Legend />
-        <Bar dataKey="pv" barSize={20} fill="#8884d8" />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarChart
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 5,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />
+      <Legend />
+      <Bar dataKey="pv" barSize={20} fill="#8884d8" isAnimationActive={isAnimationActive} />
+    </BarChart>
   );
 };
 
-export default Example;
+export default CustomContentOfTooltip;
