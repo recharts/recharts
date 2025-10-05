@@ -113,6 +113,15 @@ export function ChartSizing() {
         See <Link to={`/${locale}/examples/PieChartInFlexbox`}>this example of a PieChart in a flexbox container</Link>{' '}
         for a demonstration.
       </p>
+      <h2>Usage with CSS grid</h2>
+      <p>
+        The <code>responsive</code> prop also works great with CSS grid layouts. You can place charts in grid cells and
+        they will adapt to the size of the cell.
+      </p>
+      <p>
+        See <Link to={`/${locale}/examples/PieChartInGrid`}>this example of a PieChart in a grid container</Link> for a
+        demonstration.
+      </p>
       <h2>Automatic resizing on older Recharts versions</h2>
       <p>
         The <code>responsive</code> prop is only available in Recharts 3.3 and later. If you are using an older version

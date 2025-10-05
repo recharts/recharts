@@ -13,6 +13,8 @@ import pieChartWithNeedleSource from './PieChartWithNeedle?raw';
 import { ChartExample } from '../types.ts';
 import PieChartInFlexbox from './PieChartInFlexbox.tsx';
 import pieChartInFlexboxSource from './PieChartInFlexbox?raw';
+import PieChartInGrid from './PieChartInGrid.tsx';
+import pieChartInGridSource from './PieChartInGrid?raw';
 
 export const pieChartExamples: Record<string, ChartExample> = {
   TwoLevelPieChart: {
@@ -49,5 +51,10 @@ export const pieChartExamples: Record<string, ChartExample> = {
     Component: PieChartInFlexbox,
     sourceCode: pieChartInFlexboxSource,
     name: 'Pie Chart in Flexbox',
+  },
+  PieChartInGrid: {
+    Component: PieChartInGrid,
+    sourceCode: pieChartInGridSource,
+    name: 'Pie Chart in Grid',
   },
 };

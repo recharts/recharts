@@ -8,6 +8,12 @@ import PieChartWithCustomizedLabel from '../../../www/src/docs/exampleComponents
 import PieChartWithPaddingAngle from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithPaddingAngle';
 import PieChartWithNeedle from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithNeedle';
 import PieChartInFlexbox from '../../../www/src/docs/exampleComponents/PieChart/PieChartInFlexbox';
+import PieChartInGrid from '../../../www/src/docs/exampleComponents/PieChart/PieChartInGrid';
+
+test('PieChartInGrid', async ({ mount }) => {
+  const component = await mount(<PieChartInGrid />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('PieChartInFlexbox', async ({ mount }) => {
   const component = await mount(<PieChartInFlexbox />);
