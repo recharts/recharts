@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import targetBlankSvg from './targetBlank.svg';
-import './TargetBlankLink.scss';
+import './TargetBlankLink.css';
 
 type TargetBlankLinkProps = {
   href: string;

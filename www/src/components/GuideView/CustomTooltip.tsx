@@ -1,4 +1,4 @@
-import './CustomTooltip.scss';
+import './CustomTooltip.css';
 
 function getIntroOfPage(label: string): string {
   if (label === 'Page A') {
@@ -28,7 +28,7 @@ function getIntroOfPage(label: string): string {
 //   active: boolean;
 // };
 
-function CustomTooltip({ payload, label, active }: any) {
+export function CustomTooltip({ payload, label, active }: any) {
   if (active) {
     return (
       <div className="custom-tooltip">
@@ -41,5 +41,3 @@ function CustomTooltip({ payload, label, active }: any) {
 
   return null;
 }
-
-export default CustomTooltip;
