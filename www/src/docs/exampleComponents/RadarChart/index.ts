@@ -4,7 +4,7 @@ import simpleRadarChartSource from './SimpleRadarChart?raw';
 import specifiedDomainRadarChartSource from './SpecifiedDomainRadarChart?raw';
 import { ChartExample } from '../types.ts';
 
-const radarChartExamples: Record<string, ChartExample> = {
+export const radarChartExamples: Record<string, ChartExample> = {
   SimpleRadarChart: {
     Component: SimpleRadarChart,
     sourceCode: simpleRadarChartSource,
@@ -16,5 +16,3 @@ const radarChartExamples: Record<string, ChartExample> = {
     name: 'Specified Domain Radar Chart',
   },
 };
-
-export default radarChartExamples;
