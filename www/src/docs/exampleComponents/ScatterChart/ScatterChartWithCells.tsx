@@ -10,21 +10,21 @@ const data = [
 ];
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 
-export default function App() {
+export default function ScatterChartWithCells() {
   return (
     <ScatterChart
-      width={400}
-      height={400}
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
       margin={{
         top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20,
+        right: 0,
+        bottom: 0,
+        left: 0,
       }}
     >
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-      <YAxis type="number" dataKey="y" name="weight" unit="kg" />
+      <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter name="A school" data={data} fill="#8884d8">
         {data.map((_entry, index) => (

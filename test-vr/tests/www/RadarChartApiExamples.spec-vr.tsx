@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-// eslint-disable-next-line import/no-relative-packages
+
 import { RadarChartExample } from '../../../www/src/docs/apiExamples/RadarChart';
 
 test('RadarChartExample', async ({ mount }) => {

@@ -1,4 +1,5 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ActiveDotProps } from 'recharts/types/util/types';
 
 const data = [
   {
@@ -45,7 +46,7 @@ const data = [
   },
 ];
 
-const CustomizedDot = (props: any) => {
+const CustomizedDot = (props: ActiveDotProps) => {
   const { cx, cy, value } = props;
 
   if (value > 2500) {
@@ -65,27 +66,25 @@ const CustomizedDot = (props: any) => {
 
 const CustomizedDotLineChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={CustomizedDot} />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 5,
+        right: 10,
+        left: 0,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={CustomizedDot} />
+      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    </LineChart>
   );
 };
 

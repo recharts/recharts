@@ -16,7 +16,7 @@ import { ComponentExamples } from '../docs/exampleComponents/types.ts';
 type ExampleComponent = {
   cateName: string;
   exampleName: string;
-  exampleComponent: ComponentType;
+  ExampleComponent: ComponentType;
   sourceCode: string;
 };
 
@@ -29,11 +29,12 @@ const parseExampleComponent = (compName: string): ExampleComponent | null => {
   });
 
   if (res && res.length) {
+    const example = allExamples[res[0]].examples[compName];
     return {
       cateName: res[0],
-      exampleName: compName,
-      exampleComponent: allExamples[res[0]].examples[compName].Component,
-      sourceCode: allExamples[res[0]].examples[compName].sourceCode,
+      exampleName: example.name,
+      ExampleComponent: example.Component,
+      sourceCode: example.sourceCode,
     };
   }
   return null;
@@ -104,6 +105,14 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
             <span>&nbsp;</span>
             <span>Run</span>
           </button>
+          <span className="monaco-editor-toolbar-item example-link-wrapper">
+            <StackBlitzLink
+              code={this.state.exampleCode}
+              title={`Recharts example: ${exampleResult.cateName} - ${exampleResult.exampleName}`}
+            >
+              Open in StackBlitz
+            </StackBlitzLink>
+          </span>
         </div>
         <div id="monaco-editor-container">
           <Editor
@@ -142,13 +151,7 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
       return null;
     }
 
-    return (
-      <div className="example-chart-wrapper">
-        <div className="example-chart-responsive-container">
-          <Runner code={this.state.exampleCode} scope={scope} />
-        </div>
-      </div>
-    );
+    return <Runner code={this.state.exampleCode} scope={scope} />;
   }
 
   getPage(): string {
@@ -161,27 +164,19 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
 
     const exampleResult = parseExampleComponent(page);
 
+    const title = exampleResult?.exampleName ?? page;
+
     return (
       <div className="page page-examples">
-        <Helmet title={page} />
+        <Helmet title={title} />
         <div className="content">
-          <h3 className="page-title">{page}</h3>
+          <h3 className="page-title">{title}</h3>
           {exampleResult ? (
             <div className="example-wrapper">
               <div className="example-inner-wrapper">
                 {this.renderResult()}
                 {this.renderEditor(exampleResult)}
               </div>
-              {this.state.exampleCode ? (
-                <p className="example-link-wrapper">
-                  <StackBlitzLink
-                    code={this.state.exampleCode}
-                    title={`Recharts example: ${exampleResult.cateName} - ${exampleResult.exampleName}`}
-                  >
-                    Try the demo in StackBlitz
-                  </StackBlitzLink>
-                </p>
-              ) : null}
             </div>
           ) : null}
         </div>

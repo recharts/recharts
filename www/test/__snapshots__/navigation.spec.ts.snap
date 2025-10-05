@@ -313,82 +313,82 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "LineChart",
         "items": [
           {
-            "displayName": "SimpleLineChart",
+            "displayName": "Simple Line Chart",
             "key": "SimpleLineChart",
             "url": "/en-US/examples/SimpleLineChart",
           },
           {
-            "displayName": "TinyLineChart",
+            "displayName": "Tiny Line Chart",
             "key": "TinyLineChart",
             "url": "/en-US/examples/TinyLineChart",
           },
           {
-            "displayName": "DashedLineChart",
+            "displayName": "Dashed Line Chart",
             "key": "DashedLineChart",
             "url": "/en-US/examples/DashedLineChart",
           },
           {
-            "displayName": "VerticalLineChart",
+            "displayName": "Vertical Line Chart",
             "key": "VerticalLineChart",
             "url": "/en-US/examples/VerticalLineChart",
           },
           {
-            "displayName": "BiaxialLineChart",
+            "displayName": "Biaxial Line Chart",
             "key": "BiaxialLineChart",
             "url": "/en-US/examples/BiaxialLineChart",
           },
           {
-            "displayName": "VerticalLineChartWithSpecifiedDomain",
+            "displayName": "Vertical Line Chart With Specified Domain",
             "key": "VerticalLineChartWithSpecifiedDomain",
             "url": "/en-US/examples/VerticalLineChartWithSpecifiedDomain",
           },
           {
-            "displayName": "LineChartConnectNulls",
+            "displayName": "Line Chart Connect Nulls",
             "key": "LineChartConnectNulls",
             "url": "/en-US/examples/LineChartConnectNulls",
           },
           {
-            "displayName": "LineChartWithXAxisPadding",
+            "displayName": "Line Chart With X Axis Padding",
             "key": "LineChartWithXAxisPadding",
             "url": "/en-US/examples/LineChartWithXAxisPadding",
           },
           {
-            "displayName": "LineChartWithReferenceLines",
+            "displayName": "Line Chart With Reference Lines",
             "key": "LineChartWithReferenceLines",
             "url": "/en-US/examples/LineChartWithReferenceLines",
           },
           {
-            "displayName": "CustomizedDotLineChart",
+            "displayName": "Customized Dot Line Chart",
             "key": "CustomizedDotLineChart",
             "url": "/en-US/examples/CustomizedDotLineChart",
           },
           {
-            "displayName": "CustomizedLabelLineChart",
+            "displayName": "Customized Label Line Chart",
             "key": "CustomizedLabelLineChart",
             "url": "/en-US/examples/CustomizedLabelLineChart",
           },
           {
-            "displayName": "SynchronizedLineChart",
+            "displayName": "Synchronized Line Chart",
             "key": "SynchronizedLineChart",
             "url": "/en-US/examples/SynchronizedLineChart",
           },
           {
-            "displayName": "HighlightAndZoomLineChart",
+            "displayName": "Highlight And Zoom Line Chart",
             "key": "HighlightAndZoomLineChart",
             "url": "/en-US/examples/HighlightAndZoomLineChart",
           },
           {
-            "displayName": "LineChartHasMultiSeries",
+            "displayName": "Line Chart Has Multi Series",
             "key": "LineChartHasMultiSeries",
             "url": "/en-US/examples/LineChartHasMultiSeries",
           },
           {
-            "displayName": "LineChartAxisInterval",
+            "displayName": "Line Chart Axis Interval",
             "key": "LineChartAxisInterval",
             "url": "/en-US/examples/LineChartAxisInterval",
           },
           {
-            "displayName": "LineChartNegativeValuesWithReferenceLines",
+            "displayName": "Line Chart Negative Values With Reference Lines",
             "key": "LineChartNegativeValuesWithReferenceLines",
             "url": "/en-US/examples/LineChartNegativeValuesWithReferenceLines",
           },
@@ -399,42 +399,42 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "AreaChart",
         "items": [
           {
-            "displayName": "SimpleAreaChart",
+            "displayName": "Simple Area Chart",
             "key": "SimpleAreaChart",
             "url": "/en-US/examples/SimpleAreaChart",
           },
           {
-            "displayName": "StackedAreaChart",
+            "displayName": "Stacked Area Chart",
             "key": "StackedAreaChart",
             "url": "/en-US/examples/StackedAreaChart",
           },
           {
-            "displayName": "AreaChartConnectNulls",
+            "displayName": "Area Chart Connect Nulls",
             "key": "AreaChartConnectNulls",
             "url": "/en-US/examples/AreaChartConnectNulls",
           },
           {
-            "displayName": "CardinalAreaChart",
+            "displayName": "Cardinal Area Chart",
             "key": "CardinalAreaChart",
             "url": "/en-US/examples/CardinalAreaChart",
           },
           {
-            "displayName": "PercentAreaChart",
+            "displayName": "Percent Area Chart",
             "key": "PercentAreaChart",
             "url": "/en-US/examples/PercentAreaChart",
           },
           {
-            "displayName": "SynchronizedAreaChart",
+            "displayName": "Synchronized Area Chart",
             "key": "SynchronizedAreaChart",
             "url": "/en-US/examples/SynchronizedAreaChart",
           },
           {
-            "displayName": "TinyAreaChart",
+            "displayName": "Tiny Area Chart",
             "key": "TinyAreaChart",
             "url": "/en-US/examples/TinyAreaChart",
           },
           {
-            "displayName": "AreaChartFillByValue",
+            "displayName": "Area Chart Fill By Value",
             "key": "AreaChartFillByValue",
             "url": "/en-US/examples/AreaChartFillByValue",
           },
@@ -445,74 +445,69 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "BarChart",
         "items": [
           {
-            "displayName": "TinyBarChart",
+            "displayName": "Tiny Bar Chart",
             "key": "TinyBarChart",
             "url": "/en-US/examples/TinyBarChart",
           },
           {
-            "displayName": "SimpleBarChart",
+            "displayName": "Simple Bar Chart",
             "key": "SimpleBarChart",
             "url": "/en-US/examples/SimpleBarChart",
           },
           {
-            "displayName": "StackedBarChart",
+            "displayName": "Stacked Bar Chart",
             "key": "StackedBarChart",
             "url": "/en-US/examples/StackedBarChart",
           },
           {
-            "displayName": "MixBarChart",
+            "displayName": "Mix Bar Chart",
             "key": "MixBarChart",
             "url": "/en-US/examples/MixBarChart",
           },
           {
-            "displayName": "CustomShapeBarChart",
+            "displayName": "Custom Shape Bar Chart",
             "key": "CustomShapeBarChart",
             "url": "/en-US/examples/CustomShapeBarChart",
           },
           {
-            "displayName": "PositiveAndNegativeBarChart",
+            "displayName": "Positive and Negative Bar Chart",
             "key": "PositiveAndNegativeBarChart",
             "url": "/en-US/examples/PositiveAndNegativeBarChart",
           },
           {
-            "displayName": "BrushBarChart",
+            "displayName": "Brush Bar Chart",
             "key": "BrushBarChart",
             "url": "/en-US/examples/BrushBarChart",
           },
           {
-            "displayName": "BarChartWithCustomizedEvent",
+            "displayName": "Bar Chart With Customized Event",
             "key": "BarChartWithCustomizedEvent",
             "url": "/en-US/examples/BarChartWithCustomizedEvent",
           },
           {
-            "displayName": "BarChartWithMinHeight",
+            "displayName": "Bar Chart With Min Height",
             "key": "BarChartWithMinHeight",
             "url": "/en-US/examples/BarChartWithMinHeight",
           },
           {
-            "displayName": "BarChartStackedBySign",
+            "displayName": "Bar Chart Stacked By Sign",
             "key": "BarChartStackedBySign",
             "url": "/en-US/examples/BarChartStackedBySign",
           },
           {
-            "displayName": "BiaxialBarChart",
+            "displayName": "Biaxial Bar Chart",
             "key": "BiaxialBarChart",
             "url": "/en-US/examples/BiaxialBarChart",
           },
           {
-            "displayName": "BarChartHasBackground",
+            "displayName": "Bar Chart with background",
             "key": "BarChartHasBackground",
             "url": "/en-US/examples/BarChartHasBackground",
           },
           {
-            "displayName": "BarChartWithMultiXAxis",
+            "displayName": "Bar Chart With Multi X Axis",
             "key": "BarChartWithMultiXAxis",
             "url": "/en-US/examples/BarChartWithMultiXAxis",
-          },
-          {
-            "displayName": "BarChartNoPadding",
-            "key": "BarChartNoPadding",
-            "url": "/en-US/examples/BarChartNoPadding",
           },
         ],
         "key": "BarChart",
@@ -521,32 +516,32 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "ComposedChart",
         "items": [
           {
-            "displayName": "LineBarAreaComposedChart",
+            "displayName": "Line Bar Area Composed Chart",
             "key": "LineBarAreaComposedChart",
             "url": "/en-US/examples/LineBarAreaComposedChart",
           },
           {
-            "displayName": "SameDataComposedChart",
+            "displayName": "Same Data Composed Chart",
             "key": "SameDataComposedChart",
             "url": "/en-US/examples/SameDataComposedChart",
           },
           {
-            "displayName": "VerticalComposedChart",
+            "displayName": "Vertical Composed Chart",
             "key": "VerticalComposedChart",
             "url": "/en-US/examples/VerticalComposedChart",
           },
           {
-            "displayName": "ComposedChartWithAxisLabels",
+            "displayName": "Composed Chart With Axis Labels",
             "key": "ComposedChartWithAxisLabels",
             "url": "/en-US/examples/ComposedChartWithAxisLabels",
           },
           {
-            "displayName": "ScatterAndLineOfBestFit",
+            "displayName": "Scatter And Line Of Best Fit",
             "key": "ScatterAndLineOfBestFit",
             "url": "/en-US/examples/ScatterAndLineOfBestFit",
           },
           {
-            "displayName": "BandedChart",
+            "displayName": "Banded Chart",
             "key": "BandedChart",
             "url": "/en-US/examples/BandedChart",
           },
@@ -557,37 +552,37 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "ScatterChart",
         "items": [
           {
-            "displayName": "SimpleScatterChart",
+            "displayName": "Simple Scatter Chart",
             "key": "SimpleScatterChart",
             "url": "/en-US/examples/SimpleScatterChart",
           },
           {
-            "displayName": "ThreeDimScatterChart",
+            "displayName": "Three Dim Scatter Chart",
             "key": "ThreeDimScatterChart",
             "url": "/en-US/examples/ThreeDimScatterChart",
           },
           {
-            "displayName": "JointLineScatterChart",
+            "displayName": "Joint Line Scatter Chart",
             "key": "JointLineScatterChart",
             "url": "/en-US/examples/JointLineScatterChart",
           },
           {
-            "displayName": "BubbleChart",
+            "displayName": "Bubble Chart",
             "key": "BubbleChart",
             "url": "/en-US/examples/BubbleChart",
           },
           {
-            "displayName": "ScatterChartWithLabels",
+            "displayName": "Scatter Chart With Labels",
             "key": "ScatterChartWithLabels",
             "url": "/en-US/examples/ScatterChartWithLabels",
           },
           {
-            "displayName": "MultipleYAxesScatterChart",
+            "displayName": "Multiple Y Axes Scatter Chart",
             "key": "MultipleYAxesScatterChart",
             "url": "/en-US/examples/MultipleYAxesScatterChart",
           },
           {
-            "displayName": "ScatterChartWithCells",
+            "displayName": "Scatter Chart With Cells",
             "key": "ScatterChartWithCells",
             "url": "/en-US/examples/ScatterChartWithCells",
           },
@@ -598,37 +593,37 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "PieChart",
         "items": [
           {
-            "displayName": "TwoLevelPieChart",
+            "displayName": "Two Level Pie Chart",
             "key": "TwoLevelPieChart",
             "url": "/en-US/examples/TwoLevelPieChart",
           },
           {
-            "displayName": "StraightAnglePieChart",
+            "displayName": "Straight Angle Pie Chart",
             "key": "StraightAnglePieChart",
             "url": "/en-US/examples/StraightAnglePieChart",
           },
           {
-            "displayName": "TwoSimplePieChart",
+            "displayName": "Two Simple Pie Chart",
             "key": "TwoSimplePieChart",
             "url": "/en-US/examples/TwoSimplePieChart",
           },
           {
-            "displayName": "CustomActiveShapePieChart",
+            "displayName": "Custom Active Shape Pie Chart",
             "key": "CustomActiveShapePieChart",
             "url": "/en-US/examples/CustomActiveShapePieChart",
           },
           {
-            "displayName": "PieChartWithCustomizedLabel",
+            "displayName": "Pie Chart With Customized Label",
             "key": "PieChartWithCustomizedLabel",
             "url": "/en-US/examples/PieChartWithCustomizedLabel",
           },
           {
-            "displayName": "PieChartWithPaddingAngle",
+            "displayName": "Pie Chart With Padding Angle",
             "key": "PieChartWithPaddingAngle",
             "url": "/en-US/examples/PieChartWithPaddingAngle",
           },
           {
-            "displayName": "PieChartWithNeedle",
+            "displayName": "Pie Chart With Needle",
             "key": "PieChartWithNeedle",
             "url": "/en-US/examples/PieChartWithNeedle",
           },
@@ -639,12 +634,12 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "RadarChart",
         "items": [
           {
-            "displayName": "SimpleRadarChart",
+            "displayName": "Simple Radar Chart",
             "key": "SimpleRadarChart",
             "url": "/en-US/examples/SimpleRadarChart",
           },
           {
-            "displayName": "SpecifiedDomainRadarChart",
+            "displayName": "Specified Domain Radar Chart",
             "key": "SpecifiedDomainRadarChart",
             "url": "/en-US/examples/SpecifiedDomainRadarChart",
           },
@@ -655,7 +650,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "RadialBarChart",
         "items": [
           {
-            "displayName": "SimpleRadialBarChart",
+            "displayName": "Simple Radial Bar Chart",
             "key": "SimpleRadialBarChart",
             "url": "/en-US/examples/SimpleRadialBarChart",
           },
@@ -666,12 +661,12 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "TreeMap",
         "items": [
           {
-            "displayName": "SimpleTreemap",
+            "displayName": "Simple Treemap",
             "key": "SimpleTreemap",
             "url": "/en-US/examples/SimpleTreemap",
           },
           {
-            "displayName": "CustomContentTreemap",
+            "displayName": "Custom Content Treemap",
             "key": "CustomContentTreemap",
             "url": "/en-US/examples/CustomContentTreemap",
           },
@@ -682,7 +677,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "Tooltip",
         "items": [
           {
-            "displayName": "CustomContentOfTooltip",
+            "displayName": "Custom Content Of Tooltip",
             "key": "CustomContentOfTooltip",
             "url": "/en-US/examples/CustomContentOfTooltip",
           },
@@ -693,7 +688,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "Legend",
         "items": [
           {
-            "displayName": "LegendEffectOpacity",
+            "displayName": "Legend with Opacity",
             "key": "LegendEffectOpacity",
             "url": "/en-US/examples/LegendEffectOpacity",
           },
@@ -704,17 +699,17 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "displayName": "ResponsiveContainer",
         "items": [
           {
-            "displayName": "AreaResponsiveContainer",
+            "displayName": "Area Responsive Container",
             "key": "AreaResponsiveContainer",
             "url": "/en-US/examples/AreaResponsiveContainer",
           },
           {
-            "displayName": "ComposedResponsiveContainer",
+            "displayName": "Composed Responsive Container",
             "key": "ComposedResponsiveContainer",
             "url": "/en-US/examples/ComposedResponsiveContainer",
           },
           {
-            "displayName": "PieResponsiveContainer",
+            "displayName": "Pie Responsive Container",
             "key": "PieResponsiveContainer",
             "url": "/en-US/examples/PieResponsiveContainer",
           },

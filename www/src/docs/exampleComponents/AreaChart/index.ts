@@ -16,7 +16,7 @@ import tinyAreaChartSource from './TinyAreaChart?raw';
 import areaChartFillByValueSource from './AreaChartFillByValue?raw';
 import { ChartExample } from '../types.ts';
 
-const areaChartExamples: Record<string, ChartExample> = {
+export const areaChartExamples: Record<string, ChartExample> = {
   SimpleAreaChart: {
     Component: SimpleAreaChart,
     sourceCode: simpleAreaChartSource,
@@ -58,5 +58,3 @@ const areaChartExamples: Record<string, ChartExample> = {
     name: 'Area Chart Fill By Value',
   },
 };
-
-export default areaChartExamples;

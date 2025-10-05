@@ -1,4 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 const data01 = [
   { x: 100, y: 200, z: 200 },
@@ -23,27 +23,36 @@ const data02 = [
   { x: 420, y: 280, z: 200 },
 ];
 
-const Example = () => {
+const MultipleYAxesScatterChart = () => {
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <ScatterChart
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
-        }}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-        <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" stroke="#8884d8" />
-        <YAxis yAxisId="right" type="number" dataKey="y" name="weight" unit="kg" orientation="right" stroke="#82ca9d" />
-        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
-        <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
-      </ScatterChart>
-    </ResponsiveContainer>
+    <ScatterChart
+      style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      margin={{
+        top: 20,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      }}
+    >
+      <CartesianGrid />
+      <XAxis type="number" dataKey="x" name="stature" unit="cm" />
+      <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" stroke="#8884d8" width="auto" />
+      <YAxis
+        yAxisId="right"
+        type="number"
+        dataKey="y"
+        name="weight"
+        unit="kg"
+        orientation="right"
+        stroke="#82ca9d"
+        width="auto"
+      />
+      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
+      <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
+    </ScatterChart>
   );
 };
 
-export default Example;
+export default MultipleYAxesScatterChart;

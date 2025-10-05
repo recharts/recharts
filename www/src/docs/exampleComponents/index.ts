@@ -1,8 +1,8 @@
-import LineChartExamples from './LineChart';
-import AreaChartExamples from './AreaChart';
-import BarChartExamples from './BarChart';
-import ComposedChartExamples from './ComposedChart';
-import ScatterChartExamples from './ScatterChart';
+import { lineChartExamples } from './LineChart';
+import { areaChartExamples } from './AreaChart';
+import { barChartExamples } from './BarChart';
+import { composedChartExamples } from './ComposedChart';
+import { scatterChartExamples } from './ScatterChart';
 import PieChartExamples from './PieChart';
 import RadarChartExamples from './RadarChart';
 import RadialBarChartExamples from './RadialBarChart';
@@ -13,11 +13,11 @@ import ResponsiveContainerExamples from './ResponsiveContainer';
 import { AllExamples } from './types.ts';
 
 export const allExamples: AllExamples = {
-  LineChart: { examples: LineChartExamples, order: 1 },
-  AreaChart: { examples: AreaChartExamples, order: 2 },
-  BarChart: { examples: BarChartExamples, order: 3 },
-  ComposedChart: { examples: ComposedChartExamples, order: 4 },
-  ScatterChart: { examples: ScatterChartExamples, order: 5 },
+  LineChart: { examples: lineChartExamples, order: 1 },
+  AreaChart: { examples: areaChartExamples, order: 2 },
+  BarChart: { examples: barChartExamples, order: 3 },
+  ComposedChart: { examples: composedChartExamples, order: 4 },
+  ScatterChart: { examples: scatterChartExamples, order: 5 },
   PieChart: { examples: PieChartExamples, order: 6 },
   RadarChart: { examples: RadarChartExamples, order: 7 },
   RadialBarChart: { examples: RadialBarChartExamples, order: 8 },

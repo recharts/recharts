@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 const data = [
   {
@@ -45,54 +45,48 @@ const data = [
   },
 ];
 
-const Example = () => {
+const SynchronizedAreaChart = () => {
   return (
-    <div style={{ width: '100%' }}>
-      <h4>A demo of synchronized AreaCharts</h4>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart
-          width={500}
-          height={200}
-          data={data}
-          syncId="anyId"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        </AreaChart>
-      </ResponsiveContainer>
-      <p>Maybe some other content</p>
+    <>
+      <AreaChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 0,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis width="auto" />
+        <Tooltip />
+        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      </AreaChart>
 
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart
-          width={500}
-          height={200}
-          data={data}
-          syncId="anyId"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
+      <AreaChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 0,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis width="auto" />
+        <Tooltip />
+        <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+      </AreaChart>
+    </>
   );
 };
 
-export default Example;
+export default SynchronizedAreaChart;

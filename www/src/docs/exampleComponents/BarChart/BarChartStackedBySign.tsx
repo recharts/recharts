@@ -1,14 +1,4 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ReferenceLine,
-  ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
 
 const data = [
   {
@@ -55,32 +45,30 @@ const data = [
   },
 ];
 
-const Example = () => {
+const BarChartStackedBySign = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        width={500}
-        height={300}
-        data={data}
-        stackOffset="sign"
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <ReferenceLine y={0} stroke="#000" />
-        <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
-        <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      stackOffset="sign"
+      margin={{
+        top: 25,
+        right: 0,
+        left: 0,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip />
+      <Legend />
+      <ReferenceLine y={0} stroke="#000" />
+      <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
+      <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
+    </BarChart>
   );
 };
 
-export default Example;
+export default BarChartStackedBySign;

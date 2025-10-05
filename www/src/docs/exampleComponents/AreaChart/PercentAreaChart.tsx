@@ -1,13 +1,4 @@
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  TooltipContentProps,
-} from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, TooltipContentProps } from 'recharts';
 
 const data = [
   {
@@ -54,12 +45,12 @@ const data = [
   },
 ];
 
-const toPercent = (decimal: number, fixed: number = 0): string => `${(decimal * 100).toFixed(fixed)}%`;
+const toPercent = (decimal: number): string => `${(decimal * 100).toFixed(0)}%`;
 
 const getPercent = (value: number, total: number): string => {
   const ratio = total > 0 ? value / total : 0;
 
-  return toPercent(ratio, 2);
+  return toPercent(ratio);
 };
 
 const renderTooltipContent = (o: TooltipContentProps<number | string, string>) => {
@@ -67,8 +58,17 @@ const renderTooltipContent = (o: TooltipContentProps<number | string, string>) =
   const total = payload.reduce((result, entry) => result + entry.value, 0);
 
   return (
-    <div className="customized-tooltip-content">
-      <p className="total">{`${label} (Total: ${total})`}</p>
+    <div
+      className="customized-tooltip-content"
+      style={{
+        backgroundColor: 'white',
+        border: '1px solid #ccc',
+        padding: '10px',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+      }}
+    >
+      <h3 className="total">{`${label} (Total: ${total})`}</h3>
       <ul className="list">
         {payload.map((entry, index) => (
           <li key={`item-${index}`} style={{ color: entry.color }}>
@@ -80,31 +80,29 @@ const renderTooltipContent = (o: TooltipContentProps<number | string, string>) =
   );
 };
 
-const Example = () => {
+const PercentAreaChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart
-        width={500}
-        height={400}
-        data={data}
-        stackOffset="expand"
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis tickFormatter={toPercent} />
-        <Tooltip content={renderTooltipContent} />
-        <Area type="monotone" dataKey="a" stackId="1" stroke="#8884d8" fill="#8884d8" />
-        <Area type="monotone" dataKey="b" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-        <Area type="monotone" dataKey="c" stackId="1" stroke="#ffc658" fill="#ffc658" />
-      </AreaChart>
-    </ResponsiveContainer>
+    <AreaChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      stackOffset="expand"
+      margin={{
+        top: 10,
+        right: 20,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="month" />
+      <YAxis tickFormatter={toPercent} width="auto" />
+      <Tooltip content={renderTooltipContent} />
+      <Area type="monotone" dataKey="a" stackId="1" stroke="#8884d8" fill="#8884d8" />
+      <Area type="monotone" dataKey="b" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+      <Area type="monotone" dataKey="c" stackId="1" stroke="#ffc658" fill="#ffc658" />
+    </AreaChart>
   );
 };
 
-export default Example;
+export default PercentAreaChart;

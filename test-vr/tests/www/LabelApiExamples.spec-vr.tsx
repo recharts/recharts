@@ -5,7 +5,6 @@ import {
   LabelPiePositions,
   LabelRadialBarPositions,
   LabelBarChartExample,
-  // eslint-disable-next-line import/no-relative-packages
 } from '../../../www/src/docs/apiExamples/Label';
 
 test('LabelCartesianPositions', async ({ mount }) => {

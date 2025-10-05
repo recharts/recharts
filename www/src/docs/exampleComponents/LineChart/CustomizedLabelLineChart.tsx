@@ -1,14 +1,4 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LabelProps,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelProps } from 'recharts';
 
 const data = [
   {
@@ -73,30 +63,28 @@ const CustomizedAxisTick = ({ x, y, payload }: any) => {
   );
 };
 
-const Example = () => {
+const CustomizedLabelLineChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 20,
-          right: 30,
-          left: 20,
-          bottom: 10,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" height={60} tick={CustomizedAxisTick} />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" label={CustomizedLabel} />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 10,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" height={60} tick={CustomizedAxisTick} />
+      <YAxis width="auto" />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="pv" stroke="#8884d8" label={CustomizedLabel} />
+      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    </LineChart>
   );
 };
 
-export default Example;
+export default CustomizedLabelLineChart;

@@ -1,15 +1,4 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LabelList,
-  ResponsiveContainer,
-  LabelProps,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, LabelProps } from 'recharts';
 
 const data = [
   {
@@ -80,32 +69,30 @@ const renderCustomizedLabel = (props: LabelProps) => {
   );
 };
 
-const Example = () => {
+const BarChartWithMinHeight = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="pv" fill="#8884d8" minPointSize={5}>
-          <LabelList dataKey="name" content={renderCustomizedLabel} />
-        </Bar>
-        <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 25,
+        right: 0,
+        left: 0,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="pv" fill="#8884d8" minPointSize={5}>
+        <LabelList dataKey="name" content={renderCustomizedLabel} />
+      </Bar>
+      <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
+    </BarChart>
   );
 };
 
-export default Example;
+export default BarChartWithMinHeight;

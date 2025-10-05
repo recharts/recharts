@@ -11,7 +11,6 @@ import BarChartStackedBySign from './BarChartStackedBySign';
 import BiaxialBarChart from './BiaxialBarChart';
 import BarChartHasBackground from './BarChartHasBackground';
 import BarChartWithMultiXAxis from './BarChartWithMultiXAxis';
-import BarChartNoPadding from './BarChartNoPadding';
 import tinyBarChartSource from './TinyBarChart?raw';
 import simpleBarChartSource from './SimpleBarChart?raw';
 import stackedBarChartSource from './StackedBarChart?raw';
@@ -25,10 +24,9 @@ import barChartStackedBySignSource from './BarChartStackedBySign?raw';
 import biaxialBarChartSource from './BiaxialBarChart?raw';
 import barChartHasBackgroundSource from './BarChartHasBackground?raw';
 import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
-import barChartNoPaddingSource from './BarChartNoPadding?raw';
 import { ChartExample } from '../types.ts';
 
-const barChartExamples: Record<string, ChartExample> = {
+export const barChartExamples: Record<string, ChartExample> = {
   TinyBarChart: {
     Component: TinyBarChart,
     sourceCode: tinyBarChartSource,
@@ -87,18 +85,11 @@ const barChartExamples: Record<string, ChartExample> = {
   BarChartHasBackground: {
     Component: BarChartHasBackground,
     sourceCode: barChartHasBackgroundSource,
-    name: 'Bar Chart Has Background',
+    name: 'Bar Chart with background',
   },
   BarChartWithMultiXAxis: {
     Component: BarChartWithMultiXAxis,
     sourceCode: barChartWithMultiXAxisSource,
     name: 'Bar Chart With Multi X Axis',
   },
-  BarChartNoPadding: {
-    Component: BarChartNoPadding,
-    sourceCode: barChartNoPaddingSource,
-    name: 'Bar Chart No Padding',
-  },
 };
-
-export default barChartExamples;

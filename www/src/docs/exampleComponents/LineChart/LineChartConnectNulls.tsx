@@ -1,4 +1,4 @@
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000 },
@@ -13,45 +13,41 @@ const data = [
 export default function Example() {
   return (
     <div style={{ width: '100%' }}>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          width={500}
-          height={200}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        </LineChart>
-      </ResponsiveContainer>
+      <LineChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      </LineChart>
 
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart
-          width={500}
-          height={200}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        </LineChart>
-      </ResponsiveContainer>
+      <LineChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      </LineChart>
     </div>
   );
 }
