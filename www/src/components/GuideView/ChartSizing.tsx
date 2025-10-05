@@ -104,6 +104,15 @@ export function ChartSizing() {
   <Line dataKey="y" />
 </LineChart>`}
       </Highlight>
+      <h2>Usage with flexbox</h2>
+      <p>
+        You can control the chart&apos;s size and behavior using flex properties on the chart&apos;s parent or on the
+        chart component itself (by setting its <code>style</code>).
+      </p>
+      <p>
+        See <Link to={`/${locale}/examples/PieChartInFlexbox`}>this example of a PieChart in a flexbox container</Link>{' '}
+        for a demonstration.
+      </p>
       <h2>Automatic resizing on older Recharts versions</h2>
       <p>
         The <code>responsive</code> prop is only available in Recharts 3.3 and later. If you are using an older version

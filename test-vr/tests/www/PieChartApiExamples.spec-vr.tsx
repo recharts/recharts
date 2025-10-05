@@ -7,6 +7,12 @@ import CustomActiveShapePieChart from '../../../www/src/docs/exampleComponents/P
 import PieChartWithCustomizedLabel from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithCustomizedLabel';
 import PieChartWithPaddingAngle from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithPaddingAngle';
 import PieChartWithNeedle from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithNeedle';
+import PieChartInFlexbox from '../../../www/src/docs/exampleComponents/PieChart/PieChartInFlexbox';
+
+test('PieChartInFlexbox', async ({ mount }) => {
+  const component = await mount(<PieChartInFlexbox />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('PieChartWithNeedle', async ({ mount }) => {
   const component = await mount(<PieChartWithNeedle isAnimationActive={false} />);
