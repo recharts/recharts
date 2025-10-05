@@ -2,7 +2,7 @@ import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router';
 import { useEffect } from 'react';
 
-ReactGA.initialize('G-QSPTT7WK79');
+ReactGA.initialize('G-NSL7FCX8Q3');
 
 export function PageTracker() {
   const location = useLocation();
