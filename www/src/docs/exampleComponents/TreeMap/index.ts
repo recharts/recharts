@@ -4,7 +4,7 @@ import simpleTreemapSource from './SimpleTreemap?raw';
 import customContentTreemapSource from './CustomContentTreemap?raw';
 import { ChartExample } from '../types.ts';
 
-const treeMapExamples: Record<string, ChartExample> = {
+export const treeMapExamples: Record<string, ChartExample> = {
   SimpleTreemap: {
     Component: SimpleTreemap,
     sourceCode: simpleTreemapSource,
@@ -16,5 +16,3 @@ const treeMapExamples: Record<string, ChartExample> = {
     name: 'Custom Content Treemap',
   },
 };
-
-export default treeMapExamples;

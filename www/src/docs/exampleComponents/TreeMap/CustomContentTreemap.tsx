@@ -1,4 +1,4 @@
-import { Treemap, ResponsiveContainer } from 'recharts';
+import { Treemap } from 'recharts';
 import { TreemapNode } from 'recharts/types/chart/Treemap';
 
 const data = [
@@ -167,20 +167,17 @@ const CustomizedContent = (props: TreemapNode) => {
   );
 };
 
-const Example = () => {
+const CustomContentTreemap = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <Treemap
-        width={400}
-        height={200}
-        data={data}
-        dataKey="size"
-        stroke="#fff"
-        fill="#8884d8"
-        content={CustomizedContent}
-      />
-    </ResponsiveContainer>
+    <Treemap
+      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 4 / 3 }}
+      data={data}
+      dataKey="size"
+      stroke="#fff"
+      fill="#8884d8"
+      content={CustomizedContent}
+    />
   );
 };
 
-export default Example;
+export default CustomContentTreemap;
