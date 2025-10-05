@@ -95,7 +95,7 @@ describe('Chart dimensions', () => {
       expect(surface).toHaveAttribute('width', '100');
       expect(surface).toHaveAttribute('height', '200');
       expect(surface).toHaveAttribute('viewBox', '0 0 100 200');
-      expect(surface).toHaveAttribute('style', 'width: 100%; height: 100%;');
+      expect(surface).toHaveStyle({ width: '100%', height: '100%', display: 'block' });
       expect(surface).toHaveAttribute('tabindex', '0');
       expect(surface).toHaveAttribute('role', 'application');
     });
@@ -234,7 +234,7 @@ describe('Chart dimensions', () => {
         expect(surface1).toHaveAttribute('width', '100');
         expect(surface1).toHaveAttribute('height', '200');
         expect(surface1).toHaveAttribute('viewBox', '0 0 100 200');
-        expect(surface1).toHaveAttribute('style', 'width: 100%; height: 100%;');
+        expect(surface1).toHaveStyle({ width: '100%', height: '100%', display: 'block' });
         expect(surface1).toHaveAttribute('tabindex', '0');
         expect(surface1).toHaveAttribute('role', 'application');
 

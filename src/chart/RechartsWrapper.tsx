@@ -375,14 +375,6 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
             style={{
               position: 'relative',
               cursor: 'default',
-              /*
-               * Some charts may render outside their boundaries,
-               * maybe because of a bug or because of rounding errors.
-               * If that happens, and the chart is responsive, it would keep growing forever
-               * to accommodate the chart that always renders a little bit too large.
-               * Let's have overflow hidden here so that the chart size stabilises.
-               */
-              overflow: 'hidden',
               width,
               height,
               ...style,

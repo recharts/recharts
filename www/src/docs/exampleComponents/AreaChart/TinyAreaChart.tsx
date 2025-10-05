@@ -49,6 +49,7 @@ const TinyAreaChart = () => {
   return (
     <AreaChart
       style={{ width: '100%', maxWidth: '300px', maxHeight: '100px', aspectRatio: 1.618 }}
+      responsive
       data={data}
       margin={{
         top: 5,
