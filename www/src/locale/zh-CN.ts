@@ -43,6 +43,8 @@ const map = {
     'getting-started': '起步',
     customize: '组件自定义',
     activeIndex: '活动索引',
+    // chart sizes and layout
+    sizes: '图表尺寸与布局',
   },
   installation: {
     installation: '安装',
