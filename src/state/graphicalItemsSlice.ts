@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './cartesianAxisSlice';
@@ -98,30 +98,45 @@ const graphicalItemsSlice = createSlice({
   name: 'graphicalItems',
   initialState,
   reducers: {
-    addCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
-      state.cartesianItems.push(castDraft(action.payload));
+    addCartesianGraphicalItem: {
+      reducer(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
+        state.cartesianItems.push(castDraft(action.payload));
+      },
+      prepare: prepareAutoBatched<CartesianGraphicalItemSettings>(),
     },
-    replaceCartesianGraphicalItem(state, action: PayloadAction<ReplacePayload<CartesianGraphicalItemSettings>>) {
-      const { prev, next } = action.payload;
-      const index = current(state).cartesianItems.indexOf(castDraft(prev));
-      if (index > -1) {
-        state.cartesianItems[index] = castDraft(next);
-      }
+    replaceCartesianGraphicalItem: {
+      reducer(state, action: PayloadAction<ReplacePayload<CartesianGraphicalItemSettings>>) {
+        const { prev, next } = action.payload;
+        const index = current(state).cartesianItems.indexOf(castDraft(prev));
+        if (index > -1) {
+          state.cartesianItems[index] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<ReplacePayload<CartesianGraphicalItemSettings>>(),
     },
-    removeCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
-      const index = current(state).cartesianItems.indexOf(castDraft(action.payload));
-      if (index > -1) {
-        state.cartesianItems.splice(index, 1);
-      }
+    removeCartesianGraphicalItem: {
+      reducer(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
+        const index = current(state).cartesianItems.indexOf(castDraft(action.payload));
+        if (index > -1) {
+          state.cartesianItems.splice(index, 1);
+        }
+      },
+      prepare: prepareAutoBatched<CartesianGraphicalItemSettings>(),
     },
-    addPolarGraphicalItem(state, action: PayloadAction<PolarGraphicalItemSettings>) {
-      state.polarItems.push(castDraft(action.payload));
+    addPolarGraphicalItem: {
+      reducer(state, action: PayloadAction<PolarGraphicalItemSettings>) {
+        state.polarItems.push(castDraft(action.payload));
+      },
+      prepare: prepareAutoBatched<PolarGraphicalItemSettings>(),
     },
-    removePolarGraphicalItem(state, action: PayloadAction<PolarGraphicalItemSettings>) {
-      const index = current(state).polarItems.indexOf(castDraft(action.payload));
-      if (index > -1) {
-        state.polarItems.splice(index, 1);
-      }
+    removePolarGraphicalItem: {
+      reducer(state, action: PayloadAction<PolarGraphicalItemSettings>) {
+        const index = current(state).polarItems.indexOf(castDraft(action.payload));
+        if (index > -1) {
+          state.polarItems.splice(index, 1);
+        }
+      },
+      prepare: prepareAutoBatched<PolarGraphicalItemSettings>(),
     },
   },
 });

@@ -13,6 +13,8 @@ import scatterChartWithLabelsSource from './ScatterChartWithLabels?raw';
 import multipleYAxesScatterChartSource from './MultipleYAxesScatterChart?raw';
 import scatterChartWithCellsSource from './ScatterChartWithCells?raw';
 import { ChartExample } from '../types.ts';
+import ScatterChartPerformance from './ScatterChartPerformance';
+import scatterChartPerformanceSource from './ScatterChartPerformance?raw';
 
 export const scatterChartExamples: Record<string, ChartExample> = {
   SimpleScatterChart: {
@@ -49,5 +51,10 @@ export const scatterChartExamples: Record<string, ChartExample> = {
     Component: ScatterChartWithCells,
     sourceCode: scatterChartWithCellsSource,
     name: 'Scatter Chart With Cells',
+  },
+  ScatterChartPerformance: {
+    Component: ScatterChartPerformance,
+    sourceCode: scatterChartPerformanceSource,
+    name: 'Scatter Chart with many points (performance test)',
   },
 };

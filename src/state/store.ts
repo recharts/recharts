@@ -1,4 +1,4 @@
-import { Action, combineReducers, configureStore, Dispatch, Store } from '@reduxjs/toolkit';
+import { Action, autoBatchEnhancer, combineReducers, configureStore, Dispatch, Store } from '@reduxjs/toolkit';
 import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
@@ -54,6 +54,32 @@ export const createRechartsStore = (
         externalEventsMiddleware.middleware,
         touchEventMiddleware.middleware,
       ]),
+    /*
+     * I can't find out how to satisfy typescript here.
+     * We return `EnhancerArray<[StoreEnhancer<{}, {}>, StoreEnhancer]>` from this function,
+     * but the types say we should return `EnhancerArray<StoreEnhancer<{}, {}>`.
+     * Looks like it's badly inferred generics, but it won't allow me to provide the correct type manually either.
+     * So let's just ignore the error for now.
+     */
+    // @ts-expect-error mismatched generics
+    enhancers: getDefaultEnhancers => {
+      let enhancers = getDefaultEnhancers;
+      if (typeof getDefaultEnhancers === 'function') {
+        /*
+         * In RTK v2 this is always a function, but in v1 it is an array.
+         * Because we have @types/redux-toolkit v1 as a dependency, typescript is going to flag this as an error.
+         * We support both RTK v1 and v2, so we need to do this check.
+         * https://redux-toolkit.js.org/usage/migrating-rtk-2#configurestoreenhancers-must-be-a-callback
+         */
+        // @ts-expect-error RTK v2 behaviour on RTK v1 types
+        enhancers = getDefaultEnhancers();
+      }
+      return enhancers.concat(
+        autoBatchEnhancer({
+          type: 'raf',
+        }),
+      );
+    },
     devTools: Global.devToolsEnabled && {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,
