@@ -586,6 +586,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "ScatterChartWithCells",
             "url": "/en-US/examples/ScatterChartWithCells",
           },
+          {
+            "displayName": "Scatter Chart with many points (performance test)",
+            "key": "ScatterChartPerformance",
+            "url": "/en-US/examples/ScatterChartPerformance",
+          },
         ],
         "key": "ScatterChart",
       },

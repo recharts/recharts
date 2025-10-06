@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useLayoutEffect } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
@@ -47,7 +47,7 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 function SetXAxisSettings(settings: XAxisSettings): ReactNode {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(addXAxis(settings));
     return () => {
       dispatch(removeXAxis(settings));

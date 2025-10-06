@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useAppDispatch } from './hooks';
 import {
   addCartesianGraphicalItem,
@@ -14,7 +14,7 @@ export function SetCartesianGraphicalItem<T extends CartesianGraphicalItemSettin
   const dispatch = useAppDispatch();
   const prevPropsRef = useRef<T | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (prevPropsRef.current === null) {
       dispatch(addCartesianGraphicalItem(props));
     } else if (prevPropsRef.current !== props) {
@@ -23,7 +23,7 @@ export function SetCartesianGraphicalItem<T extends CartesianGraphicalItemSettin
     prevPropsRef.current = props;
   }, [dispatch, props]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       if (prevPropsRef.current) {
         dispatch(removeCartesianGraphicalItem(prevPropsRef.current));
@@ -50,7 +50,7 @@ export function SetCartesianGraphicalItem<T extends CartesianGraphicalItemSettin
 
 export function SetPolarGraphicalItem(props: PolarGraphicalItemSettings): null {
   const dispatch = useAppDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(addPolarGraphicalItem(props));
     return () => {
       dispatch(removePolarGraphicalItem(props));

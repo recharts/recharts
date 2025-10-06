@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, isValidElement, useEffect, useLayoutEffect, useRef } from 'react';
+import { FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
 import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
@@ -55,7 +55,7 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 
 function SetYAxisSettings(settings: YAxisSettings): null {
   const dispatch = useAppDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(addYAxis(settings));
     return () => {
       dispatch(removeYAxis(settings));

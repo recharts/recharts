@@ -682,15 +682,6 @@ const combineRelevantErrorBarSettings = (
     });
 };
 
-export const selectErrorBarsSettingsExceptStacked: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-) => ReadonlyArray<ErrorBarsSettings> = createSelector(
-  [selectCartesianItemsSettingsExceptStacked, selectAllErrorBarSettings, pickAxisType],
-  combineRelevantErrorBarSettings,
-);
-
 export const selectAllAppliedNumericalValuesIncludingErrorValues: (
   state: RechartsRootState,
   axisType: XorYorZType,

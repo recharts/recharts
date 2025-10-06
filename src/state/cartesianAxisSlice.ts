@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ReactElement, SVGProps } from 'react';
 import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType } from '../util/types';
@@ -107,23 +107,41 @@ const cartesianAxisSlice = createSlice({
   name: 'cartesianAxis',
   initialState,
   reducers: {
-    addXAxis(state, action: PayloadAction<XAxisSettings>) {
-      state.xAxis[action.payload.id] = castDraft(action.payload);
+    addXAxis: {
+      reducer(state, action: PayloadAction<XAxisSettings>) {
+        state.xAxis[action.payload.id] = castDraft(action.payload);
+      },
+      prepare: prepareAutoBatched<XAxisSettings>(),
     },
-    removeXAxis(state, action: PayloadAction<XAxisSettings>) {
-      delete state.xAxis[action.payload.id];
+    removeXAxis: {
+      reducer(state, action: PayloadAction<XAxisSettings>) {
+        delete state.xAxis[action.payload.id];
+      },
+      prepare: prepareAutoBatched<XAxisSettings>(),
     },
-    addYAxis(state, action: PayloadAction<YAxisSettings>) {
-      state.yAxis[action.payload.id] = castDraft(action.payload);
+    addYAxis: {
+      reducer(state, action: PayloadAction<YAxisSettings>) {
+        state.yAxis[action.payload.id] = castDraft(action.payload);
+      },
+      prepare: prepareAutoBatched<YAxisSettings>(),
     },
-    removeYAxis(state, action: PayloadAction<YAxisSettings>) {
-      delete state.yAxis[action.payload.id];
+    removeYAxis: {
+      reducer(state, action: PayloadAction<YAxisSettings>) {
+        delete state.yAxis[action.payload.id];
+      },
+      prepare: prepareAutoBatched<YAxisSettings>(),
     },
-    addZAxis(state, action: PayloadAction<ZAxisSettings>) {
-      state.zAxis[action.payload.id] = castDraft(action.payload);
+    addZAxis: {
+      reducer(state, action: PayloadAction<ZAxisSettings>) {
+        state.zAxis[action.payload.id] = castDraft(action.payload);
+      },
+      prepare: prepareAutoBatched<ZAxisSettings>(),
     },
-    removeZAxis(state, action: PayloadAction<ZAxisSettings>) {
-      delete state.zAxis[action.payload.id];
+    removeZAxis: {
+      reducer(state, action: PayloadAction<ZAxisSettings>) {
+        delete state.zAxis[action.payload.id];
+      },
+      prepare: prepareAutoBatched<ZAxisSettings>(),
     },
     updateYAxisWidth(state, action: PayloadAction<{ id: AxisId; width: number }>) {
       const { id, width } = action.payload;

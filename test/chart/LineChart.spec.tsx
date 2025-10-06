@@ -1863,7 +1863,7 @@ describe('<LineChart /> with dataKey as a function', () => {
     fireEvent.click(screen.getByText('Use data2'));
 
     expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 11);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 7);
 
     expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
