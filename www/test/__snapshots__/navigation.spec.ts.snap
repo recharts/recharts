@@ -27,6 +27,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "activeIndex",
             "url": "/en-US/guide/activeIndex",
           },
+          {
+            "displayName": "Chart size",
+            "key": "sizes",
+            "url": "/en-US/guide/sizes",
+          },
         ],
         "key": "guide",
       },
@@ -608,11 +613,6 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/examples/StraightAnglePieChart",
           },
           {
-            "displayName": "Two Simple Pie Chart",
-            "key": "TwoSimplePieChart",
-            "url": "/en-US/examples/TwoSimplePieChart",
-          },
-          {
             "displayName": "Custom Active Shape Pie Chart",
             "key": "CustomActiveShapePieChart",
             "url": "/en-US/examples/CustomActiveShapePieChart",
@@ -623,7 +623,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/examples/PieChartWithCustomizedLabel",
           },
           {
-            "displayName": "Pie Chart With Padding Angle",
+            "displayName": "Pie Chart with gap and rounded corners",
             "key": "PieChartWithPaddingAngle",
             "url": "/en-US/examples/PieChartWithPaddingAngle",
           },
@@ -631,6 +631,16 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "displayName": "Pie Chart With Needle",
             "key": "PieChartWithNeedle",
             "url": "/en-US/examples/PieChartWithNeedle",
+          },
+          {
+            "displayName": "Pie Chart in Flexbox",
+            "key": "PieChartInFlexbox",
+            "url": "/en-US/examples/PieChartInFlexbox",
+          },
+          {
+            "displayName": "Pie Chart in Grid",
+            "key": "PieChartInGrid",
+            "url": "/en-US/examples/PieChartInGrid",
           },
         ],
         "key": "PieChart",

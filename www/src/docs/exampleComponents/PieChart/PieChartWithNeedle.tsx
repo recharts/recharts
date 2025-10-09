@@ -1,15 +1,15 @@
-import { Cell, Pie, PieChart } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 
 const RADIAN = Math.PI / 180;
 const chartData = [
-  { name: 'A', value: 80, color: '#ff0000' },
-  { name: 'B', value: 45, color: '#00ff00' },
-  { name: 'C', value: 25, color: '#0000ff' },
+  { name: 'A', value: 80, fill: '#ff0000' },
+  { name: 'B', value: 45, fill: '#00ff00' },
+  { name: 'C', value: 25, fill: '#0000ff' },
 ];
 
 type Needle = {
   value: number;
-  data: { name: string; value: number; color: string }[];
+  data: { name: string; value: number; fill: string }[];
   cx: number;
   cy: number;
   iR: number;
@@ -44,15 +44,15 @@ const needle = ({ value, data, cx, cy, iR, oR, color }: Needle) => {
   ];
 };
 
-export default function Example() {
-  const cx = 150;
-  const cy = 200;
+export default function PieChartWithNeedle({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  const cx = 100;
+  const cy = 100;
   const iR = 50;
   const oR = 100;
   const value = 50;
 
   return (
-    <PieChart width={400} height={500}>
+    <PieChart width={210} height={120} style={{ margin: '0 auto' }}>
       <Pie
         dataKey="value"
         startAngle={180}
@@ -64,11 +64,8 @@ export default function Example() {
         outerRadius={oR}
         fill="#8884d8"
         stroke="none"
-      >
-        {chartData.map(entry => (
-          <Cell key={`cell-${entry.name}`} fill={entry.color} />
-        ))}
-      </Pie>
+        isAnimationActive={isAnimationActive}
+      />
       {needle({ value, data: chartData, cx, cy, iR, oR, color: '#d0d000' })}
     </PieChart>
   );

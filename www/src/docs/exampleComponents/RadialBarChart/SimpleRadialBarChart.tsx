@@ -1,4 +1,4 @@
-import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
+import { RadialBarChart, RadialBar, Legend } from 'recharts';
 
 const data = [
   {
@@ -38,7 +38,7 @@ const data = [
     fill: '#d0ed57',
   },
   {
-    name: 'unknow',
+    name: 'unknown',
     uv: 6.67,
     pv: 4800,
     fill: '#ffc658',
@@ -52,15 +52,19 @@ const style = {
   lineHeight: '24px',
 };
 
-const Example = () => {
+const SimpleRadialBarChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={data}>
-        <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="uv" />
-        <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
-      </RadialBarChart>
-    </ResponsiveContainer>
+    <RadialBarChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '80vh', aspectRatio: 1.618 }}
+      responsive
+      cx="30%"
+      barSize={14}
+      data={data}
+    >
+      <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="uv" />
+      <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
+    </RadialBarChart>
   );
 };
 
-export default Example;
+export default SimpleRadialBarChart;

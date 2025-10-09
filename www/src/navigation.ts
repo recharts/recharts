@@ -3,6 +3,7 @@ import { SupportedLocale } from './locale';
 import { localeGet, useLocale } from './utils/LocaleUtils.ts';
 import { apiCates } from './docs/apiCates.ts';
 import { allExamples } from './docs/exampleComponents';
+import { allGuides } from './views/GuideView.tsx';
 
 /**
  * Represents a single navigation link in the navigation menu.
@@ -49,8 +50,6 @@ export type NavCategory = {
 };
 
 export type Navigation = ReadonlyArray<NavItem>;
-
-const allGuides: ReadonlyArray<string> = ['installation', 'getting-started', 'customize', 'activeIndex'];
 
 function guideNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
   const items = allGuides.map(name => ({

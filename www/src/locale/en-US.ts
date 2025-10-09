@@ -43,6 +43,7 @@ const map = {
     'getting-started': 'Getting Started',
     customize: 'Customize',
     activeIndex: 'Active Index',
+    sizes: 'Chart size',
   },
   installation: {
     installation: 'Installation',

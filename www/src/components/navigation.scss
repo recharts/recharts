@@ -76,6 +76,7 @@
         display: inline-block;
         height: 61px;
         font-size: variables.$font-size-lg;
+        text-decoration: none;
 
         &.active {
           color: variables.$brand-primary;

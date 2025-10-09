@@ -4,15 +4,17 @@ import { getLocaleType } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ActiveIndex } from '../components/GuideView/ActiveIndex.tsx';
+import { ChartSizing } from '../components/GuideView/ChartSizing.tsx';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
   'getting-started': GettingStarted,
   customize: Customize,
   activeIndex: ActiveIndex,
+  sizes: ChartSizing,
 };
 
-const allGuides = Object.keys(guideMap);
+export const allGuides = Object.keys(guideMap);
 
 function Guide({ locale, page }: { locale: SupportedLocale; page: string }) {
   const GuideComponent = guideMap[page];

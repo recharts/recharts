@@ -114,9 +114,6 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
         };
         const observer = new ResizeObserver(callback);
         observer.observe(node);
-        if (observerRef.current != null) {
-          observerRef.current.disconnect();
-        }
         observerRef.current = observer;
       }
     },

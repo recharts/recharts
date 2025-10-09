@@ -50,12 +50,10 @@ textarea {
 
 a {
   color: variables.$link-color;
-  text-decoration: none;
 
   &:hover,
   &:focus {
     color: variables.$link-color-hover;
-    text-decoration: none;
   }
 
   &:focus {
