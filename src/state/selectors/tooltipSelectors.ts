@@ -82,6 +82,8 @@ import { selectTooltipAxis, selectTooltipAxisDataKey } from './selectTooltipAxis
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
+import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
+import { arrayEqualityCheck } from './arrayEqualityCheck';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -102,6 +104,11 @@ const selectTooltipAxisPredicate = createSelector([selectTooltipAxisType, select
 export const selectAllGraphicalItemsSettings = createSelector(
   [selectAllUnfilteredGraphicalItems, selectTooltipAxis, selectTooltipAxisPredicate],
   combineGraphicalItemsSettings,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: arrayEqualityCheck,
+    },
+  },
 );
 
 const selectAllStackedGraphicalItemsSettings: (
@@ -114,6 +121,11 @@ const selectAllStackedGraphicalItemsSettings: (
 export const selectTooltipGraphicalItemsData = createSelector(
   [selectAllGraphicalItemsSettings],
   combineGraphicalItemsData,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: arrayEqualityCheck,
+    },
+  },
 );
 
 /**
@@ -180,6 +192,11 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (state: Recha
       selectTooltipAxisType,
     ],
     combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
+    {
+      memoizeOptions: {
+        resultEqualityCheck: numberDomainEqualityCheck,
+      },
+    },
   );
 
 const selectReferenceDotsByTooltipAxis: (state: RechartsRootState) => ReadonlyArray<ReferenceDotSettings> | undefined =

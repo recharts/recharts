@@ -76,6 +76,8 @@ import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
+import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
+import { arrayEqualityCheck } from './arrayEqualityCheck';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -336,6 +338,11 @@ export const selectCartesianItemsSettings: (
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
   [selectUnfilteredCartesianItems, selectBaseAxis, selectAxisPredicate],
   combineGraphicalItemsSettings,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: arrayEqualityCheck,
+    },
+  },
 );
 
 export const selectStackedCartesianItemsSettings: (
@@ -379,7 +386,11 @@ export const selectCartesianGraphicalItemsData: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => ChartData = createSelector([selectCartesianItemsSettings], combineGraphicalItemsData);
+) => ChartData = createSelector([selectCartesianItemsSettings], combineGraphicalItemsData, {
+  memoizeOptions: {
+    resultEqualityCheck: arrayEqualityCheck,
+  },
+});
 
 export const combineDisplayedData = (
   graphicalItemsData: ChartData,
@@ -708,6 +719,11 @@ export const selectDomainFromUserPreference: (
 export const selectDomainOfStackGroups = createSelector(
   [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
   combineDomainOfStackGroups,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: numberDomainEqualityCheck,
+    },
+  },
 );
 
 export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
@@ -746,27 +762,30 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
   items: ReadonlyArray<GraphicalItemSettings>,
   errorBars: ErrorBarsState,
   axisType: XorYorZType,
-): NumberDomain => {
-  let result: NumberDomain | undefined;
+): NumberDomain | undefined => {
+  let lowerEnd: number | undefined, upperEnd: number | undefined;
   if (items.length > 0) {
     data.forEach(entry => {
       items.forEach(item => {
         const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
           isErrorBarRelevantForAxisType(axisType, errorBar),
         );
-        const errorDomain = getErrorDomainByDataKey(
-          entry,
-          getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey),
-          relevantErrorBars,
-        );
+        const valueByDataKey = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+        const errorDomain = getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars);
         if (errorDomain.length >= 2) {
-          result = mergeDomains(result, errorDomain);
+          const localLower = Math.min(...errorDomain);
+          const localUpper = Math.max(...errorDomain);
+          if (lowerEnd == null || localLower < lowerEnd) {
+            lowerEnd = localLower;
+          }
+          if (upperEnd == null || localUpper > upperEnd) {
+            upperEnd = localUpper;
+          }
         }
-        const dataValueDomain: NumberDomain | undefined = makeDomain(
-          getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey),
-        );
+        const dataValueDomain: NumberDomain | undefined = makeDomain(valueByDataKey);
         if (dataValueDomain != null) {
-          result = mergeDomains(result, dataValueDomain);
+          lowerEnd = lowerEnd == null ? dataValueDomain[0] : Math.min(lowerEnd, dataValueDomain[0]);
+          upperEnd = upperEnd == null ? dataValueDomain[1] : Math.max(upperEnd, dataValueDomain[1]);
         }
       });
     });
@@ -775,12 +794,16 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
     data.forEach(item => {
       const dataValueDomain: NumberDomain | undefined = makeDomain(getValueByDataKey(item, axisSettings.dataKey));
       if (dataValueDomain != null) {
-        result = mergeDomains(result, dataValueDomain);
+        lowerEnd = lowerEnd == null ? dataValueDomain[0] : Math.min(lowerEnd, dataValueDomain[0]);
+        upperEnd = upperEnd == null ? dataValueDomain[1] : Math.max(upperEnd, dataValueDomain[1]);
       }
     });
   }
 
-  return result;
+  if (isWellBehavedNumber(lowerEnd) && isWellBehavedNumber(upperEnd)) {
+    return [lowerEnd, upperEnd];
+  }
+  return undefined;
 };
 
 const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
@@ -797,6 +820,11 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     pickAxisType,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: numberDomainEqualityCheck,
+    },
+  },
 );
 
 function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date | undefined {
@@ -948,8 +976,7 @@ export const combineNumericalDomain = (
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
     : mergeDomains(referenceElementsDomain, dataAndErrorBarsDomain);
 
-  const numbers = parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
-  return numbers;
+  return parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
 };
 
 export const selectNumericalDomain: (
@@ -969,6 +996,11 @@ export const selectNumericalDomain: (
     pickAxisType,
   ],
   combineNumericalDomain,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: numberDomainEqualityCheck,
+    },
+  },
 );
 
 /**
