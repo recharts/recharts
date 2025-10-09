@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
@@ -265,14 +265,20 @@ const tooltipSlice = createSlice({
   name: 'tooltip',
   initialState,
   reducers: {
-    addTooltipEntrySettings(state, action: PayloadAction<TooltipPayloadConfiguration>) {
-      state.tooltipItemPayloads.push(castDraft(action.payload));
+    addTooltipEntrySettings: {
+      reducer(state, action: PayloadAction<TooltipPayloadConfiguration>) {
+        state.tooltipItemPayloads.push(castDraft(action.payload));
+      },
+      prepare: prepareAutoBatched<TooltipPayloadConfiguration>(),
     },
-    removeTooltipEntrySettings(state, action: PayloadAction<TooltipPayloadConfiguration>) {
-      const index = current(state).tooltipItemPayloads.indexOf(castDraft(action.payload));
-      if (index > -1) {
-        state.tooltipItemPayloads.splice(index, 1);
-      }
+    removeTooltipEntrySettings: {
+      reducer(state, action: PayloadAction<TooltipPayloadConfiguration>) {
+        const index = current(state).tooltipItemPayloads.indexOf(castDraft(action.payload));
+        if (index > -1) {
+          state.tooltipItemPayloads.splice(index, 1);
+        }
+      },
+      prepare: prepareAutoBatched<TooltipPayloadConfiguration>(),
     },
     setTooltipSettingsState(state, action: PayloadAction<TooltipSettingsState>) {
       state.settings = action.payload;
