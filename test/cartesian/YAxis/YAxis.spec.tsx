@@ -21,7 +21,12 @@ import {
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
 import { pageData, rangeData } from '../../../storybook/stories/data';
 import { useAppSelector } from '../../../src/state/hooks';
-import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../../src/state/selectors/axisSelectors';
+import {
+  implicitYAxis,
+  selectAxisDomain,
+  selectAxisSettings,
+  selectNumericalDomain,
+} from '../../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { expectYAxisTicks } from '../../helper/expectAxisTicks';
 import { IfOverflow } from '../../../src/util/IfOverflow';
@@ -29,6 +34,7 @@ import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 
 describe('<YAxis />', () => {
   const data = [
@@ -54,15 +60,8 @@ describe('<YAxis />', () => {
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(3);
   });
 
-  it('should render ticks from Area with range', () => {
-    const domainSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
-      domainSpy(domain);
-      return null;
-    };
-    const { container } = render(
+  describe('Area with range', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <AreaChart
         width={500}
         height={400}
@@ -78,38 +77,50 @@ describe('<YAxis />', () => {
         <YAxis />
         <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
         <Tooltip defaultIndex={4} active />
-        <Comp />
-      </AreaChart>,
-    );
+        {children}
+      </AreaChart>
+    ));
 
-    expectYAxisTicks(container, [
-      {
-        textContent: '-6',
-        x: '52',
-        y: '370',
-      },
-      {
-        textContent: '0',
-        x: '52',
-        y: '280',
-      },
-      {
-        textContent: '6',
-        x: '52',
-        y: '190',
-      },
-      {
-        textContent: '12',
-        x: '52',
-        y: '100',
-      },
-      {
-        textContent: '18',
-        x: '52',
-        y: '10',
-      },
-    ]);
-    expect(domainSpy).toHaveBeenLastCalledWith([-3, 16]);
+    it('should render YAxis ticks', () => {
+      const { container } = renderTestCase();
+      expectYAxisTicks(container, [
+        {
+          textContent: '-6',
+          x: '52',
+          y: '370',
+        },
+        {
+          textContent: '0',
+          x: '52',
+          y: '280',
+        },
+        {
+          textContent: '6',
+          x: '52',
+          y: '190',
+        },
+        {
+          textContent: '12',
+          x: '52',
+          y: '100',
+        },
+        {
+          textContent: '18',
+          x: '52',
+          y: '10',
+        },
+      ]);
+    });
+
+    it('should select numerical domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [-3, 16]);
+    });
+
+    it('should select final domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [-3, 16]);
+    });
   });
 
   it('Should render 5 ticks', () => {
@@ -520,35 +531,50 @@ describe('<YAxis />', () => {
     expect(ticks).toHaveLength(0);
   });
 
-  it('Render 4 ticks', () => {
-    const { container } = render(
+  describe('in simple AreaChart', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" ticks={[0, 400, 800, 1200]} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    expectYAxisTicks(container, [
-      {
-        textContent: '0',
-        x: '57',
-        y: '395',
-      },
-      {
-        textContent: '400',
-        x: '57',
-        y: '265.00000000000006',
-      },
-      {
-        textContent: '800',
-        x: '57',
-        y: '135.00000000000003',
-      },
-      {
-        textContent: '1200',
-        x: '57',
-        y: '5',
-      },
-    ]);
+        {children}
+      </AreaChart>
+    ));
+
+    it('should select numerical domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 1200]);
+    });
+
+    it('should select domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 1200]);
+    });
+
+    it('should render ticks', () => {
+      const { container } = renderTestCase();
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '400',
+          x: '57',
+          y: '265.00000000000006',
+        },
+        {
+          textContent: '800',
+          x: '57',
+          y: '135.00000000000003',
+        },
+        {
+          textContent: '1200',
+          x: '57',
+          y: '5',
+        },
+      ]);
+    });
   });
 
   it('Should pass data, index, and event to the onClick event handler', () => {

@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import range from 'es-toolkit/compat/range';
 import * as d3Scales from 'victory-vendor/d3-scale';
+import { isNotNil } from 'es-toolkit';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   checkDomainOfScale,
@@ -506,11 +507,33 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
   return undefined;
 }
 
+function makeNumber(val: unknown): number | undefined {
+  if (isNumOrStr(val) || val instanceof Date) {
+    const n = Number(val);
+    if (isWellBehavedNumber(n)) {
+      return n;
+    }
+  }
+  return undefined;
+}
+
+function makeDomain(val: unknown): NumberDomain | undefined {
+  if (Array.isArray(val)) {
+    const attempt = [makeNumber(val[0]), makeNumber(val[1])];
+    if (isWellFormedNumberDomain(attempt)) {
+      return attempt;
+    }
+    return undefined;
+  }
+  const n = makeNumber(val);
+  if (n == null) {
+    return undefined;
+  }
+  return [n, n];
+}
+
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
-  return data
-    .filter(v => isNumOrStr(v) || v instanceof Date)
-    .map(Number)
-    .filter(n => isNan(n) === false);
+  return data.map(makeNumber).filter(isNotNil);
 }
 
 /**
@@ -614,7 +637,12 @@ export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
   { dataStartIndex, dataEndIndex }: ChartDataState,
   axisType: XorYorZType,
+  domainFromUserPreference: NumberDomain | undefined,
 ): NumberDomain | undefined => {
+  if (domainFromUserPreference != null) {
+    // User has specified a domain, so we respect that and we can skip computing anything else
+    return undefined;
+  }
   if (axisType === 'zAxis') {
     // ZAxis ignores stacks
     return undefined;
@@ -626,122 +654,8 @@ export const combineDomainOfStackGroups = (
   return domainOfStackGroups;
 };
 
-export const selectDomainOfStackGroups = createSelector(
-  [selectStackGroups, selectChartDataWithIndexes, pickAxisType],
-  combineDomainOfStackGroups,
-);
-
-export const combineAppliedNumericalValuesIncludingErrorValues = (
-  data: ChartData,
-  axisSettings: BaseCartesianAxis,
-  items: ReadonlyArray<CartesianGraphicalItemSettings>,
-  errorBars: ErrorBarsState,
-  axisType: XorYorZType,
-): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
-  if (items.length > 0) {
-    return data
-      .flatMap(entry => {
-        return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-          const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
-            isErrorBarRelevantForAxisType(axisType, errorBar),
-          );
-          const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
-          return {
-            value: valueByDataKey,
-            errorDomain: getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars),
-          };
-        });
-      })
-      .filter(Boolean);
-  }
-  if (axisSettings?.dataKey != null) {
-    return data.map(
-      (item): AppliedChartDataWithErrorDomain => ({
-        value: getValueByDataKey(item, axisSettings.dataKey),
-        errorDomain: [],
-      }),
-    );
-  }
-  return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
-};
-
-export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
-
-const combineRelevantErrorBarSettings = (
-  cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
-  allErrorBarSettings: ErrorBarsState,
-  axisType: XorYType,
-): ReadonlyArray<ErrorBarsSettings> => {
-  return cartesianItemsSettings
-    .flatMap(item => {
-      return allErrorBarSettings[item.id];
-    })
-    .filter(Boolean)
-    .filter(e => {
-      return isErrorBarRelevantForAxisType(axisType, e);
-    });
-};
-
-export const selectAllAppliedNumericalValuesIncludingErrorValues: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-  isPanorama: boolean,
-) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
-  [
-    selectDisplayedData,
-    selectBaseAxis,
-    selectCartesianItemsSettingsExceptStacked,
-    selectAllErrorBarSettings,
-    pickAxisType,
-  ],
-  combineAppliedNumericalValuesIncludingErrorValues,
-);
-
-function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date | undefined {
-  const { value } = item;
-  if (isNumOrStr(value) || value instanceof Date) {
-    return value;
-  }
-  return undefined;
-}
-
-const computeNumericalDomain = (
-  dataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
-): NumberDomain | undefined => {
-  const allDataSquished = dataWithErrorDomains
-    // This flatMap has to be flat because we're creating a new array in the return value
-    .flatMap(d => [d.value, d.errorDomain])
-    // This flat is needed because a) errorDomain is an array, and b) value may be a number, or it may be a range (for Area, for example)
-    .flat(1);
-  const onlyNumbers = onlyAllowNumbers(allDataSquished);
-  if (onlyNumbers.length === 0) {
-    return undefined;
-  }
-  return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
-};
-
-const computeDomainOfTypeCategory = (
-  allDataSquished: AppliedChartData,
-  axisSettings: BaseCartesianAxis,
-  isCategorical: boolean,
-): CategoricalDomain => {
-  const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates).filter(v => v != null);
-  if (
-    isCategorical &&
-    (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain)))
-  ) {
-    /*
-     * 1. In an absence of dataKey, Recharts will use array indexes as its categorical domain
-     * 2. When category axis has duplicated text, serial numbers are used to generate scale
-     */
-    return range(0, allDataSquished.length);
-  }
-  if (axisSettings.allowDuplicatedCategory) {
-    return categoricalDomain;
-  }
-  return Array.from(new Set(categoricalDomain));
-};
+const selectAllowsDataOverflow: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => boolean =
+  createSelector([selectBaseAxis], axisSettings => axisSettings.allowDataOverflow);
 
 export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDomain => {
   if (axisSettings == null || !('domain' in axisSettings)) {
@@ -763,7 +677,59 @@ export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDo
   return axisSettings?.domain ?? defaultNumericDomain;
 };
 
-export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>): NumberDomain | undefined => {
+export const selectDomainDefinition: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
+
+/**
+ * Under certain circumstances, we can determine the domain without looking at the data at all.
+ * This is the case when the domain is explicitly specified as numbers, or when it is specified
+ * as 'auto' or 'dataMin'/'dataMax' and data overflow is not allowed.
+ *
+ * In that case, this function will return the domain, otherwise it returns undefined.
+ *
+ * This is an optimization to avoid unnecessary data processing.
+ * @param state
+ * @param axisType
+ * @param axisId
+ * @param isPanorama
+ */
+export const selectDomainFromUserPreference: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => NumberDomain | undefined = createSelector(
+  [selectDomainDefinition, selectAllowsDataOverflow],
+  numericalDomainSpecifiedWithoutRequiringData,
+);
+
+export const selectDomainOfStackGroups = createSelector(
+  [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
+  combineDomainOfStackGroups,
+);
+
+export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
+
+const combineRelevantErrorBarSettings = (
+  cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
+  allErrorBarSettings: ErrorBarsState,
+  axisType: XorYType,
+): ReadonlyArray<ErrorBarsSettings> => {
+  return cartesianItemsSettings
+    .flatMap(item => {
+      return allErrorBarSettings[item.id];
+    })
+    .filter(Boolean)
+    .filter(e => {
+      return isErrorBarRelevantForAxisType(axisType, e);
+    });
+};
+
+export const mergeDomains = (
+  ...domains: ReadonlyArray<ReadonlyArray<number> | undefined>
+): NumberDomain | undefined => {
   const allDomains = domains.filter(Boolean);
   if (allDomains.length === 0) {
     return undefined;
@@ -772,6 +738,95 @@ export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>
   const min = Math.min(...allValues);
   const max = Math.max(...allValues);
   return [min, max];
+};
+
+export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
+  data: ChartData,
+  axisSettings: BaseCartesianAxis,
+  items: ReadonlyArray<GraphicalItemSettings>,
+  errorBars: ErrorBarsState,
+  axisType: XorYorZType,
+): NumberDomain => {
+  let result: NumberDomain | undefined;
+  if (items.length > 0) {
+    data.forEach(entry => {
+      items.forEach(item => {
+        const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
+          isErrorBarRelevantForAxisType(axisType, errorBar),
+        );
+        const errorDomain = getErrorDomainByDataKey(
+          entry,
+          getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey),
+          relevantErrorBars,
+        );
+        if (errorDomain.length >= 2) {
+          result = mergeDomains(result, errorDomain);
+        }
+        const dataValueDomain: NumberDomain | undefined = makeDomain(
+          getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey),
+        );
+        if (dataValueDomain != null) {
+          result = mergeDomains(result, dataValueDomain);
+        }
+      });
+    });
+  }
+  if (axisSettings?.dataKey != null) {
+    data.forEach(item => {
+      const dataValueDomain: NumberDomain | undefined = makeDomain(getValueByDataKey(item, axisSettings.dataKey));
+      if (dataValueDomain != null) {
+        result = mergeDomains(result, dataValueDomain);
+      }
+    });
+  }
+
+  return result;
+};
+
+const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => NumberDomain | undefined = createSelector(
+  [
+    selectDisplayedData,
+    selectBaseAxis,
+    selectCartesianItemsSettingsExceptStacked,
+    selectAllErrorBarSettings,
+    pickAxisType,
+  ],
+  combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
+);
+
+function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date | undefined {
+  const { value } = item;
+  if (isNumOrStr(value) || value instanceof Date) {
+    return value;
+  }
+  return undefined;
+}
+
+const computeDomainOfTypeCategory = (
+  allDataSquished: AppliedChartData,
+  axisSettings: BaseCartesianAxis,
+  isCategorical: boolean,
+): CategoricalDomain => {
+  const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates).filter(v => v != null);
+  if (
+    isCategorical &&
+    (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain)))
+  ) {
+    /*
+     * 1. In an absence of dataKey, Recharts will use array indexes as its categorical domain
+     * 2. When category axis has duplicated text, serial numbers are used to generate scale
+     */
+    return range(0, allDataSquished.length);
+  }
+  if (axisSettings.allowDuplicatedCategory) {
+    return categoricalDomain;
+  }
+  return Array.from(new Set(categoricalDomain));
 };
 
 export const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
@@ -871,25 +926,16 @@ const selectReferenceElementsDomain = createSelector(
   },
 );
 
-export const selectDomainDefinition: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
-
 export const combineNumericalDomain = (
   axisSettings: BaseCartesianAxis,
   domainDefinition: AxisDomain | undefined,
+  domainFromUserPreference: NumberDomain | undefined,
   domainOfStackGroups: NumberDomain | undefined,
-  allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
+  dataAndErrorBarsDomain: NumberDomain | undefined,
   referenceElementsDomain: NumberDomain | undefined,
   layout: LayoutType,
   axisType: XorYorZType,
 ): NumberDomain | undefined => {
-  const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
-    domainDefinition,
-    axisSettings.allowDataOverflow,
-  );
   if (domainFromUserPreference != null) {
     // We're done! No need to compute anything else.
     return domainFromUserPreference;
@@ -899,10 +945,11 @@ export const combineNumericalDomain = (
     (layout === 'vertical' && axisType === 'xAxis') || (layout === 'horizontal' && axisType === 'yAxis');
 
   const mergedDomains = shouldIncludeDomainOfStackGroups
-    ? mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains))
-    : mergeDomains(referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains));
+    ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
+    : mergeDomains(referenceElementsDomain, dataAndErrorBarsDomain);
 
-  return parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
+  const numbers = parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
+  return numbers;
 };
 
 export const selectNumericalDomain: (
@@ -914,8 +961,9 @@ export const selectNumericalDomain: (
   [
     selectBaseAxis,
     selectDomainDefinition,
+    selectDomainFromUserPreference,
     selectDomainOfStackGroups,
-    selectAllAppliedNumericalValuesIncludingErrorValues,
+    selectDomainOfAllAppliedNumericalValuesIncludingErrorValues,
     selectReferenceElementsDomain,
     selectChartLayout,
     pickAxisType,

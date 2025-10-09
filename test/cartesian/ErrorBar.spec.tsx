@@ -6,13 +6,12 @@ import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-h
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
-import {
-  selectAllAppliedNumericalValuesIncludingErrorValues,
-  selectAxisDomainIncludingNiceTicks,
-} from '../../src/state/selectors/axisSelectors';
+import { selectAxisDomainIncludingNiceTicks, selectNumericalDomain } from '../../src/state/selectors/axisSelectors';
 import { expectBars } from '../helper/expectBars';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedErrorBarLine = {
   x1: string;
@@ -2354,7 +2353,7 @@ describe('<ErrorBar />', () => {
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
     });
 
-    it('should extend domains to negative values', () => {
+    describe('should extend domains to negative values', () => {
       const data = [
         { x: 100, y: 200, errorY: 30, errorX: 30 },
         { x: 120, y: 100, errorY: [500, 30], errorX: [200, 30] },
@@ -2363,21 +2362,7 @@ describe('<ErrorBar />', () => {
         { x: 150, y: 400, errorY: [20, 300], errorX: 30 },
         { x: 110, y: 280, errorY: 40, errorX: 40 },
       ];
-
-      const xValuesSpy = vi.fn();
-      const yValuesSpy = vi.fn();
-
-      const Comp = (): null => {
-        const isPanorama = useIsPanorama();
-        xValuesSpy(
-          useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'xAxis', 0, isPanorama)),
-        );
-        yValuesSpy(
-          useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
-        );
-        return null;
-      };
-      const { container } = render(
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <ScatterChart
           width={400}
           height={400}
@@ -2394,118 +2379,85 @@ describe('<ErrorBar />', () => {
             <ErrorBar dataKey="errorX" direction="x" />
             <ErrorBar dataKey="errorY" direction="y" />
           </Scatter>
+          {children}
+        </ScatterChart>
+      ));
 
-          <Comp />
-        </ScatterChart>,
-      );
+      it('should select XAxis domain', () => {
+        const { spy } = renderTestCase(state => selectNumericalDomain(state, 'xAxis', 0, false));
+        // lowest X is 120, with 200 error on the left, so -80
+        // highest X is 170, with 20 error on the right, so 190
+        expectLastCalledWith(spy, [-80, 190]);
+      });
 
-      expect(xValuesSpy).toHaveBeenLastCalledWith([
-        {
-          errorDomain: [70, 130],
-          value: 100,
-        },
-        {
-          errorDomain: [-80, 150],
-          value: 120,
-        },
-        {
-          errorDomain: [150, 190],
-          value: 170,
-        },
-        {
-          errorDomain: [120, 160],
-          value: 140,
-        },
-        {
-          errorDomain: [120, 180],
-          value: 150,
-        },
-        {
-          errorDomain: [70, 150],
-          value: 110,
-        },
-      ]);
-      expect(yValuesSpy).toHaveBeenLastCalledWith([
-        {
-          errorDomain: [170, 230],
-          value: 200,
-        },
-        {
-          errorDomain: [-400, 130],
-          value: 100,
-        },
-        {
-          errorDomain: [290, 320],
-          value: 300,
-        },
-        {
-          errorDomain: [220, 280],
-          value: 250,
-        },
-        {
-          errorDomain: [380, 700],
-          value: 400,
-        },
-        {
-          errorDomain: [240, 320],
-          value: 280,
-        },
-      ]);
-      expectXAxisTicks(container, [
-        {
-          textContent: '-80',
-          x: '80',
-          y: '358',
-        },
-        {
-          textContent: '0',
-          x: '155',
-          y: '358',
-        },
-        {
-          textContent: '80',
-          x: '230',
-          y: '358',
-        },
-        {
-          textContent: '160',
-          x: '305',
-          y: '358',
-        },
-        {
-          textContent: '240',
-          x: '380',
-          y: '358',
-        },
-      ]);
+      it('should select YAxis domain', () => {
+        const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+        // lowest Y is 100, with 500 error on the bottom, so -400
+        // highest Y is 400, with 300 error on the top, so 700
+        expectLastCalledWith(spy, [-400, 700]);
+      });
 
-      expectYAxisTicks(container, [
-        {
-          textContent: '-700',
-          x: '72',
-          y: '350',
-        },
-        {
-          textContent: '-350',
-          x: '72',
-          y: '267.5',
-        },
-        {
-          textContent: '0',
-          x: '72',
-          y: '185',
-        },
-        {
-          textContent: '350',
-          x: '72',
-          y: '102.5',
-        },
-        {
-          textContent: '700',
-          x: '72',
-          y: '20',
-        },
-      ]);
+      it('should render XAxis ticks', () => {
+        const { container } = renderTestCase();
+        expectXAxisTicks(container, [
+          {
+            textContent: '-80',
+            x: '80',
+            y: '358',
+          },
+          {
+            textContent: '0',
+            x: '155',
+            y: '358',
+          },
+          {
+            textContent: '80',
+            x: '230',
+            y: '358',
+          },
+          {
+            textContent: '160',
+            x: '305',
+            y: '358',
+          },
+          {
+            textContent: '240',
+            x: '380',
+            y: '358',
+          },
+        ]);
+      });
+
+      it('should render YAxis ticks', () => {
+        const { container } = renderTestCase();
+        expectYAxisTicks(container, [
+          {
+            textContent: '-700',
+            x: '72',
+            y: '350',
+          },
+          {
+            textContent: '-350',
+            x: '72',
+            y: '267.5',
+          },
+          {
+            textContent: '0',
+            x: '72',
+            y: '185',
+          },
+          {
+            textContent: '350',
+            x: '72',
+            y: '102.5',
+          },
+          {
+            textContent: '700',
+            x: '72',
+            y: '20',
+          },
+        ]);
+      });
     });
   });
 });
