@@ -52,4 +52,6 @@ function main() {
   updateFileVersion('.github/workflows/ci.yml', newVersion);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
