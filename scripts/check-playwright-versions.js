@@ -74,6 +74,8 @@ function main() {
   }
 }
 
-main();
-
 exports.dockerImageRegex = dockerImageRegex;
+
+if (require.main === module) {
+  main();
+}
