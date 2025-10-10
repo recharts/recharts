@@ -1,11 +1,11 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
-import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { Funnel, FunnelChart } from '../../src';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
 
 const data = [
   { value: 100, name: '展现' },
@@ -33,7 +33,7 @@ const data02 = [
 
 describe('<FunnelChart />', () => {
   test('Renders 1 funnel in simple FunnelChart', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive={false} />
       </FunnelChart>,
@@ -46,24 +46,22 @@ describe('<FunnelChart />', () => {
     });
   });
 
-  test('Renders 1 funnel in FunnelChart with animation', () => {
-    mockAnimation();
-
-    const { container } = render(
+  test('Renders 1 funnel in FunnelChart with animation', async () => {
+    const { container, animationManager } = rechartsTestRender(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive animationDuration={1} />
       </FunnelChart>,
     );
 
+    await animationManager.completeAnimation();
+
     expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
     // all trapezoids are visible
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(5);
-
-    cleanupMockAnimation();
   });
 
   test('Renders 2 funnel in nest FunnelChart', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <FunnelChart margin={{ top: 20, right: 50, left: 20, bottom: 0 }} width={500} height={300}>
         <Funnel dataKey="value" data={data01} isAnimationActive={false} />
         <Funnel dataKey="value" data={data02} isAnimationActive={false} width="80%" />
@@ -85,7 +83,7 @@ describe('<FunnelChart />', () => {
     test(`should fire ${event} event`, () => {
       const onEventMock = vi.fn();
 
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <FunnelChart
           margin={{ top: 20, right: 50, left: 20, bottom: 0 }}
           width={500}
@@ -110,7 +108,7 @@ describe('<FunnelChart />', () => {
         spy(useViewBox());
         return null;
       };
-      render(
+      rechartsTestRender(
         <FunnelChart width={100} height={50} barSize={20}>
           <Comp />
         </FunnelChart>,
@@ -126,7 +124,7 @@ describe('<FunnelChart />', () => {
         spy(useClipPathId());
         return null;
       };
-      render(
+      rechartsTestRender(
         <FunnelChart width={100} height={50} barSize={20}>
           <Comp />
         </FunnelChart>,
@@ -142,7 +140,7 @@ describe('<FunnelChart />', () => {
         spy(useChartWidth());
         return null;
       };
-      render(
+      rechartsTestRender(
         <FunnelChart width={100} height={50} barSize={20}>
           <Comp />
         </FunnelChart>,
@@ -158,7 +156,7 @@ describe('<FunnelChart />', () => {
         spy(useChartHeight());
         return null;
       };
-      render(
+      rechartsTestRender(
         <FunnelChart width={100} height={50} barSize={20}>
           <Comp />
         </FunnelChart>,

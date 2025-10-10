@@ -1,8 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
-import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
@@ -10,7 +8,7 @@ import { selectAxisDomainIncludingNiceTicks, selectNumericalDomain } from '../..
 import { expectBars } from '../helper/expectBars';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedErrorBarLine = {
@@ -61,16 +59,82 @@ describe('<ErrorBar />', () => {
     { name: 'digital', uv: 2800, pv: 2800, time: 4, uvError: [100, 200], pvError: 30 },
   ];
 
-  beforeEach(() => {
-    mockAnimation();
-  });
-
-  afterEach(() => {
-    cleanupMockAnimation();
-  });
-
+  const expectedErrorBars = [
+    {
+      x1: '61.25',
+      x2: '71.25',
+      y1: '215.97222222222223',
+      y2: '215.97222222222223',
+    },
+    {
+      x1: '66.25',
+      x2: '66.25',
+      y1: '236.38888888888889',
+      y2: '215.97222222222223',
+    },
+    {
+      x1: '61.25',
+      x2: '71.25',
+      y1: '236.38888888888889',
+      y2: '236.38888888888889',
+    },
+    {
+      x1: '183.75',
+      x2: '193.75',
+      y1: '26.777777777777754',
+      y2: '26.777777777777754',
+    },
+    {
+      x1: '188.75',
+      x2: '188.75',
+      y1: '62.16666666666668',
+      y2: '26.777777777777754',
+    },
+    {
+      x1: '183.75',
+      x2: '193.75',
+      y1: '62.16666666666668',
+      y2: '62.16666666666668',
+    },
+    {
+      x1: '306.25',
+      x2: '316.25',
+      y1: '48.555555555555564',
+      y2: '48.555555555555564',
+    },
+    {
+      x1: '311.25',
+      x2: '311.25',
+      y1: '75.77777777777779',
+      y2: '48.555555555555564',
+    },
+    {
+      x1: '306.25',
+      x2: '316.25',
+      y1: '75.77777777777779',
+      y2: '75.77777777777779',
+    },
+    {
+      x1: '428.75',
+      x2: '438.75',
+      y1: '86.66666666666666',
+      y2: '86.66666666666666',
+    },
+    {
+      x1: '433.75',
+      x2: '433.75',
+      y1: '127.5',
+      y2: '86.66666666666666',
+    },
+    {
+      x1: '428.75',
+      x2: '438.75',
+      y1: '127.5',
+      y2: '127.5',
+    },
+  ];
   test('Renders Error Bars in Bar', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" />
@@ -78,84 +142,11 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    expectErrorBars(container, expectedErrorBars);
   });
 
   test('Renders Multiple Error Bars in Bar', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500} layout="vertical">
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="x" />
@@ -316,7 +307,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('Renders Error Bars in stacked Bar', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv" stackId="1">
           <ErrorBar dataKey="uvError" />
@@ -484,7 +475,7 @@ describe('<ErrorBar />', () => {
   ];
 
   test('Renders Error Bars in Line', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <LineChart data={lineData} width={500} height={500}>
         <Line isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" />
@@ -587,7 +578,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('Renders Multiple Error Bars in Line', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <LineChart data={lineData} width={500} height={500}>
         <Line isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" />
@@ -781,7 +772,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('Renders Error Bars with animation', async () => {
-    const { container } = render(
+    const { container, animationManager } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive dataKey="uvError" />
@@ -789,80 +780,9 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    await animationManager.completeAnimation();
+
+    expectErrorBars(container, expectedErrorBars);
     assertAnimationStyles(container, true, {
       transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
@@ -870,7 +790,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('Renders Error Bars without animation', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive={false} dataKey="uvError" />
@@ -878,87 +798,14 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    expectErrorBars(container, expectedErrorBars);
     assertAnimationStyles(container, false, {
       transform: 'scaleY(1)',
     });
   });
 
-  test('Renders Error Bars with animation delay', () => {
-    const { container } = render(
+  test('Renders Error Bars with animation delay', async () => {
+    const { container, animationManager } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive begin={200} dataKey="uvError" />
@@ -966,80 +813,9 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    await animationManager.completeAnimation();
+
+    expectErrorBars(container, expectedErrorBars);
     assertAnimationStyles(container, true, {
       transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
@@ -1051,8 +827,8 @@ describe('<ErrorBar />', () => {
     });
   });
 
-  test('Renders Error Bars with animation duration', () => {
-    const { container } = render(
+  test('Renders Error Bars with animation duration', async () => {
+    const { container, animationManager } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive animationDuration={400} dataKey="uvError" />
@@ -1060,88 +836,17 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    await animationManager.completeAnimation();
+
+    expectErrorBars(container, expectedErrorBars);
     assertAnimationStyles(container, true, {
       transition: 'transform 400ms ease-in-out',
       transform: 'scaleY(1)',
     });
   });
 
-  test('Renders Error Bars with animation easing', () => {
-    const { container } = render(
+  test('Renders Error Bars with animation easing', async () => {
+    const { container, animationManager } = rechartsTestRender(
       <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
@@ -1149,80 +854,9 @@ describe('<ErrorBar />', () => {
       </BarChart>,
     );
 
-    expectErrorBars(container, [
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '215.97222222222223',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '66.25',
-        x2: '66.25',
-        y1: '236.38888888888889',
-        y2: '215.97222222222223',
-      },
-      {
-        x1: '61.25',
-        x2: '71.25',
-        y1: '236.38888888888889',
-        y2: '236.38888888888889',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '26.777777777777754',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '188.75',
-        x2: '188.75',
-        y1: '62.16666666666668',
-        y2: '26.777777777777754',
-      },
-      {
-        x1: '183.75',
-        x2: '193.75',
-        y1: '62.16666666666668',
-        y2: '62.16666666666668',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '48.555555555555564',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '311.25',
-        x2: '311.25',
-        y1: '75.77777777777779',
-        y2: '48.555555555555564',
-      },
-      {
-        x1: '306.25',
-        x2: '316.25',
-        y1: '75.77777777777779',
-        y2: '75.77777777777779',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '86.66666666666666',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '433.75',
-        x2: '433.75',
-        y1: '127.5',
-        y2: '86.66666666666666',
-      },
-      {
-        x1: '428.75',
-        x2: '438.75',
-        y1: '127.5',
-        y2: '127.5',
-      },
-    ]);
+    await animationManager.completeAnimation();
+
+    expectErrorBars(container, expectedErrorBars);
     assertAnimationStyles(container, true, {
       transition: 'transform 400ms linear',
       transform: 'scaleY(1)',
@@ -1230,7 +864,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('renders two ErrorBars in ScatterChart, one for XAxis another for YAxis', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <ScatterChart width={500} height={500}>
         <Scatter isAnimationActive={false} data={dataWithError} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="y" />
@@ -1425,7 +1059,7 @@ describe('<ErrorBar />', () => {
   });
 
   test('renders two ErrorBars in vertical ScatterChart, one for XAxis another for YAxis', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <ScatterChart width={500} height={500} layout="vertical">
         <Scatter isAnimationActive={false} data={dataWithError} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="y" />
@@ -1630,7 +1264,7 @@ describe('<ErrorBar />', () => {
   test.each(['category', undefined])(
     'does not render anything when direction=x and XAxis id type=%s',
     (domainType: AxisDomainType) => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="name" type={domainType} />
           <Bar isAnimationActive={false} dataKey="uv">
@@ -1650,7 +1284,7 @@ describe('<ErrorBar />', () => {
         axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, isPanorama)));
         return null;
       };
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
           <Bar isAnimationActive={false} dataKey="uv" />
@@ -1800,7 +1434,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should extend YAxis domain when data is defined on the graphical item', () => {
@@ -1810,7 +1444,7 @@ describe('<ErrorBar />', () => {
         axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, isPanorama)));
         return null;
       };
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <LineChart width={500} height={500}>
           <YAxis dataKey="uv" />
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />
@@ -1961,7 +1595,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should extend XAxis domain', () => {
@@ -1971,7 +1605,7 @@ describe('<ErrorBar />', () => {
         xAxisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, isPanorama)));
         return null;
       };
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <BarChart data={dataWithError} width={500} height={500} layout="vertical">
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv" />
@@ -2157,7 +1791,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisDomainSpy).toHaveBeenCalledTimes(4);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(5);
       expectBars(container, [
         {
           d: 'M 65,16.5 h 238.8888888888889 v 92 h -238.8888888888889 Z',
@@ -2201,7 +1835,7 @@ describe('<ErrorBar />', () => {
         xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, isPanorama)));
         return null;
       };
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <LineChart width={500} height={500}>
           <XAxis dataKey="uv" type="number" />
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />

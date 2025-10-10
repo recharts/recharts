@@ -1,15 +1,15 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent } from '@testing-library/react';
 import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<PieChart />', () => {
   const data = [
@@ -22,7 +22,7 @@ describe('<PieChart />', () => {
   ];
 
   test('Renders 1 sector in simple PieChart', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
@@ -48,7 +48,7 @@ describe('<PieChart />', () => {
       { name: 'Group D', value: 100 },
     ];
 
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
@@ -72,7 +72,7 @@ describe('<PieChart />', () => {
   });
 
   test('Renders 6 sectors circles in simple PieChart', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
@@ -114,7 +114,7 @@ describe('<PieChart />', () => {
     }
 
     test('With Tooltip render customized active sector when activeShape is set to be an element', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
@@ -136,7 +136,7 @@ describe('<PieChart />', () => {
     });
 
     test('With Tooltip render customized active sector when activeShape is set to be a function', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
@@ -160,7 +160,7 @@ describe('<PieChart />', () => {
     });
 
     test('With Tooltip render customized active sector when activeShape is set to be an object', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
@@ -182,7 +182,7 @@ describe('<PieChart />', () => {
     });
 
     test('With Tooltip render customized active sector when activeShape is set to be a truthy boolean', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
@@ -204,7 +204,7 @@ describe('<PieChart />', () => {
   });
 
   test('Renders 6 sectors circles when add Cell to specified props of each slice', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>
           {data.map((entry, index) => (
@@ -334,7 +334,7 @@ describe('<PieChart />', () => {
   });
 
   test("Don't renders any sectors when width or height is smaller than 0", () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={-10} height={400}>
         <Pie
           dataKey="value"
@@ -463,7 +463,7 @@ describe('<PieChart />', () => {
   });
 
   test('Renders tooltip when add a Tooltip element', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie
           isAnimationActive={false}
@@ -502,14 +502,15 @@ describe('<PieChart />', () => {
     };
 
     test('click on Sector should invoke onClick callback', async () => {
+      const user = userEventSetup();
       const onClick = vi.fn();
 
-      const { container } = render(getPieChart({ onClick }));
+      const { container } = rechartsTestRender(getPieChart({ onClick }));
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
 
       expect(onClick).toHaveBeenCalledTimes(0);
-      await userEvent.click(sector);
+      await user.click(sector);
       expect(onClick).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenLastCalledWith(
         {
@@ -529,15 +530,17 @@ describe('<PieChart />', () => {
     });
 
     test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
+      const user = userEventSetup();
       const onMouseEnter = vi.fn();
 
-      const { container } = render(getPieChart({ onMouseEnter }));
+      const { container } = rechartsTestRender(getPieChart({ onMouseEnter }));
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
 
       expect(onMouseEnter).toHaveBeenCalledTimes(0);
-      await userEvent.hover(sector);
+      await user.hover(sector);
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      // why are the coordinates undefined and index null? Looks like a bug to me
       expect(onMouseEnter).toHaveBeenLastCalledWith(
         {
           activeCoordinate: undefined,
@@ -553,18 +556,20 @@ describe('<PieChart />', () => {
     });
 
     test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
+      const user = userEventSetup();
       const onMouseLeave = vi.fn();
 
-      const { container } = render(getPieChart({ onMouseLeave }));
+      const { container } = rechartsTestRender(getPieChart({ onMouseLeave }));
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
 
+      await user.hover(sector);
       expect(onMouseLeave).toHaveBeenCalledTimes(0);
-      await userEvent.unhover(sector);
+      await user.unhover(sector);
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
       expect(onMouseLeave).toHaveBeenLastCalledWith(
         {
-          activeCoordinate: undefined,
+          activeCoordinate: { x: 165.08751071020006, y: 207.64446567223055 },
           activeDataKey: undefined,
           activeIndex: null,
           activeLabel: undefined,
@@ -614,7 +619,7 @@ describe('<PieChart />', () => {
   });
 
   test('classNames can be given to label and labelLine.', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
@@ -645,7 +650,7 @@ describe('<PieChart />', () => {
 
     it('renders sectors with a constant radius', () => {
       const outerRadius = 80;
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
@@ -670,7 +675,7 @@ describe('<PieChart />', () => {
     });
 
     it('renders sectors with radius based on outerRadius function', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"

@@ -242,7 +242,7 @@ describe('<Scatter />', () => {
         zAxisId: 'zaxis id',
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
-      expect(settingsSpy).toHaveBeenCalledTimes(3);
+      expect(settingsSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <ScatterChart height={400} width={400}>
@@ -256,7 +256,7 @@ describe('<Scatter />', () => {
         name: 'new name',
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expectedWithName]);
-      expect(settingsSpy).toHaveBeenCalledTimes(6);
+      expect(settingsSpy).toHaveBeenCalledTimes(4);
     });
   });
 

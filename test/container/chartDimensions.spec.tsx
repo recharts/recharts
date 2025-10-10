@@ -51,7 +51,7 @@ describe('Chart dimensions', () => {
         top: 11,
         width: 74,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     it('should return clipPath ID', () => {
@@ -114,7 +114,7 @@ describe('Chart dimensions', () => {
     it('should always say that the chart is not panorama', () => {
       const { spy } = renderTestCase(useIsPanorama);
       expect(spy).toHaveBeenCalledWith(false);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 

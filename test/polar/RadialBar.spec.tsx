@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
-import userEvent from '@testing-library/user-event';
 import {
   Customized,
   PolarAngleAxis,
@@ -39,6 +38,7 @@ import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
@@ -1084,6 +1084,7 @@ describe('<RadialBar />', () => {
   });
 
   test('calls mouse handler events', async () => {
+    const user = userEventSetup();
     const onMouseEnter = vi.fn();
     const onMouseLeave = vi.fn();
     const onClick = vi.fn();
@@ -1104,11 +1105,11 @@ describe('<RadialBar />', () => {
 
     const sector = container.querySelectorAll('.recharts-sector')[0];
 
-    await userEvent.hover(sector);
+    await user.hover(sector);
     expect(onMouseEnter).toHaveBeenCalled();
-    await userEvent.unhover(sector);
+    await user.unhover(sector);
     expect(onMouseLeave).toHaveBeenCalled();
-    await userEvent.click(sector);
+    await user.click(sector);
     expect(onClick).toHaveBeenCalled();
   });
 
@@ -1140,7 +1141,7 @@ describe('<RadialBar />', () => {
         maxBarSize: undefined,
       };
       expect(polarItemsSpy).toHaveBeenLastCalledWith([expectedPolarItemsSettings]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(3);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <RadialBarChart width={100} height={100} data={PageData}>
@@ -1149,7 +1150,7 @@ describe('<RadialBar />', () => {
       );
 
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(4);
     });
   });
 });
