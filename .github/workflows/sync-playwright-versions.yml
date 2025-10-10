@@ -56,6 +56,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "fix(ci): sync playwright versions [dependabot-skip]"
+            git commit --no-verify -m "fix(ci): sync playwright versions [dependabot-skip]"
             git push
           fi
