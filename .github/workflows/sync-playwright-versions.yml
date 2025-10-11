@@ -37,7 +37,7 @@ jobs:
       # This script exits with an error if versions are out of sync.
       # We use continue-on-error so we can act on the failure in the next step.
       - name: Check for version mismatch
-        id: check_versions
+        id: check_versions_before
         run: npm run check-playwright-versions
         continue-on-error: true
 
@@ -48,7 +48,7 @@ jobs:
         run: node scripts/sync-playwright-versions.js
 
       - name: Check again for version mismatch
-        id: check_versions
+        id: check_versions_after
         run: npm run check-playwright-versions
         # by now, everything should be fixed. if it's not then something went wrong, and we should fail the job.
         continue-on-error: false
