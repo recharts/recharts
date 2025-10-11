@@ -78,10 +78,10 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = container.querySelector('.recharts-radial-bar-sector');
         assertNotNull(trigger);
         expectLastCalledWith(spy, '0');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
         fireEvent.click(trigger);
         expectLastCalledWith(spy, '0');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -146,10 +146,10 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = container.querySelector('.recharts-radial-bar-sector');
         assertNotNull(trigger);
         expectLastCalledWith(spy, '3');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
         fireEvent.click(trigger);
         expectLastCalledWith(spy, '3');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -210,13 +210,13 @@ describe('selectActiveTooltipIndex', () => {
           const trigger = container.querySelector(radialBarChartMouseHoverTooltipSelector);
           assertNotNull(trigger);
           expectLastCalledWith(spy, '1');
+          expect(spy).toHaveBeenCalledTimes(2);
+          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+          expectLastCalledWith(spy, '3');
           expect(spy).toHaveBeenCalledTimes(3);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expectLastCalledWith(spy, '3');
-          expect(spy).toHaveBeenCalledTimes(4);
-          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
-          expectLastCalledWith(spy, '3');
-          expect(spy).toHaveBeenCalledTimes(4);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should ignore mouse hover events', () => {

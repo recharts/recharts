@@ -249,7 +249,7 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
     expect(barSizeSpy).toHaveBeenLastCalledWith(3);
-    expect(barSizeSpy).toHaveBeenCalledTimes(4);
+    expect(barSizeSpy).toHaveBeenCalledTimes(3);
 
     expectRadialBars(container, [
       {

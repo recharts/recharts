@@ -1,6 +1,4 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -14,6 +12,8 @@ import {
 import { ZAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<ZAxis />', () => {
   const data = [
@@ -31,7 +31,7 @@ describe('<ZAxis />', () => {
     },
   ];
   it('should not render anything', () => {
-    render(
+    rechartsTestRender(
       <Surface width={500} height={500}>
         <ZAxis dataKey="x" name="stature" unit="cm" />
       </Surface>,
@@ -44,7 +44,8 @@ describe('<ZAxis />', () => {
   });
 
   it('Renders Scatters symbols and tooltips with Z axis data', async () => {
-    const { container } = render(
+    const user = userEventSetup();
+    const { container } = rechartsTestRender(
       <ScatterChart height={400} width={400}>
         <XAxis dataKey="xAxis" type="number" />
         <YAxis dataKey="yAxis" />
@@ -76,7 +77,7 @@ describe('<ZAxis />', () => {
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
     expect(tooltip).not.toBeVisible();
 
-    await userEvent.hover(firstShape);
+    await user.hover(firstShape);
 
     expectTooltipPayload(container, '', [
       `test name : ${data[0].zAxis}km`,
@@ -84,10 +85,10 @@ describe('<ZAxis />', () => {
       `yAxis : ${data[0].yAxis}`,
     ]);
 
-    await userEvent.unhover(firstShape);
+    await user.unhover(firstShape);
     expect(tooltip).not.toBeVisible();
 
-    await userEvent.hover(secondShape);
+    await user.hover(secondShape);
     expectTooltipPayload(container, '', [
       `test name : ${data[1].zAxis}km`,
       `xAxis : ${data[1].xAxis}`,
@@ -113,7 +114,7 @@ describe('<ZAxis />', () => {
         });
         return null;
       };
-      render(
+      rechartsTestRender(
         <ScatterChart height={400} width={400}>
           <XAxis dataKey="xAxis" type="number" />
           <YAxis dataKey="yAxis" />
@@ -139,17 +140,17 @@ describe('<ZAxis />', () => {
         range: [20, 30],
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expected);
-      expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
+      expect(axisSettingsSpy).toHaveBeenCalledTimes(2);
 
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 800]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
 
       expect(axisScaleSpy).toHaveBeenLastCalledWith({
         domain: [0, 800],
         range: [20, 30],
         realScaleType: 'linear',
       });
-      expect(axisScaleSpy).toHaveBeenCalledTimes(3);
+      expect(axisScaleSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

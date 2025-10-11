@@ -16,14 +16,13 @@ import {
   YAxis,
   ZAxis,
 } from '../../src';
-import { useAppSelector } from '../../src/state/hooks';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import {
-  selectAllAppliedNumericalValuesIncludingErrorValues,
   selectAxisDomain,
   selectBaseAxis,
   selectDisplayedData,
   selectDomainOfStackGroups,
+  selectNumericalDomain,
   selectTicksOfGraphicalItem,
   selectZAxisWithScale,
 } from '../../src/state/selectors/axisSelectors';
@@ -44,7 +43,6 @@ import {
 import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
-import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -250,139 +248,45 @@ describe('ScatterChart of three dimension data', () => {
 });
 
 describe('ScatterChart with joint line', () => {
-  it('should compute ZAxis from explicit dataKey', () => {
-    const data01 = [
-      { x: 10, y: 30, z: 120 },
-      { x: 30, y: 200, z: 190 },
-      { x: 45, y: 100, z: 32 },
-      { x: 50, y: 400, z: 67 },
-      { x: 70, y: 150, z: 109 },
-      { x: 100, y: 250, z: 120 },
-    ];
-    const data02 = [
-      { x: 30, y: 20, z: 190 },
-      { x: 50, y: 180, z: 32 },
-      { x: 75, y: 240, z: 67 },
-      { x: 100, y: 100, z: 109 },
-      { x: 120, y: 190, z: 120 },
-    ];
+  const data01 = [
+    { x: 10, y: 30, z: 120 },
+    { x: 30, y: 200, z: 190 },
+    { x: 45, y: 100, z: 32 },
+    { x: 50, y: 400, z: 67 },
+    { x: 70, y: 150, z: 109 },
+    { x: 100, y: 250, z: 120 },
+  ];
+  const data02 = [
+    { x: 30, y: 20, z: 190 },
+    { x: 50, y: 180, z: 32 },
+    { x: 75, y: 240, z: 67 },
+    { x: 100, y: 100, z: 109 },
+    { x: 120, y: 190, z: 120 },
+  ];
 
-    const zAxisScaleSpy = vi.fn();
-    const zAxisDataSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      zAxisScaleSpy(useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 0, false)));
-      zAxisDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
-      );
-      return null;
-    };
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <ScatterChart width={600} height={400}>
+      <CartesianGrid />
+      <XAxis type="number" dataKey="x" name="stature" unit="cm" />
+      <YAxis type="number" dataKey="y" name="weight" unit="kg" />
+      <ZAxis type="number" dataKey="z" range={[100, 200]} />
+      <Legend />
+      <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
+      <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
+      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      {children}
+    </ScatterChart>
+  ));
 
-    const { container } = render(
-      <ScatterChart width={600} height={400}>
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-        <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-        <ZAxis type="number" dataKey="z" range={[100, 200]} />
-        <Legend />
-        <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
-        <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
-        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <Comp />
-      </ScatterChart>,
-    );
+  it('should select ZAxis domain', () => {
+    const { spy } = renderTestCase(state => selectNumericalDomain(state, 'zAxis', 0, false));
+    expectLastCalledWith(spy, [0, 190]);
+  });
 
-    expect(zAxisDataSpy).toHaveBeenLastCalledWith([
-      {
-        errorDomain: [],
-        value: 120,
-      },
-      {
-        errorDomain: [],
-        value: 120,
-      },
-      {
-        errorDomain: [],
-        value: 190,
-      },
-      {
-        errorDomain: [],
-        value: 190,
-      },
-      {
-        errorDomain: [],
-        value: 32,
-      },
-      {
-        errorDomain: [],
-        value: 32,
-      },
-      {
-        errorDomain: [],
-        value: 67,
-      },
-      {
-        errorDomain: [],
-        value: 67,
-      },
-      {
-        errorDomain: [],
-        value: 109,
-      },
-      {
-        errorDomain: [],
-        value: 109,
-      },
-      {
-        errorDomain: [],
-        value: 120,
-      },
-      {
-        errorDomain: [],
-        value: 120,
-      },
-      {
-        errorDomain: [],
-        value: 190,
-      },
-      {
-        errorDomain: [],
-        value: 190,
-      },
-      {
-        errorDomain: [],
-        value: 32,
-      },
-      {
-        errorDomain: [],
-        value: 32,
-      },
-      {
-        errorDomain: [],
-        value: 67,
-      },
-      {
-        errorDomain: [],
-        value: 67,
-      },
-      {
-        errorDomain: [],
-        value: 109,
-      },
-      {
-        errorDomain: [],
-        value: 109,
-      },
-      {
-        errorDomain: [],
-        value: 120,
-      },
-      {
-        errorDomain: [],
-        value: 120,
-      },
-    ]);
-    expect(zAxisScaleSpy).toHaveBeenLastCalledWith({
+  it('should select zAxis axis settings', () => {
+    const { spy } = renderTestCase(state => selectZAxisWithScale(state, 'zAxis', 0, false));
+    expectLastCalledWith(spy, {
+      domain: undefined,
       allowDataOverflow: false,
       allowDuplicatedCategory: false,
       dataKey: 'z',
@@ -395,6 +299,10 @@ describe('ScatterChart with joint line', () => {
       type: 'number',
       unit: undefined,
     });
+  });
+
+  it('should render scatter points', () => {
+    const { container } = renderTestCase();
     expectScatterPoints(container, [
       {
         cx: '109.16666666666666',
@@ -857,182 +765,147 @@ describe('ScatterChart of two dimension data', () => {
     ]);
   });
 
-  test('renders points in Composed chart when there are stacks but the stacks are smaller than the ZAxis dataKey', () => {
-    const yAxisDomainSpy = vi.fn();
-    const yAxisDataSpy = vi.fn();
-    const yAxisTicksSpy = vi.fn();
-    const displayedDataSpy = vi.fn();
-    const stackGroupsDomainSpy = vi.fn();
-    const zAxisAppliedDataSpy = vi.fn();
-    const zAxisSettingsSpy = vi.fn();
-    const zAxisDomainSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0, isPanorama)));
-      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0, isPanorama)));
-      zAxisAppliedDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
-      );
-      zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
-      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0, isPanorama)));
-      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
-      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama)));
-      yAxisDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
-      );
-      return null;
-    };
-
-    const { container } = render(
+  describe('Composed chart when there are stacks but the stacks are smaller than the ZAxis dataKey', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <ComposedChart width={400} height={200} data={boxPlotData}>
         <Bar stackId="a" dataKey="min" />
         <ZAxis type="number" dataKey="size" range={[0, 250]} />
-
         <Scatter dataKey="average" />
         <XAxis />
         <YAxis />
+        {children}
+      </ComposedChart>
+    ));
 
-        <Comp />
-      </ComposedChart>,
-    );
-
-    expect(yAxisDataSpy).toHaveBeenLastCalledWith([
-      {
-        errorDomain: [],
-        value: 150,
-      },
-      {
-        errorDomain: [],
-        value: 550,
-      },
-      {
-        errorDomain: [],
-        value: 400,
-      },
-    ]);
-    expect(yAxisDomainSpy).toHaveBeenLastCalledWith([0, 550]);
-    expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
-      { coordinate: 165, value: 0, offset: 0 },
-      { coordinate: 138.33333333333334, value: 100, offset: 0 },
-      { coordinate: 111.66666666666669, value: 200, offset: 0 },
-      { coordinate: 85, value: 300, offset: 0 },
-      { coordinate: 58.33333333333334, value: 400, offset: 0 },
-      { coordinate: 31.66666666666666, value: 500, offset: 0 },
-      { coordinate: 5, value: 600, offset: 0 },
-    ]);
-    expect(displayedDataSpy).toHaveBeenLastCalledWith([
-      {
-        average: 150,
-        bottomBox: 50,
-        bottomWhisker: 100,
-        min: 100,
-        size: 150,
-        topBox: 200,
-        topWhisker: 200,
-      },
-      {
-        average: 550,
-        bottomBox: 200,
-        bottomWhisker: 200,
-        min: 200,
-        size: 250,
-        topBox: 100,
-        topWhisker: 100,
-      },
-      {
-        average: 400,
-        bottomBox: 200,
-        bottomWhisker: 200,
-        min: 0,
-        size: 350,
-        topBox: 200,
-        topWhisker: 200,
-      },
-    ]);
-    // expect(stackGroupsDomainSpy).toHaveBeenLastCalledWith([0, 200]);
-    expect(zAxisAppliedDataSpy).toHaveBeenLastCalledWith([
-      {
-        errorDomain: [],
-        value: 150,
-      },
-      {
-        errorDomain: [],
-        value: 250,
-      },
-      {
-        errorDomain: [],
-        value: 350,
-      },
-    ]);
-    expect(zAxisSettingsSpy).toHaveBeenLastCalledWith({
-      allowDataOverflow: false,
-      allowDuplicatedCategory: false,
-      dataKey: 'size',
-      id: 0,
-      includeHidden: false,
-      name: undefined,
-      range: [0, 250],
-      reversed: false,
-      scale: 'auto',
-      type: 'number',
-      unit: undefined,
+    it('should select YAxis numerical domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 550]);
     });
-    expect(zAxisDomainSpy).toHaveBeenLastCalledWith([0, 350]);
-    expectScatterPoints(container, [
-      {
-        cx: '120',
-        cy: '125',
-        d: 'M0,0',
-        height: '11.67983401638037',
-        transform: 'translate(120, 125)',
-        width: '11.67983401638037',
-      },
-      {
-        cx: '230',
-        cy: '18.33333333333334',
-        d: 'M0,0',
-        height: '15.078600877302687',
-        transform: 'translate(230, 18.33333333333334)',
-        width: '15.078600877302687',
-      },
-      {
-        cx: '340',
-        cy: '58.33333333333334',
-        d: 'M0,0',
-        height: '17.841241161527712',
-        transform: 'translate(340, 58.33333333333334)',
-        width: '17.841241161527712',
-      },
-    ]);
+
+    it('should select YAxis final domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 550]);
+    });
+
+    it('should select YAxis ticks', () => {
+      const { spy } = renderTestCase(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 165, value: 0, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 138.33333333333334, value: 100, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 111.66666666666669, value: 200, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 85, value: 300, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 58.33333333333334, value: 400, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 31.66666666666666, value: 500, offset: 0 },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        { coordinate: 5, value: 600, offset: 0 },
+      ]);
+    });
+
+    it('should select ZAxis displayed data', () => {
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [
+        {
+          average: 150,
+          bottomBox: 50,
+          bottomWhisker: 100,
+          min: 100,
+          size: 150,
+          topBox: 200,
+          topWhisker: 200,
+        },
+        {
+          average: 550,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 200,
+          size: 250,
+          topBox: 100,
+          topWhisker: 100,
+        },
+        {
+          average: 400,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 0,
+          size: 350,
+          topBox: 200,
+          topWhisker: 200,
+        },
+      ]);
+    });
+
+    it('should select ZAxis stack groups domain', () => {
+      const { spy } = renderTestCase(state => selectDomainOfStackGroups(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, undefined);
+    });
+
+    it('should select ZAxis numerical domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [0, 350]);
+    });
+
+    it('should select ZAxis final domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [0, 350]);
+    });
+
+    it('should select ZAxis axis settings', () => {
+      const { spy } = renderTestCase(state => selectZAxisWithScale(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, {
+        domain: undefined,
+        allowDataOverflow: false,
+        allowDuplicatedCategory: false,
+        dataKey: 'size',
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        range: [0, 250],
+        reversed: false,
+        scale: expect.toBeRechartsScale({ domain: [0, 350], range: [0, 250] }),
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should render scatter points', () => {
+      const { container } = renderTestCase();
+      expectScatterPoints(container, [
+        {
+          cx: '120',
+          cy: '125',
+          d: 'M0,0',
+          height: '11.67983401638037',
+          transform: 'translate(120, 125)',
+          width: '11.67983401638037',
+        },
+        {
+          cx: '230',
+          cy: '18.33333333333334',
+          d: 'M0,0',
+          height: '15.078600877302687',
+          transform: 'translate(230, 18.33333333333334)',
+          width: '15.078600877302687',
+        },
+        {
+          cx: '340',
+          cy: '58.33333333333334',
+          d: 'M0,0',
+          height: '17.841241161527712',
+          transform: 'translate(340, 58.33333333333334)',
+          width: '17.841241161527712',
+        },
+      ]);
+    });
   });
 
-  test('renders points in Composed chart when stacks are bigger than ZAxis dataKey', () => {
-    const yAxisDomainSpy = vi.fn();
-    const yAxisDataSpy = vi.fn();
-    const yAxisTicksSpy = vi.fn();
-    const displayedDataSpy = vi.fn();
-    const stackGroupsDomainSpy = vi.fn();
-    const zAxisAppliedDataSpy = vi.fn();
-    const zAxisSettingsSpy = vi.fn();
-    const zAxisDomainSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0, isPanorama)));
-      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0, isPanorama)));
-      zAxisAppliedDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
-      );
-      zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
-      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0, isPanorama)));
-      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, isPanorama)));
-      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama)));
-      yAxisDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
-      );
-      return null;
-    };
-
-    const { container } = render(
+  describe('Composed chart when stacks are bigger than ZAxis dataKey', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <ComposedChart width={400} height={200} data={boxPlotData}>
         <Bar stackId="a" dataKey="min" />
         <Bar stackId="a" dataKey="bar" />
@@ -1048,136 +921,153 @@ describe('ScatterChart of two dimension data', () => {
         <XAxis />
         <YAxis />
 
-        <Comp />
-      </ComposedChart>,
-    );
+        {children}
+      </ComposedChart>
+    ));
 
-    expect(yAxisDataSpy).toHaveBeenLastCalledWith([
-      {
-        errorDomain: [],
-        value: 150,
-      },
-      {
-        errorDomain: [],
-        value: 550,
-      },
-      {
-        errorDomain: [],
-        value: 400,
-      },
-    ]);
-    expect(yAxisDomainSpy).toHaveBeenLastCalledWith([0, 800]);
-    expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
-      {
-        coordinate: 165,
-        offset: 0,
-        value: 0,
-      },
-      {
-        coordinate: 125,
-        offset: 0,
-        value: 200,
-      },
-      {
-        coordinate: 85,
-        offset: 0,
-        value: 400,
-      },
-      {
-        coordinate: 45,
-        offset: 0,
-        value: 600,
-      },
-      {
-        coordinate: 5,
-        offset: 0,
-        value: 800,
-      },
-    ]);
-    expect(displayedDataSpy).toHaveBeenLastCalledWith([
-      {
-        average: 150,
-        bottomBox: 50,
-        bottomWhisker: 100,
-        min: 100,
-        size: 150,
-        topBox: 200,
-        topWhisker: 200,
-      },
-      {
-        average: 550,
-        bottomBox: 200,
-        bottomWhisker: 200,
-        min: 200,
-        size: 250,
-        topBox: 100,
-        topWhisker: 100,
-      },
-      {
-        average: 400,
-        bottomBox: 200,
-        bottomWhisker: 200,
-        min: 0,
-        size: 350,
-        topBox: 200,
-        topWhisker: 200,
-      },
-    ]);
-    // expect(stackGroupsDomainSpy).toHaveBeenLastCalledWith([0, 800]);
-    expect(zAxisAppliedDataSpy).toHaveBeenLastCalledWith([
-      {
-        errorDomain: [],
-        value: 150,
-      },
-      {
-        errorDomain: [],
-        value: 250,
-      },
-      {
-        errorDomain: [],
-        value: 350,
-      },
-    ]);
-    expect(zAxisSettingsSpy).toHaveBeenLastCalledWith({
-      allowDataOverflow: false,
-      allowDuplicatedCategory: false,
-      dataKey: 'size',
-      id: 0,
-      includeHidden: false,
-      name: undefined,
-      range: [0, 250],
-      reversed: false,
-      scale: 'auto',
-      type: 'number',
-      unit: undefined,
+    it('should select YAxis numeric domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 800]);
     });
-    expect(zAxisDomainSpy).toHaveBeenLastCalledWith([0, 350]);
-    expectScatterPoints(container, [
-      {
-        cx: '120',
-        cy: '135',
-        d: 'M0,0',
-        height: '11.67983401638037',
-        transform: 'translate(120, 135)',
-        width: '11.67983401638037',
-      },
-      {
-        cx: '230',
-        cy: '55',
-        d: 'M0,0',
-        height: '15.078600877302687',
-        transform: 'translate(230, 55)',
-        width: '15.078600877302687',
-      },
-      {
-        cx: '340',
-        cy: '85',
-        d: 'M0,0',
-        height: '17.841241161527712',
-        transform: 'translate(340, 85)',
-        width: '17.841241161527712',
-      },
-    ]);
+
+    it('should select YAxis final domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [0, 800]);
+    });
+
+    it('should select YAxis ticks', () => {
+      const { spy } = renderTestCase(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false));
+
+      expectLastCalledWith(spy, [
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        {
+          coordinate: 165,
+          offset: 0,
+          value: 0,
+        },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        {
+          coordinate: 125,
+          offset: 0,
+          value: 200,
+        },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        {
+          coordinate: 85,
+          offset: 0,
+          value: 400,
+        },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        {
+          coordinate: 45,
+          offset: 0,
+          value: 600,
+        },
+        // @ts-expect-error the type says that index is required property but this selector does not return it!
+        {
+          coordinate: 5,
+          offset: 0,
+          value: 800,
+        },
+      ]);
+    });
+
+    it('should select ZAxis displayed data', () => {
+      const { spy } = renderTestCase(state => selectDisplayedData(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [
+        {
+          average: 150,
+          bottomBox: 50,
+          bottomWhisker: 100,
+          min: 100,
+          size: 150,
+          topBox: 200,
+          topWhisker: 200,
+        },
+        {
+          average: 550,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 200,
+          size: 250,
+          topBox: 100,
+          topWhisker: 100,
+        },
+        {
+          average: 400,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 0,
+          size: 350,
+          topBox: 200,
+          topWhisker: 200,
+        },
+      ]);
+    });
+
+    it('should select ZAxis stack groups domain', () => {
+      const { spy } = renderTestCase(state => selectDomainOfStackGroups(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, undefined);
+    });
+
+    it('should select ZAxis numerical domain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [0, 350]);
+    });
+
+    it('should select ZAxis final domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'zAxis', 0, false));
+      expectLastCalledWith(spy, [0, 350]);
+    });
+
+    it('should select ZAxis axis settings', () => {
+      const { spy } = renderTestCase(state => selectBaseAxis(state, 'zAxis', 0));
+      expectLastCalledWith(spy, {
+        allowDataOverflow: false,
+        allowDuplicatedCategory: false,
+        dataKey: 'size',
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        // @ts-expect-error according to the type, range should not be here - but the selector returns it too
+        range: [0, 250],
+        reversed: false,
+        scale: 'auto',
+        type: 'number',
+        unit: undefined,
+        domain: undefined,
+      });
+    });
+
+    it('should render Scatter points', () => {
+      const { container } = renderTestCase();
+      expectScatterPoints(container, [
+        {
+          cx: '120',
+          cy: '135',
+          d: 'M0,0',
+          height: '11.67983401638037',
+          transform: 'translate(120, 135)',
+          width: '11.67983401638037',
+        },
+        {
+          cx: '230',
+          cy: '55',
+          d: 'M0,0',
+          height: '15.078600877302687',
+          transform: 'translate(230, 55)',
+          width: '15.078600877302687',
+        },
+        {
+          cx: '340',
+          cy: '85',
+          d: 'M0,0',
+          height: '17.841241161527712',
+          transform: 'translate(340, 85)',
+          width: '17.841241161527712',
+        },
+      ]);
+    });
   });
 
   describe('customized active shape', () => {
@@ -1908,6 +1798,7 @@ describe('Tooltip integration', () => {
 
     it('should select tooltip payload configurations', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'));
+      expect(spy).toHaveBeenCalledTimes(2);
       expectLastCalledWith(spy, [
         {
           dataDefinedOnItem: [

@@ -660,7 +660,7 @@ export type AxisDomain =
   | ReadonlyArray<string>
   | ReadonlyArray<number>
   | Readonly<[AxisDomainItem, AxisDomainItem]>
-  | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
+  | (([dataMin, dataMax]: NumberDomain, allowDataOverflow: boolean) => NumberDomain);
 
 /**
  * NumberDomain is an evaluated {@link AxisDomain}.
@@ -671,7 +671,7 @@ export type AxisDomain =
  *
  * There are also `category` axes that have different things than numbers in their domain.
  */
-export type NumberDomain = [min: number, max: number];
+export type NumberDomain = readonly [min: number, max: number];
 
 export type CategoricalDomain = ReadonlyArray<number | string | Date>;
 

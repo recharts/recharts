@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { BarChart, Brush, BrushProps, ComposedChart, Customized, Line, LineChart, ReferenceLine } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -13,6 +12,7 @@ import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelect
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectBrush } from '../helper/expectBrush';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<Brush />', () => {
   const data = [
@@ -532,7 +532,7 @@ describe('<Brush />', () => {
     };
 
     test('Travellers should move and chart should update when brush start and end indexes are controlled', async () => {
-      const user = userEvent.setup();
+      const user = userEventSetup();
       const { container } = render(<ControlledPanoramicBrush />);
 
       const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;

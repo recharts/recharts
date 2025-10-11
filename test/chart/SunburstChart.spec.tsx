@@ -1,7 +1,6 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import userEvent from '@testing-library/user-event';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -10,10 +9,12 @@ import { sunburstChartMouseHoverTooltipSelector } from '../component/Tooltip/too
 import { assertNotNull } from '../helper/assertNotNull';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
-    const { container } = render(<SunburstChart width={500} height={500} data={exampleSunburstData} />);
+    const { container } = rechartsTestRender(<SunburstChart width={500} height={500} data={exampleSunburstData} />);
 
     const sectors = container.querySelectorAll('.recharts-sector');
 
@@ -25,11 +26,12 @@ describe('<Sunburst />', () => {
   });
 
   it('fires callbacks upon hover and click events', async () => {
+    const user = userEventSetup();
     const onMouseEnter = vi.fn();
     const onMouseLeave = vi.fn();
     const onClick = vi.fn();
 
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <SunburstChart
         width={500}
         height={500}
@@ -41,11 +43,11 @@ describe('<Sunburst />', () => {
     );
     const sector = container.querySelectorAll('.recharts-sector')[0];
 
-    await userEvent.hover(sector);
+    await user.hover(sector);
     expect(onMouseEnter).toHaveBeenCalled();
-    await userEvent.unhover(sector);
+    await user.unhover(sector);
     expect(onMouseLeave).toHaveBeenCalled();
-    await userEvent.click(sector);
+    await user.click(sector);
     expect(onClick).toHaveBeenCalled();
   });
 
@@ -58,7 +60,7 @@ describe('<Sunburst />', () => {
         viewBoxSpy(useViewBox());
         return null;
       };
-      render(
+      rechartsTestRender(
         <SunburstChart width={100} height={50} data={exampleSunburstData}>
           <Customized component={<Comp />} />
         </SunburstChart>,
@@ -77,7 +79,7 @@ describe('<Sunburst />', () => {
         heightSpy(useChartHeight());
         return null;
       };
-      render(
+      rechartsTestRender(
         <SunburstChart width={100} height={50} data={exampleSunburstData}>
           <Customized component={<Comp />} />
         </SunburstChart>,
@@ -96,7 +98,7 @@ describe('<Sunburst />', () => {
         tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
         return null;
       };
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <SunburstChart width={1000} height={500} data={exampleSunburstData}>
           <Customized component={<Comp />} />
         </SunburstChart>,

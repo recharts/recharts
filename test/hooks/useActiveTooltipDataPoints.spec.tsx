@@ -55,7 +55,7 @@ describe('useActiveTooltipDataPoints', () => {
       it('should return undefined before any interactions', () => {
         const { spy } = renderTestCase(useActiveTooltipDataPoints);
         expectLastCalledWith(spy, undefined);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return data point after mouse hover', () => {
@@ -70,7 +70,7 @@ describe('useActiveTooltipDataPoints', () => {
             uv: 300,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should again return undefined after mouse leave', () => {
@@ -79,7 +79,7 @@ describe('useActiveTooltipDataPoints', () => {
         hideTooltip(container, areaChartMouseHoverTooltipSelector);
 
         expectLastCalledWith(spy, undefined);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
       });
 
       it('should return undefined after click', () => {
@@ -87,7 +87,7 @@ describe('useActiveTooltipDataPoints', () => {
         showTooltipClick(container, areaChartMouseHoverTooltipSelector);
 
         expectLastCalledWith(spy, undefined);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -317,7 +317,7 @@ describe('useActiveTooltipDataPoints', () => {
           uv: 300,
         },
       ]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -344,7 +344,7 @@ describe('useActiveTooltipDataPoints', () => {
         { name: 'Page C', uv: 300 },
         { amt: 2400, name: 'Page C' },
       ]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
     });
   });
 });

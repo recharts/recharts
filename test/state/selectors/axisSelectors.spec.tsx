@@ -4,7 +4,6 @@ import { act, render } from '@testing-library/react';
 import {
   BaseAxisWithScale,
   mergeDomains,
-  selectAllAppliedNumericalValuesIncludingErrorValues,
   selectAllAppliedValues,
   selectAllErrorBarSettings,
   selectAxisDomain,
@@ -1949,7 +1948,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -1960,7 +1959,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
 
@@ -2038,7 +2037,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -2057,7 +2056,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
   });
@@ -2347,36 +2346,9 @@ describe('selectAxisWithScale', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
-    test('selectAllAppliedNumericalValuesIncludingErrorValues', () => {
-      const { spy } = renderTestCase(state =>
-        selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', defaultAxisId, false),
-      );
-      expectLastCalledWith(spy, [
-        {
-          errorDomain: [],
-          value: 2400,
-        },
-        {
-          errorDomain: [],
-          value: 4567,
-        },
-        {
-          errorDomain: [],
-          value: 1398,
-        },
-        {
-          errorDomain: [],
-          value: 9800,
-        },
-        {
-          errorDomain: [],
-          value: 3908,
-        },
-        {
-          errorDomain: [],
-          value: 4800,
-        },
-      ]);
+    test('selectNumericalDomain', () => {
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', defaultAxisId, false));
+      expectLastCalledWith(spy, [0, 9800]);
     });
 
     test('selectAxisDomain', () => {

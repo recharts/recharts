@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { Label, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
-import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { PolarViewBoxRequired } from '../../src/util/types';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -25,7 +25,7 @@ describe('<Label />', () => {
     clockWise: false,
   };
   it('Render polar labels (position="center")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="center" />
       </Surface>,
@@ -38,7 +38,7 @@ describe('<Label />', () => {
   });
 
   it('Render polar labels (position="outside")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="outside" />
       </Surface>,
@@ -51,7 +51,7 @@ describe('<Label />', () => {
   });
 
   it('Render radial labels (position="insideStart")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="insideStart" />
       </Surface>,
@@ -63,7 +63,7 @@ describe('<Label />', () => {
   });
 
   it('Render radial labels (position="insideEnd")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="insideEnd" />
       </Surface>,
@@ -72,7 +72,7 @@ describe('<Label />', () => {
     expect(container.querySelectorAll('.recharts-radial-bar-label').length).toEqual(1);
   });
   it('Render radial labels (position="end")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="end" />
       </Surface>,
@@ -89,7 +89,7 @@ describe('<Label />', () => {
   };
 
   it('Render cartesian labels (position="center")', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
         <Label viewBox={cartesianViewBox} value="text" position="center" />
       </Surface>,
@@ -103,7 +103,7 @@ describe('<Label />', () => {
   });
 
   it('Render label when content is a function, and return a simple string.', () => {
-    render(
+    rechartsTestRender(
       <Surface height={0} width={0}>
         <Label
           viewBox={cartesianViewBox}
@@ -119,7 +119,7 @@ describe('<Label />', () => {
   });
 
   it('Render label by label = <Label />', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <ReferenceLine y={200} stroke="red" label={<Label value="Max PV PAGE" />} />
@@ -129,7 +129,7 @@ describe('<Label />', () => {
   });
 
   it('Renders label by label props with animation disabled', () => {
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ position: 'center' }} isAnimationActive={false} />
       </LineChart>,
@@ -140,8 +140,7 @@ describe('<Label />', () => {
   });
 
   it('Renders label by label props with animation enabled', () => {
-    mockAnimation();
-    const { container } = render(
+    const { container } = rechartsTestRender(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ position: 'center' }} />
       </LineChart>,
@@ -149,15 +148,13 @@ describe('<Label />', () => {
 
     expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
     expect(screen.getByText(/400/i)).toBeInTheDocument();
-
-    cleanupMockAnimation();
   });
 
   describe('in PieChart', () => {
     describe('with custom content function', () => {
       it('should pass the correct props to the content function when position=center', () => {
         const contentFn = vi.fn();
-        render(
+        rechartsTestRender(
           <PieChart height={100} width={200}>
             <Label value="text" position="center" content={contentFn} />
           </PieChart>,
@@ -182,7 +179,7 @@ describe('<Label />', () => {
 
       it('should pass the correct props to the content function when position=insideEnd', () => {
         const contentFn = vi.fn();
-        render(
+        rechartsTestRender(
           <PieChart height={100} width={200}>
             <Label value="text" position="insideEnd" content={contentFn} />
           </PieChart>,
@@ -214,7 +211,7 @@ describe('<Label />', () => {
     describe('with custom content function', () => {
       it('should pass the correct props to the content function', () => {
         const contentFn = vi.fn();
-        render(
+        rechartsTestRender(
           <LineChart width={400} height={400} data={data}>
             <Label value="text" position="center" content={contentFn} />
           </LineChart>,

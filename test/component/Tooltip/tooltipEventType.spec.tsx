@@ -1,7 +1,6 @@
 import React, { ComponentType } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { PageData } from '../../_data';
 import { getTooltip } from './tooltipTestHelpers';
 import {
@@ -27,6 +26,7 @@ import {
 import { TooltipTrigger } from '../../../src/chart/types';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { userEventSetup } from '../../helper/userEventSetup';
 
 type TooltipEventTypeTestCase = {
   testName: string;
@@ -203,7 +203,7 @@ describe('tooltipEventType', () => {
       });
 
       it('should not react to mouse over', async () => {
-        const user = userEvent.setup();
+        const user = userEventSetup();
         const { container } = render(<Component tooltipTrigger={tooltipTrigger} />);
 
         const tooltip = getTooltip(container);

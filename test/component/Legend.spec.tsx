@@ -1,5 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import {
   Area,
@@ -31,7 +31,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
 import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
@@ -330,7 +330,7 @@ describe('<Legend />', () => {
   describe('outside of chart context', () => {
     it('should ignore payload prop', () => {
       // @ts-expect-error payload is now omitted from Legend types
-      const { container } = render(<Legend width={500} height={30} payload={categoricalData} />);
+      const { container } = rechartsTestRender(<Legend width={500} height={30} payload={categoricalData} />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(0);
@@ -361,7 +361,7 @@ describe('<Legend />', () => {
         );
       }
 
-      const { container } = render(<Example />);
+      const { container } = rechartsTestRender(<Example />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
       expect(container.querySelectorAll('[data-testid="my-custom-portal-target"] .customized-legend')).toHaveLength(1);
@@ -369,7 +369,7 @@ describe('<Legend />', () => {
 
     it('should render a custom component wrapped legend', () => {
       const CustomLegend = (props: LegendProps) => <Legend {...props} />;
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CustomLegend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -382,7 +382,7 @@ describe('<Legend />', () => {
 
     it('should inject extra sneaky props - but none of them are actual HTML props so they get ignored by React', () => {
       const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend content={<CustomizedLegend />} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -401,7 +401,7 @@ describe('<Legend />', () => {
       const customizedLegend = () => {
         return 'custom return value';
       };
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend content={customizedLegend} />
           <Line dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -421,7 +421,7 @@ describe('<Legend />', () => {
         spy(params);
         return null;
       };
-      render(
+      rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend content={customContent} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -513,7 +513,7 @@ describe('<Legend />', () => {
       const CustomizedLegend = () => {
         return <>custom return value</>;
       };
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend content={CustomizedLegend} />
           <Line dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -529,7 +529,7 @@ describe('<Legend />', () => {
 
   describe('as a child of LineChart', () => {
     test('Renders `strokeDasharray` (if present) in Legend when iconType is set to `plainline`', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend iconType="plainline" />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -544,7 +544,7 @@ describe('<Legend />', () => {
     });
 
     test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData}>
           <Legend iconType="line" />
           <Line dataKey="pv" />
@@ -559,7 +559,7 @@ describe('<Legend />', () => {
     });
 
     test('Renders name value of siblings when dataKey is a function', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Line dataKey={row => row.value} name="My Line Data" />
@@ -574,7 +574,7 @@ describe('<Legend />', () => {
     });
 
     test('Legend defaults are read correctly', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Line dataKey={row => row.value} name="My Line Data" />
@@ -593,7 +593,7 @@ describe('<Legend />', () => {
     });
 
     it('should render one line legend item for each Line, with default class and style attributes', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           <Line dataKey="percent" />
@@ -621,7 +621,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           <Line dataKey="unknown" />
@@ -634,7 +634,7 @@ describe('<Legend />', () => {
     });
 
     it('should change color and className of hidden Line', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend inactiveColor="yellow" />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -656,7 +656,7 @@ describe('<Legend />', () => {
     });
 
     it('should have a default inactive Line legend color', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -678,7 +678,7 @@ describe('<Legend />', () => {
     });
 
     it('should render one empty legend item if Line has no dataKey', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           {/* I wonder if dataKey should be required here, like it is in Radar? */}
@@ -689,7 +689,7 @@ describe('<Legend />', () => {
     });
 
     it('should set legend item from `name` prop on Line, and update it after rerender', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           <Line dataKey="percent" name="%" />
@@ -707,7 +707,7 @@ describe('<Legend />', () => {
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Line dataKey="value" />
@@ -718,7 +718,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Line element is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Line dataKey="name" />
@@ -740,7 +740,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if Line data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
           <Line dataKey="value" />
@@ -764,7 +764,7 @@ describe('<Legend />', () => {
         spy(props);
         return null;
       };
-      render(
+      rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend content={CustomContent} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -851,7 +851,7 @@ describe('<Legend />', () => {
     });
 
     it('should render legend labels', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend iconType="plainline" />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
@@ -869,7 +869,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <LineChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Line dataKey="value" legendType={legendType} />
@@ -881,7 +881,7 @@ describe('<Legend />', () => {
     });
 
     it('should prefer Legend.iconType over Line.legendType', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend iconType="circle" />
           <Line dataKey="value" legendType="square" />
@@ -896,7 +896,7 @@ describe('<Legend />', () => {
 
   describe('as a child of LineChart when data is passed to Line child instead of the root', () => {
     it('should render labels', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <LineChart width={600} height={300} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend iconType="plainline" />
           <Line
@@ -920,7 +920,7 @@ describe('<Legend />', () => {
 
   describe('as a child of BarChart', () => {
     it('should render one rect legend item for each Bar, with default class and style attributes', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar dataKey="percent" />
@@ -949,7 +949,7 @@ describe('<Legend />', () => {
     });
 
     it('should not render items with a type of `none`', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Bar dataKey="value" legendType="star" />
@@ -968,7 +968,7 @@ describe('<Legend />', () => {
         return null;
       };
 
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar isAnimationActive={false} dataKey="percent" />
@@ -1041,7 +1041,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(5);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
 
       expectBars(container, [
         {
@@ -1096,7 +1096,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar dataKey="unknown" />
@@ -1106,7 +1106,7 @@ describe('<Legend />', () => {
     });
 
     it('should change color and className of hidden Bar', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend inactiveColor="yellow" />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -1128,7 +1128,7 @@ describe('<Legend />', () => {
     });
 
     it('should have a default inactive Bar legend color', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -1150,7 +1150,7 @@ describe('<Legend />', () => {
     });
 
     it('should render one empty legend item if Bar has no dataKey', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar />
@@ -1160,7 +1160,7 @@ describe('<Legend />', () => {
     });
 
     it('should set legend item from `name` prop on Bar, and update it after rerender', () => {
-      const { rerender, container } = render(
+      const { rerender, container } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar dataKey="percent" name="%" />
@@ -1178,7 +1178,7 @@ describe('<Legend />', () => {
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container, queryByText } = render(
+      const { container, queryByText } = rechartsTestRender(
         <BarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Bar dataKey="color" />
@@ -1196,7 +1196,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Bar element is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <BarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Bar dataKey="name" />
@@ -1218,7 +1218,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if Bar data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar dataKey="value" />
@@ -1237,7 +1237,7 @@ describe('<Legend />', () => {
 
     describe('wrapper props', () => {
       it('should provide default props', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <BarChart width={500} height={500} data={numericalData}>
             <Legend />
             <Bar dataKey="value" />
@@ -1257,7 +1257,7 @@ describe('<Legend />', () => {
           width: 3,
           height: 5,
         });
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <BarChart width={300} height={200} margin={{ top: 11, right: 13, left: 17, bottom: 19 }} data={numericalData}>
             <Legend />
             <Bar dataKey="value" />
@@ -1273,7 +1273,7 @@ describe('<Legend />', () => {
       });
 
       it('should change width and height based on explicit Legend props', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <BarChart width={500} height={500} margin={{ top: 11, right: 13, left: 17, bottom: 19 }} data={numericalData}>
             <Legend width={90} height={20} />
             <Bar dataKey="value" />
@@ -1289,7 +1289,7 @@ describe('<Legend />', () => {
       });
 
       it('should append wrapperStyle', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <BarChart width={500} height={500} data={numericalData}>
             <Legend wrapperStyle={{ backgroundColor: 'red' }} />
             <Bar dataKey="value" />
@@ -1356,7 +1356,7 @@ describe('<Legend />', () => {
       test.each(wrapperStyleTestCases)(
         'should calculate position if wrapperStyle is $name',
         ({ wrapperStyle, align, expectedStyle }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <BarChart
               width={500}
               height={500}
@@ -1512,7 +1512,7 @@ describe('<Legend />', () => {
             width: 23,
             height: 29,
           });
-          const { container, rerender } = render(
+          const { container, rerender } = rechartsTestRender(
             <BarChart
               width={500}
               height={700}
@@ -1676,7 +1676,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <BarChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Bar dataKey="value" legendType={legendType} />
@@ -1687,7 +1687,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Bar.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <BarChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Bar dataKey="value" legendType="square" />
@@ -1750,7 +1750,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey="unknown" />
@@ -1760,7 +1760,7 @@ describe('<Legend />', () => {
     });
 
     it('should change color and className of hidden Area', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend inactiveColor="yellow" />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -1782,7 +1782,7 @@ describe('<Legend />', () => {
     });
 
     it('should have a default inactive Area legend color', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -1804,7 +1804,7 @@ describe('<Legend />', () => {
     });
 
     it('should render one empty legend item if Area has no dataKey', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey={undefined} />
@@ -1869,7 +1869,7 @@ describe('<Legend />', () => {
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container, queryByText } = render(
+      const { container, queryByText } = rechartsTestRender(
         <AreaChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Area dataKey="value" />
@@ -1887,7 +1887,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Area element is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <AreaChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Area dataKey="name" />
@@ -1909,7 +1909,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if Area data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey="value" />
@@ -1931,7 +1931,7 @@ describe('<Legend />', () => {
         test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
           'should render element $selector for legendType $legendType',
           ({ legendType, selector, expectedAttributes }) => {
-            const { container } = render(
+            const { container } = rechartsTestRender(
               <AreaChart width={500} height={500} data={categoricalData}>
                 <Legend />
                 <Area dataKey="value" legendType={legendType} />
@@ -1946,7 +1946,7 @@ describe('<Legend />', () => {
         test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
           'should render legend colors for $selector for legendType $legendType',
           ({ legendType, selector, expectedAttributes }) => {
-            const { container } = render(
+            const { container } = rechartsTestRender(
               <AreaChart width={500} height={500} data={numericalData}>
                 <Legend />
                 <Area dataKey="percent" legendType={legendType} fill="red" />
@@ -1961,7 +1961,7 @@ describe('<Legend />', () => {
         test.each(expectedLegendTypeSymbolsWithColor('yellow'))(
           'should render legend colors for $selector for legendType $legendType',
           ({ legendType, selector, expectedAttributes }) => {
-            const { container } = render(
+            const { container } = rechartsTestRender(
               <AreaChart width={500} height={500} data={numericalData}>
                 <Legend />
                 <Area dataKey="percent" legendType={legendType} stroke="yellow" />
@@ -1976,7 +1976,7 @@ describe('<Legend />', () => {
         test.each(expectedLegendTypeSymbolsWithColor('gold'))(
           'should render legend colors for $selector for legendType $legendType',
           ({ legendType, selector, expectedAttributes }) => {
-            const { container } = render(
+            const { container } = rechartsTestRender(
               <AreaChart width={500} height={500} data={numericalData}>
                 <Legend />
                 <Area dataKey="percent" legendType={legendType} stroke="gold" fill="green" />
@@ -1991,7 +1991,7 @@ describe('<Legend />', () => {
         test.each(expectedLegendTypeSymbolsWithColor('green'))(
           'should render legend colors for $selector for legendType $legendType',
           ({ legendType, selector, expectedAttributes }) => {
-            const { container } = render(
+            const { container } = rechartsTestRender(
               <AreaChart width={500} height={500} data={numericalData}>
                 <Legend />
                 <Area dataKey="percent" legendType={legendType} stroke="none" fill="green" />
@@ -2003,7 +2003,7 @@ describe('<Legend />', () => {
       });
 
       it('should prefer Legend.iconType over Area.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <AreaChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Area dataKey="value" legendType="square" />
@@ -2017,7 +2017,7 @@ describe('<Legend />', () => {
     });
 
     it('should render legend', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey="value" />
@@ -2030,7 +2030,7 @@ describe('<Legend />', () => {
 
   describe('as a child of AreaChart when data is defined on graphical item', () => {
     it('should render legend', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <AreaChart width={500} height={500}>
           <Legend />
           <Area dataKey="value" data={numericalData} />
@@ -2043,7 +2043,7 @@ describe('<Legend />', () => {
 
   describe('as a child of ComposedChart', () => {
     it('should render one legend item for each allowed graphical element, even if their dataKey does not match the data or is undefined', () => {
-      const { container, queryByText } = render(
+      const { container, queryByText } = rechartsTestRender(
         <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Area dataKey="value" />
@@ -2072,7 +2072,7 @@ describe('<Legend />', () => {
     });
 
     it('should not render legend of unsupported graphical element', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Pie dataKey="pie datakey" />
@@ -2084,7 +2084,7 @@ describe('<Legend />', () => {
     });
 
     it('should render legend of Scatter even though it is not a supported graphical element inside ComposedChart', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Scatter dataKey="scatter datakey" />
@@ -2094,7 +2094,7 @@ describe('<Legend />', () => {
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container, queryByText } = render(
+      const { container, queryByText } = rechartsTestRender(
         <ComposedChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Area dataKey="value" />
@@ -2121,7 +2121,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Area dataKey="value" legendType={legendType} />
@@ -2132,7 +2132,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Area.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <ComposedChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Area dataKey="value" legendType="square" />
@@ -2149,7 +2149,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Bar dataKey="value" legendType={legendType} />
@@ -2160,7 +2160,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Bar.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <ComposedChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Bar dataKey="value" legendType="square" />
@@ -2177,7 +2177,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Line dataKey="value" legendType={legendType} />
@@ -2188,7 +2188,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Line.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <ComposedChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Line dataKey="value" legendType="square" />
@@ -2204,7 +2204,7 @@ describe('<Legend />', () => {
 
   describe('as a child of PieChart', () => {
     it('should render one legend item for each segment, and it should use nameKey as its label', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="percent" nameKey="value" />
@@ -2222,7 +2222,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="unknown" />
@@ -2241,7 +2241,7 @@ describe('<Legend />', () => {
     });
 
     it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={dataWithSpecialNameAndFillProperties} dataKey="value" />
@@ -2265,7 +2265,7 @@ describe('<Legend />', () => {
           { name: 'name3', fill: 'fill3', value: 56 },
         ];
 
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <PieChart width={500} height={500}>
             <Legend />
             <Pie data={dataWithSpecialNameAndFillPropertiesInDifferentOrder} dataKey="value" />
@@ -2283,7 +2283,7 @@ describe('<Legend />', () => {
       it.each(['dataKey', null] as const)(
         'should leave items in the original data order when itemSorter=%s',
         itemSorter => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <PieChart width={500} height={500}>
               <Legend itemSorter={itemSorter} />
               <Pie data={numericalData} dataKey="percent" nameKey="value" />
@@ -2303,7 +2303,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Pie data is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="percent" />
@@ -2341,7 +2341,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Pie itself is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="percent" />
@@ -2378,7 +2378,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if Pie data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="percent" nameKey="value" />
@@ -2409,7 +2409,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if nameKey changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={numericalData} dataKey="percent" nameKey="value" />
@@ -2444,7 +2444,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#808080'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <PieChart width={500} height={500}>
               <Legend />
               <Pie data={numericalData} dataKey="percent" legendType={legendType} />
@@ -2455,7 +2455,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Pie.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <PieChart width={500} height={500}>
             <Legend iconType="circle" />
             <Pie data={numericalData} dataKey="percent" legendType="square" />
@@ -2471,7 +2471,7 @@ describe('<Legend />', () => {
 
   describe('as a child of RadarChart', () => {
     it('should render one rect legend item for each Radar, with default class and style attributes', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="percent" />
@@ -2499,7 +2499,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="unknown" />
@@ -2509,7 +2509,7 @@ describe('<Legend />', () => {
     });
 
     it('should change color and className of hidden Radar', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend inactiveColor="yellow" />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -2531,7 +2531,7 @@ describe('<Legend />', () => {
     });
 
     it('should have a default inactive Radar legend color', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           {/* this will ignore the stroke and use inactive color on legend */}
@@ -2553,7 +2553,7 @@ describe('<Legend />', () => {
     });
 
     it('should render one empty legend item if Radar has no dataKey', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar />
@@ -2564,7 +2564,7 @@ describe('<Legend />', () => {
     });
 
     it('should set legend item from `name` prop on Radar, and update it after rerender', () => {
-      const { rerender, container } = render(
+      const { rerender, container } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="percent" name="%" />
@@ -2582,7 +2582,7 @@ describe('<Legend />', () => {
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Radar dataKey="value" />
@@ -2592,7 +2592,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after Radar element is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Radar dataKey="name" />
@@ -2614,7 +2614,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if Radar data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="value" />
@@ -2635,7 +2635,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} />
@@ -2646,7 +2646,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Radar.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <RadarChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Radar dataKey="value" legendType="square" />
@@ -2663,7 +2663,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('red'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} fill="red" />
@@ -2678,7 +2678,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('yellow'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} stroke="yellow" />
@@ -2693,7 +2693,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('gold'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} stroke="gold" fill="green" />
@@ -2708,7 +2708,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('green'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} stroke="none" fill="green" />
@@ -2722,7 +2722,7 @@ describe('<Legend />', () => {
 
   describe('as a child of RadialBarChart', () => {
     it('should render one legend item for each segment, with no label text, and rect icon with no color, by default', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
           <RadialBar dataKey="percent" label />
@@ -2740,7 +2740,7 @@ describe('<Legend />', () => {
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
           <RadialBar dataKey="unknown" />
@@ -2758,7 +2758,7 @@ describe('<Legend />', () => {
 
     it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
       // I think this is the only way to set legend labels for RadialBarChart?
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="percent" />
@@ -2774,7 +2774,7 @@ describe('<Legend />', () => {
     });
 
     it('should use special `name` and `fill` properties from data as legend labels and colors, even if the dataKey does not match', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="unknown" />
@@ -2789,7 +2789,7 @@ describe('<Legend />', () => {
     });
 
     it('should disappear after RadialBar itself is removed', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
           <RadialBar dataKey="percent" />
@@ -2835,7 +2835,7 @@ describe('<Legend />', () => {
     });
 
     it('should update legend if RadialBarChart data changes', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
           <RadialBar dataKey="percent" />
@@ -2869,7 +2869,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <RadialBarChart width={500} height={500} data={numericalData}>
               <Legend />
               <RadialBar dataKey="percent" legendType={legendType} />
@@ -2881,7 +2881,7 @@ describe('<Legend />', () => {
     });
 
     it('should prefer Legend.iconType over RadialBar.legendType', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend iconType="circle" />
           <RadialBar dataKey="value" legendType="square" />
@@ -2896,7 +2896,7 @@ describe('<Legend />', () => {
 
   describe('as a child of ScatterChart', () => {
     it('should render one legend item for each Scatter', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend />
           <Scatter dataKey="percent" />
@@ -2910,7 +2910,7 @@ describe('<Legend />', () => {
     });
 
     it('should not use `fill` from data for the legend fill', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Scatter dataKey="value" />
@@ -2923,7 +2923,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <ScatterChart width={500} height={500} data={numericalData}>
               <Legend />
               <Scatter dataKey="percent" legendType={legendType} />
@@ -2934,7 +2934,7 @@ describe('<Legend />', () => {
       );
 
       it('should prefer Legend.iconType over Scatter.legendType', () => {
-        const { container } = render(
+        const { container } = rechartsTestRender(
           <ScatterChart width={500} height={500} data={numericalData}>
             <Legend iconType="circle" />
             <Scatter dataKey="value" legendType="square" />
@@ -2951,7 +2951,7 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('red'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container } = render(
+          const { container } = rechartsTestRender(
             <ScatterChart width={500} height={500} data={numericalData}>
               <Legend />
               <Scatter dataKey="percent" legendType={legendType} fill="red" />
@@ -2981,7 +2981,7 @@ describe('<Legend />', () => {
   describe('click events', () => {
     it('should call onClick when clicked', () => {
       const onClick = vi.fn();
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend onClick={onClick} />
           <Scatter dataKey="percent" />
@@ -2997,7 +2997,7 @@ describe('<Legend />', () => {
 
   describe('legend portal', () => {
     it('nothing is rendered if legend portal is undefined and there is no chart context', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <Surface height={100} width={100}>
           <Legend portal={undefined} />
           <Scatter data={numericalData} dataKey="percent" />
@@ -3008,7 +3008,7 @@ describe('<Legend />', () => {
     });
 
     it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend />
           <Scatter dataKey="percent" />
@@ -3040,7 +3040,7 @@ describe('<Legend />', () => {
           </>
         );
       }
-      const { container } = render(<Example />);
+      const { container } = rechartsTestRender(<Example />);
 
       const legendWrapper = container.querySelector('.recharts-legend-wrapper');
 
@@ -3063,7 +3063,7 @@ describe('<Legend />', () => {
         return null;
       };
 
-      const { rerender } = render(
+      const { rerender } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Customized component={Comp} />
@@ -3088,7 +3088,7 @@ describe('<Legend />', () => {
         width: 0,
       };
       expect(legendSpy).toHaveBeenLastCalledWith(expectedAfterSecondRender);
-      expect(legendSpy).toHaveBeenCalledTimes(4);
+      expect(legendSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
