@@ -46,7 +46,7 @@ jobs:
 
       # This step runs only if the check_versions step failed.
       - name: Update files if versions are mismatched
-        if: steps.check_versions.outcome == 'failure'
+        if: steps.check_versions_before.outcome == 'failure'
         id: update_files
         run: node scripts/sync-playwright-versions.js
 
