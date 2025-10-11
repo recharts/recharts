@@ -24,17 +24,25 @@ function getPlaywrightVersion() {
   return version.replace(/[^0-9.]/g, '');
 }
 
+export function replacePlaywrightVersion(content, newVersion) {
+  const regex = dockerImageRegex;
+  if (!regex.test(content)) {
+    throw new Error('Could not find playwright version string to replace.');
+  }
+  return content.replace(regex, `mcr.microsoft.com/playwright:v${newVersion}-jammy`);
+}
+
 function updateFileVersion(filePath, newVersion) {
   const fullPath = path.join(projectRoot, filePath);
   const originalContent = fs.readFileSync(fullPath, 'utf8');
-  const regex = dockerImageRegex;
 
-  if (!regex.test(originalContent)) {
-    console.warn(`Warning: Could not find playwright version string in ${filePath}. Skipping update.`);
-    return;
+  let newContent;
+  try {
+    newContent = replacePlaywrightVersion(originalContent, newVersion);
+  } catch (error) {
+    console.error(`Error updating ${filePath}: ${error.message}`);
+    process.exit(1);
   }
-
-  const newContent = originalContent.replace(regex, `$1${newVersion}$2`);
 
   if (originalContent === newContent) {
     console.log(`No changes needed for ${filePath}.`);
