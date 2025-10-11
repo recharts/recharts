@@ -44,7 +44,6 @@ export default defineConfig({
         test: {
           name: 'unit',
           setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
-          globalSetup: './test/vitest.global-setup.ts',
         },
       },
       {

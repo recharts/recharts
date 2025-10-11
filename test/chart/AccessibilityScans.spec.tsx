@@ -32,6 +32,10 @@ import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburs
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 
 describe('Static scanning for accessibility markup issues', () => {
+  beforeEach(() => {
+    // https://github.com/nickcolley/jest-axe/blob/main/README.md#usage-with-jestusefaketimers-or-mocking-settimeout
+    vi.useRealTimers();
+  });
   test('Area chart', async () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data}>

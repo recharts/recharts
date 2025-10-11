@@ -166,11 +166,11 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
         key={`bar-${lineCoordinates.map(c => `${c.x1}-${c.x2}-${c.y1}-${c.y2}`)}`}
         {...svgProps}
       >
-        {lineCoordinates.map(coordinates => {
+        {lineCoordinates.map(c => {
           const lineStyle = isAnimationActive ? { transformOrigin } : undefined;
           return (
             <CSSTransitionAnimate
-              animationId={`error-bar-${direction}`}
+              animationId={`error-bar-${direction}_${c.x1}-${c.x2}-${c.y1}-${c.y2}`}
               from={`${scaleDirection}(0)`}
               to={`${scaleDirection}(1)`}
               attributeName="transform"
@@ -178,9 +178,9 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
               easing={animationEasing}
               isActive={isAnimationActive}
               duration={animationDuration}
-              key={`errorbar-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
+              key={`errorbar-${c.x1}-${c.x2}-${c.y1}-${c.y2}`}
             >
-              {style => <line {...coordinates} style={{ ...lineStyle, ...style }} />}
+              {style => <line {...c} style={{ ...lineStyle, ...style }} />}
             </CSSTransitionAnimate>
           );
         })}

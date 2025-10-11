@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectChartLayout } from '../context/chartLayoutContext';
@@ -10,7 +10,7 @@ const noop = () => {};
 export function SetLegendPayload({ legendPayload }: { legendPayload: ReadonlyArray<LegendPayload> }): null {
   const dispatch = useAppDispatch();
   const isPanorama = useIsPanorama();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isPanorama) {
       return noop;
     }
@@ -25,7 +25,7 @@ export function SetLegendPayload({ legendPayload }: { legendPayload: ReadonlyArr
 export function SetPolarLegendPayload({ legendPayload }: { legendPayload: ReadonlyArray<LegendPayload> }): null {
   const dispatch = useAppDispatch();
   const layout = useAppSelector(selectChartLayout);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (layout !== 'centric' && layout !== 'radial') {
       return noop;
     }

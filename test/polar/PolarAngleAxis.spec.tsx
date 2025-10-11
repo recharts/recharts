@@ -1742,13 +1742,13 @@ describe('<PolarAngleAxis />', () => {
           { value: 278 },
           { value: 189 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
@@ -1813,7 +1813,7 @@ describe('<PolarAngleAxis />', () => {
           // @ts-expect-error the type demands an `index` property but the selector does not return it
           { coordinate: 341.2322274881517, value: 200, offset: -0 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -1866,13 +1866,13 @@ describe('<PolarAngleAxis />', () => {
           { value: 278 },
           { value: 189 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [0, 400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
@@ -1884,7 +1884,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 400], range: [0, 360] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select real scale type', () => {
@@ -1934,7 +1934,7 @@ describe('<PolarAngleAxis />', () => {
           // @ts-expect-error the type demands an `index` property but the selector does not return it
           { coordinate: 360, offset: -0, value: 400 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -1972,19 +1972,19 @@ describe('<PolarAngleAxis />', () => {
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expectLastCalledWith(spy, [360, 0]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [400, 189], range: [360, 0] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render ticks', () => {
@@ -2167,7 +2167,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select axis domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [0, 9]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select axis range', () => {
@@ -2179,7 +2179,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 9], range: [20, 220] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render ticks in the angled part only', () => {
@@ -2419,14 +2419,14 @@ describe('<PolarAngleAxis />', () => {
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [31.47, 26.69, 15.69, 8.22, 8.63, 2.63, 6.67]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         // why is scale.domain() different from domain?
         expectLastCalledWithScale(spy, { domain: [31.47, 6.67], range: [0, 360] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -2465,13 +2465,13 @@ describe('<PolarAngleAxis />', () => {
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expectLastCalledWith(spy, [0, 9800]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 9800], range: [0, 360] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 

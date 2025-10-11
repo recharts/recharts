@@ -737,7 +737,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select real scale type', () => {
@@ -749,7 +749,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select domain with nice ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
@@ -764,7 +764,7 @@ describe('<PolarRadiusAxis />', () => {
           domain: [0, 1, 2, 3, 4, 5],
           range: [0, 196],
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should not render ticks', () => {
@@ -808,13 +808,13 @@ describe('<PolarRadiusAxis />', () => {
           type: 'number',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select real scale type', () => {
@@ -826,7 +826,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select domain with nice ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
@@ -841,7 +841,7 @@ describe('<PolarRadiusAxis />', () => {
           domain: [0, 1, 2, 3, 4, 5],
           range: [0, 196],
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render ticks', () => {
@@ -922,13 +922,13 @@ describe('<PolarRadiusAxis />', () => {
           type: 'number',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select real scale type', () => {
@@ -940,7 +940,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select domain with nice ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
         expectLastCalledWith(spy, [0, 400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select range', () => {
@@ -955,7 +955,7 @@ describe('<PolarRadiusAxis />', () => {
           domain: [0, 400],
           range: [0, 196],
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render ticks', () => {

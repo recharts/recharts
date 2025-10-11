@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 import {
@@ -3590,9 +3590,8 @@ describe('<BarChart />', () => {
 
       fireEvent.mouseOut(barCharts[0]);
       const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
-      // TODO: remove these waits. Right now with both Context and Redux there are too many re-renders.
-      waitFor(() => expect(tooltips3[0]).not.toBeVisible());
-      waitFor(() => expect(tooltips3[1]).not.toBeVisible());
+      expect(tooltips3[0]).toBeVisible();
+      expect(tooltips3[1]).toBeVisible();
 
       fireEvent.mouseOut(barCharts[1]);
       const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');
@@ -3603,36 +3602,32 @@ describe('<BarChart />', () => {
 
   describe('state integration', () => {
     it('should report margin, and update after it changes', () => {
-      const marginSpy = vi.fn();
-      const Comp = (): null => {
-        marginSpy(useMargin());
-        return null;
-      };
-      const { rerender } = render(
+      const { spy, rerender } = createSelectorTestCase(({ children }) => (
         <BarChart width={100} height={100} margin={{ top: 1, right: 2, bottom: 3, left: 4 }}>
-          <Customized component={<Comp />} />
-        </BarChart>,
-      );
-      expect(marginSpy).toHaveBeenLastCalledWith({
+          {children}
+        </BarChart>
+      ))(useMargin);
+
+      expectLastCalledWith(spy, {
         bottom: 3,
         left: 4,
         right: 2,
         top: 1,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(1);
 
-      rerender(
+      rerender(({ children }) => (
         <BarChart width={100} height={100} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
-          <Customized component={<Comp />} />
-        </BarChart>,
-      );
-      expect(marginSpy).toHaveBeenLastCalledWith({
+          {children}
+        </BarChart>
+      ));
+      expectLastCalledWith(spy, {
         bottom: 30,
         left: 40,
         right: 20,
         top: 10,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 });

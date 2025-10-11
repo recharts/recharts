@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
@@ -44,6 +43,7 @@ import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 import { expectPieSectors } from '../helper/expectPieSectors';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { PieSettings } from '../../src/state/types/PieSettings';
+import { userEventSetup } from '../helper/userEventSetup';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -718,28 +718,34 @@ describe('<Pie />', () => {
       onClick.mockClear();
     });
 
-    test('should call external handlers', async () => {
-      const { container } = renderTestCase();
+    test(
+      'should call external handlers',
+      async () => {
+        const user = userEventSetup();
+        const { container } = renderTestCase();
 
-      expect(onMouseEnter).toHaveBeenCalledTimes(0);
-      expect(onMouseLeave).toHaveBeenCalledTimes(0);
-      expect(onClick).toHaveBeenCalledTimes(0);
+        expect(onMouseEnter).toHaveBeenCalledTimes(0);
+        expect(onMouseLeave).toHaveBeenCalledTimes(0);
+        expect(onClick).toHaveBeenCalledTimes(0);
 
-      const sector = container.querySelectorAll('.recharts-layer')[4];
-      await userEvent.hover(sector);
-      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+        const sector = container.querySelectorAll('.recharts-layer')[4];
 
-      await userEvent.unhover(sector);
-      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+        await user.hover(sector);
+        expect(onMouseEnter).toHaveBeenCalledTimes(1);
 
-      await userEvent.click(sector);
-      expect(onClick).toHaveBeenCalledTimes(1);
-      // click also includes enter in it? ok
-      expect(onMouseEnter).toHaveBeenCalledTimes(2);
+        await user.unhover(sector);
+        expect(onMouseLeave).toHaveBeenCalledTimes(1);
 
-      expect(onMouseLeave).toHaveBeenCalledTimes(1);
-      expect(onClick).toHaveBeenCalledTimes(1);
-    });
+        await user.click(sector);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        // click also includes enter in it? ok
+        expect(onMouseEnter).toHaveBeenCalledTimes(2);
+
+        expect(onMouseLeave).toHaveBeenCalledTimes(1);
+        expect(onClick).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 1000 },
+    );
   });
 
   describe('Tooltip integration', () => {
@@ -1350,7 +1356,6 @@ describe('<Pie />', () => {
 
       it('should select tooltip ticks', () => {
         const { spy } = renderTestCase(selectTooltipAxisTicks);
-        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, [
           {
             coordinate: -72,
@@ -1383,6 +1388,7 @@ describe('<Pie />', () => {
             offset: -72,
           },
         ]);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should start with tooltip visible', () => {
@@ -1444,6 +1450,7 @@ describe('<Pie />', () => {
 
   describe('keyboard interaction', () => {
     test('Tab can focus in and out of the pie chart', async () => {
+      const user = userEventSetup();
       expect.assertions(3);
       const timeout = 2000;
       const { container } = render(
@@ -1474,9 +1481,9 @@ describe('<Pie />', () => {
       );
 
       // recharts-surface also has a default tabIndex of 0 so tab has to be pressed twice
-      await userEvent.tab();
+      await user.tab();
       // Pressing tab another time goes into pie
-      await userEvent.tab();
+      await user.tab();
       await waitFor(
         () => {
           expect(document.activeElement).toBe(pie);
@@ -1485,7 +1492,7 @@ describe('<Pie />', () => {
       );
 
       // Testing that pressing tab goes out of pie chart
-      await userEvent.tab();
+      await user.tab();
       await waitFor(
         () => {
           expect(document.activeElement).toBe(document.body);
@@ -1495,6 +1502,7 @@ describe('<Pie />', () => {
     });
 
     test('Tab can not focus in and out of the pie chart', async () => {
+      const user = userEventSetup();
       expect.assertions(3);
       const timeout = 2000;
       const { container } = render(
@@ -1526,7 +1534,7 @@ describe('<Pie />', () => {
       );
 
       // Testing that pressing tab goes into pie chart
-      await userEvent.tab();
+      await user.tab();
       await waitFor(
         () => {
           expect(document.activeElement).not.toBe(pie);
@@ -1535,7 +1543,7 @@ describe('<Pie />', () => {
       );
 
       // Testing that pressing tab goes out of pie chart
-      await userEvent.tab();
+      await user.tab();
       await waitFor(
         () => {
           expect(document.activeElement).toBe(document.body);
@@ -1545,6 +1553,7 @@ describe('<Pie />', () => {
     });
 
     test('Arrows move between sectors, and show tooltip information with accessibilityLayer', async () => {
+      const user = userEventSetup();
       // but only when defaultIndex is set? I can't get this to work without it
       const { container, debug } = render(
         <div role="button" tabIndex={0} className="container">
@@ -1575,20 +1584,21 @@ describe('<Pie />', () => {
       expectTooltipPayload(container, '', ['B : 250']);
 
       // unsure why two are needed but they are in order to advance one
-      await userEvent.keyboard('{ArrowRight}');
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
 
       // ArrowRight goes forwards
       expectTooltipPayload(container, '', ['C : 250']);
 
-      await userEvent.keyboard('{ArrowLeft}');
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
 
       // ArrowLeft goes back
       expectTooltipPayload(container, '', ['A : 250']);
     });
 
     test.fails('Arrows move between sectors, wrap around, and escape blurs', async () => {
+      const user = userEventSetup();
       const { container, debug } = render(
         <div role="button" tabIndex={0} className="container">
           <PieChart width={500} height={500}>
@@ -1613,32 +1623,32 @@ describe('<Pie />', () => {
       const allSectors = pie.querySelectorAll('.recharts-pie-sector');
       expect(allSectors).toHaveLength(5);
 
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
 
       expect(document.activeElement).toBe(allSectors[4]);
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(allSectors[3]);
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(allSectors[2]);
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(allSectors[1]);
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(allSectors[0]);
-      await userEvent.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(allSectors[4]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[0]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[1]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[2]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[3]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[4]);
-      await userEvent.keyboard('{ArrowLeft}');
+      await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(allSectors[0]);
-      await userEvent.keyboard('{Escape}');
+      await user.keyboard('{Escape}');
       expect(document.activeElement).toBe(document.body);
     });
   });
@@ -1668,7 +1678,7 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       const expectedPie1: PieSettings = {
         maxRadius: undefined,
         angleAxisId: 0,
@@ -1708,7 +1718,7 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(6);
+      expect(spy).toHaveBeenCalledTimes(4);
       const expectedPie2: PieSettings = {
         maxRadius: undefined,
         angleAxisId: 0,
@@ -1756,7 +1766,7 @@ describe('<Pie />', () => {
         </PieChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       const expectedPie: PieSettings = {
         maxRadius: undefined,
         angleAxisId: 0,

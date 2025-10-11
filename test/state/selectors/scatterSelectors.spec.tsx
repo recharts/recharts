@@ -407,7 +407,7 @@ describe('selectScatterPoints', () => {
           },
         },
       ];
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenCalledWith(expectedPoints);
     });
   });

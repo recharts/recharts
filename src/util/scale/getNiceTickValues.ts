@@ -6,6 +6,7 @@
 import Decimal from 'decimal.js-light';
 import { compose, range, memoize, map, reverse } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
+import { NumberDomain } from '../types';
 
 /**
  * Calculate a interval of a minimum value and a maximum value
@@ -171,7 +172,7 @@ export const calculateStep = (
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true): number[] {
+function getNiceTickValuesFn([min, max]: NumberDomain, tickCount = 6, allowDecimals = true): number[] {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -206,7 +207,7 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickCount: number, allowDecimals = true) {
+function getTickValuesFixedDomainFn([min, max]: NumberDomain, tickCount: number, allowDecimals = true) {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
 

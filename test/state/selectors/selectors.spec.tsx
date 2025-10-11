@@ -49,6 +49,7 @@ import { useTooltipEventType } from '../../../src/state/selectors/selectTooltipE
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 import { combineTooltipPayload } from '../../../src/state/selectors/combiners/combineTooltipPayload';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -1225,9 +1226,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       spy(tooltipData);
       return null;
     };
-    render(
+    rechartsTestRender(
       <PieChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
         <Pie data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" />
         <Pie data={[{ y: 10 }, { y: 20 }, { y: 30 }]} dataKey="y" />
       </PieChart>,

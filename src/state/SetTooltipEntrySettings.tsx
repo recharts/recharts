@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useAppDispatch } from './hooks';
 import { addTooltipEntrySettings, removeTooltipEntrySettings, TooltipPayloadConfiguration } from './tooltipSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -11,7 +11,7 @@ type SetTooltipEntrySettingsProps<T> = {
 export function SetTooltipEntrySettings<T>({ fn, args }: SetTooltipEntrySettingsProps<T>): null {
   const dispatch = useAppDispatch();
   const isPanorama = useIsPanorama();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isPanorama) {
       // Panorama graphical items should never contribute to Tooltip payload.
       return undefined;
