@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: write
-  actions: write
 
 jobs:
   sync:
@@ -23,7 +22,7 @@ jobs:
         with:
           # Checkout the head of the PR to be able to push changes back.
           ref: ${{ github.head_ref }}
-          token: '${{ secrets.PLAYWRIGHT_VERSION_SYNC_TOKEN }}'
+          token: ${{ secrets.PLAYWRIGHT_VERSION_SYNC_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
