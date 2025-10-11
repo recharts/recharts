@@ -6,7 +6,9 @@
 name: Sync Playwright Versions
 
 on:
-  pull_request:
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -15,6 +17,8 @@ jobs:
   sync:
     # Only run this job for pull requests created by the dependabot user.
     runs-on: ubuntu-latest
+    # due to pull_request_target this workflow can potentially expose secrets to untrusted party,
+    # so it's critical to limit its execution to only trusted actors (here, dependabot)
     if: github.actor == 'dependabot[bot]'
     steps:
       - name: Checkout code
