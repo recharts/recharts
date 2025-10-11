@@ -23,6 +23,7 @@ jobs:
         with:
           # Checkout the head of the PR to be able to push changes back.
           ref: ${{ github.head_ref }}
+          token: '${{ secrets.PLAYWRIGHT_VERSION_SYNC_TOKEN }}'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,6 +46,12 @@ jobs:
         if: steps.check_versions.outcome == 'failure'
         id: update_files
         run: node scripts/sync-playwright-versions.js
+
+      - name: Check again for version mismatch
+        id: check_versions
+        run: npm run check-playwright-versions
+        # by now, everything should be fixed. if it's not then something went wrong, and we should fail the job.
+        continue-on-error: false
 
       # If the files were updated, commit and push them to the PR branch.
       - name: Commit and push changes
