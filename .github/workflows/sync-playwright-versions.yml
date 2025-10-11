@@ -48,7 +48,7 @@ jobs:
       - name: Update files if versions are mismatched
         if: steps.check_versions_before.outcome == 'failure'
         id: update_files
-        run: node scripts/sync-playwright-versions.js
+        run: node scripts/sync-playwright-versions.mjs
 
       - name: Check again for version mismatch
         id: check_versions_after
