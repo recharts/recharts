@@ -7,22 +7,14 @@
  * This script is designed to be run in a CI/CD environment, particularly for Dependabot pull requests,
  * to automatically align the Playwright version used in container images with the version specified in package.json.
  */
-const fs = require('fs');
-const path = require('path');
-const { dockerImageRegex } = require('./check-playwright-versions');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dockerImageRegex, getPackageJsonVersion, checkPlaywrightVersions } from './check-playwright-versions.mjs';
 
-const projectRoot = path.join(__dirname, '..');
-
-function getPlaywrightVersion() {
-  const packageJsonPath = path.join(projectRoot, 'package.json');
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  const version = packageJson.devDependencies.playwright;
-  if (!version) {
-    console.error('Error: Could not find playwright in devDependencies of package.json');
-    process.exit(1);
-  }
-  return version.replace(/[^0-9.]/g, '');
-}
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+const projectRoot = path.join(dirname, '..');
 
 export function replacePlaywrightVersion(content, newVersion) {
   const regex = dockerImageRegex;
@@ -53,13 +45,25 @@ function updateFileVersion(filePath, newVersion) {
 }
 
 function main() {
-  const newVersion = getPlaywrightVersion();
+  const { allSame: before } = checkPlaywrightVersions();
+  if (before === true) {
+    console.log('All Playwright versions are already in sync. No changes needed.');
+    return;
+  }
+  const newVersion = getPackageJsonVersion('playwright');
   console.log(`Syncing playwright versions to ${newVersion}`);
 
   updateFileVersion('test-vr/playwright-ct.Dockerfile', newVersion);
   updateFileVersion('.github/workflows/ci.yml', newVersion);
+
+  const { allSame: after } = checkPlaywrightVersions();
+  if (after !== true) {
+    console.error('Error: Versions are still not in sync after update.');
+    process.exit(1);
+  }
+  console.log('All Playwright versions are now in sync.');
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

@@ -9,12 +9,15 @@
  * If any version is different, it logs the discrepancies and exits with code 1.
  * This script is intended to be used in CI to prevent version mismatches.
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const projectRoot = path.join(__dirname, '..');
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+const projectRoot = path.join(dirname, '..');
 
-function getPackageJsonVersion(packageName) {
+export function getPackageJsonVersion(packageName) {
   const packageJsonPath = path.join(projectRoot, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   const version = packageJson.devDependencies[packageName];
@@ -26,7 +29,7 @@ function getPackageJsonVersion(packageName) {
   return version.replace(/[^0-9.]/g, '');
 }
 
-const dockerImageRegex = /mcr\.microsoft\.com\/playwright:v([0-9.]+)-jammy/;
+export const dockerImageRegex = /mcr\.microsoft\.com\/playwright:v([0-9.]+)-jammy/;
 
 function getDockerfileVersion() {
   const dockerfilePath = path.join(projectRoot, 'test-vr', 'playwright-ct.Dockerfile');
@@ -50,7 +53,7 @@ function getCiYmlVersion() {
   return match[1];
 }
 
-function main() {
+export function checkPlaywrightVersions() {
   const versions = {
     'package.json (playwright)': getPackageJsonVersion('playwright'),
     'package.json (@playwright/experimental-ct-react)': getPackageJsonVersion('@playwright/experimental-ct-react'),
@@ -61,6 +64,11 @@ function main() {
   const versionValues = Object.values(versions);
   const firstVersion = versionValues[0];
   const allSame = versionValues.every(v => v === firstVersion);
+  return { versions, firstVersion, allSame };
+}
+
+function main() {
+  const { versions, firstVersion, allSame } = checkPlaywrightVersions();
 
   if (allSame) {
     console.log(`Success: All playwright versions are in sync at ${firstVersion}`);
@@ -74,8 +82,8 @@ function main() {
   }
 }
 
-exports.dockerImageRegex = dockerImageRegex;
+export { main };
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

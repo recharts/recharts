@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 // @ts-expect-error scripts folder is not included in the tsconfig
-import { replacePlaywrightVersion } from '../../scripts/sync-playwright-versions';
+import { replacePlaywrightVersion } from '../../scripts/sync-playwright-versions.mjs';
 
 describe('replacePlaywrightVersion', () => {
   it('replaces the version in the given content', () => {
