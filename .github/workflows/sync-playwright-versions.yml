@@ -57,5 +57,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit --no-verify -m "fix(ci): sync playwright versions [dependabot-skip]"
-            git push
+            git push --no-verify
           fi
