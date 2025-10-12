@@ -194,9 +194,8 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
 
-  const { activeIndex, isActive } = useAppSelector(state =>
-    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
-  );
+  const { activeIndex, isActive } =
+    useAppSelector(state => selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString)) ?? {};
 
   const payloadFromRedux = useAppSelector(state =>
     selectTooltipPayload(state, tooltipEventType, trigger, defaultIndexAsString),
@@ -209,7 +208,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
   const coordinate = useAppSelector(state =>
     selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
   );
-  const payload: TooltipPayload = payloadFromRedux;
+  const payload: TooltipPayload | undefined = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
@@ -217,7 +216,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? isActive;
+  const finalIsActive: boolean = activeFromProps ?? isActive ?? false;
   const [lastBoundingBox, updateBoundingBox] = useElementOffset([payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 

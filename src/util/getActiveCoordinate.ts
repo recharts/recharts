@@ -1,16 +1,14 @@
 import {
   AxisType,
   CartesianLayout,
-  ChartCoordinate,
   ChartOffsetInternal,
   ChartPointer,
   Coordinate,
-  LayoutType,
-  PolarViewBoxRequired,
+  PolarLayout,
   RangeObj,
   TickItem,
 } from './types';
-import { inRangeOfSector, polarToCartesian } from './PolarUtils';
+import { polarToCartesian } from './PolarUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { mathSign } from './DataUtils';
 
@@ -34,21 +32,27 @@ export const getActiveCartesianCoordinate = (
   return { x: 0, y: 0 };
 };
 
-export const getActiveCoordinate = (
-  layout: LayoutType,
+/**
+ * Get the active coordinate in polar coordinate system.
+ * Internally we only really use x and y, but this returned object is part of public API
+ * (because it goes straight to the tooltip content) so we keep all the other properties
+ * for backwards compatibility.
+ *
+ * @param layout - The polar layout type ('centric' or 'radial').
+ * @param tooltipTicks - Array of tick items used for tooltips.
+ * @param activeIndex - The index of the active tick.
+ * @param rangeObj - The range object containing polar chart properties.
+ * @returns The active coordinate object with polar properties.
+ */
+export const getActivePolarCoordinate = (
+  layout: PolarLayout,
   tooltipTicks: readonly TickItem[],
   activeIndex: number,
   rangeObj: RangeObj,
-): ChartCoordinate => {
+): RangeObj & Coordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
   if (entry) {
-    if (layout === 'horizontal') {
-      return { x: entry.coordinate, y: rangeObj.y };
-    }
-    if (layout === 'vertical') {
-      return { x: rangeObj.x, y: entry.coordinate };
-    }
     if (layout === 'centric') {
       const angle = entry.coordinate;
       const { radius } = rangeObj;
@@ -72,33 +76,24 @@ export const getActiveCoordinate = (
     };
   }
 
-  return { x: 0, y: 0 };
+  return {
+    angle: 0,
+    clockWise: false,
+    cx: 0,
+    cy: 0,
+    endAngle: 0,
+    innerRadius: 0,
+    outerRadius: 0,
+    radius: 0,
+    startAngle: 0,
+    x: 0,
+    y: 0,
+  };
 };
 
 export function isInCartesianRange(pointer: ChartPointer, offset: ChartOffsetInternal): boolean {
   const { chartX: x, chartY: y } = pointer;
   return x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
-}
-
-export function inRange(
-  x: number,
-  y: number,
-  layout: LayoutType,
-  polarViewBox: PolarViewBoxRequired | undefined,
-  offset: ChartOffsetInternal,
-): RangeObj | null {
-  if (layout === 'horizontal' || layout === 'vertical') {
-    const isInRange =
-      x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
-
-    return isInRange ? { x, y } : null;
-  }
-
-  if (polarViewBox) {
-    return inRangeOfSector({ x, y }, polarViewBox);
-  }
-
-  return null;
 }
 
 export const calculateActiveTickIndex = (

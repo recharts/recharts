@@ -26,6 +26,7 @@ import {
   NumberDomain,
   OffsetHorizontal,
   OffsetVertical,
+  PolarLayout,
   RangeObj,
   Size,
   StackOffsetType,
@@ -427,7 +428,7 @@ export const getStackedData = (
   const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType];
   const stack = shapeStack<Record<string, unknown>, DataKey<any>>()
     .keys(dataKeys)
-    .value((d, key) => +getValueByDataKey(d, key, 0))
+    .value((d, key) => Number(getValueByDataKey(d, key, 0)))
     .order(stackOrderNone)
     // @ts-expect-error definitelytyped types are incorrect
     .offset(offsetAccessor);
@@ -658,13 +659,7 @@ export const calculateCartesianTooltipPos = (coordinate: ChartPointer, layout: C
   return undefined;
 };
 
-export const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
-  if (layout === 'horizontal') {
-    return rangeObj.x;
-  }
-  if (layout === 'vertical') {
-    return rangeObj.y;
-  }
+export const calculatePolarTooltipPos = (rangeObj: RangeObj, layout: PolarLayout): number | undefined => {
   if (layout === 'centric') {
     return rangeObj.angle;
   }

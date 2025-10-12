@@ -957,18 +957,9 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | SVGProps<ElementType>
   | boolean;
 
-/**
- * @deprecated, mixes cartesian and polar properties. Instead use `Coordinate` for cartesian
- * and `PolarCoordinate` for polar charts.
- * TODO we need two different range objects, one for polar and another for cartesian layouts
- */
-export type RangeObj = {
-  x?: number;
-  y?: number;
-  cx?: number;
-  cy?: number;
-  angle?: number;
-  radius?: number;
+export type RangeObj = PolarViewBoxRequired & {
+  angle: number;
+  radius: number;
 };
 
 /**

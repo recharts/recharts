@@ -30,7 +30,7 @@ export const combineTooltipPayload = (
   tooltipAxisDataKey: DataKey<any> | undefined,
   activeLabel: string | undefined,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
 ): TooltipPayload | undefined => {
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
