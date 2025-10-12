@@ -310,7 +310,7 @@ const overridesConfig = [
      */
     basePath: './www/src/docs/exampleComponents',
     files: ['**/*.tsx', '**/*.ts'],
-    ignores: ['**/index.ts'],
+    ignores: ['**/index.ts', '**/index.tsx'],
     rules: {
       'import/no-default-export': 'off',
       'import/prefer-default-export': 'error',

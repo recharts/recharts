@@ -48,7 +48,15 @@ export const pieChartExamples: Record<string, ChartExample> = {
     name: 'Pie Chart With Needle',
   },
   PieChartInFlexbox: {
-    Component: PieChartInFlexbox,
+    Component: () => (
+      <div style={{ width: '100%', minHeight: '400px' }}>
+        <p>
+          The <code>responsive</code> prop works well with flexbox. The charts below are in a flex container. Resize the
+          window to see how they behave. Each chart is a flex item.
+        </p>
+        <PieChartInFlexbox />
+      </div>
+    ),
     sourceCode: pieChartInFlexboxSource,
     name: 'Pie Chart in Flexbox',
   },

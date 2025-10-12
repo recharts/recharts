@@ -19,44 +19,38 @@ const MyPie = () => (
  */
 export default function PieChartInFlexbox() {
   return (
-    <div style={{ width: '100%', minHeight: '400px' }}>
-      <p>
-        The <code>responsive</code> prop works well with flexbox. The charts below are in a flex container. Resize the
-        window to see how they behave. Each chart is a flex item.
-      </p>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          width: '100%',
-          minHeight: '300px',
-          border: '1px solid #ccc',
-          padding: '10px',
-          justifyContent: 'space-around',
-          alignItems: 'stretch',
-        }}
-      >
-        <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', flex: '1 1 200px', aspectRatio: 1 }}>
-          <MyPie />
-          <Label position="center" fill="#666">
-            Flex: 1 1 200px
-          </Label>
-        </PieChart>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        width: '100%',
+        minHeight: '300px',
+        border: '1px solid #ccc',
+        padding: '10px',
+        justifyContent: 'space-around',
+        alignItems: 'stretch',
+      }}
+    >
+      <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', flex: '1 1 200px', aspectRatio: 1 }}>
+        <MyPie />
+        <Label position="center" fill="#666">
+          Flex: 1 1 200px
+        </Label>
+      </PieChart>
 
-        <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', maxWidth: '300px', aspectRatio: 1 }}>
-          <MyPie />
-          <Label position="center" fill="#666">
-            maxWidth: &#39;300px&#39;
-          </Label>
-        </PieChart>
+      <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', maxWidth: '300px', aspectRatio: 1 }}>
+        <MyPie />
+        <Label position="center" fill="#666">
+          maxWidth: &#39;300px&#39;
+        </Label>
+      </PieChart>
 
-        <PieChart responsive style={{ height: 'calc(100% - 20px)', maxHeight: '20vh', width: '33%', aspectRatio: 1 }}>
-          <MyPie />
-          <Label position="center" fill="#666">
-            maxHeight: &#39;20vh&#39;
-          </Label>
-        </PieChart>
-      </div>
+      <PieChart responsive style={{ height: 'calc(100% - 20px)', maxHeight: '20vh', width: '33%', aspectRatio: 1 }}>
+        <MyPie />
+        <Label position="center" fill="#666">
+          maxHeight: &#39;20vh&#39;
+        </Label>
+      </PieChart>
     </div>
   );
 }
