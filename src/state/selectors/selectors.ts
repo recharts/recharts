@@ -9,9 +9,10 @@ import {
   TooltipPayload,
   TooltipPayloadConfiguration,
 } from '../tooltipSlice';
-import { calculateTooltipPos } from '../../util/ChartUtils';
+import { calculateCartesianTooltipPos, calculateTooltipPos } from '../../util/ChartUtils';
 import {
   AxisType,
+  CartesianLayout,
   ChartOffsetInternal,
   ChartPointer,
   Coordinate,
@@ -38,7 +39,13 @@ import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { selectTooltipAxisDataKey } from './selectTooltipAxis';
-import { calculateActiveTickIndex, getActiveCoordinate, inRange } from '../../util/getActiveCoordinate';
+import {
+  calculateActiveTickIndex,
+  getActiveCartesianCoordinate,
+  getActiveCoordinate,
+  inRange,
+  isInCartesianRange,
+} from '../../util/getActiveCoordinate';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
@@ -186,22 +193,20 @@ export const selectIsTooltipActive: (
 
 const combineActiveCartesianProps = (
   chartEvent: ChartPointer | undefined,
-  layout: LayoutType | undefined,
-  polarViewBox: PolarViewBoxRequired | undefined,
+  layout: CartesianLayout,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffsetInternal,
 ): ActiveTooltipProps | undefined => {
-  if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
+  if (!chartEvent || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
-  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, layout, polarViewBox, offset);
-  if (!rangeObj) {
+  if (!isInCartesianRange(chartEvent, offset)) {
     return undefined;
   }
-  const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
+  const pos: number | undefined = calculateCartesianTooltipPos(chartEvent, layout);
 
   const activeIndex = calculateActiveTickIndex(
     pos,
@@ -211,7 +216,7 @@ const combineActiveCartesianProps = (
     tooltipAxisRange,
   );
 
-  const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
+  const activeCoordinate = getActiveCartesianCoordinate(layout, tooltipTicks, activeIndex, chartEvent);
 
   return { activeIndex: String(activeIndex), activeCoordinate };
 };
@@ -265,7 +270,6 @@ export const combineActiveProps = (
     return combineActiveCartesianProps(
       chartEvent,
       layout,
-      polarViewBox,
       tooltipAxisType,
       tooltipAxisRange,
       tooltipTicks,

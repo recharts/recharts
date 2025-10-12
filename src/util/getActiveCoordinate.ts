@@ -1,7 +1,10 @@
 import {
   AxisType,
+  CartesianLayout,
   ChartCoordinate,
   ChartOffsetInternal,
+  ChartPointer,
+  Coordinate,
   LayoutType,
   PolarViewBoxRequired,
   RangeObj,
@@ -10,6 +13,26 @@ import {
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { mathSign } from './DataUtils';
+
+export const getActiveCartesianCoordinate = (
+  layout: CartesianLayout,
+  tooltipTicks: readonly TickItem[],
+  activeIndex: number,
+  pointer: ChartPointer,
+): Coordinate => {
+  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
+
+  if (entry) {
+    if (layout === 'horizontal') {
+      return { x: entry.coordinate, y: pointer.chartY };
+    }
+    if (layout === 'vertical') {
+      return { x: pointer.chartX, y: entry.coordinate };
+    }
+  }
+
+  return { x: 0, y: 0 };
+};
 
 export const getActiveCoordinate = (
   layout: LayoutType,
@@ -51,6 +74,11 @@ export const getActiveCoordinate = (
 
   return { x: 0, y: 0 };
 };
+
+export function isInCartesianRange(pointer: ChartPointer, offset: ChartOffsetInternal): boolean {
+  const { chartX: x, chartY: y } = pointer;
+  return x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
+}
 
 export function inRange(
   x: number,

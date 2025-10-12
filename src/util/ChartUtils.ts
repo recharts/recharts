@@ -19,6 +19,8 @@ import {
   AxisTick,
   AxisType,
   BaseAxisProps,
+  CartesianLayout,
+  ChartPointer,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -644,6 +646,17 @@ export function getTooltipNameProp(
   }
   return undefined;
 }
+
+export const calculateCartesianTooltipPos = (coordinate: ChartPointer, layout: CartesianLayout): number | undefined => {
+  if (layout === 'horizontal') {
+    return coordinate.chartX;
+  }
+  if (layout === 'vertical') {
+    return coordinate.chartY;
+  }
+
+  return undefined;
+};
 
 export const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
   if (layout === 'horizontal') {
