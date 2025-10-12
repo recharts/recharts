@@ -251,7 +251,7 @@ function VerticalGridLines(props: GridLinesProps) {
 
 function HorizontalStripes(props: Props) {
   const { horizontalFill, fillOpacity, x, y, width, height, horizontalPoints, horizontal = true } = props;
-  if (!horizontal || !horizontalFill || !horizontalFill.length) {
+  if (!horizontal || !horizontalFill || !horizontalFill.length || horizontalPoints == null) {
     return null;
   }
 

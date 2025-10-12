@@ -9,7 +9,7 @@ import {
   TooltipPayload,
   TooltipPayloadConfiguration,
 } from '../tooltipSlice';
-import { calculateActiveTickIndex, calculateTooltipPos, getActiveCoordinate, inRange } from '../../util/ChartUtils';
+import { calculateTooltipPos } from '../../util/ChartUtils';
 import {
   AxisType,
   ChartOffsetInternal,
@@ -38,6 +38,7 @@ import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { selectTooltipAxisDataKey } from './selectTooltipAxis';
+import { calculateActiveTickIndex, getActiveCoordinate, inRange } from '../../util/getActiveCoordinate';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
@@ -183,7 +184,7 @@ export const selectIsTooltipActive: (
   },
 );
 
-export const combineActiveProps = (
+const combineActiveCartesianProps = (
   chartEvent: ChartPointer | undefined,
   layout: LayoutType | undefined,
   polarViewBox: PolarViewBoxRequired | undefined,
@@ -213,4 +214,73 @@ export const combineActiveProps = (
   const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
 
   return { activeIndex: String(activeIndex), activeCoordinate };
+};
+
+const combineActivePolarProps = (
+  chartEvent: ChartPointer | undefined,
+  layout: LayoutType | undefined,
+  polarViewBox: PolarViewBoxRequired | undefined,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
+  offset: ChartOffsetInternal,
+): ActiveTooltipProps | undefined => {
+  if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
+    return undefined;
+  }
+  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, layout, polarViewBox, offset);
+  if (!rangeObj) {
+    return undefined;
+  }
+  const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
+
+  const activeIndex = calculateActiveTickIndex(
+    pos,
+    orderedTooltipTicks,
+    tooltipTicks,
+    tooltipAxisType,
+    tooltipAxisRange,
+  );
+
+  const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
+
+  return { activeIndex: String(activeIndex), activeCoordinate };
+};
+
+export const combineActiveProps = (
+  chartEvent: ChartPointer | undefined,
+  layout: LayoutType | undefined,
+  polarViewBox: PolarViewBoxRequired | undefined,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
+  offset: ChartOffsetInternal,
+): ActiveTooltipProps | undefined => {
+  if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
+    return undefined;
+  }
+  if (layout === 'horizontal' || layout === 'vertical') {
+    return combineActiveCartesianProps(
+      chartEvent,
+      layout,
+      polarViewBox,
+      tooltipAxisType,
+      tooltipAxisRange,
+      tooltipTicks,
+      orderedTooltipTicks,
+      offset,
+    );
+  }
+  return combineActivePolarProps(
+    chartEvent,
+    layout,
+    polarViewBox,
+    tooltipAxisType,
+    tooltipAxisRange,
+    tooltipTicks,
+    orderedTooltipTicks,
+    offset,
+  );
 };

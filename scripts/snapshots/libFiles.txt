@@ -217,6 +217,7 @@
   "lib/util/cursor/getCursorRectangle.js",
   "lib/util/cursor/getRadialCursorPoints.js",
   "lib/util/excludeEventProps.js",
+  "lib/util/getActiveCoordinate.js",
   "lib/util/getChartPointer.js",
   "lib/util/getEveryNthWithCondition.js",
   "lib/util/getRadiusAndStrokeWidthFromDot.js",

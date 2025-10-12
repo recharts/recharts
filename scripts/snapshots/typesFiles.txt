@@ -217,6 +217,7 @@
   "types/util/cursor/getCursorRectangle.d.ts",
   "types/util/cursor/getRadialCursorPoints.d.ts",
   "types/util/excludeEventProps.d.ts",
+  "types/util/getActiveCoordinate.d.ts",
   "types/util/getChartPointer.d.ts",
   "types/util/getEveryNthWithCondition.d.ts",
   "types/util/getRadiusAndStrokeWidthFromDot.d.ts",

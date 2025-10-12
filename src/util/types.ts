@@ -957,7 +957,10 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | SVGProps<ElementType>
   | boolean;
 
-// TODO we need two different range objects, one for polar and another for cartesian layouts
+/**
+ * @deprecated, mixes cartesian and polar properties
+ * TODO we need two different range objects, one for polar and another for cartesian layouts
+ */
 export type RangeObj = {
   x?: number;
   y?: number;
