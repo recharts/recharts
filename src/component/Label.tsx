@@ -67,7 +67,7 @@ interface LabelProps {
   textBreakAll?: boolean;
   angle?: number;
   index?: number;
-  labelRef?: React.RefObject<Element>;
+  labelRef?: React.RefObject<Element> | null;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -569,7 +569,7 @@ Label.displayName = 'Label';
 const parseLabel = (
   label: ImplicitLabelType | undefined,
   viewBox: ViewBox | undefined,
-  labelRef?: React.RefObject<Element>,
+  labelRef?: React.RefObject<Element> | null,
 ) => {
   if (!label) {
     return null;
@@ -609,7 +609,7 @@ export function CartesianLabelFromLabelProp({
   labelRef,
 }: {
   label: ImplicitLabelType | undefined;
-  labelRef?: React.RefObject<Element>;
+  labelRef?: React.RefObject<Element> | null;
 }) {
   const viewBox = useCartesianLabelContext();
 

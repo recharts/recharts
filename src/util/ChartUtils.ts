@@ -184,7 +184,7 @@ export type AxisPropsNeededForTicksGenerator = {
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (
-  axis: null | AxisPropsNeededForTicksGenerator,
+  axis: undefined | AxisPropsNeededForTicksGenerator,
   isGrid?: boolean,
   isAll?: boolean,
 ): ReadonlyArray<TickItem> | null => {

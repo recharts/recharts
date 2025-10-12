@@ -119,14 +119,14 @@ function getTicksStart(
 }
 
 export type GetTicksInput = {
-  angle: number;
-  interval: CartesianAxisSettings['interval'];
+  angle?: number;
+  interval: CartesianAxisSettings['interval'] | undefined;
   minTickGap: number;
   orientation: XAxisOrientation | YAxisOrientation;
   tick: CartesianAxisSettings['tick'];
-  tickFormatter: CartesianAxisSettings['tickFormatter'];
-  ticks: ReadonlyArray<CartesianTickItem>;
-  unit: CartesianAxisSettings['unit'];
+  tickFormatter?: CartesianAxisSettings['tickFormatter'];
+  ticks: ReadonlyArray<CartesianTickItem> | null;
+  unit?: CartesianAxisSettings['unit'];
   viewBox: CartesianViewBoxRequired;
 };
 

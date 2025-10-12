@@ -16,8 +16,9 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 /**
  * The <CartesianGrid horizontal
@@ -40,7 +41,7 @@ type GridLineType =
 
 export type HorizontalCoordinatesGenerator = (
   props: {
-    yAxis: AxisPropsForCartesianGridTicksGeneration;
+    yAxis: AxisPropsForCartesianGridTicksGeneration | undefined;
     width: number;
     height: number;
     offset: ChartOffsetInternal;
@@ -50,7 +51,7 @@ export type HorizontalCoordinatesGenerator = (
 
 export type VerticalCoordinatesGenerator = (
   props: {
-    xAxis: AxisPropsForCartesianGridTicksGeneration;
+    xAxis: AxisPropsForCartesianGridTicksGeneration | undefined;
     width: number;
     height: number;
     offset: ChartOffsetInternal;
@@ -58,14 +59,23 @@ export type VerticalCoordinatesGenerator = (
   syncWithTicks: boolean,
 ) => number[];
 
-interface InternalCartesianGridProps {
+interface CartesianGridProps {
+  /**
+   * The width of grid.
+   */
   width?: number;
+  /**
+   * The height of grid.
+   */
   height?: number;
+  /**
+   * A function that generates the y-coordinates of all horizontal lines. The generator gets passed an object of the shape { yAxis, width, height, offset }.
+   */
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
+  /**
+   * A function that generates the x-coordinates of all vertical lines. The generator gets passed an object of the shape { xAxis, width, height, offset }.
+   */
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-}
-
-interface CartesianGridProps extends InternalCartesianGridProps {
   /**
    * The x-coordinate of grid.
    * If left undefined, it will be computed from the chart's offset and margins.
@@ -138,6 +148,15 @@ type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset'>;
 
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
+type CartesianGridInternalProps = AcceptedSvgProps &
+  RequiresDefaultProps<CartesianGridProps, typeof defaultCartesianGridProps> & {
+    // x,y,width,height are not declared directly in default props but are resolved using offset, if undefined
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+
 const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height' | 'ry'>) => {
   const { fill } = props;
 
@@ -164,8 +183,8 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 
 type LineItemProps = Props & {
   offset: ChartOffsetInternal;
-  xAxis: null | AxisPropsForCartesianGridTicksGeneration;
-  yAxis: null | AxisPropsForCartesianGridTicksGeneration;
+  xAxis: undefined | AxisPropsForCartesianGridTicksGeneration;
+  yAxis: undefined | AxisPropsForCartesianGridTicksGeneration;
   x1: number;
   y1: number;
   x2: number;
@@ -191,7 +210,7 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
   return lineItem;
 }
 
-type GridLinesProps = Props & {
+type GridLinesProps = CartesianGridInternalProps & {
   offset: GridLineTypeFunctionProps['offset'];
   xAxis: GridLineTypeFunctionProps['xAxis'];
   yAxis: GridLineTypeFunctionProps['yAxis'];
@@ -249,13 +268,12 @@ function VerticalGridLines(props: GridLinesProps) {
   return <g className="recharts-cartesian-grid-vertical">{items}</g>;
 }
 
-function HorizontalStripes(props: Props) {
+function HorizontalStripes(props: CartesianGridInternalProps) {
   const { horizontalFill, fillOpacity, x, y, width, height, horizontalPoints, horizontal = true } = props;
   if (!horizontal || !horizontalFill || !horizontalFill.length || horizontalPoints == null) {
     return null;
   }
 
-  // Why =y -y? I was trying to find any difference that this makes, with floating point numbers and edge cases but ... nothing.
   const roundedSortedHorizontalPoints = horizontalPoints.map(e => Math.round(e + y - y)).sort((a, b) => a - b);
   // Why is this condition `!==` instead of `<=` ?
   if (y !== roundedSortedHorizontalPoints[0]) {
@@ -288,7 +306,7 @@ function HorizontalStripes(props: Props) {
   return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
 }
 
-function VerticalStripes(props: Props) {
+function VerticalStripes(props: CartesianGridInternalProps) {
   const { vertical = true, verticalFill, fillOpacity, x, y, width, height, verticalPoints } = props;
   if (!vertical || !verticalFill || !verticalFill.length) {
     return null;
@@ -358,7 +376,7 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
     syncWithTicks,
   );
 
-const defaultProps = {
+const defaultCartesianGridProps = {
   horizontal: true,
   vertical: true,
   // The ordinates of horizontal grid lines
@@ -373,14 +391,15 @@ const defaultProps = {
   horizontalFill: [],
   xAxisId: 0,
   yAxisId: 0,
+  syncWithTicks: false,
 } as const satisfies Partial<Props>;
 
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const offset = useOffsetInternal();
-  const propsIncludingDefaults = {
-    ...resolveDefaultProps(props, defaultProps),
+  const propsIncludingDefaults: CartesianGridInternalProps = {
+    ...resolveDefaultProps(props, defaultCartesianGridProps),
     x: isNumber(props.x) ? props.x : offset.left,
     y: isNumber(props.y) ? props.y : offset.top,
     width: isNumber(props.width) ? props.width : offset.width,
@@ -391,23 +410,14 @@ export function CartesianGrid(props: Props) {
     propsIncludingDefaults;
 
   const isPanorama = useIsPanorama();
-  const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+  const xAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
   );
-  const yAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+  const yAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
   );
 
-  if (
-    !isNumber(width) ||
-    width <= 0 ||
-    !isNumber(height) ||
-    height <= 0 ||
-    !isNumber(x) ||
-    x !== +x ||
-    !isNumber(y) ||
-    y !== +y
-  ) {
+  if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
     return null;
   }
 
@@ -437,8 +447,8 @@ export function CartesianGrid(props: Props) {
               ticks: isHorizontalValues ? horizontalValues : yAxis.ticks,
             }
           : undefined,
-        width: chartWidth,
-        height: chartHeight,
+        width: chartWidth ?? width,
+        height: chartHeight ?? height,
         offset,
       },
       isHorizontalValues ? true : syncWithTicks,
@@ -464,8 +474,8 @@ export function CartesianGrid(props: Props) {
               ticks: isVerticalValues ? verticalValues : xAxis.ticks,
             }
           : undefined,
-        width: chartWidth,
-        height: chartHeight,
+        width: chartWidth ?? width,
+        height: chartHeight ?? height,
         offset,
       },
       isVerticalValues ? true : syncWithTicks,

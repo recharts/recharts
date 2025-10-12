@@ -1758,9 +1758,9 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
     axisRange,
     niceTicks,
     axisType: AxisType,
-  ): AxisPropsForCartesianGridTicksGeneration | null => {
+  ): AxisPropsForCartesianGridTicksGeneration | undefined => {
     if (axis == null) {
-      return null;
+      return undefined;
     }
     const isCategorical = isCategoricalAxis(layout, axisType);
     return {
