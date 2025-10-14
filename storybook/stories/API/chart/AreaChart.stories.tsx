@@ -14,12 +14,10 @@ export default {
 
 export const Simple = {
   render: (args: Args) => {
-    const [myState, setMyState] = React.useState(0);
     return (
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart
           {...args}
-          onMouseDown={() => setMyState(myState + 1)}
           margin={{
             top: 0,
             bottom: 0,
