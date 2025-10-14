@@ -149,8 +149,14 @@ const cartesianAxisSlice = createSlice({
       if (axis) {
         const history = axis.widthHistory || [];
         // An oscillation is detected when the new width is the same as the width before the last one.
-        // This is a simple A -> B -> A pattern. If the next width is B, we ignore it.
-        if (history.length === 3 && history[0] === history[2] && width === history[1] && width !== axis.width) {
+        // This is a simple A -> B -> A pattern. If the next width is B, and the difference is less than 1 pixel, we ignore it.
+        if (
+          history.length === 3 &&
+          history[0] === history[2] &&
+          width === history[1] &&
+          width !== axis.width &&
+          Math.abs(width - history[0]) <= 1
+        ) {
           return;
         }
         const newHistory = [...history, width].slice(-3);
