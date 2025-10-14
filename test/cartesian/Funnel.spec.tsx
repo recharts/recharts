@@ -139,7 +139,7 @@ describe('<Funnel />', () => {
 
     expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
     const firstTrapezoid = container.getElementsByClassName('recharts-trapezoid')[0];
-    expect(firstTrapezoid.getAttribute('x')).toEqual('30');
+    expect(firstTrapezoid.getAttribute('x')).toEqual('5');
     expect(firstTrapezoid.getAttribute('y')).toEqual('5');
 
     rerender(
@@ -151,7 +151,7 @@ describe('<Funnel />', () => {
 
     expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
     const firstTrapezoidReversed = container.getElementsByClassName('recharts-trapezoid')[0];
-    expect(firstTrapezoidReversed.getAttribute('x')).toEqual('73');
-    expect(firstTrapezoidReversed.getAttribute('y')).toEqual('229');
+    expect(firstTrapezoidReversed.getAttribute('x')).toEqual('54');
+    expect(firstTrapezoidReversed.getAttribute('y')).toEqual('237');
   });
 });

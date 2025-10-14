@@ -15,7 +15,7 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolate, isNumber } from '../util/DataUtils';
+import { getPercentValue, interpolate } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -117,7 +117,7 @@ type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
 export type Props = FunnelSvgProps & FunnelProps;
 
-type RealFunnelData = any;
+type RealFunnelData = unknown;
 
 type FunnelTrapezoidsProps = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
@@ -332,21 +332,15 @@ function RenderTrapezoids(props: InternalProps) {
 }
 
 const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetInternal) => {
-  const { width, height, left, right, top, bottom } = offset;
-  const realHeight = height;
-  let realWidth = width;
+  const { width, height, left, top } = offset;
 
-  if (isNumber(customWidth)) {
-    realWidth = customWidth;
-  } else if (typeof customWidth === 'string') {
-    realWidth = (realWidth * parseFloat(customWidth)) / 100;
-  }
+  const realWidth: number = getPercentValue(customWidth, width, width);
 
   return {
-    realWidth: realWidth - left - right - 50,
-    realHeight: realHeight - bottom - top,
-    offsetX: (width - realWidth) / 2,
-    offsetY: (height - realHeight) / 2,
+    realWidth,
+    realHeight: height,
+    offsetX: left,
+    offsetY: top,
   };
 };
 
@@ -471,11 +465,10 @@ export function computeFunnelTrapezoids({
   reversed?: boolean;
   customWidth: number | string | undefined;
 }): ReadonlyArray<FunnelTrapezoidItem> {
-  const { left, top } = offset;
   const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(customWidth, offset);
   const maxValue = Math.max.apply(
     null,
-    displayedData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),
+    displayedData.map((entry: unknown) => getValueByDataKey(entry, dataKey, 0)),
   );
   const len = displayedData.length;
   const rowHeight = realHeight / len;
@@ -503,8 +496,8 @@ export function computeFunnelTrapezoids({
       }
 
       // @ts-expect-error getValueByDataKey does not validate the output type
-      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
-      const y = rowHeight * i + left + offsetY;
+      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
+      const y = rowHeight * i + offsetY;
       // @ts-expect-error getValueByDataKey does not validate the output type
       const upperWidth = (val / maxValue) * realWidth;
       const lowerWidth = (nextVal / maxValue) * realWidth;

@@ -22,7 +22,6 @@ export const Simple: StoryObj<FunnelProps> = {
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart accessibilityLayer data={data}>
           <Funnel
-            width={400}
             dataKey="value"
             stroke="#424242"
             isAnimationActive
