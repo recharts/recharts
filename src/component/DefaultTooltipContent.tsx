@@ -14,7 +14,7 @@ function defaultFormatter<TValue extends ValueType>(value: TValue) {
 }
 
 export type TooltipType = 'none';
-export type ValueType = number | string | Array<number | string>;
+export type ValueType = number | string | ReadonlyArray<number | string>;
 export type NameType = number | string;
 export type Formatter<TValue extends ValueType, TName extends NameType> = (
   value: TValue,

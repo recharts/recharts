@@ -29,6 +29,7 @@ import {
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
+  TrapezoidViewBox,
 } from '../util/types';
 import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
@@ -36,7 +37,7 @@ import {
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
 } from '../context/tooltipContext';
-import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { findAllByType } from '../util/ReactUtils';
@@ -47,18 +48,17 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
 
-export interface FunnelTrapezoidItem extends TrapezoidProps {
-  value?: number | string;
-  payload?: any;
-  isActive: boolean;
-  tooltipPosition: Coordinate;
-  x: number;
-  y: number;
-  upperWidth: number;
-  lowerWidth: number;
-  height: number;
-  name: string;
-}
+export type FunnelTrapezoidItem = TrapezoidProps &
+  TrapezoidViewBox & {
+    value?: number | string;
+    payload?: any;
+    tooltipPosition: Coordinate;
+    name: string;
+    labelViewBox: TrapezoidViewBox;
+    parentViewBox: CartesianViewBoxRequired;
+    val: number | ReadonlyArray<number>;
+    tooltipPayload: TooltipPayload;
+  };
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -160,18 +160,13 @@ function FunnelLabelListProvider({
       return undefined;
     }
     return trapezoids?.map((entry): CartesianLabelListEntry => {
-      const viewBox: CartesianViewBoxRequired = {
-        x: entry.x,
-        y: entry.y,
-        // Label positions in Funnel are calculated relative to upperWidth so that's what we need to pass here as "width"
-        width: entry.upperWidth,
-        height: entry.height,
-      };
+      const viewBox: TrapezoidViewBox = entry.labelViewBox;
+
       return {
         ...viewBox,
         value: entry.name,
         payload: entry.payload,
-        parentViewBox: undefined,
+        parentViewBox: entry.parentViewBox,
         viewBox,
         fill: entry.fill,
       };
@@ -459,7 +454,7 @@ export function computeFunnelTrapezoids({
   dataKey: Props['dataKey'];
   nameKey: Props['nameKey'];
   offset: ChartOffsetInternal;
-  displayedData: RealFunnelData[];
+  displayedData: ReadonlyArray<RealFunnelData>;
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];
   reversed?: boolean;
@@ -475,9 +470,10 @@ export function computeFunnelTrapezoids({
   const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
   let trapezoids: ReadonlyArray<FunnelTrapezoidItem> = displayedData.map(
-    (entry: any, i: number): FunnelTrapezoidItem => {
-      const rawVal = getValueByDataKey(entry, dataKey, 0);
-      const name = getValueByDataKey(entry, nameKey, i);
+    (entry: object, i: number): FunnelTrapezoidItem => {
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      const rawVal: number | ReadonlyArray<number> = getValueByDataKey(entry, dataKey, 0);
+      const name: string = String(getValueByDataKey(entry, nameKey, i));
       let val = rawVal;
       let nextVal;
 
@@ -485,7 +481,7 @@ export function computeFunnelTrapezoids({
         nextVal = getValueByDataKey(displayedData[i + 1], dataKey, 0);
 
         if (nextVal instanceof Array) {
-          [nextVal] = nextVal;
+          [val, nextVal] = nextVal;
         }
       } else if (rawVal instanceof Array && rawVal.length === 2) {
         [val, nextVal] = rawVal;
@@ -495,27 +491,30 @@ export function computeFunnelTrapezoids({
         nextVal = 0;
       }
 
-      // @ts-expect-error getValueByDataKey does not validate the output type
+      // @ts-expect-error this is a problem if we have ranged values because `val` can be an array
       const x = ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
       const y = rowHeight * i + offsetY;
       // @ts-expect-error getValueByDataKey does not validate the output type
       const upperWidth = (val / maxValue) * realWidth;
       const lowerWidth = (nextVal / maxValue) * realWidth;
 
-      const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
+      const tooltipPayload: TooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
       const tooltipPosition: Coordinate = {
         x: x + upperWidth / 2,
         y: y + rowHeight / 2,
       };
 
-      return {
+      const trapezoidViewBox: TrapezoidViewBox = {
         x,
         y,
-        width: Math.max(upperWidth, lowerWidth),
         upperWidth,
         lowerWidth,
+        width: Math.max(upperWidth, lowerWidth),
         height: rowHeight,
-        // @ts-expect-error getValueByDataKey does not validate the output type
+      };
+
+      return {
+        ...trapezoidViewBox,
         name,
         val,
         tooltipPayload,
@@ -523,30 +522,30 @@ export function computeFunnelTrapezoids({
         ...omit(entry, ['width']),
         payload: entry,
         parentViewBox,
-        labelViewBox: {
-          x: x + (upperWidth - lowerWidth) / 4,
-          y,
-          width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
-          height: rowHeight,
-        },
+        labelViewBox: trapezoidViewBox,
       };
     },
   );
 
   if (reversed) {
-    trapezoids = trapezoids.map((entry: any, index: number) => {
-      const newY = entry.y - index * rowHeight + (len - 1 - index) * rowHeight;
-      return {
-        ...entry,
-        upperWidth: entry.lowerWidth,
-        lowerWidth: entry.upperWidth,
+    trapezoids = trapezoids.map((entry: FunnelTrapezoidItem, index: number): FunnelTrapezoidItem => {
+      const reversedViewBox: TrapezoidViewBox = {
         x: entry.x - (entry.lowerWidth - entry.upperWidth) / 2,
         y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
-        tooltipPosition: { ...entry.tooltipPosition, y: newY + rowHeight / 2 },
-        labelViewBox: {
-          ...entry.labelViewBox,
-          y: newY,
+        upperWidth: entry.lowerWidth,
+        lowerWidth: entry.upperWidth,
+        width: Math.max(entry.lowerWidth, entry.upperWidth),
+        height: rowHeight,
+      };
+
+      return {
+        ...entry,
+        ...reversedViewBox,
+        tooltipPosition: {
+          ...entry.tooltipPosition,
+          y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight + rowHeight / 2,
         },
+        labelViewBox: reversedViewBox,
       };
     });
   }

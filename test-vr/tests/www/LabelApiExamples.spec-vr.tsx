@@ -5,6 +5,7 @@ import {
   LabelPiePositions,
   LabelRadialBarPositions,
   LabelBarChartExample,
+  LabelFunnelPositions,
 } from '../../../www/src/docs/apiExamples/Label';
 
 test('LabelCartesianPositions', async ({ mount }) => {
@@ -24,5 +25,10 @@ test('LabelRadialBarPositions', async ({ mount }) => {
 
 test('LabelBarChartExample', async ({ mount }) => {
   const component = await mount(<LabelBarChartExample locale="en-US" isAnimationActive={false} />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('LabelFunnelPositions', async ({ mount }) => {
+  const component = await mount(<LabelFunnelPositions locale="en-US" isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

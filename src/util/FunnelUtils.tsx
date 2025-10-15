@@ -8,7 +8,7 @@ import { Shape, getPropsFromShapeOption } from './ActiveShapeUtils';
 // When props are being spread in from a user defined component in Funnel,
 // the prop types of an SVGElement have these typed as string | number.
 // This function will return the passed in props along with x, y, height as numbers.
-export function typeGuardTrapezoidProps(option: SVGProps<SVGPathElement>, props: FunnelTrapezoidItem): TrapezoidProps {
+export function typeGuardTrapezoidProps(option: SVGProps<SVGPathElement>, props: FunnelTrapezoidProps): TrapezoidProps {
   const xValue = `${props.x || option.x}`;
   const x = parseInt(xValue, 10);
   const yValue = `${props.y || option.y}`;
@@ -24,7 +24,7 @@ export function typeGuardTrapezoidProps(option: SVGProps<SVGPathElement>, props:
   };
 }
 
-export type FunnelTrapezoidProps = { option: FunnelProps['activeShape'] } & FunnelTrapezoidItem;
+export type FunnelTrapezoidProps = { option: FunnelProps['activeShape']; isActive: boolean } & FunnelTrapezoidItem;
 
 export function FunnelTrapezoid(props: FunnelTrapezoidProps) {
   return <Shape shapeType="trapezoid" propTransformer={typeGuardTrapezoidProps} {...props} />;

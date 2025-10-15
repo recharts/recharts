@@ -26,7 +26,15 @@ import {
   CartesianLabelListEntry,
   CartesianLabelListContextProvider,
 } from '../component/LabelList';
-import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration, ActiveDotType } from '../util/types';
+import {
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  DataKey,
+  AnimationDuration,
+  ActiveDotType,
+  TrapezoidViewBox,
+} from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
@@ -288,10 +296,12 @@ function RadarLabelListProvider({
   // );
 
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
-    const viewBox = {
+    const viewBox: TrapezoidViewBox = {
       x: point.x,
       y: point.y,
       width: 0,
+      lowerWidth: 0,
+      upperWidth: 0,
       height: 0,
     };
     return {

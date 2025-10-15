@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { typeGuardTrapezoidProps, FunnelTrapezoid } from '../../src/util/FunnelUtils';
+import { typeGuardTrapezoidProps, FunnelTrapezoid, FunnelTrapezoidProps } from '../../src/util/FunnelUtils';
 import { Coordinate } from '../../src/util/types';
-import { FunnelTrapezoidItem } from '../../src/cartesian/Funnel';
 import { Props as TrapezoidProps } from '../../src/shape/Trapezoid';
 
 describe('funnelUtils', () => {
@@ -12,7 +11,7 @@ describe('funnelUtils', () => {
     y: 10,
     height: 100,
   };
-  const mockProps: FunnelTrapezoidItem = {
+  const mockProps: FunnelTrapezoidProps = {
     width: 100,
     upperWidth: 80,
     lowerWidth: 60,
@@ -22,6 +21,11 @@ describe('funnelUtils', () => {
     tooltipPosition: undefined,
     height: 0,
     name: undefined,
+    option: undefined,
+    labelViewBox: undefined,
+    parentViewBox: undefined,
+    val: undefined,
+    tooltipPayload: undefined,
   };
   it('typeGuardTrapezoidProps returns object from options + props', () => {
     const mockRes: TrapezoidProps = {
@@ -51,6 +55,7 @@ describe('funnelUtils', () => {
     const { container } = render(
       <svg width={100} height={100}>
         <FunnelTrapezoid
+          {...mockProps}
           width={100}
           tooltipPosition={mockTooltipPosition}
           option={{ x: 10, y: 10 }}

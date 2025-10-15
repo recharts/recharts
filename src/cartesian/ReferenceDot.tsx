@@ -116,7 +116,14 @@ function ReferenceDotImpl(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
       {renderDot(shape, dotProps)}
-      <CartesianLabelContextProvider x={cx - r} y={cy - r} width={2 * r} height={2 * r}>
+      <CartesianLabelContextProvider
+        x={cx - r}
+        y={cy - r}
+        width={2 * r}
+        height={2 * r}
+        upperWidth={2 * r}
+        lowerWidth={2 * r}
+      >
         <CartesianLabelFromLabelProp label={props.label} />
         {props.children}
       </CartesianLabelContextProvider>

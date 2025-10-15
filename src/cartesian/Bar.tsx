@@ -37,6 +37,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   TickItem,
   TooltipType,
+  TrapezoidViewBox,
 } from '../util/types';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
@@ -311,10 +312,12 @@ function BarLabelListProvider({
 }) {
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> | undefined = rects?.map(
     (entry: BarRectangleItem): CartesianLabelListEntry => {
-      const viewBox = {
+      const viewBox: TrapezoidViewBox = {
         x: entry.x,
         y: entry.y,
         width: entry.width,
+        lowerWidth: entry.width,
+        upperWidth: entry.width,
         height: entry.height,
       };
       return {

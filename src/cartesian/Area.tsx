@@ -28,6 +28,7 @@ import {
   NullableCoordinate,
   TickItem,
   TooltipType,
+  TrapezoidViewBox,
 } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
@@ -271,10 +272,12 @@ function AreaLabelListProvider({
   points: ReadonlyArray<AreaPointItem>;
 }) {
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
-    const viewBox = {
+    const viewBox: TrapezoidViewBox = {
       x: point.x,
       y: point.y,
       width: 0,
+      lowerWidth: 0,
+      upperWidth: 0,
       height: 0,
     };
     return {

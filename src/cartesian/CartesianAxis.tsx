@@ -501,7 +501,14 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
         x={props.x}
         y={props.y}
       />
-      <CartesianLabelContextProvider x={props.x} y={props.y} width={props.width} height={props.height}>
+      <CartesianLabelContextProvider
+        x={props.x}
+        y={props.y}
+        width={props.width}
+        height={props.height}
+        lowerWidth={props.width}
+        upperWidth={props.width}
+      >
         <CartesianLabelFromLabelProp label={props.label} labelRef={props.labelRef} />
         {props.children}
       </CartesianLabelContextProvider>

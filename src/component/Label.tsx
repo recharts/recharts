@@ -14,8 +14,15 @@ import { clsx } from 'clsx';
 import { RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
 import { getPercentValue, isNullish, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { CartesianViewBoxRequired, DataKey, Percent, PolarViewBoxRequired, ViewBox } from '../util/types';
-import { useViewBox } from '../context/chartLayoutContext';
+import {
+  CartesianViewBoxRequired,
+  DataKey,
+  Percent,
+  PolarViewBoxRequired,
+  TrapezoidViewBox,
+  ViewBox,
+} from '../util/types';
+import { cartesianViewBoxToTrapezoid, useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -87,37 +94,37 @@ export type ImplicitLabelType =
   // dataKey is only applicable when label is used implicitly from graphical element props
   | (Props & { dataKey?: DataKey<any> });
 
-const CartesianLabelContext = createContext<CartesianViewBoxRequired | null>(null);
+const CartesianLabelContext = createContext<TrapezoidViewBox | null>(null);
 
 export const CartesianLabelContextProvider = ({
   x,
   y,
+  upperWidth,
+  lowerWidth,
   width,
   height,
   children,
-}: {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+}: TrapezoidViewBox & {
   children: ReactNode;
 }) => {
-  const viewBox: CartesianViewBoxRequired = useMemo(
+  const viewBox: TrapezoidViewBox = useMemo(
     () => ({
       x,
       y,
+      upperWidth,
+      lowerWidth,
       width,
       height,
     }),
-    [x, y, width, height],
+    [x, y, upperWidth, lowerWidth, width, height],
   );
   return <CartesianLabelContext.Provider value={viewBox}>{children}</CartesianLabelContext.Provider>;
 };
 
-const useCartesianLabelContext = (): CartesianViewBoxRequired | undefined => {
+const useCartesianLabelContext = (): TrapezoidViewBox | undefined => {
   const labelChildContext = useContext(CartesianLabelContext);
   const chartContext = useViewBox();
-  return labelChildContext || chartContext;
+  return labelChildContext || cartesianViewBoxToTrapezoid(chartContext);
 };
 
 const PolarLabelContext = createContext<PolarViewBoxRequired | null>(null);
@@ -284,8 +291,9 @@ const getAttrsOfPolarLabel = (
   };
 };
 
-const isPolar = (viewBox: CartesianViewBoxRequired | PolarViewBoxRequired): viewBox is PolarViewBoxRequired =>
-  'cx' in viewBox && isNumber(viewBox.cx);
+const isPolar = (
+  viewBox: CartesianViewBoxRequired | TrapezoidViewBox | PolarViewBoxRequired,
+): viewBox is PolarViewBoxRequired => 'cx' in viewBox && isNumber(viewBox.cx);
 
 export type CartesianLabelPositionInput = {
   parentViewBox?: ViewBox;
@@ -304,7 +312,7 @@ export type LabelPositionAttributes = {
 
 export const getAttrsOfCartesianLabel = (
   props: CartesianLabelPositionInput,
-  viewBox: CartesianViewBoxRequired,
+  viewBox: TrapezoidViewBox,
 ): LabelPositionAttributes => {
   const { parentViewBox: parentViewBoxFromProps, offset, position } = props;
   let parentViewBox: CartesianViewBoxRequired | undefined;
@@ -313,23 +321,36 @@ export const getAttrsOfCartesianLabel = (
     parentViewBox = parentViewBoxFromProps;
   }
 
-  const { x, y, width, height } = viewBox;
+  const { x, y, upperWidth, lowerWidth, height } = viewBox;
 
-  // Define vertical offsets and position inverts based on the value being positive or negative
+  // Funnel.tsx provides a viewBox where `x` is the top-left of the trapezoid shape.
+  const upperX = x;
+  // The trapezoid is centered, so we can calculate the other corners from the top-left.
+  const lowerX = x + (upperWidth - lowerWidth) / 2;
+  // middleX is the x-coordinate of the left edge at the vertical midpoint of the trapezoid.
+  const middleX = (upperX + lowerX) / 2;
+  // The width of the trapezoid at its vertical midpoint.
+  const midHeightWidth = (upperWidth + lowerWidth) / 2;
+  // The center x-coordinate is constant for the entire height of the trapezoid.
+  const centerX = upperX + upperWidth / 2;
+
+  // Define vertical offsets and position inverts based on the value being positive or negative.
+  // This allows labels to be positioned correctly for bars with negative height.
   const verticalSign = height >= 0 ? 1 : -1;
   const verticalOffset = verticalSign * offset;
   const verticalEnd = verticalSign > 0 ? 'end' : 'start';
   const verticalStart = verticalSign > 0 ? 'start' : 'end';
 
-  // Define horizontal offsets and position inverts based on the value being positive or negative
-  const horizontalSign = width >= 0 ? 1 : -1;
+  // Define horizontal offsets and position inverts based on the value being positive or negative.
+  // This allows labels to be positioned correctly for bars with negative width.
+  const horizontalSign = upperWidth >= 0 ? 1 : -1;
   const horizontalOffset = horizontalSign * offset;
   const horizontalEnd = horizontalSign > 0 ? 'end' : 'start';
   const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
 
   if (position === 'top') {
     const attrs: LabelPositionAttributes = {
-      x: x + width / 2,
+      x: upperX + upperWidth / 2,
       y: y - verticalSign * offset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
@@ -340,7 +361,7 @@ export const getAttrsOfCartesianLabel = (
       ...(parentViewBox
         ? {
             height: Math.max(y - parentViewBox.y, 0),
-            width,
+            width: upperWidth,
           }
         : {}),
     };
@@ -348,7 +369,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'bottom') {
     const attrs: LabelPositionAttributes = {
-      x: x + width / 2,
+      x: lowerX + lowerWidth / 2,
       y: y + height + verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalStart,
@@ -359,7 +380,7 @@ export const getAttrsOfCartesianLabel = (
       ...(parentViewBox
         ? {
             height: Math.max(parentViewBox.y + parentViewBox.height - (y + height), 0),
-            width,
+            width: lowerWidth,
           }
         : {}),
     };
@@ -367,7 +388,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'left') {
     const attrs: LabelPositionAttributes = {
-      x: x - horizontalOffset,
+      x: middleX - horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
@@ -386,7 +407,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'right') {
     const attrs: LabelPositionAttributes = {
-      x: x + width + horizontalOffset,
+      x: middleX + midHeightWidth + horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalStart,
       verticalAnchor: 'middle',
@@ -402,11 +423,11 @@ export const getAttrsOfCartesianLabel = (
     };
   }
 
-  const sizeAttrs = parentViewBox ? { width, height } : {};
+  const sizeAttrs = parentViewBox ? { width: midHeightWidth, height } : {};
 
   if (position === 'insideLeft') {
     return {
-      x: x + horizontalOffset,
+      x: middleX + horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalStart,
       verticalAnchor: 'middle',
@@ -416,7 +437,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideRight') {
     return {
-      x: x + width - horizontalOffset,
+      x: middleX + midHeightWidth - horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
@@ -426,7 +447,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideTop') {
     return {
-      x: x + width / 2,
+      x: upperX + upperWidth / 2,
       y: y + verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalStart,
@@ -436,7 +457,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideBottom') {
     return {
-      x: x + width / 2,
+      x: lowerX + lowerWidth / 2,
       y: y + height - verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
@@ -446,7 +467,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideTopLeft') {
     return {
-      x: x + horizontalOffset,
+      x: upperX + horizontalOffset,
       y: y + verticalOffset,
       textAnchor: horizontalStart,
       verticalAnchor: verticalStart,
@@ -456,7 +477,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideTopRight') {
     return {
-      x: x + width - horizontalOffset,
+      x: upperX + upperWidth - horizontalOffset,
       y: y + verticalOffset,
       textAnchor: horizontalEnd,
       verticalAnchor: verticalStart,
@@ -466,7 +487,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideBottomLeft') {
     return {
-      x: x + horizontalOffset,
+      x: lowerX + horizontalOffset,
       y: y + height - verticalOffset,
       textAnchor: horizontalStart,
       verticalAnchor: verticalEnd,
@@ -476,7 +497,7 @@ export const getAttrsOfCartesianLabel = (
 
   if (position === 'insideBottomRight') {
     return {
-      x: x + width - horizontalOffset,
+      x: lowerX + lowerWidth - horizontalOffset,
       y: y + height - verticalOffset,
       textAnchor: horizontalEnd,
       verticalAnchor: verticalEnd,
@@ -490,8 +511,11 @@ export const getAttrsOfCartesianLabel = (
     (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
+    // TODO: This is not quite right. The width of the trapezoid changes with y.
+    // A percentage-based x should be relative to the width at that y.
+    // For now, we use the mid-height width as a reasonable approximation.
     return {
-      x: x + getPercentValue(position.x, width),
+      x: x + getPercentValue(position.x, midHeightWidth),
       y: y + getPercentValue(position.y, height),
       textAnchor: 'end',
       verticalAnchor: 'end',
@@ -500,7 +524,7 @@ export const getAttrsOfCartesianLabel = (
   }
 
   return {
-    x: x + width / 2,
+    x: centerX,
     y: y + height / 2,
     textAnchor: 'middle',
     verticalAnchor: 'middle',
@@ -534,7 +558,16 @@ export function Label(outerProps: Props) {
    */
   const resolvedViewBox = position === 'center' ? cartesianViewBox : (polarViewBox ?? cartesianViewBox);
 
-  const viewBox = viewBoxFromProps || resolvedViewBox;
+  let viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
+    label: RenderableText,
+    positionAttrs: LabelPositionAttributes;
+  if (viewBoxFromProps == null) {
+    viewBox = resolvedViewBox;
+  } else if (isPolar(viewBoxFromProps)) {
+    viewBox = viewBoxFromProps;
+  } else {
+    viewBox = cartesianViewBoxToTrapezoid(viewBoxFromProps);
+  }
 
   if (
     !viewBox ||
@@ -553,7 +586,6 @@ export function Label(outerProps: Props) {
     return cloneElement(content, propsWithoutLabelRef);
   }
 
-  let label: RenderableText;
   if (typeof content === 'function') {
     // @ts-expect-error we're not checking if the content component returns something that Text is able to render
     label = createElement(content, propsWithViewBox);
@@ -565,16 +597,16 @@ export function Label(outerProps: Props) {
     label = getLabel(props);
   }
 
-  const isPolarLabel = isPolar(viewBox);
   const attrs = svgPropertiesAndEvents(props);
 
-  if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
-    return renderRadialLabel(props, position, label, attrs, viewBox);
+  if (isPolar(viewBox)) {
+    if (position === 'insideStart' || position === 'insideEnd' || position === 'end') {
+      return renderRadialLabel(props, position, label, attrs, viewBox);
+    }
+    positionAttrs = getAttrsOfPolarLabel(viewBox, props.offset, props.position);
+  } else {
+    positionAttrs = getAttrsOfCartesianLabel(props, viewBox);
   }
-
-  const positionAttrs: LabelPositionAttributes = isPolarLabel
-    ? getAttrsOfPolarLabel(viewBox, props.offset, props.position)
-    : getAttrsOfCartesianLabel(props, viewBox);
 
   return (
     <Text
