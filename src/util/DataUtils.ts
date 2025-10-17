@@ -33,12 +33,19 @@ export const uniqueId = (prefix?: string) => {
 };
 
 /**
- * Get percent value of a total value
- * @param {number|string} percent A percent
- * @param {number} totalValue     Total value
- * @param {number} defaultValue   The value returned when percent is undefined or invalid
- * @param {boolean} validate      If set to be true, the result will be validated
- * @return {number} value
+ * Calculates the numeric value represented by a percent string or number, based on a total value.
+ *
+ * - If `percent` is not a number or string, returns `defaultValue`.
+ * - If `percent` is a percent string but `totalValue` is null/undefined, returns `defaultValue`.
+ * - If the result is NaN, returns `defaultValue`.
+ * - If `validate` is true and the result exceeds `totalValue`, returns `totalValue`.
+ *
+ * @param percent - The percent value to convert. Can be a number (e.g. 25) or a string ending with '%' (e.g. '25%').
+ *                  If a string, it must end with '%' to be treated as a percent; otherwise, it is parsed as a number.
+ * @param totalValue - The total value to calculate the percent of. Required if `percent` is a percent string.
+ * @param defaultValue - The value returned if `percent` is undefined, invalid, or cannot be converted to a number.
+ * @param validate - If true, ensures the result does not exceed `totalValue` (when provided).
+ * @returns The calculated value, or `defaultValue` for invalid input.
  */
 export const getPercentValue = (
   percent: number | string,
