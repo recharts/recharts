@@ -31,7 +31,7 @@ class GuideView extends PureComponent<RouteComponentProps> {
     const page = params?.name ?? allGuides[0];
 
     const locale = getLocaleType(this.props);
-    const title = localeGet(locale, 'guide', page);
+    const title = localeGet(locale, 'guide', page) || page;
 
     return (
       <div className="page page-guide">
