@@ -60,7 +60,7 @@ describe('getAttrsOfCartesianLabel', () => {
         offset,
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
-      const expected: LabelPositionAttributes = { x: 107.5, y: 100, textAnchor: 'end', verticalAnchor: 'middle' };
+      const expected: LabelPositionAttributes = { x: 95, y: 100, textAnchor: 'end', verticalAnchor: 'middle' };
       expect(actual).toEqual(expected);
     });
 
@@ -70,7 +70,7 @@ describe('getAttrsOfCartesianLabel', () => {
         offset,
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
-      const expected: LabelPositionAttributes = { x: 292.5, y: 100, textAnchor: 'start', verticalAnchor: 'middle' };
+      const expected: LabelPositionAttributes = { x: 305, y: 100, textAnchor: 'start', verticalAnchor: 'middle' };
       expect(actual).toEqual(expected);
     });
 
@@ -81,7 +81,7 @@ describe('getAttrsOfCartesianLabel', () => {
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
       const expected: LabelPositionAttributes = {
-        x: 115,
+        x: 105,
         y: 100,
         textAnchor: 'start',
         verticalAnchor: 'middle',
@@ -96,7 +96,7 @@ describe('getAttrsOfCartesianLabel', () => {
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
       const expected: LabelPositionAttributes = {
-        x: 285,
+        x: 295,
         y: 100,
         textAnchor: 'end',
         verticalAnchor: 'middle',
@@ -156,7 +156,7 @@ describe('getAttrsOfCartesianLabel', () => {
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
       const expected: LabelPositionAttributes = {
-        x: 130,
+        x: 105,
         y: 145,
         textAnchor: 'start',
         verticalAnchor: 'end',
@@ -171,7 +171,7 @@ describe('getAttrsOfCartesianLabel', () => {
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
       const expected: LabelPositionAttributes = {
-        x: 270,
+        x: 295,
         y: 145,
         textAnchor: 'end',
         verticalAnchor: 'end',
@@ -196,7 +196,7 @@ describe('getAttrsOfCartesianLabel', () => {
       };
       const actual = getAttrsOfCartesianLabel(input, viewBox);
       const expected: LabelPositionAttributes = {
-        x: 187.5,
+        x: 200,
         y: 100,
         textAnchor: 'end',
         verticalAnchor: 'end',
