@@ -89,17 +89,6 @@ export default {
       },
     },
     {
-      name: 'payload',
-      type: 'Array',
-      defaultVal: '[]',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source data of the content to be displayed in the legend, usually calculated internally.',
-        'zh-CN': '图例的源数据，通常内部计算，如果用户指定了这个值，会覆盖内部计算的值。',
-      },
-      format: ["[{ value: 'item name', type: 'line', id: 'ID01' }]"],
-    },
-    {
       name: 'content',
       type: 'ReactElement | Function',
       defaultVal: 'null',
