@@ -1,8 +1,53 @@
-## Recharts unit tests
+# Recharts unit tests
 
 This folder contains unit tests for Recharts. The tests are written using [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
 
-Recharts has some specialties that you need to be aware of when writing tests:
+## Best practices
+
+When writing new code, aim for 100% unit test code coverage.
+
+### `createSelectorTestCase`
+
+When writing a new test or modifying an existing one, prefer to use the `createSelectorTestCase` helper function.
+
+Here is an example usage:
+
+```tsx
+  const renderTestCase = createSelectorTestCase(({ children }) => <MyChart>{children}</MyChart>);
+  const { spy, rerenderSameComponent } = renderTestCase(mySelector);
+  expectLastCalledWith(spy, expectedValue);
+```
+
+Inspect some of the test files in the `test` folder for more examples.
+
+### `expectLastCalledWith`
+
+The `expectLastCalledWith` helper function is a thin wrapper around `expect(spy).toHaveBeenLastCalledWith(...)`
+with better typing.
+
+The usual `toHaveBeenLastCalledWith` matcher has `any` types for the arguments,
+so you are not getting any type checking or autocompletion when using it.
+Using `expectLastCalledWith` gives you proper types for the arguments, and allows you to catch mistakes at compile time.
+
+### Count re-renders
+
+When writing tests for selectors, it is often useful to verify how many times a selector was called.
+This helps to spot unnecessary re-renders and improve performance.
+
+Every time you use `createSelectorTestCase`, you get a `spy` object that you can use to verify the number of calls:
+
+```ts
+  const { spy, rerenderSameComponent } = renderTestCase(mySelector);
+  expect(spy).toHaveBeenCalledTimes(1); // Initial render
+  rerenderSameComponent();
+  expect(spy).toHaveBeenCalledTimes(1); // No re-render
+  rerenderSameComponent({ someProp: newValue });
+  expect(spy).toHaveBeenCalledTimes(2); // Re-rendered due to prop change
+```
+
+## Special considerations for Recharts tests
+
+Recharts has some more specialties that you need to be aware of when writing tests:
 
 ### getBoundingClientRect dependency
 
@@ -30,7 +75,7 @@ But because of React 16 support we're better off with Redux-toolkit 1.9 for now.
 Usually this would not be a problem except because we use autobatcher which means that everything is behind a timer,
 and all timers are mocked, so nothing happens until you advance the timers.
 
-If you use the `createSelectorTest` helper from `test/util/CreateSelectorTest.ts`,
+If you use the `createSelectorTestCase` helper from `test/util/createSelectorTestCase.ts`,
 it will automatically advance timers for you after each render.
 
 If not, then you need to do this yourself by calling `vi.runOnlyPendingTimers()`.

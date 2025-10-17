@@ -38,6 +38,11 @@ type TestCaseResult<T> = {
  * This is useful for testing selectors that depend on the component tree,
  * such as those that use context or hooks.
  *
+ * @example:
+ *   const renderTestCase = createSelectorTestCase(({ children }) => <MyChart>{children}</MyChart>);
+ *   const { spy, rerenderSameComponent } = renderTestCase(mySelector);
+ *   expectLastCalledWith(spy, expectedValue);
+ *
  * @param Component The component to render. It should accept children.
  * @returns A function that renders the test case with a given selector.
  */
@@ -158,6 +163,7 @@ export function rechartsTestRender(chart: ReactNode): RenderResult {
  *
  * @param ComponentA first component to render
  * @param ComponentB second component to render
+ * @param ComponentC optional third component to render
  * @returns a function that renders the test case
  */
 export function createSynchronisedSelectorTestCase(

@@ -30,7 +30,12 @@ Wherever possible we prefer the simplest tests - unit tests. Only where needed /
 
 ### Unit tests
 
-When implementing a new feature we would prefer to extract pure helper function for data processing. Such functions are found a few utils files. An example is `test/util/ShallowEqual.spec.ts`
+When writing new code, aim for 100% unit test code coverage.
+
+When implementing a new feature we would prefer to extract pure helper function for data processing.
+Such functions are found a few utils files. An example is `test/util/ShallowEqual.spec.ts`.
+
+Unit testing in recharts has some specialties, please see [Recharts unit tests README](test/README.md) for more information.
 
 ### React Testing Library
 
@@ -70,6 +75,15 @@ Our linter will catch most styling issues that may exist in your code.
 You can check the status of your code styling by running: `npm run lint`
 
 However, there are still some styles that the linter cannot pick up. If you are unsure about something, looking at [Airbnb's Style Guide](https://github.com/airbnb/javascript) will guide you in the right direction.
+
+## Types
+
+We use TypeScript for type safety. Some rules to follow:
+
+- Never use `any` type. Implicit or explicit.
+- Prefer `unknown` over `any`. Refine the type.
+- Always type your function parameters and return values explicitly, do not rely on implicit any or inference
+- Do not use `as` type assertions, ever. The only except is `as const`.
 
 ## <a name="license"></a>License
 
