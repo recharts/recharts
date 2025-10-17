@@ -1,9 +1,10 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { Label, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
+import { Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { assertNotNull } from '../helper/assertNotNull';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -24,6 +25,7 @@ describe('<Label />', () => {
     endAngle: 90,
     clockWise: false,
   };
+
   it('Render polar labels (position="center")', () => {
     const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
@@ -71,6 +73,7 @@ describe('<Label />', () => {
 
     expect(container.querySelectorAll('.recharts-radial-bar-label').length).toEqual(1);
   });
+
   it('Render radial labels (position="end")', () => {
     const { container } = rechartsTestRender(
       <Surface height={0} width={0}>
@@ -102,20 +105,437 @@ describe('<Label />', () => {
     expect(label[0]).toHaveAttribute('y', `${cartesianViewBox.y + cartesianViewBox.height / 2}`);
   });
 
-  it('Render label when content is a function, and return a simple string.', () => {
-    rechartsTestRender(
-      <Surface height={0} width={0}>
-        <Label
-          viewBox={cartesianViewBox}
-          value="label"
-          position="center"
-          content={({ value }) => `${value} from content function`}
-        />
-      </Surface>,
-    );
+  describe('content/value/children variants', () => {
+    describe('when only one option is provided', () => {
+      function renderLabelWithChildren(children: LabelProps['children']) {
+        return rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center">
+              {children}
+            </Label>
+          </Surface>,
+        );
+      }
 
-    const label = screen.getAllByText('label from content function');
-    expect(label.length).toEqual(1);
+      function renderLabelWithValue(value: LabelProps['value']) {
+        return rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" value={value} />
+          </Surface>,
+        );
+      }
+
+      function renderLabelWithContent(content: LabelProps['content']) {
+        return rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" content={content} />
+          </Surface>,
+        );
+      }
+
+      describe('string', () => {
+        it('should render label when given children prop', () => {
+          renderLabelWithChildren('label from children');
+
+          const label = screen.getAllByText('label from children');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should render label when given value prop', () => {
+          renderLabelWithValue('label from value');
+
+          const label = screen.getAllByText('label from value');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should not render label at all when given content prop', () => {
+          // @ts-expect-error content prop says it can't be a string, and indeed the Label does not render
+          const { container } = renderLabelWithContent('label from content');
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+
+          expect(container.textContent).toBe('');
+        });
+      });
+
+      describe('number', () => {
+        it('should render label when given children prop', () => {
+          renderLabelWithChildren(12345);
+
+          const label = screen.getAllByText('12345');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should render label when given value prop', () => {
+          renderLabelWithValue(67890);
+
+          const label = screen.getAllByText('67890');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should not render label at all when given content prop', () => {
+          // @ts-expect-error content prop says it can't be a number, and indeed the Label does not render
+          const { container } = renderLabelWithContent(54321);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+
+          expect(container.textContent).toBe('');
+        });
+      });
+
+      describe('boolean', () => {
+        it('should render label when given children prop', () => {
+          renderLabelWithChildren(true);
+
+          const label = screen.getAllByText('true');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should render label when given value prop', () => {
+          // @ts-expect-error Label type says it doesn't accept boolean as value, but in practice it does render it just fine
+          renderLabelWithValue(false);
+
+          const label = screen.getAllByText('false');
+          expect(label.length).toEqual(1);
+        });
+
+        it('should not render label at all when given content prop', () => {
+          // @ts-expect-error content prop says it can't be a boolean, and indeed the Label does not render
+          const { container } = renderLabelWithContent(true);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+
+          expect(container.textContent).toBe('');
+        });
+      });
+
+      describe('null', () => {
+        it('should not render label at all when given children prop', () => {
+          const { container } = renderLabelWithChildren(null);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+        });
+
+        it('should not render label at all when given value prop', () => {
+          const { container } = renderLabelWithValue(null);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+        });
+
+        it('should not render label at all when given content prop', () => {
+          const { container } = renderLabelWithContent(null);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+
+          expect(container.textContent).toBe('');
+        });
+      });
+
+      describe('undefined', () => {
+        it('should not render label at all when given children prop', () => {
+          const { container } = renderLabelWithChildren(undefined);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+        });
+
+        it('should not render label at all when given value prop', () => {
+          const { container } = renderLabelWithValue(undefined);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+        });
+
+        it('should not render label at all when given content prop', () => {
+          const { container } = renderLabelWithContent(undefined);
+
+          const label = container.querySelector('.recharts-label');
+          expect(label).toBeNull();
+
+          expect(container.textContent).toBe('');
+        });
+      });
+
+      describe('function that returns a string', () => {
+        const fn = vi.fn(() => 'label from function');
+
+        it('should render label when given children prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow function as children, and renders gibberish
+          const { container } = renderLabelWithChildren(fn);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          expect(label.textContent).toMatch('function(...args) {');
+
+          expect(fn).toHaveBeenCalledTimes(0);
+        });
+
+        it('should render label when given value prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow function as value, and renders gibberish
+          const { container } = renderLabelWithValue(fn);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          expect(label.textContent).toMatch('function(...args) {');
+
+          expect(fn).toHaveBeenCalledTimes(0);
+        });
+
+        it('should render label when given content prop', () => {
+          renderLabelWithContent(fn);
+
+          const label = screen.getAllByText('label from function');
+          expect(label.length).toEqual(1);
+
+          expect(fn).toHaveBeenCalledTimes(1);
+          expect(fn).toHaveBeenLastCalledWith(
+            {
+              content: fn,
+              offset: 5,
+              position: 'center',
+              viewBox: {
+                height: 200,
+                width: 200,
+                x: 50,
+                y: 50,
+              },
+            },
+            {},
+          );
+        });
+      });
+
+      describe('React function component', () => {
+        const MyComp = () => {
+          const [state, setState] = React.useState(0);
+          React.useEffect(() => {
+            setState(1);
+          }, []);
+          return <>label from component {state}</>;
+        };
+
+        it('should render label when given children prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow React component as children, and it renders gibberish
+          const { container } = renderLabelWithChildren(MyComp);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          // the component itself gets serialized and rendered
+          expect(label.textContent).toMatch('() => {');
+        });
+
+        it('should render label when given value prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow React component as value, and it renders gibberish
+          const { container } = renderLabelWithValue(MyComp);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          // the component itself gets serialized and rendered
+          expect(label.textContent).toMatch('() => {');
+        });
+
+        it('should render label when given content prop', () => {
+          const { container } = renderLabelWithContent(MyComp);
+
+          // content is the only one that allows components - and it runs hooks too
+          expect(container.textContent).toEqual('label from component 1');
+        });
+      });
+
+      describe('React element', () => {
+        const element = <>label from element</>;
+
+        it('should render label when given children prop', () => {
+          const { container } = renderLabelWithChildren(element);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          // this is not great - even though the type says it allows this, in practice it's pointless
+          expect(label.textContent).toEqual('[object Object]');
+        });
+
+        it('should render label when given value prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow React element as value, and it renders gibberish
+          const { container } = renderLabelWithValue(element);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          expect(label.textContent).toEqual('[object Object]');
+        });
+
+        it('should render label when given content prop', () => {
+          const { container } = renderLabelWithContent(element);
+
+          expect(container.textContent).toEqual('label from element');
+        });
+      });
+
+      describe('array of strings', () => {
+        const array = ['label', 'from', 'array'];
+
+        it('should render label when given children prop', () => {
+          // the type says that this is allowed but perhaps it shouldn't be?
+          const { container } = renderLabelWithChildren(array);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          expect(label.textContent).toEqual('label,from,array');
+        });
+
+        it('should render label when given value prop', () => {
+          // @ts-expect-error typescript says that array of strings is not allowed as value, and indeed it calls the standard .toString() on it and renders that
+          const { container } = renderLabelWithValue(array);
+
+          const label = container.querySelector('.recharts-label');
+          assertNotNull(label);
+          expect(label).toBeInTheDocument();
+
+          expect(label.textContent).toEqual('label,from,array');
+        });
+
+        it('should render label when given content prop', () => {
+          // @ts-expect-error typescript says that array of strings is not allowed as content, and indeed it does not render anything
+          const { container } = renderLabelWithContent(array);
+
+          expect(container.textContent).toEqual('');
+        });
+      });
+    });
+
+    describe('when both children + value are provided', () => {
+      it('should prefer children over value', () => {
+        const { container } = rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" value="label from value">
+              label from children
+            </Label>
+          </Surface>,
+        );
+
+        const label = container.querySelectorAll('.recharts-label');
+
+        expect(label.length).toEqual(1);
+        expect(label[0].textContent).toEqual('label from children');
+      });
+    });
+
+    describe('when both children + content are provided', () => {
+      it('should should pass children as a prop to the content function, and render what content returned', () => {
+        const contentFn = vi.fn(() => 'label from content');
+
+        const { container } = rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" content={contentFn}>
+              label from children
+            </Label>
+          </Surface>,
+        );
+
+        expect(container.textContent).toEqual('label from content');
+
+        expect(contentFn).toHaveBeenCalledTimes(1);
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            children: 'label from children',
+            content: contentFn,
+            offset: 5,
+            position: 'center',
+            viewBox: {
+              height: 200,
+              width: 200,
+              x: 50,
+              y: 50,
+            },
+          },
+          {},
+        );
+      });
+    });
+
+    describe('when both value + content are provided', () => {
+      it('should should pass value as a prop to the content function, and render what content returned', () => {
+        const contentFn = vi.fn(() => 'label from content');
+
+        const { container } = rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" value="label from value" content={contentFn} />
+          </Surface>,
+        );
+
+        expect(container.textContent).toEqual('label from content');
+
+        expect(contentFn).toHaveBeenCalledTimes(1);
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            value: 'label from value',
+            content: contentFn,
+            offset: 5,
+            position: 'center',
+            viewBox: {
+              height: 200,
+              width: 200,
+              x: 50,
+              y: 50,
+            },
+          },
+          {},
+        );
+      });
+    });
+
+    describe('when all three children + value + content are provided', () => {
+      it('should should pass children and value as props to the content function, and render what content returned', () => {
+        const contentFn = vi.fn(() => 'label from content');
+
+        const { container } = rechartsTestRender(
+          <Surface height={0} width={0}>
+            <Label viewBox={cartesianViewBox} position="center" value="label from value" content={contentFn}>
+              label from children
+            </Label>
+          </Surface>,
+        );
+
+        expect(container.textContent).toEqual('label from content');
+
+        expect(contentFn).toHaveBeenCalledTimes(1);
+        expect(contentFn).toHaveBeenLastCalledWith(
+          {
+            children: 'label from children',
+            value: 'label from value',
+            content: contentFn,
+            offset: 5,
+            position: 'center',
+            viewBox: {
+              height: 200,
+              width: 200,
+              x: 50,
+              y: 50,
+            },
+          },
+          {},
+        );
+      });
+    });
   });
 
   it('Render label by label = <Label />', () => {

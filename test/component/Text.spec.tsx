@@ -29,7 +29,7 @@ describe('<Text />', () => {
     expect(text?.children).toHaveLength(1);
   });
 
-  test('renders children that are numbers', () => {
+  test('renders number children', () => {
     const { container } = render(
       <Surface width={300} height={300}>
         <Text width={300} style={{ fontFamily: 'Courier' }}>
@@ -43,6 +43,71 @@ describe('<Text />', () => {
     expect(text).toBeInTheDocument();
 
     expect(text.textContent).toBe('12345');
+  });
+
+  test('renders boolean children', () => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={300} style={{ fontFamily: 'Courier' }}>
+          {/* @ts-expect-error typescript says that booleans are not allowed, but it does render it just fine */}
+          {true}
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+    expect(text.textContent).toBe('true');
+  });
+
+  test('renders the string "NaN" when children is NaN', () => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={300} style={{ fontFamily: 'Courier' }}>
+          {NaN}
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+    expect(text.textContent).toBe('NaN');
+  });
+
+  test.each([null, undefined] as const)('Renders empty text when children is %s', (children: null | undefined) => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={300} style={{ fontFamily: 'Courier' }}>
+          {children}
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    expect(text).not.toBeInTheDocument();
+  });
+
+  test('renders object object when children are React elements', () => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        {/* @ts-expect-error typescript is correct here, Text doesn't accept ReactElement, the test is to demonstrate that */}
+        <Text width={300} style={{ fontFamily: 'Courier' }}>
+          <tspan x="0" dy="1.2em">
+            Hello
+          </tspan>
+          <tspan x="0" dy="1.2em">
+            World
+          </tspan>
+        </Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toBeInTheDocument();
+    expect(text.textContent).toBe('[object Object],[object Object]');
   });
 
   test('Wraps long text if not enough width', () => {
