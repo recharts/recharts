@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { Text, TextAnchor, TextVerticalAnchor } from './Text';
+import { RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
 import { getPercentValue, isNullish, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, Percent, PolarViewBoxRequired, ViewBox } from '../util/types';
@@ -21,7 +21,7 @@ import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
-export type LabelContentType = ReactElement | ((props: Props) => ReactNode);
+export type LabelContentType = ReactElement | ((props: Props) => RenderableText | ReactElement);
 
 type CartesianLabelPosition =
   | 'top'
@@ -54,20 +54,22 @@ type PolarLabelPosition = 'insideStart' | 'insideEnd' | 'end';
 
 export type LabelPosition = CartesianLabelPosition | PolarLabelPosition;
 
+export type LabelFormatter = (label: RenderableText) => RenderableText;
+
 interface LabelProps {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
-  formatter?: (label: React.ReactNode) => React.ReactNode;
-  value?: number | string;
+  formatter?: LabelFormatter;
+  value?: RenderableText;
   offset?: number;
   position?: LabelPosition;
-  children?: ReactNode;
+  children?: RenderableText;
   className?: string;
   content?: LabelContentType;
   textBreakAll?: boolean;
   angle?: number;
   index?: number;
-  labelRef?: React.RefObject<Element> | null;
+  labelRef?: React.RefObject<SVGTextElement> | null;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -153,9 +155,9 @@ export const usePolarLabelContext = (): PolarViewBoxRequired | undefined => {
   return labelChildContext || chartContext;
 };
 
-const getLabel = (props: Props) => {
+const getLabel = (props: Props): RenderableText => {
   const { value, formatter } = props;
-  const label = isNullish(props.children) ? value : props.children;
+  const label: RenderableText = isNullish(props.children) ? value : props.children;
 
   if (typeof formatter === 'function') {
     return formatter(label);
@@ -225,7 +227,11 @@ const renderRadialLabel = (
   );
 };
 
-const getAttrsOfPolarLabel = (viewBox: PolarViewBoxRequired, offset: number, position: LabelPosition | undefined) => {
+const getAttrsOfPolarLabel = (
+  viewBox: PolarViewBoxRequired,
+  offset: number,
+  position: LabelPosition | undefined,
+): LabelPositionAttributes => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox;
   const midAngle = (startAngle + endAngle) / 2;
 
@@ -547,9 +553,10 @@ export function Label(outerProps: Props) {
     return cloneElement(content, propsWithoutLabelRef);
   }
 
-  let label: ReactNode;
+  let label: RenderableText;
   if (typeof content === 'function') {
-    label = createElement(content as any, propsWithViewBox);
+    // @ts-expect-error we're not checking if the content component returns something that Text is able to render
+    label = createElement(content, propsWithViewBox);
 
     if (isValidElement(label)) {
       return label;
@@ -565,7 +572,7 @@ export function Label(outerProps: Props) {
     return renderRadialLabel(props, position, label, attrs, viewBox);
   }
 
-  const positionAttrs = isPolarLabel
+  const positionAttrs: LabelPositionAttributes = isPolarLabel
     ? getAttrsOfPolarLabel(viewBox, props.offset, props.position)
     : getAttrsOfCartesianLabel(props, viewBox);
 
@@ -574,7 +581,7 @@ export function Label(outerProps: Props) {
       ref={labelRef}
       className={clsx('recharts-label', className)}
       {...attrs}
-      {...(positionAttrs as any)}
+      {...positionAttrs}
       breakAll={textBreakAll}
     >
       {label}
@@ -587,7 +594,7 @@ Label.displayName = 'Label';
 const parseLabel = (
   label: ImplicitLabelType | undefined,
   viewBox: ViewBox | undefined,
-  labelRef?: React.RefObject<Element> | null,
+  labelRef?: React.RefObject<SVGTextElement> | null,
 ) => {
   if (!label) {
     return null;
@@ -627,7 +634,7 @@ export function CartesianLabelFromLabelProp({
   labelRef,
 }: {
   label: ImplicitLabelType | undefined;
-  labelRef?: React.RefObject<Element> | null;
+  labelRef?: React.RefObject<SVGTextElement> | null;
 }) {
   const viewBox = useCartesianLabelContext();
 

@@ -49,7 +49,6 @@ describe('<Text />', () => {
     const { container } = render(
       <Surface width={300} height={300}>
         <Text width={300} style={{ fontFamily: 'Courier' }}>
-          {/* @ts-expect-error typescript says that booleans are not allowed, but it does render it just fine */}
           {true}
         </Text>
       </Surface>,
@@ -76,7 +75,7 @@ describe('<Text />', () => {
     expect(text.textContent).toBe('NaN');
   });
 
-  test.each([null, undefined] as const)('Renders empty text when children is %s', (children: null | undefined) => {
+  test.each([null, undefined] as const)('Renders nothing when children is %s', (children: null | undefined) => {
     const { container } = render(
       <Surface width={300} height={300}>
         <Text width={300} style={{ fontFamily: 'Courier' }}>

@@ -147,12 +147,13 @@ describe('<YAxis /> Label', () => {
       ]);
     });
 
-    it('renders nonsense if <Label /> itself has element children - this looks like a bug, we should fix it!', () => {
+    it('renders nonsense if <Label /> itself has element children', () => {
       const { container } = render(
         <AreaChart width={500} height={500} data={PageData}>
           <Area dataKey="uv" />
           <YAxis>
             <Label value="Test Label" angle={-80} position="insideEnd">
+              {/* @ts-expect-error the type here says it doesn't accept span, and it is correct! the Label doesn't render it properly */}
               <span>Additional Content</span>
             </Label>
           </YAxis>
@@ -160,7 +161,6 @@ describe('<YAxis /> Label', () => {
       );
       expectYAxisLabel(container, [
         {
-          // ... this is not great. Room for improvement definitely.
           textContent: '[object Object]',
           transform: 'rotate(-80, 35, 250)',
           x: '35',

@@ -194,7 +194,6 @@ describe('<Label />', () => {
         });
 
         it('should render label when given value prop', () => {
-          // @ts-expect-error Label type says it doesn't accept boolean as value, but in practice it does render it just fine
           renderLabelWithValue(false);
 
           const label = screen.getAllByText('false');
@@ -360,6 +359,7 @@ describe('<Label />', () => {
         const element = <>label from element</>;
 
         it('should render label when given children prop', () => {
+          // @ts-expect-error typescript is correct here, Label does not allow React element as value, and it renders gibberish
           const { container } = renderLabelWithChildren(element);
 
           const label = container.querySelector('.recharts-label');
@@ -392,7 +392,7 @@ describe('<Label />', () => {
         const array = ['label', 'from', 'array'];
 
         it('should render label when given children prop', () => {
-          // the type says that this is allowed but perhaps it shouldn't be?
+          // @ts-expect-error typescript is correct here, Label does not allow React element as value, and it renders gibberish
           const { container } = renderLabelWithChildren(array);
 
           const label = container.querySelector('.recharts-label');

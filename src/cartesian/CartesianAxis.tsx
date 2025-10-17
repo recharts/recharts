@@ -74,7 +74,7 @@ export interface CartesianAxisProps {
    * this is Recharts scale, based on d3-scale.
    */
   scale?: RechartsScale;
-  labelRef?: React.RefObject<Element> | null;
+  labelRef?: React.RefObject<SVGTextElement> | null;
 
   ref?: React.Ref<CartesianAxisRef>;
 }
