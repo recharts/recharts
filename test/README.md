@@ -75,7 +75,7 @@ But because of React 16 support we're better off with Redux-toolkit 1.9 for now.
 Usually this would not be a problem except because we use autobatcher which means that everything is behind a timer,
 and all timers are mocked, so nothing happens until you advance the timers.
 
-If you use the `createSelectorTestCase` helper from `test/util/createSelectorTestCase.ts`,
+If you use the `createSelectorTestCase` helper from `test/helper/createSelectorTestCase.tsx`,
 it will automatically advance timers for you after each render.
 
 If not, then you need to do this yourself by calling `vi.runOnlyPendingTimers()`.

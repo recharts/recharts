@@ -33,7 +33,7 @@ Wherever possible we prefer the simplest tests - unit tests. Only where needed /
 When writing new code, aim for 100% unit test code coverage.
 
 When implementing a new feature we would prefer to extract pure helper function for data processing.
-Such functions are found a few utils files. An example is `test/util/ShallowEqual.spec.ts`.
+Such functions are found in a few utils files. An example is `test/util/ShallowEqual.spec.ts`.
 
 Unit testing in recharts has some specialties, please see [Recharts unit tests README](test/README.md) for more information.
 
@@ -83,7 +83,7 @@ We use TypeScript for type safety. Some rules to follow:
 - Never use `any` type. Implicit or explicit.
 - Prefer `unknown` over `any`. Refine the type.
 - Always type your function parameters and return values explicitly, do not rely on implicit any or inference
-- Do not use `as` type assertions, ever. The only except is `as const`.
+- Do not use `as` type assertions, ever. The only exception is `as const`.
 
 ## <a name="license"></a>License
 
