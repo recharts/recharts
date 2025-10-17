@@ -1,4 +1,5 @@
-import { FunnelChart, Funnel, LabelList, Trapezoid, Label, FunnelTrapezoidItem } from 'recharts';
+import { FunnelChart, Funnel, LabelList, Trapezoid, Label } from 'recharts';
+import { FunnelTrapezoidItem } from 'recharts/types/cartesian/Funnel';
 import { ApiExample, ApiExampleDemo } from '../api/types.ts';
 
 const data = [
