@@ -1,5 +1,5 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import { Coordinate, RangeObj, PolarViewBoxRequired, ChartOffsetInternal } from './types';
+import { Coordinate, RangeObj, PolarViewBoxRequired, ChartOffsetInternal, ChartPointer } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -30,14 +30,14 @@ export const getMaxRadius = (
     Math.abs(height - (offset.top || 0) - (offset.bottom || 0)),
   ) / 2;
 
-export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinate) => {
+const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinate) => {
   const { x: x1, y: y1 } = point;
   const { x: x2, y: y2 } = anotherPoint;
 
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 };
 
-export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBoxRequired) => {
+const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBoxRequired) => {
   const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
 
   if (radius <= 0) {
@@ -54,7 +54,7 @@ export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBoxRe
   return { radius, angle: radianToDegree(angleInRadian), angleInRadian };
 };
 
-export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBoxRequired) => {
+const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBoxRequired) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -65,7 +65,7 @@ export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBoxRequir
   };
 };
 
-const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: PolarViewBoxRequired) => {
+const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: PolarViewBoxRequired): number => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -73,7 +73,10 @@ const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: Pol
   return angle + min * 360;
 };
 
-export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBoxRequired): RangeObj | null => {
+export const inRangeOfSector = (
+  { chartX: x, chartY: y }: ChartPointer,
+  viewBox: PolarViewBoxRequired,
+): RangeObj | null => {
   const { radius, angle } = getAngleOfPoint({ x, y }, viewBox);
   const { innerRadius, outerRadius } = viewBox;
 

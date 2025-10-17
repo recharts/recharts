@@ -217,6 +217,7 @@
   "es6/util/cursor/getCursorRectangle.js",
   "es6/util/cursor/getRadialCursorPoints.js",
   "es6/util/excludeEventProps.js",
+  "es6/util/getActiveCoordinate.js",
   "es6/util/getChartPointer.js",
   "es6/util/getEveryNthWithCondition.js",
   "es6/util/getRadiusAndStrokeWidthFromDot.js",

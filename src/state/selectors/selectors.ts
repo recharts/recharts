@@ -9,14 +9,15 @@ import {
   TooltipPayload,
   TooltipPayloadConfiguration,
 } from '../tooltipSlice';
-import { calculateActiveTickIndex, calculateTooltipPos, getActiveCoordinate, inRange } from '../../util/ChartUtils';
+import { calculateCartesianTooltipPos, calculatePolarTooltipPos } from '../../util/ChartUtils';
 import {
   AxisType,
+  CartesianLayout,
   ChartOffsetInternal,
   ChartPointer,
   Coordinate,
   DataKey,
-  LayoutType,
+  PolarLayout,
   PolarViewBoxRequired,
   TickItem,
   TooltipEventType,
@@ -38,23 +39,32 @@ import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { selectTooltipAxisDataKey } from './selectTooltipAxis';
+import {
+  calculateActiveTickIndex,
+  getActiveCartesianCoordinate,
+  getActivePolarCoordinate,
+  isInCartesianRange,
+} from '../../util/getActiveCoordinate';
+import { inRangeOfSector } from '../../util/PolarUtils';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
 };
 
-const pickTooltipEventType = (_state: RechartsRootState, tooltipEventType: TooltipEventType): TooltipEventType =>
-  tooltipEventType;
+const pickTooltipEventType = (
+  _state: RechartsRootState,
+  tooltipEventType: TooltipEventType | undefined,
+): TooltipEventType | undefined => tooltipEventType;
 
 const pickTrigger = (
   _state: RechartsRootState,
-  _tooltipEventType: TooltipEventType,
+  _tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
 ): TooltipTrigger => trigger;
 
 const pickDefaultIndex = (
   _state: RechartsRootState,
-  _tooltipEventType: TooltipEventType,
+  _tooltipEventType: TooltipEventType | undefined,
   _trigger: TooltipTrigger,
   defaultIndex?: TooltipIndex | undefined,
 ): TooltipIndex | undefined => defaultIndex;
@@ -65,7 +75,7 @@ export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, 
 
 export const selectTooltipInteractionState: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipInteractionState | undefined = createSelector(
@@ -75,7 +85,7 @@ export const selectTooltipInteractionState: (
 
 export const selectActiveIndex: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipIndex | null = createSelector(
@@ -106,17 +116,17 @@ export const selectTooltipDataKey = (
 
 export const selectTooltipPayloadConfigurations: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
+) => ReadonlyArray<TooltipPayloadConfiguration> | undefined = createSelector(
   [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
   combineTooltipPayloadConfigurations,
 );
 
 export const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => Coordinate | undefined = createSelector(
@@ -135,7 +145,7 @@ export const selectCoordinateForDefaultIndex: (
 
 export const selectActiveCoordinate: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
   // TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
@@ -148,14 +158,14 @@ export const selectActiveCoordinate: (
 
 export const selectActiveLabel: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => string | number | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
+) => string | number | undefined = createSelector([selectTooltipAxisTicks, selectActiveIndex], combineActiveLabel);
 
 export const selectTooltipPayload: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipPayload | undefined = createSelector(
@@ -173,7 +183,7 @@ export const selectTooltipPayload: (
 
 export const selectIsTooltipActive: (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => { isActive: boolean; activeIndex: TooltipIndex | undefined } = createSelector(
@@ -183,9 +193,70 @@ export const selectIsTooltipActive: (
   },
 );
 
+const combineActiveCartesianProps = (
+  chartEvent: ChartPointer | undefined,
+  layout: CartesianLayout,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
+  offset: ChartOffsetInternal,
+): ActiveTooltipProps | undefined => {
+  if (!chartEvent || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
+    return undefined;
+  }
+  if (!isInCartesianRange(chartEvent, offset)) {
+    return undefined;
+  }
+  const pos: number | undefined = calculateCartesianTooltipPos(chartEvent, layout);
+
+  const activeIndex = calculateActiveTickIndex(
+    pos,
+    orderedTooltipTicks,
+    tooltipTicks,
+    tooltipAxisType,
+    tooltipAxisRange,
+  );
+
+  const activeCoordinate = getActiveCartesianCoordinate(layout, tooltipTicks, activeIndex, chartEvent);
+
+  return { activeIndex: String(activeIndex), activeCoordinate };
+};
+
+const combineActivePolarProps = (
+  chartEvent: ChartPointer | undefined,
+  layout: PolarLayout,
+  polarViewBox: PolarViewBoxRequired | undefined,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
+): ActiveTooltipProps | undefined => {
+  if (!chartEvent || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks || !polarViewBox) {
+    return undefined;
+  }
+  const rangeObj = inRangeOfSector(chartEvent, polarViewBox);
+  if (!rangeObj) {
+    return undefined;
+  }
+  const pos: number | undefined = calculatePolarTooltipPos(rangeObj, layout);
+
+  const activeIndex = calculateActiveTickIndex(
+    pos,
+    orderedTooltipTicks,
+    tooltipTicks,
+    tooltipAxisType,
+    tooltipAxisRange,
+  );
+
+  const activeCoordinate = getActivePolarCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
+
+  return { activeIndex: String(activeIndex), activeCoordinate };
+};
+
 export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
-  layout: LayoutType | undefined,
+  layout: CartesianLayout | PolarLayout | undefined,
   polarViewBox: PolarViewBoxRequired | undefined,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
@@ -196,21 +267,24 @@ export const combineActiveProps = (
   if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
-  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, layout, polarViewBox, offset);
-  if (!rangeObj) {
-    return undefined;
+  if (layout === 'horizontal' || layout === 'vertical') {
+    return combineActiveCartesianProps(
+      chartEvent,
+      layout,
+      tooltipAxisType,
+      tooltipAxisRange,
+      tooltipTicks,
+      orderedTooltipTicks,
+      offset,
+    );
   }
-  const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
-
-  const activeIndex = calculateActiveTickIndex(
-    pos,
-    orderedTooltipTicks,
-    tooltipTicks,
+  return combineActivePolarProps(
+    chartEvent,
+    layout,
+    polarViewBox,
     tooltipAxisType,
     tooltipAxisRange,
+    tooltipTicks,
+    orderedTooltipTicks,
   );
-
-  const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
-
-  return { activeIndex: String(activeIndex), activeCoordinate };
 };

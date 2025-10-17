@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, test, it, expect, vi, Mock } from 'vitest';
 import { render } from '@testing-library/react';
 import {
   CartesianGrid,
@@ -28,6 +28,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { pageData } from '../../storybook/stories/data';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
@@ -782,7 +783,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         });
 
         it('should pass props to the generator', () => {
-          const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+          const horizontalCoordinatesGenerator: Mock<HorizontalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
@@ -813,14 +814,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             ticks: undefined,
             type: 'number',
           };
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
+          expectLastCalledWith(
+            horizontalCoordinatesGenerator,
             {
               yAxis: expectedYAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
             },
-            undefined,
+            false,
           );
         });
 
@@ -873,7 +875,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         test.each([true, false, undefined])(
           'should set syncWithTicks as %s when horizontalValues is provided but is empty',
           syncWithTicks => {
-            const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+            const horizontalCoordinatesGenerator: Mock<HorizontalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
             render(
               <ChartElement width={300} height={200} margin={chartMargin}>
                 <CartesianGrid
@@ -906,14 +908,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               ticks: undefined,
               type: 'number',
             };
-            expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
+            expectLastCalledWith(
+              horizontalCoordinatesGenerator,
               {
                 yAxis: expectedYAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
               },
-              syncWithTicks,
+              Boolean(syncWithTicks),
             );
           },
         );
@@ -921,7 +924,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         test.each([true, false, undefined])(
           'should pass props to the generator when syncWithTicks is %s',
           syncWithTicks => {
-            const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+            const horizontalCoordinatesGenerator: Mock<HorizontalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
             render(
               <ChartElement width={300} height={200} margin={chartMargin}>
                 <CartesianGrid
@@ -953,14 +956,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               ticks: undefined,
               type: 'number',
             };
-            expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
+            expectLastCalledWith(
+              horizontalCoordinatesGenerator,
               {
                 yAxis: expectedYAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
               },
-              syncWithTicks,
+              Boolean(syncWithTicks),
             );
           },
         );
@@ -1059,7 +1063,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         });
 
         it('should pass props to the generator', () => {
-          const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+          const verticalCoordinatesGenerator: Mock<VerticalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
@@ -1090,14 +1094,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             type: 'category',
             unit: undefined,
           };
-          expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+          expectLastCalledWith(
+            verticalCoordinatesGenerator,
             {
               xAxis: expectedXAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
             },
-            undefined,
+            false,
           );
         });
 
@@ -1150,7 +1155,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         test.each([true, false, undefined])(
           'should set syncWithTicks as %s when horizontalValues is provided but is empty',
           syncWithTicks => {
-            const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+            const verticalCoordinatesGenerator: Mock<VerticalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
             render(
               <ChartElement width={300} height={200} margin={chartMargin}>
                 <CartesianGrid
@@ -1183,14 +1188,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               type: 'category',
               unit: undefined,
             };
-            expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+            expectLastCalledWith(
+              verticalCoordinatesGenerator,
               {
                 xAxis: expectedXAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
               },
-              syncWithTicks,
+              Boolean(syncWithTicks),
             );
           },
         );
@@ -1198,7 +1204,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         test.each([true, false, undefined])(
           'should pass props to the generator when syncWithTicks is %s',
           syncWithTicks => {
-            const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+            const verticalCoordinatesGenerator: Mock<VerticalCoordinatesGenerator> = vi.fn().mockReturnValue([]);
             render(
               <ChartElement width={300} height={200} margin={chartMargin}>
                 <CartesianGrid
@@ -1230,14 +1236,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               type: 'category',
               unit: undefined,
             };
-            expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+            expectLastCalledWith(
+              verticalCoordinatesGenerator,
               {
                 xAxis: expectedXAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
               },
-              syncWithTicks,
+              Boolean(syncWithTicks),
             );
           },
         );
@@ -1303,6 +1310,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
+            syncWithTicks: false,
             fill: 'none',
             height: 200,
             width: 300,
@@ -1397,6 +1405,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
+            syncWithTicks: false,
             fill: 'none',
             height: 200,
             width: 300,
@@ -1487,6 +1496,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
+            syncWithTicks: false,
             fill: 'none',
             height: 200,
             width: 300,
@@ -1581,6 +1591,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
+            syncWithTicks: false,
             fill: 'none',
             height: 200,
             width: 300,

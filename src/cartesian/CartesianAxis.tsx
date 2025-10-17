@@ -291,26 +291,26 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
 }
 
 type TicksProps = {
-  ticks?: ReadonlyArray<CartesianTickItem>;
-  tick?: Props['tick'];
-  tickLine?: Props['tickLine'];
-  stroke?: Props['stroke'];
-  tickFormatter?: Props['tickFormatter'];
-  unit?: Props['unit'];
-  padding?: Props['padding'];
-  tickTextProps?: Props['tickTextProps'];
-  orientation: Orientation;
+  events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
+  fontSize: string;
+  getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
+  height: number;
+  letterSpacing: string;
   mirror: boolean;
+  orientation: Orientation;
+  padding?: Props['padding'];
+  stroke?: Props['stroke'];
+  tick?: Props['tick'];
+  tickFormatter?: Props['tickFormatter'];
+  tickLine?: Props['tickLine'];
+  tickMargin: number;
+  tickSize: number;
+  tickTextProps?: Props['tickTextProps'];
+  ticks?: ReadonlyArray<CartesianTickItem>;
+  unit?: Props['unit'];
+  width: number;
   x: number;
   y: number;
-  width: number;
-  height: number;
-  tickSize: number;
-  tickMargin: number;
-  fontSize: string;
-  letterSpacing: string;
-  getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
-  events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
 };
 
 function Ticks(props: TicksProps) {
@@ -480,26 +480,26 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
         otherSvgProps={svgPropertiesNoEvents(props)}
       />
       <Ticks
-        ticks={ticks}
-        tick={props.tick}
-        tickLine={props.tickLine}
-        stroke={props.stroke}
-        tickFormatter={props.tickFormatter}
-        unit={props.unit}
-        padding={props.padding}
-        tickTextProps={props.tickTextProps}
-        orientation={props.orientation}
+        events={rest}
+        fontSize={fontSize}
+        getTicksConfig={props}
+        height={props.height}
+        letterSpacing={letterSpacing}
         mirror={props.mirror}
+        orientation={props.orientation}
+        padding={props.padding}
+        stroke={props.stroke}
+        tick={props.tick}
+        tickFormatter={props.tickFormatter}
+        tickLine={props.tickLine}
+        tickMargin={props.tickMargin}
+        tickSize={props.tickSize}
+        tickTextProps={props.tickTextProps}
+        ticks={ticks}
+        unit={props.unit}
+        width={props.width}
         x={props.x}
         y={props.y}
-        width={props.width}
-        height={props.height}
-        tickSize={props.tickSize}
-        tickMargin={props.tickMargin}
-        fontSize={fontSize}
-        letterSpacing={letterSpacing}
-        getTicksConfig={props}
-        events={rest}
       />
       <CartesianLabelContextProvider x={props.x} y={props.y} width={props.width} height={props.height}>
         <CartesianLabelFromLabelProp label={props.label} labelRef={props.labelRef} />

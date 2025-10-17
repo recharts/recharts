@@ -182,22 +182,23 @@ const selectTooltipDomainOfStackGroups: (state: RechartsRootState) => NumberDoma
 const selectTooltipItemsSettingsExceptStacked: (state: RechartsRootState) => ReadonlyArray<GraphicalItemSettings> =
   createSelector([selectAllGraphicalItemsSettings], filterGraphicalNotStackedItems);
 
-const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (state: RechartsRootState) => NumberDomain =
-  createSelector(
-    [
-      selectTooltipDisplayedData,
-      selectTooltipAxis,
-      selectTooltipItemsSettingsExceptStacked,
-      selectAllErrorBarSettings,
-      selectTooltipAxisType,
-    ],
-    combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
-    {
-      memoizeOptions: {
-        resultEqualityCheck: numberDomainEqualityCheck,
-      },
+const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
+  state: RechartsRootState,
+) => NumberDomain | undefined = createSelector(
+  [
+    selectTooltipDisplayedData,
+    selectTooltipAxis,
+    selectTooltipItemsSettingsExceptStacked,
+    selectAllErrorBarSettings,
+    selectTooltipAxisType,
+  ],
+  combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
+  {
+    memoizeOptions: {
+      resultEqualityCheck: numberDomainEqualityCheck,
     },
-  );
+  },
+);
 
 const selectReferenceDotsByTooltipAxis: (state: RechartsRootState) => ReadonlyArray<ReferenceDotSettings> | undefined =
   createSelector([selectReferenceDots, selectTooltipAxisType, selectTooltipAxisId], filterReferenceElements);

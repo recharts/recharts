@@ -17,7 +17,7 @@ export const getCalculatedYAxisWidth = ({
   tickSize = 0,
   tickMargin = 0,
 }: {
-  ticks: ArrayLike<IGetBoundingClient> | undefined;
+  ticks: ArrayLike<IGetBoundingClient> | null;
   label: IGetBoundingClient | null | undefined;
   labelGapWithTick: number | undefined;
   tickSize: number | undefined;

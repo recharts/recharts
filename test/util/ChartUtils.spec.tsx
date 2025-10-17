@@ -1,6 +1,5 @@
 import { scaleBand, scaleLinear, scalePoint } from 'victory-vendor/d3-scale';
 import {
-  calculateActiveTickIndex,
   getBandSizeOfAxis,
   getDomainOfStackGroups,
   getValueByDataKey,
@@ -12,6 +11,7 @@ import {
 } from '../../src/util/ChartUtils';
 import { AxisType, DataKey, LayoutType, TickItem } from '../../src/util/types';
 import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
+import { calculateActiveTickIndex } from '../../src/util/getActiveCoordinate';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
