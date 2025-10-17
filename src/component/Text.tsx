@@ -47,6 +47,8 @@ export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
+export type RenderableText = string | number | boolean | null | undefined;
+
 interface TextProps {
   /**
    * When true, scales the text to fit within the specified width.
@@ -125,7 +127,7 @@ interface TextProps {
    * Can be a string or number. Numbers will be converted to strings.
    * undefined or null values will result in no text being rendered.
    */
-  children?: string | number;
+  children?: RenderableText;
 
   /**
    * Maximum number of lines to display when text wrapping is enabled.
