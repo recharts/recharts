@@ -1,6 +1,7 @@
 import { ComponentType, PureComponent } from 'react';
+import Helmet from 'react-helmet';
 import { Installation, GettingStarted, Customize } from '../components/GuideView';
-import { getLocaleType } from '../utils/LocaleUtils.ts';
+import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ActiveIndex } from '../components/GuideView/ActiveIndex.tsx';
@@ -30,9 +31,11 @@ class GuideView extends PureComponent<RouteComponentProps> {
     const page = params?.name ?? allGuides[0];
 
     const locale = getLocaleType(this.props);
+    const title = localeGet(locale, 'guide', page) || page;
 
     return (
       <div className="page page-guide">
+        <Helmet title={title} />
         <div className="content">
           <Guide locale={locale} page={page} />
         </div>
