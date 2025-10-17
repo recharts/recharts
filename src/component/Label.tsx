@@ -1,20 +1,20 @@
 import * as React from 'react';
 import {
   cloneElement,
-  isValidElement,
-  ReactNode,
-  ReactElement,
-  createElement,
-  SVGProps,
   createContext,
+  createElement,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+  SVGProps,
   useContext,
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { Text } from './Text';
-import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
+import { Text, TextAnchor, TextVerticalAnchor } from './Text';
+import { getPercentValue, isNullish, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ViewBox, DataKey, CartesianViewBoxRequired, PolarViewBoxRequired } from '../util/types';
+import { CartesianViewBoxRequired, DataKey, Percent, PolarViewBoxRequired, ViewBox } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -46,8 +46,8 @@ type CartesianLabelPosition =
   | 'centerBottom'
   | 'middle'
   | {
-      x?: number;
-      y?: number;
+      x?: number | Percent;
+      y?: number | Percent;
     };
 
 type PolarLabelPosition = 'insideStart' | 'insideEnd' | 'end';
@@ -281,7 +281,25 @@ const getAttrsOfPolarLabel = (viewBox: PolarViewBoxRequired, offset: number, pos
 const isPolar = (viewBox: CartesianViewBoxRequired | PolarViewBoxRequired): viewBox is PolarViewBoxRequired =>
   'cx' in viewBox && isNumber(viewBox.cx);
 
-const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianViewBoxRequired) => {
+export type CartesianLabelPositionInput = {
+  parentViewBox?: ViewBox;
+  offset: number;
+  position?: CartesianLabelPosition;
+};
+
+export type LabelPositionAttributes = {
+  x: number;
+  y: number;
+  textAnchor: TextAnchor;
+  verticalAnchor: TextVerticalAnchor;
+  width?: number;
+  height?: number;
+};
+
+export const getAttrsOfCartesianLabel = (
+  props: CartesianLabelPositionInput,
+  viewBox: CartesianViewBoxRequired,
+): LabelPositionAttributes => {
   const { parentViewBox: parentViewBoxFromProps, offset, position } = props;
   let parentViewBox: CartesianViewBoxRequired | undefined;
   if (parentViewBoxFromProps != null && !isPolar(parentViewBoxFromProps)) {
@@ -304,7 +322,7 @@ const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianVi
   const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
 
   if (position === 'top') {
-    const attrs = {
+    const attrs: LabelPositionAttributes = {
       x: x + width / 2,
       y: y - verticalSign * offset,
       textAnchor: 'middle',
@@ -323,7 +341,7 @@ const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianVi
   }
 
   if (position === 'bottom') {
-    const attrs = {
+    const attrs: LabelPositionAttributes = {
       x: x + width / 2,
       y: y + height + verticalOffset,
       textAnchor: 'middle',
@@ -342,7 +360,7 @@ const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianVi
   }
 
   if (position === 'left') {
-    const attrs = {
+    const attrs: LabelPositionAttributes = {
       x: x - horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalEnd,
@@ -361,7 +379,7 @@ const getAttrsOfCartesianLabel = (props: PropsWithDefaults, viewBox: CartesianVi
   }
 
   if (position === 'right') {
-    const attrs = {
+    const attrs: LabelPositionAttributes = {
       x: x + width + horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalStart,
