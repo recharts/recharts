@@ -122,21 +122,13 @@ export const exampleComponents = [
 
 export const guidePages = ['installation', 'getting-started', 'customize', 'activeIndex', 'sizes'];
 
-export function getAllUrls(): string[] {
-  const locales = ['en-US', 'zh-CN'];
-  const routes: Array<string> = [];
+export function getSiteRoutes(): string[] {
+  // the vite sitemap plugin adds root route by default so we don't need to add it here
+  const routes = ['/guide', '/api', '/examples', '/storybook'];
 
-  locales.forEach(locale => {
-    routes.push(`/${locale}/`);
-    routes.push(`/${locale}/guide`);
-    routes.push(`/${locale}/api`);
-    routes.push(`/${locale}/examples`);
-    routes.push(`/${locale}/storybook`);
-
-    guidePages.forEach(slug => routes.push(`/${locale}/guide/${slug}`));
-    apiComponents.forEach(slug => routes.push(`/${locale}/api/${slug}`));
-    exampleComponents.forEach(slug => routes.push(`/${locale}/examples/${slug}`));
-  });
+  guidePages.forEach(slug => routes.push(`/guide/${slug}`));
+  apiComponents.forEach(slug => routes.push(`/api/${slug}`));
+  exampleComponents.forEach(slug => routes.push(`/examples/${slug}`));
 
   return routes;
 }

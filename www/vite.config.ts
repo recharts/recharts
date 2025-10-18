@@ -2,7 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import sitemap from 'vite-plugin-sitemap';
-import { getAllUrls } from './src/navigation.data';
+import { getSiteRoutes } from './src/navigation.data';
+import { supportedLocales } from './src/locale';
+import { defaultLocale } from './src/utils/LocaleUtils';
 
 export default defineConfig(({ mode }) => ({
   // depending on your application, base can also be "/"
@@ -19,9 +21,14 @@ export default defineConfig(({ mode }) => ({
     }),
     sitemap({
       hostname: 'https://recharts.github.io',
-      dynamicRoutes: getAllUrls(),
+      dynamicRoutes: getSiteRoutes(),
       outDir: 'docs',
-      exclude: ['./google*.html'],
+      exclude: ['/googlecacbec94e341ad8a'],
+      i18n: {
+        languages: Array.from(supportedLocales),
+        defaultLanguage: defaultLocale,
+        strategy: 'prefix',
+      },
       robots: [
         {
           userAgent: '*',
