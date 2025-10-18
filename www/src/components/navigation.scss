@@ -117,7 +117,6 @@
     line-height: 2em;
 
     a {
-      display: block;
       padding: 8px 20px;
       font-size: variables.$font-size-lg;
 
@@ -152,14 +151,15 @@
       }
 
       .collapsible-content .sidebar-cate {
-        a {
-          display: block;
-          padding: 8px 20px;
+        .menu {
+          padding-left: 1rem;
         }
+        a {
+          padding: 8px 20px;
 
-        h4 {
-          margin: 0;
-          font-size: variables.$font-size-lg;
+          h4 {
+            margin: 0;
+          }
         }
       }
     }
@@ -168,4 +168,23 @@
 
 body.no-scroll {
   overflow: hidden;
+}
+
+.sidebar-cate {
+  a {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    h4 {
+      font-size: variables.$font-size-lg;
+      flex-grow: 3;
+    }
+
+    .chart-preview {
+      flex-grow: 1;
+      max-width: 7rem;
+    }
+  }
 }

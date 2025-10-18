@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import 'simple-line-icons/scss/simple-line-icons.scss';
-import { useAllNavigationItems } from '../navigation.ts';
+import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.scss';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
@@ -67,11 +67,16 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                   </button>
                   {isExpanded && (
                     <div className="collapsible-content">
-                      {categories.map(({ key, displayName, items }) => (
+                      {categories.map(({ key, displayName, items, NavPreview }: NavCategory) => (
                         <div className="sidebar-cate" key={key}>
                           {displayName && items?.length > 0 && (
                             <Link to={items[0].url} onClick={onClose}>
                               <h4>{displayName}</h4>
+                              {NavPreview && (
+                                <div className="chart-preview">
+                                  <NavPreview />
+                                </div>
+                              )}
                             </Link>
                           )}
                           {displayName && (!items || items.length === 0) && <h4>{displayName}</h4>}

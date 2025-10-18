@@ -17,6 +17,7 @@ import HighlightAndZoomLineChart from '../../../www/src/docs/exampleComponents/L
 import LineChartHasMultiSeries from '../../../www/src/docs/exampleComponents/LineChart/LineChartHasMultiSeries';
 import LineChartAxisInterval from '../../../www/src/docs/exampleComponents/LineChart/LineChartAxisInterval';
 import LineChartNegativeValuesWithReferenceLines from '../../../www/src/docs/exampleComponents/LineChart/LineChartNegativeValuesWithReferenceLines';
+import LineChartNavExample from '../../../www/src/docs/exampleComponents/LineChart/LineChartNavExample';
 
 test('LineChartNegativeValuesWithReferenceLines', async ({ mount }) => {
   const component = await mount(<LineChartNegativeValuesWithReferenceLines />);
@@ -100,5 +101,10 @@ test('LineChartExample', async ({ mount }) => {
 
 test('SimpleLineChart', async ({ mount }) => {
   const component = await mount(<SimpleLineChart />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('LineChartNavExample', async ({ mount }) => {
+  const component = await mount(<LineChartNavExample />);
   await expect(component).toHaveScreenshot();
 });
