@@ -49,26 +49,42 @@ export const FunnelExample: ApiExampleDemo = ({ isAnimationActive }) => {
   );
 };
 
-const exampleCode = `
-<FunnelChart
-  style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-  responsive
-  margin={{
-    right: 30
-  }}
->
-  <Tooltip />
-  <Funnel
-    dataKey="value"
-    data={data}
-    isAnimationActive
-    activeShape={(args) => {
-      console.log(args)
+const exampleCode = `const FunnelWithDimensions = (props: FunnelTrapezoidItem) => {
+  return (
+    <>
+      <Trapezoid {...props} stroke="red" fill="orange" fillOpacity={0.2} />
+      <Label
+        position="insideBottom"
+        value={\`lowerWidth: \${Math.round(props.lowerWidth)}\`}
+        viewBox={props.labelViewBox}
+      />
+      <Label position="insideTop" value={\`upperWidth: \${Math.round(props.upperWidth)}\`} viewBox={props.labelViewBox} />
+      <Label position="insideTopLeft" value={\`x: \${Math.round(props.x)}\`} viewBox={props.labelViewBox} />
+      <Label position="insideTopRight" value={\`y: \${Math.round(props.y)}\`} viewBox={props.labelViewBox} />
+      <Label position="middle" value={\`width: \${Math.round(props.width)}\`} viewBox={props.labelViewBox} />
+    </>
+  );
+};
+
+return (
+  <FunnelChart
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
+    margin={{
+      right: 30
     }}
   >
-    <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
-  </Funnel>
-</FunnelChart>
+    <Tooltip />
+    <Funnel
+      dataKey="value"
+      data={data}
+      activeShape={FunnelWithDimensions}
+      reversed
+    >
+      <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
+    </Funnel>
+  </FunnelChart>
+)
 `;
 
 export const funnelApiExamples: ReadonlyArray<ApiExample> = [
