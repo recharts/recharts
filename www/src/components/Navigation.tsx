@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
-import 'simple-line-icons/scss/simple-line-icons.scss';
+import { Bar, BarChart, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.scss';
@@ -27,16 +27,51 @@ function DesktopNav() {
   );
 }
 
+function HamburgerIcon() {
+  return (
+    <BarChart
+      style={{ height: '3rem', width: '3rem', cursor: 'pointer' }}
+      responsive
+      data={[{ v: 1 }, { v: 1 }, { v: 1 }]}
+      layout="vertical"
+    >
+      <Bar dataKey="v" fill="var(--var-brand-info)" barSize={3} radius={[2, 2, 2, 2]} />
+      <XAxis dataKey="v" type="number" hide />
+      <YAxis type="category" hide />
+    </BarChart>
+  );
+}
+
 function MobileNavToggle({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" className="mobile-nav-toggle mobile-only" onClick={onClick} aria-label="Toggle navigation">
       <span>Menu</span>
-      <div className="hamburger-icon">
-        <span />
-        <span />
-        <span />
-      </div>
+      <HamburgerIcon />
     </button>
+  );
+}
+
+function Chevron({ isExpanded }: { isExpanded: boolean }) {
+  return (
+    <LineChart
+      style={{ height: '3rem', width: '3rem' }}
+      responsive
+      data={[{ v: 1 }, { v: 0 }, { v: 1 }]}
+      layout={!isExpanded ? 'vertical' : 'horizontal'}
+    >
+      <Line dataKey="v" dot={false} activeDot={false} animationDuration={500} />
+      {!isExpanded ? (
+        <>
+          <XAxis dataKey="v" type="number" hide reversed domain={[1, 2]} />
+          <YAxis dataKey="v" type="category" hide domain={['dataMin', 'dataMax']} />
+        </>
+      ) : (
+        <>
+          <XAxis dataKey="v" type="category" hide />
+          <YAxis dataKey="v" type="number" hide domain={[1, 2]} />
+        </>
+      )}
+    </LineChart>
   );
 }
 
@@ -63,7 +98,7 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 <li key={navItem.key} className={`collapsible ${isExpanded ? 'expanded' : ''}`}>
                   <button type="button" className="collapsible-trigger" onClick={() => toggle(navItem.key)}>
                     <span>{navItem.displayName}</span>
-                    <i className="icon-arrow-left" />
+                    <Chevron isExpanded={isExpanded} />
                   </button>
                   {isExpanded && (
                     <div className="collapsible-content">

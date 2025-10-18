@@ -88,6 +88,9 @@
   }
 }
 
+.language-switch {
+  padding: 0 2rem;
+}
 .slide-right-mobile-nav {
   position: fixed;
   top: 0;
@@ -140,10 +143,6 @@
         padding: 8px 20px;
         cursor: pointer;
         text-align: left;
-
-        i {
-          transition: transform 0.2s ease-in-out;
-        }
       }
 
       &.expanded .collapsible-trigger i {
