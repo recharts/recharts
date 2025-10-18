@@ -1,6 +1,7 @@
 import { Props } from './PolarAngleAxis';
 
 export const defaultPolarAngleAxisProps = {
+  allowDecimals: false,
   allowDuplicatedCategory: true, // if I set this to false then Tooltip synchronisation stops working in Radar, wtf
   angleAxisId: 0,
   axisLine: true,
@@ -13,4 +14,5 @@ export const defaultPolarAngleAxisProps = {
   tickLine: true,
   tickSize: 8,
   type: 'category',
+  tickCount: 10,
 } as const satisfies Props;

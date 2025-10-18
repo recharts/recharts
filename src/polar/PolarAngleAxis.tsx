@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { FunctionComponent, PureComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
+import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
-import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
+import { Props as TextProps, Text, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import {
   adaptEventsOfChild,
   AxisDomain,
@@ -22,6 +22,8 @@ import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxi
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -48,20 +50,28 @@ export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
   tickCount?: number;
   tickLine?: boolean | SVGProps<SVGLineElement>;
   tickFormatter?: (value: any, index: number) => string;
-  reversed: boolean;
+  reversed?: boolean;
   dataKey?: DataKey<any>;
   tick?:
     | SVGProps<SVGTextElement>
     | ReactElement<SVGElement>
     | ((props: TickItemTextProps) => ReactElement<SVGElement>)
     | boolean;
-  scale: ScaleType | RechartsScale;
+  scale?: ScaleType | RechartsScale;
   type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
 }
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
 
 export type Props = AxisSvgProps & PolarAngleAxisProps;
+
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
+
+type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
+  radius: number;
+  ticks: ReadonlyArray<TickItem>;
+  scale: RechartsScale;
+};
 
 const AXIS_TYPE = 'angleAxis';
 
@@ -97,7 +107,7 @@ function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
  */
 const getTickLineCoord = (
   data: TickItem,
-  props: Props,
+  props: InsideProps,
 ): {
   x1: number;
   y1: number;
@@ -148,9 +158,7 @@ const getTickTextVerticalAnchor = (data: TickItem): TextVerticalAnchor => {
   return 'middle';
 };
 
-type PropsWithTicks = Props & { ticks: ReadonlyArray<TickItem> };
-
-const AxisLine = (props: PropsWithTicks) => {
+const AxisLine = (props: InsideProps) => {
   const { cx, cy, radius, axisLineType, axisLine, ticks } = props;
   if (!axisLine) {
     return null;
@@ -182,7 +190,7 @@ export type TickItemTextProps = TextProps & {
   payload: any;
 };
 
-const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement => {
+const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactNode => {
   if (!tick) {
     return null;
   }
@@ -200,7 +208,7 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement =
   );
 };
 
-const Ticks = (props: PropsWithTicks) => {
+const Ticks = (props: InsideProps) => {
   const { tick, tickLine, tickFormatter, stroke, ticks } = props;
   const axisProps = svgPropertiesNoEvents(props);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
@@ -250,7 +258,7 @@ const Ticks = (props: PropsWithTicks) => {
   return <Layer className="recharts-polar-angle-axis-ticks">{items}</Layer>;
 };
 
-export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
+export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defaultsAndInputs: PropsWithDefaults) => {
   const { angleAxisId } = defaultsAndInputs;
 
   const viewBox = useAppSelector(selectPolarViewBox);
@@ -258,56 +266,55 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
   const isPanorama = useIsPanorama();
   const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
 
-  if (viewBox == null || !ticks || !ticks.length) {
+  if (viewBox == null || !ticks || !ticks.length || scale == null) {
     return null;
   }
 
-  const props: Props = {
+  const props: InsideProps = {
     ...defaultsAndInputs,
     scale,
     ...viewBox,
     radius: viewBox.outerRadius,
+    ticks,
   };
 
   return (
     <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
-      <AxisLine {...props} ticks={ticks} />
-      <Ticks {...props} ticks={ticks} />
+      <AxisLine {...props} />
+      <Ticks {...props} />
     </Layer>
   );
 };
 
-export class PolarAngleAxis extends PureComponent<Props> {
-  static displayName = 'PolarAngleAxis';
-
-  static axisType = AXIS_TYPE;
-
-  static defaultProps = defaultPolarAngleAxisProps;
-
-  render(): React.ReactNode {
-    if (this.props.radius <= 0) return null;
-
-    return (
-      <SetAngleAxisSettings
-        id={this.props.angleAxisId}
-        scale={this.props.scale}
-        type={this.props.type}
-        dataKey={this.props.dataKey}
-        unit={undefined}
-        name={this.props.name}
-        allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
-        allowDataOverflow={false}
-        reversed={this.props.reversed}
-        includeHidden={false}
-        allowDecimals={this.props.allowDecimals}
-        tickCount={this.props.tickCount}
-        // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
-        ticks={this.props.ticks}
-        tick={this.props.tick}
-        domain={this.props.domain}
-      >
-        <PolarAngleAxisWrapper {...this.props} />
-      </SetAngleAxisSettings>
-    );
+export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
+  const props = resolveDefaultProps(outsideProps, defaultPolarAngleAxisProps);
+  const { radius } = props;
+  if (radius != null && !isPositiveNumber(radius)) {
+    return null;
   }
+
+  return (
+    <SetAngleAxisSettings
+      id={props.angleAxisId}
+      scale={props.scale}
+      type={props.type}
+      dataKey={props.dataKey}
+      unit={undefined}
+      name={props.name}
+      allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
+      allowDataOverflow={false}
+      reversed={props.reversed}
+      includeHidden={false}
+      allowDecimals={props.allowDecimals}
+      tickCount={props.tickCount}
+      // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+      ticks={props.ticks}
+      tick={props.tick}
+      domain={props.domain}
+    >
+      <PolarAngleAxisWrapper {...props} />
+    </SetAngleAxisSettings>
+  );
 }
+
+PolarAngleAxis.displayName = 'PolarAngleAxis';
