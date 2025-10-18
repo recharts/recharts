@@ -3,7 +3,7 @@ import { create } from 'storybook/theming/create';
 export default create({
   base: 'light',
   brandTitle: 'Recharts',
-  brandUrl: 'https://recharts.org/en-US/',
+  brandUrl: 'https://recharts.github.io/en-US/',
   brandTarget: '_self',
 
   fontBase: '"Source Sans Pro", "Hiragino Sans GB", Arial, sans-serif',

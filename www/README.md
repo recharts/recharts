@@ -1,4 +1,4 @@
-# recharts.org
+# recharts.github.io
 
 This site is built with react and react-router. Pull requests welcome!
 
