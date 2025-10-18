@@ -41,10 +41,9 @@ export const BarInBar = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart {...args}>
-          <Bar dataKey="uv" fill="green" xAxisId="one" barSize={50} />
+          <Bar zIndex={1} dataKey="uv" fill="green" xAxisId="one" barSize={50} />
+          <Bar zIndex={2} dataKey="pv" fill="red" xAxisId="two" barSize={30} />
           <XAxis xAxisId="one" />
-          {/* The smaller bar must be rendered in front of the larger one to be visible. */}
-          <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} />
           <XAxis xAxisId="two" hide />
           <RechartsHookInspector />
         </BarChart>
