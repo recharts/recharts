@@ -27,6 +27,7 @@ import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
 import { isPercent } from '../util/DataUtils';
+import { ZIndexSvgPortal } from '../zindex/ZIndexPortal';
 
 type Nullable<T> = {
   [P in keyof T]: T[P] | undefined;

@@ -70,6 +70,7 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
+import { withZIndex } from '../zindex/ZIndexable';
 
 type Rectangle = {
   x: number | null;
@@ -819,6 +820,7 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
+  console.log('BarFn', outsideProps);
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -851,5 +853,5 @@ function BarFn(outsideProps: Props) {
   );
 }
 
-export const Bar = React.memo(BarFn);
+export const Bar = React.memo(withZIndex(BarFn));
 Bar.displayName = 'Bar';
