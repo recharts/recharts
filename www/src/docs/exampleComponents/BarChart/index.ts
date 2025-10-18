@@ -25,6 +25,9 @@ import biaxialBarChartSource from './BiaxialBarChart?raw';
 import barChartHasBackgroundSource from './BarChartHasBackground?raw';
 import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
 import { ChartExample } from '../types.ts';
+import BarChartNavExample from './BarChartNavExample';
+
+export { BarChartNavExample };
 
 export const barChartExamples: Record<string, ChartExample> = {
   TinyBarChart: {

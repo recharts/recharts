@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, ReactNode } from 'react';
 
 export type ChartExample = {
   /**
@@ -25,6 +25,7 @@ export type ChartExample = {
 export type ComponentExamples = {
   examples: Record<string, ChartExample>;
   order: number;
+  NavPreview: null | ((props: { isAnimationActive?: boolean }) => ReactNode);
 };
 
 export type AllExamples = Record<string, ComponentExamples>;

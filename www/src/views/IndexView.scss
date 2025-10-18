@@ -70,15 +70,13 @@
     margin-top: 60px;
 
     .feat {
-      max-width: 1000px;
-      margin: 0 auto;
-      @include mixins.clearfix;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
 
       > li {
-        float: left;
-        vertical-align: top;
         width: 250px;
-        margin: 40px;
 
         i {
           font-size: 48px;

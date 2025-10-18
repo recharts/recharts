@@ -32,7 +32,7 @@ import lineChartAxisIntervalSource from './LineChartAxisInterval?raw';
 import lineChartNegativeValuesWithReferenceLinesSource from './LineChartNegativeValuesWithReferenceLines?raw';
 import { ChartExample } from '../types.ts';
 
-export const lineChartExamples: Record<string, ChartExample> = {
+export const lineChartExamples = {
   SimpleLineChart: {
     Component: SimpleLineChart,
     sourceCode: simpleLineChartSource,
@@ -113,4 +113,6 @@ export const lineChartExamples: Record<string, ChartExample> = {
     sourceCode: lineChartNegativeValuesWithReferenceLinesSource,
     name: 'Line Chart Negative Values With Reference Lines',
   },
-};
+} satisfies Record<string, ChartExample>;
+
+export { default as LineChartNavExample } from './LineChartNavExample';

@@ -15,6 +15,9 @@ import PieChartInFlexbox from './PieChartInFlexbox.tsx';
 import pieChartInFlexboxSource from './PieChartInFlexbox?raw';
 import PieChartInGrid from './PieChartInGrid.tsx';
 import pieChartInGridSource from './PieChartInGrid?raw';
+import PieChartNavExample from './PieChartNavExample';
+
+export { PieChartNavExample };
 
 export const pieChartExamples: Record<string, ChartExample> = {
   TwoLevelPieChart: {

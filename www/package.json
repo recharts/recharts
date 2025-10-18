@@ -25,6 +25,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "sass": "^1.93.2",
     "vite": "^6.4.0",
+    "vite-plugin-sitemap": "^0.8.2",
     "vitest": "^3.2.4"
   },
   "dependencies": {

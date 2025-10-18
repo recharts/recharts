@@ -5,6 +5,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
   {
     "categories": [
       {
+        "NavPreview": null,
         "displayName": "",
         "items": [
           {
@@ -43,6 +44,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
   {
     "categories": [
       {
+        "NavPreview": null,
         "displayName": "Charts",
         "items": [
           {
@@ -104,6 +106,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "charts",
       },
       {
+        "NavPreview": null,
         "displayName": "General Components",
         "items": [
           {
@@ -150,6 +153,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "general-components",
       },
       {
+        "NavPreview": null,
         "displayName": "Cartesian Components",
         "items": [
           {
@@ -231,6 +235,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "cartesian-components",
       },
       {
+        "NavPreview": null,
         "displayName": "Polar Components",
         "items": [
           {
@@ -267,6 +272,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "polar-components",
       },
       {
+        "NavPreview": null,
         "displayName": "Shapes",
         "items": [
           {
@@ -315,6 +321,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
   {
     "categories": [
       {
+        "NavPreview": [Function],
         "displayName": "LineChart",
         "items": [
           {
@@ -401,6 +408,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "LineChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "AreaChart",
         "items": [
           {
@@ -447,6 +455,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "AreaChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "BarChart",
         "items": [
           {
@@ -518,6 +527,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "BarChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "ComposedChart",
         "items": [
           {
@@ -554,6 +564,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "ComposedChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "ScatterChart",
         "items": [
           {
@@ -600,6 +611,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "ScatterChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "PieChart",
         "items": [
           {
@@ -646,6 +658,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "PieChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "RadarChart",
         "items": [
           {
@@ -662,6 +675,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "RadarChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "RadialBarChart",
         "items": [
           {
@@ -673,6 +687,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "RadialBarChart",
       },
       {
+        "NavPreview": [Function],
         "displayName": "TreeMap",
         "items": [
           {
@@ -689,6 +704,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "TreeMap",
       },
       {
+        "NavPreview": null,
         "displayName": "Tooltip",
         "items": [
           {
@@ -700,6 +716,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "Tooltip",
       },
       {
+        "NavPreview": null,
         "displayName": "Legend",
         "items": [
           {
@@ -711,6 +728,7 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         "key": "Legend",
       },
       {
+        "NavPreview": null,
         "displayName": "ResponsiveContainer",
         "items": [
           {

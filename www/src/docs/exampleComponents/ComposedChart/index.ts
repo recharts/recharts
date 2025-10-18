@@ -11,6 +11,9 @@ import verticalComposedChartSource from './VerticalComposedChart?raw';
 import scatterAndLineOfBestFitSource from './ScatterAndLineOfBestFit?raw';
 import bandedChartSource from './BandedChart?raw';
 import { ChartExample } from '../types.ts';
+import ComposedChartNavExample from './ComposedChartNavExample';
+
+export { ComposedChartNavExample };
 
 export const composedChartExamples: Record<string, ChartExample> = {
   LineBarAreaComposedChart: {

@@ -3,6 +3,9 @@ import CustomContentTreemap from './CustomContentTreemap';
 import simpleTreemapSource from './SimpleTreemap?raw';
 import customContentTreemapSource from './CustomContentTreemap?raw';
 import { ChartExample } from '../types.ts';
+import TreeMapNavExample from './TreeMapNavExample';
+
+export { TreeMapNavExample };
 
 export const treeMapExamples: Record<string, ChartExample> = {
   SimpleTreemap: {

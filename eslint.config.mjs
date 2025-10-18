@@ -316,6 +316,16 @@ const overridesConfig = [
       'import/prefer-default-export': 'error',
     },
   },
+  {
+    name: 'vite-config-override',
+    /*
+     * Vite config files use default export by convention.
+     */
+    files: ['**/vite.config.*', '**/vitest.config.*'],
+    rules: {
+      'import/no-default-export': 'off',
+    },
+  },
 ];
 
 const settings = [

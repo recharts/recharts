@@ -5,16 +5,10 @@
   top: 60px;
   bottom: 0;
   width: 280px;
-  padding-top: 30px;
-  padding-left: 20px;
+  padding: 2rem;
   overflow: auto;
   z-index: 1;
   background: #fff;
-
-  h4 {
-    font-size: 18px;
-    margin: 16px 0;
-  }
 
   .menu {
     list-style: none;

@@ -13,7 +13,6 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname: string = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
   plugins: [react()],
   resolve: {

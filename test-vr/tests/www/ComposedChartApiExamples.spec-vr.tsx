@@ -7,6 +7,12 @@ import VerticalComposedChart from '../../../www/src/docs/exampleComponents/Compo
 import ComposedChartWithAxisLabels from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartWithAxisLabels';
 import ScatterAndLineOfBestFit from '../../../www/src/docs/exampleComponents/ComposedChart/ScatterAndLineOfBestFit';
 import BandedChart from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
+import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
+
+test('ComposedChartNavExample', async ({ mount }) => {
+  const component = await mount(<ComposedChartNavExample />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('BandedChart', async ({ mount }) => {
   const component = await mount(<BandedChart />);

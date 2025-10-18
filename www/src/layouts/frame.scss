@@ -9,14 +9,13 @@ header {
   z-index: 1000;
   height: 60px;
   line-height: 60px;
-  padding-left: 20px;
   display: flex;
   flex-direction: row;
   gap: 80px;
 
   .logo {
-    width: 132px;
     margin: 0;
+    padding: 0 2rem;
     font-family: variables.$font-family-code;
     font-weight: 300;
     font-size: variables.$font-size-xl;

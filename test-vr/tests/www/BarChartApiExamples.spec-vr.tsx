@@ -14,6 +14,12 @@ import BarChartStackedBySign from '../../../www/src/docs/exampleComponents/BarCh
 import BiaxialBarChart from '../../../www/src/docs/exampleComponents/BarChart/BiaxialBarChart';
 import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarChart/BarChartHasBackground';
 import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
+import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
+
+test('BarChartNavExample', async ({ mount }) => {
+  const component = await mount(<BarChartNavExample />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('BarChartWithMultiXAxis', async ({ mount }) => {
   const component = await mount(<BarChartWithMultiXAxis />);

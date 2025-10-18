@@ -47,6 +47,10 @@ export type NavCategory = {
    * The list of navigation items under this category.
    */
   items: ReadonlyArray<NavItem>;
+  /**
+   * A preview component to be displayed alongside the navigation items in this category.
+   */
+  NavPreview: null | ((props: { isAnimationActive?: boolean }) => ReactNode);
 };
 
 export type Navigation = ReadonlyArray<NavItem>;
@@ -63,20 +67,24 @@ function guideNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       key: 'guide',
       displayName: '',
       items,
+      NavPreview: null,
     },
   ];
 }
 
 function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
-  return apiCates.map(({ name, items }) => ({
-    key: name,
-    displayName: localeGet(locale, 'api', name),
-    items: items.map(compName => ({
-      key: compName,
-      displayName: compName,
-      url: `/${locale}/api/${compName}`,
-    })),
-  }));
+  return apiCates.map(
+    ({ name, items }): NavCategory => ({
+      key: name,
+      displayName: localeGet(locale, 'api', name),
+      items: items.map(compName => ({
+        key: compName,
+        displayName: compName,
+        url: `/${locale}/api/${compName}`,
+      })),
+      NavPreview: null,
+    }),
+  );
 }
 
 const exampleCategoryNames = Object.keys(allExamples).sort((a, b) => allExamples[a].order - allExamples[b].order);
@@ -90,6 +98,7 @@ function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
         displayName: allExamples[cate].examples[name].name,
         url: `/${locale}/examples/${name}`,
       })),
+      NavPreview: allExamples[cate].NavPreview,
     }),
   );
 }
