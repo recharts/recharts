@@ -17,8 +17,9 @@ import { referenceLineApiExamples } from './ReferenceLine';
 import { errorBarApiExamples } from './ErrorBar';
 import { labelApiExamples } from './Label.tsx';
 import { labelListApiExamples } from './LabelList';
-import { funnelApiExamples } from './FunnelChart';
+import { funnelChartApiExamples } from './FunnelChart';
 import { ApiExample } from '../api/types';
+import { funnelApiExamples } from './Funnel.tsx';
 
 export const allApiExamples: Record<string, ReadonlyArray<ApiExample>> = {
   AreaChart: areaChartApiExamples,
@@ -39,6 +40,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ApiExample>> = {
   ErrorBar: errorBarApiExamples,
   Label: labelApiExamples,
   LabelList: labelListApiExamples,
-  FunnelChart: funnelApiExamples,
+  Funnel: funnelApiExamples,
+  FunnelChart: funnelChartApiExamples,
   SankeyChart: sankeyApiExamples,
 };

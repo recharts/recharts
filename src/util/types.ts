@@ -792,6 +792,36 @@ interface PolarViewBox {
 
 export type PolarViewBoxRequired = Required<PolarViewBox>;
 
+export type TrapezoidViewBox = {
+  /**
+   * The x-coordinate of the upper left corner of the trapezoid.
+   * If the upper side is shorter than the lower side, this will be the x-coordinate of the upper left corner,
+   * meaning that the X does take into account the varying width of the trapezoid.
+   */
+  x: number;
+  /**
+   * The y-coordinate of the upper side of the trapezoid.
+   * Nothing exciting happening here.
+   */
+  y: number;
+  /**
+   * The width of the upper side of the trapezoid.
+   */
+  upperWidth: number;
+  /**
+   * The width of the lower side of the trapezoid.
+   */
+  lowerWidth: number;
+  /**
+   * The overall width of the trapezoid: `Math.max(upperWidth, lowerWidth)`.
+   */
+  width: number;
+  /**
+   * The height of the trapezoid.
+   */
+  height: number;
+};
+
 export type ViewBox = CartesianViewBoxRequired | PolarViewBoxRequired;
 
 type RecordString<T> = Record<string, T>;

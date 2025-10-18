@@ -25,6 +25,7 @@ import {
   LegendType,
   TickItem,
   TooltipType,
+  TrapezoidViewBox,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
@@ -308,10 +309,12 @@ function LineLabelListProvider({
 }) {
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points?.map((point): CartesianLabelListEntry => {
-      const viewBox = {
+      const viewBox: TrapezoidViewBox = {
         x: point.x,
         y: point.y,
         width: 0,
+        lowerWidth: 0,
+        upperWidth: 0,
         height: 0,
       };
       return {

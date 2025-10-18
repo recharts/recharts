@@ -126,10 +126,12 @@ function ReferenceAreaImpl(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
       {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
-      <CartesianLabelContextProvider {...rect}>
-        <CartesianLabelFromLabelProp label={props.label} />
-        {props.children}
-      </CartesianLabelContextProvider>
+      {rect != null && (
+        <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+          <CartesianLabelFromLabelProp label={props.label} />
+          {props.children}
+        </CartesianLabelContextProvider>
+      )}
     </Layer>
   );
 }

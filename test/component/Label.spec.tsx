@@ -305,6 +305,8 @@ describe('<Label />', () => {
               viewBox: {
                 height: 200,
                 width: 200,
+                lowerWidth: 200,
+                upperWidth: 200,
                 x: 50,
                 y: 50,
               },
@@ -463,6 +465,8 @@ describe('<Label />', () => {
             viewBox: {
               height: 200,
               width: 200,
+              lowerWidth: 200,
+              upperWidth: 200,
               x: 50,
               y: 50,
             },
@@ -494,6 +498,8 @@ describe('<Label />', () => {
             viewBox: {
               height: 200,
               width: 200,
+              lowerWidth: 200,
+              upperWidth: 200,
               x: 50,
               y: 50,
             },
@@ -528,6 +534,8 @@ describe('<Label />', () => {
             viewBox: {
               height: 200,
               width: 200,
+              lowerWidth: 200,
+              upperWidth: 200,
               x: 50,
               y: 50,
             },
@@ -585,6 +593,8 @@ describe('<Label />', () => {
             viewBox: {
               height: 90,
               width: 190,
+              lowerWidth: 190,
+              upperWidth: 190,
               x: 5,
               y: 5,
             },
@@ -642,6 +652,8 @@ describe('<Label />', () => {
             viewBox: {
               height: 390,
               width: 390,
+              lowerWidth: 390,
+              upperWidth: 390,
               x: 5,
               y: 5,
             },

@@ -5,7 +5,7 @@ import last from 'es-toolkit/compat/last';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired } from '../util/types';
+import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
@@ -31,12 +31,12 @@ interface BaseLabelListEntry {
  *
  * It's not necessary to pass redundant data, but we keep it for backward compatibility.
  */
-export interface CartesianLabelListEntry extends BaseLabelListEntry, CartesianViewBoxRequired {
+export interface CartesianLabelListEntry extends BaseLabelListEntry, TrapezoidViewBox {
   /**
    * The bounding box of the graphical element that this label is attached to.
    * This will be an individual Bar for example.
    */
-  viewBox: CartesianViewBoxRequired;
+  viewBox: TrapezoidViewBox;
   parentViewBox?: CartesianViewBoxRequired;
 }
 

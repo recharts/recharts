@@ -28,6 +28,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   SymbolType,
   TickItem,
+  TrapezoidViewBox,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterSymbol } from '../util/ScatterUtils';
@@ -254,7 +255,7 @@ function ScatterLabelListProvider({
   const chartViewBox = useViewBox();
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points?.map((point): CartesianLabelListEntry => {
-      const viewBox = {
+      const viewBox: TrapezoidViewBox = {
         /*
          * Scatter label uses x and y as the reference point for the label,
          * not cx and cy.
@@ -267,6 +268,8 @@ function ScatterLabelListProvider({
         y: point.y,
         width: point.width,
         height: point.height,
+        lowerWidth: point.width,
+        upperWidth: point.width,
       };
       return {
         ...viewBox,

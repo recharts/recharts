@@ -208,10 +208,12 @@ function ReferenceLineImpl(props: Props) {
     y2,
   };
 
+  const rect = rectWithCoords({ x1, y1, x2, y2 });
+
   return (
     <Layer className={clsx('recharts-reference-line', className)}>
       {renderLine(shape, lineProps)}
-      <CartesianLabelContextProvider {...rectWithCoords({ x1, y1, x2, y2 })}>
+      <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
         <CartesianLabelFromLabelProp label={props.label} />
         {props.children}
       </CartesianLabelContextProvider>

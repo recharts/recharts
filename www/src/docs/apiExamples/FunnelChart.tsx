@@ -43,7 +43,7 @@ const exampleCode = `
 </FunnelChart>
 `;
 
-export const funnelApiExamples: ReadonlyArray<ApiExample> = [
+export const funnelChartApiExamples: ReadonlyArray<ApiExample> = [
   {
     demo: FunnelChartExample,
     code: exampleCode,

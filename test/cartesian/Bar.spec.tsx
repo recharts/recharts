@@ -1019,8 +1019,10 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             viewBox: {
               height: expect.any(Number),
               width: expect.any(Number),
+              lowerWidth: expect.any(Number),
+              upperWidth: expect.any(Number),
               x: expect.any(Number),
-              y: 86.66666666666666,
+              y: 413.3333333333333,
             },
             width: expect.any(Number),
             x: expect.any(Number),
