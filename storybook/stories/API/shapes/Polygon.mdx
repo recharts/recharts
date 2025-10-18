@@ -1,4 +1,4 @@
-import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Polygon.stories';
 
 # Polygon
@@ -7,14 +7,12 @@ The Polygon is a shape that is valid in the context of any SVG as well as within
 This is a building block used internally to recharts to create `<Radar />`, etc.
 
 ```jsx
-<Customized component={<Polygon {...polygonProps} />} />
+<Polygon {...polygonProps} />
 ```
 
 <Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={ComponentStories} />
-</Canvas>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Properties
 

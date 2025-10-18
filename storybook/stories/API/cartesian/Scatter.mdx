@@ -1,4 +1,4 @@
-import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Scatter.stories';
 
 # Scatter
@@ -10,9 +10,7 @@ If the dataKey is set, and no xAxis or yAxis is set, the Scatter will use the da
 
 <Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={ComponentStories} />
-</Canvas>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 

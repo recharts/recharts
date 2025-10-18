@@ -1,4 +1,4 @@
-import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Rectangle.stories';
 
 # Rectangle
@@ -12,17 +12,9 @@ This is a building block used internally to recharts to create `<Bar />`, etc.
 </svg>
 ```
 
-or
-
-```jsx
-<Customized component={<Rectangle {...rectangleProps} />} />
-```
-
 <Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={ComponentStories} />
-</Canvas>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Properties
 
