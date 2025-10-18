@@ -25,7 +25,7 @@ export type ChartExample = {
 export type ComponentExamples = {
   examples: Record<string, ChartExample>;
   order: number;
-  NavPreview: null | (() => ReactNode);
+  NavPreview: null | ((props: { isAnimationActive?: boolean }) => ReactNode);
 };
 
 export type AllExamples = Record<string, ComponentExamples>;

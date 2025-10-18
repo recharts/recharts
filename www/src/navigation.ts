@@ -50,7 +50,7 @@ export type NavCategory = {
   /**
    * A preview component to be displayed alongside the navigation items in this category.
    */
-  NavPreview: null | (() => ReactNode);
+  NavPreview: null | ((props: { isAnimationActive?: boolean }) => ReactNode);
 };
 
 export type Navigation = ReadonlyArray<NavItem>;

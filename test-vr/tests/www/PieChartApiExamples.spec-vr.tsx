@@ -12,7 +12,7 @@ import PieChartNavExample from '../../../www/src/docs/exampleComponents/PieChart
 // import PieChartInGrid from '../../../www/src/docs/exampleComponents/PieChart/PieChartInGrid';
 
 test('PieChartNavExample', async ({ mount }) => {
-  const component = await mount(<PieChartNavExample />);
+  const component = await mount(<PieChartNavExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 

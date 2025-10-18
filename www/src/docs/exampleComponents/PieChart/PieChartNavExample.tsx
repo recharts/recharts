@@ -6,10 +6,17 @@ const data = [
   { value: 400, fill: 'red' },
 ];
 
-const PieChartNavExample = () => {
+const PieChartNavExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => {
   return (
     <PieChart style={{ aspectRatio: 1 }} responsive>
-      <Pie data={data} dataKey="value" nameKey="name" outerRadius="120%" stroke="black" />
+      <Pie
+        data={data}
+        dataKey="value"
+        nameKey="name"
+        outerRadius="120%"
+        stroke="black"
+        isAnimationActive={isAnimationActive}
+      />
     </PieChart>
   );
 };
