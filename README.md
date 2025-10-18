@@ -1,6 +1,6 @@
 # Recharts
 
-[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://recharts.org/en-US/storybook)
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://recharts.github.io/en-US/storybook)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![codecov](https://codecov.io/gh/recharts/recharts/graph/badge.svg?token=Bn6L2hrl8T)](https://codecov.io/gh/recharts/recharts)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -17,7 +17,7 @@ The main purpose of this library is to help you to write charts in React applica
 2. **Native** SVG support, lightweight with minimal dependencies.
 3. **Declarative** components.
 
-Documentation at [recharts.org](https://recharts.org) and our [storybook](https://recharts.org/en-US/storybook)
+Documentation at [recharts.github.io](https://recharts.github.io) and our [storybook](https://recharts.github.io/en-US/storybook)
 
 Also see [the wiki](https://github.com/recharts/recharts/wiki).
 
