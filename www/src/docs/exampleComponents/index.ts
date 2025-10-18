@@ -1,28 +1,28 @@
 import { lineChartExamples, LineChartNavExample } from './LineChart';
-import { areaChartExamples } from './AreaChart';
-import { barChartExamples } from './BarChart';
-import { composedChartExamples } from './ComposedChart';
-import { scatterChartExamples } from './ScatterChart';
-import { pieChartExamples } from './PieChart';
-import { radarChartExamples } from './RadarChart';
-import { radialBarChartExamples } from './RadialBarChart';
-import { treeMapExamples } from './TreeMap';
+import { areaChartExamples, AreaChartNavExample } from './AreaChart';
+import { barChartExamples, BarChartNavExample } from './BarChart';
+import { composedChartExamples, ComposedChartNavExample } from './ComposedChart';
+import { scatterChartExamples, ScatterChartNavExample } from './ScatterChart';
+import { pieChartExamples, PieChartNavExample } from './PieChart';
+import { radarChartExamples, RadarChartNavExample } from './RadarChart';
+import { radialBarChartExamples, RadialBarChartNavExample } from './RadialBarChart';
+import { treeMapExamples, TreeMapNavExample } from './TreeMap';
 import { tooltipExamples } from './Tooltip';
 import LegendExamples from './Legend';
 import ResponsiveContainerExamples from './ResponsiveContainer';
-import { AllExamples } from './types.ts';
+import { AllExamples } from './types';
 
 export const allExamples: AllExamples = {
   LineChart: { examples: lineChartExamples, order: 1, NavPreview: LineChartNavExample },
-  AreaChart: { examples: areaChartExamples, order: 2 },
-  BarChart: { examples: barChartExamples, order: 3 },
-  ComposedChart: { examples: composedChartExamples, order: 4 },
-  ScatterChart: { examples: scatterChartExamples, order: 5 },
-  PieChart: { examples: pieChartExamples, order: 6 },
-  RadarChart: { examples: radarChartExamples, order: 7 },
-  RadialBarChart: { examples: radialBarChartExamples, order: 8 },
-  TreeMap: { examples: treeMapExamples, order: 9 },
-  Tooltip: { examples: tooltipExamples, order: 10 },
-  Legend: { examples: LegendExamples, order: 11 },
-  ResponsiveContainer: { examples: ResponsiveContainerExamples, order: 12 },
+  AreaChart: { examples: areaChartExamples, order: 2, NavPreview: AreaChartNavExample },
+  BarChart: { examples: barChartExamples, order: 3, NavPreview: BarChartNavExample },
+  ComposedChart: { examples: composedChartExamples, order: 4, NavPreview: ComposedChartNavExample },
+  ScatterChart: { examples: scatterChartExamples, order: 5, NavPreview: ScatterChartNavExample },
+  PieChart: { examples: pieChartExamples, order: 6, NavPreview: PieChartNavExample },
+  RadarChart: { examples: radarChartExamples, order: 7, NavPreview: RadarChartNavExample },
+  RadialBarChart: { examples: radialBarChartExamples, order: 8, NavPreview: RadialBarChartNavExample },
+  TreeMap: { examples: treeMapExamples, order: 9, NavPreview: TreeMapNavExample },
+  Tooltip: { examples: tooltipExamples, order: 10, NavPreview: null },
+  Legend: { examples: LegendExamples, order: 11, NavPreview: null },
+  ResponsiveContainer: { examples: ResponsiveContainerExamples, order: 12, NavPreview: null },
 };

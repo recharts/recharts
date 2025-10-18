@@ -9,6 +9,12 @@ import PercentAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/
 import SynchronizedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart';
 import TinyAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
 import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
+import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
+
+test('AreaChartNavExample', async ({ mount }) => {
+  const component = await mount(<AreaChartNavExample />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('AreaChartFillByValue', async ({ mount }) => {
   const component = await mount(<AreaChartFillByValue />);

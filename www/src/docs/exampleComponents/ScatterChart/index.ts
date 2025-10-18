@@ -15,6 +15,9 @@ import scatterChartWithCellsSource from './ScatterChartWithCells?raw';
 import { ChartExample } from '../types.ts';
 import ScatterChartPerformance from './ScatterChartPerformance';
 import scatterChartPerformanceSource from './ScatterChartPerformance?raw';
+import ScatterChartNavExample from './ScatterChartNavExample';
+
+export { ScatterChartNavExample };
 
 export const scatterChartExamples: Record<string, ChartExample> = {
   SimpleScatterChart: {

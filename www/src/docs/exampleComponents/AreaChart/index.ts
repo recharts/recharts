@@ -15,6 +15,9 @@ import synchronizedAreaChartSource from './SynchronizedAreaChart?raw';
 import tinyAreaChartSource from './TinyAreaChart?raw';
 import areaChartFillByValueSource from './AreaChartFillByValue?raw';
 import { ChartExample } from '../types.ts';
+import AreaChartNavExample from './AreaChartNavExample';
+
+export { AreaChartNavExample };
 
 export const areaChartExamples: Record<string, ChartExample> = {
   SimpleAreaChart: {

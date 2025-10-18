@@ -3,6 +3,9 @@ import SpecifiedDomainRadarChart from './SpecifiedDomainRadarChart';
 import simpleRadarChartSource from './SimpleRadarChart?raw';
 import specifiedDomainRadarChartSource from './SpecifiedDomainRadarChart?raw';
 import { ChartExample } from '../types.ts';
+import RadarChartNavExample from './RadarChartNavExample';
+
+export { RadarChartNavExample };
 
 export const radarChartExamples: Record<string, ChartExample> = {
   SimpleRadarChart: {

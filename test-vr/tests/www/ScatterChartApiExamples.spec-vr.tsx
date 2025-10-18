@@ -8,6 +8,12 @@ import BubbleChart from '../../../www/src/docs/exampleComponents/ScatterChart/Bu
 import ScatterChartWithLabels from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels';
 import MultipleYAxesScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/MultipleYAxesScatterChart';
 import ScatterChartWithCells from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithCells';
+import ScatterChartNavExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartNavExample';
+
+test('ScatterChartNavExample', async ({ mount }) => {
+  const component = await mount(<ScatterChartNavExample />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('ScatterChartWithCells', async ({ mount }) => {
   const component = await mount(<ScatterChartWithCells />);

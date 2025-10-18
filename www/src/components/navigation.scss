@@ -175,16 +175,22 @@ body.no-scroll {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
 
     h4 {
       font-size: variables.$font-size-lg;
       flex-grow: 3;
+      margin: 1rem 0;
     }
 
     .chart-preview {
       flex-grow: 1;
       max-width: 7rem;
+      height: 4rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: stretch;
     }
   }
 }
