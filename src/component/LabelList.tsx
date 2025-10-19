@@ -9,6 +9,7 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { ZIndexable } from '../zindex/ZIndexable';
 
 interface BaseLabelListEntry {
   /**
@@ -58,6 +59,11 @@ interface LabelListProps {
   offset?: LabelProps['offset'];
   angle?: number;
   formatter?: LabelFormatter;
+  /**
+   * Z-Index of the Bar component. The higher the value,
+   * the more on top the Bar will be rendered.
+   */
+  zIndex?: number;
 }
 
 /**
@@ -101,7 +107,7 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 }
 
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
-  const { dataKey, clockWise, id, textBreakAll, ...others } = restProps;
+  const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
   const data = cartesianData || polarData;
@@ -111,36 +117,38 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   }
 
   return (
-    <Layer className="recharts-label-list">
-      {data.map((entry, index) => {
-        const value = isNullish(dataKey)
-          ? valueAccessor(entry, index)
-          : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
+    <ZIndexable zIndex={zIndex}>
+      <Layer className="recharts-label-list">
+        {data.map((entry, index) => {
+          const value = isNullish(dataKey)
+            ? valueAccessor(entry, index)
+            : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
 
-        const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+          const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-        return (
-          <Label
-            key={`label-${index}`} // eslint-disable-line react/no-array-index-key
-            {...svgPropertiesAndEvents(entry)}
-            {...others}
-            {...idProps}
-            /*
-             * Prefer to use the explicit fill from LabelList props.
-             * Only in an absence of that, fall back to the fill of the entry.
-             * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-             * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-             */
-            fill={restProps.fill ?? entry.fill}
-            parentViewBox={entry.parentViewBox}
-            value={value}
-            textBreakAll={textBreakAll}
-            viewBox={entry.viewBox}
-            index={index}
-          />
-        );
-      })}
-    </Layer>
+          return (
+            <Label
+              key={`label-${index}`} // eslint-disable-line react/no-array-index-key
+              {...svgPropertiesAndEvents(entry)}
+              {...others}
+              {...idProps}
+              /*
+               * Prefer to use the explicit fill from LabelList props.
+               * Only in an absence of that, fall back to the fill of the entry.
+               * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
+               * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+               */
+              fill={restProps.fill ?? entry.fill}
+              parentViewBox={entry.parentViewBox}
+              value={value}
+              textBreakAll={textBreakAll}
+              viewBox={entry.viewBox}
+              index={index}
+            />
+          );
+        })}
+      </Layer>
+    </ZIndexable>
   );
 }
 
