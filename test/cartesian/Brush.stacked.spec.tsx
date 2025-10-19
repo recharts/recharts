@@ -101,6 +101,15 @@ describe('Brush in a stacked chart', () => {
       fireEvent.mouseMove(traveller, { clientX: 100, clientY: 0 });
     }
 
+    function primeToLastThree(container: Element) {
+      const traveller = container.querySelector('.recharts-brush-traveller');
+      assertNotNull(traveller);
+
+      fireEvent.mouseDown(traveller);
+      // Move far to the right to show only the last 3 pages (D, E, F)
+      fireEvent.mouseMove(traveller, { clientX: 300, clientY: 0 });
+    }
+
     it('should display fewer bars after moving the brush traveller', () => {
       /* Reproduces https://github.com/recharts/recharts/issues/6006 */
       const { container } = renderTestCase();
@@ -173,6 +182,82 @@ describe('Brush in a stacked chart', () => {
             ],
           ]),
         },
+      });
+    });
+
+    describe('when narrowed down to last 3 pages', () => {
+      it('should display bars for the last 3 pages', () => {
+        const { container } = renderTestCase();
+        primeToLastThree(container);
+
+        // Check that bars are rendered (not empty)
+        const bars = container.querySelectorAll('.recharts-bar-rectangle');
+        expect(bars.length).toBeGreaterThan(0);
+      });
+
+      it('should select correct stack groups with proper data range', () => {
+        const { container, spy } = renderTestCase(state => selectStackGroups(state, 'xAxis', 0, false));
+        primeToLastThree(container);
+
+        // When narrowed to last 3 pages, stackedData should still have all 6 elements
+        // but only the last 3 will be used for rendering (handled by dataStartIndex/dataEndIndex)
+        expectLastCalledWith(spy, {
+          a: {
+            graphicalItems: [
+              {
+                id: expect.stringMatching('bar-'),
+                barSize: undefined,
+                data: undefined,
+                dataKey: 'pv',
+                hide: false,
+                // @ts-expect-error unexpected property
+                isPanorama: false,
+                maxBarSize: undefined,
+                minPointSize: 0,
+                stackId: 'a',
+                type: 'bar',
+                xAxisId: 0,
+                yAxisId: 0,
+                zAxisId: 0,
+              },
+              {
+                id: expect.stringMatching('bar-'),
+                barSize: undefined,
+                data: undefined,
+                dataKey: 'uv',
+                hide: false,
+                // @ts-expect-error unexpected property
+                isPanorama: false,
+                maxBarSize: undefined,
+                minPointSize: 0,
+                stackId: 'a',
+                type: 'bar',
+                xAxisId: 0,
+                yAxisId: 0,
+                zAxisId: 0,
+              },
+            ],
+            stackedData: expect.toBeRechartsStackedData([
+              [
+                // All 6 elements are still in stackedData
+                [0, 2400],
+                [0, 4567],
+                [0, 1398],
+                [0, 9800],
+                [0, 3908],
+                [0, 4800],
+              ],
+              [
+                [2400, 2800],
+                [4567, 4867],
+                [1398, 1698],
+                [9800, 10000],
+                [3908, 4186],
+                [4800, 4989],
+              ],
+            ]),
+          },
+        });
       });
     });
   });

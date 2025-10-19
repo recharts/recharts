@@ -713,6 +713,7 @@ export function computeBarRectangles({
   offset,
   cells,
   parentViewBox,
+  dataStartIndex,
 }: {
   layout: 'horizontal' | 'vertical';
   barSettings: BarSettings;
@@ -727,6 +728,7 @@ export function computeBarRectangles({
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
   parentViewBox: CartesianViewBoxRequired;
+  dataStartIndex: number;
 }): ReadonlyArray<BarRectangleItem> | undefined {
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
@@ -738,8 +740,8 @@ export function computeBarRectangles({
       let value, x: number | null, y, width, height, background: Rectangle;
 
       if (stackedData) {
-        // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
-        value = truncateByDomain(stackedData[index], stackedDomain);
+        // Use dataStartIndex to access the correct element in the full stackedData array
+        value = truncateByDomain(stackedData[index + dataStartIndex], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
 

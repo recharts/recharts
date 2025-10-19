@@ -545,6 +545,7 @@ export const selectBarRectangles: (
       displayedData,
       offset,
       cells,
+      dataStartIndex,
     });
   },
 );
