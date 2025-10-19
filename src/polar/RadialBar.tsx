@@ -560,8 +560,8 @@ export function RadialBar(outsideProps: RadialBarProps) {
             data={undefined} // why does RadialBar not allow data defined on the item?
             dataKey={props.dataKey}
             hide={props.hide ?? defaultRadialBarProps.hide}
-            angleAxisId={props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
-            radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
+            angleAxisId={props.angleAxisId ?? defaultRadialBarProps.angleAxisId}
+            radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId}
             stackId={getNormalizedStackId(props.stackId)}
             barSize={props.barSize}
             minPointSize={props.minPointSize}

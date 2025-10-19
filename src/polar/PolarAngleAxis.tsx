@@ -23,21 +23,11 @@ import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
-/**
- * These are injected from Redux, are required, but cannot be set by user.
- */
-interface PropsInjectedFromRedux {
-  cx?: number;
-  cy?: number;
-  radius?: number;
-}
-
-export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
+export interface PolarAngleAxisProps {
   allowDecimals?: boolean;
   domain?: AxisDomain;
   allowDuplicatedCategory?: boolean;
@@ -68,6 +58,8 @@ export type Props = AxisSvgProps & PolarAngleAxisProps;
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
 
 type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
+  cx: number;
+  cy: number;
   radius: number;
   ticks: ReadonlyArray<TickItem>;
   scale: RechartsScale;
@@ -288,10 +280,6 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
 
 export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
   const props = resolveDefaultProps(outsideProps, defaultPolarAngleAxisProps);
-  const { radius } = props;
-  if (radius != null && !isPositiveNumber(radius)) {
-    return null;
-  }
 
   return (
     <SetAngleAxisSettings
