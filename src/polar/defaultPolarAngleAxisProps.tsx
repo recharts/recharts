@@ -14,5 +14,4 @@ export const defaultPolarAngleAxisProps = {
   tickLine: true,
   tickSize: 8,
   type: 'category',
-  tickCount: 10,
 } as const satisfies Props;

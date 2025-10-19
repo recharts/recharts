@@ -545,7 +545,7 @@ describe('selectAngleAxisForBandSize', () => {
 
     expect(angleAxisSpy).toHaveBeenLastCalledWith({
       allowDataOverflow: false,
-      allowDecimals: undefined,
+      allowDecimals: false,
       allowDuplicatedCategory: false,
       dataKey: 'value',
       domain: undefined,

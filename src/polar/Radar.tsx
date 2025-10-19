@@ -100,7 +100,7 @@ export type RadarComposedData = {
   isRange: boolean;
 };
 
-function getLegendItemColor(stroke: string | undefined, fill: string): string {
+function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
@@ -493,10 +493,6 @@ const defaultRadarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
-  /**
-   * https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/fill#path
-   */
-  fill: 'black',
 } as const satisfies Partial<Props>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;

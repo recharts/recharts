@@ -988,7 +988,7 @@ describe('<PolarGrid />', () => {
         const { spy } = renderTestCase(state => selectPolarAxis(state, 'angleAxis', 'axis-uv'));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: 'uv',
           domain: undefined,

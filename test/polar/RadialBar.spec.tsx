@@ -476,7 +476,7 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: false,
         dataKey: 'pv',
         domain: undefined,
@@ -505,14 +505,14 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: true,
         dataKey: 'name',
         domain: undefined,
         id: 0,
-        includeHidden: undefined,
+        includeHidden: false,
         name: undefined,
-        reversed: undefined,
+        reversed: false,
         scale: 'auto',
         tick: true,
         tickCount: 5,
@@ -861,7 +861,7 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
@@ -895,14 +895,14 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: true,
         dataKey: undefined,
         domain: undefined,
         id: 0,
-        includeHidden: undefined,
+        includeHidden: false,
         name: undefined,
-        reversed: undefined,
+        reversed: false,
         scale: 'auto',
         tick: true,
         tickCount: 5,
