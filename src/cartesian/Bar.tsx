@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
+import {
+  ComponentType,
+  Key,
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
@@ -853,5 +863,5 @@ function BarFn(outsideProps: Props) {
   );
 }
 
-export const Bar = React.memo(withZIndex(BarFn));
+export const Bar: ComponentType<Props> = withZIndex(React.memo(BarFn));
 Bar.displayName = 'Bar';

@@ -6,6 +6,6 @@ export const selectZIndexQuerySelector: (state: RechartsRootState, zIndex: numbe
     (state: RechartsRootState) => state.zIndex.zIndexMap,
     (_: RechartsRootState, zIndex: number) => zIndex,
     (zIndexMap, zIndex) => {
-      return zIndexMap[zIndex];
+      return zIndexMap[zIndex]?.elementId;
     },
   );
