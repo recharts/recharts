@@ -1,23 +1,40 @@
 import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import { useChartWidth, useChartHeight } from '../context/chartLayoutContext';
-import { useAppDispatch } from '../state/hooks';
-import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { registerZIndexPortalId, unregisterZIndexPortalId } from '../state/zIndexSlice';
 
 export function getZIndexPortalId(zIndex: number) {
   return `recharts-zindex-portal-${zIndex}`;
 }
 
-export function ZIndexSvgPortal({ zIndex }: { zIndex: number }) {
+function ZIndexSvgPortal({ zIndex, width, height }: { zIndex: number; width: number; height: number }) {
   const portalId = getZIndexPortalId(zIndex);
-  const chartWidth = useChartWidth();
-  const chartHeight = useChartHeight();
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(registerZIndexPortal({ zIndex, id: portalId }));
+    dispatch(registerZIndexPortalId({ zIndex, elementId: portalId }));
     return () => {
-      dispatch(unregisterZIndexPortal({ zIndex }));
+      dispatch(unregisterZIndexPortalId({ zIndex }));
     };
   }, [dispatch, zIndex, portalId]);
-  return <g id={portalId} width={chartWidth} height={chartHeight} />;
+  return <g id={portalId} width={width} height={height} />;
+}
+
+export function AllPositiveZIndexPortals() {
+  const zIndexMap = useAppSelector(state => state.zIndex.zIndexMap);
+  const chartWidth = useChartWidth();
+  const chartHeight = useChartHeight();
+
+  return (
+    <>
+      {Object.keys(zIndexMap)
+        .map(zIndexStr => parseInt(zIndexStr, 10))
+        .filter(zIndex => zIndex >= 0)
+        .sort((a, b) => a - b)
+        .map(zIndex => {
+          const portalId = getZIndexPortalId(zIndex);
+          return <ZIndexSvgPortal key={portalId} zIndex={zIndex} width={chartWidth} height={chartHeight} />;
+        })}
+    </>
+  );
 }

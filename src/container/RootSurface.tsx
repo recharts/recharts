@@ -7,7 +7,7 @@ import { Surface } from './Surface';
 import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { ZIndexSvgPortal } from '../zindex/ZIndexPortal';
+import { AllPositiveZIndexPortals } from '../zindex/ZIndexPortal';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -101,8 +101,7 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     return (
       <MainChartSurface ref={ref} {...rest}>
         {children}
-        <ZIndexSvgPortal zIndex={1} />
-        <ZIndexSvgPortal zIndex={2} />
+        <AllPositiveZIndexPortals />
       </MainChartSurface>
     );
   },
