@@ -80,7 +80,7 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { withZIndex } from '../zindex/ZIndexable';
+import { ZIndexable } from '../zindex/ZIndexable';
 
 type Rectangle = {
   x: number | null;
@@ -132,6 +132,11 @@ export interface BarProps {
   animationEasing?: EasingInput;
   id?: string;
   label?: ImplicitLabelListType;
+  /**
+   * Z-Index of the Bar component. The higher the value,
+   * the more on top the Bar will be rendered.
+   */
+  zIndex?: number;
 }
 
 type BarMouseEvent = (
@@ -830,7 +835,6 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  console.log('BarFn', outsideProps);
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -856,12 +860,14 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
           />
-          <BarImpl {...props} id={id} />
+          <ZIndexable zIndex={props.zIndex}>
+            <BarImpl {...props} id={id} />
+          </ZIndexable>
         </>
       )}
     </RegisterGraphicalItemId>
   );
 }
 
-export const Bar: ComponentType<Props> = withZIndex(React.memo(BarFn));
+export const Bar: ComponentType<Props> = React.memo(BarFn);
 Bar.displayName = 'Bar';
