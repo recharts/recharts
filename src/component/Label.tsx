@@ -673,7 +673,7 @@ export function CartesianLabelFromLabelProp({
   return parseLabel(label, viewBox, labelRef) || null;
 }
 
-export function PolarLabelFromLabelProp({ label }: { label: ImplicitLabelType }) {
+export function PolarLabelFromLabelProp({ label }: { label: ImplicitLabelType | undefined }) {
   const viewBox = usePolarLabelContext();
 
   return parseLabel(label, viewBox) || null;
