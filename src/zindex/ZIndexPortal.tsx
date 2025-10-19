@@ -3,13 +3,10 @@ import { useLayoutEffect } from 'react';
 import { useChartWidth, useChartHeight } from '../context/chartLayoutContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { registerZIndexPortalId, unregisterZIndexPortalId } from '../state/zIndexSlice';
-
-export function getZIndexPortalId(zIndex: number) {
-  return `recharts-zindex-portal-${zIndex}`;
-}
+import { useUniqueId } from '../util/useUniqueId';
 
 function ZIndexSvgPortal({ zIndex, width, height }: { zIndex: number; width: number; height: number }) {
-  const portalId = getZIndexPortalId(zIndex);
+  const portalId = useUniqueId(`recharts-zindex-${zIndex}`);
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
     dispatch(registerZIndexPortalId({ zIndex, elementId: portalId }));
@@ -32,8 +29,7 @@ export function AllPositiveZIndexPortals() {
         .filter(zIndex => zIndex >= 0)
         .sort((a, b) => a - b)
         .map(zIndex => {
-          const portalId = getZIndexPortalId(zIndex);
-          return <ZIndexSvgPortal key={portalId} zIndex={zIndex} width={chartWidth} height={chartHeight} />;
+          return <ZIndexSvgPortal key={zIndex} zIndex={zIndex} width={chartWidth} height={chartHeight} />;
         })}
     </>
   );
