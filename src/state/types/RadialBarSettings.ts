@@ -3,6 +3,6 @@ import { BasePolarGraphicalItemSettings } from '../graphicalItemsSlice';
 
 export interface RadialBarSettings extends BasePolarGraphicalItemSettings, MaybeStackedGraphicalItem {
   type: 'radialBar';
-  minPointSize: number | undefined;
+  minPointSize: number;
   maxBarSize: number | undefined;
 }

@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
@@ -16,26 +15,27 @@ import {
   PolarLabelListEntry,
 } from '../component/LabelList';
 import { Cell } from '../component/Cell';
-import { mathSign, interpolateNumber } from '../util/DataUtils';
+import { interpolate, mathSign } from '../util/DataUtils';
 import {
+  BarPositionPosition,
   getCateCoordinateOfBar,
+  getNormalizedStackId,
+  getTooltipNameProp,
   getValueByDataKey,
   truncateByDomain,
-  getTooltipNameProp,
-  BarPositionPosition,
-  getNormalizedStackId,
 } from '../util/ChartUtils';
 import {
-  LegendType,
-  TooltipType,
-  AnimationTiming,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-  AnimationDuration,
   ActiveShape,
-  LayoutType,
+  adaptEventsOfChild,
+  AnimationDuration,
+  AnimationTiming,
   DataKey,
+  LayoutType,
+  LegendType,
+  PolarViewBoxRequired,
+  PresentationAttributesAdaptChildEvent,
+  TickItem,
+  TooltipType,
 } from '../util/types';
 import {
   useMouseClickItemDispatch,
@@ -57,14 +57,17 @@ import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { WithIdRequired } from '../util/useUniqueId';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
-export type RadialBarDataItem = SectorProps & {
-  value?: any;
-  payload?: any;
-  background?: SectorProps;
-};
+export type RadialBarDataItem = SectorProps &
+  PolarViewBoxRequired & {
+    value?: any;
+    payload?: any;
+    background?: SectorProps;
+  };
 
 type RadialBarBackground = ActiveShape<SectorProps>;
 
@@ -84,7 +87,7 @@ function RadialBarLabelListProvider({
   children: ReactNode;
 }) {
   const labelListEntries: ReadonlyArray<PolarLabelListEntry> = sectors.map(
-    (sector): PolarLabelListEntry => ({
+    (sector: RadialBarDataItem): PolarLabelListEntry => ({
       value: sector.value,
       payload: sector.payload,
       parentViewBox: undefined,
@@ -103,7 +106,7 @@ function RadialBarLabelListProvider({
   );
 
   return (
-    <PolarLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <PolarLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </PolarLabelListContextProvider>
   );
@@ -140,7 +143,6 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
         // @ts-expect-error the types need a bit of attention
         const onClick = onClickFromContext(entry, i);
 
-        // @ts-expect-error cx types are incompatible
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
@@ -216,26 +218,22 @@ function SectorsWithAnimation({
       key={animationId}
     >
       {(t: number) => {
-        const stepData =
+        const stepData: ReadonlyArray<RadialBarDataItem> | undefined =
           t === 1
             ? data
-            : (data ?? STABLE_EMPTY_ARRAY).map((entry, index) => {
+            : (data ?? STABLE_EMPTY_ARRAY).map((entry: RadialBarDataItem, index: number): RadialBarDataItem => {
                 const prev = prevData && prevData[index];
 
                 if (prev) {
-                  const interpolatorStartAngle = interpolateNumber(prev.startAngle, entry.startAngle);
-                  const interpolatorEndAngle = interpolateNumber(prev.endAngle, entry.endAngle);
-
                   return {
                     ...entry,
-                    startAngle: interpolatorStartAngle(t),
-                    endAngle: interpolatorEndAngle(t),
+                    startAngle: interpolate(prev.startAngle, entry.startAngle, t),
+                    endAngle: interpolate(prev.endAngle, entry.endAngle, t),
                   };
                 }
                 const { endAngle, startAngle } = entry;
-                const interpolator = interpolateNumber(startAngle, endAngle);
 
-                return { ...entry, endAngle: interpolator(t) };
+                return { ...entry, endAngle: interpolate(startAngle, endAngle, t) };
               });
 
         if (t > 0) {
@@ -347,7 +345,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
         ...backgroundProps,
         ...adaptEventsOfChild(this.props, entry, i),
         index: i,
-        className: clsx('recharts-radial-bar-background-sector', backgroundProps?.className),
+        className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
         option: background,
         isActive: false,
       };
@@ -382,7 +380,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
   }
 }
 
-function RadialBarImpl(props: RadialBarProps) {
+function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
   const cells = findAllByType(props.children, Cell);
   const radialBarSettings: RadialBarSettings = {
     data: undefined,
@@ -409,7 +407,7 @@ function RadialBarImpl(props: RadialBarProps) {
   );
 }
 
-const defaultRadialBarProps: Partial<RadialBarProps> = {
+const defaultRadialBarProps = {
   angleAxisId: 0,
   radiusAxisId: 0,
   minPointSize: 0,
@@ -422,7 +420,9 @@ const defaultRadialBarProps: Partial<RadialBarProps> = {
   animationEasing: 'ease',
   forceCornerRadius: false,
   cornerIsExternal: false,
-};
+} as const satisfies Partial<RadialBarProps>;
+
+type PropsWithDefaults = RequiresDefaultProps<RadialBarProps, typeof defaultRadialBarProps>;
 
 export function computeRadialBarDataItems({
   displayedData,
@@ -457,7 +457,7 @@ export function computeRadialBarDataItems({
   bandSize: number;
   pos: BarPositionPosition;
   angleAxis: BaseAxisWithScale;
-  minPointSize: number | undefined;
+  minPointSize: number;
   cx: number;
   cy: number;
   angleAxisTicks: ReadonlyArray<TickItem> | undefined;
@@ -465,6 +465,10 @@ export function computeRadialBarDataItems({
   startAngle: number;
   endAngle: number;
 }): ReadonlyArray<RadialBarDataItem> {
+  if (angleAxisTicks == null || radiusAxisTicks == null) {
+    return STABLE_EMPTY_ARRAY;
+  }
+
   return (displayedData ?? []).map((entry: unknown, index: number) => {
     let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
@@ -544,36 +548,31 @@ export function computeRadialBarDataItems({
   });
 }
 
-export class RadialBar extends PureComponent<RadialBarProps> {
-  static displayName = 'RadialBar';
-
-  static defaultProps = defaultRadialBarProps;
-
-  render() {
-    return (
-      <RegisterGraphicalItemId id={this.props.id} type="radialBar">
-        {id => (
-          <>
-            <SetPolarGraphicalItem
-              type="radialBar"
-              id={id}
-              // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
-              data={undefined} // data prop is injected through generator and overwrites what user passes in
-              dataKey={this.props.dataKey}
-              // TS is not smart enough to know defaultProps has values due to the explicit Partial type
-              hide={this.props.hide ?? defaultRadialBarProps.hide!}
-              angleAxisId={this.props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
-              radiusAxisId={this.props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
-              stackId={getNormalizedStackId(this.props.stackId)}
-              barSize={this.props.barSize}
-              minPointSize={this.props.minPointSize}
-              maxBarSize={this.props.maxBarSize}
-            />
-            <SetRadialBarPayloadLegend {...this.props} />
-            <RadialBarImpl {...this.props} id={id} />
-          </>
-        )}
-      </RegisterGraphicalItemId>
-    );
-  }
+export function RadialBar(outsideProps: RadialBarProps) {
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadialBarProps);
+  return (
+    <RegisterGraphicalItemId id={props.id} type="radialBar">
+      {id => (
+        <>
+          <SetPolarGraphicalItem
+            type="radialBar"
+            id={id}
+            data={undefined} // why does RadialBar not allow data defined on the item?
+            dataKey={props.dataKey}
+            hide={props.hide ?? defaultRadialBarProps.hide}
+            angleAxisId={props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
+            radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
+            stackId={getNormalizedStackId(props.stackId)}
+            barSize={props.barSize}
+            minPointSize={props.minPointSize}
+            maxBarSize={props.maxBarSize}
+          />
+          <SetRadialBarPayloadLegend {...props} />
+          <RadialBarImpl {...props} id={id} />
+        </>
+      )}
+    </RegisterGraphicalItemId>
+  );
 }
+
+RadialBar.displayName = 'RadialBar';
