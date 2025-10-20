@@ -158,7 +158,7 @@ export type PieSectorDataItem = PiePresentationProps &
   };
 
 type PieSectorContentProps = PieSectorDataItem & { isActive: boolean };
-type PieContentType = ReactNode | ((props: PieSectorDataItem) => React.ReactElement);
+type PieContentType = ReactNode | ((props: PieSectorContentProps) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -507,9 +507,10 @@ function PieSectors(props: PieSectorsProps) {
     <>
       {sectors.map((entry, i) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-        const isSectorActive = activeShape && String(i) === activeIndex;
+
+        const isActive = String(i) === activeIndex;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
-        const sectorOptions = isSectorActive ? activeShape : inactiveShape;
+        const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
         const sectorProps = {
           ...entry,
           stroke: entry.stroke,
@@ -517,7 +518,7 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
-        const contentProps = { ...sectorProps, isActive: isSectorActive };
+        const contentProps = { ...sectorProps, isActive };
 
         return (
           <Layer
