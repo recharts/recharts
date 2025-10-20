@@ -9,7 +9,7 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 interface BaseLabelListEntry {
   /**
@@ -48,7 +48,7 @@ export interface PolarLabelListEntry extends BaseLabelListEntry {
   clockWise?: boolean;
 }
 
-interface LabelListProps {
+interface LabelListProps extends ZIndexable {
   id?: string;
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number | undefined;
   clockWise?: boolean;
@@ -59,11 +59,6 @@ interface LabelListProps {
   offset?: LabelProps['offset'];
   angle?: number;
   formatter?: LabelFormatter;
-  /**
-   * Z-Index of the Bar component. The higher the value,
-   * the more on top the Bar will be rendered.
-   */
-  zIndex?: number;
 }
 
 /**
