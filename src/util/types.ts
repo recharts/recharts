@@ -938,7 +938,7 @@ export type Size = { width: number; height: number };
 export type ActiveDotProps = DotProps & {
   payload: any;
   index: number;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   cx: number | undefined;
   cy: number | undefined;
   r: number | string | undefined;
