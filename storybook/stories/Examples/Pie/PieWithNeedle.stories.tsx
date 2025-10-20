@@ -15,18 +15,20 @@ const Needle = ({
   midAngle,
   innerRadius,
   outerRadius,
+  isActive,
 }: {
   cx: number;
   cy: number;
   innerRadius: number;
   outerRadius: number;
-  midAngle: number;
+  midAngle?: number;
+  isActive: boolean;
 }) => {
   const needleBaseCenterX = cx;
   const needleBaseCenterY = cy;
   const needleLength = innerRadius + (outerRadius - innerRadius) / 2;
 
-  return (
+  return isActive ? (
     <g>
       <circle
         cx={needleBaseCenterX}
@@ -46,7 +48,7 @@ const Needle = ({
         }}
       />
     </g>
-  );
+  ) : null;
 };
 
 export const PieWithNeedle = {
@@ -74,7 +76,7 @@ export const PieWithNeedle = {
             outerRadius={100}
             stroke="none"
             fill="none"
-            activeShape={Needle}
+            content={Needle}
           />
           <Tooltip defaultIndex={1} />
           <RechartsHookInspector />
