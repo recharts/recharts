@@ -2,14 +2,14 @@
  * @fileOverview Reference Line
  */
 import * as React from 'react';
-import { Component, ReactElement, SVGProps, useEffect } from 'react';
+import { ReactElement, SVGProps, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNan, isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { CartesianViewBox } from '../util/types';
+import { CartesianViewBox, CartesianViewBoxRequired } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { useViewBox } from '../context/chartLayoutContext';
@@ -25,6 +25,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -80,19 +81,15 @@ const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLine
   return line;
 };
 
-type EndPointsPropsSubset = {
-  ifOverflow?: IfOverflow;
-  segment?: ReadonlyArray<Segment>;
-  x?: number | string;
-  y?: number | string;
-};
+type EndPointsPropsSubset = Pick<PropsWithDefaults, 'y' | 'x' | 'segment' | 'ifOverflow'>;
+
 // TODO: ScaleHelper
 export const getEndPoints = (
   scales: any,
   isFixedX: boolean,
   isFixedY: boolean,
   isSegment: boolean,
-  viewBox: CartesianViewBox,
+  viewBox: CartesianViewBoxRequired,
   position: Props['position'],
   xAxisOrientation: XAxisProps['orientation'],
   yAxisOrientation: YAxisProps['orientation'],
@@ -158,7 +155,7 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
   return null;
 }
 
-function ReferenceLineImpl(props: Props) {
+function ReferenceLineImpl(props: PropsWithDefaults) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const isPanorama = useIsPanorama();
@@ -178,7 +175,7 @@ function ReferenceLineImpl(props: Props) {
 
   const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
-  const isSegment = segment && segment.length === 2;
+  const isSegment: boolean = Boolean(segment && segment.length === 2);
 
   const endPoints = getEndPoints(
     scales,
@@ -221,7 +218,21 @@ function ReferenceLineImpl(props: Props) {
   );
 }
 
-function ReferenceLineSettingsDispatcher(props: Props) {
+const referenceLineDefaultProps = {
+  ifOverflow: 'discard',
+  xAxisId: 0,
+  yAxisId: 0,
+  fill: 'none',
+  stroke: '#ccc',
+  fillOpacity: 1,
+  strokeWidth: 1,
+  position: 'middle',
+} as const satisfies Partial<Props>;
+
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
+
+export function ReferenceLine(outsideProps: Props) {
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);
   return (
     <>
       <ReportReferenceLine
@@ -236,22 +247,4 @@ function ReferenceLineSettingsDispatcher(props: Props) {
   );
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class ReferenceLine extends Component<Props> {
-  static displayName = 'ReferenceLine';
-
-  static defaultProps = {
-    ifOverflow: 'discard',
-    xAxisId: 0,
-    yAxisId: 0,
-    fill: 'none',
-    stroke: '#ccc',
-    fillOpacity: 1,
-    strokeWidth: 1,
-    position: 'middle',
-  };
-
-  render() {
-    return <ReferenceLineSettingsDispatcher {...this.props} />;
-  }
-}
+ReferenceLine.displayName = 'ReferenceLine';
