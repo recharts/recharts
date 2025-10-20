@@ -39,6 +39,15 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
     return children;
   }
 
+  if (!portalId) {
+    /*
+     * If we don't have a portalId yet, this means that the registration
+     * has not been processed yet by the ZIndexPortals component.
+     * So here we render null and wait for the next render cycle.
+     */
+    return null;
+  }
+
   const zIndexPortal = document.getElementById(portalId);
 
   if (zIndexPortal) {
