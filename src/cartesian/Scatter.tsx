@@ -220,7 +220,7 @@ function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem
 
   const scatterProps = svgPropertiesNoEvents(props);
   const customLineProps = svgPropertiesNoEventsFromUnknown(line);
-  let linePoints: ReadonlyArray<NullableCoordinate>, lineItem;
+  let linePoints: ReadonlyArray<NullableCoordinate>, lineItem: ReactNode;
 
   if (lineType === 'joint') {
     linePoints = points.map(entry => ({ x: entry.cx ?? null, y: entry.cy ?? null }));
@@ -240,7 +240,6 @@ function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem
     // @ts-expect-error customLineProps is contributing unknown props
     stroke: scatterProps && scatterProps.fill,
     ...customLineProps,
-    // @ts-expect-error linePoints used before being assigned? But it's assigned above.
     points: linePoints,
   };
 

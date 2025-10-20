@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cloneElement, isValidElement } from 'react';
+import { cloneElement, isValidElement, ReactElement } from 'react';
 import isPlainObject from 'es-toolkit/compat/isPlainObject';
 
 import { Rectangle } from '../shape/Rectangle';
@@ -66,7 +66,7 @@ function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
   }
 }
 
-export function getPropsFromShapeOption(option: unknown): unknown {
+export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
   if (isValidElement(option)) {
     return option.props;
   }
