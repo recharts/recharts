@@ -196,13 +196,13 @@ describe('<RadarChart />', () => {
         <PolarAngleAxis />
         <PolarRadiusAxis />
         <Radar dataKey="value" />
-        <Customized component={<Comp />} />
+        <Comp />
       </RadarChart>,
     );
 
     expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
       allowDataOverflow: false,
-      allowDecimals: undefined,
+      allowDecimals: false,
       allowDuplicatedCategory: false,
       dataKey: undefined,
       domain: undefined,

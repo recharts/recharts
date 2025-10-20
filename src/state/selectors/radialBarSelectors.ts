@@ -204,6 +204,8 @@ export const pickMaxBarSize = (
   _cells: ReadonlyArray<ReactElement> | undefined,
 ): number | undefined => radialBarSettings.maxBarSize;
 
+const isRadialBar = (item: PolarGraphicalItemSettings): item is RadialBarSettings => item.type === 'radialBar';
+
 const selectAllVisibleRadialBars: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
@@ -226,7 +228,7 @@ const selectAllVisibleRadialBars: (
         return i.radiusAxisId === radiusAxisId;
       })
       .filter(i => i.hide === false)
-      .filter(i => i.type === 'radialBar');
+      .filter(isRadialBar);
   },
 );
 
@@ -327,8 +329,10 @@ const selectStackedRadialBars: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
-) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector([selectPolarItemsSettings], allPolarItems =>
-  allPolarItems.filter(item => item.type === 'radialBar').filter(isStacked),
+) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
+  [selectPolarItemsSettings],
+  (allPolarItems: ReadonlyArray<PolarGraphicalItemSettings>): ReadonlyArray<DefinitelyStackedGraphicalItem> =>
+    allPolarItems.filter(isRadialBar).filter(isStacked),
 );
 
 const selectPolarCombinedStackedData: (
@@ -477,6 +481,7 @@ export const selectRadialBarLegendPayload: (
         value: entry.name,
         // @ts-expect-error we need a better typing for our data inputs
         color: entry.fill,
+        // ts-expect-error we need a better typing for our data inputs
         payload: entry,
       };
     });

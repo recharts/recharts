@@ -14,8 +14,8 @@ interface PolarGridProps {
   cy?: number;
   innerRadius?: number;
   outerRadius?: number;
-  polarAngles?: number[];
-  polarRadius?: number[];
+  polarAngles?: ReadonlyArray<number>;
+  polarRadius?: ReadonlyArray<number>;
   gridType?: 'polygon' | 'circle';
   radialLines?: boolean;
   angleAxisId?: AxisId;
@@ -24,12 +24,21 @@ interface PolarGridProps {
 
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 
-type ConcentricProps = Props & {
+type PropsWithDefaults = Props & {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  polarAngles: ReadonlyArray<number>;
+  polarRadius: ReadonlyArray<number>;
+};
+
+type ConcentricProps = PropsWithDefaults & {
   // The radius of circle
   radius: number;
 };
 
-const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: number[]) => {
+const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: ReadonlyArray<number>) => {
   let path = '';
 
   polarAngles.forEach((angle: number, i: number) => {
@@ -47,7 +56,7 @@ const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: num
 };
 
 // Draw axis of radial line
-const PolarAngles: React.FC<Props> = props => {
+const PolarAngles: React.FC<PropsWithDefaults> = (props: PropsWithDefaults) => {
   const { cx, cy, innerRadius, outerRadius, polarAngles, radialLines } = props;
 
   if (!polarAngles || !polarAngles.length || !radialLines) {
@@ -92,7 +101,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
 };
 
 // Draw concentric polygons
-const ConcentricPolygon: React.FC<ConcentricProps> = props => {
+const ConcentricPolygon: React.FC<ConcentricProps> = (props: ConcentricProps) => {
   const { radius } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
@@ -110,14 +119,14 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
 };
 
 // Draw concentric axis
-const ConcentricGridPath: React.FC<Props> = props => {
+const ConcentricGridPath = (props: PropsWithDefaults) => {
   const { polarRadius, gridType } = props;
 
   if (!polarRadius || !polarRadius.length) {
     return null;
   }
 
-  const maxPolarRadius = Math.max(...polarRadius);
+  const maxPolarRadius: number = Math.max(...polarRadius);
   const renderBackground = props.fill && props.fill !== 'none';
 
   return (
@@ -148,19 +157,11 @@ export const PolarGrid = ({
   cy: cyFromOutside,
   innerRadius: innerRadiusFromOutside,
   outerRadius: outerRadiusFromOutside,
+  polarAngles: polarAnglesInput,
+  polarRadius: polarRadiusInput,
   ...inputs
 }: Props) => {
   const polarViewBox: PolarViewBoxRequired | undefined = useAppSelector(selectPolarViewBox);
-
-  const props = {
-    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
-    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
-    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
-    outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
-    ...inputs,
-  };
-
-  const { polarAngles: polarAnglesInput, polarRadius: polarRadiusInput, outerRadius } = props;
 
   const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));
   const polarRadiiFromRedux = useAppSelector(state => selectPolarGridRadii(state, radiusAxisId));
@@ -168,7 +169,23 @@ export const PolarGrid = ({
   const polarAngles = Array.isArray(polarAnglesInput) ? polarAnglesInput : polarAnglesFromRedux;
   const polarRadius = Array.isArray(polarRadiusInput) ? polarRadiusInput : polarRadiiFromRedux;
 
-  if (outerRadius <= 0 || polarAngles == null || polarRadius == null) {
+  if (polarAngles == null || polarRadius == null) {
+    return null;
+  }
+
+  const props: PropsWithDefaults = {
+    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
+    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
+    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
+    outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
+    polarAngles,
+    polarRadius,
+    ...inputs,
+  };
+
+  const { outerRadius } = props;
+
+  if (outerRadius <= 0) {
     return null;
   }
 

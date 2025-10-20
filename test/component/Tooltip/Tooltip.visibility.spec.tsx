@@ -977,7 +977,7 @@ describe('Tooltip visibility', () => {
       const { spy } = renderTestCase(selectTooltipAxis);
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: false,
         dataKey: 'name',
         domain: undefined,
@@ -1268,14 +1268,14 @@ describe('Tooltip visibility', () => {
       const { spy } = renderTestCase(selectTooltipAxis);
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: true,
         dataKey: undefined,
         domain: undefined,
         id: 0,
-        includeHidden: undefined,
+        includeHidden: false,
         name: undefined,
-        reversed: undefined,
+        reversed: false,
         scale: 'auto',
         tick: true,
         tickCount: 5,

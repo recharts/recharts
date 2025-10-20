@@ -39,7 +39,15 @@ export type BaseCartesianAxis = {
 
 export type TicksSettings = {
   allowDecimals: boolean;
-  tickCount: number;
+  /**
+   * We pass the suggested number of ticks to d3 https://d3js.org/d3-scale/linear#linear_ticks
+   * This number is a suggestion. d3 tries to accommodate it, but it might return more or less ticks than requested:
+   * > The specified count is only a hint; the scale may return more or fewer values depending on the domain.
+   *
+   * If undefined, then d3 decides the number of ticks on its own. The default in d3 is 10,
+   * but it can vary based on the domain size and other factors.
+   */
+  tickCount: number | undefined;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number

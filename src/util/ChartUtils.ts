@@ -155,7 +155,11 @@ export interface RechartsScale {
   range(): ReadonlyArray<unknown>;
   range(newRange: ReadonlyArray<unknown>): this;
   bandwidth?: () => number;
-  ticks?: (count: number) => any;
+  /**
+   * https://d3js.org/d3-scale/linear#linear_ticks
+   * @param count number of ticks
+   */
+  ticks?: (count: number) => ReadonlyArray<number>;
   (args: any): number;
 }
 

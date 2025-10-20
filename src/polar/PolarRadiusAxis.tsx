@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
+import { FunctionComponent, ReactElement, useEffect } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import minBy from 'es-toolkit/compat/minBy';
 
@@ -22,6 +22,8 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RechartsScale } from '../util/ChartUtils';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -38,6 +40,13 @@ export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
 
 export type Props = AxisSvgProps & PolarRadiusAxisProps;
+
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarRadiusAxisProps>;
+
+type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
+  scale: RechartsScale;
+  radius: number;
+};
 
 const AXIS_TYPE = 'radiusAxis';
 
@@ -91,13 +100,13 @@ const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<
     cy,
     startAngle: angle,
     endAngle: angle,
-    innerRadius: minRadiusTick.coordinate || 0,
-    outerRadius: maxRadiusTick.coordinate || 0,
+    innerRadius: minRadiusTick?.coordinate || 0,
+    outerRadius: maxRadiusTick?.coordinate || 0,
     clockWise: false,
   };
 };
 
-const renderAxisLine = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
+const renderAxisLine = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactElement => {
   const { cx, cy, angle, axisLine, ...others } = props;
   const extent = ticks.reduce(
     (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
@@ -138,7 +147,7 @@ const renderTickItem = (option: Props['tick'], tickProps: any, value: string | n
   return tickItem;
 };
 
-const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
+const renderTicks = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactElement => {
   const { angle, tickFormatter, stroke, tick, ...others } = props;
   const textAnchor = getTickTextAnchor(props.orientation);
   const axisProps = svgPropertiesNoEvents(others);
@@ -172,18 +181,18 @@ const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement
   return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
 };
 
-export const PolarRadiusAxisWrapper: FunctionComponent<Props> = (defaultsAndInputs: Props) => {
+export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (defaultsAndInputs: PropsWithDefaults) => {
   const { radiusAxisId } = defaultsAndInputs;
 
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
   const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, false));
 
-  if (viewBox == null || !ticks || !ticks.length) {
+  if (viewBox == null || !ticks || !ticks.length || scale == null) {
     return null;
   }
 
-  const props: Props = {
+  const props: InsideProps = {
     ...defaultsAndInputs,
     scale,
     ...viewBox,
@@ -204,36 +213,31 @@ export const PolarRadiusAxisWrapper: FunctionComponent<Props> = (defaultsAndInpu
   );
 };
 
-export class PolarRadiusAxis extends PureComponent<Props> {
-  static displayName = 'PolarRadiusAxis';
-
-  static axisType = AXIS_TYPE;
-
-  static defaultProps = defaultPolarRadiusAxisProps;
-
-  render() {
-    return (
-      <>
-        <SetRadiusAxisSettings
-          domain={this.props.domain}
-          id={this.props.radiusAxisId}
-          scale={this.props.scale}
-          type={this.props.type}
-          dataKey={this.props.dataKey}
-          unit={undefined}
-          name={this.props.name}
-          allowDuplicatedCategory={this.props.allowDuplicatedCategory}
-          allowDataOverflow={this.props.allowDataOverflow}
-          reversed={this.props.reversed}
-          includeHidden={this.props.includeHidden}
-          allowDecimals={this.props.allowDecimals}
-          tickCount={this.props.tickCount}
-          // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
-          ticks={this.props.ticks}
-          tick={this.props.tick}
-        />
-        <PolarRadiusAxisWrapper {...this.props} />
-      </>
-    );
-  }
+export function PolarRadiusAxis(outsideProps: Props) {
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultPolarRadiusAxisProps);
+  return (
+    <>
+      <SetRadiusAxisSettings
+        domain={props.domain}
+        id={props.radiusAxisId}
+        scale={props.scale}
+        type={props.type}
+        dataKey={props.dataKey}
+        unit={undefined}
+        name={props.name}
+        allowDuplicatedCategory={props.allowDuplicatedCategory}
+        allowDataOverflow={props.allowDataOverflow}
+        reversed={props.reversed}
+        includeHidden={props.includeHidden}
+        allowDecimals={props.allowDecimals}
+        // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+        ticks={props.ticks}
+        tickCount={props.tickCount}
+        tick={props.tick}
+      />
+      <PolarRadiusAxisWrapper {...props} />
+    </>
+  );
 }
+
+PolarRadiusAxis.displayName = 'PolarRadiusAxis';

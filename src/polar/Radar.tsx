@@ -1,16 +1,5 @@
-// eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import {
-  PureComponent,
-  ReactElement,
-  MouseEvent,
-  SVGProps,
-  useCallback,
-  useRef,
-  MutableRefObject,
-  useState,
-  ReactNode,
-} from 'react';
+import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useCallback, useRef, useState } from 'react';
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
@@ -22,17 +11,17 @@ import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import {
-  LabelListFromLabelProp,
-  CartesianLabelListEntry,
   CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import {
-  LegendType,
-  TooltipType,
+  ActiveDotType,
+  AnimationDuration,
   AnimationTiming,
   DataKey,
-  AnimationDuration,
-  ActiveDotType,
+  LegendType,
+  TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
@@ -49,13 +38,15 @@ import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { WithIdRequired } from '../util/useUniqueId';
 
 interface RadarPoint {
   x: number;
   y: number;
   cx?: number;
   cy?: number;
-  angle?: number;
+  angle: number;
   radius?: number;
   value?: number;
   payload?: any;
@@ -66,7 +57,7 @@ type RadarDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElem
 
 interface RadarProps {
   className?: string;
-  dataKey: DataKey<any>;
+  dataKey?: DataKey<any>;
   angleAxisId?: string | number;
   radiusAxisId?: string | number;
   points?: RadarPoint[];
@@ -109,11 +100,11 @@ export type RadarComposedData = {
   isRange: boolean;
 };
 
-function getLegendItemColor(stroke: string | undefined, fill: string): string {
+function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromRadarSectors = (props: Props): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromRadarSectors = (props: PropsWithDefaults): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide } = props;
   return [
     {
@@ -127,7 +118,7 @@ const computeLegendPayloadFromRadarSectors = (props: Props): ReadonlyArray<Legen
   ];
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+function getTooltipEntrySettings(props: PropsWithDefaults): TooltipPayloadConfiguration {
   const { dataKey, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     /*
@@ -191,9 +182,9 @@ export function computeRadarPoints({
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
     const value = getValueByDataKey(entry, dataKey);
-    const angle = angleAxis.scale(name) + angleBandSize;
+    const angle: number = angleAxis.scale(name) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
-    const radius = isNullish(pointValue) ? undefined : radiusAxis.scale(pointValue);
+    const radius = isNullish(pointValue) ? 0 : radiusAxis.scale(pointValue);
 
     if (Array.isArray(value) && value.length >= 2) {
       isRange = true;
@@ -215,10 +206,10 @@ export function computeRadarPoints({
   const baseLinePoints: RadarPoint[] = [];
 
   if (isRange) {
-    points.forEach(point => {
+    points.forEach((point: RadarPoint) => {
       if (Array.isArray(point.value)) {
         const baseValue = point.value[0];
-        const radius = isNullish(baseValue) ? undefined : radiusAxis.scale(baseValue);
+        const radius = isNullish(baseValue) ? 0 : radiusAxis.scale(baseValue);
 
         baseLinePoints.push({
           ...point,
@@ -306,7 +297,7 @@ function RadarLabelListProvider({
     };
     return {
       ...viewBox,
-      value: point.value,
+      value: point.value ?? '',
       payload: point.payload,
       parentViewBox: undefined,
       viewBox,
@@ -315,7 +306,7 @@ function RadarLabelListProvider({
   });
 
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
@@ -379,7 +370,7 @@ function StaticPolygon({
 }
 
 const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint>, prevPointsDiffFactor: number, t: number) =>
+  (prevPoints: ReadonlyArray<RadarPoint> | undefined, prevPointsDiffFactor: number, t: number) =>
   (entry: RadarPoint, index: number) => {
     const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
 
@@ -403,8 +394,8 @@ function PolygonWithAnimation({
   previousPointsRef,
   previousBaseLinePointsRef,
 }: {
-  props: Props;
-  previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint>>;
+  props: InternalProps;
+  previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
   previousBaseLinePointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
 }) {
   const {
@@ -420,8 +411,10 @@ function PolygonWithAnimation({
   const prevPoints = previousPointsRef.current;
   const prevBaseLinePoints = previousBaseLinePointsRef.current;
 
-  const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
-  const prevBaseLinePointsDiffFactor = prevBaseLinePoints && prevBaseLinePoints.length / baseLinePoints.length;
+  const prevPointsDiffFactor: number = prevPoints ? prevPoints.length / points.length : 1;
+  const prevBaseLinePointsDiffFactor: number = prevBaseLinePoints
+    ? prevBaseLinePoints.length / baseLinePoints.length
+    : 1;
 
   const animationId = useAnimationId(props, 'recharts-radar-');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -476,7 +469,7 @@ function PolygonWithAnimation({
   );
 }
 
-function RenderPolygon(props: Props) {
+function RenderPolygon(props: InternalProps) {
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
   const previousBaseLinePointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
 
@@ -489,7 +482,7 @@ function RenderPolygon(props: Props) {
   );
 }
 
-const defaultRadarProps: Partial<Props> = {
+const defaultRadarProps = {
   angleAxisId: 0,
   radiusAxisId: 0,
   hide: false,
@@ -500,39 +493,45 @@ const defaultRadarProps: Partial<Props> = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
-};
+} as const satisfies Partial<Props>;
 
-class RadarWithState extends PureComponent<Props> {
-  render() {
-    const { hide, className, points } = this.props;
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
 
-    if (hide || points == null) {
-      return null;
-    }
+type InternalProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
 
-    const layerClass = clsx('recharts-radar', className);
+function RadarWithState(props: InternalProps) {
+  const { hide, className, points } = props;
 
-    return (
-      <>
-        <Layer className={layerClass}>
-          <RenderPolygon {...this.props} />
-        </Layer>
-        <ActivePoints
-          points={points}
-          mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
-          itemDataKey={this.props.dataKey}
-          activeDot={this.props.activeDot}
-        />
-      </>
-    );
+  if (hide) {
+    return null;
   }
+
+  const layerClass = clsx('recharts-radar', className);
+
+  return (
+    <>
+      <Layer className={layerClass}>
+        <RenderPolygon {...props} />
+      </Layer>
+      <ActivePoints
+        points={points}
+        mainColor={getLegendItemColor(props.stroke, props.fill)}
+        itemDataKey={props.dataKey}
+        activeDot={props.activeDot}
+      />
+    </>
+  );
 }
 
-function RadarImpl(props: Props) {
+function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
     selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.id),
   );
+
+  if (radarPoints?.points == null) {
+    return null;
+  }
 
   return (
     <RadarWithState
@@ -544,31 +543,28 @@ function RadarImpl(props: Props) {
   );
 }
 
-export class Radar extends PureComponent<Props> {
-  static displayName = 'Radar';
-
-  static defaultProps = defaultRadarProps;
-
-  render() {
-    return (
-      <RegisterGraphicalItemId id={this.props.id} type="radar">
-        {id => (
-          <>
-            <SetPolarGraphicalItem
-              type="radar"
-              id={id}
-              data={undefined} // Radar does not have data prop, why?
-              dataKey={this.props.dataKey}
-              hide={this.props.hide}
-              angleAxisId={this.props.angleAxisId}
-              radiusAxisId={this.props.radiusAxisId}
-            />
-            <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
-            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-            <RadarImpl {...this.props} id={id} />
-          </>
-        )}
-      </RegisterGraphicalItemId>
-    );
-  }
+export function Radar(outsideProps: Props) {
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadarProps);
+  return (
+    <RegisterGraphicalItemId id={props.id} type="radar">
+      {id => (
+        <>
+          <SetPolarGraphicalItem
+            type="radar"
+            id={id}
+            data={undefined} // Radar does not have data prop, why?
+            dataKey={props.dataKey}
+            hide={props.hide}
+            angleAxisId={props.angleAxisId}
+            radiusAxisId={props.radiusAxisId}
+          />
+          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props)} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <RadarImpl {...props} id={id} />
+        </>
+      )}
+    </RegisterGraphicalItemId>
+  );
 }
+
+Radar.displayName = 'Radar';

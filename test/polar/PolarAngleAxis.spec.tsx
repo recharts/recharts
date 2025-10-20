@@ -121,7 +121,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: 'value',
           domain: undefined,
@@ -369,7 +369,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
@@ -656,7 +656,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: 'angle',
           domain: [0, 360],
@@ -845,7 +845,7 @@ describe('<PolarAngleAxis />', () => {
 
       expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: false,
         dataKey: 'angle',
         domain: [0, 360],
@@ -1715,7 +1715,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
@@ -1952,7 +1952,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
@@ -2135,7 +2135,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
-          allowDecimals: undefined,
+          allowDecimals: false,
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
@@ -2514,7 +2514,7 @@ describe('<PolarAngleAxis />', () => {
       );
       const expectedAxis: AngleAxisSettings = {
         allowDataOverflow: false,
-        allowDecimals: undefined,
+        allowDecimals: false,
         allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
