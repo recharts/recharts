@@ -10,8 +10,6 @@ import { IfOverflow } from '../util/IfOverflow';
 import { isNan, isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { CartesianViewBox, CartesianViewBoxRequired } from '../util/types';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import { useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -34,6 +32,16 @@ interface InternalReferenceLineProps {
   clipPathId?: number | string;
 }
 
+/**
+ * Single point that defines one end of a segment.
+ * These coordinates are in data space, meaning that you should provide
+ * values that correspond to the data domain of the axes.
+ * So you would provide a value of `Page A` to indicate the data value `Page A`
+ * and then recharts will convert that to pixels.
+ *
+ * Likewise for numbers. If your x-axis goes from 0 to 100,
+ * and you want the line to end at 50, you would provide `50` here.
+ */
 export type Segment = {
   x?: number | string;
   y?: number | string;
@@ -44,11 +52,53 @@ export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 interface ReferenceLineProps extends InternalReferenceLineProps {
   ifOverflow?: IfOverflow;
 
-  x?: number | string;
+  /**
+   * The y-coordinate of the reference line in data space.
+   * This value is used when you want to draw a horizontal reference line.
+   *
+   * You should provide a value that corresponds to the data domain of the y-axis.
+   * So you would provide a value of `100` to indicate the data value `100`
+   * and then recharts will convert that to pixels.
+   *
+   * If you provide this prop, then the `x` and `segment` props will be ignored.
+   */
   y?: number | string;
 
+  /**
+   * The x-coordinate of the reference line in data space.
+   * This value is used when you want to draw a vertical reference line.
+   *
+   * You should provide a value that corresponds to the data domain of the x-axis.
+   * So you would provide a value of `Page A` to indicate the data value `Page A`
+   * and then recharts will convert that to pixels.
+   *
+   * This prop is ignored if the `y` prop is provided.
+   * If you provide this prop, then the `segment` prop will be ignored.
+   */
+  x?: number | string;
+
+  /**
+   * An array of two points that define the start and end of a line segment.
+   * Each point is an object with `x` and `y` properties.
+   * If this array has other than two points, it will be ignored.
+   *
+   * These coordinates are in data space, meaning that you should provide
+   * values that correspond to the data domain of the axes.
+   * So you would provide a value of `Page A` to indicate the data value `Page A`
+   * and then recharts will convert that to pixels.
+   *
+   * Likewise for numbers. If your x-axis goes from 0 to 100,
+   * and you want the line to end at 50, you would provide `50` here.
+   *
+   * This prop is only used if both `x` and `y` props are undefined.
+   */
   segment?: ReadonlyArray<Segment>;
 
+  /**
+   * The position of the reference line when the axis has bandwidth
+   * (e.g., a band scale). This determines where within the band
+   * the line is drawn.
+   */
   position?: ReferenceLinePosition;
 
   className?: number | string;
@@ -83,22 +133,22 @@ const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLine
 
 type EndPointsPropsSubset = Pick<PropsWithDefaults, 'y' | 'x' | 'segment' | 'ifOverflow'>;
 
-// TODO: ScaleHelper
 export const getEndPoints = (
   scales: any,
-  isFixedX: boolean,
-  isFixedY: boolean,
-  isSegment: boolean,
   viewBox: CartesianViewBoxRequired,
   position: Props['position'],
-  xAxisOrientation: XAxisProps['orientation'],
-  yAxisOrientation: YAxisProps['orientation'],
+  xAxisOrientation: Props['orientation'],
+  yAxisOrientation: Props['orientation'],
   props: EndPointsPropsSubset,
 ) => {
+  const { x: xCoord, y: yCoord, segment } = props;
+  const isFixedX = isNumOrStr(xCoord);
+  const isFixedY = isNumOrStr(yCoord);
+  const isSegment: boolean = segment != null && segment.length === 2;
+
   const { x, y, width, height } = viewBox;
 
   if (isFixedY) {
-    const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
     // don't render the line if the scale can't compute a result that makes sense
     if (isNan(coord)) return null;
@@ -114,7 +164,6 @@ export const getEndPoints = (
     return yAxisOrientation === 'left' ? points.reverse() : points;
   }
   if (isFixedX) {
-    const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
     // don't render the line if the scale can't compute a result that makes sense
     if (isNan(coord)) return null;
@@ -130,8 +179,6 @@ export const getEndPoints = (
     return xAxisOrientation === 'top' ? points.reverse() : points;
   }
   if (isSegment) {
-    const { segment } = props;
-
     const points = segment.map(p => scales.apply(p, { position }));
 
     if (props.ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
@@ -156,7 +203,7 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
 }
 
 function ReferenceLineImpl(props: PropsWithDefaults) {
-  const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
+  const { xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const isPanorama = useIsPanorama();
   const clipPathId = useClipPathId();
@@ -166,8 +213,6 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
   const viewBox = useViewBox();
-  const isFixedX = isNumOrStr(fixedX);
-  const isFixedY = isNumOrStr(fixedY);
 
   if (!clipPathId || !viewBox || xAxis == null || yAxis == null || xAxisScale == null || yAxisScale == null) {
     return null;
@@ -175,19 +220,7 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
 
   const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
-  const isSegment: boolean = Boolean(segment && segment.length === 2);
-
-  const endPoints = getEndPoints(
-    scales,
-    isFixedX,
-    isFixedY,
-    isSegment,
-    viewBox,
-    props.position,
-    xAxis.orientation,
-    yAxis.orientation,
-    props,
-  );
+  const endPoints = getEndPoints(scales, viewBox, props.position, xAxis.orientation, yAxis.orientation, props);
   if (!endPoints) {
     return null;
   }
