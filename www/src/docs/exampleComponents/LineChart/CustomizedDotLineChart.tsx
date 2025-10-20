@@ -49,6 +49,10 @@ const data = [
 const CustomizedDot = (props: ActiveDotProps) => {
   const { cx, cy, value } = props;
 
+  if (cx == null || cy == null) {
+    return <g />;
+  }
+
   if (value > 2500) {
     return (
       <svg x={cx - 10} y={cy - 10} width={20} height={20} fill="red" viewBox="0 0 1024 1024">
