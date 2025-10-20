@@ -12,7 +12,7 @@ import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { Global } from '../util/Global';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
-import { AllowInDimension, AnimationDuration, AnimationTiming, ChartCoordinate, Coordinate } from '../util/types';
+import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useElementOffset } from '../util/useElementOffset';
@@ -42,14 +42,14 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
 
 export type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
   label?: string | number;
-  payload: any[];
-  coordinate: ChartCoordinate;
+  payload: ReadonlyArray<any>;
+  coordinate: Coordinate | undefined;
   active: boolean;
   accessibilityLayer: boolean;
 };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
-  content: ContentType<TValue, TName>,
+  content: ContentType<TValue, TName> | undefined,
   props: TooltipContentProps<TValue, TName>,
 ): ReactNode {
   if (React.isValidElement(content)) {
@@ -205,7 +205,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
     selectActiveLabel(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const coordinate = useAppSelector(state =>
+  const coordinate: Coordinate | undefined = useAppSelector(state =>
     selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
   );
   const payload: TooltipPayload | undefined = payloadFromRedux;
@@ -223,7 +223,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
   useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
-  if (tooltipPortal == null) {
+  if (tooltipPortal == null || viewBox == null || tooltipEventType == null) {
     return null;
   }
 
@@ -234,7 +234,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
 
   if (filterNull && finalPayload.length) {
     finalPayload = getUniqPayload(
-      payload.filter(entry => entry.value != null && (entry.hide !== true || props.includeHidden)),
+      finalPayload.filter(entry => entry.value != null && (entry.hide !== true || props.includeHidden)),
       payloadUniqBy,
       defaultUniqBy,
     );
@@ -262,7 +262,6 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
     >
       {renderContent(content, {
         ...props,
-        // @ts-expect-error renderContent method expects the payload to be mutable, TODO make it immutable
         payload: finalPayload,
         label: finalLabel,
         active: finalIsActive,
@@ -281,7 +280,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
           cursor={cursor}
           tooltipEventType={tooltipEventType}
           coordinate={coordinate}
-          payload={payload}
+          payload={finalPayload}
           index={activeIndex}
         />
       )}

@@ -10,11 +10,11 @@ export type TooltipBoundingBoxProps = {
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
   children: ReactNode;
-  coordinate: Coordinate;
+  coordinate: Coordinate | undefined;
   hasPayload: boolean;
   isAnimationActive: boolean;
   offset: number;
-  position: Partial<Coordinate>;
+  position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
