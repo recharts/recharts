@@ -6,6 +6,7 @@ import { clsx } from 'clsx';
 import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { isNumber } from '../util/DataUtils';
 
 interface DotProps {
   className?: string;
@@ -21,7 +22,7 @@ export const Dot: React.FC<Props> = props => {
   const { cx, cy, r, className } = props;
   const layerClass = clsx('recharts-dot', className);
 
-  if (cx === +cx && cy === +cy && r === +r) {
+  if (isNumber(cx) && isNumber(cy) && isNumber(r)) {
     return (
       <circle
         {...svgPropertiesNoEvents(props)}

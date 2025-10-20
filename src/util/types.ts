@@ -938,10 +938,10 @@ export type Size = { width: number; height: number };
 export type ActiveDotProps = DotProps & {
   payload: any;
   index: number;
-  dataKey: DataKey<any>;
-  cx: number;
-  cy: number;
-  r: number | string;
+  dataKey: DataKey<any> | undefined;
+  cx: number | undefined;
+  cy: number | undefined;
+  r: number | string | undefined;
   fill: string;
   strokeWidth: number;
   stroke: string;
@@ -1095,3 +1095,9 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
 }
 
 export type Percent = `${number}%`;
+
+export type NonEmptyArray<T> = readonly [T, ...T[]];
+
+export const isNonEmptyArray = <T>(arr: ReadonlyArray<T> | null | undefined): arr is NonEmptyArray<T> => {
+  return Array.isArray(arr) && arr.length > 0;
+};

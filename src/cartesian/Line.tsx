@@ -276,8 +276,8 @@ function Dots({
       ...lineProps,
       ...customDotProps,
       index: i,
-      cx: entry.x,
-      cy: entry.y,
+      cx: entry.x ?? undefined,
+      cy: entry.y ?? undefined,
       dataKey,
       value: entry.value,
       payload: entry.payload,
@@ -310,8 +310,8 @@ function LineLabelListProvider({
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points?.map((point): CartesianLabelListEntry => {
       const viewBox: TrapezoidViewBox = {
-        x: point.x,
-        y: point.y,
+        x: point.x ?? 0,
+        y: point.y ?? 0,
         width: 0,
         lowerWidth: 0,
         upperWidth: 0,
@@ -332,7 +332,7 @@ function LineLabelListProvider({
     });
   }, [points]);
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
@@ -586,8 +586,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataKey,
 ): ErrorBarDataItem => {
   return {
-    x: dataPoint.x,
-    y: dataPoint.y,
+    x: dataPoint.x ?? undefined,
+    y: dataPoint.y ?? undefined,
     value: dataPoint.value,
     // @ts-expect-error getValueByDataKey does not validate the output type
     errorVal: getValueByDataKey(dataPoint.payload, dataKey),

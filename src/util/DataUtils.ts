@@ -1,5 +1,5 @@
 import get from 'es-toolkit/compat/get';
-import { Percent } from './types';
+import { NonEmptyArray, Percent } from './types';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -99,22 +99,6 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   return false;
 };
 
-/**
- * @deprecated instead use {@link interpolate}
- *  this function returns a function that is called immediately in all use-cases.
- *  Instead, use interpolate which returns a number and skips the anonymous function step.
- *  @param numberA The first number
- *  @param numberB The second number
- *  @return A function that returns the interpolated number
- */
-export const interpolateNumber = (numberA: number | undefined, numberB: number | undefined) => {
-  if (isNumber(numberA) && isNumber(numberB)) {
-    return (t: number) => numberA + t * (numberB - numberA);
-  }
-
-  return () => numberB;
-};
-
 export function interpolate(start: unknown, end: number, t: number): number;
 export function interpolate(start: unknown, end: null, t: number): null;
 export function interpolate(start: unknown, end: number | null, t: number): number | null;
@@ -140,16 +124,19 @@ export function findEntryInArray<T>(
   );
 }
 
+type LinearRegressionResult = {
+  xmin: number;
+  xmax: number;
+  a: number;
+  b: number;
+};
+
 /**
  * The least square linear regression
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: number }>) => {
-  if (!data || !data.length) {
-    return null;
-  }
-
+export const getLinearRegression = (data: NonEmptyArray<{ cx?: number; cy?: number }>): LinearRegressionResult => {
   const len = data.length;
   let xsum = 0;
   let ysum = 0;

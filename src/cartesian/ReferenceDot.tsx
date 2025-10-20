@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
@@ -14,6 +14,8 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { AxisId } from '../state/cartesianAxisSlice';
 
 interface ReferenceDotProps {
   r?: number;
@@ -39,8 +41,8 @@ export type Props = DotProps & ReferenceDotProps;
 const useCoordinate = (
   x: number | string | undefined,
   y: number | string | undefined,
-  xAxisId: Props['xAxisId'],
-  yAxisId: Props['yAxisId'],
+  xAxisId: AxisId,
+  yAxisId: AxisId,
   ifOverflow: IfOverflow,
 ) => {
   const isX = isNumOrStr(x);
@@ -90,7 +92,7 @@ const renderDot = (option: Props['shape'], props: DotProps) => {
   return dot;
 };
 
-function ReferenceDotImpl(props: Props) {
+function ReferenceDotImpl(props: PropsWithDefaults) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
@@ -131,7 +133,21 @@ function ReferenceDotImpl(props: Props) {
   );
 }
 
-function ReferenceDotSettingsDispatcher(props: Props) {
+const referenceDotDefaultProps = {
+  ifOverflow: 'discard',
+  xAxisId: 0,
+  yAxisId: 0,
+  r: 10,
+  fill: '#fff',
+  stroke: '#ccc',
+  fillOpacity: 1,
+  strokeWidth: 1,
+} as const satisfies Partial<Props>;
+
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
+
+export function ReferenceDot(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
   return (
     <>
@@ -141,22 +157,4 @@ function ReferenceDotSettingsDispatcher(props: Props) {
   );
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class ReferenceDot extends Component<Props> {
-  static displayName = 'ReferenceDot';
-
-  static defaultProps: Partial<Props> = {
-    ifOverflow: 'discard',
-    xAxisId: 0,
-    yAxisId: 0,
-    r: 10,
-    fill: '#fff',
-    stroke: '#ccc',
-    fillOpacity: 1,
-    strokeWidth: 1,
-  };
-
-  render() {
-    return <ReferenceDotSettingsDispatcher {...this.props} />;
-  }
-}
+ReferenceDot.displayName = 'ReferenceDot';

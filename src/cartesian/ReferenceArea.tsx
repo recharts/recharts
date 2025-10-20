@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
@@ -17,6 +17,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -94,7 +95,7 @@ function ReportReferenceArea(props: ReferenceAreaSettings): null {
   return null;
 }
 
-function ReferenceAreaImpl(props: Props) {
+function ReferenceAreaImpl(props: PropsWithDefaults) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
   const isPanorama = useIsPanorama();
@@ -136,7 +137,21 @@ function ReferenceAreaImpl(props: Props) {
   );
 }
 
-function ReferenceAreaSettingsDispatcher(props: Props) {
+const referenceAreaDefaultProps = {
+  ifOverflow: 'discard',
+  xAxisId: 0,
+  yAxisId: 0,
+  r: 10,
+  fill: '#ccc',
+  fillOpacity: 0.5,
+  stroke: 'none',
+  strokeWidth: 1,
+} as const satisfies Partial<Props>;
+
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
+
+export function ReferenceArea(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);
   return (
     <>
       <ReportReferenceArea
@@ -153,22 +168,4 @@ function ReferenceAreaSettingsDispatcher(props: Props) {
   );
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class ReferenceArea extends Component<Props> {
-  static displayName = 'ReferenceArea';
-
-  static defaultProps = {
-    ifOverflow: 'discard',
-    xAxisId: 0,
-    yAxisId: 0,
-    r: 10,
-    fill: '#ccc',
-    fillOpacity: 0.5,
-    stroke: 'none',
-    strokeWidth: 1,
-  };
-
-  render() {
-    return <ReferenceAreaSettingsDispatcher {...this.props} />;
-  }
-}
+ReferenceArea.displayName = 'ReferenceArea';

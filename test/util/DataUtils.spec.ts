@@ -5,7 +5,6 @@ import {
   isPercent,
   isNumber,
   isNumOrStr,
-  interpolateNumber,
   getLinearRegression,
   findEntryInArray,
   uniqueId,
@@ -150,25 +149,6 @@ describe('hasDuplicate', () => {
   });
 });
 
-describe('interpolateNumber', () => {
-  it('should always return a function', () => {
-    expect(interpolateNumber(10, 10)).toBeInstanceOf(Function);
-  });
-
-  it('should provide interpolator function between two number', () => {
-    const interpolateFn = interpolateNumber(0, 10);
-    expect(interpolateFn(0.1)).toBe(1);
-    expect(interpolateFn(0.2)).toBe(2);
-  });
-
-  it("should provide interpolator function that returns second value if first value isn't a number", () => {
-    /** @see noteNeverCasting */
-    const interpolateFn = interpolateNumber(null as never, 10);
-    expect(interpolateFn(1)).toBe(10);
-    expect(interpolateFn(2)).toBe(10);
-  });
-});
-
 describe('interpolate', () => {
   it('should return a number when called with two numbers', () => {
     expect(interpolate(10, 20, 0.5)).toBe(15);
@@ -219,12 +199,18 @@ describe('findEntryInArray', () => {
 });
 
 describe('getLinearRegression', () => {
-  it('should return when a non-array is supplied', () => {
-    /** @see noteNeverCasting */
-    expect(getLinearRegression(null as never)).toBeNull();
+  it('should throw an error when null is supplied', () => {
+    expect(() => getLinearRegression(null as never)).toThrowError();
   });
-  it('should return when an empty array is supplied', () => {
-    expect(getLinearRegression([])).toBeNull();
+
+  it('should return nonsense object when an empty array is supplied', () => {
+    /** @see noteNeverCasting */
+    expect(getLinearRegression([] as never)).toEqual({
+      a: 0,
+      b: NaN,
+      xmax: -Infinity,
+      xmin: Infinity,
+    });
   });
   it('should return a linear progression with supplied data', () => {
     const data: Parameters<typeof getLinearRegression>[0] = [
