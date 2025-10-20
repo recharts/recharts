@@ -33,7 +33,7 @@ export function combineDisplayedStackedData(
     // If there is no data on the individual item then we use the root chart data
     const resolvedData = item.data ?? chartData;
     if (resolvedData == null || resolvedData.length === 0) {
-      // if that didn't work then we skip this item
+      // if that doesn't work then we skip this item
       return;
     }
     const stackIdentifier = getStackSeriesIdentifier(item);
