@@ -6,6 +6,15 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexQuerySelector } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
 
+export interface ZIndexable {
+  /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   */
+  zIndex?: number;
+}
+
 type ZIndexLayerProps = {
   zIndex?: number;
   children?: React.ReactNode;
@@ -17,7 +26,7 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
     if (!shouldRenderInPortal) {
-      // nothing to do
+      // Nothing to do. We have to call the hook because of the rules of hooks.
       return noop;
     }
     /*

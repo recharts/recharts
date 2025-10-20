@@ -133,8 +133,9 @@ export interface BarProps {
   id?: string;
   label?: ImplicitLabelListType;
   /**
-   * Z-Index of the Bar component. The higher the value,
-   * the more on top the Bar will be rendered.
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
    */
   zIndex?: number;
 }
