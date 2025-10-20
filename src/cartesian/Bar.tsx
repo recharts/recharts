@@ -80,7 +80,7 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { ZIndexable } from '../zindex/ZIndexable';
+import { ZIndexLayer } from '../zindex/ZIndexLayer';
 
 type Rectangle = {
   x: number | null;
@@ -860,9 +860,9 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
           />
-          <ZIndexable zIndex={props.zIndex}>
+          <ZIndexLayer zIndex={props.zIndex}>
             <BarImpl {...props} id={id} />
-          </ZIndexable>
+          </ZIndexLayer>
         </>
       )}
     </RegisterGraphicalItemId>

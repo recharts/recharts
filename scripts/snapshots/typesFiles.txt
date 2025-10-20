@@ -185,6 +185,7 @@
   "types/state/types/RadialBarSettings.d.ts",
   "types/state/types/ScatterSettings.d.ts",
   "types/state/types/StackedGraphicalItem.d.ts",
+  "types/state/zIndexSlice.d.ts",
   "types/synchronisation",
   "types/synchronisation/syncSelectors.d.ts",
   "types/synchronisation/types.d.ts",
@@ -247,4 +248,8 @@
   "types/util/useId.d.ts",
   "types/util/useReportScale.d.ts",
   "types/util/useUniqueId.d.ts",
+  "types/zindex",
+  "types/zindex/ZIndexPortal.d.ts",
+  "types/zindex/ZIndexable.d.ts",
+  "types/zindex/zIndexSelectors.d.ts",
 ]

@@ -6,12 +6,12 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexQuerySelector } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
 
-type ZIndexableProps = {
+type ZIndexLayerProps = {
   zIndex?: number;
   children?: React.ReactNode;
 };
 
-export function ZIndexable({ zIndex, children }: ZIndexableProps) {
+export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   const shouldRenderInPortal = zIndex !== undefined && zIndex !== 0;
 
   const dispatch = useAppDispatch();

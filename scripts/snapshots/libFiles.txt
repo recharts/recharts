@@ -185,6 +185,7 @@
   "lib/state/types/RadialBarSettings.js",
   "lib/state/types/ScatterSettings.js",
   "lib/state/types/StackedGraphicalItem.js",
+  "lib/state/zIndexSlice.js",
   "lib/synchronisation",
   "lib/synchronisation/syncSelectors.js",
   "lib/synchronisation/types.js",
@@ -247,4 +248,8 @@
   "lib/util/useId.js",
   "lib/util/useReportScale.js",
   "lib/util/useUniqueId.js",
+  "lib/zindex",
+  "lib/zindex/ZIndexPortal.js",
+  "lib/zindex/ZIndexable.js",
+  "lib/zindex/zIndexSelectors.js",
 ]

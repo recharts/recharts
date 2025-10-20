@@ -185,6 +185,7 @@
   "es6/state/types/RadialBarSettings.js",
   "es6/state/types/ScatterSettings.js",
   "es6/state/types/StackedGraphicalItem.js",
+  "es6/state/zIndexSlice.js",
   "es6/synchronisation",
   "es6/synchronisation/syncSelectors.js",
   "es6/synchronisation/types.js",
@@ -247,4 +248,8 @@
   "es6/util/useId.js",
   "es6/util/useReportScale.js",
   "es6/util/useUniqueId.js",
+  "es6/zindex",
+  "es6/zindex/ZIndexPortal.js",
+  "es6/zindex/ZIndexable.js",
+  "es6/zindex/zIndexSelectors.js",
 ]
