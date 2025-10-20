@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cloneElement, isValidElement, SVGProps } from 'react';
+import { cloneElement, isValidElement } from 'react';
 import isPlainObject from 'es-toolkit/compat/isPlainObject';
 
 import { Rectangle } from '../shape/Rectangle';
@@ -66,7 +66,7 @@ function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
   }
 }
 
-export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElement> {
+export function getPropsFromShapeOption(option: unknown): unknown {
   if (isValidElement(option)) {
     return option.props;
   }
@@ -85,6 +85,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
   let shape: React.JSX.Element;
 
   if (isValidElement(option)) {
+    // @ts-expect-error we can't know the type of cloned element props
     shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
   } else if (typeof option === 'function') {
     shape = option(props);

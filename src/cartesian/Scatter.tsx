@@ -15,7 +15,7 @@ import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
-import { getLinearRegression, interpolateNumber, isNullish } from '../util/DataUtils';
+import { getLinearRegression, interpolate, isNullish } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -24,7 +24,10 @@ import {
   AnimationTiming,
   Coordinate,
   DataKey,
+  isNonEmptyArray,
   LegendType,
+  NonEmptyArray,
+  NullableCoordinate,
   PresentationAttributesAdaptChildEvent,
   SymbolType,
   TickItem,
@@ -59,6 +62,8 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
+import { WithIdRequired, WithoutId } from '../util/useUniqueId';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -66,23 +71,30 @@ interface ScatterPointNode {
   z?: number | string;
 }
 
+/**
+ * Scatter coordinates are nullable because sometimes the point value is out of the domain
+ * and we can't compute a valid coordinate for it.
+ *
+ * Scatter -> Symbol ignores points with null cx or cy so those won't render if using the default shapes.
+ * However the points are exposed via various props and can be used in custom shapes so we keep them around.
+ */
 export interface ScatterPointItem {
   /**
    * The x coordinate of the point center in pixels.
    */
-  cx: number;
+  cx: number | undefined;
   /**
    * The y coordinate of the point center in pixels.
    */
-  cy: number;
+  cy: number | undefined;
   /**
    * The x coordinate (in pixels) of the top-left corner of the rectangle that wraps the point.
    */
-  x: number;
+  x: number | undefined;
   /**
    * The y coordinate (in pixels) of the top-left corner of the rectangle that wraps the point.
    */
-  y: number;
+  y: number | undefined;
   /**
    * ScatterPointItem size is an abstract number that is used to calculate the radius of the point.
    * It's not the radius itself, but rather a value that is used to calculate the radius.
@@ -97,7 +109,7 @@ export interface ScatterPointItem {
    * Height of the point in pixels.
    */
   height: number;
-  node?: ScatterPointNode;
+  node: ScatterPointNode;
   payload?: any;
   tooltipPayload?: TooltipPayload;
   tooltipPosition: Coordinate;
@@ -136,6 +148,8 @@ interface ScatterInternalProps {
   animationEasing: AnimationTiming;
 
   needClip: boolean;
+
+  id: GraphicalItemId;
 }
 
 /**
@@ -197,7 +211,7 @@ type ScatterSymbolsProps = {
   allOtherScatterProps: InternalProps;
 };
 
-function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem>; props: InternalProps }) {
+function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem>; props: WithoutId<InternalProps> }) {
   const { line, lineType, lineJointType } = props;
 
   if (!line) {
@@ -206,10 +220,10 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
 
   const scatterProps = svgPropertiesNoEvents(props);
   const customLineProps = svgPropertiesNoEventsFromUnknown(line);
-  let linePoints, lineItem;
+  let linePoints: ReadonlyArray<NullableCoordinate>, lineItem;
 
   if (lineType === 'joint') {
-    linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
+    linePoints = points.map(entry => ({ x: entry.cx ?? null, y: entry.cy ?? null }));
   } else if (lineType === 'fitting') {
     const { xmin, xmax, a, b } = getLinearRegression(points);
     const linearExp = (x: number) => a * x + b;
@@ -218,6 +232,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
       { x: xmax, y: linearExp(xmax) },
     ];
   }
+
   const lineProps: CurveProps = {
     ...scatterProps,
     // @ts-expect-error customLineProps is contributing unknown props
@@ -225,6 +240,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
     // @ts-expect-error customLineProps is contributing unknown props
     stroke: scatterProps && scatterProps.fill,
     ...customLineProps,
+    // @ts-expect-error linePoints used before being assigned? But it's assigned above.
     points: linePoints,
   };
 
@@ -260,12 +276,12 @@ function ScatterLabelListProvider({
          * Scatter label uses x and y as the reference point for the label,
          * not cx and cy.
          */
-        x: point.x,
+        x: point.x ?? 0,
         /*
          * Scatter label uses x and y as the reference point for the label,
          * not cx and cy.
          */
-        y: point.y,
+        y: point.y ?? 0,
         width: point.width,
         height: point.height,
         lowerWidth: point.width,
@@ -288,7 +304,7 @@ function ScatterLabelListProvider({
   }, [chartViewBox, points]);
 
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
@@ -309,7 +325,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
-  if (points == null) {
+  if (!isNonEmptyArray(points)) {
     return null;
   }
 
@@ -320,8 +336,9 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     <>
       <ScatterLine points={points} props={allOtherPropsWithoutId} />
       {points.map((entry, i) => {
-        const isActive = activeShape && activeIndex === String(i);
-        const option = isActive ? activeShape : shape;
+        const hasActiveShape = activeShape != null && activeShape !== false;
+        const isActive: boolean = hasActiveShape && activeIndex === String(i);
+        const option = hasActiveShape && isActive ? activeShape : shape;
         const symbolProps = {
           key: `symbol-${i}`,
           ...baseProps,
@@ -355,7 +372,7 @@ function SymbolsWithAnimation({
   previousPointsRef,
   props,
 }: {
-  previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem>>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem> | null>;
   props: InternalProps;
 }) {
   const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
@@ -396,28 +413,22 @@ function SymbolsWithAnimation({
         key={animationId}
       >
         {(t: number) => {
-          const stepData =
+          const stepData: ReadonlyArray<ScatterPointItem> =
             t === 1
               ? points
-              : points?.map((entry, index) => {
+              : points?.map((entry: ScatterPointItem, index: number): ScatterPointItem => {
                   const prev = prevPoints && prevPoints[index];
 
                   if (prev) {
-                    const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
-                    const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
-                    const interpolatorSize = interpolateNumber(prev.size, entry.size);
-
                     return {
                       ...entry,
-                      cx: interpolatorCx(t),
-                      cy: interpolatorCy(t),
-                      size: interpolatorSize(t),
+                      cx: entry.cx == null ? undefined : interpolate(prev.cx, entry.cx, t),
+                      cy: entry.cy == null ? undefined : interpolate(prev.cy, entry.cy, t),
+                      size: interpolate(prev.size, entry.size, t),
                     };
                   }
 
-                  const interpolator = interpolateNumber(0, entry.size);
-
-                  return { ...entry, size: interpolator(t) };
+                  return { ...entry, size: interpolate(0, entry.size, t) };
                 });
 
           if (t > 0) {
@@ -500,8 +511,7 @@ export function computeScatterPoints({
 
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
-        // @ts-expect-error name prop should not have dataKey in it
-        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || xAxis.dataKey,
+        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxis.dataKey),
         unit: xAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: x,
@@ -510,8 +520,7 @@ export function computeScatterPoints({
         type: scatterSettings.tooltipType,
       },
       {
-        // @ts-expect-error name prop should not have dataKey in it
-        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || yAxis.dataKey,
+        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxis.dataKey),
         unit: yAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: y,
@@ -534,7 +543,7 @@ export function computeScatterPoints({
       });
     }
 
-    const cx = getCateCoordinateOfLine({
+    const cx: number | null = getCateCoordinateOfLine({
       axis: xAxis,
       ticks: xAxisTicks,
       bandSize: xBandSize,
@@ -557,8 +566,8 @@ export function computeScatterPoints({
       ...entry,
       cx,
       cy,
-      x: cx - radius,
-      y: cy - radius,
+      x: cx == null ? undefined : cx - radius,
+      y: cy == null ? undefined : cy - radius,
       width: 2 * radius,
       height: 2 * radius,
       size,
@@ -579,7 +588,7 @@ const errorBarDataPointFormatter = (
   return {
     x: dataPoint.cx,
     y: dataPoint.cy,
-    value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
+    value: direction === 'x' ? Number(dataPoint.node.x) : Number(dataPoint.node.y),
     // @ts-expect-error getValueByDataKey does not validate the output type
     errorVal: getValueByDataKey(dataPoint, dataKey),
   };
@@ -595,7 +604,7 @@ function ScatterWithId(props: InternalProps) {
   const clipPathId = id;
 
   return (
-    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null} id={id}>
+    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined} id={id}>
       {needClip && (
         <defs>
           <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -633,7 +642,7 @@ const defaultScatterProps = {
   animationEasing: 'linear',
 } as const satisfies Partial<Props>;
 
-function ScatterImpl(props: Props) {
+function ScatterImpl(props: WithIdRequired<Props>) {
   const {
     animationBegin,
     animationDuration,

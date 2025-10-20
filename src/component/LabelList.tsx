@@ -13,8 +13,9 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 interface BaseLabelListEntry {
   /**
    * Value is what renders in the UI as the label content.
+   * If undefined, then the LabelList will pull it from the payload using the dataKey.
    */
-  value: number | string | Array<number | string>;
+  value: number | string | Array<number | string> | undefined;
   /**
    * Payload is the source data object for this entry. The shape of this depends on what the user has passed
    * as the data prop to the chart.

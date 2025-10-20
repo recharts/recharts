@@ -1095,3 +1095,9 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
 }
 
 export type Percent = `${number}%`;
+
+export type NonEmptyArray<T> = readonly [T, ...T[]];
+
+export const isNonEmptyArray = <T>(arr: ReadonlyArray<T> | null | undefined): arr is NonEmptyArray<T> => {
+  return Array.isArray(arr) && arr.length > 0;
+};

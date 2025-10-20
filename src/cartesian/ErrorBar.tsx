@@ -16,8 +16,8 @@ import { useChartLayout } from '../context/chartLayoutContext';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 
 export interface ErrorBarDataItem {
-  x: number | null;
-  y: number | null;
+  x: number | undefined;
+  y: number | undefined;
   value: number;
   errorVal?: number[] | number;
 }
