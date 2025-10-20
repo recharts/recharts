@@ -7,8 +7,19 @@ import { Global } from '../util/Global';
 import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
+
+interface Words {
+  words: Array<string>;
+  width: number | undefined;
+}
+
+interface WordsWithWidth {
+  words: Array<string>;
+  width: number;
+}
 
 interface WordWithComputedWidth {
   word: string;
@@ -22,7 +33,7 @@ interface CalculatedWordWidths {
 
 type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 
-const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths => {
+const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths | null => {
   try {
     let words: string[] = [];
     if (!isNullish(children)) {
@@ -152,47 +163,89 @@ interface TextProps {
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
 
-interface Words {
-  words: Array<string>;
-  width?: number;
-}
-
 type CalculateWordsByLinesProps = Pick<Props, 'maxLines' | 'children' | 'style' | 'breakAll'>;
+
+const calculate = (
+  words: ReadonlyArray<WordWithComputedWidth>,
+  lineWidth: number | string | undefined,
+  spaceWidth: number,
+  scaleToFit: boolean,
+): ReadonlyArray<WordsWithWidth> =>
+  words.reduce((result: Array<WordsWithWidth>, { word, width }) => {
+    const currentLine = result[result.length - 1];
+
+    if (
+      currentLine &&
+      width != null &&
+      (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < Number(lineWidth))
+    ) {
+      // Word can be added to an existing line
+      currentLine.words.push(word);
+      currentLine.width += width + spaceWidth;
+    } else {
+      // Add first word to line or word is too long to scaleToFit on existing line
+      const newLine: WordsWithWidth = { words: [word], width };
+      result.push(newLine);
+    }
+
+    return result;
+  }, []);
+
+const findLongestLine = (words: ReadonlyArray<WordsWithWidth>): WordsWithWidth =>
+  words.reduce((a: WordsWithWidth, b: WordsWithWidth) => (a.width > b.width ? a : b));
+
+const suffix = '…';
+
+const checkOverflow = (
+  text: string,
+  index: number,
+  breakAll: TextProps['breakAll'],
+  style: TextProps['style'],
+  maxLines: number,
+  lineWidth: number | string | undefined,
+  spaceWidth: number,
+  scaleToFit: boolean,
+): [boolean, ReadonlyArray<Words>] => {
+  const tempText = text.slice(0, index);
+
+  const words = calculateWordWidths({
+    breakAll,
+    style,
+    children: tempText + suffix,
+  });
+
+  if (!words) {
+    return [false, []];
+  }
+
+  const result: ReadonlyArray<WordsWithWidth> = calculate(
+    words.wordsWithComputedWidth,
+    lineWidth,
+    spaceWidth,
+    scaleToFit,
+  );
+
+  const doesOverflow = result.length > maxLines || findLongestLine(result).width > Number(lineWidth);
+
+  return [doesOverflow, result];
+};
 
 const calculateWordsByLines = (
   { maxLines, children, style, breakAll }: CalculateWordsByLinesProps,
-  initialWordsWithComputedWith: Array<WordWithComputedWidth>,
+  initialWordsWithComputedWith: ReadonlyArray<WordWithComputedWidth>,
   spaceWidth: number,
-  lineWidth: number | string,
-  scaleToFit?: boolean,
-): Array<Words> => {
+  lineWidth: number | string | undefined,
+  scaleToFit: boolean,
+): ReadonlyArray<Words> => {
   const shouldLimitLines = isNumber(maxLines);
-  const text = children as string;
+  const text = String(children);
 
-  const calculate = (words: Array<WordWithComputedWidth> = []) =>
-    words.reduce((result, { word, width }) => {
-      const currentLine = result[result.length - 1];
-
-      if (
-        currentLine &&
-        (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < Number(lineWidth))
-      ) {
-        // Word can be added to an existing line
-        currentLine.words.push(word);
-        currentLine.width += width + spaceWidth;
-      } else {
-        // Add first word to line or word is too long to scaleToFit on existing line
-        const newLine = { words: [word], width };
-        result.push(newLine);
-      }
-
-      return result;
-    }, []);
-
-  const originalResult = calculate(initialWordsWithComputedWith);
-
-  const findLongestLine = (words: Array<Words>): Words =>
-    words.reduce((a: Words, b: Words) => (a.width > b.width ? a : b));
+  const originalResult: ReadonlyArray<WordsWithWidth> = calculate(
+    initialWordsWithComputedWith,
+    lineWidth,
+    spaceWidth,
+    scaleToFit,
+  );
 
   if (!shouldLimitLines || scaleToFit) {
     return originalResult;
@@ -202,24 +255,6 @@ const calculateWordsByLines = (
   if (!overflows) {
     return originalResult;
   }
-
-  const suffix = '…';
-
-  const checkOverflow = (index: number): [boolean, Words[]] => {
-    const tempText = text.slice(0, index);
-
-    const words = calculateWordWidths({
-      breakAll,
-      style,
-      children: tempText + suffix,
-    }).wordsWithComputedWidth;
-
-    const result = calculate(words);
-
-    const doesOverflow = result.length > maxLines || findLongestLine(result).width > Number(lineWidth);
-
-    return [doesOverflow, result];
-  };
 
   let start = 0;
   let end = text.length - 1;
@@ -231,8 +266,26 @@ const calculateWordsByLines = (
     const middle = Math.floor((start + end) / 2);
     const prev = middle - 1;
 
-    const [doesPrevOverflow, result] = checkOverflow(prev);
-    const [doesMiddleOverflow] = checkOverflow(middle);
+    const [doesPrevOverflow, result] = checkOverflow(
+      text,
+      prev,
+      breakAll,
+      style,
+      maxLines,
+      lineWidth,
+      spaceWidth,
+      scaleToFit,
+    );
+    const [doesMiddleOverflow] = checkOverflow(
+      text,
+      middle,
+      breakAll,
+      style,
+      maxLines,
+      lineWidth,
+      spaceWidth,
+      scaleToFit,
+    );
 
     if (!doesPrevOverflow && !doesMiddleOverflow) {
       start = middle + 1;
@@ -257,7 +310,7 @@ const calculateWordsByLines = (
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
   const words = !isNullish(children) ? children.toString().split(BREAKING_SPACES) : [];
-  return [{ words }];
+  return [{ words, width: undefined }];
 };
 
 type GetWordsByLinesProps = Pick<Props, 'width' | 'scaleToFit' | 'children' | 'style' | 'breakAll' | 'maxLines'>;
@@ -265,7 +318,7 @@ type GetWordsByLinesProps = Pick<Props, 'width' | 'scaleToFit' | 'children' | 's
 export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, maxLines }: GetWordsByLinesProps) => {
   // Only perform calculations if using features that require them (multiline, scaleToFit)
   if ((width || scaleToFit) && !Global.isSsr) {
-    let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
+    let wordsWithComputedWidth: ReadonlyArray<WordWithComputedWidth>, spaceWidth: number;
 
     const wordWidths = calculateWordWidths({ breakAll, children, style });
 
@@ -283,7 +336,7 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
       wordsWithComputedWidth,
       spaceWidth,
       width,
-      scaleToFit,
+      Boolean(scaleToFit),
     );
   }
   return getWordsWithoutCalculate(children);
@@ -291,91 +344,99 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 
 const DEFAULT_FILL = '#808080';
 
-export const Text = forwardRef<SVGTextElement, Props>(
-  (
-    {
-      x: propsX = 0,
-      y: propsY = 0,
-      lineHeight = '1em',
-      // Magic number from d3
-      capHeight = '0.71em',
-      scaleToFit = false,
-      textAnchor = 'start',
-      // Maintain compat with existing charts / default SVG behavior
-      verticalAnchor = 'end',
-      fill = DEFAULT_FILL,
-      ...props
-    },
-    ref,
-  ) => {
-    const wordsByLines: Array<Words> = useMemo(() => {
-      return getWordsByLines({
-        breakAll: props.breakAll,
-        children: props.children,
-        maxLines: props.maxLines,
-        scaleToFit,
-        style: props.style,
-        width: props.width,
-      });
-    }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
+const textDefaultProps = {
+  breakAll: false,
+  // Magic number from d3
+  capHeight: '0.71em',
+  fill: DEFAULT_FILL,
+  lineHeight: '1em',
+  scaleToFit: false,
+  textAnchor: 'start',
+  // Maintain compat with existing charts / default SVG behavior
+  verticalAnchor: 'end',
+  x: 0,
+  y: 0,
+} as const satisfies Partial<Props>;
 
-    const { dx, dy, angle, className, breakAll, ...textProps } = props;
+export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
+  const {
+    x: propsX,
+    y: propsY,
+    lineHeight,
+    capHeight,
+    fill,
+    scaleToFit,
+    textAnchor,
+    verticalAnchor,
+    ...props
+  } = resolveDefaultProps(outsideProps, textDefaultProps);
+  const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
+    return getWordsByLines({
+      breakAll: props.breakAll,
+      children: props.children,
+      maxLines: props.maxLines,
+      scaleToFit,
+      style: props.style,
+      width: props.width,
+    });
+  }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
 
-    if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
-      return null;
-    }
-    const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
-    const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
+  const { dx, dy, angle, className, breakAll, ...textProps } = props;
 
-    let startDy: string;
-    switch (verticalAnchor) {
-      case 'start':
-        startDy = reduceCSSCalc(`calc(${capHeight})`);
-        break;
-      case 'middle':
-        startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
-        break;
-      default:
-        startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
-        break;
-    }
+  if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
+    return null;
+  }
+  const x = Number(propsX) + (isNumber(dx) ? dx : 0);
+  const y = Number(propsY) + (isNumber(dy) ? dy : 0);
 
-    const transforms = [];
-    if (scaleToFit) {
-      const lineWidth = wordsByLines[0].width;
-      const { width } = props;
-      transforms.push(`scale(${isNumber(width as number) ? (width as number) / lineWidth : 1})`);
-    }
-    if (angle) {
-      transforms.push(`rotate(${angle}, ${x}, ${y})`);
-    }
-    if (transforms.length) {
-      textProps.transform = transforms.join(' ');
-    }
+  let startDy: string;
+  switch (verticalAnchor) {
+    case 'start':
+      startDy = reduceCSSCalc(`calc(${capHeight})`);
+      break;
+    case 'middle':
+      startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
+      break;
+    default:
+      startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
+      break;
+  }
 
-    return (
-      <text
-        {...svgPropertiesAndEvents(textProps)}
-        ref={ref}
-        x={x}
-        y={y}
-        className={clsx('recharts-text', className)}
-        textAnchor={textAnchor}
-        fill={fill.includes('url') ? DEFAULT_FILL : fill}
-      >
-        {wordsByLines.map((line, index) => {
-          const words = line.words.join(breakAll ? '' : ' ');
-          return (
-            // duplicate words will cause duplicate keys
-            // eslint-disable-next-line react/no-array-index-key
-            <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
-              {words}
-            </tspan>
-          );
-        })}
-      </text>
-    );
-  },
-);
+  const transforms = [];
+  if (scaleToFit) {
+    const lineWidth = wordsByLines[0].width;
+    const { width } = props;
+    transforms.push(`scale(${isNumber(width) && isNumber(lineWidth) ? width / lineWidth : 1})`);
+  }
+  if (angle) {
+    transforms.push(`rotate(${angle}, ${x}, ${y})`);
+  }
+  if (transforms.length) {
+    textProps.transform = transforms.join(' ');
+  }
+
+  return (
+    <text
+      {...svgPropertiesAndEvents(textProps)}
+      ref={ref}
+      x={x}
+      y={y}
+      className={clsx('recharts-text', className)}
+      textAnchor={textAnchor}
+      fill={fill.includes('url') ? DEFAULT_FILL : fill}
+    >
+      {wordsByLines.map((line, index) => {
+        const words = line.words.join(breakAll ? '' : ' ');
+        return (
+          // duplicate words will cause duplicate keys
+          // eslint-disable-next-line react/no-array-index-key
+          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
+            {words}
+          </tspan>
+        );
+      })}
+    </text>
+  );
+});
 
 Text.displayName = 'Text';
