@@ -939,9 +939,9 @@ export type ActiveDotProps = DotProps & {
   payload: any;
   index: number;
   dataKey: DataKey<any>;
-  cx: number;
-  cy: number;
-  r: number | string;
+  cx: number | undefined;
+  cy: number | undefined;
+  r: number | string | undefined;
   fill: string;
   strokeWidth: number;
   stroke: string;

@@ -75,7 +75,7 @@ interface InternalAreaProps {
   data?: any[];
   dataKey: DataKey<any>;
   dot: ActiveDotType;
-  height?: number;
+  height: number;
   hide: boolean;
 
   /**
@@ -101,7 +101,7 @@ interface InternalAreaProps {
   top: number;
   type?: CurveType;
   unit?: string | number;
-  width?: number;
+  width: number;
   xAxisId: string | number;
   yAxisId: string | number;
 }
@@ -241,8 +241,8 @@ function Dots({
       ...areaProps,
       ...customDotProps,
       index: i,
-      cx: entry.x,
-      cy: entry.y,
+      cx: entry.x ?? undefined,
+      cy: entry.y ?? undefined,
       dataKey,
       value: entry.value,
       payload: entry.payload,
@@ -273,8 +273,8 @@ function AreaLabelListProvider({
 }) {
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
     const viewBox: TrapezoidViewBox = {
-      x: point.x,
-      y: point.y,
+      x: point.x ?? 0,
+      y: point.y ?? 0,
       width: 0,
       lowerWidth: 0,
       upperWidth: 0,
@@ -291,7 +291,7 @@ function AreaLabelListProvider({
   });
 
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : null}>
+    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
