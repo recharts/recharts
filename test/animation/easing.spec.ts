@@ -139,16 +139,15 @@ describe('configBezier', () => {
     expect(bezier(1)).toBeCloseTo(1);
   });
 
-  // perhaps this shouldn't return a function, but rather throw an error - the output is useless anyway
-  it('should return bezier function that returns all NaNs if the input is not a known function', () => {
+  it('should return linear easing function if the input is not a known function', () => {
     // @ts-expect-error typescript correctly highlights that the input is invalid
     const bezier = configBezier('invalid');
     expect(bezier).toBeInstanceOf(Function);
-    expect(bezier(0)).toBe(NaN);
-    expect(bezier(0.25)).toBe(NaN);
-    expect(bezier(0.5)).toBe(NaN);
-    expect(bezier(0.75)).toBe(NaN);
-    expect(bezier(1)).toBe(NaN);
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.25, 4);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 4);
+    expect(bezier(0.75)).toBeCloseTo(0.75, 4);
+    expect(bezier(1)).toBe(1);
   });
 });
 
