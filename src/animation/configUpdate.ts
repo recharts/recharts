@@ -111,7 +111,7 @@ function createStepperUpdate<T extends Record<string, unknown>>(
 
     // return stop animation method
     return () => {
-      stopAnimation();
+      stopAnimation?.();
     };
   };
 }
@@ -173,7 +173,7 @@ function createTimingUpdate<T extends Record<string, number>>(
 
     // return stop animation method
     return () => {
-      stopAnimation();
+      stopAnimation?.();
     };
   };
 }
