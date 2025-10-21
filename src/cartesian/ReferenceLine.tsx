@@ -133,6 +133,69 @@ const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLine
 
 type EndPointsPropsSubset = Pick<PropsWithDefaults, 'y' | 'x' | 'segment' | 'ifOverflow'>;
 
+const getHorizontalLineEndPoints = (
+  yCoord: number | string,
+  ifOverflow: IfOverflow,
+  position: Props['position'],
+  yAxisOrientation: Props['orientation'],
+  scales: any,
+  viewBox: CartesianViewBoxRequired,
+) => {
+  const { x, width } = viewBox;
+  const coord = scales.y.apply(yCoord, { position });
+  // don't render the line if the scale can't compute a result that makes sense
+  if (isNan(coord)) return null;
+
+  if (ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
+    return null;
+  }
+
+  const points = [
+    { x: x + width, y: coord },
+    { x, y: coord },
+  ];
+  return yAxisOrientation === 'left' ? points.reverse() : points;
+};
+
+const getVerticalLineEndPoints = (
+  xCoord: number | string,
+  ifOverflow: IfOverflow,
+  position: Props['position'],
+  xAxisOrientation: Props['orientation'],
+  scales: any,
+  viewBox: CartesianViewBoxRequired,
+) => {
+  const { y, height } = viewBox;
+  const coord = scales.x.apply(xCoord, { position });
+  // don't render the line if the scale can't compute a result that makes sense
+  if (isNan(coord)) return null;
+
+  if (ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
+    return null;
+  }
+
+  const points = [
+    { x: coord, y: y + height },
+    { x: coord, y },
+  ];
+  return xAxisOrientation === 'top' ? points.reverse() : points;
+};
+
+const getSegmentLineEndPoints = (
+  segment: ReadonlyArray<Segment>,
+  ifOverflow: IfOverflow,
+  position: Props['position'],
+  scales: any,
+) => {
+  const points = segment.map(p => scales.apply(p, { position }));
+
+  if (ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
+    return null;
+  }
+
+  return points;
+};
+
 export const getEndPoints = (
   scales: any,
   viewBox: CartesianViewBoxRequired,
@@ -141,51 +204,18 @@ export const getEndPoints = (
   yAxisOrientation: Props['orientation'],
   props: EndPointsPropsSubset,
 ) => {
-  const { x: xCoord, y: yCoord, segment } = props;
+  const { x: xCoord, y: yCoord, segment, ifOverflow } = props;
   const isFixedX = isNumOrStr(xCoord);
   const isFixedY = isNumOrStr(yCoord);
-  const isSegment: boolean = segment != null && segment.length === 2;
-
-  const { x, y, width, height } = viewBox;
 
   if (isFixedY) {
-    const coord = scales.y.apply(yCoord, { position });
-    // don't render the line if the scale can't compute a result that makes sense
-    if (isNan(coord)) return null;
-
-    if (props.ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
-      return null;
-    }
-
-    const points = [
-      { x: x + width, y: coord },
-      { x, y: coord },
-    ];
-    return yAxisOrientation === 'left' ? points.reverse() : points;
+    return getHorizontalLineEndPoints(yCoord, ifOverflow, position, yAxisOrientation, scales, viewBox);
   }
   if (isFixedX) {
-    const coord = scales.x.apply(xCoord, { position });
-    // don't render the line if the scale can't compute a result that makes sense
-    if (isNan(coord)) return null;
-
-    if (props.ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
-      return null;
-    }
-
-    const points = [
-      { x: coord, y: y + height },
-      { x: coord, y },
-    ];
-    return xAxisOrientation === 'top' ? points.reverse() : points;
+    return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, scales, viewBox);
   }
-  if (isSegment) {
-    const points = segment.map(p => scales.apply(p, { position }));
-
-    if (props.ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
-      return null;
-    }
-
-    return points;
+  if (segment != null && segment.length === 2) {
+    return getSegmentLineEndPoints(segment, ifOverflow, position, scales);
   }
 
   return null;
