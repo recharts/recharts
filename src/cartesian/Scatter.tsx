@@ -11,7 +11,6 @@ import {
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -49,7 +48,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
-import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
+import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
@@ -499,7 +498,7 @@ export function computeScatterPoints({
   const xAxisDataKey = isNullish(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
   const yAxisDataKey = isNullish(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
   const zAxisDataKey = zAxis && zAxis.dataKey;
-  const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
+  const defaultRangeZ = zAxis ? zAxis.range : implicitZAxis.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
   const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
   const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
