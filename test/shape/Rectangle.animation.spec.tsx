@@ -23,7 +23,7 @@ function getRectPath(container: Element) {
   return trim(rect.getAttribute('d'));
 }
 
-function getStyle(container: Element): string {
+function getStyle(container: Element): string | null {
   assertNotNull(container);
   const rect = getFirstRect(container);
   expect(rect).toHaveAttribute('style');
@@ -85,7 +85,7 @@ function expectNoStrokeDasharray(container: Element) {
 async function expectAnimatedStrokeDasharray(container: HTMLElement, animationManager: MockAnimationManager) {
   const initialStyle = getStyle(container);
 
-  const allStyles: string[] = [];
+  const allStyles: Array<string | null> = [];
   allStyles.push(initialStyle);
 
   await animationManager.setAnimationProgress(0.1);

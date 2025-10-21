@@ -42,6 +42,9 @@ describe('when a Recharts chart is used in another Redux app as a neighbour', ()
   const App = ({ spy }: { spy?: (arg: number) => unknown }) => {
     const Comp = (): null => {
       const chartHeight = useAppSelector(selectChartHeight);
+      if (chartHeight == null) {
+        throw new Error('Expected chart height');
+      }
       spy?.(chartHeight);
       return null;
     };
@@ -86,6 +89,9 @@ describe('when a Recharts chart is used in another Redux app as a parent', () =>
   const App = ({ spy }: { spy?: (arg: number) => unknown }) => {
     const Comp = (): null => {
       const chartHeight = useAppSelector(selectChartHeight);
+      if (chartHeight == null) {
+        throw new Error('Expected chart height');
+      }
       spy?.(chartHeight);
       return null;
     };

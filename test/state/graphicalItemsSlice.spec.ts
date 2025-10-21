@@ -14,7 +14,7 @@ import { AreaSettings } from '../../src/state/types/AreaSettings';
 describe('graphicalItemsSlice', () => {
   const item1: BarSettings = {
     maxBarSize: 0,
-    minPointSize: undefined,
+    minPointSize: 0,
     id: 'my-bar',
     isPanorama: false,
     type: 'bar',
@@ -47,7 +47,7 @@ describe('graphicalItemsSlice', () => {
     isPanorama: false,
     type: 'area',
     stackId: undefined,
-    dataKey: undefined,
+    dataKey: 'a',
     data: PageData,
     xAxisId: 'x',
     yAxisId: 'y',

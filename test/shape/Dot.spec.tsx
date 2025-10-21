@@ -3,6 +3,7 @@ import { describe, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
 
 import { Surface, Dot } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Dot />', () => {
   test('Render 1 circle in simple Dot', () => {
@@ -50,6 +51,7 @@ describe('<Dot />', () => {
       </Surface>,
     );
     const circle = container.querySelector('.recharts-dot');
+    assertNotNull(circle);
     expect.soft(circle.getAttributeNames().sort()).toEqual(['class', 'cx', 'cy', 'fill', 'r']);
     expect.soft(circle.getAttribute('class')).toEqual('recharts-dot my-custom-classname');
     expect.soft(circle.getAttribute('cx')).toEqual('100');
