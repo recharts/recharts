@@ -339,7 +339,7 @@ function BarLabelListProvider({
 }
 
 function BarRectangleWithActiveState(props: {
-  shape: ActiveShape<BarProps, SVGPathElement>;
+  shape: ActiveShape<BarProps, SVGPathElement> | undefined;
   activeBar: ActiveShape<BarProps, SVGPathElement>;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
@@ -375,7 +375,7 @@ function BarRectangleWithActiveState(props: {
 }
 
 function BarRectangleNeverActive(props: {
-  shape: ActiveShape<BarProps, SVGPathElement>;
+  shape: ActiveShape<BarProps, SVGPathElement> | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
   index: number;
@@ -402,7 +402,7 @@ function BarRectangles({
   data: ReadonlyArray<BarRectangleItem> | undefined;
   props: BarRectanglesProps;
 }) {
-  const { id, ...baseProps } = svgPropertiesNoEvents(props);
+  const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
   const { shape, dataKey, activeBar } = props;
 
   const {

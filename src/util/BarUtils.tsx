@@ -45,7 +45,7 @@ export type BarRectangleProps = {
   width?: number;
   height?: number;
   index: number;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
 } & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 export function BarRectangle(props: BarRectangleProps) {
