@@ -3,8 +3,8 @@ import { assertNotNull } from './assertNotNull';
 
 export type ExpectedRadarPolygon = {
   d: string;
-  fill: string;
-  fillOpacity: string;
+  fill: string | null;
+  fillOpacity: string | null;
 };
 
 export function getRadarPolygons(container: Element): ReadonlyArray<SVGPathElement> {

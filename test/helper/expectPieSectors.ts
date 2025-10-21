@@ -1,4 +1,5 @@
 import { trim } from './trim';
+import { assertNotNull } from './assertNotNull';
 
 export function selectPieSectors(container: Element) {
   return Array.from(container.querySelectorAll('.recharts-pie-sector path.recharts-sector'));
@@ -78,7 +79,9 @@ export function getPieSectorAngles(sectors: ReadonlyArray<Element>) {
     }
     const cx = parseFloat(sector.getAttribute('cx') ?? '0');
     const cy = parseFloat(sector.getAttribute('cy') ?? '0');
-    return calculateAnglesFromPath(cx, cy, d);
+    const anglesFromPath = calculateAnglesFromPath(cx, cy, d);
+    assertNotNull(anglesFromPath);
+    return anglesFromPath;
   });
 }
 
