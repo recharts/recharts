@@ -51,7 +51,7 @@ export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
 
   useEffect(() => {
     return () => {
-      if (prevPropsRef.current != null) {
+      if (prevPropsRef.current != null && graphicalItemId != null) {
         dispatch(removeErrorBar({ itemId: graphicalItemId, errorBar: prevPropsRef.current }));
         prevPropsRef.current = null;
       }

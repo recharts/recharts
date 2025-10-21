@@ -180,7 +180,7 @@ export function Legend(outsideProps: Props) {
 
   const legendPortal = portalFromProps ?? legendPortalFromContext;
 
-  if (legendPortal == null) {
+  if (legendPortal == null || contextPayload == null) {
     return null;
   }
 
