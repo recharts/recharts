@@ -12,6 +12,7 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { ActiveDotProps } from '../../../src/util/types';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 const commonChartProps = {
   width: 400,
@@ -35,11 +36,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const circle = activeDot.querySelector('circle');
+      assertNotNull(circle);
       expect(circle).toBeVisible();
       expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', 'fill', 'stroke-width', 'stroke', 'class']);
       expect(circle.getAttribute('class')).toEqual('recharts-dot');
@@ -65,11 +68,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const customElement = activeDot.querySelector('[data-testid="my-custom-dot"]');
+      assertNotNull(customElement);
       expect(customElement).toBeVisible();
       expect(customElement.getAttributeNames()).toEqual([
         'data-testid',
@@ -151,11 +156,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const circle = activeDot.querySelector('circle');
+      assertNotNull(circle);
       expect(circle).toBeVisible();
       expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', 'fill', 'stroke-width', 'stroke', 'class']);
       expect(circle.getAttribute('class')).toEqual('recharts-dot');
@@ -181,11 +188,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const customElement = activeDot.querySelector('[data-testid="my-custom-dot"]');
+      assertNotNull(customElement);
       expect(customElement).toBeVisible();
       expect(customElement.getAttributeNames()).toEqual([
         'data-testid',
@@ -267,11 +276,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const circle = activeDot.querySelector('circle');
+      assertNotNull(circle);
       expect(circle).toBeVisible();
       expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', 'fill', 'stroke-width', 'stroke', 'class']);
       expect(circle.getAttribute('class')).toEqual('recharts-dot');
@@ -297,11 +308,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const customElement = activeDot.querySelector('[data-testid="my-custom-dot"]');
+      assertNotNull(customElement);
       expect(customElement).toBeVisible();
       expect(customElement.getAttributeNames()).toEqual([
         'data-testid',
@@ -383,11 +396,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const circle = activeDot.querySelector('circle');
+      assertNotNull(circle);
       expect(circle).toBeVisible();
       // Not sure why does Radar activeDot not have fill but for some reason it does not.
       expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', 'fill', 'stroke-width', 'stroke', 'class']);
@@ -414,11 +429,13 @@ describe('ActiveDot', () => {
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
+      assertNotNull(activeDot);
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
       expect(activeDot.getAttribute('class')).toEqual('recharts-layer recharts-active-dot');
 
       const customElement = activeDot.querySelector('[data-testid="my-custom-dot"]');
+      assertNotNull(customElement);
       expect(customElement).toBeVisible();
       expect(customElement.getAttributeNames()).toEqual([
         'data-testid',
