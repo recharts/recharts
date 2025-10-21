@@ -8,7 +8,7 @@ export function assertHasLegend(container: Element): ReadonlyArray<Element> {
 
 export function expectLegendLabels(
   container: Element,
-  expectedLabels: undefined | ReadonlyArray<{ textContent: string; fill: string; stroke?: string }>,
+  expectedLabels: undefined | ReadonlyArray<{ textContent: string; fill: string | null; stroke?: string }>,
 ) {
   assertNotNull(container);
 
