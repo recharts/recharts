@@ -6,6 +6,7 @@ import {
   svgPropertiesNoEvents,
   svgPropertiesNoEventsFromUnknown,
 } from '../../src/util/svgPropertiesNoEvents';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('svgPropertiesNoEvents', () => {
   it('should return an empty object when called with an empty object', () => {
@@ -121,7 +122,8 @@ describe('svgPropertiesNoEvents', () => {
       name?: string;
       style?: CSSProperties;
     };
-    const output: ExpectedOutputType = svgPropertiesNoEvents(input);
+    const output: ExpectedOutputType | null = svgPropertiesNoEvents(input);
+    assertNotNull(output);
 
     // @ts-expect-error this should be a type error because `width` is not in the input, so it should not be in the output either
     const w = output.width;
@@ -207,7 +209,7 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       custom: 'not-a-svg-prop',
     };
     const element: ReactElement<InputType> = <svg {...myProps} />;
-    const result: Partial<Record<SVGElementPropKeysType, unknown>> = svgPropertiesNoEventsFromUnknown(element);
+    const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(element);
     expect(result).toEqual({
       'aria-label': 'test',
       className: 'svg-class',
@@ -292,11 +294,11 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
         return svgPropertiesNoEventsFromUnknown(i);
       }
       const input1: InputType = { cx: 10, cy: 10, r: 5 };
-      const result1: Partial<Record<SVGElementPropKeysType, unknown>> = noInfer(input1);
+      const result1: Partial<Record<SVGElementPropKeysType, unknown>> | null = noInfer(input1);
       expect(result1).toEqual({ cx: 10, cy: 10, r: 5 });
 
       const input2: InputType = true;
-      const result2: Partial<Record<SVGElementPropKeysType, unknown>> = noInfer(input2);
+      const result2: Partial<Record<SVGElementPropKeysType, unknown>> | null = noInfer(input2);
       expect(result2).toBeNull();
     });
   });
