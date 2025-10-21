@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, PureComponent, useEffect } from 'react';
+import { CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import { DefaultLegendContent, LegendPayload, Props as DefaultProps } from './DefaultLegendContent';
@@ -12,13 +12,14 @@ import { ElementOffset, useElementOffset } from '../util/useElementOffset';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
 }
 
 type ContentProps = Props & {
-  margin: Partial<Margin>;
+  margin: Margin | undefined;
   chartWidth: number;
   chartHeight: number;
   contextPayload: ReadonlyArray<LegendPayload>;
@@ -51,7 +52,7 @@ type PositionInput = {
 function getDefaultPosition(
   style: CSSProperties | undefined,
   props: PositionInput,
-  margin: Margin,
+  margin: Margin | undefined,
   chartWidth: number,
   chartHeight: number,
   box: ElementOffset,
@@ -103,11 +104,6 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
   itemSorter?: LegendItemSorter;
 };
 
-interface State {
-  boxWidth: number;
-  boxHeight: number;
-}
-
 function LegendSettingsDispatcher(props: LegendSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -127,7 +123,36 @@ function LegendSizeDispatcher(props: Size): null {
   return null;
 }
 
-function LegendWrapper(props: Props) {
+function getWidthOrHeight(
+  layout: LayoutType | undefined,
+  height: number | undefined,
+  width: number | undefined,
+  maxWidth: number,
+): null | { height?: number; width?: number } {
+  if (layout === 'vertical' && isNumber(height)) {
+    return {
+      height,
+    };
+  }
+  if (layout === 'horizontal') {
+    return {
+      width: width || maxWidth,
+    };
+  }
+
+  return null;
+}
+
+const legendDefaultProps = {
+  align: 'center',
+  iconSize: 14,
+  itemSorter: 'value',
+  layout: 'horizontal',
+  verticalAlign: 'bottom',
+} as const satisfies Partial<Props>;
+
+export function Legend(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, legendDefaultProps);
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
@@ -140,9 +165,8 @@ function LegendWrapper(props: Props) {
   if (chartWidth == null || chartHeight == null) {
     return null;
   }
-  const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
+  const maxWidth = chartWidth - (margin?.left || 0) - (margin?.right || 0);
+  const widthOrHeight = getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
   // if the user supplies their own portal, only use their defined wrapper styles
   const outerStyle: CSSProperties | undefined = portalFromProps
     ? wrapperStyle
@@ -183,38 +207,4 @@ function LegendWrapper(props: Props) {
   return createPortal(legendElement, legendPortal);
 }
 
-export class Legend extends PureComponent<Props, State> {
-  static displayName = 'Legend';
-
-  static defaultProps = {
-    align: 'center',
-    iconSize: 14,
-    itemSorter: 'value',
-    layout: 'horizontal',
-    verticalAlign: 'bottom',
-  };
-
-  static getWidthOrHeight(
-    layout: LayoutType | undefined,
-    height: number | undefined,
-    width: number | undefined,
-    maxWidth: number,
-  ): null | { height?: number; width?: number } {
-    if (layout === 'vertical' && isNumber(height)) {
-      return {
-        height,
-      };
-    }
-    if (layout === 'horizontal') {
-      return {
-        width: width || maxWidth,
-      };
-    }
-
-    return null;
-  }
-
-  public render() {
-    return <LegendWrapper {...this.props} />;
-  }
-}
+Legend.displayName = 'Legend';
