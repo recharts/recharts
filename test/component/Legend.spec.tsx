@@ -32,9 +32,10 @@ import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelect
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
 import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
 import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
-import { Size } from '../../src/util/types';
+import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -1244,6 +1245,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1264,6 +1266,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1280,6 +1283,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1296,6 +1300,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1368,6 +1373,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper);
           expect(wrapper).toBeInTheDocument();
           expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1376,9 +1382,9 @@ describe('<Legend />', () => {
       );
 
       type LegendPositionTextCase = {
-        align: LegendProps['align'];
-        verticalAlign: LegendProps['verticalAlign'];
-        layout: LegendProps['layout'];
+        align: HorizontalAlignmentType;
+        verticalAlign: VerticalAlignmentType;
+        layout: CartesianLayout;
         expectedStyleOnSecondRender: string;
       };
 
@@ -1524,6 +1530,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper);
           expect(wrapper).toBeInTheDocument();
           expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1545,6 +1552,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper2 = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper2);
           expect(wrapper2).toBeInTheDocument();
           expect.soft(wrapper2.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper2.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1807,7 +1815,8 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
-          <Area dataKey={undefined} />
+          {/* @ts-expect-error Indeed Typescript is correct, Area requires a dataKey */}
+          <Area />
         </AreaChart>,
       );
       expectLegendLabels(container, [{ fill: 'none', textContent: '' }]);
@@ -2831,7 +2840,7 @@ describe('<Legend />', () => {
           <Legend />
         </RadialBarChart>,
       );
-      expectLegendLabels(container, undefined);
+      expectLegendLabels(container, null);
     });
 
     it('should update legend if RadialBarChart data changes', () => {

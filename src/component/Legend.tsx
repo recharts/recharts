@@ -101,7 +101,7 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
    * If this is undefined then Legend renders inside the recharts-wrapper element.
    */
   portal?: HTMLElement | null;
-  itemSorter?: LegendItemSorter;
+  itemSorter?: LegendItemSorter | null;
 };
 
 function LegendSettingsDispatcher(props: LegendSettings): null {
