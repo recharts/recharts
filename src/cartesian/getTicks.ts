@@ -42,11 +42,13 @@ function getTicksEnd(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
+    if (entry.tickCoord != null) {
+      const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
 
-    if (isShow) {
-      end = entry.tickCoord - sign * (getSize() / 2 + minTickGap);
-      result[i] = { ...entry, isShow: true };
+      if (isShow) {
+        end = entry.tickCoord - sign * (getSize() / 2 + minTickGap);
+        result[i] = { ...entry, isShow: true };
+      }
     }
   }
 
@@ -77,11 +79,13 @@ function getTicksStart(
       tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
     };
 
-    const isTailShow = isVisible(sign, tail.tickCoord, () => tailSize, start, end);
+    if (tail.tickCoord != null) {
+      const isTailShow = isVisible(sign, tail.tickCoord, () => tailSize, start, end);
 
-    if (isTailShow) {
-      end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
-      result[len - 1] = { ...tail, isShow: true };
+      if (isTailShow) {
+        end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
+        result[len - 1] = { ...tail, isShow: true };
+      }
     }
   }
 
@@ -107,11 +111,13 @@ function getTicksStart(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
+    if (entry.tickCoord != null) {
+      const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
 
-    if (isShow) {
-      start = entry.tickCoord + sign * (getSize() / 2 + minTickGap);
-      result[i] = { ...entry, isShow: true };
+      if (isShow) {
+        start = entry.tickCoord + sign * (getSize() / 2 + minTickGap);
+        result[i] = { ...entry, isShow: true };
+      }
     }
   }
 
