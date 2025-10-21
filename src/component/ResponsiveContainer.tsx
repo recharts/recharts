@@ -14,6 +14,7 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
+import { noop } from 'es-toolkit';
 import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
@@ -79,17 +80,21 @@ export interface Props {
 
 const ResponsiveContainerContext = createContext<Size>({ width: -1, height: -1 });
 
+function isAcceptableSize(size: { width: number | undefined; height: number | undefined }): size is Size {
+  return isPositiveNumber(size.width) && isPositiveNumber(size.height);
+}
+
 function ResponsiveContainerContextProvider({
   children,
   width,
   height,
 }: {
   children: ReactNode;
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
 }) {
   const size = useMemo(() => ({ width, height }), [width, height]);
-  if (width <= 0 || height <= 0) {
+  if (!isAcceptableSize(size)) {
     /*
      * Don't render the container if width or height is non-positive because
      * in that case the chart will not be rendered properly anyway.
@@ -102,7 +107,7 @@ function ResponsiveContainerContextProvider({
 
 export const useResponsiveContainerContext = () => useContext(ResponsiveContainerContext);
 
-const SizeDetectorContainer = forwardRef<HTMLDivElement, Props>(
+const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
   (
     {
       aspect,
@@ -128,14 +133,14 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement, Props>(
     }: Props,
     ref,
   ) => {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
     /*
      * We are using a ref to avoid re-creating the ResizeObserver when the onResize function changes.
      * The ref is updated on every render, so the latest onResize function is always available in the effect.
      */
     const onResizeRef = useRef<Props['onResize']>();
     onResizeRef.current = onResize;
-    useImperativeHandle(ref, () => containerRef.current);
+    useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 
     const [sizes, setSizes] = useState<{
       containerWidth: number;
@@ -158,6 +163,9 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement, Props>(
     }, []);
 
     useEffect(() => {
+      if (containerRef.current == null) {
+        return noop;
+      }
       let callback = (entries: ResizeObserverEntry[]) => {
         const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
         setContainerSize(containerWidth, containerHeight);
@@ -193,7 +201,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement, Props>(
     });
 
     warn(
-      calculatedWidth > 0 || calculatedHeight > 0,
+      (calculatedWidth != null && calculatedWidth > 0) || (calculatedHeight != null && calculatedHeight > 0),
       `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
