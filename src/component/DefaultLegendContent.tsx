@@ -95,7 +95,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
           strokeWidth={4}
           fill="none"
           stroke={color}
-          strokeDasharray={data.payload.strokeDasharray}
+          strokeDasharray={data.payload?.strokeDasharray}
           x1={0}
           y1={halfSize}
           x2={SIZE}

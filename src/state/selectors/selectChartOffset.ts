@@ -6,9 +6,6 @@ import { ChartOffset } from '../../types';
 export const selectChartOffset = createSelector(
   [selectChartOffsetInternal],
   (offsetInternal: ChartOffsetInternal): ChartOffset => {
-    if (!offsetInternal) {
-      return undefined;
-    }
     return {
       top: offsetInternal.top,
       bottom: offsetInternal.bottom,
