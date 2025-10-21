@@ -1,8 +1,9 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
+import { curveLinear } from 'victory-vendor/d3-shape';
 import { Surface, Curve } from '../../src';
-import { getPath } from '../../src/shape/Curve';
+import { getPath, CurveType } from '../../src/shape/Curve';
 
 describe('<Curve />', () => {
   describe('all points defined', () => {
@@ -74,6 +75,19 @@ describe('<Curve />', () => {
       );
 
       expect(container.querySelectorAll('.recharts-curve')).toHaveLength(0);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('renders a path when path prop is passed', () => {
+      const path = 'M10,10 L20,20 C30,30 40,40 50,50';
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve path={path} />
+        </Surface>,
+      );
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      const curve = container.querySelector('.recharts-curve');
+      expect(curve.getAttribute('d')).toBe(path);
       expect(container).toMatchSnapshot();
     });
   });
@@ -165,6 +179,111 @@ describe('<Curve />', () => {
       expect(d.match(/M/g) || []).toHaveLength(2);
       expect(container).toMatchSnapshot();
     });
+  });
+});
+
+describe('type prop', () => {
+  const points = [
+    { x: 10, y: 10 },
+    { x: 25, y: 40 },
+    { x: 40, y: 10 },
+    { x: 55, y: 40 },
+    { x: 70, y: 10 },
+  ];
+
+  test('renders a linear curve as fallback for invalid type', () => {
+    const { container } = render(
+      <Surface width={400} height={400}>
+        {/* @ts-expect-error testing invalid type */}
+        <Curve points={points} type="invalidCurveType" />
+      </Surface>,
+    );
+
+    const { container: linearContainer } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} type="linear" />
+      </Surface>,
+    );
+
+    const path1 = container.querySelector('.recharts-curve').getAttribute('d');
+    const path2 = linearContainer.querySelector('.recharts-curve').getAttribute('d');
+    expect(path1).toBe(path2);
+    expect(container).toMatchSnapshot();
+  });
+
+  test('renders a curve when type is a custom function', () => {
+    const { container } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} type={curveLinear} />
+      </Surface>,
+    );
+
+    const { container: linearContainer } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} type="linear" />
+      </Surface>,
+    );
+
+    const path1 = container.querySelector('.recharts-curve').getAttribute('d');
+    const path2 = linearContainer.querySelector('.recharts-curve').getAttribute('d');
+    expect(path1).toBe(path2);
+    expect(container).toMatchSnapshot();
+  });
+
+  const curveTypes: ReadonlyArray<CurveType> = [
+    'basis',
+    'basisClosed',
+    'basisOpen',
+    'bumpX',
+    'bumpY',
+    'linear',
+    'linearClosed',
+    'natural',
+    'monotoneX',
+    'monotoneY',
+    'step',
+    'stepBefore',
+    'stepAfter',
+  ];
+
+  it.each(curveTypes)('renders a %s curve', type => {
+    const { container } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} type={type} />
+      </Surface>,
+    );
+    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
+  });
+});
+
+describe('event handlers and refs', () => {
+  const points = [
+    { x: 10, y: 10 },
+    { x: 25, y: 40 },
+  ];
+  test('calls onClick handler when curve is clicked', () => {
+    const onClick = vi.fn();
+    const { container } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} onClick={onClick} />
+      </Surface>,
+    );
+    const curve = container.querySelector('.recharts-curve');
+    expect(curve).not.toBeNull();
+    fireEvent.click(curve);
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  test('sets the pathRef to the path element', () => {
+    const ref = React.createRef<SVGPathElement>();
+    const { container } = render(
+      <Surface width={400} height={400}>
+        <Curve points={points} pathRef={ref} />
+      </Surface>,
+    );
+    expect(ref.current).not.toBeNull();
+    expect(ref.current).toBe(container.querySelector('.recharts-curve'));
   });
 });
 
