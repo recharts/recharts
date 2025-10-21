@@ -19,7 +19,7 @@ import {
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { shallowEqual } from '../util/ShallowEqual';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -56,7 +56,7 @@ function SetXAxisSettings(settings: XAxisSettings): ReactNode {
   return null;
 }
 
-const XAxisImpl = (props: Props) => {
+const XAxisImpl = (props: PropsWithDefaults) => {
   const { xAxisId, className } = props;
   const viewBox = useAppSelector(selectAxisViewBox);
   const isPanorama = useIsPanorama();
@@ -112,8 +112,10 @@ const xAxisDefaultProps = {
   xAxisId: 0,
 };
 
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof xAxisDefaultProps>;
+
 const XAxisSettingsDispatcher = (outsideProps: Props) => {
-  const props = resolveDefaultProps(outsideProps, xAxisDefaultProps);
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, xAxisDefaultProps);
   return (
     <>
       <SetXAxisSettings
