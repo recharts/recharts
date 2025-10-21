@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxj
 import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { CartesianViewBoxRequired, Coordinate, DataKey } from '../util/types';
+import { CartesianViewBoxRequired, Coordinate, DataKey, PolarCoordinate } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
 
 /**
@@ -70,7 +70,7 @@ export type TooltipPayloadConfiguration = {
 
 export type ActiveTooltipProps = {
   activeIndex: TooltipIndex;
-  activeCoordinate: Coordinate | undefined;
+  activeCoordinate: Coordinate | PolarCoordinate | undefined;
 };
 
 /**
@@ -150,7 +150,7 @@ export type TooltipInteractionState = {
    * - when the chart is controlled programmatically through `defaultIndex` prop
    * - when the chart is controlled using keyboard interactions
    */
-  coordinate: Coordinate | undefined;
+  coordinate: Coordinate | PolarCoordinate | undefined;
 };
 
 export type TooltipSyncState = TooltipInteractionState & {

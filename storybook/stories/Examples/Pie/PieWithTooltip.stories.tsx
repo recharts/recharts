@@ -17,7 +17,7 @@ interface DataPoint {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const CustomContent = ({ active, payload }: { active: boolean; payload: Array<DataPoint> }) => {
+const CustomContent = ({ active, payload }: { active: boolean; payload: ReadonlyArray<DataPoint> }) => {
   if (active && payload && payload.length > 0) {
     return (
       <div

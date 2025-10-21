@@ -124,12 +124,16 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
-export type PolarCoordinate = {
-  cx: number;
-  cy: number;
-  radius: number;
+export type PolarCoordinate = Coordinate & {
+  angle: number;
   startAngle: number;
   endAngle: number;
+  clockWise: boolean;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  radius: number;
 };
 
 export type ScaleType =

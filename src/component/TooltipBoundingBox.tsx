@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { CSSProperties, PureComponent, ReactNode } from 'react';
-import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
+import {
+  AllowInDimension,
+  AnimationDuration,
+  AnimationTiming,
+  CartesianViewBox,
+  Coordinate,
+  PolarCoordinate,
+} from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
 import { ElementOffset, SetElementOffset } from '../util/useElementOffset';
 
@@ -10,7 +17,7 @@ export type TooltipBoundingBoxProps = {
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
   children: ReactNode;
-  coordinate: Coordinate | undefined;
+  coordinate: Coordinate | PolarCoordinate | undefined;
   hasPayload: boolean;
   isAnimationActive: boolean;
   offset: number;

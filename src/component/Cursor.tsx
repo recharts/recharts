@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
 import { clsx } from 'clsx';
-import { ChartOffsetInternal, Coordinate, LayoutType, TooltipEventType } from '../util/types';
+import { ChartOffsetInternal, Coordinate, LayoutType, PolarCoordinate, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -25,7 +25,7 @@ export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
 export type CursorProps = {
   cursor: CursorDefinition;
   tooltipEventType: TooltipEventType;
-  coordinate: Coordinate | undefined;
+  coordinate: Coordinate | PolarCoordinate | undefined;
   payload: TooltipPayload;
   index: TooltipIndex | undefined;
 };
@@ -35,6 +35,10 @@ export type CursorConnectedProps = CursorProps & {
   layout: LayoutType;
   offset: ChartOffsetInternal;
   chartName: string;
+};
+
+const isPolarCoordinate = (c: Coordinate | PolarCoordinate): c is PolarCoordinate => {
+  return 'radius' in c && 'startAngle' in c && 'endAngle' in c;
 };
 
 export function CursorInternal(props: CursorConnectedProps) {
@@ -56,8 +60,7 @@ export function CursorInternal(props: CursorConnectedProps) {
   } else if (chartName === 'BarChart') {
     restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
     cursorComp = Rectangle;
-  } else if (layout === 'radial') {
-    // @ts-expect-error TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
+  } else if (layout === 'radial' && isPolarCoordinate(activeCoordinate)) {
     const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
     restProps = {
       cx,

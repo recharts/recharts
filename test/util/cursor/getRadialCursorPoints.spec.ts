@@ -4,6 +4,12 @@ import { PolarCoordinate } from '../../../src/util/types';
 describe('getRadialCursorPoints', () => {
   it('should add startPoint and endPoint to activeCoordinate', () => {
     const activeCoordinate: PolarCoordinate = {
+      angle: 0,
+      clockWise: false,
+      innerRadius: 0,
+      outerRadius: 0,
+      x: 0,
+      y: 0,
       cx: 10,
       cy: 15,
       radius: 5,
