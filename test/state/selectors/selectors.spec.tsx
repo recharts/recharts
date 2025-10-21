@@ -11,7 +11,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
-import { ChartCoordinate, ChartPointer, Coordinate, TooltipEventType } from '../../../src/util/types';
+import { ChartPointer, Coordinate, PolarCoordinate, TooltipEventType } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   addTooltipEntrySettings,
@@ -260,13 +260,14 @@ describe('selectTooltipPayload', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
       positions: undefined,
-      settings: undefined,
+      settings: { nameKey: 'y' },
       dataDefinedOnItem: undefined,
     };
     const expectedEntry1: TooltipPayloadEntry = {
       payload: undefined,
       dataKey: undefined,
-      nameKey: undefined,
+      name: undefined,
+      nameKey: 'y',
       value: undefined,
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
@@ -308,13 +309,14 @@ describe('selectTooltipPayload', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
       positions: undefined,
-      settings: undefined,
+      settings: { nameKey: 'y' },
       dataDefinedOnItem: undefined,
     };
     const expectedEntry1: TooltipPayloadEntry = {
       payload: undefined,
       dataKey: undefined,
-      nameKey: undefined,
+      name: undefined,
+      nameKey: 'y',
       value: undefined,
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
@@ -557,7 +559,7 @@ describe('selectActiveIndex', () => {
 describe('selectActiveCoordinate', () => {
   it('should return undefined for initial state', () => {
     const initialState = createRechartsStore().getState();
-    const expected: ChartCoordinate = undefined;
+    const expected: Coordinate | PolarCoordinate | undefined = undefined;
     expect(selectActiveCoordinate(initialState, 'axis', 'hover', undefined)).toBe(expected);
     expect(selectActiveCoordinate(initialState, 'axis', 'click', undefined)).toBe(expected);
     expect(selectActiveCoordinate(initialState, 'item', 'hover', undefined)).toBe(expected);
@@ -568,7 +570,7 @@ describe('selectActiveCoordinate', () => {
     const store = createRechartsStore(preloadedState);
 
     const initialState = createRechartsStore().getState();
-    const expected: ChartCoordinate = { x: 100, y: 150 };
+    const expected: Coordinate | PolarCoordinate | undefined = { x: 100, y: 150 };
     expect(selectActiveCoordinate(initialState, 'axis', 'hover', undefined)).toBe(undefined);
 
     store.dispatch(
@@ -592,7 +594,7 @@ describe('selectActiveCoordinate', () => {
     const store = createRechartsStore(preloadedState);
 
     const initialState = createRechartsStore().getState();
-    const expected: ChartCoordinate = { x: 100, y: 150 };
+    const expected: Coordinate | PolarCoordinate | undefined = { x: 100, y: 150 };
     expect(selectActiveCoordinate(initialState, 'axis', 'click', undefined)).toBe(undefined);
 
     store.dispatch(
@@ -614,7 +616,7 @@ describe('selectActiveCoordinate', () => {
     const store = createRechartsStore(preloadedState);
 
     const initialState = createRechartsStore().getState();
-    const expected: ChartCoordinate = { x: 100, y: 150 };
+    const expected: Coordinate | PolarCoordinate | undefined = { x: 100, y: 150 };
     expect(selectActiveCoordinate(initialState, 'item', 'hover', undefined)).toBe(undefined);
 
     store.dispatch(
@@ -643,7 +645,10 @@ describe('selectActiveCoordinate', () => {
     const store = createRechartsStore(preloadedState);
 
     const initialState = createRechartsStore().getState();
-    const expected: ChartCoordinate = { x: 100, y: 150 };
+    const expected: Coordinate | PolarCoordinate | undefined = {
+      x: 100,
+      y: 150,
+    };
     expect(selectActiveCoordinate(initialState, 'item', 'click', undefined)).toBe(undefined);
 
     store.dispatch(
@@ -1039,7 +1044,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
   it('should return empty array in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectTooltipState).tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
+      const tooltipData = useAppSelector(selectTooltipState)?.tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
       spy(tooltipData);
       return null;
     };
@@ -1055,7 +1060,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
   it('should return all tooltip payloads defined on graphical items in ComposedChart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectTooltipState).tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
+      const tooltipData = useAppSelector(selectTooltipState)?.tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
       spy(tooltipData);
       return null;
     };
@@ -1222,7 +1227,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
   it('should return all payloads in PieChart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectTooltipState).tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
+      const tooltipData = useAppSelector(selectTooltipState)?.tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
       spy(tooltipData);
       return null;
     };

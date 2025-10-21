@@ -8,8 +8,8 @@ import { useClipPathId } from '../../src/container/ClipPathProvider';
 type AllContextPropertiesMixed = {
   clipPathId: string | undefined;
   viewBox: CartesianViewBox | undefined;
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
   offset: ChartOffsetInternal | null;
 };
 

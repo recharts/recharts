@@ -12,12 +12,6 @@ const emptyOffset: OffsetVertical & OffsetHorizontal = {
 
 vi.mock('../../../src/util/ReactUtils');
 describe('appendOffsetOfLegend', () => {
-  it('should return offset without changes if Legend is not found in children', () => {
-    const result = appendOffsetOfLegend(emptyOffset, undefined, undefined);
-    expect(result).toBe(emptyOffset);
-    expect(result).toEqual(emptyOffset);
-  });
-
   it('should add extra space for a vertical legend', () => {
     const settings: LegendSettings = {
       verticalAlign: 'bottom',

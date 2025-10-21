@@ -285,10 +285,12 @@ describe('isNullish', () => {
 
 describe('upperFirst', () => {
   it('should return null when value is null', () => {
+    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     expect(upperFirst(null)).toBe(null);
   });
 
   it('should return undefined when value is undefined', () => {
+    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     expect(upperFirst(undefined)).toBe(undefined);
   });
 
