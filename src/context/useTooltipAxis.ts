@@ -4,7 +4,7 @@ import { AxisWithTicksSettings } from '../state/selectors/axisSelectors';
 import { selectTooltipAxisScale, selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
 import { selectTooltipAxis } from '../state/selectors/selectTooltipAxis';
 
-export const useTooltipAxis = (): AxisWithTicksSettings => useAppSelector(selectTooltipAxis);
+export const useTooltipAxis = (): AxisWithTicksSettings | undefined => useAppSelector(selectTooltipAxis);
 
 export const useTooltipAxisBandSize = (): number | undefined => {
   const tooltipAxis = useTooltipAxis();
