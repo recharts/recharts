@@ -42,7 +42,7 @@ export function RechartsStoreProvider({ preloadedState, children, reduxStoreName
     storeRef.current = createRechartsStore(preloadedState, reduxStoreName);
   }
 
-  // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+  // ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
   const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;
 
   return (

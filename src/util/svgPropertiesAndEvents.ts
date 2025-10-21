@@ -44,7 +44,7 @@ export function svgPropertiesAndEventsFromUnknown(input: unknown): SVGProps<unkn
   }
 
   if (isValidElement(input)) {
-    // @ts-expect-error we can't type this better because input can be any React element
+    // ts-expect-error we can't type this better because input can be any React element
     return svgPropertiesAndEvents(input.props);
   }
 
