@@ -25,7 +25,7 @@ import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal'
 import { useIsPanorama } from '../context/PanoramaContext';
 import { isLabelContentAFunction } from '../component/Label';
 import { shallowEqual } from '../util/ShallowEqual';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -64,7 +64,7 @@ function SetYAxisSettings(settings: YAxisSettings): null {
   return null;
 }
 
-const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
+const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
   const { yAxisId, className, width, label } = props;
 
   const cartesianAxisRef = useRef<CartesianAxisRef>(null);
@@ -165,8 +165,10 @@ export const yAxisDefaultProps = {
   yAxisId: 0,
 } as const satisfies Partial<Props>;
 
+type PropsWithDefaults = RequiresDefaultProps<Props, typeof yAxisDefaultProps>;
+
 const YAxisSettingsDispatcher = (outsideProps: Props) => {
-  const props = resolveDefaultProps(outsideProps, yAxisDefaultProps);
+  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, yAxisDefaultProps);
   return (
     <>
       <SetYAxisSettings
