@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
+import { cloneElement, createElement, isValidElement, ReactElement, SVGProps } from 'react';
 import { clsx } from 'clsx';
-import { ChartOffsetInternal, Coordinate, LayoutType, PolarCoordinate, TooltipEventType } from '../util/types';
+import {
+  ChartOffsetInternal,
+  Coordinate,
+  isPolarCoordinate,
+  LayoutType,
+  PolarCoordinate,
+  TooltipEventType,
+} from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -35,10 +42,6 @@ export type CursorConnectedProps = CursorProps & {
   layout: LayoutType;
   offset: ChartOffsetInternal;
   chartName: string;
-};
-
-const isPolarCoordinate = (c: Coordinate | PolarCoordinate): c is PolarCoordinate => {
-  return 'radius' in c && 'startAngle' in c && 'endAngle' in c;
 };
 
 export function CursorInternal(props: CursorConnectedProps) {
