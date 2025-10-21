@@ -141,7 +141,8 @@ function Icon({
   return <Symbols fill={color} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />;
 }
 
-function Items({ payload, iconSize, layout, formatter, inactiveColor, iconType }: InternalProps) {
+function Items(props: InternalProps) {
+  const { payload, iconSize, layout, formatter, inactiveColor, iconType } = props;
   const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
   const itemStyle = {
     display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -169,7 +170,7 @@ function Items({ payload, iconSize, layout, formatter, inactiveColor, iconType }
         style={itemStyle}
         // eslint-disable-next-line react/no-array-index-key
         key={`legend-item-${i}`}
-        {...adaptEventsOfChild(this.props, entry, i)}
+        {...adaptEventsOfChild(props, entry, i)}
       >
         <Surface
           width={iconSize}
