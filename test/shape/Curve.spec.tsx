@@ -5,75 +5,166 @@ import { Surface, Curve } from '../../src';
 import { getPath } from '../../src/shape/Curve';
 
 describe('<Curve />', () => {
-  const points = [
-    { x: 10, y: 10 },
-    { x: 25, y: 40 },
-    { x: 40, y: 10 },
-    { x: 55, y: 40 },
-    { x: 70, y: 10 },
-  ];
+  describe('all points defined', () => {
+    const points = [
+      { x: 10, y: 10 },
+      { x: 25, y: 40 },
+      { x: 40, y: 10 },
+      { x: 55, y: 40 },
+      { x: 70, y: 10 },
+    ];
 
-  const points02 = [
-    { x: 10, y: 100 },
-    { x: 25, y: 400 },
-    { x: 40, y: 100 },
-    { x: 55, y: 400 },
-    { x: 70, y: 100 },
-  ];
+    const points02 = [
+      { x: 10, y: 100 },
+      { x: 25, y: 400 },
+      { x: 40, y: 100 },
+      { x: 55, y: 400 },
+      { x: 70, y: 100 },
+    ];
 
-  test('renders 1 curve', () => {
-    const { container } = render(
-      <Surface width={400} height={400}>
-        <Curve stroke="#000" fill="none" type="monotone" points={points} />
-      </Surface>,
-    );
+    test('renders 1 curve', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={points} />
+        </Surface>,
+      );
 
-    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
-    expect(container).toMatchSnapshot();
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('renders 1 vertical layout area', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={0} />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('renders 1 horizontal layout area', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={0} />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('renders 1 area', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={points02} />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('Not render when points is empty', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={[]} />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(0);
+      expect(container).toMatchSnapshot();
+    });
   });
 
-  test('renders 1 vertical layout area', () => {
-    const { container } = render(
-      <Surface width={400} height={400}>
-        <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={0} />
-      </Surface>,
-    );
+  describe('connectNulls', () => {
+    const pointsWithNulls = [
+      { x: 10, y: 10 },
+      { x: 25, y: 40 },
+      { x: 40, y: null },
+      { x: 55, y: 40 },
+      { x: 70, y: 10 },
+    ];
 
-    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
-    expect(container).toMatchSnapshot();
-  });
+    test('renders a broken line when connectNulls is false and points have nulls', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={pointsWithNulls} />
+        </Surface>,
+      );
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      const path = container.querySelector('.recharts-curve');
+      const d = path.getAttribute('d');
+      // When not connecting nulls, d3's `defined` will create a break in the path.
+      // This results in multiple "M" commands in the `d` attribute.
+      expect(d.match(/M/g) || []).toHaveLength(2);
+      expect(container).toMatchSnapshot();
+    });
 
-  test('renders 1 horizontal layout area', () => {
-    const { container } = render(
-      <Surface width={400} height={400}>
-        <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={0} />
-      </Surface>,
-    );
+    test('renders a single connected line when connectNulls is true and points have nulls', () => {
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve stroke="#000" fill="none" type="monotone" points={pointsWithNulls} connectNulls />
+        </Surface>,
+      );
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      const path = container.querySelector('.recharts-curve');
+      // When connecting nulls, we filter points, so it should be a single path
+      // without breaks. A break would be indicated by another "M" command.
+      const d = path.getAttribute('d');
+      expect(d.match(/M/g) || []).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
 
-    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
-    expect(container).toMatchSnapshot();
-  });
+    test('should not throw when connectNulls is true and baseLine has nulls', () => {
+      const points = [
+        { x: 1, y: 1 },
+        { x: 2, y: 2 },
+      ];
+      const baseLineWithNulls = [
+        { x: 1, y: 10 },
+        { x: 2, y: null },
+      ];
 
-  test('renders 1 area', () => {
-    const { container } = render(
-      <Surface width={400} height={400}>
-        <Curve stroke="#000" fill="none" type="monotone" points={points} baseLine={points02} />
-      </Surface>,
-    );
+      // This should render without throwing an error
+      const renderCurve = () =>
+        render(
+          <Surface width={400} height={400}>
+            <Curve points={points} baseLine={baseLineWithNulls} connectNulls />
+          </Surface>,
+        );
 
-    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
-    expect(container).toMatchSnapshot();
-  });
+      expect(renderCurve).not.toThrow();
+      const { container } = renderCurve();
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      expect(container).toMatchSnapshot();
+    });
 
-  test('Not render when points is empty', () => {
-    const { container } = render(
-      <Surface width={400} height={400}>
-        <Curve stroke="#000" fill="none" type="monotone" points={[]} />
-      </Surface>,
-    );
+    test('should render a broken area when connectNulls is false and baseLine has nulls', () => {
+      const points = [
+        { x: 1, y: 1 },
+        { x: 2, y: 2 },
+        { x: 3, y: 3 },
+      ];
+      const baseLineWithNulls = [
+        { x: 1, y: 10 },
+        { x: 2, y: null },
+        { x: 3, y: 30 },
+      ];
 
-    expect(container.querySelectorAll('.recharts-curve')).toHaveLength(0);
-    expect(container).toMatchSnapshot();
+      const { container } = render(
+        <Surface width={400} height={400}>
+          <Curve points={points} baseLine={baseLineWithNulls} connectNulls={false} />
+        </Surface>,
+      );
+      expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+      const path = container.querySelector('.recharts-curve');
+      const d = path.getAttribute('d');
+      // The path should be broken into two areas
+      expect(d.match(/M/g) || []).toHaveLength(2);
+      expect(container).toMatchSnapshot();
+    });
   });
 });
 

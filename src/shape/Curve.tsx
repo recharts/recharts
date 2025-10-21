@@ -131,9 +131,16 @@ export const getPath = ({
   const formatPoints: ReadonlyArray<NullablePoint> = connectNulls ? points.filter(defined) : points;
   let lineFunction;
 
+  // When dealing with an area chart (where `baseLine` is an array),
+  // we need to pair points with their corresponding `baseLine` points first.
+  // This is to ensure that we filter points and their baseline counterparts together,
+  // preventing errors from mismatched array lengths and ensuring `defined` checks both.
   if (Array.isArray(baseLine)) {
-    const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
-    const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
+    const areaPoints = points.map((entry, index) => ({ ...entry, base: baseLine[index] }));
+
+    const areaDefined = (d: NullablePoint & { base?: NullablePoint }): d is Point & { base: Point } =>
+      d.base != null && defined(d) && defined(d.base);
+
     if (layout === 'vertical') {
       lineFunction = shapeArea<Point & { base: Point }>()
         .y(getY)
@@ -145,9 +152,11 @@ export const getPath = ({
         .y1(getY)
         .y0(d => d.base.y);
     }
-    lineFunction.defined(defined).curve(curveFactory);
+    lineFunction.defined(areaDefined).curve(curveFactory);
 
-    return lineFunction(areaPoints);
+    const finalPoints = connectNulls ? areaPoints.filter(areaDefined) : areaPoints;
+
+    return lineFunction(finalPoints);
   }
   if (layout === 'vertical' && isNumber(baseLine)) {
     lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
