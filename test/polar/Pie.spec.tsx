@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
-import { Point } from '../../src/shape/Curve';
 import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
@@ -44,8 +43,9 @@ import { expectPieSectors } from '../helper/expectPieSectors';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { PieSettings } from '../../src/state/types/PieSettings';
 import { userEventSetup } from '../helper/userEventSetup';
+import { Coordinate } from '../../src/util/types';
 
-type CustomizedLabelLineProps = { points?: Array<Point> };
+type CustomizedLabelLineProps = { points?: Array<Coordinate> };
 
 const pageDataSectorPaths = [
   { d: 'M 455,255 A 200,200,0, 0,0, 267.6182908505558,55.398450066111025 L 255,255 Z' },

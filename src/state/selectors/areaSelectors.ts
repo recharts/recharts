@@ -14,13 +14,12 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
-import { NullablePoint } from '../../shape/Curve';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { StackDataPoint, StackGroup, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { AreaSettings } from '../types/AreaSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 
-export interface AreaPointItem extends NullablePoint {
+export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
   y: number | null;
   value?: number | number[];
