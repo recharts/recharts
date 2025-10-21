@@ -239,6 +239,7 @@ function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem
     // @ts-expect-error customLineProps is contributing unknown props
     stroke: scatterProps && scatterProps.fill,
     ...customLineProps,
+    // @ts-expect-error linePoints is used before it is assigned (???)
     points: linePoints,
   };
 

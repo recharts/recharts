@@ -166,6 +166,9 @@ export const payloadSearcher: TooltipPayloadSearcher<SunburstData[], SunburstDat
   data: SunburstData[],
   activeIndex: TooltipIndex,
 ): SunburstData | undefined => {
+  if (activeIndex == null) {
+    return undefined;
+  }
   return get(data, activeIndex);
 };
 
@@ -215,6 +218,11 @@ const SunburstChartImpl = ({
 
   const width = useChartWidth();
   const height = useChartHeight();
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
+
+  if (width == null || height == null) {
+    return null;
+  }
 
   const outerRadius = outerRadiusFromProps ?? Math.min(width, height) / 2;
   const cx = cxFromProps ?? width / 2;
@@ -227,7 +235,6 @@ const SunburstChartImpl = ({
   const sectors: React.ReactNode[] = [];
   const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
 
-  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
