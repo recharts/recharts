@@ -321,7 +321,7 @@ const overridesConfig = [
     /*
      * Vite config files use default export by convention.
      */
-    files: ['**/vite.config.*', '**/vitest.config.*'],
+    files: ['**/vite.config*', '**/vitest.config*'],
     rules: {
       'import/no-default-export': 'off',
     },
