@@ -4,9 +4,10 @@
   "description": "the website of recharts",
   "private": true,
   "scripts": {
-    "build": "vite build && npm run prerender",
+    "build": "vite build && npm run prerender && npm run validate-sitemap",
     "build:client": "vite build",
     "prerender": "tsx scripts/prerender.tsx",
+    "validate-sitemap": "tsx scripts/validate-sitemap.tsx",
     "preview": "vite preview",
     "start": "vite"
   },

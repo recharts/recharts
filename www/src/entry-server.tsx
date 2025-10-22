@@ -13,6 +13,25 @@ export function render(url: string, template: string) {
 export function getAllRoutes(): string[] {
   const allRoutes: string[] = ['/'];
 
+  // Add routes without locale prefix (default locale paths)
+  allRoutes.push('/guide');
+  allRoutes.push('/api');
+  allRoutes.push('/examples');
+  allRoutes.push('/storybook');
+
+  guidePages.forEach(slug => {
+    allRoutes.push(`/guide/${slug}`);
+  });
+
+  apiComponents.forEach(slug => {
+    allRoutes.push(`/api/${slug}`);
+  });
+
+  exampleComponents.forEach(slug => {
+    allRoutes.push(`/examples/${slug}`);
+  });
+
+  // Add routes with locale prefixes
   supportedLocales.forEach(locale => {
     allRoutes.push(`/${locale}`);
     allRoutes.push(`/${locale}/guide`);
