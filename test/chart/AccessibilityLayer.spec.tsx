@@ -82,6 +82,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
 
       const svg = container.querySelector('svg');
+      assertNotNull(svg);
       assertChartA11yAttributes(svg);
     });
 
@@ -111,19 +112,20 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
           <Tooltip />
         </AreaChart>,
       );
+      assertNotNull(container);
 
       // Confirm that the tooltip container exists, but isn't displaying anything
       const tooltip = getTooltip(container);
       expect(tooltip.textContent).toBe('');
 
       // Once the chart receives focus, the tooltip should display
-      act(() => container.querySelector('svg').focus());
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      act(() => svg.focus());
       expect(tooltip).toHaveTextContent('uv : 400');
 
       // Use keyboard to move around
-      fireEvent.keyDown(document.querySelector('svg'), {
-        key: 'ArrowRight',
-      });
+      fireEvent.keyDown(svg, { key: 'ArrowRight' });
       expect(tooltip).toHaveTextContent('uv : 300');
     });
 
@@ -157,7 +159,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
 
       const cursor = container.querySelector('.recharts-tooltip-cursor');
-      expect(cursor).not.toBeNull();
+      assertNotNull(cursor);
 
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);

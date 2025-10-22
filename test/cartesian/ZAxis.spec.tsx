@@ -57,15 +57,18 @@ describe('<ZAxis />', () => {
     );
 
     const svg = document.querySelector('svg');
+    assertNotNull(svg);
     const gContainers = svg.querySelectorAll('.recharts-layer.recharts-scatter-symbol');
 
     expect(gContainers).toHaveLength(data.length);
 
     const firstShape = gContainers[0].querySelector('path');
+    assertNotNull(firstShape);
     const firstShapeName = firstShape.getAttribute('name');
     expect(firstShapeName).toBe(data[0].name);
 
     const secondShape = gContainers[1].querySelector('path');
+    assertNotNull(secondShape);
     const secondShapeName = secondShape.getAttribute('name');
     expect(secondShapeName).toBe(data[1].name);
 

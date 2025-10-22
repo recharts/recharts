@@ -7,8 +7,9 @@ import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { ExpectedPoint, expectScatterPoints, getAllScatterPoints } from '../helper/expectScatterPoints';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { assertNotNull } from '../helper/assertNotNull';
 
-function getDotsXY(container: Element): ReadonlyArray<{ cx: string; cy: string }> {
+function getDotsXY(container: Element): ReadonlyArray<{ cx: string | null; cy: string | null }> {
   return getAllScatterPoints(container).map(dot => ({
     cx: dot.getAttribute('cx'),
     cy: dot.getAttribute('cy'),
@@ -54,7 +55,7 @@ async function dotsDoNotMove(container: Element, animationManager: MockAnimation
 async function dotsAnimate(
   container: Element,
   animationManager: MockAnimationManager,
-): Promise<ReadonlyArray<{ cx: string; cy: string }>> {
+): Promise<ReadonlyArray<{ cx: string | null; cy: string | null }>> {
   const initial = getDotsXY(container);
 
   await animationManager.setAnimationProgress(0.1);
@@ -89,7 +90,7 @@ async function dotsAnimate(
   return [initial[0], step1[0], step2[0], step3[0], final[0]];
 }
 
-function getAllScatterPointPathsDs(container: Element): ReadonlyArray<string> {
+function getAllScatterPointPathsDs(container: Element): ReadonlyArray<string | null> {
   return Array.from(getAllScatterPoints(container)).map(path => path.getAttribute('d'));
 }
 
@@ -115,7 +116,7 @@ function assertAllItemsAreEqual<T>(arr: ReadonlyArray<T>): void {
 async function animatedScatterPoint(
   container: Element,
   animationManager: MockAnimationManager,
-): Promise<ReadonlyArray<string>> {
+): Promise<ReadonlyArray<string | null>> {
   const initialPaths = getAllScatterPointPathsDs(container);
   assertAllItemsAreEqual(initialPaths);
 
@@ -295,6 +296,7 @@ describe('Scatter Animation', () => {
     async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.setAnimationProgress(0.3);
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -340,6 +342,7 @@ describe('Scatter Animation', () => {
     async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -401,6 +404,7 @@ describe('Scatter Animation', () => {
 
       // now click once, that will hide the scatter in the middle of the animation
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();

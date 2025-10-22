@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { Bar, BarChart, Customized, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceDotsByAxis } from '../../src/state/selectors/axisSelectors';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<ReferenceDot />', () => {
   const data = [
@@ -280,6 +281,7 @@ describe('<ReferenceDot />', () => {
         </BarChart>,
       );
       const myCustomDot = container.querySelector('.custom-dot');
+      assertNotNull(myCustomDot);
       expect(myCustomDot).toBeInTheDocument();
       expect
         .soft(myCustomDot.getAttributeNames().sort())
@@ -339,6 +341,7 @@ describe('<ReferenceDot />', () => {
         </BarChart>,
       );
       const myCustomDot = container.querySelector('.custom-dot');
+      assertNotNull(myCustomDot);
       expect(myCustomDot).toBeInTheDocument();
       expect.soft(myCustomDot.getAttributeNames().sort()).toEqual(['class']);
       expect.soft(myCustomDot.getAttribute('class')).toEqual('custom-dot');
