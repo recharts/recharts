@@ -83,7 +83,7 @@ export function assertStableBetweenRenders<T>(
  * @param selector accepts RechartsRootState and returns T
  * @return T that the selector returned
  */
-export function useAppSelectorWithStableTest<T>(selector: Selector<RechartsRootState, T, never>): T {
+export function useAppSelectorWithStableTest<T>(selector: Selector<RechartsRootState, T, never>): T | undefined {
   return useAppSelector((state: RechartsRootState) => {
     const result1 = selector(state);
     const result2 = selector(state);

@@ -47,7 +47,7 @@ export type CartesianChartTestCase = {
     onTouchEnd?: (param: unknown) => void;
   }>;
   testName: string;
-  tooltipIndex: TooltipIndex;
+  tooltipIndex: NonNullable<TooltipIndex>;
 };
 
 export type PolarChartTestCase = {
@@ -211,12 +211,12 @@ export const allCartesianChartCases: ReadonlyArray<CartesianChartTestCase> = [
 
 export const allPolarChartCases: ReadonlyArray<PolarChartTestCase> = [PieChartCase, RadarChartCase, RadialBarChartCase];
 
-export const allCharts: ReadonlyArray<CartesianChartTestCase> = [].concat(
-  allCartesianChartCases,
+export const allCharts: ReadonlyArray<CartesianChartTestCase> = [
+  ...allCartesianChartCases,
   TreemapChartCase,
   SankeyChartCase,
   SunburstChartCase,
-);
+];
 
 /**
  * For when you want to exclude certain charts from the test suite.

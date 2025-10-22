@@ -15,6 +15,7 @@ import { Bar, BarChart, Tooltip, XAxis } from '../../src';
 import { PageData } from '../_data';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
+import { assertNotNull } from '../helper/assertNotNull';
 
 /**
  * These three charts accept the same named events - but they only trigger them when user interacts with the graphics.
@@ -44,6 +45,12 @@ const spies = {
   onTouchEnd: vi.fn(),
 };
 
+function getSurface(chartContainer: HTMLElement): Element {
+  const surface = chartContainer.querySelector('.recharts-surface');
+  assertNotNull(surface);
+  return surface;
+}
+
 describe('chart wrapper events', () => {
   beforeEach(() => {
     Object.values(spies).forEach(spy => spy.mockClear());
@@ -59,7 +66,7 @@ describe('chart wrapper events', () => {
 
     it('should call onClick when user clicks on the chart', () => {
       const { container } = render(<ChartElement onClick={spies.onClick} />);
-      fireEvent.click(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      fireEvent.click(getSurface(container), { clientX: 10, clientY: 10 });
       expect(spies.onClick).toHaveBeenCalled();
     });
 
@@ -71,14 +78,14 @@ describe('chart wrapper events', () => {
           onMouseLeave={spies.onMouseLeave}
         />,
       );
-      fireEvent.mouseOver(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      fireEvent.mouseOver(getSurface(container), { clientX: 10, clientY: 10 });
       expect(spies.onMouseEnter).toHaveBeenCalledTimes(1);
       expect(spies.onMouseMove).not.toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
-      fireEvent.mouseMove(container.querySelector('.recharts-wrapper'), { clientX: 20, clientY: 20 });
+      fireEvent.mouseMove(getSurface(container), { clientX: 20, clientY: 20 });
       expect(spies.onMouseMove).toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
-      fireEvent.mouseLeave(container.querySelector('.recharts-wrapper'));
+      fireEvent.mouseLeave(getSurface(container));
       expect(spies.onMouseLeave).toHaveBeenCalled();
     });
 
@@ -90,18 +97,18 @@ describe('chart wrapper events', () => {
           onTouchEnd={spies.onTouchEnd}
         />,
       );
-      fireEvent.touchStart(container.querySelector('.recharts-wrapper'), {
+      fireEvent.touchStart(getSurface(container), {
         changedTouches: [{ pageX: 10, pageY: 10 }],
       });
       expect(spies.onTouchStart).toHaveBeenCalled();
       expect(spies.onTouchMove).not.toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
-      fireEvent.touchMove(container.querySelector('.recharts-wrapper'), {
+      fireEvent.touchMove(getSurface(container), {
         changedTouches: [{ pageX: 20, pageY: 20 }],
       });
       expect(spies.onTouchMove).toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
-      fireEvent.touchEnd(container.querySelector('.recharts-wrapper'), {
+      fireEvent.touchEnd(getSurface(container), {
         changedTouches: [{ pageX: 20, pageY: 20 }],
       });
       expect(spies.onTouchEnd).toHaveBeenCalled();
@@ -111,7 +118,9 @@ describe('chart wrapper events', () => {
   describe.each(onlyCompact(allCharts))('$testName', ({ ChartElement, tooltipIndex }) => {
     it('should not call onClick when user clicks on the chart', () => {
       const { container } = render(<ChartElement onClick={spies.onClick} />);
-      fireEvent.click(container.querySelector('.recharts-surface'), { clientX: 10, clientY: 10 });
+      const surface = container.querySelector('.recharts-surface');
+      assertNotNull(surface);
+      fireEvent.click(surface, { clientX: 10, clientY: 10 });
       expect(spies.onClick).not.toHaveBeenCalled();
     });
 
@@ -123,9 +132,10 @@ describe('chart wrapper events', () => {
           onMouseLeave={spies.onMouseLeave}
         />,
       );
-      fireEvent.mouseOver(container.querySelector('.recharts-surface'), { clientX: 10, clientY: 10 });
-      fireEvent.mouseMove(container.querySelector('.recharts-surface'), { clientX: 20, clientY: 20 });
-      fireEvent.mouseLeave(container.querySelector('.recharts-surface'));
+      const surface = getSurface(container);
+      fireEvent.mouseOver(surface, { clientX: 10, clientY: 10 });
+      fireEvent.mouseMove(surface, { clientX: 20, clientY: 20 });
+      fireEvent.mouseLeave(surface);
       expect(spies.onMouseEnter).not.toHaveBeenCalled();
       expect(spies.onMouseMove).not.toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
@@ -141,9 +151,10 @@ describe('chart wrapper events', () => {
           onTouchEnd={spies.onTouchEnd}
         />,
       );
-      fireEvent.touchStart(container.querySelector('.recharts-surface'), { touches: [{ clientX: 20, clientY: 20 }] });
-      fireEvent.touchMove(container.querySelector('.recharts-surface'), { touches: [{ clientX: 20, clientY: 20 }] });
-      fireEvent.touchEnd(container.querySelector('.recharts-surface'));
+      const surface = getSurface(container);
+      fireEvent.touchStart(surface, { touches: [{ clientX: 20, clientY: 20 }] });
+      fireEvent.touchMove(surface, { touches: [{ clientX: 20, clientY: 20 }] });
+      fireEvent.touchEnd(surface);
       expect(spies.onTouchStart).not.toHaveBeenCalled();
       expect(spies.onTouchMove).not.toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
@@ -169,7 +180,7 @@ describe('chart wrapper event data', () => {
 
     it('should pass tooltip state to onClick when user clicks on the chart', () => {
       const { container } = renderTestCase();
-      fireEvent.click(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      fireEvent.click(getSurface(container), { clientX: 10, clientY: 10 });
       expectLastCalledWithData(spies.onClick, {
         activeCoordinate: { x: 37.5, y: 10 },
         activeDataKey: undefined,
@@ -193,7 +204,7 @@ describe('chart wrapper event data', () => {
 
     it('should pass tooltip state to onMouseEnter, onMouseMove, and onMouseLeave when user hovers over the chart', () => {
       const { container } = renderTestCase();
-      fireEvent.mouseOver(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      fireEvent.mouseOver(getSurface(container), { clientX: 10, clientY: 10 });
       expectLastCalledWithData(spies.onMouseEnter, {
         activeCoordinate: { x: 37.5, y: 10 },
         activeDataKey: undefined,
@@ -202,7 +213,7 @@ describe('chart wrapper event data', () => {
         activeTooltipIndex: '0',
         isTooltipActive: true,
       });
-      fireEvent.mouseMove(container.querySelector('.recharts-wrapper'), { clientX: 20, clientY: 20 });
+      fireEvent.mouseMove(getSurface(container), { clientX: 20, clientY: 20 });
       expectLastCalledWithData(spies.onMouseMove, {
         activeCoordinate: { x: 37.5, y: 20 },
         activeDataKey: undefined,
@@ -211,7 +222,7 @@ describe('chart wrapper event data', () => {
         activeTooltipIndex: '0',
         isTooltipActive: true,
       });
-      fireEvent.mouseLeave(container.querySelector('.recharts-wrapper'));
+      fireEvent.mouseLeave(getSurface(container));
       expectLastCalledWithData(spies.onMouseLeave, {
         activeCoordinate: {
           x: 37.5,

@@ -56,6 +56,7 @@ async function expectAnimatedPath(
   animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const initialPath = getRectPath(container);
+  assertNotNull(initialPath);
 
   const allPaths: string[] = [];
   allPaths.push(initialPath);
@@ -64,6 +65,7 @@ async function expectAnimatedPath(
     // eslint-disable-next-line no-await-in-loop
     await animationManager.setAnimationProgress(i);
     const currentPath = getRectPath(container);
+    assertNotNull(currentPath);
     // expect(allPaths).not.toContain(currentPath);
     allPaths.push(currentPath);
   }

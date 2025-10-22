@@ -1,11 +1,11 @@
-import { useEffect, useRef, EffectCallback, DependencyList } from 'react';
+import { useEffect, useRef, EffectCallback, DependencyList, MutableRefObject } from 'react';
 
 /*
  * https://stackoverflow.com/a/59843241
  */
 
 const usePrevious = <T>(value: T | null): T | null => {
-  const ref = useRef<T>(null);
+  const ref: MutableRefObject<T | null> = useRef<T>(null);
   useEffect(() => {
     ref.current = value;
   });

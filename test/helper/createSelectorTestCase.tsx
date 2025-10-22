@@ -57,9 +57,9 @@ function isReactHook<T>(fn: ReactHook<T> | Selector<RechartsRootState, T, never>
  */
 export function createSelectorTestCase(Component: ComponentType<{ children: ReactNode }>) {
   return function renderTestCase<T>(
-    selector: ReactHook<T> | Selector<RechartsRootState, T, never> = emptySelector,
+    selector: ReactHook<T> | Selector<RechartsRootState, T, never> | undefined = emptySelector,
   ): TestCaseResult<T> {
-    const spy: Mock<(selectorResult: T) => void> = vi.fn();
+    const spy: Mock<(selectorResult: T | undefined) => void> = vi.fn();
     const animationManager = new CompositeAnimationManager();
 
     const Comp = isReactHook(selector)
@@ -187,7 +187,7 @@ export function createSynchronisedSelectorTestCase(
   ComponentB: ComponentType<{ children: ReactNode }>,
   ComponentC?: ComponentType<{ children: ReactNode }>,
 ) {
-  return function renderTestCase<T>(selector: Selector<RechartsRootState, T, never> = emptySelector): {
+  return function renderTestCase<T>(selector: Selector<RechartsRootState, T | undefined, never> = emptySelector): {
     container: Element;
     wrapperA: Element;
     wrapperB: Element;
@@ -197,9 +197,9 @@ export function createSynchronisedSelectorTestCase(
     spyC: Mock<(selectorResult: T) => void>;
     debug: () => void;
   } {
-    const spyA: Mock<(selectorResult: T) => void> = vi.fn();
-    const spyB: Mock<(selectorResult: T) => void> = vi.fn();
-    const spyC: Mock<(selectorResult: T) => void> = vi.fn();
+    const spyA: Mock<(selectorResult: T | undefined) => void> = vi.fn();
+    const spyB: Mock<(selectorResult: T | undefined) => void> = vi.fn();
+    const spyC: Mock<(selectorResult: T | undefined) => void> = vi.fn();
 
     const CompA = (): null => {
       spyA(useAppSelectorWithStableTest(selector));

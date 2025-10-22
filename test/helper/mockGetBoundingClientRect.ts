@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import { mockHTMLElementProperty } from './mockHTMLElementProperty';
+import { NonEmptyArray } from '../../src/util/types';
 
 export function getMockDomRect(partial: Partial<DOMRect> = {}): DOMRect {
   return {
@@ -35,8 +36,8 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
   vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(mockDomRect);
 
   if (mockClientHeightWidth) {
-    mockHTMLElementProperty('offsetHeight', rect.height);
-    mockHTMLElementProperty('offsetWidth', rect.width);
+    mockHTMLElementProperty('offsetHeight', mockDomRect.height);
+    mockHTMLElementProperty('offsetWidth', mockDomRect.width);
   }
 }
 
@@ -49,7 +50,7 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
  * @return void
  */
 export function mockSequenceOfGetBoundingClientRect(
-  rects: Array<Partial<DOMRect>>,
+  rects: NonEmptyArray<Partial<DOMRect>>,
   mockClientHeightWidth = true,
 ): void {
   const mockDomRects = rects.map(getMockDomRect);
@@ -59,7 +60,7 @@ export function mockSequenceOfGetBoundingClientRect(
   vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(mockDomRects[mockDomRects.length - 1]);
 
   if (mockClientHeightWidth) {
-    mockHTMLElementProperty('offsetHeight', rects[0].height);
-    mockHTMLElementProperty('offsetWidth', rects[0].width);
+    mockHTMLElementProperty('offsetHeight', mockDomRects[0].height);
+    mockHTMLElementProperty('offsetWidth', mockDomRects[0].width);
   }
 }

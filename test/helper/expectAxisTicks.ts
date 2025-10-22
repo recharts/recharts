@@ -38,7 +38,7 @@ export function ExpectAxisDomain({
 }: {
   axisType: 'xAxis' | 'yAxis';
   axisId?: AxisId;
-  assert: (domainFromRedux: ReadonlyArray<unknown>) => void;
+  assert: (domainFromRedux: ReadonlyArray<unknown> | undefined) => void;
 }): null {
   const scale = useAppSelectorWithStableTest(state => selectAxisScale(state, axisType, axisId, false));
   assert(scale?.domain());

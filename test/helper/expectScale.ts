@@ -22,7 +22,7 @@ export function expectScale(actual: unknown, expected: ExpectedScale) {
   expect(scale).toBeInstanceOf(Function);
   expect(scale.domain(), 'domain error').toEqual(expected.domain);
   expect(scale.range(), 'range error').toEqual(expected.range);
-  if ('bandwidth' in expected) {
+  if ('bandwidth' in expected && typeof scale.bandwidth === 'function') {
     expect(scale.bandwidth(), 'bandwidth error').toEqual(expected.bandwidth);
   }
 }

@@ -24,9 +24,10 @@ function expectClipPathDimensions(
 }
 
 function expectClipPath(
-  container: Element,
+  container: Element | null,
   expectedDimensions: { x: string; y: string; width: string; height: string },
 ) {
+  assertNotNull(container);
   const allClipPaths = selectAllClipPaths(container);
   expect(allClipPaths).toHaveLength(1);
   const clipPath = allClipPaths[0];
@@ -59,6 +60,7 @@ describe('clip paths', () => {
       const line = container.querySelector('.recharts-line');
       expect(selectAllClipPaths(line)).toHaveLength(0);
       const curve = container.querySelector('.recharts-line-curve');
+      assertNotNull(curve);
       expect(curve.getAttribute('clip-path')).toEqual(null);
     });
 
@@ -76,10 +78,13 @@ describe('clip paths', () => {
         x: '99',
         y: '-196.5',
       });
+      assertNotNull(line);
       const clipPath = line.querySelector('clipPath');
+      assertNotNull(clipPath);
       const clipPathId = clipPath.getAttribute('id');
       expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-line-[:a-z]+/));
       const curve = container.querySelector('.recharts-line-curve');
+      assertNotNull(curve);
       expect(curve.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 
@@ -179,8 +184,10 @@ describe('clip paths', () => {
         </BarChart>,
       );
       const bar = container.querySelector('.recharts-bar');
+      assertNotNull(bar);
       expect(selectAllClipPaths(bar)).toHaveLength(0);
       const layer = bar.querySelector('.recharts-bar-rectangles');
+      assertNotNull(layer);
       expect(layer.getAttribute('clip-path')).toBe(null);
     });
 
@@ -198,10 +205,13 @@ describe('clip paths', () => {
         x: '99',
         y: '-196.5',
       });
+      assertNotNull(bar);
       const clipPath = bar.querySelector('clipPath');
+      assertNotNull(clipPath);
       const clipPathId = clipPath.getAttribute('id');
       expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-bar-[:a-z]+/));
       const layer = bar.querySelector('.recharts-bar-rectangles');
+      assertNotNull(layer);
       expect(layer.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 
@@ -247,6 +257,7 @@ describe('clip paths', () => {
         </ScatterChart>,
       );
       const scatter = container.querySelector('.recharts-scatter');
+      assertNotNull(scatter);
       expect(selectAllClipPaths(scatter)).toHaveLength(0);
       expect(scatter.getAttribute('clip-path')).toBe(null);
     });
@@ -259,6 +270,7 @@ describe('clip paths', () => {
         </ScatterChart>,
       );
       const scatter = container.querySelector('.recharts-scatter');
+      assertNotNull(scatter);
       expectClipPath(scatter, {
         height: '830',
         width: '379',
@@ -266,6 +278,7 @@ describe('clip paths', () => {
         y: '-196.5',
       });
       const clipPath = scatter.querySelector('clipPath');
+      assertNotNull(clipPath);
       const clipPathId = clipPath.getAttribute('id');
       expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-scatter-[:a-z]+/));
       expect(scatter.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);

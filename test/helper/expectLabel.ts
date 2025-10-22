@@ -2,11 +2,11 @@ import { assertNotNull } from './assertNotNull';
 
 export type ExpectedLabel = {
   textContent: string;
-  x: string;
-  y: string;
-  width: string;
-  height: string;
-  offset: string;
+  x: string | null;
+  y: string | null;
+  width: string | null;
+  height: string | null;
+  offset: string | null;
 };
 
 export function expectLabels(
