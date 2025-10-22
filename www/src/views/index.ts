@@ -2,6 +2,7 @@ import IndexView from './IndexView';
 import GuideView from './GuideView';
 import APIView from './APIView';
 import ExamplesView from './ExamplesView';
+import ExamplesIndexView from './ExamplesIndexView';
 import Storybook from './Storybook';
 
-export { IndexView, GuideView, APIView, ExamplesView, Storybook };
+export { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook };

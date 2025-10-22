@@ -22,7 +22,10 @@ const data02 = [
 
 export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
-    <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }} responsive>
+    <PieChart
+      style={{ width: '100%', height: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
+      responsive
+    >
       <Pie
         data={data01}
         dataKey="value"

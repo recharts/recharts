@@ -1,17 +1,10 @@
-import { Navigate, Route, Routes, useParams } from 'react-router';
-import { IndexView, GuideView, APIView, ExamplesView, Storybook } from '../views';
+import { Route, Routes } from 'react-router';
+import { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook } from '../views';
 import { Frame } from '../layouts/Frame';
-import { defaultLocale } from '../utils/LocaleUtils.ts';
-
-function RedirectToDefaultExample() {
-  const { locale } = useParams();
-  return <Navigate to={`/${locale}/examples/SimpleLineChart`} replace />;
-}
 
 export function routes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={`/${defaultLocale}`} />} />
       <Route
         path="/:locale/guide/:name?"
         element={
@@ -28,9 +21,16 @@ export function routes() {
           </Frame>
         }
       />
-      <Route path="/:locale/examples" element={<RedirectToDefaultExample />} />
       <Route
-        path="/:locale/examples/:name?"
+        path="/:locale/examples"
+        element={
+          <Frame>
+            <ExamplesIndexView />
+          </Frame>
+        }
+      />
+      <Route
+        path="/:locale/examples/:name"
         element={
           <Frame>
             <ExamplesView />
