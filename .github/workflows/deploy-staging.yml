@@ -1,0 +1,56 @@
+name: Deploy website to recharts.github.io/recharts/
+
+# This deployment and the ci.yml are going to overwrite each other
+# so this is only good as a staging environment for manual testing.
+
+on:
+  # this workflow runs only manually
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 20.x
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# This job will build and deploy the website to GitHub Pages (staging)
+# It will override the VR report from ci.yml which is okay - staging is temporary
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Install dependencies
+        working-directory: www
+        run: npm ci
+
+      - name: Build
+        working-directory: www
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'www/docs'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
