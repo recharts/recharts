@@ -17,16 +17,35 @@ interface ValidationResult {
 }
 
 function extractUrlsFromSitemap(sitemapContent: string): Set<string> {
-  const urlPattern = /<loc>(.*?)<\/loc>/g;
   const urls = new Set<string>();
+
+  // Extract primary URLs from <loc> tags
+  const locPattern = /<loc>(.*?)<\/loc>/g;
   let match;
 
-  // eslint-disable-next-line no-cond-assign
-  while ((match = urlPattern.exec(sitemapContent)) !== null) {
-    const url = match[1];
-    // Convert URL to path relative to outDir
+  function add(url: string) {
+    // sitemap has absolute URLs so first we remove that part
     const path = url.replace('https://recharts.github.io', '');
-    urls.add(path || '/');
+    // now we handle trivial cases
+    if (path == null || path === '/') {
+      return urls.add('/');
+    }
+    // some routes in sitemap end with a slash and some don't so let's normalize it
+    return urls.add(path.replace(/\/$/, ''));
+  }
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = locPattern.exec(sitemapContent)) !== null) {
+    const url = match[1];
+    add(url);
+  }
+
+  // Extract alternate URLs from xhtml:link tags
+  const altPattern = /<xhtml:link[^>]+href="([^"]+)"/g;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = altPattern.exec(sitemapContent)) !== null) {
+    const url = match[1];
+    add(url);
   }
 
   return urls;
@@ -104,6 +123,11 @@ function validateSitemap(): ValidationResult {
   console.log('Checking sitemap URLs...');
   let missingOrEmptyCount = 0;
   sitemapUrls.forEach(urlPath => {
+    // Skip localized 404 pages - they don't exist as separate files
+    if (urlPath.match(/^\/[^/]+\/404$/)) {
+      return;
+    }
+
     const htmlPath = getHtmlFilePath(urlPath, outDir);
 
     try {

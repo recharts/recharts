@@ -4,7 +4,6 @@ import { resolve } from 'path';
 import sitemap from 'vite-plugin-sitemap';
 import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
-import { defaultLocale } from './src/utils/LocaleUtils';
 
 export default defineConfig(({ mode }) => ({
   // depending on your application, base can also be "/"
@@ -23,10 +22,14 @@ export default defineConfig(({ mode }) => ({
       hostname: 'https://recharts.github.io',
       dynamicRoutes: getSiteRoutes(),
       outDir: 'docs',
-      exclude: ['/googlecacbec94e341ad8a'],
+      exclude: ['/googlecacbec94e341ad8a', '/404'],
       i18n: {
+        /*
+         * Here it's important that we _do not_ use the defaultLanguage
+         * because if we do then the sitemap plugin will exclude the default from URLs.
+         * Which is sensible thing to do but that's different from how the website itself is behaving.
+         */
         languages: Array.from(supportedLocales),
-        defaultLanguage: defaultLocale,
         strategy: 'prefix',
       },
       robots: [
