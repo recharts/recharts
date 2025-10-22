@@ -170,9 +170,9 @@ describe('AreaChart', () => {
         hide: false,
         isPanorama: false,
         type: 'area',
-        xAxisId: undefined,
-        yAxisId: undefined,
-        zAxisId: undefined,
+        xAxisId: 0,
+        yAxisId: 0,
+        zAxisId: 0,
         id: 'area-0',
         barSize: undefined,
         baseValue: undefined,
@@ -405,9 +405,9 @@ describe('AreaChart', () => {
         isPanorama: false,
         stackId: '1',
         type: 'area',
-        xAxisId: undefined,
-        yAxisId: undefined,
-        zAxisId: undefined,
+        xAxisId: 0,
+        yAxisId: 0,
+        zAxisId: 0,
       };
 
       areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings.id)));
@@ -473,9 +473,9 @@ describe('AreaChart', () => {
       hide: false,
       isPanorama: false,
       type: 'area',
-      xAxisId: undefined,
-      yAxisId: undefined,
-      zAxisId: undefined,
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
       id: 'area-0',
       barSize: undefined,
       baseValue: undefined,
@@ -718,7 +718,10 @@ describe('AreaChart', () => {
     ]);
 
     [uv, pv].forEach(path => {
-      const commands = [...path.getAttribute('d').matchAll(/[a-zA-Z][\d ,.]+/g)];
+      const d = path.getAttribute('d');
+      assertNotNull(d);
+      const matchAll = d.matchAll(/[a-zA-Z][\d ,.]+/g);
+      const commands = [...matchAll];
       expect(commands).toHaveLength(3);
       const [pageB] = commands[1];
       expect(pageB[0]).toBe('C');
