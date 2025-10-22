@@ -28,9 +28,9 @@ async function expectBarHeightAnimation(
   animationManager: MockAnimationManager,
   steps: number = 5,
 ): Promise<{
-  heights: ReadonlyArray<ReadonlyArray<string>>;
-  yCoordinates: ReadonlyArray<ReadonlyArray<string>>;
-  pathDs: ReadonlyArray<ReadonlyArray<string>>;
+  heights: ReadonlyArray<ReadonlyArray<string | null>>;
+  yCoordinates: ReadonlyArray<ReadonlyArray<string | null>>;
+  pathDs: ReadonlyArray<ReadonlyArray<string | null>>;
 }> {
   assertNotNull(container);
   /*
@@ -50,9 +50,9 @@ async function expectBarHeightAnimation(
     radius: bar.getAttribute('radius'),
   }));
 
-  const heightsDuringAnimation: string[][] = [];
-  const yCoordinatesDuringAnimation: string[][] = [];
-  const pathDsDuringAnimation: string[][] = [];
+  const heightsDuringAnimation: (string | null)[][] = [];
+  const yCoordinatesDuringAnimation: (string | null)[][] = [];
+  const pathDsDuringAnimation: (string | null)[][] = [];
   for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
     // eslint-disable-next-line no-await-in-loop
     await animationManager.setAnimationProgress(animationProgress);

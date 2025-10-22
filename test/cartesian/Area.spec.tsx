@@ -96,7 +96,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
   describe('dot', () => {
     test('Render customized dot when dot is set to be a function', () => {
       let areaDotProps;
-      const renderDot = (props: { cx: number; cy: number }) => {
+      const renderDot = (props: { cx: number | undefined; cy: number | undefined }) => {
         const { cx, cy } = props;
         areaDotProps = props;
 
@@ -136,7 +136,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const { container } = render(
         <ChartElement data={data}>
           {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
-          {/* TypeScript should flag this as an error, but we have strict null checks disabled in config */}
+          {/* @ts-expect-error TypeScript should flag this as an error, but we have strict null checks disabled in config */}
           <Area dataKey="value" dot={null} isAnimationActive={false} />
           <XAxis dataKey="x" allowDataOverflow />
         </ChartElement>,
@@ -160,6 +160,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const dots = container.querySelectorAll('.recharts-area-dot');
       expect(dots).toHaveLength(5);
       const dotsWrapper = container.querySelector('.recharts-area-dots');
+      assertNotNull(dotsWrapper);
       // Well this is confusing. When clipDot is false the className contains 'dots'. AKA clip path name includes what is showing, rather than what is clipped.
       expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-dots-recharts-area');
     });
@@ -178,6 +179,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(dots).toHaveLength(5);
 
       const dotsWrapper = container.querySelector('.recharts-area-dots');
+      assertNotNull(dotsWrapper);
       // When clipDot is true the className does not contain 'dots'
       expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-area');
     });
@@ -555,6 +557,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const spy = vi.fn();
       const Comp = (): null => {
         const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        assertNotNull(cartesianItems);
         if (cartesianItems.length > 1) {
           throw new Error('Expected only one item in cartesianItems');
         }
@@ -842,6 +845,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
@@ -859,6 +863,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
@@ -915,6 +920,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
@@ -931,6 +937,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
@@ -990,6 +997,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
@@ -1006,6 +1014,7 @@ describe('getBaseValue', () => {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
+            // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
             type: axisType,
           };
           const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
@@ -1053,9 +1062,9 @@ describe('computeArea', () => {
       hide: false,
       isPanorama: false,
       type: 'area',
-      xAxisId: undefined,
-      yAxisId: undefined,
-      zAxisId: undefined,
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
       id: 'area-0',
       barSize: undefined,
       connectNulls: false,
@@ -1106,9 +1115,9 @@ describe('computeArea', () => {
       hide: false,
       isPanorama: false,
       type: 'area',
-      xAxisId: undefined,
-      yAxisId: undefined,
-      zAxisId: undefined,
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
       id: 'area-0',
       barSize: undefined,
       connectNulls: false,

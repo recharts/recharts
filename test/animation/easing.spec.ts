@@ -7,6 +7,7 @@ import {
   configSpring,
   EasingFunction,
 } from '../../src/animation/easing';
+import { assertNotNull } from '../helper/assertNotNull';
 
 function assertIsBezierFunction(easing: EasingFunction): asserts easing is BezierEasingFunction {
   if (typeof easing !== 'function' || easing.isStepper) {
@@ -219,6 +220,7 @@ describe('configEasing', () => {
 
   it('should return stepper function', () => {
     const spring = configEasing('spring');
+    assertNotNull(spring);
     expect(spring).toBeInstanceOf(Function);
     expect(spring.isStepper).toBe(true);
     assertIsSpringFunction(spring);
@@ -227,6 +229,7 @@ describe('configEasing', () => {
 
   it('should handle cubic-bezier input', () => {
     const bezier = configEasing('cubic-bezier(0.42,0,0.58,1)');
+    assertNotNull(bezier);
     expect(bezier).toBeInstanceOf(Function);
     assertIsBezierFunction(bezier);
     expect(bezier.isStepper).toBe(false);

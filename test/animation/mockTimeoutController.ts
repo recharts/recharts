@@ -30,11 +30,13 @@ export class MockTimeoutController implements TimeoutController {
    * @returns undefined
    */
   async triggerNextTimeout(now: number): Promise<void> {
-    if (this.timeouts.length === 0) {
+    const next = this.timeouts.shift();
+
+    if (next == null) {
       return;
     }
 
-    const { callback } = this.timeouts.shift();
+    const { callback } = next;
     await Promise.resolve(); // Simulate async behavior
     // Remove the timeout before executing the callback, because the callback may queue itself again
     this.removeTimeout(callback);

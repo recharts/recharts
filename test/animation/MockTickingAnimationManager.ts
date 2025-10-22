@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import { AnimationManager, ReactSmoothQueue } from '../../src/animation/AnimationManager';
 import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
+import { assertNotNull } from '../helper/assertNotNull';
 
 /**
  * It's a faff trying to match function so let's have another type for the easy assertions
@@ -27,6 +28,7 @@ export class MockTickingAnimationManager extends MockAbstractAnimationManager im
       expect(this.queue).toBeNull();
       return;
     }
+    assertNotNull(this.queue);
     const serializedQueue: SerializableQueue = this.queue.map(item => {
       if (typeof item === 'function') {
         const name = 'getMockName' in item && typeof item.getMockName === 'function' ? item.getMockName() : item.name;
