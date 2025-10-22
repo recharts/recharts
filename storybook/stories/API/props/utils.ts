@@ -4,10 +4,11 @@ import { StorybookArgs } from '../../../StorybookArgs';
 export const getStoryArgsFromArgsTypesObject = (argsTypes: StorybookArgs): Record<string, unknown> => {
   const args: Record<string, unknown> = {};
   Object.keys(argsTypes).forEach((key: string) => {
-    if ('defaultValue' in argsTypes[key]) {
-      args[key] = argsTypes[key].defaultValue;
-    } else if ('table' in argsTypes[key] && 'defaultValue' in argsTypes[key].table) {
-      args[key] = argsTypes[key].table.defaultValue;
+    const argsType = argsTypes[key];
+    if ('defaultValue' in argsType) {
+      args[key] = argsType.defaultValue;
+    } else if ('table' in argsType && argsType.table != null && 'defaultValue' in argsType.table) {
+      args[key] = argsType.table.defaultValue;
     }
   });
   return args;

@@ -1,5 +1,5 @@
-import { ReactElement, SVGProps, isValidElement } from 'react';
-import { Coordinate, RangeObj, PolarViewBoxRequired, ChartOffsetInternal, ChartPointer } from './types';
+import { isValidElement } from 'react';
+import { ChartOffsetInternal, ChartPointer, Coordinate, PolarViewBoxRequired, RangeObj, TickProp } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -117,9 +117,7 @@ export const inRangeOfSector = (
   return null;
 };
 
-export const getTickClassName = (
-  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean,
-) =>
+export const getTickClassName = (tick?: TickProp) =>
   !isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' && tick != null
     ? tick.className
     : '';

@@ -36,7 +36,15 @@ function HorizontalLineWithArrows({
   );
 }
 
-function Background({ width, height, label }: { width: number; height: number; label: string }) {
+function Background({
+  width,
+  height,
+  label,
+}: {
+  width: number | undefined;
+  height: number | undefined;
+  label: string;
+}) {
   const patternId = `pattern+${label.replace(/\s+/g, '-')}`;
   return (
     <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -164,6 +172,9 @@ export function SvgDimensionShower({
 export const ChartSizeDimensions = () => {
   const width = useChartWidth();
   const height = useChartHeight();
+  if (width == null || height == null) {
+    return null;
+  }
   return (
     <SvgDimensionShower
       width={width}

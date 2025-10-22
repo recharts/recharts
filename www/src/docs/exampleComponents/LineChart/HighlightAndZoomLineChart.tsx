@@ -56,7 +56,7 @@ const getAxisYDomain = (
   ref: keyof Impressions,
   offset: number,
 ): (number | string)[] => {
-  if (from && to) {
+  if (from != null && to != null) {
     const refData = impressionsData.slice(Number(from) - 1, Number(to));
     let [bottom, top] = [refData[0][ref], refData[0][ref]];
     refData.forEach(d => {
@@ -94,8 +94,8 @@ const HighlightAndZoomLineChart = () => {
         ...prev,
         refAreaLeft: undefined,
         refAreaRight: undefined,
-        left: refAreaLeft ?? 'dataMin',
-        right: refAreaRight ?? 'dataMax',
+        left: refAreaLeft ?? initialState.left,
+        right: refAreaRight ?? initialState.right,
         bottom,
         top,
         bottom2,

@@ -694,7 +694,7 @@ export const StackedAreaWithCustomLegend = {
           <Legend
             content={({ payload }) => (
               <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>
-                {payload.map((entry, index) => (
+                {payload?.map((entry, index) => (
                   <li key={`item-${index}`} style={{ color: entry.color }}>
                     <button
                       type="button"

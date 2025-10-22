@@ -9,8 +9,12 @@ export default {
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
-const renderDot = (props: { cx: number; cy: number }) => {
+const renderDot = (props: { cx: number | undefined; cy: number | undefined }) => {
   const { cx, cy } = props;
+
+  if (cx == null || cy == null) {
+    return null;
+  }
 
   return (
     <svg x={cx - 10} y={cy - 10} width={20} height={20} fill="green" viewBox="0 0 1024 1024">

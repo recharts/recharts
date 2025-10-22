@@ -10,6 +10,9 @@ function ShowScale() {
   const width = useChartWidth();
   const height = useChartHeight();
   const scale = useAppSelector(selectContainerScale);
+  if (width == null || height == null) {
+    return null;
+  }
   return (
     <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
       <text x={width * 0.9} y={height * 0.9} textAnchor="end" dominantBaseline="hanging" stroke="black">

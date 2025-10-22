@@ -517,8 +517,8 @@ export const WithCustomizedLabel = {
 type ZoomAndHighlightState = {
   left: string | number;
   right: string | number;
-  refAreaLeft: string | number;
-  refAreaRight: string | number;
+  refAreaLeft: string | number | undefined;
+  refAreaRight: string | number | undefined;
   top: string | number;
   bottom: string | number;
   top2: string | number;
@@ -529,8 +529,8 @@ type ZoomAndHighlightState = {
 const initialState: ZoomAndHighlightState = {
   left: 'dataMin',
   right: 'dataMax',
-  refAreaLeft: '',
-  refAreaRight: '',
+  refAreaLeft: undefined,
+  refAreaRight: undefined,
   top: 'dataMax+1',
   bottom: 'dataMin-1',
   top2: 'dataMax+20',
@@ -539,12 +539,12 @@ const initialState: ZoomAndHighlightState = {
 };
 
 const getAxisYDomain = (
-  from: string | number,
-  to: string | number,
+  from: string | number | undefined,
+  to: string | number | undefined,
   ref: keyof Impressions,
   offset: number,
 ): (number | string)[] => {
-  if (from && to) {
+  if (from != null && to != null) {
     const refData = impressionsData.slice(Number(from) - 1, Number(to));
     let [bottom, top] = [refData[0][ref], refData[0][ref]];
     refData.forEach(d => {
@@ -568,8 +568,8 @@ export const HighlightAndZoom = {
         if (refAreaLeft === refAreaRight || refAreaRight === '') {
           return {
             ...prev,
-            refAreaLeft: '',
-            refAreaRight: '',
+            refAreaLeft: undefined,
+            refAreaRight: undefined,
           };
         }
 
@@ -581,10 +581,10 @@ export const HighlightAndZoom = {
 
         return {
           ...prev,
-          refAreaLeft: '',
-          refAreaRight: '',
-          left: refAreaLeft,
-          right: refAreaRight,
+          refAreaLeft: undefined,
+          refAreaRight: undefined,
+          left: refAreaLeft ?? initialState.left,
+          right: refAreaRight ?? initialState.right,
           bottom,
           top,
           bottom2,
@@ -604,7 +604,7 @@ export const HighlightAndZoom = {
 
     const onMouseMove = useCallback(
       (e: MouseHandlerDataParam) => {
-        setZoomGraph(prev => {
+        setZoomGraph((prev: ZoomAndHighlightState): ZoomAndHighlightState => {
           if (prev.refAreaLeft) {
             return { ...prev, refAreaRight: e.activeLabel };
           }

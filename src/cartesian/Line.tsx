@@ -97,7 +97,7 @@ interface InternalLineProps {
   tooltipType?: TooltipType;
   top: number;
   type?: CurveType;
-  unit?: string | number;
+  unit?: string | number | null;
   width: number;
   xAxisId: AxisId;
   yAxisId: AxisId;

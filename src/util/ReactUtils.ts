@@ -94,7 +94,7 @@ export function findAllByType<
   }
 
   toArray(children).forEach(child => {
-    // ts-expect-error toArray and lodash.get are not compatible. Let's get rid of the whole findAllByType function
+    // @ts-expect-error toArray and lodash.get are not compatible. Let's get rid of the whole findAllByType function
     const childType: string = get(child, 'type.displayName') || get(child, 'type.name');
     if (childType && types.indexOf(childType) !== -1) {
       result.push(child as DetailedElement);

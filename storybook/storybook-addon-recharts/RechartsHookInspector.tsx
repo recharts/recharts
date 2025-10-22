@@ -12,11 +12,11 @@ import { PlotAreaShower } from './inspectors/PlotAreaShower';
 import { useRechartsInspectorState } from './RechartsInspectorDecorator';
 import { ManualAnimations } from './ManualAnimations';
 import {
+  Blanket,
   CrosshairControls,
+  CrosshairType,
   RenderCrosshairs,
   useCrosshairManager,
-  CrosshairType,
-  Blanket,
 } from './crosshairs/CrosshairControls';
 
 function Controls({
@@ -42,6 +42,10 @@ function Controls({
   onDeleteCrosshair: (id: number) => void;
   onUpdateCrosshair: (crosshair: CrosshairType) => void;
 }) {
+  const container = document.querySelector('#recharts-hook-inspector-portal');
+  if (container == null) {
+    return null;
+  }
   return createPortal(
     <>
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
@@ -55,7 +59,7 @@ function Controls({
         onUpdateCrosshair={onUpdateCrosshair}
       />
     </>,
-    document.querySelector('#recharts-hook-inspector-portal'),
+    container,
   );
 }
 

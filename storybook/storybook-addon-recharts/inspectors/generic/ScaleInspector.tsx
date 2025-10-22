@@ -2,7 +2,13 @@ import React from 'react';
 import { RechartsScale } from '../../../../src/util/ChartUtils';
 import { ArrayInspector } from './ArrayInspector';
 
-export function ScaleInspector({ scale, realScaleType }: { scale: RechartsScale | undefined; realScaleType: string }) {
+export function ScaleInspector({
+  scale,
+  realScaleType,
+}: {
+  scale: RechartsScale | undefined;
+  realScaleType: string | undefined;
+}) {
   if (scale == null) {
     return (
       <p>

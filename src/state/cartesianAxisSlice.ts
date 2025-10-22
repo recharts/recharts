@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { ReactElement, SVGProps } from 'react';
-import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType } from '../util/types';
+import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType, TickProp } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import type { AxisRange } from './selectors/axisSelectors';
@@ -53,7 +52,7 @@ export type TicksSettings = {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
-  tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  tick: TickProp;
 };
 
 /**

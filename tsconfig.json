@@ -11,7 +11,7 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "sourceMap": true,
     "target": "es6",
     "types": ["vitest/globals"]

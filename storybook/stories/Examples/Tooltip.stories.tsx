@@ -251,7 +251,7 @@ const CustomContent = ({ active, payload }: CustomTooltipProps) => {
         visibility: active ? 'visible' : 'hidden',
       }}
     >
-      {payload.map((pld: payloadType) => (
+      {payload?.map((pld: payloadType) => (
         <p
           key={pld.name}
           style={{
