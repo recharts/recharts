@@ -249,7 +249,7 @@
   "es6/util/useReportScale.js",
   "es6/util/useUniqueId.js",
   "es6/zindex",
+  "es6/zindex/ZIndexLayer.js",
   "es6/zindex/ZIndexPortal.js",
-  "es6/zindex/ZIndexable.js",
   "es6/zindex/zIndexSelectors.js",
 ]

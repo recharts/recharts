@@ -249,7 +249,7 @@
   "lib/util/useReportScale.js",
   "lib/util/useUniqueId.js",
   "lib/zindex",
+  "lib/zindex/ZIndexLayer.js",
   "lib/zindex/ZIndexPortal.js",
-  "lib/zindex/ZIndexable.js",
   "lib/zindex/zIndexSelectors.js",
 ]

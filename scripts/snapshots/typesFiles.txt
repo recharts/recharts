@@ -249,7 +249,7 @@
   "types/util/useReportScale.d.ts",
   "types/util/useUniqueId.d.ts",
   "types/zindex",
+  "types/zindex/ZIndexLayer.d.ts",
   "types/zindex/ZIndexPortal.d.ts",
-  "types/zindex/ZIndexable.d.ts",
   "types/zindex/zIndexSelectors.d.ts",
 ]
