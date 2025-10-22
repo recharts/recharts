@@ -21,6 +21,7 @@ import {
   YAxis,
 } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type WrapperProps = {
   onClick: () => void;
@@ -196,6 +197,7 @@ describe('CategoricalChart', () => {
       );
 
       const surface = container.querySelector('.recharts-wrapper');
+      assertNotNull(surface);
       fireEvent.click(surface);
       fireEvent.doubleClick(surface);
       fireEvent.contextMenu(surface);

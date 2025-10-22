@@ -116,6 +116,7 @@ export function showTooltip(container: Element, selector?: string, debug?: () =>
 
 export function hideTooltip(container: Element, mouseHoverSelector: string): void {
   const element = container.querySelector(mouseHoverSelector);
+  assertNotNull(element);
   fireEvent.mouseLeave(element);
 }
 
@@ -135,9 +136,10 @@ export function expectTooltipPayload(
   expectedTooltipContent: ReadonlyArray<string>,
 ) {
   const tooltip = getTooltip(container);
+  assertNotNull(tooltip);
   expect(tooltip).toBeInTheDocument();
   expect(tooltip).toBeVisible();
-  expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
+  expect.soft(tooltip.querySelector('.recharts-tooltip-label')?.textContent).toBe(expectedTooltipTitle);
   const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
   expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
 }

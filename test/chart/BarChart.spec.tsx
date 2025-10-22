@@ -1088,9 +1088,13 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
+      // @ts-expect-error variable used before assigned?
       expect(seriesOneBarOneEntry).toBeDefined();
+      // @ts-expect-error variable used before assigned?
       expect(seriesTwoBarOneEntry).toBeDefined();
+      // @ts-expect-error variable used before assigned?
       expect(seriesOneBarOneEntry.value).toEqual([0, 400]);
+      // @ts-expect-error variable used before assigned?
       expect(seriesTwoBarOneEntry.value).toEqual([400, 2800]);
 
       expectBars(container, [

@@ -10,6 +10,7 @@ import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { selectDisplayedData, selectPieLegend } from '../../src/state/selectors/pieSelectors';
 import { userEventSetup } from '../helper/userEventSetup';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<PieChart />', () => {
   const data = [
@@ -668,9 +669,11 @@ describe('<PieChart />', () => {
       );
 
       const elementA = container.querySelector('path[name="Group A"]');
+      assertNotNull(elementA);
       assertSectorRadius(elementA, outerRadius);
 
       const elementB = container.querySelector('path[name="Group B"]');
+      assertNotNull(elementB);
       assertSectorRadius(elementB, outerRadius);
     });
 
@@ -695,9 +698,11 @@ describe('<PieChart />', () => {
       );
 
       const elementA = container.querySelector('path[name="Group A"]');
+      assertNotNull(elementA);
       assertSectorRadius(elementA, 40);
 
       const elementB = container.querySelector('path[name="Group B"]');
+      assertNotNull(elementB);
       assertSectorRadius(elementB, 30);
     });
   });

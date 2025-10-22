@@ -7,6 +7,7 @@ import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -201,6 +202,7 @@ describe('<Treemap />', () => {
 
       const tooltip = getTooltip(container);
       const tooltipTriggerElement = container.querySelector(treemapNodeChartMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       expect(tooltip).not.toBeVisible();
 
       fireEvent.click(tooltipTriggerElement);
@@ -221,6 +223,7 @@ describe('<Treemap />', () => {
       expect(tooltip).not.toBeVisible();
 
       const tooltipTriggerElement = container.querySelector(treemapNodeChartMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltip).toBeVisible();
@@ -299,23 +302,23 @@ describe('addToTreemapNodeIndex + treemapPayloadSearcher tandem', () => {
     index: 0,
     node: dummyRoot,
     dataKey: 'value',
-    nameKey: undefined,
+    nameKey: 'name',
     nestedActiveTooltipIndex: undefined,
   });
   it('should return index for root node and then look it up', () => {
-    expect(computedRootNode.children[4]).toBeDefined();
+    expect(computedRootNode.children?.[4]).toBeDefined();
     const activeIndex = addToTreemapNodeIndex(4);
     expect(activeIndex).toEqual('children[4]');
-    expect(treemapPayloadSearcher(computedRootNode, activeIndex)).toBe(computedRootNode.children[4]);
+    expect(treemapPayloadSearcher(computedRootNode, activeIndex)).toBe(computedRootNode.children?.[4]);
   });
 
   it('should return index for nested node and then look it up', () => {
-    const level1 = computedRootNode.children[0];
+    const level1 = computedRootNode.children?.[0];
+    assertNotNull(level1);
     const activeIndex1 = addToTreemapNodeIndex(0);
-    const level2 = level1.children[1];
+    const level2 = level1.children?.[1];
     const activeIndex2 = addToTreemapNodeIndex(1, activeIndex1);
     expect(activeIndex2).toEqual('children[0]children[1]');
-    expect(level1).toBeDefined();
     expect(level2).toBeDefined();
     expect(treemapPayloadSearcher(computedRootNode, activeIndex1)).toBe(level1);
     expect(treemapPayloadSearcher(computedRootNode, activeIndex2)).toBe(level2);

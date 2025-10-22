@@ -96,7 +96,7 @@ type TooltipVisibilityTestCase = {
   mouseCoordinate?: MouseCoordinate;
   Wrapper: ComponentType<{ children: ReactNode }>;
   expectedTransform: string;
-  tooltipIndex: TooltipIndex;
+  tooltipIndex: NonNullable<TooltipIndex>;
 };
 
 const commonChartProps = {

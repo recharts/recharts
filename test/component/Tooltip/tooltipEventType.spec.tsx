@@ -158,6 +158,7 @@ describe('tooltipEventType', () => {
         const tooltip = getTooltip(container);
 
         const trigger = container.querySelector('.recharts-wrapper');
+        assertNotNull(trigger);
         fireEvent.mouseOver(trigger, { clientX: 200, clientY: 200 });
 
         expect(tooltip).toBeVisible();
@@ -258,6 +259,7 @@ describe('tooltipEventType', () => {
 
         // this is needed for bar background - for some reason it needs to select the trigger twice, otherwise mouseOut does not dismiss the tooltip
         const trigger2 = container.querySelector(itemSelector);
+        assertNotNull(trigger2);
         fireEvent.mouseOut(trigger2);
         expect(tooltip).not.toBeVisible();
       });
