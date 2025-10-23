@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../state/store';
+import { arrayContentsAreEqualCheck } from '../state/selectors/arrayEqualityCheck';
 
 /**
  * Given a zIndex, returns the corresponding portal element ID.
@@ -25,5 +26,10 @@ export const selectAllRegisteredZIndexes: (state: RechartsRootState) => Readonly
     return Object.keys(zIndexMap)
       .map(zIndexStr => parseInt(zIndexStr, 10))
       .sort((a, b) => a - b);
+  },
+  {
+    memoizeOptions: {
+      resultEqualityCheck: arrayContentsAreEqualCheck,
+    },
   },
 );
