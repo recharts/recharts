@@ -4,6 +4,7 @@ import { useChartWidth, useChartHeight } from '../context/chartLayoutContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { registerZIndexPortalId, unregisterZIndexPortalId } from '../state/zIndexSlice';
 import { useUniqueId } from '../util/useUniqueId';
+import { selectAllRegisteredZIndexes } from './zIndexSelectors';
 
 function ZIndexSvgPortal({ zIndex, width, height }: { zIndex: number; width: number; height: number }) {
   const portalId = useUniqueId(`recharts-zindex-${zIndex}`);
@@ -17,20 +18,25 @@ function ZIndexSvgPortal({ zIndex, width, height }: { zIndex: number; width: num
   return <g id={portalId} width={width} height={height} />;
 }
 
-export function AllPositiveZIndexPortals() {
-  const zIndexMap = useAppSelector(state => state.zIndex.zIndexMap);
+export function AllZIndexPortals({ children }: { children?: React.ReactNode }) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
 
+  const allRegisteredZIndexes: ReadonlyArray<number> = useAppSelector(selectAllRegisteredZIndexes);
+
+  const allNegativeZIndexes = allRegisteredZIndexes.filter(zIndex => zIndex < 0);
+  // We exclude zero on purpose - that is the default layer, and it doesn't need a portal.
+  const allPositiveZIndexes = allRegisteredZIndexes.filter(zIndex => zIndex > 0);
+
   return (
     <>
-      {Object.keys(zIndexMap)
-        .map(zIndexStr => parseInt(zIndexStr, 10))
-        .filter(zIndex => zIndex >= 0)
-        .sort((a, b) => a - b)
-        .map(zIndex => {
-          return <ZIndexSvgPortal key={zIndex} zIndex={zIndex} width={chartWidth} height={chartHeight} />;
-        })}
+      {allNegativeZIndexes.map(zIndex => (
+        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} width={chartWidth} height={chartHeight} />
+      ))}
+      {children}
+      {allPositiveZIndexes.map(zIndex => (
+        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} width={chartWidth} height={chartHeight} />
+      ))}
     </>
   );
 }
