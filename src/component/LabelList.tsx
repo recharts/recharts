@@ -9,7 +9,7 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 interface BaseLabelListEntry {
   /**
@@ -106,13 +106,12 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
   const data = cartesianData || polarData;
-
   if (!data || !data.length) {
     return null;
   }
 
   return (
-    <ZIndexLayer zIndex={zIndex}>
+    <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
       <Layer className="recharts-label-list">
         {data.map((entry, index) => {
           const value = isNullish(dataKey)

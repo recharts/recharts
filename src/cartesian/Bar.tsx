@@ -80,7 +80,7 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 type Rectangle = {
   x: number | null;
@@ -649,6 +649,7 @@ const defaultBarProps = {
   minPointSize: defaultMinPointSize,
   xAxisId: 0,
   yAxisId: 0,
+  zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<Props>;
 
 type BarImplProps = Omit<InternalBarProps, 'layout' | 'data'> & { children?: ReactNode };
