@@ -80,7 +80,7 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { DefaultZIndexes, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 type Rectangle = {
   x: number | null;
@@ -103,7 +103,7 @@ export interface BarRectangleItem extends RectangleProps {
   height: number;
 }
 
-export interface BarProps {
+export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
   xAxisId?: string | number;
@@ -132,12 +132,6 @@ export interface BarProps {
   animationEasing?: EasingInput;
   id?: string;
   label?: ImplicitLabelListType;
-  /**
-   * Z-Index of this component and its children. The higher the value,
-   * the more on top it will be rendered.
-   * Components with higher zIndex will appear in front of components with lower zIndex.
-   */
-  zIndex?: number;
 }
 
 type BarMouseEvent = (
