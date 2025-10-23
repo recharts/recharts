@@ -38,7 +38,9 @@ export class RequestAnimationFrameTimeoutController implements TimeoutController
     requestId = requestAnimationFrame(executeCallback);
 
     return () => {
-      cancelAnimationFrame(requestId);
+      if (requestId != null) {
+        cancelAnimationFrame(requestId);
+      }
     };
   }
 }

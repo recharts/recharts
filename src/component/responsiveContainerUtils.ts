@@ -4,13 +4,13 @@ import { isPercent } from '../util/DataUtils';
 import { Percent } from '../util/types';
 
 export const calculateChartDimensions = (
-  containerWidth: number,
-  containerHeight: number,
+  containerWidth: number | undefined,
+  containerHeight: number | undefined,
   props: {
-    width: Percent | number;
-    height: Percent | number;
-    aspect: number;
-    maxHeight: number;
+    width: Percent | number | undefined;
+    height: Percent | number | undefined;
+    aspect: number | undefined;
+    maxHeight: number | undefined;
   },
 ) => {
   const { width = '100%', height = '100%', aspect, maxHeight } = props;
@@ -19,8 +19,8 @@ export const calculateChartDimensions = (
    * The containerWidth and containerHeight are already percentage based because it's set as that percentage in CSS.
    * Means we don't have to calculate percentages here.
    */
-  let calculatedWidth: number = isPercent(width) ? containerWidth : Number(width);
-  let calculatedHeight: number = isPercent(height) ? containerHeight : Number(height);
+  let calculatedWidth: number | undefined = isPercent(width) ? containerWidth : Number(width);
+  let calculatedHeight: number | undefined = isPercent(height) ? containerHeight : Number(height);
 
   if (aspect && aspect > 0) {
     // Preserve the desired aspect ratio
@@ -33,7 +33,7 @@ export const calculateChartDimensions = (
     }
 
     // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
-    if (maxHeight && calculatedHeight > maxHeight) {
+    if (maxHeight && calculatedHeight != null && calculatedHeight > maxHeight) {
       calculatedHeight = maxHeight;
     }
   }
@@ -95,7 +95,7 @@ export function getDefaultWidthAndHeight({
   width: Percent | number | undefined;
   height: Percent | number | undefined;
   aspect: number | undefined;
-}): { width: Percent | number; height: Percent | number } {
+}): { width: Percent | number | undefined; height: Percent | number | undefined } {
   let calculatedWidth = width;
   let calculatedHeight = height;
 

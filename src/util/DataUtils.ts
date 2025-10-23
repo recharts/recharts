@@ -48,7 +48,7 @@ export const uniqueId = (prefix?: string) => {
  * @returns The calculated value, or `defaultValue` for invalid input.
  */
 export const getPercentValue = (
-  percent: number | string,
+  percent: number | string | undefined,
   totalValue: number | undefined,
   defaultValue = 0,
   validate = false,

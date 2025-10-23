@@ -159,7 +159,7 @@ export interface RechartsScale {
    * https://d3js.org/d3-scale/linear#linear_ticks
    * @param count number of ticks
    */
-  ticks?: (count: number) => ReadonlyArray<number>;
+  ticks?: (count: number | undefined) => ReadonlyArray<number>;
   (args: any): number;
 }
 

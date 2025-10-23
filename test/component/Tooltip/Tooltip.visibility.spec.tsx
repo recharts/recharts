@@ -1138,8 +1138,6 @@ describe('Tooltip visibility', () => {
             dataKey: undefined,
             index: '5',
             coordinate: {
-              // I don't think we need the whole axis to be included here but this is what the generator did
-              // @ts-expect-error typescript says this property should not be here at all
               angle: -210,
               clockWise: false,
               cx: 300,
@@ -1224,7 +1222,6 @@ describe('Tooltip visibility', () => {
       showTooltipOnCoordinate(container, RadarChartTestCase.mouseHoverSelector, RadarChartTestCase.mouseCoordinate);
 
       expectLastCalledWith(spy, {
-        // @ts-expect-error extra properties not expected in the type
         angle: -210,
         clockWise: false,
         cx: 300,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import { Curve, CurveType, NullablePoint, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import {
@@ -349,7 +349,7 @@ function StaticArea({
               type={type}
               connectNulls={connectNulls}
               fill="none"
-              points={baseLine as CurvePoint[]}
+              points={baseLine as NullableCoordinate[]}
             />
           )}
         </Layer>
@@ -537,7 +537,7 @@ function AreaWithAnimation({
 
                     return entry;
                   });
-            let stepBaseLine: number | ReadonlyArray<NullablePoint>;
+            let stepBaseLine: number | ReadonlyArray<NullableCoordinate>;
 
             if (isNumber(baseLine)) {
               stepBaseLine = interpolate(prevBaseLine, baseLine, t);

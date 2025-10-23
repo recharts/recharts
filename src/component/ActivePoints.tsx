@@ -26,7 +26,7 @@ const renderActivePoint = ({
   point: PointType;
   activeDot: ActiveDotType;
   childIndex: number;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   /**
    * Different graphical elements have different opinion on what is their main color.
    * Sometimes stroke, sometimes fill, sometimes combination.

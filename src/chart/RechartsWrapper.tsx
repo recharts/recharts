@@ -3,6 +3,7 @@ import {
   CSSProperties,
   forwardRef,
   HTMLAttributes,
+  MutableRefObject,
   ReactNode,
   Ref,
   useCallback,
@@ -33,8 +34,8 @@ type Nullable<T> = {
 
 export type RechartsWrapperProps = Nullable<ExternalMouseEvents> & {
   children: ReactNode;
-  width: number | Percent;
-  height: number | Percent;
+  width: number | Percent | undefined;
+  height: number | Percent | undefined;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
    * If false, then it renders the chart at the specified width and height and will stay that way
@@ -78,7 +79,7 @@ type WrapperDivProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
-  const observerRef = useRef(null);
+  const observerRef: MutableRefObject<ResizeObserver | null> = useRef(null);
 
   const [sizes, setSizes] = useState<{
     containerWidth: number;
@@ -229,7 +230,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       responsive,
       dispatchTouchEvents = true,
     } = props;
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);

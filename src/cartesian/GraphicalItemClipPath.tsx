@@ -31,7 +31,7 @@ export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: Graphica
 
   const { needClipX, needClipY, needClip } = useNeedsClip(xAxisId, yAxisId);
 
-  if (!needClip) {
+  if (!needClip || !plotArea) {
     return null;
   }
 

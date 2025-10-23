@@ -13,6 +13,7 @@ import {
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import range from 'es-toolkit/compat/range';
+import { isNotNil } from 'es-toolkit';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -93,7 +94,7 @@ function DefaultTraveller(props: TravellerProps) {
   );
 }
 
-function Traveller(props: { travellerType: BrushTravellerType; travellerProps: TravellerProps }) {
+function Traveller(props: { travellerType: BrushTravellerType | undefined; travellerProps: TravellerProps }) {
   const { travellerProps, travellerType } = props;
 
   if (React.isValidElement(travellerType)) {
@@ -356,7 +357,7 @@ function Panorama({
   width: number;
   height: number;
   data: any[];
-  children: ReactElement;
+  children: ReactElement | undefined;
   padding: Padding;
 }) {
   const isPanoramic = React.Children.count(children) === 1;
@@ -439,7 +440,10 @@ const createScale = ({
   const scale = scalePoint<number>()
     .domain(range(0, len))
     .range([x, x + width - travellerWidth]);
-  const scaleValues = scale.domain().map(entry => scale(entry));
+  const scaleValues = scale
+    .domain()
+    .map(entry => scale(entry))
+    .filter(isNotNil);
 
   return {
     isTextActive: false,
@@ -694,7 +698,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
-    if (movingTravellerId == null) {
+    if (movingTravellerId == null || scaleValues == null) {
       return;
     }
     const prevValue = this.state[movingTravellerId];

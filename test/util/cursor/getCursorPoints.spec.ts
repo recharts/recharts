@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 
 import { RADIAN } from '../../../src/util/PolarUtils';
 import { getCursorPoints } from '../../../src/util/cursor/getCursorPoints';
-import { ChartCoordinate, ChartOffsetInternal, Coordinate } from '../../../src/util/types';
+import { ChartOffsetInternal, Coordinate, PolarCoordinate } from '../../../src/util/types';
 import { getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
 import { emptyOffset, makeChartOffset } from '../../helper/offsetHelpers';
 
@@ -10,10 +10,24 @@ vi.mock('../../../src/util/cursor/getRadialCursorPoints');
 
 const spy = vi.mocked(getRadialCursorPoints);
 
+const polarCoordinate: PolarCoordinate = {
+  clockWise: false,
+  endAngle: 0,
+  radius: 0,
+  startAngle: 0,
+  cx: 18,
+  cy: 99,
+  innerRadius: 7,
+  outerRadius: 9,
+  angle: RADIAN / 4,
+  x: 0,
+  y: 0,
+};
+
 describe('getCursorPoints', () => {
   describe('horizontal layout', () => {
     it('should return coordinates based on X dimension', () => {
-      const activeCoordinate: ChartCoordinate = {
+      const activeCoordinate: Coordinate = {
         x: 18,
         y: 0,
       };
@@ -38,7 +52,7 @@ describe('getCursorPoints', () => {
 
   describe('vertical layout', () => {
     it('should return coordinates based on Y dimension', () => {
-      const activeCoordinate: ChartCoordinate = {
+      const activeCoordinate: Coordinate = {
         x: 18,
         y: 99,
       };
@@ -61,36 +75,17 @@ describe('getCursorPoints', () => {
     });
   });
   describe('centric layout', () => {
-    it('should return undefineds if cx or cy is not defined', () => {
-      const activeCoordinate: ChartCoordinate = {
+    it('should return undefined if cx or cy is not defined', () => {
+      const activeCoordinate: Coordinate = {
         x: 1,
         y: 1,
       };
       const offset: ChartOffsetInternal = makeChartOffset({});
       const result = getCursorPoints('centric', activeCoordinate, offset);
-      const expected: object[] = [
-        {
-          x: undefined,
-          y: undefined,
-        },
-        {
-          x: undefined,
-          y: undefined,
-        },
-      ];
-      expect(result).toEqual(expected);
+      expect(result).toEqual(undefined);
     });
     it('should return cartesian coordinates', () => {
-      const activeCoordinate: ChartCoordinate = {
-        cx: 18,
-        cy: 99,
-        innerRadius: 7,
-        outerRadius: 9,
-        angle: RADIAN / 4,
-        x: 0,
-        y: 0,
-      };
-      const result = getCursorPoints('centric', activeCoordinate, emptyOffset);
+      const result = getCursorPoints('centric', polarCoordinate, emptyOffset);
       const expected: [Coordinate, Coordinate] = [
         {
           x: 24.999999979701798,
@@ -104,15 +99,6 @@ describe('getCursorPoints', () => {
       expect(result).toEqual(expected);
     });
     it('should ignore offset', () => {
-      const activeCoordinate: ChartCoordinate = {
-        cx: 18,
-        cy: 99,
-        innerRadius: 7,
-        outerRadius: 9,
-        angle: RADIAN / 4,
-        x: 0,
-        y: 0,
-      };
       const fullOffset: ChartOffsetInternal = {
         bottom: 87,
         brushBottom: 23,
@@ -122,48 +108,29 @@ describe('getCursorPoints', () => {
         top: 43,
         width: 4573,
       };
-      const resultWithoutOffset = getCursorPoints('centric', activeCoordinate, emptyOffset);
-      const resultWithOffset = getCursorPoints('centric', activeCoordinate, fullOffset);
+      const resultWithoutOffset = getCursorPoints('centric', polarCoordinate, emptyOffset);
+      const resultWithOffset = getCursorPoints('centric', polarCoordinate, fullOffset);
 
       expect(resultWithoutOffset).toEqual(resultWithOffset);
     });
   });
   describe('radial layout', () => {
     it('should return undefineds if cx or cy is not defined', () => {
-      const activeCoordinate: ChartCoordinate = {
+      const activeCoordinate: Coordinate = {
         x: 1,
         y: 1,
       };
       const result = getCursorPoints('radial', activeCoordinate, emptyOffset);
-      const expected: object[] = [
-        {
-          x: undefined,
-          y: undefined,
-        },
-        {
-          x: undefined,
-          y: undefined,
-        },
-      ];
-      expect(result).toEqual(expected);
+      expect(result).toEqual(undefined);
     });
     it('should call getRadialCursorPoints', () => {
-      const activeCoordinate: ChartCoordinate = {
-        cx: 18,
-        cy: 99,
-        innerRadius: 7,
-        outerRadius: 9,
-        angle: RADIAN / 4,
-        x: 0,
-        y: 0,
-      };
       const offset: ChartOffsetInternal = makeChartOffset({
         left: 42,
         width: 60,
       });
-      getCursorPoints('radial', activeCoordinate, offset);
+      getCursorPoints('radial', polarCoordinate, offset);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith(activeCoordinate);
+      expect(spy).toHaveBeenCalledWith(polarCoordinate);
     });
   });
 });

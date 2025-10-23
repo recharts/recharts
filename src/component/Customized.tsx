@@ -21,6 +21,7 @@ export function Customized<P, C extends Comp<P>>({ component, ...props }: Props<
   if (isValidElement(component)) {
     child = cloneElement(component, props);
   } else if (typeof component === 'function') {
+    // ts-expect-error TS cannot verify that C is FunctionComponent<P> here
     child = createElement(component, props as any);
   } else {
     warn(false, "Customized's props `component` must be React.element or Function, but got %s.", typeof component);

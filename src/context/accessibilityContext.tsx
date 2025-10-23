@@ -1,3 +1,4 @@
 import { useAppSelector } from '../state/hooks';
 
-export const useAccessibilityLayer = () => useAppSelector(state => state.rootProps.accessibilityLayer);
+export const useAccessibilityLayer: () => boolean = () =>
+  useAppSelector(state => state.rootProps.accessibilityLayer) ?? true;

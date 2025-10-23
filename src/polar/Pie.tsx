@@ -764,7 +764,7 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
 export function Pie(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
   const { id: externalId, ...propsWithoutId } = props;
-  const presentationProps: PiePresentationProps = svgPropertiesNoEvents(propsWithoutId);
+  const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
 
   return (
     <RegisterGraphicalItemId id={externalId} type="pie">

@@ -12,7 +12,7 @@ type RootSurfaceProps = {
   children: ReactNode;
   title: string | undefined;
   desc: string | undefined;
-  otherAttributes: Record<string, unknown>;
+  otherAttributes: Record<string, unknown> | null;
 };
 
 const FULL_WIDTH_AND_HEIGHT = {
@@ -43,16 +43,18 @@ const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: Roo
 
   let tabIndex: number | undefined, role: string | undefined;
 
-  if (typeof otherAttributes.tabIndex === 'number') {
-    tabIndex = otherAttributes.tabIndex;
-  } else {
-    tabIndex = hasAccessibilityLayer ? 0 : undefined;
-  }
+  if (otherAttributes != null) {
+    if (typeof otherAttributes.tabIndex === 'number') {
+      tabIndex = otherAttributes.tabIndex;
+    } else {
+      tabIndex = hasAccessibilityLayer ? 0 : undefined;
+    }
 
-  if (typeof otherAttributes.role === 'string') {
-    role = otherAttributes.role;
-  } else {
-    role = hasAccessibilityLayer ? 'application' : undefined;
+    if (typeof otherAttributes.role === 'string') {
+      role = otherAttributes.role;
+    } else {
+      role = hasAccessibilityLayer ? 'application' : undefined;
+    }
   }
 
   return (

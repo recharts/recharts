@@ -20,10 +20,18 @@ import {
   curveStep,
   curveStepAfter,
   curveStepBefore,
+  Area,
+  Line,
 } from 'victory-vendor/d3-shape';
 
 import { clsx } from 'clsx';
-import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
+import {
+  LayoutType,
+  PresentationAttributesWithProps,
+  adaptEventHandlers,
+  NullableCoordinate,
+  Coordinate,
+} from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
@@ -66,27 +74,14 @@ export type CurveType =
   | 'stepAfter'
   | CurveFactory;
 
-/**
- * @deprecated use {@link Coordinate} instead
- * Duplicated with `Coordinate` in `util/types.ts`
- */
-export interface Point {
-  readonly x: number;
-  readonly y: number;
-}
+type AreaPoint = Coordinate & { base: Coordinate };
 
-/**
- * @deprecated use {@link NullableCoordinate} instead
- * Duplicated with `NullableCoordinate` in `util/types.ts`
- */
-export interface NullablePoint {
-  readonly x: number | null;
-  readonly y: number | null;
-}
+type NullableAreaPoint = NullableCoordinate & { base?: NullableCoordinate };
 
-const defined = (p: NullablePoint): p is Point => isWellBehavedNumber(p.x) && isWellBehavedNumber(p.y);
-const getX = (p: Point) => p.x;
-const getY = (p: Point) => p.y;
+const defined = (p: NullableCoordinate): p is Coordinate => isWellBehavedNumber(p.x) && isWellBehavedNumber(p.y);
+const areaDefined = (d: NullableAreaPoint): d is AreaPoint => d.base != null && defined(d.base) && defined(d);
+const getX = (p: Coordinate) => p.x;
+const getY = (p: Coordinate) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
   if (typeof type === 'function') {
@@ -105,8 +100,8 @@ interface CurveProps {
   className?: string;
   type?: CurveType;
   layout?: LayoutType;
-  baseLine?: number | ReadonlyArray<NullablePoint>;
-  points?: ReadonlyArray<NullablePoint>;
+  baseLine?: number | ReadonlyArray<NullableCoordinate>;
+  points?: ReadonlyArray<NullableCoordinate>;
   connectNulls?: boolean;
   path?: string;
   pathRef?: Ref<SVGPathElement>;
@@ -128,38 +123,60 @@ export const getPath = ({
   connectNulls = false,
 }: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
-  const formatPoints: ReadonlyArray<NullablePoint> = connectNulls ? points.filter(defined) : points;
-  let lineFunction;
+  const formatPoints: ReadonlyArray<NullableCoordinate> = connectNulls ? points.filter(defined) : points;
+  let lineFunction: Area<Coordinate> | Line<Coordinate>;
 
+  // When dealing with an area chart (where `baseLine` is an array),
+  // we need to pair points with their corresponding `baseLine` points first.
+  // This is to ensure that we filter points and their baseline counterparts together,
+  // preventing errors from mismatched array lengths and ensuring `defined` checks both.
   if (Array.isArray(baseLine)) {
-    const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
-    const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
+    const areaPoints: ReadonlyArray<NullableAreaPoint> = points.map((entry, index) => ({
+      ...entry,
+      base: baseLine[index],
+    }));
+
     if (layout === 'vertical') {
-      lineFunction = shapeArea<Point & { base: Point }>()
+      lineFunction = shapeArea<AreaPoint>()
         .y(getY)
         .x1(getX)
         .x0(d => d.base.x);
     } else {
-      lineFunction = shapeArea<Point & { base: Point }>()
+      lineFunction = shapeArea<AreaPoint>()
         .x(getX)
         .y1(getY)
         .y0(d => d.base.y);
     }
-    lineFunction.defined(defined).curve(curveFactory);
+    /*
+     * What happens here is that the `.defined()` call will make it so that this function can accept
+     * nullable points, and internally it will filter them out and skip when generating the path.
+     * So on the input it accepts NullableCoordinate, but it never calls getX/getY on null points because of the defined() filter.
+     *
+     * The d3 type definition has only one generic so it doesn't allow to describe this properly.
+     * However. d3 types are mutable, but we can pretend that they are not and we can pretend
+     * that calling defined() returns a new function with a different generic type.
+     */
+    const nullableLineFunction: Area<NullableCoordinate> | Line<NullableCoordinate> = lineFunction
+      .defined(areaDefined)
+      .curve(curveFactory);
 
-    return lineFunction(areaPoints);
+    const finalPoints: ReadonlyArray<NullableAreaPoint> = connectNulls ? areaPoints.filter(areaDefined) : areaPoints;
+
+    return nullableLineFunction(finalPoints);
   }
   if (layout === 'vertical' && isNumber(baseLine)) {
-    lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
+    lineFunction = shapeArea<Coordinate>().y(getY).x1(getX).x0(baseLine);
   } else if (isNumber(baseLine)) {
-    lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
+    lineFunction = shapeArea<Coordinate>().x(getX).y1(getY).y0(baseLine);
   } else {
-    lineFunction = shapeLine<Point>().x(getX).y(getY);
+    lineFunction = shapeLine<Coordinate>().x(getX).y(getY);
   }
 
-  lineFunction.defined(defined).curve(curveFactory);
+  const nullableLineFunction: Area<NullableCoordinate> | Line<NullableCoordinate> = lineFunction
+    .defined(defined)
+    .curve(curveFactory);
 
-  return lineFunction(formatPoints);
+  return nullableLineFunction(formatPoints);
 };
 
 export const Curve: React.FC<Props> = props => {

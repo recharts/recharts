@@ -13,7 +13,7 @@ export type UniqueOption<T> = boolean | UniqueFunc<T>;
 
 export function getUniqPayload<T>(
   payload: ReadonlyArray<T>,
-  option: UniqueOption<T>,
+  option: UniqueOption<T> | undefined,
   defaultUniqBy: UniqueFunc<T>,
 ): ReadonlyArray<T> {
   if (option === true) {

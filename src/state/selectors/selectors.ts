@@ -17,6 +17,7 @@ import {
   ChartPointer,
   Coordinate,
   DataKey,
+  PolarCoordinate,
   PolarLayout,
   PolarViewBoxRequired,
   TickItem,
@@ -149,9 +150,12 @@ export const selectActiveCoordinate: (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
   // TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
-) => Coordinate | undefined = createSelector(
+) => Coordinate | PolarCoordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
-  (tooltipInteractionState: TooltipInteractionState, defaultIndexCoordinate: Coordinate): Coordinate | undefined => {
+  (
+    tooltipInteractionState: TooltipInteractionState,
+    defaultIndexCoordinate: Coordinate,
+  ): Coordinate | PolarCoordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );
@@ -249,7 +253,7 @@ const combineActivePolarProps = (
     tooltipAxisRange,
   );
 
-  const activeCoordinate = getActivePolarCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
+  const activeCoordinate: PolarCoordinate = getActivePolarCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
 
   return { activeIndex: String(activeIndex), activeCoordinate };
 };

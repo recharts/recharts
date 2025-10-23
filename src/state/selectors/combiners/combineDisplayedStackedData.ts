@@ -45,7 +45,7 @@ export function combineDisplayedStackedData(
       const numericValue = getValueByDataKey(entry, item.dataKey, 0);
       let curr;
       if (knownItemsByDataKey.has(tooltipValue)) {
-        curr = knownItemsByDataKey.get(tooltipValue);
+        curr = knownItemsByDataKey.get(tooltipValue)!;
       } else {
         curr = {};
       }

@@ -4,6 +4,7 @@ import {
   ChartOffsetInternal,
   ChartPointer,
   Coordinate,
+  PolarCoordinate,
   PolarLayout,
   RangeObj,
   TickItem,
@@ -49,7 +50,7 @@ export const getActivePolarCoordinate = (
   tooltipTicks: readonly TickItem[],
   activeIndex: number,
   rangeObj: RangeObj,
-): RangeObj & Coordinate => {
+): PolarCoordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
   if (entry) {

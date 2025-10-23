@@ -1026,7 +1026,7 @@ export const combineAxisDomain = (
   const isCategorical = isCategoricalAxis(layout, axisType);
 
   if (isCategorical && dataKey == null) {
-    return range(0, displayedData.length);
+    return range(0, displayedData?.length ?? 0);
   }
 
   if (type === 'category') {

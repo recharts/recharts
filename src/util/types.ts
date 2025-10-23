@@ -107,6 +107,7 @@ export type RectanglePosition = {
 
 /**
  * @deprecated do not use: too many properties, mixing too many concepts, cartesian and polar together, everything optional.
+ * Instead use either `Coordinate` or `PolarCoordinate`.
  */
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
@@ -124,12 +125,20 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
-export type PolarCoordinate = {
-  cx: number;
-  cy: number;
-  radius: number;
+export type PolarCoordinate = Coordinate & {
+  angle: number;
   startAngle: number;
   endAngle: number;
+  clockWise: boolean;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  radius: number;
+};
+
+export const isPolarCoordinate = (c: Coordinate | PolarCoordinate): c is PolarCoordinate => {
+  return 'radius' in c && 'startAngle' in c && 'endAngle' in c;
 };
 
 export type ScaleType =

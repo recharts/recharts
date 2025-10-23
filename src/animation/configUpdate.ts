@@ -111,7 +111,7 @@ function createStepperUpdate<T extends Record<string, unknown>>(
 
     // return stop animation method
     return () => {
-      stopAnimation();
+      stopAnimation?.();
     };
   };
 }
@@ -173,7 +173,7 @@ function createTimingUpdate<T extends Record<string, number>>(
 
     // return stop animation method
     return () => {
-      stopAnimation();
+      stopAnimation?.();
     };
   };
 }
@@ -183,12 +183,23 @@ function createTimingUpdate<T extends Record<string, number>>(
 export default <T extends Record<string, number>>(
   from: T,
   to: T,
-  easing: EasingFunction,
+  easing: EasingFunction | null,
   duration: number,
   render: (currentStyle: T) => void,
   timeoutController: TimeoutController,
 ): StartAnimationFunction => {
   const interKeys: ReadonlyArray<string> = getIntersectionKeys(from, to);
+
+  if (easing == null) {
+    // no animation, just set to final state
+    return () => {
+      render({
+        ...from,
+        ...to,
+      });
+      return () => {};
+    };
+  }
 
   return easing.isStepper === true
     ? createStepperUpdate(from, to, easing, interKeys, render, timeoutController)

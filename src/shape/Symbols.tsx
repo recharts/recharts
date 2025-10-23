@@ -14,7 +14,7 @@ import {
 } from 'victory-vendor/d3-shape';
 import { clsx } from 'clsx';
 import { SymbolType } from '../util/types';
-import { upperFirst } from '../util/DataUtils';
+import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 type SizeType = 'area' | 'diameter';
@@ -68,7 +68,7 @@ const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) =
 
 export interface InnerSymbolsProp {
   className?: string;
-  type: SymbolType;
+  type?: SymbolType;
   cx?: number;
   cy?: number;
   size?: number;
@@ -115,7 +115,7 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
   const { className, cx, cy } = props;
   const filteredProps = svgPropertiesAndEvents(props);
 
-  if (cx === +cx && cy === +cy && size === +size) {
+  if (isNumber(cx) && isNumber(cy) && isNumber(size)) {
     return (
       <path
         {...filteredProps}

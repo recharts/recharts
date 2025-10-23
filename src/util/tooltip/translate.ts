@@ -45,7 +45,7 @@ export function getTooltipTranslateXY({
   coordinate: Coordinate;
   key: Dimension2D;
   offsetTopLeft: number;
-  position: Partial<Coordinate>;
+  position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   tooltipDimension: number;
   viewBox: CartesianViewBox;
@@ -116,7 +116,7 @@ export function getTooltipTranslate({
   allowEscapeViewBox: AllowInDimension;
   coordinate: Coordinate | undefined;
   offsetTopLeft: number;
-  position: Partial<Coordinate>;
+  position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   tooltipBox: { width: number; height: number };
   useTranslate3d: boolean;

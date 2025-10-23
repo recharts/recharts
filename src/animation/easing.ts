@@ -29,41 +29,42 @@ export type BezierEasingFunction = {
   (t: number): number;
 };
 
-// calculate cubic-bezier using Newton's method
-export const configBezier = (...args: BezierInput): BezierEasingFunction => {
-  let x1: number, x2: number, y1: number, y2: number;
-
+const getBezierCoordinates = (...args: BezierInput): [number, number, number, number] => {
   if (args.length === 1) {
     switch (args[0]) {
       case 'linear':
-        [x1, y1, x2, y2] = [0.0, 0.0, 1.0, 1.0];
-        break;
+        return [0.0, 0.0, 1.0, 1.0];
       case 'ease':
-        [x1, y1, x2, y2] = [0.25, 0.1, 0.25, 1.0];
-        break;
+        return [0.25, 0.1, 0.25, 1.0];
       case 'ease-in':
-        [x1, y1, x2, y2] = [0.42, 0.0, 1.0, 1.0];
-        break;
+        return [0.42, 0.0, 1.0, 1.0];
       case 'ease-out':
-        [x1, y1, x2, y2] = [0.42, 0.0, 0.58, 1.0];
-        break;
+        return [0.42, 0.0, 0.58, 1.0];
       case 'ease-in-out':
-        [x1, y1, x2, y2] = [0.0, 0.0, 0.58, 1.0];
-        break;
+        return [0.0, 0.0, 0.58, 1.0];
       default: {
         const easing = args[0].split('(');
-        if (easing[0] === 'cubic-bezier' && easing[1].split(')')[0].split(',').length === 4) {
-          [x1, y1, x2, y2] = easing[1]
+        if (easing[0] === 'cubic-bezier' && easing[1]?.split(')')[0].split(',').length === 4) {
+          const coords = easing[1]
             .split(')')[0]
             .split(',')
             .map((x: string) => parseFloat(x));
+          return [coords[0], coords[1], coords[2], coords[3]];
         }
       }
     }
-  } else if (args.length === 4) {
-    [x1, y1, x2, y2] = args;
   }
 
+  if (args.length === 4) {
+    return args;
+  }
+
+  // Fallback for invalid inputs. The previous implementation was buggy and would lead to NaN.
+  // Returning linear easing is a safe default.
+  return [0.0, 0.0, 1.0, 1.0];
+};
+
+const createBezierEasing = (x1: number, y1: number, x2: number, y2: number): BezierEasingFunction => {
   const curveX = cubicBezier(x1, x2);
   const curveY = cubicBezier(y1, y2);
   const derCurveX = derivativeCubicBezier(x1, x2);
@@ -99,6 +100,11 @@ export const configBezier = (...args: BezierInput): BezierEasingFunction => {
   bezier.isStepper = false as const;
 
   return bezier;
+};
+
+// calculate cubic-bezier using Newton's method
+export const configBezier = (...args: BezierInput): BezierEasingFunction => {
+  return createBezierEasing(...getBezierCoordinates(...args));
 };
 
 type SpringInput = {
@@ -137,7 +143,7 @@ export type EasingFunction = BezierEasingFunction | SpringEasingFunction;
 
 export type EasingInput = NamedBezier | 'spring' | EasingFunction;
 
-export const configEasing = (easing: EasingInput): EasingFunction => {
+export const configEasing = (easing: EasingInput): EasingFunction | null => {
   if (typeof easing === 'string') {
     switch (easing) {
       case 'ease':

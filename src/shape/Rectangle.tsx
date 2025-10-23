@@ -158,7 +158,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const transition = getTransitionVal(
     ['strokeDasharray'],
     animationDuration,
-    typeof animationEasing === 'string' ? animationEasing : undefined,
+    typeof animationEasing === 'string' ? animationEasing : defaultProps.animationEasing,
   );
 
   return (
