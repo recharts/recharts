@@ -4,7 +4,10 @@
   "description": "the website of recharts",
   "private": true,
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && npm run prerender && npm run validate-sitemap",
+    "build:client": "vite build",
+    "prerender": "tsx scripts/prerender.tsx",
+    "validate-sitemap": "tsx scripts/validate-sitemap.tsx",
     "preview": "vite preview",
     "start": "vite"
   },
@@ -24,6 +27,7 @@
     "@types/react-helmet": "^6.1.11",
     "@vitejs/plugin-react": "^4.7.0",
     "sass": "^1.93.2",
+    "tsx": "^4.20.6",
     "vite": "^6.4.1",
     "vite-plugin-sitemap": "^0.8.2",
     "vitest": "^3.2.4"

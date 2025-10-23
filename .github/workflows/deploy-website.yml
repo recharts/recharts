@@ -1,4 +1,4 @@
-name: Deploy Website
+name: Deploy website to recharts.github.io
 
 on:
   # this workflow runs manually

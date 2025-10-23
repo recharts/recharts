@@ -42,7 +42,7 @@ const data = [
 const SimpleRadarChart = () => {
   return (
     <RadarChart
-      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
+      style={{ width: '100%', height: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
       responsive
       outerRadius="80%"
       data={data}

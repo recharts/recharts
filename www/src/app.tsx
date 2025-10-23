@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import { hydrateRoot } from 'react-dom/client';
 import { loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -35,5 +35,5 @@ const container = document.getElementById('app');
 if (container == null) {
   throw new Error('Container element with id "app" not found');
 }
-const root = createRoot(container);
-root.render(<Root />);
+
+hydrateRoot(container, <Root />);

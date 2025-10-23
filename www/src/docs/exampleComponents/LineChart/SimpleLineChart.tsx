@@ -48,7 +48,7 @@ const data = [
 export default function Example() {
   return (
     <LineChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      style={{ width: '100%', maxWidth: '700px', height: '100%', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
       data={data}
       margin={{
