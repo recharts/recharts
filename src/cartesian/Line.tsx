@@ -51,6 +51,7 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
+import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 export interface LinePointItem {
   readonly value: number;
@@ -106,7 +107,7 @@ interface InternalLineProps {
 /**
  * External props, intended for end users to fill in
  */
-interface LineProps {
+interface LineProps extends ZIndexable {
   activeDot?: ActiveDotType;
   animateNewValues?: boolean;
   animationBegin?: number;
@@ -665,6 +666,7 @@ const defaultLineProps = {
   strokeWidth: 1,
   xAxisId: 0,
   yAxisId: 0,
+  zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
 function LineImpl(props: WithIdRequired<Props>) {
@@ -798,7 +800,9 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} />
+          <ZIndexLayer zIndex={props.zIndex}>
+            <LineImpl {...props} id={id} />
+          </ZIndexLayer>
         </>
       )}
     </RegisterGraphicalItemId>

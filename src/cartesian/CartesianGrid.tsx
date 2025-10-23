@@ -19,6 +19,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 /**
  * The <CartesianGrid horizontal
@@ -59,7 +60,7 @@ export type VerticalCoordinatesGenerator = (
   syncWithTicks: boolean,
 ) => number[];
 
-interface CartesianGridProps {
+interface CartesianGridProps extends ZIndexable {
   /**
    * The width of grid.
    */
@@ -392,6 +393,7 @@ const defaultCartesianGridProps = {
   xAxisId: 0,
   yAxisId: 0,
   syncWithTicks: false,
+  zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
 export function CartesianGrid(props: Props) {
@@ -490,36 +492,38 @@ export function CartesianGrid(props: Props) {
   }
 
   return (
-    <g className="recharts-cartesian-grid">
-      <Background
-        fill={propsIncludingDefaults.fill}
-        fillOpacity={propsIncludingDefaults.fillOpacity}
-        x={propsIncludingDefaults.x}
-        y={propsIncludingDefaults.y}
-        width={propsIncludingDefaults.width}
-        height={propsIncludingDefaults.height}
-        ry={propsIncludingDefaults.ry}
-      />
+    <ZIndexLayer zIndex={propsIncludingDefaults.zIndex}>
+      <g className="recharts-cartesian-grid">
+        <Background
+          fill={propsIncludingDefaults.fill}
+          fillOpacity={propsIncludingDefaults.fillOpacity}
+          x={propsIncludingDefaults.x}
+          y={propsIncludingDefaults.y}
+          width={propsIncludingDefaults.width}
+          height={propsIncludingDefaults.height}
+          ry={propsIncludingDefaults.ry}
+        />
 
-      <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
-      <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
+        <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
+        <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
 
-      <HorizontalGridLines
-        {...propsIncludingDefaults}
-        offset={offset}
-        horizontalPoints={horizontalPoints}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      />
+        <HorizontalGridLines
+          {...propsIncludingDefaults}
+          offset={offset}
+          horizontalPoints={horizontalPoints}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        />
 
-      <VerticalGridLines
-        {...propsIncludingDefaults}
-        offset={offset}
-        verticalPoints={verticalPoints}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      />
-    </g>
+        <VerticalGridLines
+          {...propsIncludingDefaults}
+          offset={offset}
+          verticalPoints={verticalPoints}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        />
+      </g>
+    </ZIndexLayer>
   );
 }
 
