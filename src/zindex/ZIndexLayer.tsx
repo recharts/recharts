@@ -3,8 +3,35 @@ import { useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { noop } from 'es-toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectZIndexQuerySelector } from './zIndexSelectors';
+import { selectZIndexPortalId } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
+
+/**
+ * A collection of all default zIndex values used throughout the library.
+ */
+export const DefaultZIndexes = {
+  grid: -100,
+
+  /*
+   * other chart elements or custom elements without specific zIndex
+   * render in here, at zIndex 0
+   */
+
+  area: 100,
+  bar: 200,
+  line: 300,
+  scatter: 400,
+
+  axisLineAndTick: 500,
+  label: 600,
+  axisTitle: 700,
+  legend: 800,
+
+  cursor: 1000,
+  activeShape: 1100,
+
+  tooltip: 10000,
+};
 
 export interface ZIndexable {
   /**
@@ -41,7 +68,7 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
     };
   }, [dispatch, zIndex, shouldRenderInPortal]);
 
-  const portalId: string | undefined = useAppSelector(state => selectZIndexQuerySelector(state, zIndex));
+  const portalId: string | undefined = useAppSelector(state => selectZIndexPortalId(state, zIndex));
 
   if (!shouldRenderInPortal) {
     // If no zIndex is provided or zIndex is 0, render normally without portals
