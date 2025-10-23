@@ -6,8 +6,7 @@ import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
 
 export default defineConfig(({ mode }) => ({
-  // depending on your application, base can also be "/"
-  base: '/',
+  base: process.env.BASE_URL || '/',
   loader: { '.js': 'jsx' },
   plugins: [
     react({
@@ -79,6 +78,6 @@ export default defineConfig(({ mode }) => ({
             'react-dom': resolve(__dirname, 'node_modules/react-dom'),
             'react-is': resolve(__dirname, 'node_modules/react-is'),
           }
-        : {},
+        : undefined,
   },
 }));
