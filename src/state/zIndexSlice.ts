@@ -3,6 +3,7 @@
  * The state is a map from z-index numbers to a string ID.
  */
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { DefaultZIndexes } from '../zindex/ZIndexLayer';
 
 type ZIndexEntry = {
   elementId: string | undefined;
@@ -17,30 +18,38 @@ const initialState: ZIndexState = {
   zIndexMap: {},
 };
 
+function isDefaultZIndex(zIndex: number): boolean {
+  return Object.values(DefaultZIndexes).includes(zIndex);
+}
+
 const zIndexSlice = createSlice({
   name: 'zIndex',
   initialState,
   reducers: {
-    registerZIndexPortal: {
-      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
-        const { zIndex } = action.payload;
-        if (state.zIndexMap[zIndex]) {
-          state.zIndexMap[zIndex].consumers += 1;
-        } else {
-          state.zIndexMap[zIndex] = {
-            consumers: 1,
-            elementId: undefined,
-          };
-        }
-      },
-      prepare: prepareAutoBatched<{ zIndex: number }>(),
+    registerZIndexPortal: (state, action: PayloadAction<{ zIndex: number }>) => {
+      const { zIndex } = action.payload;
+      if (state.zIndexMap[zIndex]) {
+        state.zIndexMap[zIndex].consumers += 1;
+      } else {
+        state.zIndexMap[zIndex] = {
+          consumers: 1,
+          elementId: undefined,
+        };
+      }
     },
     unregisterZIndexPortal: {
       reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
         const { zIndex } = action.payload;
         if (state.zIndexMap[zIndex]) {
           state.zIndexMap[zIndex].consumers -= 1;
-          if (state.zIndexMap[zIndex].consumers <= 0) {
+          /*
+           * Garbage collect unused z-index entries, except for default z-indexes.
+           * Default z-indexes are always rendered, regardless of whether there are consumers or not.
+           * And because of that, even if we delete this entry, the ZIndexPortal provider will still be rendered
+           * and React is not going to re-create it, and it won't re-register the element ID.
+           * So let's not delete default z-index entries.
+           */
+          if (state.zIndexMap[zIndex].consumers <= 0 && !isDefaultZIndex(zIndex)) {
             delete state.zIndexMap[zIndex];
           }
         }
