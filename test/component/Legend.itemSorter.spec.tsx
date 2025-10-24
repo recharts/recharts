@@ -6,6 +6,7 @@ import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { DefaultZIndexes } from '../../src/zindex/ZIndexLayer';
 import { assertNotNull } from '../helper/assertNotNull';
 
 describe('Legend.itemSorter', () => {
@@ -93,6 +94,7 @@ describe('Legend.itemSorter', () => {
                 strokeWidth: 1,
                 xAxisId: 0,
                 yAxisId: 0,
+                zIndex: DefaultZIndexes.line,
               },
               type: 'line',
               value: 'A',
@@ -120,6 +122,7 @@ describe('Legend.itemSorter', () => {
                 strokeWidth: 1,
                 xAxisId: 0,
                 yAxisId: 0,
+                zIndex: DefaultZIndexes.line,
               },
               type: 'line',
               value: 'B',
@@ -182,6 +185,7 @@ describe('Legend.itemSorter', () => {
                 strokeWidth: 1,
                 xAxisId: 0,
                 yAxisId: 0,
+                zIndex: DefaultZIndexes.line,
               },
               type: 'line',
               value: 'B',
@@ -209,6 +213,7 @@ describe('Legend.itemSorter', () => {
                 strokeWidth: 1,
                 xAxisId: 0,
                 yAxisId: 0,
+                zIndex: DefaultZIndexes.line,
               },
               type: 'line',
               value: 'A',
