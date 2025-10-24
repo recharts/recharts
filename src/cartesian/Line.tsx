@@ -68,7 +68,7 @@ export interface LinePointItem {
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalLineProps {
+interface InternalLineProps extends ZIndexable {
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -405,7 +405,7 @@ function CurveWithAnimation({
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
-      {props.children}
+      <ZIndexLayer zIndex={props.zIndex}>{props.children}</ZIndexLayer>
       <JavascriptAnimate
         animationId={animationId}
         begin={animationBegin}
@@ -756,9 +756,7 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <ZIndexLayer zIndex={props.zIndex}>
-            <LineImpl {...props} id={id} />
-          </ZIndexLayer>
+          <LineImpl {...props} id={id} />
         </>
       )}
     </RegisterGraphicalItemId>
