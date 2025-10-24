@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -44,6 +45,7 @@ const data = [
     amt: 2100,
   },
 ];
+// #endregion
 
 export default function Example() {
   return (
