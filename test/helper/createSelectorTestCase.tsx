@@ -30,6 +30,15 @@ type TestCaseResult<T> = {
   queryByText: (text: string) => HTMLElement | null;
 };
 
+type ReactHook<T> = {
+  name: `use${string}`;
+  (): T;
+};
+
+function isReactHook<T>(fn: ReactHook<T> | Selector<RechartsRootState, T, never>): fn is ReactHook<T> {
+  return /^use[A-Z].*$/.test(fn.name);
+}
+
 /**
  * Test helper to create a multi-render test case for a selector.
  * It renders a component that uses the selector and spies on its output.
@@ -48,15 +57,22 @@ type TestCaseResult<T> = {
  */
 export function createSelectorTestCase(Component: ComponentType<{ children: ReactNode }>) {
   return function renderTestCase<T>(
-    selector: Selector<RechartsRootState, T, never> = emptySelector,
+    selector: ReactHook<T> | Selector<RechartsRootState, T, never> = emptySelector,
   ): TestCaseResult<T> {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
     const animationManager = new CompositeAnimationManager();
 
-    const Comp = (): null => {
-      spy(useAppSelectorWithStableTest(selector));
-      return null;
-    };
+    const Comp = isReactHook(selector)
+      ? (): null => {
+          const t = selector();
+          spy(t);
+          return null;
+        }
+      : (): null => {
+          const t = useAppSelectorWithStableTest(selector);
+          spy(t);
+          return null;
+        };
 
     const { container, debug, rerender, getByText, queryByText, unmount } = render(
       <AnimationManagerContext.Provider value={animationManager.factory}>

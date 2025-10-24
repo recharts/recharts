@@ -56,7 +56,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
       const { container, spy } = renderTestCase(useActiveTooltipDataPoints);
 
       expectLastCalledWith(spy, undefined);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(1);
 
       showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 387.5, clientY: 100 });
 
@@ -64,10 +64,10 @@ describe('Tooltip in chart with multiple data arrays', () => {
         { xAxis: 30, y1: 6 },
         { xAxis: 30, y2: 12 },
       ]);
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(2);
 
       // it is important that the data points are equal by reference because ActivePoints uses strict equality to compare them
-      const activePoints = spy.mock.calls[3][0];
+      const activePoints = spy.mock.calls[spy.mock.calls.length - 1][0];
       expect(activePoints[0]).toBe(data1[2]);
       expect(activePoints[1]).toBe(data2[5]);
     });
