@@ -8,7 +8,8 @@ import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { RechartsReduxContext } from '../../src/state/RechartsReduxContext';
 import { registerZIndexPortal } from '../../src/state/zIndexSlice';
 import { selectAllRegisteredZIndexes } from '../../src/zindex/zIndexSelectors';
-import { DefaultZIndexes } from '../../src/zindex/ZIndexLayer';
+
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 describe('AllZIndexPortals', () => {
   let store: Store<RechartsRootState>;

@@ -9,7 +9,8 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface BaseLabelListEntry {
   /**
