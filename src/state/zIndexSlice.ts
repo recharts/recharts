@@ -7,6 +7,13 @@ import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type ZIndexEntry = {
+  /**
+   * The ID of the HTML element that corresponds to this z-index.
+   * This ID is used to create a React portal for rendering components at this z-index.
+   *
+   * If undefined, it means no element is currently registered for this z-index,
+   * and registration is in progress. If that happens, wait for the next render cycle.
+   */
   elementId: string | undefined;
   consumers: number;
 };
@@ -15,8 +22,19 @@ type ZIndexState = {
   zIndexMap: Record<number, ZIndexEntry>;
 };
 
+const seed: ZIndexState['zIndexMap'] = {};
+
 const initialState: ZIndexState = {
-  zIndexMap: {},
+  zIndexMap: Object.values(DefaultZIndexes).reduce(
+    (acc: ZIndexState, current): ZIndexState => ({
+      ...acc,
+      [current]: {
+        elementId: undefined,
+        consumers: 0,
+      },
+    }),
+    seed,
+  ),
 };
 
 function isDefaultZIndex(zIndex: number): boolean {
@@ -27,16 +45,19 @@ const zIndexSlice = createSlice({
   name: 'zIndex',
   initialState,
   reducers: {
-    registerZIndexPortal: (state, action: PayloadAction<{ zIndex: number }>) => {
-      const { zIndex } = action.payload;
-      if (state.zIndexMap[zIndex]) {
-        state.zIndexMap[zIndex].consumers += 1;
-      } else {
-        state.zIndexMap[zIndex] = {
-          consumers: 1,
-          elementId: undefined,
-        };
-      }
+    registerZIndexPortal: {
+      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
+        const { zIndex } = action.payload;
+        if (state.zIndexMap[zIndex]) {
+          state.zIndexMap[zIndex].consumers += 1;
+        } else {
+          state.zIndexMap[zIndex] = {
+            consumers: 1,
+            elementId: undefined,
+          };
+        }
+      },
+      prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
     unregisterZIndexPortal: {
       reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
