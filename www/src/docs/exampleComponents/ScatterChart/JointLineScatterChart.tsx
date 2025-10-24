@@ -1,5 +1,6 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+// #region Sample data
 const data01 = [
   { x: 10, y: 30 },
   { x: 30, y: 200 },
@@ -16,6 +17,7 @@ const data02 = [
   { x: 120, y: 190 },
 ];
 
+// #endregion
 const JointLineScatterChart = () => {
   return (
     <ScatterChart

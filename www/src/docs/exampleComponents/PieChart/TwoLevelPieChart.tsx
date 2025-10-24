@@ -1,5 +1,6 @@
 import { Pie, PieChart } from 'recharts';
 
+// #region Sample data
 const data01 = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -20,6 +21,7 @@ const data02 = [
   { name: 'D2', value: 50 },
 ];
 
+// #endregion
 export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
     <PieChart
