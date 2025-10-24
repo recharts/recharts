@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../state/store';
 import { arrayContentsAreEqualCheck } from '../state/selectors/arrayEqualityCheck';
-import { DefaultZIndexes } from './ZIndexLayer';
+
+import { DefaultZIndexes } from './DefaultZIndexes';
 
 /**
  * Given a zIndex, returns the corresponding portal element ID.

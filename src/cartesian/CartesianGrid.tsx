@@ -19,7 +19,8 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /**
  * The <CartesianGrid horizontal

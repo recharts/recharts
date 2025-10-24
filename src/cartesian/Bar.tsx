@@ -80,7 +80,8 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type Rectangle = {
   x: number | null;

@@ -51,7 +51,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
-import { DefaultZIndexes, ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export interface LinePointItem {
   readonly value: number;

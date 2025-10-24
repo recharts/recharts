@@ -3,7 +3,8 @@
  * The state is a map from z-index numbers to a string ID.
  */
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
-import { DefaultZIndexes } from '../zindex/ZIndexLayer';
+
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type ZIndexEntry = {
   elementId: string | undefined;

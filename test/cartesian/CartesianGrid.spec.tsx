@@ -29,7 +29,8 @@ import { pageData } from '../../storybook/stories/data';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../src/zindex/ZIndexLayer';
+
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
