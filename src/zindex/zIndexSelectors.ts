@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../state/store';
 import { arrayContentsAreEqualCheck } from '../state/selectors/arrayEqualityCheck';
+import { DefaultZIndexes } from './ZIndexLayer';
 
 /**
  * Given a zIndex, returns the corresponding portal element ID.
@@ -23,9 +24,11 @@ export const selectZIndexPortalId: (state: RechartsRootState, zIndex: number | u
 export const selectAllRegisteredZIndexes: (state: RechartsRootState) => ReadonlyArray<number> = createSelector(
   (state: RechartsRootState) => state.zIndex.zIndexMap,
   zIndexMap => {
-    return Object.keys(zIndexMap)
+    const allNumbers = Object.keys(zIndexMap)
       .map(zIndexStr => parseInt(zIndexStr, 10))
-      .sort((a, b) => a - b);
+      .concat(Object.values(DefaultZIndexes));
+    const uniqueNumbers = Array.from(new Set(allNumbers));
+    return uniqueNumbers.sort((a, b) => a - b);
   },
   {
     memoizeOptions: {
