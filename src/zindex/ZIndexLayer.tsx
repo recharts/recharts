@@ -5,6 +5,7 @@ import { noop } from 'es-toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexPortalId } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
+import { useIsInChartContext } from '../context/chartLayoutContext';
 
 /**
  * A collection of all default zIndex values used throughout the library.
@@ -48,7 +49,17 @@ type ZIndexLayerProps = {
 };
 
 export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
-  const shouldRenderInPortal = zIndex !== undefined && zIndex !== 0;
+  /*
+   * If we are outside of chart, then we can't rely on the zIndex portal state,
+   * so we just render normally.
+   */
+  const isInChartContext = useIsInChartContext();
+  /*
+   * If zIndex is undefined then we render normally without portals.
+   * Also, if zIndex is 0, we render normally without portals,
+   * because 0 is the default layer that does not need a portal.
+   */
+  const shouldRenderInPortal = isInChartContext && zIndex !== undefined && zIndex !== 0;
 
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
