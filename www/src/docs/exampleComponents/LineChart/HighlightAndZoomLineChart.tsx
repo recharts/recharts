@@ -3,6 +3,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceArea, M
 
 type Impressions = { name: number; cost: number; impression: number };
 
+// #region Sample data
 const impressionsData = [
   { name: 1, cost: 4.11, impression: 100 },
   { name: 2, cost: 2.39, impression: 120 },
@@ -26,6 +27,7 @@ const impressionsData = [
   { name: 20, cost: 7, impression: 100 },
 ];
 
+// #endregion
 type ZoomAndHighlightState = {
   left: string | number;
   right: string | number;
