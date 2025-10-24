@@ -2,7 +2,7 @@
  * This slice contains a registry of z-index values for various components.
  * The state is a map from z-index numbers to a string ID.
  */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 
 type ZIndexEntry = {
   elementId: string | undefined;
@@ -21,42 +21,54 @@ const zIndexSlice = createSlice({
   name: 'zIndex',
   initialState,
   reducers: {
-    registerZIndexPortal: (state, action: PayloadAction<{ zIndex: number }>) => {
-      const { zIndex } = action.payload;
-      if (state.zIndexMap[zIndex]) {
-        state.zIndexMap[zIndex].consumers += 1;
-      } else {
-        state.zIndexMap[zIndex] = {
-          consumers: 1,
-          elementId: undefined,
-        };
-      }
-    },
-    unregisterZIndexPortal: (state, action: PayloadAction<{ zIndex: number }>) => {
-      const { zIndex } = action.payload;
-      if (state.zIndexMap[zIndex]) {
-        state.zIndexMap[zIndex].consumers -= 1;
-        if (state.zIndexMap[zIndex].consumers <= 0) {
-          delete state.zIndexMap[zIndex];
+    registerZIndexPortal: {
+      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
+        const { zIndex } = action.payload;
+        if (state.zIndexMap[zIndex]) {
+          state.zIndexMap[zIndex].consumers += 1;
+        } else {
+          state.zIndexMap[zIndex] = {
+            consumers: 1,
+            elementId: undefined,
+          };
         }
-      }
+      },
+      prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
-    registerZIndexPortalId: (state, action: PayloadAction<{ zIndex: number; elementId: string }>) => {
-      const { zIndex, elementId } = action.payload;
-      if (state.zIndexMap[zIndex]) {
-        state.zIndexMap[zIndex].elementId = elementId;
-      } else {
-        state.zIndexMap[zIndex] = {
-          consumers: 0,
-          elementId,
-        };
-      }
+    unregisterZIndexPortal: {
+      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
+        const { zIndex } = action.payload;
+        if (state.zIndexMap[zIndex]) {
+          state.zIndexMap[zIndex].consumers -= 1;
+          if (state.zIndexMap[zIndex].consumers <= 0) {
+            delete state.zIndexMap[zIndex];
+          }
+        }
+      },
+      prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
-    unregisterZIndexPortalId: (state, action: PayloadAction<{ zIndex: number }>) => {
-      const { zIndex } = action.payload;
-      if (state.zIndexMap[zIndex]) {
-        state.zIndexMap[zIndex].elementId = undefined;
-      }
+    registerZIndexPortalId: {
+      reducer: (state, action: PayloadAction<{ zIndex: number; elementId: string }>) => {
+        const { zIndex, elementId } = action.payload;
+        if (state.zIndexMap[zIndex]) {
+          state.zIndexMap[zIndex].elementId = elementId;
+        } else {
+          state.zIndexMap[zIndex] = {
+            consumers: 0,
+            elementId,
+          };
+        }
+      },
+      prepare: prepareAutoBatched<{ zIndex: number; elementId: string }>(),
+    },
+    unregisterZIndexPortalId: {
+      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
+        const { zIndex } = action.payload;
+        if (state.zIndexMap[zIndex]) {
+          state.zIndexMap[zIndex].elementId = undefined;
+        }
+      },
+      prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
   },
 });
