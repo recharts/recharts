@@ -1,6 +1,7 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { curveCardinal } from 'd3-shape';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -46,6 +47,7 @@ const data = [
   },
 ];
 
+// #endregion
 const cardinal = curveCardinal.tension(0.2);
 
 const CardinalAreaChart = () => {

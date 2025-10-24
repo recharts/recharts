@@ -1,6 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { AxisInterval } from 'recharts/types/util/types';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -46,6 +47,7 @@ const data = [
   },
 ];
 
+// #endregion
 const LineChartAxisInterval = () => {
   const chart = (interval: AxisInterval) => (
     <LineChart

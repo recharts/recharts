@@ -1,5 +1,6 @@
 import { Area, AreaChart, Brush, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 export default function Example() {
   return (
     <>

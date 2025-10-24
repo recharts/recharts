@@ -1,5 +1,6 @@
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: '18-24',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const style = {
   top: '50%',
   right: 0,

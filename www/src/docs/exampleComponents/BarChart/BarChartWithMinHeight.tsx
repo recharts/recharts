@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, LabelProps } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const renderCustomizedLabel = (props: LabelProps) => {
   const { x, y, width, value } = props;
 

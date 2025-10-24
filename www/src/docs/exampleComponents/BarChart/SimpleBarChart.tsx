@@ -1,5 +1,6 @@
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const SimpleBarChart = () => {
   return (
     <BarChart

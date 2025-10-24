@@ -2,6 +2,7 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload } from 'recharts';
 import { DataKey } from 'recharts/types/util/types';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -47,6 +48,7 @@ const data = [
   },
 ];
 
+// #endregion
 const LegendEffectOpacity = () => {
   const [hoveringDataKey, setHoveringDataKey] = React.useState<DataKey<any> | undefined>(undefined);
 

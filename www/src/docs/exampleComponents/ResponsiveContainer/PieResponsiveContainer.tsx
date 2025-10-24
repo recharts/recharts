@@ -1,5 +1,6 @@
 import { ResponsiveContainer, PieChart, Pie } from 'recharts';
 
+// #region Sample data
 const data = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -7,6 +8,7 @@ const data = [
   { name: 'Group D', value: 200 },
 ];
 
+// #endregion
 const Example = () => {
   return (
     <div style={{ width: '100%', height: 300 }}>

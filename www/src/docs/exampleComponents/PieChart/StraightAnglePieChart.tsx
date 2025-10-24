@@ -1,5 +1,6 @@
 import { Pie, PieChart } from 'recharts';
 
+// #region Sample data
 const data = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -9,6 +10,7 @@ const data = [
   { name: 'Group F', value: 189 },
 ];
 
+// #endregion
 export default function StraightAnglePieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
     <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 2 }} responsive>

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { TooltipContentProps } from 'recharts/types/component/Tooltip';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps<string | number, string>) => {
   const newPayload = payload.filter(x => x.dataKey !== 'a');
   return <DefaultTooltipContent payload={newPayload} {...rest} />;

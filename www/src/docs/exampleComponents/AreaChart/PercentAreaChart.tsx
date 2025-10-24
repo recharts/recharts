@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, TooltipContentProps } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     month: '2015.01',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const toPercent = (decimal: number): string => `${(decimal * 100).toFixed(0)}%`;
 
 const getPercent = (value: number, total: number): string => {

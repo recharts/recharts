@@ -1,6 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, TooltipContentProps } from 'recharts';
 import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -46,6 +47,7 @@ const data = [
   },
 ];
 
+// #endregion
 const getIntroOfPage = (label: string | number | undefined) => {
   if (label === 'Page A') {
     return "Page A is about men's clothing";

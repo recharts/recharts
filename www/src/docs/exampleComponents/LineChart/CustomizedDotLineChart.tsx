@@ -1,6 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { ActiveDotProps } from 'recharts/types/util/types';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -46,6 +47,7 @@ const data = [
   },
 ];
 
+// #endregion
 const CustomizedDot = (props: ActiveDotProps) => {
   const { cx, cy, value } = props;
 

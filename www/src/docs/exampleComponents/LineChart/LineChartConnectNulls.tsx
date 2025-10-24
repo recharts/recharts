@@ -1,5 +1,6 @@
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
+// #region Sample data
 const data = [
   { name: 'Page A', uv: 4000 },
   { name: 'Page B', uv: 3000 },
@@ -10,6 +11,7 @@ const data = [
   { name: 'Page G', uv: 3490 },
 ];
 
+// #endregion
 export default function Example() {
   return (
     <div style={{ width: '100%' }}>

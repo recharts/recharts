@@ -20,6 +20,7 @@ type PieSectorData = {
 
 type PieSectorDataItem = React.SVGProps<SVGPathElement> & Partial<SectorProps> & PieSectorData;
 
+// #region Sample data
 const data = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -27,6 +28,7 @@ const data = [
   { name: 'Group D', value: 200 },
 ];
 
+// #endregion
 const renderActiveShape = ({
   cx,
   cy,
