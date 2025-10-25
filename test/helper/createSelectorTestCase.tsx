@@ -39,6 +39,26 @@ function isReactHook<T>(fn: ReactHook<T> | Selector<RechartsRootState, T, never>
   return /^use[A-Z].*$/.test(fn.name);
 }
 
+function getComp<T>(
+  selector: ReactHook<T> | ((state: RechartsRootState, ...params: never) => T) | undefined,
+  spy: Mock<(selectorResult: T | undefined) => void>,
+) {
+  if (selector == null) {
+    return (): null => null;
+  }
+  return isReactHook(selector)
+    ? (): null => {
+        const t = selector();
+        spy(t);
+        return null;
+      }
+    : (): null => {
+        const t = useAppSelectorWithStableTest(selector);
+        spy(t);
+        return null;
+      };
+}
+
 /**
  * Test helper to create a multi-render test case for a selector.
  * It renders a component that uses the selector and spies on its output.
@@ -57,22 +77,12 @@ function isReactHook<T>(fn: ReactHook<T> | Selector<RechartsRootState, T, never>
  */
 export function createSelectorTestCase(Component: ComponentType<{ children: ReactNode }>) {
   return function renderTestCase<T>(
-    selector: ReactHook<T> | Selector<RechartsRootState, T, never> | undefined = emptySelector,
+    selector: ReactHook<T> | Selector<RechartsRootState, T, never> | undefined = undefined,
   ): TestCaseResult<T> {
     const spy: Mock<(selectorResult: T | undefined) => void> = vi.fn();
     const animationManager = new CompositeAnimationManager();
 
-    const Comp = isReactHook(selector)
-      ? (): null => {
-          const t = selector();
-          spy(t);
-          return null;
-        }
-      : (): null => {
-          const t = useAppSelectorWithStableTest(selector);
-          spy(t);
-          return null;
-        };
+    const Comp = getComp(selector, spy);
 
     const { container, debug, rerender, getByText, queryByText, unmount } = render(
       <AnimationManagerContext.Provider value={animationManager.factory}>

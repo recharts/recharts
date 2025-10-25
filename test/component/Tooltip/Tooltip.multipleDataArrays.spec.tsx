@@ -17,6 +17,7 @@ import { showTooltipOnCoordinate } from './tooltipTestHelpers';
 import { composedChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('Tooltip in chart with multiple data arrays', () => {
   beforeEach(() => {
@@ -68,6 +69,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
 
       // it is important that the data points are equal by reference because ActivePoints uses strict equality to compare them
       const activePoints = spy.mock.calls[spy.mock.calls.length - 1][0];
+      assertNotNull(activePoints);
       expect(activePoints[0]).toBe(data1[2]);
       expect(activePoints[1]).toBe(data2[5]);
     });
@@ -128,6 +130,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
       );
       expect(spy).toHaveBeenCalledTimes(3);
       const scale = spy.mock.calls[2][0];
+      assertNotNull(scale);
       const chartX1 = scale(5);
       expect(chartX1).toBe(118.75);
 
