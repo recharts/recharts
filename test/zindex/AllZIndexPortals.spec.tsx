@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { Context } from 'react';
 import type { Store } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act, render } from '@testing-library/react';
 import { AllZIndexPortals } from '../../src/zindex/ZIndexPortal';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
-import { RechartsReduxContext } from '../../src/state/RechartsReduxContext';
+import { RechartsReduxContext, RechartsReduxContextValue } from '../../src/state/RechartsReduxContext';
 import { registerZIndexPortal } from '../../src/state/zIndexSlice';
 import { selectAllRegisteredZIndexes } from '../../src/zindex/zIndexSelectors';
 
 import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+
+// @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;
 
 describe('AllZIndexPortals', () => {
   let store: Store<RechartsRootState>;
@@ -21,7 +24,7 @@ describe('AllZIndexPortals', () => {
   it('should add z-index portal when z-index consumer is registered', () => {
     const { container } = render(
       <svg>
-        <Provider store={store} context={RechartsReduxContext}>
+        <Provider store={store} context={nonNullContext}>
           <AllZIndexPortals>child</AllZIndexPortals>
         </Provider>
       </svg>,
@@ -48,7 +51,7 @@ describe('AllZIndexPortals', () => {
   it('should render one child for each of the registered element IDs', () => {
     const { container } = render(
       <svg>
-        <Provider store={store} context={RechartsReduxContext}>
+        <Provider store={store} context={nonNullContext}>
           <AllZIndexPortals>
             <div data-testid="child">child</div>
           </AllZIndexPortals>
