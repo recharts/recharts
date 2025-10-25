@@ -450,7 +450,7 @@ function CurveWithAnimation({
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
-      <ZIndexLayer zIndex={props.zIndex}>{props.children}</ZIndexLayer>
+      {props.children}
       <JavascriptAnimate
         animationId={animationId}
         begin={animationBegin}
@@ -599,7 +599,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 // eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
   render() {
-    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip } = this.props;
+    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, zIndex } =
+      this.props;
 
     if (hide) {
       return null;
@@ -612,7 +613,7 @@ class LineWithState extends Component<InternalProps> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <>
+      <ZIndexLayer zIndex={zIndex}>
         <Layer className={layerClass}>
           {needClip && (
             <defs>
@@ -645,7 +646,7 @@ class LineWithState extends Component<InternalProps> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
         />
-      </>
+      </ZIndexLayer>
     );
   }
 }
