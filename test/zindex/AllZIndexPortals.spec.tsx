@@ -25,7 +25,7 @@ describe('AllZIndexPortals', () => {
     const { container } = render(
       <svg>
         <Provider store={store} context={nonNullContext}>
-          <AllZIndexPortals>child</AllZIndexPortals>
+          <AllZIndexPortals isPanorama={false}>child</AllZIndexPortals>
         </Provider>
       </svg>,
     );
@@ -52,7 +52,7 @@ describe('AllZIndexPortals', () => {
     const { container } = render(
       <svg>
         <Provider store={store} context={nonNullContext}>
-          <AllZIndexPortals>
+          <AllZIndexPortals isPanorama={false}>
             <div data-testid="child">child</div>
           </AllZIndexPortals>
         </Provider>

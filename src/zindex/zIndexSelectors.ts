@@ -10,17 +10,28 @@ import { DefaultZIndexes } from './DefaultZIndexes';
  *
  * It also returns undefined in case the z-index portal has not been rendered yet.
  */
-export const selectZIndexPortalId: (state: RechartsRootState, zIndex: number | undefined) => string | undefined =
-  createSelector(
-    (state: RechartsRootState) => state.zIndex.zIndexMap,
-    (_: RechartsRootState, zIndex: number) => zIndex,
-    (zIndexMap, zIndex) => {
-      if (zIndex == null) {
-        return undefined;
-      }
-      return zIndexMap[zIndex]?.elementId;
-    },
-  );
+export const selectZIndexPortalId: (
+  state: RechartsRootState,
+  zIndex: number | undefined,
+  isPanorama: boolean,
+) => string | undefined = createSelector(
+  (state: RechartsRootState) => state.zIndex.zIndexMap,
+  (_: RechartsRootState, zIndex: number | undefined) => zIndex,
+  (_: RechartsRootState, _zIndex: number | undefined, isPanorama: boolean) => isPanorama,
+  (zIndexMap, zIndex, isPanorama) => {
+    if (zIndex == null) {
+      return undefined;
+    }
+    const entry = zIndexMap[zIndex];
+    if (entry == null) {
+      return undefined;
+    }
+    if (isPanorama) {
+      return entry.panoramaElementId;
+    }
+    return entry.elementId;
+  },
+);
 
 export const selectAllRegisteredZIndexes: (state: RechartsRootState) => ReadonlyArray<number> = createSelector(
   (state: RechartsRootState) => state.zIndex.zIndexMap,

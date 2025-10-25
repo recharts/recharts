@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexPortalId } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
 import { useIsInChartContext } from '../context/chartLayoutContext';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 export interface ZIndexable {
   /**
@@ -34,6 +35,8 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
    */
   const shouldRenderInPortal = isInChartContext && zIndex !== undefined && zIndex !== 0;
 
+  const isPanorama = useIsPanorama();
+
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
     if (!shouldRenderInPortal) {
@@ -52,7 +55,7 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
     };
   }, [dispatch, zIndex, shouldRenderInPortal]);
 
-  const portalId: string | undefined = useAppSelector(state => selectZIndexPortalId(state, zIndex));
+  const portalId: string | undefined = useAppSelector(state => selectZIndexPortalId(state, zIndex, isPanorama));
 
   if (!shouldRenderInPortal) {
     // If no zIndex is provided or zIndex is 0, render normally without portals

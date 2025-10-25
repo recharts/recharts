@@ -5,19 +5,20 @@ import { registerZIndexPortalId, unregisterZIndexPortalId } from '../state/zInde
 import { useUniqueId } from '../util/useUniqueId';
 import { selectAllRegisteredZIndexes } from './zIndexSelectors';
 
-function ZIndexSvgPortal({ zIndex }: { zIndex: number }) {
-  const portalId = useUniqueId(`recharts-zindex-${zIndex}`);
+function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: boolean }) {
+  const prefix = isPanorama ? `recharts-zindex-panorama-` : `recharts-zindex-`;
+  const portalId = useUniqueId(`${prefix}${zIndex}`);
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(registerZIndexPortalId({ zIndex, elementId: portalId }));
+    dispatch(registerZIndexPortalId({ zIndex, elementId: portalId, isPanorama }));
     return () => {
-      dispatch(unregisterZIndexPortalId({ zIndex }));
+      dispatch(unregisterZIndexPortalId({ zIndex, isPanorama }));
     };
-  }, [dispatch, zIndex, portalId]);
+  }, [dispatch, zIndex, portalId, isPanorama]);
   return <g id={portalId} />;
 }
 
-export function AllZIndexPortals({ children }: { children?: React.ReactNode }) {
+export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {
   const allRegisteredZIndexes: ReadonlyArray<number> | undefined = useAppSelector(selectAllRegisteredZIndexes);
 
   if (!allRegisteredZIndexes || allRegisteredZIndexes.length === 0) {
@@ -31,11 +32,11 @@ export function AllZIndexPortals({ children }: { children?: React.ReactNode }) {
   return (
     <>
       {allNegativeZIndexes.map(zIndex => (
-        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} />
+        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} isPanorama={isPanorama} />
       ))}
       {children}
       {allPositiveZIndexes.map(zIndex => (
-        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} />
+        <ZIndexSvgPortal key={zIndex} zIndex={zIndex} isPanorama={isPanorama} />
       ))}
     </>
   );

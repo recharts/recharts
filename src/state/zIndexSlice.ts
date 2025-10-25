@@ -15,6 +15,12 @@ type ZIndexEntry = {
    * and registration is in progress. If that happens, wait for the next render cycle.
    */
   elementId: string | undefined;
+  /**
+   * Panorama items can't mix with normal items in the same z-index layer,
+   * because they are rendered in a different SVG element.
+   * So we need to have a separate element ID for panorama z-index portals.
+   */
+  panoramaElementId: string | undefined;
   consumers: number;
 };
 
@@ -54,6 +60,7 @@ const zIndexSlice = createSlice({
           state.zIndexMap[zIndex] = {
             consumers: 1,
             elementId: undefined,
+            panoramaElementId: undefined,
           };
         }
       },
@@ -79,27 +86,36 @@ const zIndexSlice = createSlice({
       prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
     registerZIndexPortalId: {
-      reducer: (state, action: PayloadAction<{ zIndex: number; elementId: string }>) => {
-        const { zIndex, elementId } = action.payload;
+      reducer: (state, action: PayloadAction<{ zIndex: number; elementId: string; isPanorama: boolean }>) => {
+        const { zIndex, elementId, isPanorama } = action.payload;
         if (state.zIndexMap[zIndex]) {
-          state.zIndexMap[zIndex].elementId = elementId;
+          if (isPanorama) {
+            state.zIndexMap[zIndex].panoramaElementId = elementId;
+          } else {
+            state.zIndexMap[zIndex].elementId = elementId;
+          }
         } else {
           state.zIndexMap[zIndex] = {
             consumers: 0,
-            elementId,
+            elementId: isPanorama ? undefined : elementId,
+            panoramaElementId: isPanorama ? elementId : undefined,
           };
         }
       },
-      prepare: prepareAutoBatched<{ zIndex: number; elementId: string }>(),
+      prepare: prepareAutoBatched<{ zIndex: number; elementId: string; isPanorama: boolean }>(),
     },
     unregisterZIndexPortalId: {
-      reducer: (state, action: PayloadAction<{ zIndex: number }>) => {
+      reducer: (state, action: PayloadAction<{ zIndex: number; isPanorama: boolean }>) => {
         const { zIndex } = action.payload;
         if (state.zIndexMap[zIndex]) {
-          state.zIndexMap[zIndex].elementId = undefined;
+          if (action.payload.isPanorama) {
+            state.zIndexMap[zIndex].panoramaElementId = undefined;
+          } else {
+            state.zIndexMap[zIndex].elementId = undefined;
+          }
         }
       },
-      prepare: prepareAutoBatched<{ zIndex: number }>(),
+      prepare: prepareAutoBatched<{ zIndex: number; isPanorama: boolean }>(),
     },
   },
 });
