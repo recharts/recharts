@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, it, expect, vi, test, beforeEach } from 'vitest';
 import { Line, ErrorBar, LineChart, Customized, XAxis, LineProps, Tooltip } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
@@ -14,6 +14,7 @@ import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<Line />', () => {
   beforeEach(() => {
@@ -262,6 +263,186 @@ describe('<Line />', () => {
 
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expectedProps);
+    });
+  });
+
+  describe('events', () => {
+    const points = [
+      {
+        payload: { value: 100, x: 10, y: 50 },
+        value: 50,
+        x: 5,
+        y: 86.66666666666666,
+      },
+      {
+        payload: { value: 100, x: 50, y: 50 },
+        value: 50,
+        x: 127.5,
+        y: 86.66666666666666,
+      },
+      {
+        payload: { value: 100, x: 90, y: 50 },
+        value: 50,
+        x: 250,
+        y: 86.66666666666666,
+      },
+      {
+        payload: { value: 100, x: 130, y: 50 },
+        value: 50,
+        x: 372.5,
+        y: 86.66666666666666,
+      },
+      {
+        payload: { value: 100, x: 170, y: 50 },
+        value: 50,
+        x: 495,
+        y: 86.66666666666666,
+      },
+    ];
+    it('should fire onClick event when clicking on the line', async () => {
+      const user = userEventSetup();
+      const handleClick = vi.fn();
+      const { container } = render(
+        <LineChart width={500} height={500} data={data}>
+          <Line isAnimationActive={false} dataKey="y" onClick={handleClick} />
+        </LineChart>,
+      );
+
+      const linePath = container.querySelector('.recharts-line-curve');
+      assertNotNull(linePath);
+      await user.click(linePath);
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleClick,
+        {
+          className: 'recharts-line-curve',
+          clipPath: undefined,
+          connectNulls: false,
+          fill: 'none',
+          height: 490,
+          id: expect.stringMatching(/recharts-line-.*/),
+          layout: 'horizontal',
+          onClick: handleClick,
+          pathRef: expect.objectContaining({
+            current: expect.any(Object),
+          }),
+          stroke: '#3182bd',
+          strokeDasharray: undefined,
+          strokeWidth: 1,
+          type: undefined,
+          width: 490,
+          points,
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onMouseOver and onMouseOut events when hovering over the line', async () => {
+      const user = userEventSetup();
+      const handleMouseOver = vi.fn();
+      const handleMouseOut = vi.fn();
+
+      const { container } = render(
+        <LineChart width={500} height={500} data={data}>
+          <Line isAnimationActive={false} dataKey="y" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
+        </LineChart>,
+      );
+
+      const linePath = container.querySelector('.recharts-line-curve');
+      assertNotNull(linePath);
+      await user.hover(linePath);
+      expect(handleMouseOver).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOver,
+        {
+          className: 'recharts-line-curve',
+          clipPath: undefined,
+          connectNulls: false,
+          fill: 'none',
+          height: 490,
+          id: expect.stringMatching(/recharts-line-.*/),
+          layout: 'horizontal',
+          onMouseOut: handleMouseOut,
+          onMouseOver: handleMouseOver,
+          pathRef: expect.objectContaining({
+            current: expect.any(Object),
+          }),
+          points,
+          stroke: '#3182bd',
+          strokeDasharray: undefined,
+          strokeWidth: 1,
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
+
+      await user.unhover(linePath);
+      expect(handleMouseOut).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOut,
+        {
+          className: 'recharts-line-curve',
+          clipPath: undefined,
+          connectNulls: false,
+          fill: 'none',
+          height: 490,
+          id: expect.stringMatching(/recharts-line-.*/),
+          layout: 'horizontal',
+          onMouseOut: handleMouseOut,
+          onMouseOver: handleMouseOver,
+          pathRef: expect.objectContaining({
+            current: expect.any(Object),
+          }),
+          points,
+          stroke: '#3182bd',
+          strokeDasharray: undefined,
+          strokeWidth: 1,
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onTouchMove and onTouchEnd events when touching the line', async () => {
+      const handleTouchMove = vi.fn();
+      const handleTouchEnd = vi.fn();
+
+      const { container } = render(
+        <LineChart width={500} height={500} data={data}>
+          <Line isAnimationActive={false} dataKey="y" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
+        </LineChart>,
+      );
+
+      const linePath = container.querySelector('.recharts-line-curve');
+      assertNotNull(linePath);
+      fireEvent.touchMove(linePath, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchMove,
+        {
+          className: 'recharts-line-curve',
+          clipPath: undefined,
+          connectNulls: false,
+          fill: 'none',
+          height: 490,
+          id: expect.stringMatching(/recharts-line-.*/),
+          layout: 'horizontal',
+          onTouchEnd: handleTouchEnd,
+          onTouchMove: handleTouchMove,
+          pathRef: expect.objectContaining({
+            current: expect.any(Object),
+          }),
+          points,
+          stroke: '#3182bd',
+          strokeDasharray: undefined,
+          strokeWidth: 1,
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
     });
   });
 

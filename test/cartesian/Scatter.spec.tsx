@@ -11,6 +11,8 @@ import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
 import { ScatterSettings } from '../../src/state/types/ScatterSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
+import { mockTouchingElement } from '../helper/mockTouchingElement';
 
 describe('<Scatter />', () => {
   const data = [
@@ -257,6 +259,310 @@ describe('<Scatter />', () => {
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expectedWithName]);
       expect(settingsSpy).toHaveBeenCalledTimes(4);
+    });
+  });
+
+  describe('events', () => {
+    it('should fire onClick event when clicking on a scatter point', async () => {
+      const user = userEventSetup();
+      const handleClick = vi.fn();
+      const { container } = render(
+        <ScatterChart width={500} height={500}>
+          <Scatter data={data} dataKey="cx" onClick={handleClick} />
+        </ScatterChart>,
+      );
+
+      const scatterPoints = container.querySelectorAll('.recharts-symbols');
+      await user.click(scatterPoints[0]);
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleClick,
+        {
+          cx: 54,
+          cy: 467.77777777777777,
+          height: 9.0270333367641,
+          node: { x: 10, y: 10, z: '-' },
+          payload: {
+            cx: 10,
+            cy: 50,
+            payload: { x: 12, y: 23, z: 78 },
+            size: 64,
+          },
+          size: 0,
+          tooltipPayload: [
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+          ],
+          tooltipPosition: { x: 54, y: 467.77777777777777 },
+          width: 9.0270333367641,
+          x: 49.48648333161795,
+          y: 463.2642611093957,
+        },
+        0,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onMouseOver and onMouseOut events when hovering over a scatter point', async () => {
+      const user = userEventSetup();
+      const handleMouseOver = vi.fn();
+      const handleMouseOut = vi.fn();
+
+      const { container } = render(
+        <ScatterChart width={500} height={500}>
+          <Scatter data={data} dataKey="cx" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
+        </ScatterChart>,
+      );
+
+      const scatterPoints = container.querySelectorAll('.recharts-symbols');
+      await user.hover(scatterPoints[0]);
+      expect(handleMouseOver).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOver,
+        {
+          cx: 54,
+          cy: 467.77777777777777,
+          height: 9.0270333367641,
+          node: { x: 10, y: 10, z: '-' },
+          payload: {
+            cx: 10,
+            cy: 50,
+            payload: { x: 12, y: 23, z: 78 },
+            size: 64,
+          },
+          size: 0,
+          tooltipPayload: [
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+          ],
+          tooltipPosition: { x: 54, y: 467.77777777777777 },
+          width: 9.0270333367641,
+          x: 49.48648333161795,
+          y: 463.2642611093957,
+        },
+        0,
+        expect.any(Object),
+      );
+
+      await user.unhover(scatterPoints[0]);
+      expect(handleMouseOut).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOut,
+        {
+          cx: 54,
+          cy: 467.77777777777777,
+          height: 9.0270333367641,
+          node: { x: 10, y: 10, z: '-' },
+          payload: {
+            cx: 10,
+            cy: 50,
+            payload: { x: 12, y: 23, z: 78 },
+            size: 64,
+          },
+          size: 0,
+          tooltipPayload: [
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+          ],
+          tooltipPosition: { x: 54, y: 467.77777777777777 },
+          width: 9.0270333367641,
+          x: 49.48648333161795,
+          y: 463.2642611093957,
+        },
+        0,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onTouchMove and onTouchEnd events when touching a scatter point', async () => {
+      mockTouchingElement('0', 'cx');
+      const handleTouchMove = vi.fn();
+      const handleTouchEnd = vi.fn();
+
+      const { container } = render(
+        <ScatterChart width={500} height={500}>
+          <Scatter data={data} dataKey="cx" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
+        </ScatterChart>,
+      );
+
+      const scatterPoints = container.querySelectorAll('.recharts-symbols');
+      fireEvent.touchMove(scatterPoints[0], { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchMove,
+        {
+          cx: 54,
+          cy: 467.77777777777777,
+          height: 9.0270333367641,
+          node: { x: 10, y: 10, z: '-' },
+          payload: {
+            cx: 10,
+            cy: 50,
+            payload: { x: 12, y: 23, z: 78 },
+            size: 64,
+          },
+          size: 0,
+          tooltipPayload: [
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+          ],
+          tooltipPosition: { x: 54, y: 467.77777777777777 },
+          width: 9.0270333367641,
+          x: 49.48648333161795,
+          y: 463.2642611093957,
+        },
+        0,
+        expect.any(Object),
+      );
+
+      fireEvent.touchEnd(scatterPoints[0], { changedTouches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchEnd).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchEnd,
+        {
+          cx: 54,
+          cy: 467.77777777777777,
+          height: 9.0270333367641,
+          node: { x: 10, y: 10, z: '-' },
+          payload: {
+            cx: 10,
+            cy: 50,
+            payload: { x: 12, y: 23, z: 78 },
+            size: 64,
+          },
+          size: 0,
+          tooltipPayload: [
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+            {
+              dataKey: 'cx',
+              name: undefined,
+              payload: {
+                cx: 10,
+                cy: 50,
+                payload: { x: 12, y: 23, z: 78 },
+                size: 64,
+              },
+              type: undefined,
+              unit: '',
+              value: 10,
+            },
+          ],
+          tooltipPosition: { x: 54, y: 467.77777777777777 },
+          width: 9.0270333367641,
+          x: 49.48648333161795,
+          y: 463.2642611093957,
+        },
+        0,
+        expect.any(Object),
+      );
     });
   });
 

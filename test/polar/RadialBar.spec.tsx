@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
 import {
   Customized,
@@ -1106,11 +1106,164 @@ describe('<RadialBar />', () => {
     const sector = container.querySelectorAll('.recharts-sector')[0];
 
     await user.hover(sector);
-    expect(onMouseEnter).toHaveBeenCalled();
+    expect(onMouseEnter).toHaveBeenCalledTimes(1);
+    expectLastCalledWith(
+      onMouseEnter,
+      {
+        name: 'Page A',
+        uv: 400,
+        pv: 2400,
+        amt: 2400,
+        background: {
+          cx: 250,
+          cy: 250,
+          innerRadius: 3.266666666666666,
+          outerRadius: 29.266666666666666,
+          startAngle: 0,
+          endAngle: 360,
+        },
+        payload: {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+        },
+        value: 2400,
+        cx: 250,
+        cy: 250,
+        innerRadius: 3.266666666666666,
+        outerRadius: 29.266666666666666,
+        startAngle: 0,
+        endAngle: 360,
+      },
+      0,
+      expect.any(Object),
+    );
+
     await user.unhover(sector);
-    expect(onMouseLeave).toHaveBeenCalled();
+    expect(onMouseLeave).toHaveBeenCalledTimes(1);
+    expectLastCalledWith(
+      onMouseLeave,
+      {
+        name: 'Page A',
+        uv: 400,
+        pv: 2400,
+        amt: 2400,
+        background: {
+          cx: 250,
+          cy: 250,
+          innerRadius: 3.266666666666666,
+          outerRadius: 29.266666666666666,
+          startAngle: 0,
+          endAngle: 360,
+        },
+        payload: {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+        },
+        value: 2400,
+        cx: 250,
+        cy: 250,
+        innerRadius: 3.266666666666666,
+        outerRadius: 29.266666666666666,
+        startAngle: 0,
+        endAngle: 360,
+      },
+      0,
+      expect.any(Object),
+    );
+
     await user.click(sector);
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expectLastCalledWith(
+      onClick,
+      {
+        name: 'Page A',
+        uv: 400,
+        pv: 2400,
+        amt: 2400,
+        background: {
+          cx: 250,
+          cy: 250,
+          innerRadius: 3.266666666666666,
+          outerRadius: 29.266666666666666,
+          startAngle: 0,
+          endAngle: 360,
+        },
+        payload: {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+        },
+        value: 2400,
+        cx: 250,
+        cy: 250,
+        innerRadius: 3.266666666666666,
+        outerRadius: 29.266666666666666,
+        startAngle: 0,
+        endAngle: 360,
+      },
+      0,
+      expect.any(Object),
+    );
+  });
+
+  test('calls touch handler events', async () => {
+    const onTouchMove = vi.fn();
+    const onTouchEnd = vi.fn();
+
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={PageData}>
+        <RadialBar
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          dataKey="amt"
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        />
+      </RadialBarChart>,
+    );
+
+    const sector = container.querySelectorAll('.recharts-sector')[0];
+
+    fireEvent.touchMove(sector, { touches: [{ clientX: 200, clientY: 200 }] });
+    expect(onTouchMove).toHaveBeenCalledTimes(1);
+    expectLastCalledWith(
+      onTouchMove,
+      {
+        name: 'Page A',
+        uv: 400,
+        pv: 2400,
+        amt: 2400,
+        background: {
+          cx: 250,
+          cy: 250,
+          innerRadius: 3.266666666666666,
+          outerRadius: 29.266666666666666,
+          startAngle: 0,
+          endAngle: 360,
+        },
+        payload: {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+        },
+        value: 2400,
+        cx: 250,
+        cy: 250,
+        innerRadius: 3.266666666666666,
+        outerRadius: 29.266666666666666,
+        startAngle: 0,
+        endAngle: 360,
+      },
+      0,
+      expect.any(Object),
+    );
   });
 
   describe('state integration', () => {

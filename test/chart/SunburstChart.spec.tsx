@@ -11,6 +11,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { userEventSetup } from '../helper/userEventSetup';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
@@ -45,10 +46,77 @@ describe('<Sunburst />', () => {
 
     await user.hover(sector);
     expect(onMouseEnter).toHaveBeenCalled();
+    expectLastCalledWith(
+      onMouseEnter,
+      {
+        name: 'Child1',
+        fill: '#264653',
+        value: 30,
+        children: [
+          {
+            name: 'third child',
+            value: 10,
+          },
+        ],
+        tooltipIndex: '[0]',
+      },
+      expect.any(Object),
+    );
+
     await user.unhover(sector);
     expect(onMouseLeave).toHaveBeenCalled();
+    expectLastCalledWith(
+      onMouseLeave,
+      {
+        name: 'Child1',
+        fill: '#264653',
+        value: 30,
+        children: [
+          {
+            name: 'third child',
+            value: 10,
+          },
+        ],
+        tooltipIndex: '[0]',
+      },
+      expect.any(Object),
+    );
+
     await user.click(sector);
     expect(onClick).toHaveBeenCalled();
+    // click doesn't add the original event, not sure why?
+    expectLastCalledWith(onClick, {
+      name: 'Child1',
+      fill: '#264653',
+      value: 30,
+      children: [
+        {
+          name: 'third child',
+          value: 10,
+        },
+      ],
+      tooltipIndex: '[0]',
+    });
+  });
+
+  it('does not call touch event callbacks', async () => {
+    const onTouchMove = vi.fn();
+    const onTouchEnd = vi.fn();
+
+    const { container } = rechartsTestRender(
+      <SunburstChart
+        width={500}
+        height={500}
+        // @ts-expect-error typescript is correct here - indeed SunburstChart does not fire touch events
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        data={exampleSunburstData}
+      />,
+    );
+    const sector = container.querySelectorAll('.recharts-sector')[0];
+
+    fireEvent.touchMove(sector, { touches: [{ clientX: 200, clientY: 200 }] });
+    expect(onTouchMove).not.toHaveBeenCalled();
   });
 
   describe('SunburstChart layout context', () => {

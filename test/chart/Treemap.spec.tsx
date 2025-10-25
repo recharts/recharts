@@ -8,6 +8,7 @@ import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/
 import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
+import { mockTouchingElement } from '../helper/mockTouchingElement';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -735,5 +736,30 @@ describe('<Treemap /> mouse events', () => {
       x: 0,
       y: 0,
     });
+  });
+
+  it('should not call touch event handlers', () => {
+    mockTouchingElement('0', 'size');
+    const onTouchMove = vi.fn();
+    const onTouchEnd = vi.fn();
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={data}
+        nameKey="name"
+        dataKey="size"
+        // @ts-expect-error typescript is correct here - indeed Treemap does not fire touch events. It shows Tooltip internally but doesn't allow external handlers
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        isAnimationActive={false}
+      />,
+    );
+
+    const firstNode = container.querySelectorAll('.recharts-treemap-depth-1 g')[0];
+    expect(firstNode).toBeInTheDocument();
+
+    fireEvent.touchMove(firstNode, { touches: [{ clientX: 200, clientY: 200 }] });
+    expect(onTouchMove).toHaveBeenCalledTimes(0);
   });
 });

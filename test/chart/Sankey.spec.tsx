@@ -13,6 +13,8 @@ import {
 import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { mockTouchingElement } from '../helper/mockTouchingElement';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -442,6 +444,364 @@ describe('<Sankey />', () => {
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
+    });
+  });
+
+  describe('events', () => {
+    it('should call onClick handler on links', () => {
+      const onClick = vi.fn();
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+
+      fireEvent.click(link, { clientX: 200, clientY: 200 });
+      expect(onClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onClick,
+        {
+          index: 0,
+          linkWidth: 13.172337974085991,
+          payload: {
+            dy: 13.172337974085991,
+            source: {
+              depth: 0,
+              dx: 10,
+              dy: 13.172337974085991,
+              name: 'Agricultural waste',
+              sourceLinks: [],
+              sourceNodes: [],
+              targetLinks: [0],
+              targetNodes: [1],
+              value: 124.729,
+              x: 0,
+              y: 127.92976245668771,
+            },
+            sy: 0,
+            target: {
+              depth: 1,
+              dx: 10,
+              dy: 41.07345963305562,
+              name: 'Bio-conversion',
+              sourceLinks: [65, 0, 51, 44],
+              sourceNodes: [0, 34, 39, 45],
+              targetLinks: [2, 3, 4, 1],
+              targetNodes: [2, 3, 4, 5],
+              value: 388.925,
+              x: 140,
+              y: 113.96304660380619,
+            },
+            ty: 19.221650415407733,
+            value: 124.729,
+          },
+          sourceControlX: 80,
+          sourceRelativeY: 0,
+          sourceX: 15,
+          sourceY: 139.51593144373072,
+          targetControlX: 80,
+          targetRelativeY: 19.221650415407733,
+          targetX: 145,
+          targetY: 144.77086600625694,
+        },
+        'link',
+        expect.any(Object),
+      );
+    });
+
+    it('should call onClick handler on nodes', () => {
+      const onClick = vi.fn();
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      fireEvent.click(node, { clientX: 200, clientY: 200 });
+      expect(onClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onClick,
+        {
+          height: 13.172337974085991,
+          index: 0,
+          payload: {
+            depth: 0,
+            dx: 10,
+            dy: 13.172337974085991,
+            name: 'Agricultural waste',
+            sourceLinks: [],
+            sourceNodes: [],
+            targetLinks: [0],
+            targetNodes: [1],
+            value: 124.729,
+            x: 0,
+            y: 127.92976245668771,
+          },
+          width: 10,
+          x: 5,
+          y: 132.9297624566877,
+        },
+        'node',
+        expect.any(Object),
+      );
+    });
+
+    it('should call onMouseEnter and onMouseLeave handlers on links', () => {
+      const onMouseEnter = vi.fn();
+      const onMouseLeave = vi.fn();
+      const { container } = render(
+        <Sankey
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        />,
+      );
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+
+      fireEvent.mouseEnter(link, { clientX: 200, clientY: 200 });
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onMouseEnter,
+        {
+          sourceX: 15,
+          targetX: 145,
+          sourceY: 139.51593144373072,
+          targetY: 144.77086600625694,
+          sourceControlX: 80,
+          targetControlX: 80,
+          sourceRelativeY: 0,
+          targetRelativeY: 19.221650415407733,
+          linkWidth: 13.172337974085991,
+          index: 0,
+          payload: {
+            source: {
+              name: 'Agricultural waste',
+              sourceNodes: [],
+              sourceLinks: [],
+              targetLinks: [0],
+              targetNodes: [1],
+              value: 124.729,
+              depth: 0,
+              x: 0,
+              dx: 10,
+              y: 127.92976245668771,
+              dy: 13.172337974085991,
+            },
+            target: {
+              name: 'Bio-conversion',
+              sourceNodes: [0, 34, 39, 45],
+              sourceLinks: [65, 0, 51, 44],
+              targetLinks: [2, 3, 4, 1],
+              targetNodes: [2, 3, 4, 5],
+              value: 388.925,
+              depth: 1,
+              x: 140,
+              dx: 10,
+              y: 113.96304660380619,
+              dy: 41.07345963305562,
+            },
+            value: 124.729,
+            dy: 13.172337974085991,
+            sy: 0,
+            ty: 19.221650415407733,
+          },
+        },
+        'link',
+        expect.any(Object),
+      );
+
+      fireEvent.mouseLeave(link);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onMouseLeave,
+        {
+          sourceX: 15,
+          targetX: 145,
+          sourceY: 139.51593144373072,
+          targetY: 144.77086600625694,
+          sourceControlX: 80,
+          targetControlX: 80,
+          sourceRelativeY: 0,
+          targetRelativeY: 19.221650415407733,
+          linkWidth: 13.172337974085991,
+          index: 0,
+          payload: {
+            source: {
+              name: 'Agricultural waste',
+              sourceNodes: [],
+              sourceLinks: [],
+              targetLinks: [0],
+              targetNodes: [1],
+              value: 124.729,
+              depth: 0,
+              x: 0,
+              dx: 10,
+              y: 127.92976245668771,
+              dy: 13.172337974085991,
+            },
+            target: {
+              name: 'Bio-conversion',
+              sourceNodes: [0, 34, 39, 45],
+              sourceLinks: [65, 0, 51, 44],
+              targetLinks: [2, 3, 4, 1],
+              targetNodes: [2, 3, 4, 5],
+              value: 388.925,
+              depth: 1,
+              x: 140,
+              dx: 10,
+              y: 113.96304660380619,
+              dy: 41.07345963305562,
+            },
+            value: 124.729,
+            dy: 13.172337974085991,
+            sy: 0,
+            ty: 19.221650415407733,
+          },
+        },
+        'link',
+        expect.any(Object),
+      );
+    });
+
+    it('should do nothing onMouseMove on links', () => {
+      // looks like a bug or missed feature - why have enter + leave but no move?
+      const onMouseMove = vi.fn();
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} onMouseMove={onMouseMove} />,
+      );
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+
+      fireEvent.mouseMove(link, { clientX: 200, clientY: 200 });
+      expect(onMouseMove).toHaveBeenCalledTimes(0);
+    });
+
+    it('should call onMouseEnter and onMouseLeave handlers on nodes', () => {
+      const onMouseEnter = vi.fn();
+      const onMouseLeave = vi.fn();
+      const { container } = render(
+        <Sankey
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        />,
+      );
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      fireEvent.mouseEnter(node, { clientX: 200, clientY: 200 });
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onMouseEnter,
+        {
+          height: 13.172337974085991,
+          index: 0,
+          payload: {
+            name: 'Agricultural waste',
+            sourceNodes: [],
+            sourceLinks: [],
+            targetLinks: [0],
+            targetNodes: [1],
+            value: 124.729,
+            depth: 0,
+            x: 0,
+            dx: 10,
+            y: 127.92976245668771,
+            dy: 13.172337974085991,
+          },
+          width: 10,
+          x: 5,
+          y: 132.9297624566877,
+        },
+        'node',
+        expect.any(Object),
+      );
+
+      fireEvent.mouseLeave(node);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        onMouseLeave,
+        {
+          height: 13.172337974085991,
+          index: 0,
+          payload: {
+            name: 'Agricultural waste',
+            sourceNodes: [],
+            sourceLinks: [],
+            targetLinks: [0],
+            targetNodes: [1],
+            value: 124.729,
+            depth: 0,
+            x: 0,
+            dx: 10,
+            y: 127.92976245668771,
+            dy: 13.172337974085991,
+          },
+          width: 10,
+          x: 5,
+          y: 132.9297624566877,
+        },
+        'node',
+        expect.any(Object),
+      );
+    });
+
+    it('should do nothing onMouseMove on nodes', () => {
+      // looks like a bug or missed feature - why have enter + leave but no move?
+      const onMouseMove = vi.fn();
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} onMouseMove={onMouseMove} />,
+      );
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      fireEvent.mouseMove(node, { clientX: 200, clientY: 200 });
+      expect(onMouseMove).toHaveBeenCalledTimes(0);
+    });
+
+    it('should do nothing onTouchMove on links', () => {
+      // looks like a bug or missed feature
+      mockTouchingElement('1', 'a');
+      const onTouchMove = vi.fn();
+      const onTouchEnd = vi.fn();
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} />,
+      );
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+
+      fireEvent.touchMove(link, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchMove).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchEnd(link, { changedTouches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchEnd).toHaveBeenCalledTimes(0);
+    });
+
+    it('should do nothing onTouchMove and onTouchEnd on nodes', () => {
+      // looks like a bug or missed feature
+      mockTouchingElement('1', 'a');
+      const onTouchMove = vi.fn();
+      const onTouchEnd = vi.fn();
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} />,
+      );
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchMove).toHaveBeenCalledTimes(0);
+
+      fireEvent.touchEnd(node, { changedTouches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchEnd).toHaveBeenCalledTimes(0);
     });
   });
 });
