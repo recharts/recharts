@@ -54,7 +54,8 @@ describe('<Brush />', () => {
     }
 
     it('should render two lines, one for the big chart another in the panorama', () => {
-      const { container } = renderTestCase();
+      const { container, debug } = renderTestCase();
+      debug();
 
       const dotsInPanorama = selectAllDotsInPanorama(container);
       expect(dotsInPanorama).toHaveLength(data.length);

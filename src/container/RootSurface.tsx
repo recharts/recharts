@@ -96,11 +96,15 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     const isPanorama = useIsPanorama();
 
     if (isPanorama) {
-      return <BrushPanoramaSurface>{children}</BrushPanoramaSurface>;
+      return (
+        <BrushPanoramaSurface>
+          <AllZIndexPortals isPanorama>{children}</AllZIndexPortals>
+        </BrushPanoramaSurface>
+      );
     }
     return (
       <MainChartSurface ref={ref} {...rest}>
-        <AllZIndexPortals>{children}</AllZIndexPortals>
+        <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
       </MainChartSurface>
     );
   },
