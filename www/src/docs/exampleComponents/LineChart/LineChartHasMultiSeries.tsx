@@ -1,5 +1,6 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
+// #region Sample data
 const series = [
   {
     name: 'Series 1',
@@ -27,6 +28,7 @@ const series = [
   },
 ];
 
+// #endregion
 export default function LineChartHasMultiSeries() {
   return (
     <LineChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>

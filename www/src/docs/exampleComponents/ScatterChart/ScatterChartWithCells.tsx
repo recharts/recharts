@@ -1,5 +1,6 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
+// #region Sample data
 const data = [
   { x: 100, y: 200, z: 200 },
   { x: 120, y: 100, z: 260 },
@@ -8,6 +9,7 @@ const data = [
   { x: 150, y: 400, z: 500 },
   { x: 110, y: 280, z: 200 },
 ];
+// #endregion
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 
 export default function ScatterChartWithCells() {

@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelProps } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const CustomizedLabel = ({ x, y, stroke, value }: LabelProps) => {
   return (
     <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">

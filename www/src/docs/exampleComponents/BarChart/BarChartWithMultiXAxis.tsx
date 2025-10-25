@@ -1,6 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { ReactNode } from 'react';
 
+// #region Sample data
 const data = [
   {
     date: '2000-01',
@@ -76,6 +77,7 @@ const data = [
   },
 ];
 
+// #endregion
 const monthTickFormatter = (tick: string | number | Date): string => {
   const date = new Date(tick);
 

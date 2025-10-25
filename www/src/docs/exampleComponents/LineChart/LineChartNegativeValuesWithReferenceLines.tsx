@@ -1,5 +1,6 @@
 import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     x: -50,
@@ -47,6 +48,7 @@ const data = [
   },
 ];
 
+// #endregion
 const minX = Math.min(...data.map(d => d.x));
 const minY = Math.min(...data.map(d => d.y));
 

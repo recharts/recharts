@@ -1,5 +1,6 @@
 import { Radar, RadarChart, PolarGrid, Legend, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     subject: 'Math',
@@ -39,6 +40,7 @@ const data = [
   },
 ];
 
+// #endregion
 const SpecifiedDomainRadarChart = () => {
   return (
     <RadarChart

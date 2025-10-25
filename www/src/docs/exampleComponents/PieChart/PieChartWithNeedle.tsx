@@ -1,12 +1,14 @@
 import { Pie, PieChart } from 'recharts';
 
 const RADIAN = Math.PI / 180;
+// #region Sample data
 const chartData = [
   { name: 'A', value: 80, fill: '#ff0000' },
   { name: 'B', value: 45, fill: '#00ff00' },
   { name: 'C', value: 25, fill: '#0000ff' },
 ];
 
+// #endregion
 type Needle = {
   value: number;
   data: { name: string; value: number; fill: string }[];

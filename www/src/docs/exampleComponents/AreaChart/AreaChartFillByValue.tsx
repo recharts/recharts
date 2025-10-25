@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 const gradientOffset = () => {
   const dataMax = Math.max(...data.map(i => i.uv));
   const dataMin = Math.min(...data.map(i => i.uv));

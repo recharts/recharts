@@ -1,5 +1,6 @@
 import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter } from 'recharts';
 
+// #region Sample data
 const data = [
   { index: 10000, red: 1643, blue: 790 },
   { index: 1666, red: 182, blue: 42 },
@@ -11,6 +12,7 @@ const data = [
   { index: 10000, blueLine: 678 },
 ];
 
+// #endregion
 const ScatterAndLineOfBestFit = () => {
   return (
     <ComposedChart

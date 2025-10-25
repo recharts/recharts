@@ -1,5 +1,6 @@
 import { Cell, Pie, PieChart, PieLabelRenderProps } from 'recharts';
 
+// #region Sample data
 const data = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -7,6 +8,7 @@ const data = [
   { name: 'Group D', value: 200 },
 ];
 
+// #endregion
 const RADIAN = Math.PI / 180;
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 

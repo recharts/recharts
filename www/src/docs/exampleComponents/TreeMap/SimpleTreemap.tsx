@@ -1,5 +1,6 @@
 import { Treemap } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'axis',
@@ -133,6 +134,7 @@ const data = [
   },
 ];
 
+// #endregion
 const SimpleTreemap = () => {
   return (
     <Treemap

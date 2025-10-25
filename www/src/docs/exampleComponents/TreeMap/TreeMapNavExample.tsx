@@ -1,7 +1,9 @@
 import { Treemap } from 'recharts';
 
+// #region Sample data
 const data = [{ size: 20 }, { size: 30 }, { size: 50 }];
 
+// #endregion
 const TreeMapNavExample = () => {
   return (
     <Treemap

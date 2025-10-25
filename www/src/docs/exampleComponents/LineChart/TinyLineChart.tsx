@@ -1,5 +1,6 @@
 import { Line, LineChart } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 export default function Example() {
   return (
     <LineChart style={{ maxHeight: 'min(100px, 100%)', aspectRatio: 1.618 }} responsive data={data}>

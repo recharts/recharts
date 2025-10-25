@@ -2,6 +2,7 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarProps } from 'rech
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -47,6 +48,7 @@ const data = [
   },
 ];
 
+// #endregion
 const getPath = (x: number, y: number, width: number, height: number) => {
   return `M${x},${y + height}C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3}
   ${x + width / 2}, ${y}

@@ -1,6 +1,7 @@
 import { Treemap } from 'recharts';
 import { TreemapNode } from 'recharts/types/chart/Treemap';
 
+// #region Sample data
 const data = [
   {
     name: 'axis',
@@ -134,6 +135,7 @@ const data = [
   },
 ];
 
+// #endregion
 const COLORS = ['#8889DD', '#9597E4', '#8DC77B', '#A5D297', '#E2CF45', '#F8C12D'];
 
 const CustomizedContent = (props: TreemapNode) => {

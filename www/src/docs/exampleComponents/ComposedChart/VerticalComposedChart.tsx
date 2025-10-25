@@ -1,5 +1,6 @@
 import { ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -39,6 +40,7 @@ const data = [
   },
 ];
 
+// #endregion
 const VerticalComposedChart = () => {
   return (
     <ComposedChart

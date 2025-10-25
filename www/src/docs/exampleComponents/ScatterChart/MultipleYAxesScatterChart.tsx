@@ -1,5 +1,6 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
+// #region Sample data
 const data01 = [
   { x: 100, y: 200, z: 200 },
   { x: 120, y: 100, z: 260 },
@@ -23,6 +24,7 @@ const data02 = [
   { x: 420, y: 280, z: 200 },
 ];
 
+// #endregion
 const MultipleYAxesScatterChart = () => {
   return (
     <ScatterChart

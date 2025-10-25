@@ -130,6 +130,12 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
               // @ts-expect-error current is readonly
               // noinspection JSConstantReassignment
               this.editorRef.current = editor;
+
+              // Fold all #region blocks on mount
+              const action = editor.getAction('editor.foldAllMarkerRegions');
+              if (action != null) {
+                action.run();
+              }
             }}
           />
         </div>

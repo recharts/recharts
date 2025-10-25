@@ -1,6 +1,7 @@
 import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps } from 'recharts';
 import { ReactNode } from 'react';
 
+// #region Sample data
 const data01 = [
   { hour: '12a', index: 1, value: 170 },
   { hour: '1a', index: 1, value: 180 },
@@ -55,6 +56,7 @@ const data02 = [
   { hour: '11p', index: 1, value: 180 },
 ];
 
+// #endregion
 const parseDomain = () => [
   0,
   Math.max(
