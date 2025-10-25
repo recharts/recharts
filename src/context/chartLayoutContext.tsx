@@ -133,6 +133,26 @@ export const selectChartLayout = (state: RechartsRootState): LayoutType => state
 
 export const useChartLayout = () => useAppSelector(selectChartLayout);
 
+/**
+ * Returns true if the component is rendered inside a chart context.
+ * Some components may be used both inside and outside of charts,
+ * and this hook allows them to determine if they are in a chart context or not.
+ *
+ * Other selectors may return undefined when used outside a chart context,
+ * or undefined when inside a chart, but without relevant data.
+ * This hook provides a more explicit way to check for chart context.
+ *
+ * @returns {boolean} True if in chart context, false otherwise.
+ */
+export const useIsInChartContext = (): boolean => {
+  /*
+   * All charts provide a layout type in the chart context.
+   * If we have a layout type, we are in a chart context.
+   */
+  const layout = useChartLayout();
+  return layout !== undefined;
+};
+
 export const ReportChartSize = (props: {
   width: number | Percent | undefined;
   height: number | Percent | undefined;

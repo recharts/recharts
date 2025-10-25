@@ -84,7 +84,7 @@ describe('selectCartesianItemsSettings', () => {
         ],
         dataKey: 'pv',
         hide: false,
-        id: 'recharts-line-:r1:',
+        id: expect.stringMatching(/recharts-line-.+/),
         isPanorama: false,
         type: 'line',
         xAxisId: 0,

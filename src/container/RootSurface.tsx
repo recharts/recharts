@@ -7,6 +7,7 @@ import { Surface } from './Surface';
 import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { AllZIndexPortals } from '../zindex/ZIndexPortal';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -95,11 +96,15 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     const isPanorama = useIsPanorama();
 
     if (isPanorama) {
-      return <BrushPanoramaSurface>{children}</BrushPanoramaSurface>;
+      return (
+        <BrushPanoramaSurface>
+          <AllZIndexPortals isPanorama>{children}</AllZIndexPortals>
+        </BrushPanoramaSurface>
+      );
     }
     return (
       <MainChartSurface ref={ref} {...rest}>
-        {children}
+        <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
       </MainChartSurface>
     );
   },

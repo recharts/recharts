@@ -77,7 +77,7 @@ import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/c
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
-import { arrayEqualityCheck } from './arrayEqualityCheck';
+import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -340,7 +340,7 @@ export const selectCartesianItemsSettings: (
   combineGraphicalItemsSettings,
   {
     memoizeOptions: {
-      resultEqualityCheck: arrayEqualityCheck,
+      resultEqualityCheck: emptyArraysAreEqualCheck,
     },
   },
 );
@@ -388,7 +388,7 @@ export const selectCartesianGraphicalItemsData: (
   axisId: AxisId,
 ) => ChartData = createSelector([selectCartesianItemsSettings], combineGraphicalItemsData, {
   memoizeOptions: {
-    resultEqualityCheck: arrayEqualityCheck,
+    resultEqualityCheck: emptyArraysAreEqualCheck,
   },
 });
 

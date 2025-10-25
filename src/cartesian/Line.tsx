@@ -51,6 +51,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export interface LinePointItem {
   readonly value: number;
@@ -66,7 +68,7 @@ export interface LinePointItem {
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalLineProps {
+interface InternalLineProps extends ZIndexable {
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -106,7 +108,7 @@ interface InternalLineProps {
 /**
  * External props, intended for end users to fill in
  */
-interface LineProps {
+interface LineProps extends ZIndexable {
   activeDot?: ActiveDotType;
   animateNewValues?: boolean;
   animationBegin?: number;
@@ -597,7 +599,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 // eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
   render() {
-    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip } = this.props;
+    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, zIndex } =
+      this.props;
 
     if (hide) {
       return null;
@@ -610,7 +613,7 @@ class LineWithState extends Component<InternalProps> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <>
+      <ZIndexLayer zIndex={zIndex}>
         <Layer className={layerClass}>
           {needClip && (
             <defs>
@@ -643,7 +646,7 @@ class LineWithState extends Component<InternalProps> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
         />
-      </>
+      </ZIndexLayer>
     );
   }
 }
@@ -665,6 +668,7 @@ const defaultLineProps = {
   strokeWidth: 1,
   xAxisId: 0,
   yAxisId: 0,
+  zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
 function LineImpl(props: WithIdRequired<Props>) {
