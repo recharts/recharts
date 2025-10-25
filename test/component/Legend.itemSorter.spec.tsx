@@ -6,8 +6,8 @@ import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../src/zindex/ZIndexLayer';
 import { assertNotNull } from '../helper/assertNotNull';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 describe('Legend.itemSorter', () => {
   describe('with default content', () => {

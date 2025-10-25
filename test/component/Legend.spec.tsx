@@ -35,8 +35,8 @@ import { createSelectorTestCase, rechartsTestRender } from '../helper/createSele
 import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../src/zindex/ZIndexLayer';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
