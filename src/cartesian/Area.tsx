@@ -55,7 +55,7 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
-import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -318,13 +318,14 @@ function StaticArea({
 
   const { id, ...propsWithoutId } = props;
   const allOtherProps = svgPropertiesNoEvents(propsWithoutId);
+  const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
 
   return (
     <>
       {points?.length > 1 && (
         <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <Curve
-            {...allOtherProps}
+            {...propsWithEvents}
             id={id}
             points={points}
             connectNulls={connectNulls}

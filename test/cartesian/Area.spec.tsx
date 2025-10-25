@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Area, Brush, Tooltip, XAxis, YAxis } from '../../src';
 import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import {
@@ -20,6 +20,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
 
 type TestCase = CartesianChartTestCase;
 
@@ -182,6 +183,172 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       assertNotNull(dotsWrapper);
       // When clipDot is true the className does not contain 'dots'
       expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-area');
+    });
+  });
+
+  describe('events', () => {
+    const points = [
+      {
+        payload: { value: 100, x: 10, y: 50 },
+        value: [0, 100],
+        x: 5,
+        y: 5,
+      },
+      {
+        payload: { value: 100, x: 50, y: 50 },
+        value: [0, 100],
+        x: 127.5,
+        y: 5,
+      },
+      {
+        payload: { value: 100, x: 90, y: 50 },
+        value: [0, 100],
+        x: 250,
+        y: 5,
+      },
+      {
+        payload: { value: 100, x: 130, y: 50 },
+        value: [0, 100],
+        x: 372.5,
+        y: 5,
+      },
+      {
+        payload: { value: 100, x: 170, y: 50 },
+        value: [0, 100],
+        x: 495,
+        y: 5,
+      },
+    ];
+    it('should fire onClick event when clicking on the area', async () => {
+      const user = userEventSetup();
+
+      const handleClick = vi.fn();
+      const { container } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" onClick={handleClick} />
+        </ChartElement>,
+      );
+
+      const areaPath = container.querySelector('.recharts-area-area');
+      assertNotNull(areaPath);
+      await user.click(areaPath);
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleClick,
+        {
+          baseLine: 495,
+          className: 'recharts-area-area',
+          connectNulls: false,
+          fill: '#3182bd',
+          fillOpacity: 0.6,
+          height: 490,
+          id: expect.stringMatching(/^recharts-area-.*/),
+          layout: 'horizontal',
+          onClick: handleClick,
+          points,
+          stroke: 'none',
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onMouseOver and onMouseOut events when hovering over the area', async () => {
+      const user = userEventSetup();
+
+      const handleMouseOver = vi.fn();
+      const handleMouseOut = vi.fn();
+
+      const { container } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
+        </ChartElement>,
+      );
+
+      const areaPath = container.querySelector('.recharts-area-area');
+      assertNotNull(areaPath);
+      await user.hover(areaPath);
+      expect(handleMouseOver).toHaveBeenCalledTimes(1);
+
+      expectLastCalledWith(
+        handleMouseOver,
+        {
+          baseLine: 495,
+          className: 'recharts-area-area',
+          connectNulls: false,
+          fill: '#3182bd',
+          fillOpacity: 0.6,
+          height: 490,
+          id: expect.stringMatching(/^recharts-area-.*/),
+          layout: 'horizontal',
+          onMouseOut: handleMouseOut,
+          onMouseOver: handleMouseOver,
+          points,
+          stroke: 'none',
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
+      await user.unhover(areaPath);
+      expect(handleMouseOut).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOut,
+        {
+          baseLine: 495,
+          className: 'recharts-area-area',
+          connectNulls: false,
+          fill: '#3182bd',
+          fillOpacity: 0.6,
+          height: 490,
+          id: expect.stringMatching(/^recharts-area-.*/),
+          layout: 'horizontal',
+          onMouseOut: handleMouseOut,
+          onMouseOver: handleMouseOver,
+          points,
+          stroke: 'none',
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onTouchMove and onTouchEnd events when touching the area', async () => {
+      const handleTouchMove = vi.fn();
+      const handleTouchEnd = vi.fn();
+
+      const { container } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
+        </ChartElement>,
+      );
+
+      const areaPath = container.querySelector('.recharts-area-area');
+      assertNotNull(areaPath);
+      fireEvent.touchMove(areaPath, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchMove,
+        {
+          baseLine: 495,
+          className: 'recharts-area-area',
+          connectNulls: false,
+          fill: '#3182bd',
+          fillOpacity: 0.6,
+          height: 490,
+          id: expect.stringMatching(/^recharts-area-.*/),
+          layout: 'horizontal',
+          onTouchEnd: handleTouchEnd,
+          onTouchMove: handleTouchMove,
+          points,
+          stroke: 'none',
+          type: undefined,
+          width: 490,
+        },
+        expect.any(Object),
+      );
     });
   });
 
