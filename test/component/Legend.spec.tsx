@@ -32,9 +32,10 @@ import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelect
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
 import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
 import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
-import { Size } from '../../src/util/types';
+import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -614,9 +615,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Line should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-        tc => tc.legendType === 'line',
-      );
+      const find = expectedLegendTypeSymbolsWithColor('#3182bd').find(tc => tc.legendType === 'line');
+      assertNotNull(find);
+      const { selector, expectedAttributes } = find;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -649,9 +650,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Line should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
-        tc => tc.legendType === 'line',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('yellow').find(tc => tc.legendType === 'line');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -671,9 +672,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Line should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
-        tc => tc.legendType === 'line',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('#ccc').find(tc => tc.legendType === 'line');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -887,9 +888,9 @@ describe('<Legend />', () => {
           <Line dataKey="value" legendType="square" />
         </LineChart>,
       );
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-        li => li.legendType === 'circle',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('#3182bd').find(li => li.legendType === 'circle');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
   });
@@ -942,9 +943,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Bar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithoutColor.find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -1121,9 +1122,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Bar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('yellow').find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -1143,9 +1144,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Bar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('#ccc').find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -1244,6 +1245,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1264,6 +1266,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1280,6 +1283,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1296,6 +1300,7 @@ describe('<Legend />', () => {
           </BarChart>,
         );
         const wrapper = container.querySelector('.recharts-legend-wrapper');
+        assertNotNull(wrapper);
         expect(wrapper).toBeInTheDocument();
         expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
         expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1368,6 +1373,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper);
           expect(wrapper).toBeInTheDocument();
           expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1376,9 +1382,9 @@ describe('<Legend />', () => {
       );
 
       type LegendPositionTextCase = {
-        align: LegendProps['align'];
-        verticalAlign: LegendProps['verticalAlign'];
-        layout: LegendProps['layout'];
+        align: HorizontalAlignmentType;
+        verticalAlign: VerticalAlignmentType;
+        layout: CartesianLayout;
         expectedStyleOnSecondRender: string;
       };
 
@@ -1524,6 +1530,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper);
           expect(wrapper).toBeInTheDocument();
           expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1545,6 +1552,7 @@ describe('<Legend />', () => {
             </BarChart>,
           );
           const wrapper2 = container.querySelector('.recharts-legend-wrapper');
+          assertNotNull(wrapper2);
           expect(wrapper2).toBeInTheDocument();
           expect.soft(wrapper2.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper2.getAttribute('class')).toBe('recharts-legend-wrapper');
@@ -1693,9 +1701,9 @@ describe('<Legend />', () => {
             <Bar dataKey="value" legendType="square" />
           </BarChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithoutColor.find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -1742,9 +1750,9 @@ describe('<Legend />', () => {
 
       it('should render Line symbols and colors in absence of explicit legendType', () => {
         const { container } = renderTestCase();
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-          tc => tc.legendType === 'line',
-        );
+        const findResult = expectedLegendTypeSymbolsWithColor('#3182bd').find(tc => tc.legendType === 'line');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -1775,9 +1783,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Area should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
-        tc => tc.legendType === 'line',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('yellow').find(tc => tc.legendType === 'line');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -1797,9 +1805,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Area should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
-        tc => tc.legendType === 'line',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('#ccc').find(tc => tc.legendType === 'line');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -1807,7 +1815,8 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
-          <Area dataKey={undefined} />
+          {/* @ts-expect-error Indeed Typescript is correct, Area requires a dataKey */}
+          <Area />
         </AreaChart>,
       );
       expectLegendLabels(container, [{ fill: 'none', textContent: '' }]);
@@ -2009,9 +2018,9 @@ describe('<Legend />', () => {
             <Area dataKey="value" legendType="square" />
           </AreaChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithColor('#3182bd').find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2138,9 +2147,9 @@ describe('<Legend />', () => {
             <Area dataKey="value" legendType="square" />
           </ComposedChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithColor('#3182bd').find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2166,9 +2175,9 @@ describe('<Legend />', () => {
             <Bar dataKey="value" legendType="square" />
           </ComposedChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithoutColor.find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2194,9 +2203,9 @@ describe('<Legend />', () => {
             <Line dataKey="value" legendType="square" />
           </ComposedChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithColor('#3182bd').find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2461,9 +2470,9 @@ describe('<Legend />', () => {
             <Pie data={numericalData} dataKey="percent" legendType="square" />
           </PieChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#808080').find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithColor('#808080').find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2492,9 +2501,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Radar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithoutColor.find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -2524,9 +2533,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Radar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('yellow').find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -2546,9 +2555,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Radar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
-        tc => tc.legendType === 'rect',
-      );
+      const findResult = expectedLegendTypeSymbolsWithColor('#ccc').find(tc => tc.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -2652,9 +2661,9 @@ describe('<Legend />', () => {
             <Radar dataKey="value" legendType="square" />
           </RadarChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithoutColor.find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
@@ -2735,7 +2744,9 @@ describe('<Legend />', () => {
         expect(legendItemText).toBeInTheDocument();
         expect(legendItemText).toBeEmptyDOMElement();
       });
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(i => i.legendType === 'rect');
+      const findResult = expectedLegendTypeSymbolsWithoutColor.find(i => i.legendType === 'rect');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -2831,7 +2842,7 @@ describe('<Legend />', () => {
           <Legend />
         </RadialBarChart>,
       );
-      expectLegendLabels(container, undefined);
+      expectLegendLabels(container, null);
     });
 
     it('should update legend if RadialBarChart data changes', () => {
@@ -2887,9 +2898,9 @@ describe('<Legend />', () => {
           <RadialBar dataKey="value" legendType="square" />
         </RadialBarChart>,
       );
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-        li => li.legendType === 'circle',
-      );
+      const findResult = expectedLegendTypeSymbolsWithoutColor.find(li => li.legendType === 'circle');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
   });
@@ -2940,9 +2951,9 @@ describe('<Legend />', () => {
             <Scatter dataKey="value" legendType="square" />
           </ScatterChart>,
         );
-        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
-          li => li.legendType === 'circle',
-        );
+        const findResult = expectedLegendTypeSymbolsWithoutColor.find(li => li.legendType === 'circle');
+        assertNotNull(findResult);
+        const { selector, expectedAttributes } = findResult;
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });

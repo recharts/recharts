@@ -55,6 +55,7 @@ describe('getErrorDomainByDataKey', () => {
   });
 
   it.each([null, undefined])('should return empty array when errorBars.dataKey is %s', dataKey => {
+    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     const errorBars: ReadonlyArray<ErrorBarsSettings> = [{ dataKey, direction: 'x' }];
     expect(getErrorDomainByDataKey(1, 1, errorBars)).toEqual([]);
   });

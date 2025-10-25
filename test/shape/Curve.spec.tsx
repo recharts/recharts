@@ -4,6 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { curveLinear } from 'victory-vendor/d3-shape';
 import { Surface, Curve } from '../../src';
 import { getPath, CurveType } from '../../src/shape/Curve';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Curve />', () => {
   describe('all points defined', () => {
@@ -87,6 +88,7 @@ describe('<Curve />', () => {
       );
       expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
       const curve = container.querySelector('.recharts-curve');
+      assertNotNull(curve);
       expect(curve.getAttribute('d')).toBe(path);
       expect(container).toMatchSnapshot();
     });
@@ -109,7 +111,9 @@ describe('<Curve />', () => {
       );
       expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
       const path = container.querySelector('.recharts-curve');
+      assertNotNull(path);
       const d = path.getAttribute('d');
+      assertNotNull(d);
       // When not connecting nulls, d3's `defined` will create a break in the path.
       // This results in multiple "M" commands in the `d` attribute.
       expect(d.match(/M/g) || []).toHaveLength(2);
@@ -124,9 +128,11 @@ describe('<Curve />', () => {
       );
       expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
       const path = container.querySelector('.recharts-curve');
+      assertNotNull(path);
       // When connecting nulls, we filter points, so it should be a single path
       // without breaks. A break would be indicated by another "M" command.
       const d = path.getAttribute('d');
+      assertNotNull(d);
       expect(d.match(/M/g) || []).toHaveLength(1);
       expect(container).toMatchSnapshot();
     });
@@ -174,7 +180,9 @@ describe('<Curve />', () => {
       );
       expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
       const path = container.querySelector('.recharts-curve');
+      assertNotNull(path);
       const d = path.getAttribute('d');
+      assertNotNull(d);
       // The path should be broken into two areas
       expect(d.match(/M/g) || []).toHaveLength(2);
       expect(container).toMatchSnapshot();
@@ -205,8 +213,8 @@ describe('type prop', () => {
       </Surface>,
     );
 
-    const path1 = container.querySelector('.recharts-curve').getAttribute('d');
-    const path2 = linearContainer.querySelector('.recharts-curve').getAttribute('d');
+    const path1 = container.querySelector('.recharts-curve')?.getAttribute('d');
+    const path2 = linearContainer.querySelector('.recharts-curve')?.getAttribute('d');
     expect(path1).toBe(path2);
     expect(container).toMatchSnapshot();
   });
@@ -224,8 +232,8 @@ describe('type prop', () => {
       </Surface>,
     );
 
-    const path1 = container.querySelector('.recharts-curve').getAttribute('d');
-    const path2 = linearContainer.querySelector('.recharts-curve').getAttribute('d');
+    const path1 = container.querySelector('.recharts-curve')?.getAttribute('d');
+    const path2 = linearContainer.querySelector('.recharts-curve')?.getAttribute('d');
     expect(path1).toBe(path2);
     expect(container).toMatchSnapshot();
   });
@@ -270,7 +278,7 @@ describe('event handlers and refs', () => {
       </Surface>,
     );
     const curve = container.querySelector('.recharts-curve');
-    expect(curve).not.toBeNull();
+    assertNotNull(curve);
     fireEvent.click(curve);
     expect(onClick).toHaveBeenCalled();
   });

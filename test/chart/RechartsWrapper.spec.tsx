@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { BarChart } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('RechartsWrapper', () => {
   it('should call onMouseEnter, and onMouseLeave handlers', async () => {
@@ -12,6 +13,7 @@ describe('RechartsWrapper', () => {
     );
 
     const wrapper = container.querySelector('.recharts-wrapper');
+    assertNotNull(wrapper);
     expect(wrapper).toBeInTheDocument();
 
     expect(onMouseEnterSpy).not.toHaveBeenCalled();

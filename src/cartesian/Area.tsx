@@ -119,6 +119,10 @@ interface AreaProps {
 
   connectNulls?: boolean;
   data?: ChartData;
+  /**
+   * dataKey is indeed required - some other graphical elements will use the combination of axes to
+   * imply the dataKey, but Area always needs an explicit dataKey.
+   */
   dataKey: DataKey<any>;
   dot?: ActiveDotType;
   hide?: boolean;

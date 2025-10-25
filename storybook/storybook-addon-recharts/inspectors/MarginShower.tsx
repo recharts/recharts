@@ -6,6 +6,9 @@ export function MarginShower() {
   const margin = useMargin();
   const height = useChartHeight();
   const width = useChartWidth();
+  if (margin == null || width == null || height == null) {
+    return null;
+  }
   return (
     <>
       <SvgDimensionShower

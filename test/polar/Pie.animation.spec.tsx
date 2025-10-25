@@ -39,7 +39,11 @@ async function expectAnimatedPiePaths(
   await animationManager.setAnimationProgress(animationProgress);
   const stepSize = (1 - animationProgress) / steps;
   const initialPieSectors = selectPieSectors(container);
-  const getD = (sector: Element) => trim(sector.getAttribute('d'));
+  const getD = (sector: Element) => {
+    const trimmed = trim(sector.getAttribute('d'));
+    assertNotNull(trimmed);
+    return trimmed;
+  };
   const initialPathDs = Array.from(initialPieSectors).map(getD);
   const initialAttributes = Array.from(initialPieSectors).map(sector => ({
     fill: sector.getAttribute('fill'),

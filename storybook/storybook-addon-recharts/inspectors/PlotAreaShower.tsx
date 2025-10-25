@@ -6,6 +6,9 @@ export function PlotAreaShower() {
   const plotArea = usePlotArea();
   const width = useChartWidth();
   const height = useChartHeight();
+  if (plotArea == null || width == null || height == null) {
+    return null;
+  }
   return (
     <>
       <SvgDimensionShower width={width} height={plotArea.y} labels={{ background: 'y', vertical: 'usePlotArea.y' }} />

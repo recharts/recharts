@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, ReactElement, useEffect } from 'react';
+import { FunctionComponent, ReactElement, ReactNode, useEffect } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import minBy from 'es-toolkit/compat/minBy';
 
@@ -129,7 +129,7 @@ const renderAxisLine = (props: InsideProps, ticks: ReadonlyArray<TickItem>): Rea
   return <line className="recharts-polar-radius-axis-line" {...axisLineProps} />;
 };
 
-const renderTickItem = (option: Props['tick'], tickProps: any, value: string | number): ReactElement => {
+const renderTickItem = (option: Props['tick'], tickProps: any, value: string | number): ReactNode => {
   let tickItem;
 
   if (React.isValidElement(option)) {

@@ -172,6 +172,7 @@ describe('<Brush />', () => {
     });
 
     const customTraveller = container.querySelector('[data-testid="custom-traveller-element"]');
+    assertNotNull(customTraveller);
     expect(customTraveller).toBeInTheDocument();
     expect(customTraveller).toBeVisible();
     expect(customTraveller.getAttributeNames()).toEqual(['data-testid', 'x', 'y', 'width', 'height', 'fill', 'stroke']);
@@ -534,6 +535,7 @@ describe('<Brush />', () => {
     test('Travellers should move and chart should update when brush start and end indexes are controlled', async () => {
       const user = userEventSetup();
       const { container } = render(<ControlledPanoramicBrush />);
+      assertNotNull(container);
 
       const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
       fireEvent.focus(traveller);
@@ -546,7 +548,8 @@ describe('<Brush />', () => {
       await user.clear(endIndexInput);
       await user.type(endIndexInput, '5');
 
-      const brushTexts = container.getElementsByClassName('recharts-brush-texts').item(0).children;
+      const brushTexts = container.getElementsByClassName('recharts-brush-texts').item(0)?.children;
+      assertNotNull(brushTexts);
       expect(brushTexts.item(0)).toBeInTheDocument();
 
       expect(brushTexts.item(0)?.textContent).toContain('2');

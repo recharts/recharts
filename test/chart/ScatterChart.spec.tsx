@@ -49,6 +49,7 @@ import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/cha
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -202,6 +203,7 @@ describe('ScatterChart of three dimension data', () => {
     );
 
     const clipPath = container.querySelector('clipPath rect');
+    assertNotNull(clipPath);
     expect(clipPath.getAttributeNames().sort()).toEqual(['height', 'width', 'x', 'y']);
     expect(clipPath).toHaveAttribute('width', '280');
     expect(clipPath).toHaveAttribute('height', '330');

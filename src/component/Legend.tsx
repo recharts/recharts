@@ -101,7 +101,14 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
    * If this is undefined then Legend renders inside the recharts-wrapper element.
    */
   portal?: HTMLElement | null;
-  itemSorter?: LegendItemSorter;
+  /**
+   * Sorts Legend items. Defaults to `value` which means it will sort alphabetically
+   * by the label.
+   *
+   * If `null` is provided then the payload is not sorted. Be aware that without sort,
+   * the order of items may change between renders!
+   */
+  itemSorter?: LegendItemSorter | null;
 };
 
 function LegendSettingsDispatcher(props: LegendSettings): null {

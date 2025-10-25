@@ -123,7 +123,6 @@ const BarChartWithMultiXAxis = () => {
         axisLine={false}
         tickLine={false}
         interval={0}
-        // @ts-expect-error recharts doesn't like the null return type
         tick={renderQuarterTick}
         height={1}
         scale="band"

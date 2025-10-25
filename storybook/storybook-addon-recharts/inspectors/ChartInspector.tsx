@@ -15,7 +15,7 @@ const tableStyle: CSSProperties = {
 };
 
 export function ChartInspector({ setEnabledOverlays, allInspectors, defaultOpened }: InspectorProps) {
-  const [selected, setSelected] = useLocalStorageState('CartesianChartInspector', [defaultOpened]);
+  const [selected, setSelected] = useLocalStorageState('CartesianChartInspector', [defaultOpened].filter(Boolean));
 
   function handleCheckboxChange(key: string) {
     setSelected(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));

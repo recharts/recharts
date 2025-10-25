@@ -24,7 +24,6 @@ import { expectLastCalledWithScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { TickItemTextProps } from '../../src/polar/PolarAngleAxis';
-import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedAngleAxisTick = {
@@ -1356,6 +1355,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       const axisLineElement = container.querySelector('.recharts-polar-angle-axis-line');
+      assertNotNull(axisLineElement);
       expect(axisLineElement.tagName).toBe('path');
       expect(axisLineElement.getAttribute('fill')).toBe('none');
       expect(axisLineElement.getAttribute('d')).toBe(
@@ -1372,6 +1372,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       const axisLineElement = container.querySelector('.recharts-polar-angle-axis-line');
+      assertNotNull(axisLineElement);
       expect(axisLineElement.tagName).toBe('circle');
       expect(axisLineElement.getAttribute('fill')).toBe('none');
       expect(axisLineElement.getAttribute('cx')).toBe('250');
@@ -2250,23 +2251,9 @@ describe('<PolarAngleAxis />', () => {
     });
 
     describe('RadialBarWithColors with default axis', () => {
-      const radialBarSettings: RadialBarSettings = {
-        id: 'my-radial-bar-id',
-        barSize: undefined,
-        dataKey: 'uv',
-        maxBarSize: undefined,
-        minPointSize: undefined,
-        stackId: undefined,
-        type: 'radialBar',
-        angleAxisId: 0,
-        radiusAxisId: 0,
-        data: undefined,
-        hide: false,
-      };
-
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={500} height={500} data={pageDataWithFillColor}>
-          <RadialBar dataKey={radialBarSettings.dataKey} />
+          <RadialBar dataKey="uv" />
           <PolarAngleAxis />
           {children}
         </RadialBarChart>
@@ -2431,23 +2418,9 @@ describe('<PolarAngleAxis />', () => {
     });
 
     describe('RadialBarWithColors with implicit axis', () => {
-      const radialBarSettings: RadialBarSettings = {
-        id: 'my-radial-bar-id',
-        barSize: undefined,
-        dataKey: 'pv',
-        maxBarSize: undefined,
-        minPointSize: undefined,
-        stackId: undefined,
-        type: 'radialBar',
-        angleAxisId: 0,
-        radiusAxisId: 0,
-        data: undefined,
-        hide: false,
-      };
-
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={500} height={500} data={pageDataWithFillColor}>
-          <RadialBar dataKey={radialBarSettings.dataKey} />
+          <RadialBar dataKey="pv" />
           {children}
         </RadialBarChart>
       ));

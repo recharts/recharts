@@ -5,7 +5,7 @@ export function getAllLines(container: Element) {
 }
 
 type ExpectedLine = {
-  readonly d: string;
+  readonly d: string | null;
 };
 
 export function expectLines(container: Element, expectedLines: ReadonlyArray<ExpectedLine>) {

@@ -10,9 +10,12 @@ import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingCl
 import { expectDots } from '../helper/expectDots';
 import { expectLines } from '../helper/expectLine';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { assertNotNull } from '../helper/assertNotNull';
 
 function getLine(container: HTMLElement) {
-  return container.querySelector('.recharts-line-curve');
+  const line = container.querySelector('.recharts-line-curve');
+  assertNotNull(line);
+  return line;
 }
 
 describe('Line animation', () => {
@@ -486,6 +489,7 @@ describe('Line animation', () => {
 
         // change the dataKey prop
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -719,6 +723,7 @@ describe('Line animation', () => {
 
         // change the dataKey prop
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -964,6 +969,7 @@ describe('Line animation', () => {
 
       // change the dataKey prop
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -1049,6 +1055,7 @@ describe('Line animation', () => {
 
         // change the data array
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -1127,6 +1134,7 @@ describe('Line animation', () => {
 
         // change the data array
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -1375,6 +1383,7 @@ describe('Line animation', () => {
 
       // change the data array
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -1665,6 +1674,7 @@ describe('Line animation', () => {
 
       // hide the line element
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -1682,6 +1692,7 @@ describe('Line animation', () => {
 
       // hide the line element
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();

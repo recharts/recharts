@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { typeGuardTrapezoidProps, FunnelTrapezoid, FunnelTrapezoidProps } from '../../src/util/FunnelUtils';
-import { Coordinate } from '../../src/util/types';
-import { Props as TrapezoidProps } from '../../src/shape/Trapezoid';
+import { Coordinate, TrapezoidViewBox } from '../../src/util/types';
 
 describe('funnelUtils', () => {
   const mockTooltipPosition: Coordinate = { x: 10, y: 10 };
@@ -11,6 +10,14 @@ describe('funnelUtils', () => {
     y: 10,
     height: 100,
   };
+  const viewBox: TrapezoidViewBox = {
+    x: 0,
+    y: 0,
+    upperWidth: 0,
+    lowerWidth: 0,
+    width: 0,
+    height: 0,
+  };
   const mockProps: FunnelTrapezoidProps = {
     width: 100,
     upperWidth: 80,
@@ -18,26 +25,31 @@ describe('funnelUtils', () => {
     x: 11,
     y: 11,
     isActive: false,
-    tooltipPosition: undefined,
+    tooltipPosition: mockTooltipPosition,
     height: 0,
-    name: undefined,
+    name: '',
     option: undefined,
-    labelViewBox: undefined,
-    parentViewBox: undefined,
-    val: undefined,
-    tooltipPayload: undefined,
+    labelViewBox: viewBox,
+    parentViewBox: viewBox,
+    val: 1,
+    tooltipPayload: [],
   };
   it('typeGuardTrapezoidProps returns object from options + props', () => {
-    const mockRes: TrapezoidProps = {
+    const mockRes: FunnelTrapezoidProps = {
       x: mockProps.x,
       y: mockProps.y,
-      // @ts-expect-error the types do not match what the function is doing
       isActive: mockProps.isActive,
       height: mockOptions.height,
       lowerWidth: 60,
-      tooltipPosition: undefined,
+      tooltipPosition: mockTooltipPosition,
       upperWidth: 80,
       width: 100,
+      labelViewBox: viewBox,
+      parentViewBox: viewBox,
+      val: 1,
+      option: undefined,
+      name: '',
+      tooltipPayload: [],
     };
     const res = typeGuardTrapezoidProps(mockOptions, mockProps);
 
@@ -46,11 +58,12 @@ describe('funnelUtils', () => {
   it('<FunnelTrapezoid /> returns a trapezoid shape with no options', () => {
     const { container } = render(
       <svg width={100} height={100}>
-        <FunnelTrapezoid tooltipPosition={mockTooltipPosition} option={{}} {...mockProps} isActive={Boolean(true)} />
+        <FunnelTrapezoid {...mockProps} isActive={Boolean(true)} />
       </svg>,
     );
     expect(container.querySelector('g')).toHaveClass('recharts-active-shape');
   });
+
   it('<FunnelTrapezoid /> returns a trapezoid shape with x & y from options', () => {
     const { container } = render(
       <svg width={100} height={100}>
@@ -65,7 +78,7 @@ describe('funnelUtils', () => {
           y={0}
           upperWidth={0}
           lowerWidth={0}
-          name={undefined}
+          name="my name"
         />
       </svg>,
     );

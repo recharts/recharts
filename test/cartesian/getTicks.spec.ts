@@ -154,7 +154,7 @@ describe('getTicks', () => {
 
     test.each([
       [
-        EXAMPLE_INPUT.ticks.length + 1,
+        (EXAMPLE_INPUT.ticks?.length ?? 0) + 1,
         [
           {
             coordinate: 50,

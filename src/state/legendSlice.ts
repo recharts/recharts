@@ -8,7 +8,7 @@ export type LegendSettings = {
   layout: LayoutType;
   align: HorizontalAlignmentType;
   verticalAlign: VerticalAlignmentType;
-  itemSorter: LegendItemSorter;
+  itemSorter: LegendItemSorter | null;
 };
 
 /**

@@ -47,7 +47,7 @@ describe('useAppSelector', () => {
       const state = useAppSelector(s => s);
       const dispatch = useAppDispatch();
       expect(state).not.toBe(undefined);
-      if (state.chartData.chartData == null) {
+      if (state?.chartData.chartData == null) {
         dispatch(setChartData([]));
       }
       return null;
@@ -83,6 +83,7 @@ describe('useAppDispatch', () => {
     const spy = vi.fn();
     store.subscribe(spy);
     render(
+      // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
       <Provider context={RechartsReduxContext} store={store}>
         <Dispatcher />
       </Provider>,

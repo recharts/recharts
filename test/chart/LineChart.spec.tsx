@@ -703,7 +703,8 @@ describe('<LineChart />', () => {
 
     // simulate entering just past Page A to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
-    const tooltipTrigger: Node = container.querySelector(lineChartMouseHoverTooltipSelector);
+    const tooltipTrigger: Node | null = container.querySelector(lineChartMouseHoverTooltipSelector);
+    assertNotNull(tooltipTrigger);
     fireEvent.mouseMove(tooltipTrigger, {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
@@ -866,21 +867,23 @@ describe('<LineChart />', () => {
 
   describe('LineChart - test ref access', () => {
     test('should allow access to the main SVG through the ref prop forwarded from CategoricalChart', () => {
+      expect.assertions(2);
       /*
        * This is a breaking change from v2.0.0, where the ref was not forwarded
        * and used to refer to the CategoricalChartWrapper component instead.
        * In 3.0 we no longer use CategoricalChartWrapper, and the ref now refers to the main SVG element.
        */
-      let refNode: SVGSVGElement | null = null;
-
       const MyComponent = () => {
         return (
           <LineChart
             width={100}
             height={100}
             data={PageData}
-            ref={node => {
-              refNode = node;
+            ref={(node: SVGSVGElement | null) => {
+              if (node != null) {
+                expect(node.tagName).toBe('svg');
+                expect(node).toHaveAttribute('class', 'recharts-surface');
+              }
             }}
           >
             <Line type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -891,11 +894,6 @@ describe('<LineChart />', () => {
       };
 
       render(<MyComponent />);
-
-      expect(refNode).toBeDefined();
-      expect(refNode).not.toBeNull();
-      expect(refNode.tagName).toBe('svg');
-      expect(refNode).toHaveAttribute('class', 'recharts-surface');
     });
   });
 

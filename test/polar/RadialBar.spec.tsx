@@ -58,7 +58,7 @@ describe('<RadialBar />', () => {
 
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <RadialBarChart width={500} height={500} data={PageData}>
-        <RadialBar isAnimationActive={false} label dataKey={radialBarSettings.dataKey} />
+        <RadialBar isAnimationActive={false} label dataKey="pv" />
         {children}
       </RadialBarChart>
     ));
@@ -448,7 +448,7 @@ describe('<RadialBar />', () => {
       <RadialBarChart width={500} height={500} data={PageData}>
         <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
         <PolarRadiusAxis dataKey="name" orientation="middle" type="category" angle={90} />
-        <RadialBar isAnimationActive={false} dataKey={radialBarSettings.dataKey} />
+        <RadialBar isAnimationActive={false} dataKey="pv" />
         {children}
       </RadialBarChart>
     ));
@@ -830,7 +830,7 @@ describe('<RadialBar />', () => {
 
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <RadialBarChart width={500} height={500} data={ringsData}>
-        <RadialBar isAnimationActive={false} dataKey={radialBarSettings.dataKey} />
+        <RadialBar isAnimationActive={false} dataKey="rings" />
         <PolarGrid gridType="circle" />
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" />

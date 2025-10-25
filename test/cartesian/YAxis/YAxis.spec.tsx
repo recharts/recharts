@@ -35,6 +35,7 @@ import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRec
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('<YAxis />', () => {
   const data = [
@@ -1722,7 +1723,7 @@ describe('<YAxis />', () => {
     describe('ReferenceDot', () => {
       const ChartWithReferenceDot = (props: {
         ifOverflow: IfOverflow | undefined;
-        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+        domainSpy: (domain: NumberDomain | CategoricalDomain | undefined) => void;
       }) => {
         const Comp = (): null => {
           const isPanorama = useIsPanorama();
@@ -1811,7 +1812,7 @@ describe('<YAxis />', () => {
     describe('ReferenceArea', () => {
       const ChartWithReferenceArea = (props: {
         ifOverflow: IfOverflow | undefined;
-        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+        domainSpy: (domain: NumberDomain | CategoricalDomain | undefined) => void;
       }) => {
         const Comp = (): null => {
           const isPanorama = useIsPanorama();
@@ -1966,7 +1967,7 @@ describe('<YAxis />', () => {
     describe('ReferenceLine with one dimension', () => {
       const ChartWithReferenceLine = (props: {
         ifOverflow: IfOverflow | undefined;
-        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+        domainSpy: (domain: NumberDomain | CategoricalDomain | undefined) => void;
       }) => {
         const Comp = (): null => {
           const isPanorama = useIsPanorama();
@@ -2054,7 +2055,7 @@ describe('<YAxis />', () => {
     describe('ReferenceLine with segment', () => {
       const ChartWithReferenceLineWithSegment = (props: {
         ifOverflow: IfOverflow | undefined;
-        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+        domainSpy: (domain: NumberDomain | CategoricalDomain | undefined) => void;
       }) => {
         const Comp = (): null => {
           const isPanorama = useIsPanorama();
@@ -2178,6 +2179,7 @@ describe('<YAxis />', () => {
     );
 
     const yAxis = container.querySelector('.yAxis');
+    assertNotNull(yAxis);
     const yAxisLine = yAxis.querySelector('line');
 
     expect(yAxis).toBeVisible();
@@ -2198,6 +2200,7 @@ describe('<YAxis />', () => {
     const tickElements = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
 
     const yAxis = container.querySelector('.yAxis');
+    assertNotNull(yAxis);
     const yAxisLine = yAxis.querySelector('line');
 
     const calculatedYAxisWidth = getCalculatedYAxisWidth({

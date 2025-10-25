@@ -69,7 +69,7 @@ describe('<Line />', () => {
   it('Does not throw when dot is null', () => {
     const { container } = render(
       <LineChart width={500} height={500}>
-        {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
+        {/* @ts-expect-error Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
         <Line isAnimationActive={false} data={data} dataKey="value" dot={null} />
       </LineChart>,
     );
@@ -92,6 +92,7 @@ describe('<Line />', () => {
     expect(dots).toHaveLength(5);
 
     const dotsWrapper = container.querySelector('.recharts-line-dots');
+    assertNotNull(dotsWrapper);
     // Well this is confusing. When clipDot is false the className contains 'dots'. AKA clip path name includes what is showing, rather than what is clipped.
     expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-dots-recharts-line');
   });
@@ -111,6 +112,7 @@ describe('<Line />', () => {
     expect(dots).toHaveLength(5);
 
     const dotsWrapper = container.querySelector('.recharts-line-dots');
+    assertNotNull(dotsWrapper);
     expect(dotsWrapper.hasAttribute('clip-path')).toBe(true);
     expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-line');
   });

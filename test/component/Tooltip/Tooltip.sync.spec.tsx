@@ -58,6 +58,7 @@ import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syn
 import { selectTooltipPayloadSearcher } from '../../../src/state/selectors/selectTooltipPayloadSearcher';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { selectChartViewBox } from '../../../src/state/selectors/selectChartOffsetInternal';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -343,7 +344,9 @@ describe('Tooltip synchronization', () => {
         const { container, debug } = renderTestCase();
         // use ids to separate the charts so the `.recharts-wrapper` class can be used to activate the tooltip
         const wrapperOne = container.querySelector('#chartOne');
+        assertNotNull(wrapperOne);
         const wrapperTwo = container.querySelector('#chartTwo');
+        assertNotNull(wrapperTwo);
 
         // target the first chart to show the tooltip
         showTooltip(wrapperOne, mouseHoverSelector, debug);
@@ -357,7 +360,9 @@ describe('Tooltip synchronization', () => {
           { wrapper: wrapperTwo, content: chartTwoContent },
         ].forEach(({ wrapper, content }) => {
           const tooltipContentName = wrapper.querySelector('.recharts-tooltip-item-name');
+          assertNotNull(tooltipContentName);
           const tooltipContentValue = wrapper.querySelector('.recharts-tooltip-item-value');
+          assertNotNull(tooltipContentValue);
           expect(tooltipContentName).not.toBeNull();
           expect(tooltipContentValue).not.toBeNull();
           expect(tooltipContentName).toBeInTheDocument();
@@ -1146,10 +1151,12 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
         // The coordinate should be defined after showing tooltip
-        expect(lastCallA).toBeDefined();
-        expect(lastCallA).not.toBeNull();
+        assertNotNull(lastCallA);
         expect(typeof lastCallA).toBe('object');
         expect(lastCallA).toHaveProperty('x');
+        if (!('x' in lastCallA)) {
+          throw new Error('x property is missing in the coordinate object');
+        }
         expect(lastCallA.x).toBeLessThanOrEqual(200);
         expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       });
@@ -1170,21 +1177,25 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
         const lastCallB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
 
-        expect(lastCallA).toBeDefined();
-        expect(lastCallA).not.toBeNull();
+        assertNotNull(lastCallA);
         expect(typeof lastCallA).toBe('object');
         expect(lastCallA).toHaveProperty('x');
         expect(lastCallA).toHaveProperty('y');
+        if (!('x' in lastCallA) || !('y' in lastCallA)) {
+          throw new Error('x or y property is missing in the coordinate object');
+        }
         expect(lastCallA.x).toBeLessThanOrEqual(200);
         expect(lastCallA.y).toBeLessThanOrEqual(200);
         expect(lastCallA.x).toBeGreaterThanOrEqual(0);
         expect(lastCallA.y).toBeGreaterThanOrEqual(0);
 
-        expect(lastCallB).toBeDefined();
-        expect(lastCallB).not.toBeNull();
+        assertNotNull(lastCallB);
         expect(typeof lastCallB).toBe('object');
         expect(lastCallB).toHaveProperty('x');
         expect(lastCallB).toHaveProperty('y');
+        if (!('x' in lastCallB) || !('y' in lastCallB)) {
+          throw new Error('x or y property is missing in the coordinate object');
+        }
         expect(lastCallB.x).toBeLessThanOrEqual(600);
         expect(lastCallB.y).toBeLessThanOrEqual(400);
       });
@@ -1212,8 +1223,14 @@ describe('Tooltip coordinate bounding in synchronization', () => {
 
         showTooltipOnCoordinate(wrapperA, mouseHoverSelector, { clientX: 100, clientY: 100 });
 
+        if (spyA.mock.lastCall == null || spyB.mock.lastCall == null) {
+          throw new Error('Expected spyA and spyB to have been called at least once');
+        }
+
         const smallChartCoord = spyA.mock.lastCall[0];
+        assertNotNull(smallChartCoord);
         const largeChartCoord = spyB.mock.lastCall[0];
+        assertNotNull(largeChartCoord);
 
         expect(smallChartCoord).toBeDefined();
         expect(largeChartCoord).toBeDefined();
@@ -1221,6 +1238,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         const actualXRatio = largeChartCoord.x / smallChartCoord.x;
         const actualYRatio = largeChartCoord.y / smallChartCoord.y;
 
+        assertNotNull(syncCoordinates);
         const {
           forwardRatio: [expectedXRatio, expectedYRatio],
         } = syncCoordinates;
@@ -1236,17 +1254,21 @@ describe('Tooltip coordinate bounding in synchronization', () => {
 
         showTooltipOnCoordinate(wrapperB, mouseHoverSelector, { clientX: 300, clientY: 200 });
 
-        const smallChartCoord = spyA.mock.lastCall[0];
-        const largeChartCoord = spyB.mock.lastCall[0];
+        if (spyA.mock.lastCall == null || spyB.mock.lastCall == null) {
+          throw new Error('Expected spyA and spyB to have been called at least once');
+        }
 
-        expect(smallChartCoord).toBeDefined();
-        expect(largeChartCoord).toBeDefined();
+        const smallChartCoord = spyA.mock.lastCall[0];
+        assertNotNull(smallChartCoord);
+        const largeChartCoord = spyB.mock.lastCall[0];
+        assertNotNull(largeChartCoord);
 
         // Test reverse scaling (large to small)
         // The ratio should be the inverse of the forward scaling
         const actualXRatio = largeChartCoord.x / smallChartCoord.x;
         const actualYRatio = largeChartCoord.y / smallChartCoord.y;
 
+        assertNotNull(syncCoordinates);
         const {
           reverseRatio: [expectedXRatio, expectedYRatio],
         } = syncCoordinates;
@@ -1289,11 +1311,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(200);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(150);
@@ -1331,11 +1355,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(300);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(200);
@@ -1374,8 +1400,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
 
       // Should preserve radial properties
@@ -1392,6 +1417,9 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       // Should bound x and y coordinates
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(300);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(200);
@@ -1429,11 +1457,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(250);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(180);
@@ -1478,11 +1508,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(280);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(220);
@@ -1521,11 +1553,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(320);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(240);
@@ -1570,8 +1604,7 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
 
       // Should preserve all radial properties when synchronizing to cartesian chart
@@ -1588,6 +1621,9 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       // Should bound x and y coordinates
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(350);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(250);
@@ -1626,11 +1662,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(300);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(280);
@@ -1670,11 +1708,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(200);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(160);
@@ -1781,11 +1821,13 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       expect(spyA).toHaveBeenCalled();
       const lastCallA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
 
-      expect(lastCallA).toBeDefined();
-      expect(lastCallA).not.toBeNull();
+      assertNotNull(lastCallA);
       expect(typeof lastCallA).toBe('object');
       expect(lastCallA).toHaveProperty('x');
       expect(lastCallA).toHaveProperty('y');
+      if (!('x' in lastCallA) || !('y' in lastCallA)) {
+        throw new Error('x or y property is missing in the coordinate object');
+      }
       expect(lastCallA.x).toBeLessThanOrEqual(100);
       expect(lastCallA.x).toBeGreaterThanOrEqual(0);
       expect(lastCallA.y).toBeLessThanOrEqual(50);
@@ -1829,6 +1871,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
         spyC: viewBoxSpyC,
       } = renderTestCase(state => selectChartViewBox(state));
 
+      if (viewBoxSpyA.mock.lastCall == null || viewBoxSpyB.mock.lastCall == null || viewBoxSpyC.mock.lastCall == null) {
+        throw new Error('Expected all viewBox spies to have been called at least once');
+      }
+
       const chartAViewBox = viewBoxSpyA.mock.lastCall[0];
       const chartBViewBox = viewBoxSpyB.mock.lastCall[0];
       const chartCViewBox = viewBoxSpyC.mock.lastCall[0];
@@ -1840,6 +1886,10 @@ describe('Tooltip coordinate bounding in synchronization', () => {
       const { wrapperA, spyA, spyB, spyC } = renderTestCase(state => selectSynchronisedTooltipState(state));
 
       showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 });
+
+      if (spyA.mock.lastCall == null || spyB.mock.lastCall == null || spyC.mock.lastCall == null) {
+        throw new Error('Expected all synchronization state spies to have been called at least once');
+      }
 
       // Chart A should have no synchronised interaction (it's the sender)
       const syncStateA = spyA.mock.lastCall[0];

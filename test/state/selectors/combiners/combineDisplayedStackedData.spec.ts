@@ -8,7 +8,7 @@ const emptyAxisSettings: BaseCartesianAxis = {
   type: 'number',
   id: 'emptyAxis',
   domain: [],
-  dataKey: null,
+  dataKey: undefined,
   scale: 'sequential',
   unit: '',
   name: '',
@@ -34,7 +34,11 @@ describe('combineDisplayedStackedData', () => {
   };
 
   it('should return empty array when no cartesian items are provided', () => {
-    const result = combineDisplayedStackedData([], emptyChartDataState, createMockBaseCartesianAxis({ dataKey: null }));
+    const result = combineDisplayedStackedData(
+      [],
+      emptyChartDataState,
+      createMockBaseCartesianAxis({ dataKey: undefined }),
+    );
     expect(result).toEqual([]);
   });
 

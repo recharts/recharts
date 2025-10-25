@@ -19,6 +19,7 @@ describe('DOMUtils', () => {
   });
 
   test('getStringSize() returns 0', () => {
+    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     expect(getStringSize(undefined)).toEqual({ width: 0, height: 0 });
   });
 

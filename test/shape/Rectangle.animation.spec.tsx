@@ -23,7 +23,7 @@ function getRectPath(container: Element) {
   return trim(rect.getAttribute('d'));
 }
 
-function getStyle(container: Element): string {
+function getStyle(container: Element): string | null {
   assertNotNull(container);
   const rect = getFirstRect(container);
   expect(rect).toHaveAttribute('style');
@@ -56,6 +56,7 @@ async function expectAnimatedPath(
   animationManager: MockAnimationManager,
 ): Promise<ReadonlyArray<string>> {
   const initialPath = getRectPath(container);
+  assertNotNull(initialPath);
 
   const allPaths: string[] = [];
   allPaths.push(initialPath);
@@ -64,6 +65,7 @@ async function expectAnimatedPath(
     // eslint-disable-next-line no-await-in-loop
     await animationManager.setAnimationProgress(i);
     const currentPath = getRectPath(container);
+    assertNotNull(currentPath);
     // expect(allPaths).not.toContain(currentPath);
     allPaths.push(currentPath);
   }
@@ -85,7 +87,7 @@ function expectNoStrokeDasharray(container: Element) {
 async function expectAnimatedStrokeDasharray(container: HTMLElement, animationManager: MockAnimationManager) {
   const initialStyle = getStyle(container);
 
-  const allStyles: string[] = [];
+  const allStyles: Array<string | null> = [];
   allStyles.push(initialStyle);
 
   await animationManager.setAnimationProgress(0.1);

@@ -28,11 +28,11 @@ export const selectorRecalculationDebugger = (selectorName: string) => {
       const changedDeps: Record<string, { before: unknown; after: unknown }> = dependencyNames.reduce<
         Record<string, { before: unknown; after: unknown }>
       >((accum, dependency) => {
-        if (currentDependencies[dependency] !== previousDependencies[dependency]) {
+        if (currentDependencies[dependency] !== previousDependencies?.[dependency]) {
           return {
             ...accum,
             [dependency]: {
-              before: previousDependencies[dependency],
+              before: previousDependencies?.[dependency],
               after: currentDependencies[dependency],
             },
           };

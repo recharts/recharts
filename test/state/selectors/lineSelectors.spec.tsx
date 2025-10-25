@@ -288,6 +288,7 @@ describe('selectLinePoints', () => {
       );
       expect(spy).toHaveBeenCalledTimes(2);
       const firstCall = spy.mock.calls[spy.mock.calls.length - 1][0];
+      assertNotNull(firstCall);
       expect(firstCall).toEqual(expectedLines);
       expect(firstCall.length).toBe(6);
 
@@ -295,6 +296,7 @@ describe('selectLinePoints', () => {
 
       expect(spy).toHaveBeenCalledTimes(3);
       const secondCall = spy.mock.calls[spy.mock.calls.length - 1][0];
+      assertNotNull(secondCall);
       expect(secondCall.length).toBe(6);
 
       expect(secondCall).toBe(firstCall);

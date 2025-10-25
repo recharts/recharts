@@ -684,11 +684,7 @@ export type NumberDomain = readonly [min: number, max: number];
 
 export type CategoricalDomain = ReadonlyArray<number | string | Date>;
 
-export type TickProp =
-  | SVGProps<SVGTextElement>
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | boolean;
+export type TickProp = SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactNode) | boolean;
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
@@ -974,11 +970,11 @@ export type ActiveDotType =
    * Unfortunately, if you write a regular old functional component and have it return SVG element,
    * its default, inferred return type is `JSX.Element` and so if this return type was `SVGElement`
    * then it would look like a type error (even when doing the right thing).
-   * So instead here we have JSX.Element return type which is invalid in runtime
+   * So instead here we have ReactNode return type which is invalid in runtime
    * (remember, we are in SVG context so HTML elements won't work, we need SVGElement).
    * But better than forcing everyone to re-type their components I guess.
    */
-  | ((props: ActiveDotProps) => JSX.Element)
+  | ((props: ActiveDotProps) => ReactNode)
   /**
    * activeDot can be an object; props from here will be appended to the default active dot
    */

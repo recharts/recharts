@@ -6,6 +6,9 @@ export function OffsetShower() {
   const offset = useOffset();
   const height = useChartHeight();
   const width = useChartWidth();
+  if (offset == null || width == null || height == null) {
+    return null;
+  }
   return (
     <>
       <SvgDimensionShower

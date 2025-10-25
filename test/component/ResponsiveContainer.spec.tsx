@@ -43,6 +43,7 @@ describe('<ResponsiveContainer />', () => {
     });
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
+    // @ts-expect-error ResizeObserver is not defined in the JSDOM environment
     delete window.ResizeObserver;
 
     window.ResizeObserver = resizeObserverMock;
@@ -467,7 +468,7 @@ describe('<ResponsiveContainer />', () => {
     );
 
     expect(ref.current).toBeInstanceOf(HTMLDivElement);
-    expect(ref.current.classList.contains('recharts-responsive-container')).toBe(true);
+    expect(ref.current?.classList.contains('recharts-responsive-container')).toBe(true);
   });
 
   it('Renders with id attribute when passed as a number', () => {

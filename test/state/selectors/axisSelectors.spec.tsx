@@ -1344,7 +1344,7 @@ describe('selectCartesianGraphicalItemsData', () => {
     const store = createRechartsStore();
     const settings: BarSettings = {
       maxBarSize: 0,
-      minPointSize: undefined,
+      minPointSize: 0,
       id: 'id',
       isPanorama: false,
       type: 'bar',
@@ -2072,7 +2072,7 @@ describe('selectErrorBarsSettings', () => {
     const store = createRechartsStore();
     const settings: BarSettings = {
       maxBarSize: 0,
-      minPointSize: undefined,
+      minPointSize: 0,
       id: 'bar1',
       isPanorama: false,
       barSize: undefined,
@@ -2172,6 +2172,7 @@ describe('selectNiceTicks', () => {
   });
 
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
+    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     { domain: undefined, expectedTicks: [0, 100, 200, 300, 400] },
     { domain: ['auto', 'auto'], expectedTicks: [180, 240, 300, 360, 420] },
     { domain: [-500, 'auto'], expectedTicks: [-500, -250, 0, 250, 500] },

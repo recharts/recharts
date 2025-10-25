@@ -148,6 +148,7 @@ describe('<Sankey />', () => {
 
       const tooltip = getTooltip(container);
       const tooltipTriggerElement = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       expect(tooltip).not.toBeVisible();
 
       fireEvent.click(tooltipTriggerElement);
@@ -166,6 +167,7 @@ describe('<Sankey />', () => {
 
       const tooltip = getTooltip(container);
       const tooltipTriggerElement = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       expect(tooltip).not.toBeVisible();
 
       fireEvent.click(tooltipTriggerElement);
@@ -188,6 +190,7 @@ describe('<Sankey />', () => {
       expect(tooltip).not.toBeVisible();
 
       const tooltipTriggerElement = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltip).toBeVisible();
@@ -210,6 +213,7 @@ describe('<Sankey />', () => {
       expect(tooltip).not.toBeVisible();
 
       const tooltipTriggerElement = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltip).toBeVisible();

@@ -21,7 +21,7 @@ function getAreaCurve(container: Element): Element {
   return curve;
 }
 
-function getAreaCurveD(container: Element): string {
+function getAreaCurveD(container: Element): string | null {
   return getAreaCurve(container).getAttribute('d');
 }
 
@@ -219,6 +219,7 @@ async function horizontalClipPathAnimation(
   const x = clipPathRect.getAttribute('x');
   const y = clipPathRect.getAttribute('y');
   const width1 = clipPathRect.getAttribute('width');
+  assertNotNull(width1);
   const height = clipPathRect.getAttribute('height');
 
   await animationManager.setAnimationProgress(0.1);
@@ -228,6 +229,7 @@ async function horizontalClipPathAnimation(
   expect(clipPathRect).toHaveAttribute('height', height);
   // width should grow
   const width2 = clipPathRect.getAttribute('width');
+  assertNotNull(width2);
   expect(parseFloat(width2)).toBeGreaterThan(parseFloat(width1));
 
   await animationManager.setAnimationProgress(0.2);
@@ -235,6 +237,7 @@ async function horizontalClipPathAnimation(
   expect(clipPathRect).toHaveAttribute('y', y);
   expect(clipPathRect).toHaveAttribute('height', height);
   const width3 = clipPathRect.getAttribute('width');
+  assertNotNull(width3);
   expect(parseFloat(width3)).toBeGreaterThan(parseFloat(width2));
 
   await animationManager.setAnimationProgress(1);
@@ -242,6 +245,7 @@ async function horizontalClipPathAnimation(
   expect(clipPathRect).toHaveAttribute('y', y);
   expect(clipPathRect).toHaveAttribute('height', height);
   const width4 = clipPathRect.getAttribute('width');
+  assertNotNull(width4);
   expect(parseFloat(width4)).toBeGreaterThan(parseFloat(width3));
 
   await animationManager.completeAnimation();
@@ -361,6 +365,7 @@ describe('Area animation', () => {
       async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.setAnimationProgress(0.3);
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -414,6 +419,7 @@ describe('Area animation', () => {
       async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         await animationManager.completeAnimation();
         const button = container.querySelector('button');
+        assertNotNull(button);
         expect(button).toBeInTheDocument();
         act(() => {
           button.click();
@@ -465,6 +471,7 @@ describe('Area animation', () => {
     async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.completeAnimation();
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();
@@ -513,6 +520,7 @@ describe('Area animation', () => {
     async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
       await animationManager.setAnimationProgress(0.3);
       const button = container.querySelector('button');
+      assertNotNull(button);
       expect(button).toBeInTheDocument();
       act(() => {
         button.click();

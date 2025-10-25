@@ -52,7 +52,7 @@ type ExpectedLabel = {
   textContent: string;
 };
 
-function expectRadiusAxisLabel(container: Element, expectedLabel: ExpectedLabel | undefined) {
+function expectRadiusAxisLabel(container: Element, expectedLabel: ExpectedLabel | null) {
   assertNotNull(container);
   const allLabels = container.querySelectorAll('.recharts-label');
 
@@ -625,7 +625,7 @@ describe('<PolarRadiusAxis />', () => {
 
       expectRadiusAxisTicks(container, []);
 
-      expectRadiusAxisLabel(container, undefined);
+      expectRadiusAxisLabel(container, null);
     });
 
     test("don't render any ticks or label when dataKey is empty", () => {
@@ -637,7 +637,7 @@ describe('<PolarRadiusAxis />', () => {
 
       expectRadiusAxisTicks(container, []);
 
-      expectRadiusAxisLabel(container, undefined);
+      expectRadiusAxisLabel(container, null);
     });
 
     test('Renders polar radius axis', () => {

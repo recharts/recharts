@@ -13,7 +13,7 @@ function getFunnelPaths(container: Element): ReadonlyArray<SVGPathElement> {
   return Array.from(container.querySelectorAll('.recharts-funnel-trapezoid path'));
 }
 
-function getFunnelPathStrings(container: Element): ReadonlyArray<string> {
+function getFunnelPathStrings(container: Element): ReadonlyArray<string | null> {
   return getFunnelPaths(container).map(path => path.getAttribute('d'));
 }
 
@@ -21,14 +21,14 @@ async function expectAnimatedFunnelPaths(
   container: Element,
   animationManager: MockAnimationManager,
   steps: number = 5,
-): Promise<ReadonlyArray<ReadonlyArray<string>>> {
+): Promise<ReadonlyArray<ReadonlyArray<string | null>>> {
   assertNotNull(container);
   let animationProgress = 0.1;
   await animationManager.setAnimationProgress(animationProgress);
   const stepSize = (1 - animationProgress) / steps;
   const initialPaths = getFunnelPathStrings(container);
 
-  const pathsDuringAnimation: Array<ReadonlyArray<string>> = [];
+  const pathsDuringAnimation: Array<ReadonlyArray<string | null>> = [];
   for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
     // eslint-disable-next-line no-await-in-loop
     await animationManager.setAnimationProgress(animationProgress);

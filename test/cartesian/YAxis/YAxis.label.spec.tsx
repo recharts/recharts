@@ -7,9 +7,9 @@ import { assertNotNull } from '../../helper/assertNotNull';
 
 type ExpectedLabel = {
   textContent: string;
-  transform: string;
-  x: string;
-  y: string;
+  transform: string | null;
+  x: string | null;
+  y: string | null;
 };
 
 function expectYAxisLabel(container: Element, expectedLabels: ReadonlyArray<ExpectedLabel>): ReadonlyArray<Element> {

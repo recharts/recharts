@@ -8,6 +8,7 @@
     "noEmit": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "target": "es2023"
   },
   "include": ["./**/*", "../types.d.ts"]

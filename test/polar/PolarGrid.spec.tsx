@@ -26,10 +26,10 @@ import { TickItem } from '../../src/util/types';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedLine = {
-  x1: string;
-  y1: string;
-  x2: string;
-  y2: string;
+  x1: string | null;
+  y1: string | null;
+  x2: string | null;
+  y2: string | null;
 };
 
 function expectPolarGridLines(container: HTMLElement, expectedLines: ReadonlyArray<ExpectedLine>) {
@@ -48,8 +48,8 @@ function expectPolarGridLines(container: HTMLElement, expectedLines: ReadonlyArr
 type ExpectedPolygon = {
   cx: number;
   cy: number;
-  d: string;
-  fill?: string;
+  d: string | null;
+  fill?: string | null;
 };
 
 function expectPolarGridPolygons(container: HTMLElement, expectedPolygon: ReadonlyArray<ExpectedPolygon>) {

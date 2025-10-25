@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import * as React from 'react';
-import { ReactElement, SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
@@ -19,6 +19,7 @@ import {
   AxisInterval,
   Coordinate,
   RectangleCoordinate,
+  TickProp,
 } from '../util/types';
 import { getTicks } from './getTicks';
 import { RechartsScale } from '../util/ChartUtils';
@@ -44,7 +45,7 @@ export interface CartesianAxisProps {
   orientation?: Orientation;
   // The viewBox of svg
   viewBox?: CartesianViewBox;
-  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  tick?: TickProp;
   /**
    * Additional props to spread to each tick Text element.
    * Optional, the CartesianAxis component will provide its own defaults calculated from other props.

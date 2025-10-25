@@ -24,8 +24,8 @@ const baseCoord = {
 
 const connectedProps: CursorConnectedProps = {
   chartName: '',
-  layout: undefined,
-  offset: undefined,
+  layout: 'vertical',
+  offset: emptyOffset,
   tooltipAxisBandSize: 0,
   ...defaultProps,
 };

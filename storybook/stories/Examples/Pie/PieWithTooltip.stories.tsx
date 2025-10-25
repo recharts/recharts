@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { PieChart, Pie, Cell, Tooltip, Legend } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { Coordinate } from '../../../../src/util/types';
 
 const data = [
   { name: 'Group A', value: 400 },
@@ -48,7 +49,7 @@ export default {
 
 export const PieWithTooltip = {
   render: (args: Args) => {
-    const [ttPos, setTtPos] = useState(undefined);
+    const [ttPos, setTtPos] = useState<Coordinate | undefined>(undefined);
     const [active, setActive] = useState(false);
     const [randomData, setRandomData] = useState(data);
 

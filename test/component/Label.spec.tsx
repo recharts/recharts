@@ -227,7 +227,7 @@ describe('<Label />', () => {
         });
 
         it('should not render label at all when given content prop', () => {
-          const { container } = renderLabelWithContent(null);
+          const { container } = renderLabelWithContent(undefined);
 
           const label = container.querySelector('.recharts-label');
           expect(label).toBeNull();

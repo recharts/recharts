@@ -15,7 +15,7 @@ import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from
  * @param dataKey the dataKey of the item that user is touching
  * @returns void
  */
-export function mockTouchingElement(touchItemIndex: TooltipIndex, dataKey: DataKey<any>): void {
+export function mockTouchingElement(touchItemIndex: NonNullable<TooltipIndex>, dataKey: DataKey<any>): void {
   const fakeElement = document.createElement('g');
   fakeElement.setAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, touchItemIndex);
   fakeElement.setAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, String(dataKey));
