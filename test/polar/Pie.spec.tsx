@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
 import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
@@ -1798,6 +1798,285 @@ describe('<Pie />', () => {
         type: 'pie',
       };
       expectLastCalledWith(spy, [expectedPie]);
+    });
+  });
+
+  describe('events', () => {
+    it('should fire onClick event when clicking on a pie sector', async () => {
+      const user = userEventSetup();
+      const handleClick = vi.fn();
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={PageData}
+            dataKey="uv"
+            onClick={handleClick}
+          />
+        </PieChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-pie-sector');
+      await user.click(sectors[0]);
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleClick,
+        {
+          amt: 2400,
+          cornerRadius: undefined,
+          cx: 255,
+          cy: 255,
+          endAngle: 86.38272345530893,
+          fill: '#808080',
+          innerRadius: 0,
+          maxRadius: 346.4823227814083,
+          midAngle: 43.19136172765447,
+          middleRadius: 100,
+          name: 'Page A',
+          outerRadius: 200,
+          paddingAngle: 0,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          percent: 0.23995200959808038,
+          pv: 2400,
+          startAngle: 0,
+          stroke: '#fff',
+          tooltipPayload: [
+            {
+              dataKey: 'uv',
+              name: 'Page A',
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              type: undefined,
+              value: 400,
+            },
+          ],
+          tooltipPosition: {
+            x: 327.9071825766426,
+            y: 186.5562805749417,
+          },
+          uv: 400,
+          value: 400,
+        },
+        0,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onMouseOver and onMouseOut events when hovering over a pie sector', async () => {
+      const user = userEventSetup();
+      const handleMouseOver = vi.fn();
+      const handleMouseOut = vi.fn();
+
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={PageData}
+            dataKey="uv"
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+          />
+        </PieChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-pie-sector');
+      await user.hover(sectors[0]);
+      expect(handleMouseOver).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOver,
+        {
+          amt: 2400,
+          cornerRadius: undefined,
+          cx: 255,
+          cy: 255,
+          endAngle: 86.38272345530893,
+          fill: '#808080',
+          innerRadius: 0,
+          maxRadius: 346.4823227814083,
+          midAngle: 43.19136172765447,
+          middleRadius: 100,
+          name: 'Page A',
+          outerRadius: 200,
+          paddingAngle: 0,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          percent: 0.23995200959808038,
+          pv: 2400,
+          startAngle: 0,
+          stroke: '#fff',
+          tooltipPayload: [
+            {
+              dataKey: 'uv',
+              name: 'Page A',
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              type: undefined,
+              value: 400,
+            },
+          ],
+          tooltipPosition: {
+            x: 327.9071825766426,
+            y: 186.5562805749417,
+          },
+          uv: 400,
+          value: 400,
+        },
+        0,
+        expect.any(Object),
+      );
+
+      await user.unhover(sectors[0]);
+      expect(handleMouseOut).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOut,
+        {
+          amt: 2400,
+          cornerRadius: undefined,
+          cx: 255,
+          cy: 255,
+          endAngle: 86.38272345530893,
+          fill: '#808080',
+          innerRadius: 0,
+          maxRadius: 346.4823227814083,
+          midAngle: 43.19136172765447,
+          middleRadius: 100,
+          name: 'Page A',
+          outerRadius: 200,
+          paddingAngle: 0,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          percent: 0.23995200959808038,
+          pv: 2400,
+          startAngle: 0,
+          stroke: '#fff',
+          tooltipPayload: [
+            {
+              dataKey: 'uv',
+              name: 'Page A',
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              type: undefined,
+              value: 400,
+            },
+          ],
+          tooltipPosition: {
+            x: 327.9071825766426,
+            y: 186.5562805749417,
+          },
+          uv: 400,
+          value: 400,
+        },
+        0,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onTouchMove and onTouchEnd events when touching a pie sector', async () => {
+      const handleTouchMove = vi.fn();
+      const handleTouchEnd = vi.fn();
+
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={PageData}
+            dataKey="uv"
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          />
+        </PieChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-pie-sector');
+      fireEvent.touchMove(sectors[0], { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchMove,
+        {
+          amt: 2400,
+          cornerRadius: undefined,
+          cx: 255,
+          cy: 255,
+          endAngle: 86.38272345530893,
+          fill: '#808080',
+          innerRadius: 0,
+          maxRadius: 346.4823227814083,
+          midAngle: 43.19136172765447,
+          middleRadius: 100,
+          name: 'Page A',
+          outerRadius: 200,
+          paddingAngle: 0,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          percent: 0.23995200959808038,
+          pv: 2400,
+          startAngle: 0,
+          stroke: '#fff',
+          tooltipPayload: [
+            {
+              dataKey: 'uv',
+              name: 'Page A',
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              type: undefined,
+              value: 400,
+            },
+          ],
+          tooltipPosition: {
+            x: 327.9071825766426,
+            y: 186.5562805749417,
+          },
+          uv: 400,
+          value: 400,
+        },
+        0,
+        expect.any(Object),
+      );
     });
   });
 

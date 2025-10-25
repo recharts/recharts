@@ -1,5 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 import { renderWithStrictMode } from '../helper/renderWithStrictMode';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
@@ -29,6 +30,7 @@ import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
 import { assertNotNull } from '../helper/assertNotNull';
 import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { userEventSetup } from '../helper/userEventSetup';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1713,6 +1715,205 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
       expectBarIsActive(bars[0]);
       expectBarIsNotActive(bars[1]);
+    });
+  });
+
+  describe('events', () => {
+    it('should fire onClick event when clicking on a bar', async () => {
+      const user = userEventSetup();
+      const handleClick = vi.fn();
+      const { container } = renderWithStrictMode(
+        <BarChart width={200} height={200} layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" onClick={handleClick} />
+        </BarChart>,
+      );
+
+      const bars = getAllBars(container);
+      const index = 1;
+      await user.click(bars[index]);
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleClick,
+        {
+          background: {
+            height: 190,
+            width: 30,
+            x: 46.8,
+            y: 5,
+          },
+          height: 63.333333333333314,
+          label: 'test2',
+          parentViewBox: {
+            height: 200,
+            width: 200,
+            x: 0,
+            y: 0,
+          },
+          payload: {
+            height: 50,
+            label: 'test2',
+            value: 200,
+            width: 20,
+            x: 50,
+            y: 50,
+          },
+          tooltipPosition: {
+            x: 61.8,
+            y: 163.33333333333334,
+          },
+          value: 200,
+          width: 30,
+          x: 46.8,
+          y: 131.66666666666669,
+        },
+        index,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onMouseOver and onMouseOut events when hovering over a bar', async () => {
+      const user = userEventSetup();
+      const handleMouseOver = vi.fn();
+      const handleMouseOut = vi.fn();
+
+      const { container } = renderWithStrictMode(
+        <BarChart width={200} height={200} layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
+        </BarChart>,
+      );
+
+      const bars = getAllBars(container);
+      await user.hover(bars[1]);
+      expect(handleMouseOver).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOver,
+        {
+          background: {
+            height: 190,
+            width: 30,
+            x: 46.8,
+            y: 5,
+          },
+          height: 63.333333333333314,
+          label: 'test2',
+          parentViewBox: {
+            height: 200,
+            width: 200,
+            x: 0,
+            y: 0,
+          },
+          payload: {
+            height: 50,
+            label: 'test2',
+            value: 200,
+            width: 20,
+            x: 50,
+            y: 50,
+          },
+          tooltipPosition: {
+            x: 61.8,
+            y: 163.33333333333334,
+          },
+          value: 200,
+          width: 30,
+          x: 46.8,
+          y: 131.66666666666669,
+        },
+        1,
+        expect.any(Object),
+      );
+
+      await user.unhover(bars[1]);
+      expect(handleMouseOut).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleMouseOut,
+        {
+          background: {
+            height: 190,
+            width: 30,
+            x: 46.8,
+            y: 5,
+          },
+          height: 63.333333333333314,
+          label: 'test2',
+          parentViewBox: {
+            height: 200,
+            width: 200,
+            x: 0,
+            y: 0,
+          },
+          payload: {
+            height: 50,
+            label: 'test2',
+            value: 200,
+            width: 20,
+            x: 50,
+            y: 50,
+          },
+          tooltipPosition: {
+            x: 61.8,
+            y: 163.33333333333334,
+          },
+          value: 200,
+          width: 30,
+          x: 46.8,
+          y: 131.66666666666669,
+        },
+        1,
+        expect.any(Object),
+      );
+    });
+
+    it('should fire onTouchMove and onTouchEnd events when touching a bar', async () => {
+      const handleTouchMove = vi.fn();
+      const handleTouchEnd = vi.fn();
+
+      const { container } = renderWithStrictMode(
+        <BarChart width={200} height={200} layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
+        </BarChart>,
+      );
+
+      const bars = getAllBars(container);
+      fireEvent.touchMove(bars[0], { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(
+        handleTouchMove,
+        {
+          background: {
+            height: 190,
+            width: 30,
+            x: 8.8,
+            y: 5,
+          },
+          height: 31.666666666666657,
+          label: 'test1',
+          parentViewBox: {
+            height: 200,
+            width: 200,
+            x: 0,
+            y: 0,
+          },
+          payload: {
+            height: 50,
+            label: 'test1',
+            value: 100,
+            width: 20,
+            x: 10,
+            y: 50,
+          },
+          tooltipPosition: {
+            x: 23.8,
+            y: 179.16666666666669,
+          },
+          value: 100,
+          width: 30,
+          x: 8.8,
+          y: 163.33333333333334,
+        },
+        0,
+        expect.any(Object),
+      );
     });
   });
 });
