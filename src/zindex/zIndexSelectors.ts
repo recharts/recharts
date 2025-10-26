@@ -33,7 +33,7 @@ export const selectZIndexPortalId: (
   },
 );
 
-export const selectAllRegisteredZIndexes: (state: RechartsRootState) => ReadonlyArray<number> = createSelector(
+export const selectAllRegisteredZIndexes = createSelector(
   (state: RechartsRootState) => state.zIndex.zIndexMap,
   zIndexMap => {
     const allNumbers = Object.keys(zIndexMap)

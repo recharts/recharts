@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
 
 import { selectZIndexPortalId, selectAllRegisteredZIndexes } from '../../src/zindex/zIndexSelectors';
@@ -10,6 +10,11 @@ import {
 } from '../../src/state/zIndexSlice';
 
 describe('zIndexSelectors', () => {
+  beforeEach(() => {
+    // Clear selector caches before each test to prevent cross-test pollution
+    selectAllRegisteredZIndexes.memoizedResultFunc.clearCache();
+  });
+
   describe('selectZIndexPortalId', () => {
     it('should select zIndex portal IDs correctly', () => {
       const store = createRechartsStore();
@@ -97,6 +102,43 @@ describe('zIndexSelectors', () => {
       store.dispatch(registerZIndexPortalId({ zIndex: 5, elementId: 'portal-1-panorama', isPanorama: true }));
       const fourthSelection = selectAllRegisteredZIndexes(store.getState());
       expect(fourthSelection).toBe(thirdSelection); // Same reference due to memoization
+    });
+
+    it('should not duplicate zIndex when registered multiple times', () => {
+      const store = createRechartsStore();
+
+      store.dispatch(registerZIndexPortal({ zIndex: 50 }));
+      const firstSelection = selectAllRegisteredZIndexes(store.getState());
+      expect(firstSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+
+      // Register the same zIndex again
+      store.dispatch(registerZIndexPortal({ zIndex: 50 }));
+      const secondSelection = selectAllRegisteredZIndexes(store.getState());
+      expect(secondSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(secondSelection).toBe(firstSelection); // Should be memoized, no change
+    });
+
+    it('should not affect zIndex list when only registering/unregistering portalId', () => {
+      const store = createRechartsStore();
+
+      const initialSelection = selectAllRegisteredZIndexes(store.getState());
+      expect(initialSelection).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+
+      // Register a portalId for a default zIndex without registering the zIndex itself
+      store.dispatch(registerZIndexPortalId({ zIndex: 100, elementId: 'portal-100', isPanorama: false }));
+      const afterRegister = selectAllRegisteredZIndexes(store.getState());
+      // The zIndex list should remain unchanged
+      expect(afterRegister).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      // With resultEqualityCheck, the reference should be preserved when contents match
+      expect(afterRegister).toBe(initialSelection);
+
+      // Unregister the portalId
+      store.dispatch(unregisterZIndexPortalId({ zIndex: 100, isPanorama: false }));
+      const afterUnregister = selectAllRegisteredZIndexes(store.getState());
+      // The zIndex list should still remain unchanged
+      expect(afterUnregister).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      // Reference should still be preserved
+      expect(afterUnregister).toBe(initialSelection);
     });
   });
 });
