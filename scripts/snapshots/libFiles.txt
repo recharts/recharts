@@ -53,6 +53,7 @@
   "lib/component/Customized.js",
   "lib/component/DefaultLegendContent.js",
   "lib/component/DefaultTooltipContent.js",
+  "lib/component/Dots.js",
   "lib/component/Label.js",
   "lib/component/LabelList.js",
   "lib/component/Legend.js",

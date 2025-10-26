@@ -2,6 +2,7 @@ import React from 'react';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import { DotItemDotProps } from '../../../../../src/util/types';
 
 export default {
   title: 'Examples/cartesian/Area/Customised Dot',
@@ -9,7 +10,7 @@ export default {
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
-const renderDot = (props: { cx: number | undefined; cy: number | undefined }) => {
+const renderDot = (props: DotItemDotProps) => {
   const { cx, cy } = props;
 
   if (cx == null || cy == null) {

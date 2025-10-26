@@ -3,7 +3,6 @@ import { Component, MutableRefObject, ReactNode, Ref, useCallback, useMemo, useR
 
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
-import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -11,17 +10,18 @@ import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
+import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
-  ActiveDotProps,
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   DataKey,
+  DotType,
   LegendType,
   TickItem,
   TooltipType,
@@ -40,7 +40,6 @@ import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { AreaPointItem } from '../state/selectors/areaSelectors';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
@@ -49,7 +48,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 
 export interface LinePointItem {
@@ -77,7 +76,7 @@ interface InternalLineProps {
   connectNulls: boolean;
   data?: any;
   dataKey?: DataKey<any>;
-  dot: ActiveDotType;
+  dot: DotType;
   height: number;
   hide: boolean;
   id: string;
@@ -116,7 +115,7 @@ interface LineProps {
   connectNulls?: boolean;
   data?: any;
   dataKey?: DataKey<any>;
-  dot?: ActiveDotType;
+  dot?: DotType;
   hide?: boolean;
 
   id?: string;
@@ -218,33 +217,7 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
   return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
 };
 
-function renderDotItem(option: ActiveDotType, props: ActiveDotProps) {
-  let dotItem;
-
-  if (React.isValidElement(option)) {
-    // @ts-expect-error when cloning, the event handler types do not match
-    dotItem = React.cloneElement(option, props);
-  } else if (typeof option === 'function') {
-    dotItem = option(props);
-  } else {
-    const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
-    dotItem = <Dot {...props} className={className} />;
-  }
-
-  return dotItem;
-}
-
-function shouldRenderDots(points: ReadonlyArray<AreaPointItem>, dot: InternalProps['dot']): boolean {
-  if (points == null) {
-    return false;
-  }
-  if (dot) {
-    return true;
-  }
-  return points.length === 1;
-}
-
-function Dots({
+function LineDotsWrapper({
   clipPathId,
   points,
   props,
@@ -255,46 +228,25 @@ function Dots({
 }) {
   const { dot, dataKey, needClip } = props;
 
-  if (!shouldRenderDots(points, dot)) {
-    return null;
-  }
-
   /*
    * Exclude ID from the props passed to the Dots component
    * because then the ID would be applied to multiple dots, and it would no longer be unique.
    */
   const { id, ...propsWithoutId } = props;
 
-  const clipDot = isClipDot(dot);
   const lineProps = svgPropertiesNoEvents(propsWithoutId);
-  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
-
-  const dots = points.map((entry, i) => {
-    const dotProps: ActiveDotProps = {
-      key: `dot-${i}`,
-      r: 3,
-      ...lineProps,
-      ...customDotProps,
-      index: i,
-      cx: entry.x ?? undefined,
-      cy: entry.y ?? undefined,
-      dataKey,
-      value: entry.value,
-      payload: entry.payload,
-      // @ts-expect-error we're passing extra property 'points' that the props are not expecting
-      points,
-    };
-
-    return renderDotItem(dot, dotProps);
-  });
-  const dotsProps = {
-    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined,
-  };
 
   return (
-    <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
-      {dots}
-    </Layer>
+    <Dots
+      points={points}
+      dot={dot}
+      className="recharts-line-dots"
+      dotClassName="recharts-line-dot"
+      dataKey={dataKey}
+      baseProps={lineProps}
+      needClip={needClip}
+      clipPathId={clipPathId}
+    />
   );
 }
 
@@ -367,7 +319,7 @@ function StaticCurve({
   return (
     <>
       {points?.length > 1 && <Curve {...curveProps} pathRef={pathRef} />}
-      <Dots points={points} clipPathId={clipPathId} props={props} />
+      <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
 }

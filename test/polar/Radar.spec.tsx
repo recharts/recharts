@@ -12,8 +12,8 @@ import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
-type point = { x: number; y: number };
-const CustomizedShape = ({ points }: { points: point[] }) => {
+type Point = { x?: number | string; y?: number | string };
+const CustomizedShape = ({ points }: { points: Point[] }) => {
   const d = (points || []).reduce(
     (result, entry, index) => result + (index ? `L${entry.x},${entry.y}` : `M${entry.x},${entry.y}`),
     '',
@@ -26,7 +26,7 @@ const CustomizedLabel = () => {
   return <text data-testid="customized-label">test</text>;
 };
 
-const CustomizedDot = ({ x, y }: point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
+const CustomizedDot = ({ x, y }: Point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
 
 describe('<Radar />', () => {
   it('should render a polygon in a simple Radar', () => {

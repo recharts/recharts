@@ -21,6 +21,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
+import { DotItemDotProps } from '../../src/util/types';
 
 type TestCase = CartesianChartTestCase;
 
@@ -97,7 +98,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
   describe('dot', () => {
     test('Render customized dot when dot is set to be a function', () => {
       let areaDotProps;
-      const renderDot = (props: { cx: number | undefined; cy: number | undefined }) => {
+      const renderDot = (props: DotItemDotProps) => {
         const { cx, cy } = props;
         areaDotProps = props;
 

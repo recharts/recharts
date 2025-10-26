@@ -36,31 +36,30 @@ const renderActivePoint = ({
   if (activeDot === false || point.x == null || point.y == null) {
     return null;
   }
-  const dotProps: ActiveDotProps = {
+  const dotPropsTyped: ActiveDotProps = {
     index: childIndex,
     dataKey,
-    // @ts-expect-error activeDot is contributing unknown props
     cx: point.x,
-    // @ts-expect-error activeDot is contributing unknown props
     cy: point.y,
-    // @ts-expect-error activeDot is contributing unknown props
     r: 4,
-    // @ts-expect-error activeDot is contributing unknown props
     fill: mainColor ?? 'none',
-    // @ts-expect-error activeDot is contributing unknown props
     strokeWidth: 2,
-    // @ts-expect-error activeDot is contributing unknown props
     stroke: '#fff',
     payload: point.payload,
     value: point.value,
-    ...svgPropertiesNoEventsFromUnknown(activeDot),
     ...adaptEventHandlers(activeDot),
+  };
+
+  // @ts-expect-error svgPropertiesNoEventsFromUnknown(activeDot) is contributing unknown props
+  const dotProps: ActiveDotProps = {
+    ...dotPropsTyped,
+    ...svgPropertiesNoEventsFromUnknown(activeDot),
   };
 
   let dot;
 
   if (isValidElement(activeDot)) {
-    // @ts-expect-error element cloning does not have types
+    // @ts-expect-error we're improperly typing events
     dot = cloneElement(activeDot, dotProps);
   } else if (typeof activeDot === 'function') {
     dot = activeDot(dotProps);

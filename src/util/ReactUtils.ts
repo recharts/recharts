@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Children, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { isNullish } from './DataUtils';
-import { ActiveDotType } from './types';
+import { ActiveDotType, DotType } from './types';
 
 export const SCALE_TYPES = [
   'auto',
@@ -104,7 +104,7 @@ export function findAllByType<
   return result;
 }
 
-export const isClipDot = (dot: ActiveDotType): boolean => {
+export const isClipDot = (dot: ActiveDotType | DotType): boolean => {
   if (dot && typeof dot === 'object' && 'clipDot' in dot) {
     return Boolean(dot.clipDot);
   }
