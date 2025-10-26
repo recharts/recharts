@@ -21,6 +21,8 @@ import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { ZIndexable } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /**
  * If set false, no cursor will be drawn when tooltip is active.
@@ -29,13 +31,13 @@ import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents'
  */
 export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
 
-export type CursorProps = {
+export interface CursorProps extends ZIndexable {
   cursor: CursorDefinition;
   tooltipEventType: TooltipEventType;
   coordinate: Coordinate | PolarCoordinate | undefined;
   payload: TooltipPayload;
   index: TooltipIndex | undefined;
-};
+}
 
 export type CursorConnectedProps = CursorProps & {
   tooltipAxisBandSize: number;
@@ -125,6 +127,7 @@ export function Cursor(props: CursorProps) {
       layout={layout}
       tooltipAxisBandSize={tooltipAxisBandSize}
       chartName={chartName}
+      zIndex={props.zIndex ?? DefaultZIndexes.cursor}
     />
   );
 }

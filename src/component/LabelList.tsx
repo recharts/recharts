@@ -139,6 +139,12 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
               textBreakAll={textBreakAll}
               viewBox={entry.viewBox}
               index={index}
+              /*
+               * Here we don't want to use the default Label zIndex,
+               * we want it to inherit the zIndex of the LabelList itself
+               * which means just rendering as a regular child, without portaling anywhere.
+               */
+              zIndex={0}
             />
           );
         })}

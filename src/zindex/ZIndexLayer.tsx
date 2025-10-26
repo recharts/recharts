@@ -18,10 +18,29 @@ export interface ZIndexable {
 }
 
 type ZIndexLayerProps = {
-  zIndex?: number;
+  /**
+   * Numeric zIndex value, higher values are rendered on top of lower values.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   */
+  zIndex: number | undefined;
+  /**
+   * The content to render inside this zIndex layer.
+   * Undefined children are allowed and will render nothing and will still report the zIndex to the portal system.
+   */
   children?: React.ReactNode;
 };
 
+/**
+ * A layer that renders its children into a portal corresponding to the given zIndex.
+ * We can't use regular CSS z-index because SVG does not support it.
+ * So instead, we create separate DOM nodes for each zIndex layer
+ * and render the children into the corresponding DOM node using React portals.
+ *
+ * This component must be used inside a Chart component.
+ *
+ * @param zIndex numeric zIndex value, higher values are rendered on top of lower values
+ * @param children the content to render inside this zIndex layer
+ */
 export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   /*
    * If we are outside of chart, then we can't rely on the zIndex portal state,

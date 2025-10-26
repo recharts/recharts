@@ -2,6 +2,9 @@
  * A collection of all default zIndex values used throughout the library.
  */
 export const DefaultZIndexes = {
+  /**
+   * CartesianGrid and PolarGrid
+   */
   grid: -100,
 
   /*
@@ -9,18 +12,49 @@ export const DefaultZIndexes = {
    * render in here, at zIndex 0
    */
 
+  /**
+   * Area, Pie, Radar, and ReferenceArea
+   */
   area: 100,
-  bar: 200,
-  line: 300,
-  scatter: 400,
 
+  /**
+   * Cursor is embedded inside Tooltip and controlled by it.
+   * The Tooltip itself has a separate portal and is not included in the zIndex system;
+   * Cursor is the decoration inside the chart area, usually a cross or a box.
+   */
+  cursor: 200,
+
+  /**
+   * Bar and RadialBar
+   */
+  bar: 300,
+  /**
+   * Line and ReferenceLine
+   */
+  line: 400,
+
+  // TODO is this the right place? shouldn't they be behind the line and bar?
   axisLineAndTick: 500,
+
+  /**
+   * Scatter and ReferenceDot,
+   * and Dots of Line and Area and Radar if they have dot=true
+   * TODO dot support
+   */
+  scatter: 600,
+
+  /**
+   * LabelList and Label, including Axis labels
+   */
   label: 600,
-  axisTitle: 700,
-  legend: 800,
 
-  cursor: 1000,
-  activeShape: 1100,
-
-  tooltip: 10000,
+  /**
+   * Hovering over a Bar or RadialBar renders a highlight rectangle
+   * TODO RadialBar support
+   */
+  activeBar: 1000,
+  /**
+   * Hovering over a Point in Line, Area, Scatter, Radar renders a highlight dot
+   */
+  activeDot: 1100,
 };

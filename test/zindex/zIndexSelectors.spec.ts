@@ -55,9 +55,7 @@ describe('zIndexSelectors', () => {
       const store = createRechartsStore();
 
       // empty store returns all default zIndexes
-      expect(selectAllRegisteredZIndexes(store.getState())).toEqual([
-        -100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000,
-      ]);
+      expect(selectAllRegisteredZIndexes(store.getState())).toEqual([-100, 100, 200, 300, 400, 500, 600, 1000, 1100]);
 
       store.dispatch(registerZIndexPortal({ zIndex: 2 }));
       store.dispatch(registerZIndexPortal({ zIndex: -3 }));
@@ -65,19 +63,17 @@ describe('zIndexSelectors', () => {
 
       // newly added zIndexes are included and sorted
       expect(selectAllRegisteredZIndexes(store.getState())).toEqual([
-        -100, -3, 1, 2, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000,
+        -100, -3, 1, 2, 100, 200, 300, 400, 500, 600, 1000, 1100,
       ]);
 
       store.dispatch(unregisterZIndexPortal({ zIndex: 1 }));
       expect(selectAllRegisteredZIndexes(store.getState())).toEqual([
-        -100, -3, 2, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000,
+        -100, -3, 2, 100, 200, 300, 400, 500, 600, 1000, 1100,
       ]);
 
       store.dispatch(unregisterZIndexPortal({ zIndex: -3 }));
       store.dispatch(unregisterZIndexPortal({ zIndex: 2 }));
-      expect(selectAllRegisteredZIndexes(store.getState())).toEqual([
-        -100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000,
-      ]);
+      expect(selectAllRegisteredZIndexes(store.getState())).toEqual([-100, 100, 200, 300, 400, 500, 600, 1000, 1100]);
     });
 
     it('should memoize results based on array contents', () => {
@@ -95,7 +91,7 @@ describe('zIndexSelectors', () => {
 
       const thirdSelection = selectAllRegisteredZIndexes(store.getState());
       expect(thirdSelection).not.toBe(firstSelection); // Different reference after state change
-      expect(thirdSelection).toEqual([-100, 5, 10, 15, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(thirdSelection).toEqual([-100, 5, 10, 15, 100, 200, 300, 400, 500, 600, 1000, 1100]);
 
       // now, the portal element ID has been registered, but the zIndex list should remain the same
       store.dispatch(registerZIndexPortalId({ zIndex: 5, elementId: 'portal-1', isPanorama: false }));
@@ -109,12 +105,12 @@ describe('zIndexSelectors', () => {
 
       store.dispatch(registerZIndexPortal({ zIndex: 50 }));
       const firstSelection = selectAllRegisteredZIndexes(store.getState());
-      expect(firstSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(firstSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 1000, 1100]);
 
       // Register the same zIndex again
       store.dispatch(registerZIndexPortal({ zIndex: 50 }));
       const secondSelection = selectAllRegisteredZIndexes(store.getState());
-      expect(secondSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(secondSelection).toEqual([-100, 50, 100, 200, 300, 400, 500, 600, 1000, 1100]);
       expect(secondSelection).toBe(firstSelection); // Should be memoized, no change
     });
 
@@ -122,13 +118,13 @@ describe('zIndexSelectors', () => {
       const store = createRechartsStore();
 
       const initialSelection = selectAllRegisteredZIndexes(store.getState());
-      expect(initialSelection).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(initialSelection).toEqual([-100, 100, 200, 300, 400, 500, 600, 1000, 1100]);
 
       // Register a portalId for a default zIndex without registering the zIndex itself
       store.dispatch(registerZIndexPortalId({ zIndex: 100, elementId: 'portal-100', isPanorama: false }));
       const afterRegister = selectAllRegisteredZIndexes(store.getState());
       // The zIndex list should remain unchanged
-      expect(afterRegister).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(afterRegister).toEqual([-100, 100, 200, 300, 400, 500, 600, 1000, 1100]);
       // With resultEqualityCheck, the reference should be preserved when contents match
       expect(afterRegister).toBe(initialSelection);
 
@@ -136,7 +132,7 @@ describe('zIndexSelectors', () => {
       store.dispatch(unregisterZIndexPortalId({ zIndex: 100, isPanorama: false }));
       const afterUnregister = selectAllRegisteredZIndexes(store.getState());
       // The zIndex list should still remain unchanged
-      expect(afterUnregister).toEqual([-100, 100, 200, 300, 400, 500, 600, 700, 800, 1000, 1100, 10000]);
+      expect(afterUnregister).toEqual([-100, 100, 200, 300, 400, 500, 600, 1000, 1100]);
       // Reference should still be preserved
       expect(afterUnregister).toBe(initialSelection);
     });

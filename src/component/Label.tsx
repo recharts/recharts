@@ -27,6 +27,8 @@ import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { ZIndexable } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export type LabelContentType = ReactElement | ((props: Props) => RenderableText | ReactElement);
 
@@ -63,7 +65,7 @@ export type LabelPosition = CartesianLabelPosition | PolarLabelPosition;
 
 export type LabelFormatter = (label: RenderableText) => RenderableText;
 
-interface LabelProps {
+interface LabelProps extends ZIndexable {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
   formatter?: LabelFormatter;
@@ -534,6 +536,7 @@ export const getAttrsOfCartesianLabel = (
 
 const defaultLabelProps = {
   offset: 5,
+  zIndex: DefaultZIndexes.label,
 } as const satisfies Partial<Props>;
 
 export function Label(outerProps: Props) {

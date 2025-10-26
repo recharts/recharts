@@ -56,6 +56,8 @@ import {
   Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { ZIndexable } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type ChartDataInput = Record<string, unknown>;
 
@@ -176,7 +178,7 @@ interface InternalPieProps extends PieDef {
   rootTabIndex?: number;
 }
 
-interface PieProps extends PieDef {
+interface PieProps extends PieDef, ZIndexable {
   id?: string;
   className?: string;
   /**
@@ -730,6 +732,7 @@ const defaultPieProps = {
   rootTabIndex: 0,
   startAngle: 0,
   stroke: '#fff',
+  zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
 function PieImpl(props: Omit<InternalProps, 'sectors'>) {

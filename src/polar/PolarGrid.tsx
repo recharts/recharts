@@ -8,8 +8,10 @@ import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { PolarViewBoxRequired } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
-interface PolarGridProps {
+interface PolarGridProps extends ZIndexable {
   cx?: number;
   cy?: number;
   innerRadius?: number;
@@ -178,6 +180,7 @@ export const PolarGrid = ({
     cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
     innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
     outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
+    zIndex: inputs.zIndex ?? DefaultZIndexes.grid,
     polarAngles,
     polarRadius,
     ...inputs,
@@ -190,22 +193,24 @@ export const PolarGrid = ({
   }
 
   return (
-    <g className="recharts-polar-grid">
-      <ConcentricGridPath
-        gridType={gridType}
-        radialLines={radialLines}
-        {...props}
-        polarAngles={polarAngles}
-        polarRadius={polarRadius}
-      />
-      <PolarAngles
-        gridType={gridType}
-        radialLines={radialLines}
-        {...props}
-        polarAngles={polarAngles}
-        polarRadius={polarRadius}
-      />
-    </g>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <g className="recharts-polar-grid">
+        <ConcentricGridPath
+          gridType={gridType}
+          radialLines={radialLines}
+          {...props}
+          polarAngles={polarAngles}
+          polarRadius={polarRadius}
+        />
+        <PolarAngles
+          gridType={gridType}
+          radialLines={radialLines}
+          {...props}
+          polarAngles={polarAngles}
+          polarRadius={polarRadius}
+        />
+      </g>
+    </ZIndexLayer>
   );
 };
 

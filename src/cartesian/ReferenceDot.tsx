@@ -16,8 +16,10 @@ import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { ZIndexable } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
-interface ReferenceDotProps {
+interface ReferenceDotProps extends ZIndexable {
   r?: number;
 
   ifOverflow?: IfOverflow;
@@ -142,6 +144,7 @@ const referenceDotDefaultProps = {
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
+  zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;

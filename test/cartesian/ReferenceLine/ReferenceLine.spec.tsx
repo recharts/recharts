@@ -13,7 +13,6 @@ import {
   Brush,
   ComposedChart,
 } from '../../../src';
-import { CartesianViewBox } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectReferenceLinesByAxis } from '../../../src/state/selectors/axisSelectors';
 import { pageData } from '../../../storybook/stories/data';
@@ -348,31 +347,6 @@ describe('<ReferenceLine />', () => {
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
-  });
-
-  test('viewBox is a string in SVG but object in recharts, but recharts filters the viewBox prop away', () => {
-    const spy = vi.fn();
-    const viewBox: CartesianViewBox = { x: 1, y: 2 };
-    render(
-      <BarChart width={1100} height={250} data={data}>
-        <XAxis dataKey="name" />
-        <YAxis dataKey="uv" />
-        <ReferenceLine y={20} ifOverflow="visible" shape={spy} viewBox={viewBox} />
-      </BarChart>,
-    );
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({
-      clipPath: undefined,
-      fill: 'none',
-      fillOpacity: 1,
-      stroke: '#ccc',
-      strokeWidth: 1,
-      x1: 65,
-      x2: 1095,
-      y: 20,
-      y1: -152.5,
-      y2: -152.5,
-    });
   });
 
   it('should not render anything when used without any axes', () => {

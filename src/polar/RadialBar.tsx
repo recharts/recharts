@@ -59,6 +59,8 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
+import { ZIndexable } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -261,7 +263,7 @@ function RenderSectors(props: RadialBarProps) {
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
-interface InternalRadialBarProps {
+interface InternalRadialBarProps extends ZIndexable {
   className?: string;
   angleAxisId?: AxisId;
   radiusAxisId?: AxisId;
@@ -420,6 +422,7 @@ const defaultRadialBarProps = {
   animationEasing: 'ease',
   forceCornerRadius: false,
   cornerIsExternal: false,
+  zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 
 type PropsWithDefaults = RequiresDefaultProps<RadialBarProps, typeof defaultRadialBarProps>;

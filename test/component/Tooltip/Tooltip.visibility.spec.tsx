@@ -785,7 +785,7 @@ describe('Tooltip visibility', () => {
             strokeWidth: 1,
             xAxisId: 0,
             yAxisId: 0,
-            zIndex: 300,
+            zIndex: 400,
           },
           type: 'line',
           value: 'uv',

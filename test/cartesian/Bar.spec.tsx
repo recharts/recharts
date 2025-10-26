@@ -1029,6 +1029,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
+            zIndex: 0,
           },
           {}, // second argument is a ref object
         );
