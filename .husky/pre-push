@@ -1,5 +1,7 @@
 npm test
 
+npm run build
+
 npm run check-types
 
 npm run lint
