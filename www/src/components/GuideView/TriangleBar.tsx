@@ -10,7 +10,9 @@ export function TriangleBar(props: BarProps) {
   const { fill, x, y, width, height } = props;
 
   if (x == null || y == null || width == null || height == null) {
-    return null;
+    // recharts types demand that JSX.Element is returned, even if nothing is rendered
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
   }
 
   return <path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke="none" fill={fill} />;
