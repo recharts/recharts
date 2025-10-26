@@ -28,7 +28,7 @@ const ScatterChartWithLabels = () => {
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter name="A school" data={data} fill="#8884d8">
-        <LabelList dataKey="x" zIndex={3} fill="black" />
+        <LabelList dataKey="x" fill="black" />
       </Scatter>
       <ZAxis range={[900, 4000]} dataKey="z" />
     </ScatterChart>
