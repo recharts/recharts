@@ -63,6 +63,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -119,7 +121,7 @@ export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElemen
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface ScatterInternalProps {
+interface ScatterInternalProps extends ZIndexable {
   data?: any[];
   xAxisId: string | number;
   yAxisId: string | number;
@@ -154,7 +156,7 @@ interface ScatterInternalProps {
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps {
+interface ScatterProps extends ZIndexable {
   data?: any[];
   xAxisId?: AxisId;
   yAxisId?: string | number;
@@ -603,24 +605,26 @@ function ScatterWithId(props: InternalProps) {
   const clipPathId = id;
 
   return (
-    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined} id={id}>
-      {needClip && (
-        <defs>
-          <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
-        </defs>
-      )}
-      <SetErrorBarContext
-        xAxisId={xAxisId}
-        yAxisId={yAxisId}
-        data={points}
-        dataPointFormatter={errorBarDataPointFormatter}
-        errorBarOffset={0}
-      >
-        <Layer key="recharts-scatter-symbols">
-          <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
-        </Layer>
-      </SetErrorBarContext>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined} id={id}>
+        {needClip && (
+          <defs>
+            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+          </defs>
+        )}
+        <SetErrorBarContext
+          xAxisId={xAxisId}
+          yAxisId={yAxisId}
+          data={points}
+          dataPointFormatter={errorBarDataPointFormatter}
+          errorBarOffset={0}
+        >
+          <Layer key="recharts-scatter-symbols">
+            <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+          </Layer>
+        </SetErrorBarContext>
+      </Layer>
+    </ZIndexLayer>
   );
 }
 
@@ -639,6 +643,7 @@ const defaultScatterProps = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'linear',
+  zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
 function ScatterImpl(props: WithIdRequired<Props>) {
