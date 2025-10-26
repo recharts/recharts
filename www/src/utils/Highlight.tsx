@@ -12,7 +12,7 @@ type HighlightProps = {
   children: string;
 };
 
-class Highlight extends PureComponent<HighlightProps> {
+export class Highlight extends PureComponent<HighlightProps> {
   static defaultProps = {
     className: null,
   };
@@ -52,5 +52,3 @@ class Highlight extends PureComponent<HighlightProps> {
     );
   }
 }
-
-export default Highlight;

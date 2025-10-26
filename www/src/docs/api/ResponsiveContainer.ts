@@ -1,4 +1,4 @@
-export default {
+export const ResponsiveContainerAPI = {
   name: 'ResponsiveContainer',
   desc: {
     'en-US':

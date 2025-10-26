@@ -1,4 +1,4 @@
-export default [
+export const users = [
   {
     name: '阿里指数',
     url: 'https://alizs.taobao.com',

@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const Line: ApiDoc = {
+export const LineAPI: ApiDoc = {
   name: 'Line',
   props: [
     {
@@ -393,4 +393,3 @@ const Line: ApiDoc = {
   parentComponents: ['LineChart', 'ComposedChart'],
   childrenComponents: ['LabelList', 'ErrorBar'],
 };
-export default Line;

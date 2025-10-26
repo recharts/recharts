@@ -1,4 +1,4 @@
-export default {
+export const DotAPI = {
   name: 'Dot',
   props: [
     {

@@ -1,4 +1,4 @@
-export default {
+export const PolarGridAPI = {
   name: 'PolarGrid',
   props: [
     {

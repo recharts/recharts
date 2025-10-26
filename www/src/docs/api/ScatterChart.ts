@@ -1,4 +1,4 @@
-export default {
+export const ScatterChartAPI = {
   name: 'ScatterChart',
   props: [
     {

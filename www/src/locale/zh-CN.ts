@@ -1,4 +1,4 @@
-const map = {
+export const map = {
   index: {
     loading: 'Loading',
     success: 'Success',
@@ -105,5 +105,3 @@ const map = {
     'radialbar-title': '径向坐标系中 "position" 的参数含义',
   },
 };
-
-export default map;

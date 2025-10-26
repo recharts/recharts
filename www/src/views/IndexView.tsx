@@ -1,11 +1,11 @@
 import { PureComponent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Link } from 'react-router';
-import Highlight from '../utils/Highlight.tsx';
+import { Highlight } from '../utils/Highlight.tsx';
 import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import './IndexView.scss';
 import 'simple-line-icons/scss/simple-line-icons.scss';
-import users from '../docs/users/users';
+import { users } from '../docs/users/users';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 
 const data = [
@@ -47,7 +47,7 @@ const data = [
   },
 ];
 
-class IndexView extends PureComponent<RouteComponentProps> {
+class IndexViewImpl extends PureComponent<RouteComponentProps> {
   render() {
     const locale = getLocaleType(this.props);
 
@@ -124,8 +124,8 @@ class IndexView extends PureComponent<RouteComponentProps> {
           <h2 className="block-title">{localeGet(locale, 'home', 'whoUse')}</h2>
 
           <ul className="users">
-            {users.map((entry, index) => (
-              <li className="user" key={`user-${index}`}>
+            {users.map(entry => (
+              <li className="user" key={`user-${entry.url}`}>
                 <a href={entry.url} target="_blank" title={entry.name} rel="noreferrer">
                   <img src={entry.logoImgUrl} title={entry.name} alt={entry.name} />
                 </a>
@@ -160,4 +160,4 @@ class IndexView extends PureComponent<RouteComponentProps> {
   }
 }
 
-export default withRouter(IndexView);
+export const IndexView = withRouter(IndexViewImpl);

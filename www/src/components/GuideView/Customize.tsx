@@ -1,8 +1,8 @@
 import { BarChart, Bar, Legend, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import Highlight from '../../utils/Highlight.tsx';
-import renderCustomBarLabel from './CustomBarLabel';
-import renderCustomAxisTick from './CustomAxisTick';
-import TriangleBar from './TriangleBar';
+import { Highlight } from '../../utils/Highlight.tsx';
+import { CustomBarLabel as renderCustomBarLabel } from './CustomBarLabel';
+import { renderCustomAxisTick } from './CustomAxisTick';
+import { TriangleBar } from './TriangleBar';
 import { CustomTooltip } from './CustomTooltip';
 import { localeGet } from '../../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../../locale';

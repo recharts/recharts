@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { Bar, BarChart, Pie, PieChart, Tooltip } from 'recharts';
 import { SupportedLocale } from '../../locale';
 import { TargetBlankLink } from '../Shared/TargetBlankLink.tsx';
-import Highlight from '../../utils/Highlight.tsx';
+import { Highlight } from '../../utils/Highlight.tsx';
 
 export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
   return (

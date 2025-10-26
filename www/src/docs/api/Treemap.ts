@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const Treemap: ApiDoc = {
+export const TreemapAPI: ApiDoc = {
   name: 'Treemap',
   props: [
     {
@@ -114,4 +114,3 @@ const Treemap: ApiDoc = {
   ],
   parentComponents: ['ResponsiveContainer'],
 };
-export default Treemap;

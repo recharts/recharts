@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const Text: ApiDoc = {
+export const TextAPI: ApiDoc = {
   name: 'Text',
   props: [
     {
@@ -48,4 +48,3 @@ const Text: ApiDoc = {
     },
   ],
 };
-export default Text;

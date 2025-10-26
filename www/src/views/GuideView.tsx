@@ -25,7 +25,7 @@ function Guide({ locale, page }: { locale: SupportedLocale; page: string }) {
   return null;
 }
 
-class GuideView extends PureComponent<RouteComponentProps> {
+class GuideViewImpl extends PureComponent<RouteComponentProps> {
   render() {
     const { params } = this.props;
     const page = params?.name ?? allGuides[0];
@@ -44,4 +44,4 @@ class GuideView extends PureComponent<RouteComponentProps> {
   }
 }
 
-export default withRouter(GuideView);
+export const GuideView = withRouter(GuideViewImpl);

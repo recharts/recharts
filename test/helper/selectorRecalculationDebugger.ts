@@ -22,7 +22,6 @@ export const selectorRecalculationDebugger = (selectorName: string) => {
   return (currentDependencies: Record<string, unknown>) => {
     const dependencyNames = Object.keys(currentDependencies);
     if (previousDependencies == null) {
-      // eslint-disable-next-line no-console
       console.log('[selector-recalculation-debugger]', selectorName, 'initial render', currentDependencies);
     } else {
       const changedDeps: Record<string, { before: unknown; after: unknown }> = dependencyNames.reduce<
@@ -53,7 +52,6 @@ export const selectorRecalculationDebugger = (selectorName: string) => {
           }),
         );
         const curr = Object.fromEntries(changedKeys.map(key => [key, changedDeps[key].after]));
-        // eslint-disable-next-line no-console
         console.log(
           '[selector-recalculation-debugger]',
           selectorName,

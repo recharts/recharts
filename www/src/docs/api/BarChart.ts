@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const BarChart: ApiDoc = {
+export const BarChartAPI: ApiDoc = {
   name: 'BarChart',
   props: [
     {
@@ -238,4 +238,3 @@ const BarChart: ApiDoc = {
     'validate svg elements...',
   ],
 };
-export default BarChart;

@@ -1,4 +1,4 @@
-export default {
+export const RadarAPI = {
   name: 'Radar',
   props: [
     {

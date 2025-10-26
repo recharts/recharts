@@ -37,14 +37,12 @@ export function useWhyDidYouRender<T extends Record<string, any>>(
       if (changedKeys.length) {
         const prev = Object.fromEntries(changedKeys.map(key => [key, previousAllProps[key]]));
         const curr = Object.fromEntries(changedKeys.map(key => [key, allProps[key]]));
-        // eslint-disable-next-line no-console
         console.log('[why-did-you-render?]', componentName, Object.keys(changesObj).join(', '), {
           prev,
           curr,
         });
       }
     } else {
-      // eslint-disable-next-line no-console
       console.log('[why-did-you-render?]', componentName, 'initial render', allProps);
     }
 

@@ -304,8 +304,7 @@ describe('getWordsByLines', () => {
       const width = mockedWidths[text];
 
       if (width == null) {
-        console.error(`Missing mock width for text "${text}"`);
-        return { width: 0, height: 0 };
+        throw new Error(`Missing mock width for text "${text}"`);
       }
 
       return { width, height: 0 };

@@ -1,4 +1,4 @@
-export default {
+export const RectangleAPI = {
   name: 'Rectangle',
   props: [
     {

@@ -5,10 +5,13 @@ import { allExamples } from '../../../src/docs/exampleComponents';
 import { mockGetBoundingClientRect } from '../../../../test/helper/mockGetBoundingClientRect';
 
 class MockResizeObserver {
+  // eslint-disable-next-line class-methods-use-this
   observe() {}
 
+  // eslint-disable-next-line class-methods-use-this
   unobserve() {}
 
+  // eslint-disable-next-line class-methods-use-this
   disconnect() {}
 }
 

@@ -1,4 +1,4 @@
-export default {
+export const ScatterAPI = {
   name: 'Scatter',
   props: [
     {

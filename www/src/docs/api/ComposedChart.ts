@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const ComposedChart: ApiDoc = {
+export const ComposedChartAPI: ApiDoc = {
   name: 'ComposedChart',
   desc: 'A chart composed of line, area, and bar charts. When you just want to draw a chart of a single type like line, then LineChart is recommended.',
   props: [
@@ -208,4 +208,3 @@ const ComposedChart: ApiDoc = {
     'validate svg elements...',
   ],
 };
-export default ComposedChart;

@@ -1,4 +1,4 @@
-export default {
+export const PieAPI = {
   name: 'Pie',
   props: [
     {

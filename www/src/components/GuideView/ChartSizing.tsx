@@ -1,6 +1,6 @@
 import { Line, LineChart, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router';
-import Highlight from '../../utils/Highlight.tsx';
+import { Highlight } from '../../utils/Highlight.tsx';
 import { useLocale } from '../../utils/LocaleUtils.ts';
 
 const data = [
