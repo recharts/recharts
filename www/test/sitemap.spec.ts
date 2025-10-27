@@ -4,9 +4,8 @@ import { getAllNavigationItems, NavItem } from '../src/navigation';
 import { defaultLocale } from '../src/utils/LocaleUtils';
 
 describe('sitemap', () => {
+  const hardcodedUrls = getSiteRoutes().sort();
   it('should have routes that match the main navigation source', () => {
-    const hardcodedUrls = getSiteRoutes().sort();
-
     const locale = defaultLocale; // We only need to check one locale, as the structure is the same
     const navItems = getAllNavigationItems(locale);
 
@@ -31,5 +30,11 @@ describe('sitemap', () => {
     const sortedLiveUrls = Array.from(liveUrlSet).sort();
 
     expect(sortedLiveUrls).toEqual(hardcodedUrls);
+  });
+
+  it('should suffix every route with a trailing slash', () => {
+    hardcodedUrls.forEach(url => {
+      expect(url.endsWith('/')).toBe(true);
+    });
   });
 });

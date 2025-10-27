@@ -1,6 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'url';
+import { parser as saxParser, Tag } from 'sax';
+import { supportedLocales } from '../src/locale';
 
 // @ts-expect-error import.meta
 // eslint-disable-next-line no-underscore-dangle
@@ -16,39 +18,129 @@ interface ValidationResult {
   warnings: string[];
 }
 
-function extractUrlsFromSitemap(sitemapContent: string): Set<string> {
-  const urls = new Set<string>();
+interface SitemapUrl {
+  canonical: string;
+  alternates: string[];
+}
 
-  // Extract primary URLs from <loc> tags
-  const locPattern = /<loc>(.*?)<\/loc>/g;
-  let match;
+function extractUrlsFromSitemap(sitemapContent: string): Map<string, SitemapUrl> {
+  const urlMap = new Map<string, SitemapUrl>();
+  const parser = saxParser(true);
 
-  function add(url: string) {
-    // sitemap has absolute URLs so first we remove that part
-    const path = url.replace('https://recharts.github.io', '');
-    // now we handle trivial cases
-    if (path == null || path === '/') {
-      return urls.add('/');
+  let currentUrl: SitemapUrl | null = null;
+  let currentTag = '';
+  let insideUrl = false;
+
+  parser.onopentag = (node: Tag) => {
+    if (node.name === 'url') {
+      insideUrl = true;
+      currentUrl = { canonical: '', alternates: [] };
+    } else if (insideUrl) {
+      currentTag = node.name;
+      if (node.name === 'xhtml:link' && currentUrl) {
+        const href = node.attributes.href as string;
+        if (href) {
+          // Include all alternates (x-default, locale-specific, etc.)
+          const path = href.replace('https://recharts.github.io', '') || '/';
+          currentUrl.alternates.push(path);
+        }
+      }
     }
-    // some routes in sitemap end with a slash and some don't so let's normalize it
-    return urls.add(path.replace(/\/$/, ''));
-  }
+  };
 
-  // eslint-disable-next-line no-cond-assign
-  while ((match = locPattern.exec(sitemapContent)) !== null) {
-    const url = match[1];
-    add(url);
-  }
+  parser.ontext = (text: string) => {
+    if (insideUrl && currentUrl && currentTag === 'loc') {
+      const trimmed = text.trim();
+      if (trimmed) {
+        // Extract path from absolute URL
+        const path = trimmed.replace('https://recharts.github.io', '') || '/';
+        currentUrl.canonical = path;
+      }
+    }
+  };
 
-  // Extract alternate URLs from xhtml:link tags
-  const altPattern = /<xhtml:link[^>]+href="([^"]+)"/g;
-  // eslint-disable-next-line no-cond-assign
-  while ((match = altPattern.exec(sitemapContent)) !== null) {
-    const url = match[1];
-    add(url);
-  }
+  parser.onclosetag = (tagName: string) => {
+    if (tagName === 'url' && currentUrl && currentUrl.canonical) {
+      urlMap.set(currentUrl.canonical, currentUrl);
+      currentUrl = null;
+      insideUrl = false;
+    }
+    if (tagName !== 'url') {
+      currentTag = '';
+    }
+  };
 
-  return urls;
+  parser.write(sitemapContent).close();
+  return urlMap;
+}
+
+function validateUrlStructure(sitemapUrlMap: Map<string, SitemapUrl>, result: ValidationResult): void {
+  console.log('Checking URL structure...');
+  let structureErrorCount = 0;
+
+  sitemapUrlMap.forEach((urlData, canonicalPath) => {
+    // Check 1: Canonical URL must end with trailing slash
+    if (canonicalPath !== '/' && !canonicalPath.endsWith('/')) {
+      result.errors.push(`Canonical URL ${canonicalPath} does not end with trailing slash`);
+      structureErrorCount++;
+      // eslint-disable-next-line no-param-reassign
+      result.success = false;
+    }
+
+    const isRootUrl = canonicalPath === '/';
+
+    // Check 2: Non-root URLs must have one alternate without trailing slash (x-default)
+    if (!isRootUrl) {
+      const nonTrailingSlashAlternates = urlData.alternates.filter(alt => !alt.endsWith('/'));
+      if (nonTrailingSlashAlternates.length === 0) {
+        result.errors.push(`Canonical URL ${canonicalPath} is missing non-trailing-slash alternate (x-default)`);
+        structureErrorCount++;
+        // eslint-disable-next-line no-param-reassign
+        result.success = false;
+      } else if (nonTrailingSlashAlternates.length > 1) {
+        result.errors.push(
+          `Canonical URL ${canonicalPath} has multiple non-trailing-slash alternates: ${nonTrailingSlashAlternates.join(', ')}`,
+        );
+        structureErrorCount++;
+        // eslint-disable-next-line no-param-reassign
+        result.success = false;
+      }
+    }
+
+    // Check 3: Must have one alternate for each supported locale
+    const localeAlternates = urlData.alternates.filter(alt => alt.endsWith('/'));
+    const localesFound = new Set<string>();
+
+    localeAlternates.forEach(alt => {
+      // Extract locale from path like /en-US/guide/ or /zh-CN/api/
+      const localeMatch = alt.match(/^\/([^/]+)\//);
+      if (localeMatch) {
+        localesFound.add(localeMatch[1]);
+      }
+    });
+
+    supportedLocales.forEach(locale => {
+      if (!localesFound.has(locale)) {
+        result.errors.push(`Canonical URL ${canonicalPath} is missing alternate for locale: ${locale}`);
+        structureErrorCount++;
+        // eslint-disable-next-line no-param-reassign
+        result.success = false;
+      }
+    });
+
+    // Check for extra locales
+    localesFound.forEach(locale => {
+      if (!supportedLocales.includes(locale as any)) {
+        result.warnings.push(`Canonical URL ${canonicalPath} has alternate for unsupported locale: ${locale}`);
+      }
+    });
+  });
+
+  if (structureErrorCount === 0) {
+    console.log('✓ All URLs have correct structure (trailing slash, x-default, and locale alternates)\n');
+  } else {
+    console.log(`✗ Found ${structureErrorCount} URL structure errors\n`);
+  }
 }
 
 function getAllHtmlFiles(dir: string, baseDir: string = dir): string[] {
@@ -62,10 +154,12 @@ function getAllHtmlFiles(dir: string, baseDir: string = dir): string[] {
     if (stat.isDirectory()) {
       files.push(...getAllHtmlFiles(fullPath, baseDir));
     } else if (entry === 'index.html') {
-      // Convert file path to URL path
+      // Convert file path to URL path with trailing slash
       let urlPath = fullPath.replace(baseDir, '').replace(/\/index\.html$/, '');
       if (!urlPath) {
         urlPath = '/';
+      } else if (!urlPath.endsWith('/')) {
+        urlPath += '/';
       }
       files.push(urlPath);
     }
@@ -81,7 +175,9 @@ function getHtmlFilePath(urlPath: string, dir: string): string {
   if (urlPath === '/404') {
     return join(dir, '404.html');
   }
-  return join(dir, urlPath, 'index.html');
+  // Remove trailing slash for directory path
+  const cleanPath = urlPath.endsWith('/') ? urlPath.slice(0, -1) : urlPath;
+  return join(dir, cleanPath, 'index.html');
 }
 
 function validateSitemap(): ValidationResult {
@@ -105,8 +201,9 @@ function validateSitemap(): ValidationResult {
   }
 
   // Extract URLs from sitemap
-  const sitemapUrls = extractUrlsFromSitemap(sitemapContent);
-  console.log(`✓ Found ${sitemapUrls.size} URLs in sitemap\n`);
+  const sitemapUrlMap = extractUrlsFromSitemap(sitemapContent);
+  const totalUrls = Array.from(sitemapUrlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+  console.log(`✓ Found ${sitemapUrlMap.size} canonical URLs with ${totalUrls} total URLs in sitemap\n`);
 
   // Get all HTML files
   const htmlFiles = getAllHtmlFiles(outDir);
@@ -119,29 +216,32 @@ function validateSitemap(): ValidationResult {
   );
   console.log(`✓ Found ${htmlFilesSet.size} HTML files in docs directory\n`);
 
-  // Check 1: Every sitemap URL has a corresponding non-empty HTML file
+  // Check 0: URL structure validation
+  validateUrlStructure(sitemapUrlMap, result);
+
+  // Check 1: Every sitemap canonical URL has a corresponding non-empty HTML file
   console.log('Checking sitemap URLs...');
   let missingOrEmptyCount = 0;
-  sitemapUrls.forEach(urlPath => {
+  sitemapUrlMap.forEach((urlData, canonicalPath) => {
     // Skip localized 404 pages - they don't exist as separate files
-    if (urlPath.match(/^\/[^/]+\/404$/)) {
+    if (canonicalPath.match(/^\/[^/]+\/404\/?$/)) {
       return;
     }
 
-    const htmlPath = getHtmlFilePath(urlPath, outDir);
+    const htmlPath = getHtmlFilePath(canonicalPath, outDir);
 
     try {
       const content = readFileSync(htmlPath, 'utf-8');
       const strippedContent = content.replace(/<[^>]*>/g, '').replace(/\s+/g, '');
 
       if (strippedContent.length < 50) {
-        result.errors.push(`URL ${urlPath} has an empty or nearly empty HTML file at ${htmlPath}`);
+        result.errors.push(`URL ${canonicalPath} has an empty or nearly empty HTML file at ${htmlPath}`);
         missingOrEmptyCount++;
         result.success = false;
       }
     } catch (error) {
       console.error(error);
-      result.errors.push(`URL ${urlPath} in sitemap but HTML file missing at ${htmlPath}`);
+      result.errors.push(`URL ${canonicalPath} in sitemap but HTML file missing at ${htmlPath}`);
       missingOrEmptyCount++;
       result.success = false;
     }
@@ -156,8 +256,17 @@ function validateSitemap(): ValidationResult {
   // Check 2: No extra HTML files that are missing from sitemap
   console.log('Checking for extra HTML files...');
   let extraCount = 0;
+
+  // Build a set of all URLs in sitemap (canonical + all alternates)
+  const allSitemapUrls = new Set<string>();
+  sitemapUrlMap.forEach((urlData, canonicalPath) => {
+    allSitemapUrls.add(canonicalPath);
+    urlData.alternates.forEach(alt => allSitemapUrls.add(alt));
+  });
+
   htmlFilesSet.forEach(urlPath => {
-    if (!sitemapUrls.has(urlPath)) {
+    // Check if this HTML file is referenced anywhere in sitemap
+    if (!allSitemapUrls.has(urlPath)) {
       result.errors.push(`HTML file exists at ${urlPath} but is missing from sitemap`);
       extraCount++;
       result.success = false;
@@ -197,4 +306,6 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}

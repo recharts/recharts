@@ -6,7 +6,7 @@ export function routes() {
   return (
     <Routes>
       <Route
-        path="/:locale/guide/:name?"
+        path="/:locale/guide/:name?/"
         element={
           <Frame>
             <GuideView />
@@ -14,7 +14,7 @@ export function routes() {
         }
       />
       <Route
-        path="/:locale/api/:name?"
+        path="/:locale/api/:name?/"
         element={
           <Frame>
             <APIView />
@@ -22,7 +22,7 @@ export function routes() {
         }
       />
       <Route
-        path="/:locale/examples"
+        path="/:locale/examples/"
         element={
           <Frame>
             <ExamplesIndexView />
@@ -30,7 +30,7 @@ export function routes() {
         }
       />
       <Route
-        path="/:locale/examples/:name"
+        path="/:locale/examples/:name/"
         element={
           <Frame>
             <ExamplesView />
@@ -38,7 +38,7 @@ export function routes() {
         }
       />
       <Route
-        path="/:locale/storybook"
+        path="/:locale/storybook/"
         element={
           <Frame>
             <Storybook />

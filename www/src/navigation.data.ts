@@ -124,11 +124,11 @@ export const guidePages = ['installation', 'getting-started', 'customize', 'acti
 
 export function getSiteRoutes(): string[] {
   // the vite sitemap plugin adds root route by default so we don't need to add it here
-  const routes = ['/guide', '/api', '/examples', '/storybook'];
+  const routes = ['/guide/', '/api/', '/examples/', '/storybook/'];
 
-  guidePages.forEach(slug => routes.push(`/guide/${slug}`));
-  apiComponents.forEach(slug => routes.push(`/api/${slug}`));
-  exampleComponents.forEach(slug => routes.push(`/examples/${slug}`));
+  guidePages.forEach(slug => routes.push(`/guide/${slug}/`));
+  apiComponents.forEach(slug => routes.push(`/api/${slug}/`));
+  exampleComponents.forEach(slug => routes.push(`/examples/${slug}/`));
 
   return routes;
 }

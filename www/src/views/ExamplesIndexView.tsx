@@ -36,7 +36,7 @@ class ExamplesIndexViewImpl extends PureComponent<ExamplesIndexViewProps> {
           </p>
           <div className="examples-grid">
             {categories.map(({ categoryName, firstExampleKey, Preview }) => (
-              <Link key={categoryName} to={`/${locale}/examples/${firstExampleKey}`} className="example-card">
+              <Link key={categoryName} to={`/${locale}/examples/${firstExampleKey}/`} className="example-card">
                 <div className="example-card-preview">
                   {Preview ? <Preview /> : <div className="example-card-placeholder" />}
                 </div>

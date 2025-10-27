@@ -65,7 +65,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           <p className="title">Recharts</p>
           <p className="subtitle">{localeGet(locale, 'home', 'slogan')}</p>
           <p>
-            <Link to={`/${locale}/guide/installation`} className="button install-btn">
+            <Link to={`/${locale}/guide/installation/`} className="button install-btn">
               <i className="icon-energy" />
               &nbsp;
               {localeGet(locale, 'home', 'install')}
@@ -150,7 +150,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           <i className="icon-rocket" />
           <p className="text">{localeGet(locale, 'home', 'like')}</p>
           <p className="btn">
-            <Link to={`/${locale}/guide/getting-started`} className="button getting-started-btn">
+            <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
               {localeGet(locale, 'home', 'get-started')}
             </Link>
           </p>
