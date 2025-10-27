@@ -33,7 +33,6 @@ export const DefaultZIndexes = {
    */
   line: 400,
 
-  // TODO is this the right place? shouldn't they be behind the line and bar?
   axisLineAndTick: 500,
 
   /**
