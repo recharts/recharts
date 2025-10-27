@@ -44,8 +44,9 @@ const initialState: ZIndexState = {
   ),
 };
 
+const defaultZIndexSet = new Set<number>(Object.values(DefaultZIndexes));
 function isDefaultZIndex(zIndex: number): boolean {
-  return Object.values(DefaultZIndexes).includes(zIndex);
+  return defaultZIndexSet.has(zIndex);
 }
 
 const zIndexSlice = createSlice({
