@@ -49,7 +49,6 @@ export const DefaultZIndexes = {
 
   /**
    * Hovering over a Bar or RadialBar renders a highlight rectangle
-   * TODO RadialBar support
    */
   activeBar: 1000,
   /**

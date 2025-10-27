@@ -59,7 +59,7 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
@@ -371,13 +371,14 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
     const layerClass = clsx('recharts-area', className);
 
     return (
-      <Layer className={layerClass}>
-        {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
-
-        <Layer className="recharts-radial-bar-sectors">
-          <RenderSectors {...this.props} />
+      <ZIndexLayer zIndex={this.props.zIndex}>
+        <Layer className={layerClass}>
+          {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
+          <Layer className="recharts-radial-bar-sectors">
+            <RenderSectors {...this.props} />
+          </Layer>
         </Layer>
-      </Layer>
+      </ZIndexLayer>
     );
   }
 }
