@@ -23,11 +23,12 @@ import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
-export interface PolarAngleAxisProps {
+export interface PolarAngleAxisProps extends ZIndexable {
   allowDecimals?: boolean;
   domain?: AxisDomain;
   allowDuplicatedCategory?: boolean;
@@ -271,10 +272,12 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
   };
 
   return (
-    <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
-      <AxisLine {...props} />
-      <Ticks {...props} />
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
+        <AxisLine {...props} />
+        <Ticks {...props} />
+      </Layer>
+    </ZIndexLayer>
   );
 };
 

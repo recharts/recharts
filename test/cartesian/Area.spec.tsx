@@ -22,6 +22,7 @@ import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { DotItemDotProps } from '../../src/util/types';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 type TestCase = CartesianChartTestCase;
 
@@ -791,6 +792,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             stroke: '#3182bd',
             xAxisId: 0,
             yAxisId: 0,
+            zIndex: DefaultZIndexes.area,
           },
           type: 'line',
           value: 'value',
@@ -845,6 +847,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             stroke: '#3182bd',
             xAxisId: 0,
             yAxisId: 0,
+            zIndex: DefaultZIndexes.area,
           },
           type: 'line',
           value: 'value',

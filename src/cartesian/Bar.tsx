@@ -373,6 +373,21 @@ function BarRectangleWithActiveState(props: {
   const isActive: boolean =
     activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
   const option = isActive ? activeBar : shape;
+  if (isActive) {
+    return (
+      <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
+        <BarRectangle
+          {...baseProps}
+          name={String(baseProps.name)}
+          {...entry}
+          isActive={isActive}
+          option={option}
+          index={index}
+          dataKey={dataKey}
+        />
+      </ZIndexLayer>
+    );
+  }
   return (
     <BarRectangle
       {...baseProps}

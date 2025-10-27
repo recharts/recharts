@@ -29,11 +29,14 @@ export const DefaultZIndexes = {
    */
   bar: 300,
   /**
-   * Line and ReferenceLine
+   * Line and ReferenceLine, and ErrorBor
    */
   line: 400,
 
-  axisLineAndTick: 500,
+  /**
+   * XAxis and YAxis and PolarAngleAxis and PolarRadiusAxis ticks and lines and children
+   */
+  axis: 500,
 
   /**
    * Scatter and ReferenceDot,

@@ -56,13 +56,15 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalAreaProps {
+interface InternalAreaProps extends ZIndexable {
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -109,7 +111,7 @@ interface InternalAreaProps {
 /**
  * External props, intended for end users to fill in
  */
-interface AreaProps {
+interface AreaProps extends ZIndexable {
   activeDot?: ActiveDotType;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
@@ -606,7 +608,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
 
 class AreaWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine } =
+    const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine, zIndex } =
       this.props;
 
     if (hide) {
@@ -620,7 +622,7 @@ class AreaWithState extends PureComponent<InternalProps> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <>
+      <ZIndexLayer zIndex={zIndex}>
         <Layer className={layerClass}>
           {needClip && (
             <defs>
@@ -653,7 +655,7 @@ class AreaWithState extends PureComponent<InternalProps> {
             activeDot={this.props.activeDot}
           />
         )}
-      </>
+      </ZIndexLayer>
     );
   }
 }
@@ -673,6 +675,7 @@ const defaultAreaProps = {
   stroke: '#3182bd',
   xAxisId: 0,
   yAxisId: 0,
+  zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
 function AreaImpl(props: WithIdRequired<Props>) {

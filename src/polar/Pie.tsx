@@ -400,11 +400,16 @@ function PieLabels({
     };
 
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
-        {labelLine && renderLabelLineItem(labelLine, lineProps)}
-        {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
-      </Layer>
+      <ZIndexLayer
+        zIndex={DefaultZIndexes.label}
+        // eslint-disable-next-line react/no-array-index-key
+        key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}
+      >
+        <Layer>
+          {labelLine && renderLabelLineItem(labelLine, lineProps)}
+          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+        </Layer>
+      </ZIndexLayer>
     );
   });
 

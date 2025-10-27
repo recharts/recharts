@@ -27,6 +27,8 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -35,7 +37,7 @@ export type Unit = string | number;
 /** The formatter function of tick */
 export type TickFormatter = (value: any, index: number) => string;
 
-export interface CartesianAxisProps {
+export interface CartesianAxisProps extends ZIndexable {
   className?: string;
   x?: number;
   y?: number;
@@ -106,6 +108,7 @@ export const defaultCartesianAxisProps = {
   tickSize: 6,
   tickMargin: 2,
   interval: 'preserveEnd',
+  zIndex: DefaultZIndexes.axis,
 } as const satisfies Partial<Props>;
 
 /*
@@ -469,51 +472,53 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   }
 
   return (
-    <Layer className={clsx('recharts-cartesian-axis', className)} ref={layerRef}>
-      <AxisLine
-        x={props.x}
-        y={props.y}
-        width={width}
-        height={height}
-        orientation={props.orientation}
-        mirror={props.mirror}
-        axisLine={axisLine}
-        otherSvgProps={svgPropertiesNoEvents(props)}
-      />
-      <Ticks
-        events={rest}
-        fontSize={fontSize}
-        getTicksConfig={props}
-        height={props.height}
-        letterSpacing={letterSpacing}
-        mirror={props.mirror}
-        orientation={props.orientation}
-        padding={props.padding}
-        stroke={props.stroke}
-        tick={props.tick}
-        tickFormatter={props.tickFormatter}
-        tickLine={props.tickLine}
-        tickMargin={props.tickMargin}
-        tickSize={props.tickSize}
-        tickTextProps={props.tickTextProps}
-        ticks={ticks}
-        unit={props.unit}
-        width={props.width}
-        x={props.x}
-        y={props.y}
-      />
-      <CartesianLabelContextProvider
-        x={props.x}
-        y={props.y}
-        width={props.width}
-        height={props.height}
-        lowerWidth={props.width}
-        upperWidth={props.width}
-      >
-        <CartesianLabelFromLabelProp label={props.label} labelRef={props.labelRef} />
-        {props.children}
-      </CartesianLabelContextProvider>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-cartesian-axis', className)} ref={layerRef}>
+        <AxisLine
+          x={props.x}
+          y={props.y}
+          width={width}
+          height={height}
+          orientation={props.orientation}
+          mirror={props.mirror}
+          axisLine={axisLine}
+          otherSvgProps={svgPropertiesNoEvents(props)}
+        />
+        <Ticks
+          events={rest}
+          fontSize={fontSize}
+          getTicksConfig={props}
+          height={props.height}
+          letterSpacing={letterSpacing}
+          mirror={props.mirror}
+          orientation={props.orientation}
+          padding={props.padding}
+          stroke={props.stroke}
+          tick={props.tick}
+          tickFormatter={props.tickFormatter}
+          tickLine={props.tickLine}
+          tickMargin={props.tickMargin}
+          tickSize={props.tickSize}
+          tickTextProps={props.tickTextProps}
+          ticks={ticks}
+          unit={props.unit}
+          width={props.width}
+          x={props.x}
+          y={props.y}
+        />
+        <CartesianLabelContextProvider
+          x={props.x}
+          y={props.y}
+          width={props.width}
+          height={props.height}
+          lowerWidth={props.width}
+          upperWidth={props.width}
+        >
+          <CartesianLabelFromLabelProp label={props.label} labelRef={props.labelRef} />
+          {props.children}
+        </CartesianLabelContextProvider>
+      </Layer>
+    </ZIndexLayer>
   );
 });
 

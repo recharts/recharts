@@ -24,10 +24,11 @@ import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsScale } from '../util/ChartUtils';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
-export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
+export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'>, ZIndexable {
   cx?: number;
   cy?: number;
   radiusAxisId?: string | number;
@@ -202,14 +203,16 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
   const { tick, axisLine } = props;
 
   return (
-    <Layer className={clsx('recharts-polar-radius-axis', AXIS_TYPE, props.className)}>
-      {axisLine && renderAxisLine(props, ticks)}
-      {tick && renderTicks(props, ticks)}
-      <PolarLabelContextProvider {...getViewBox(props.angle, props.cx, props.cy, ticks)}>
-        <PolarLabelFromLabelProp label={props.label} />
-        {props.children}
-      </PolarLabelContextProvider>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-polar-radius-axis', AXIS_TYPE, props.className)}>
+        {axisLine && renderAxisLine(props, ticks)}
+        {tick && renderTicks(props, ticks)}
+        <PolarLabelContextProvider {...getViewBox(props.angle, props.cx, props.cy, ticks)}>
+          <PolarLabelFromLabelProp label={props.label} />
+          {props.children}
+        </PolarLabelContextProvider>
+      </Layer>
+    </ZIndexLayer>
   );
 };
 

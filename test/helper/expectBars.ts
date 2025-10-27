@@ -11,7 +11,7 @@ type ExpectedBar = {
 };
 
 export function getAllBars(container: Element) {
-  return container.querySelectorAll('.recharts-bar .recharts-bar-rectangle');
+  return container.querySelectorAll('.recharts-bar-rectangle');
 }
 
 export function getAllBarPaths(container: Element) {
@@ -32,16 +32,20 @@ export function expectBars(container: Element, expectedBars: ReadonlyArray<Expec
   expect(actualBars).toEqual(expectedBars);
 }
 
-function getActiveChildren(bar: Element) {
-  return bar.querySelectorAll('.recharts-active-bar');
+export function getActiveBars(container: Element) {
+  return container.querySelectorAll('.recharts-active-bar path.recharts-rectangle');
 }
 
-export function expectBarIsActive(bar: Element) {
-  const activeChildren = getActiveChildren(bar);
-  expect(activeChildren).toHaveLength(1);
-}
-
-export function expectBarIsNotActive(bar: Element) {
-  const activeChildren = getActiveChildren(bar);
-  expect(activeChildren).toHaveLength(0);
+export function expectActiveBars(container: Element, expectedBars: ReadonlyArray<ExpectedBar>) {
+  assertNotNull(container);
+  const activeBars = getActiveBars(container);
+  const actualBars = Array.from(activeBars).map(bar => ({
+    x: bar.getAttribute('x'),
+    y: bar.getAttribute('y'),
+    width: bar.getAttribute('width'),
+    height: bar.getAttribute('height'),
+    radius: bar.getAttribute('radius'),
+    d: bar.getAttribute('d'),
+  }));
+  expect(actualBars).toEqual(expectedBars);
 }

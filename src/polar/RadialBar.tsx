@@ -160,6 +160,17 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           option: isActive ? activeShape : shape,
         };
 
+        if (isActive) {
+          return (
+            <ZIndexLayer
+              zIndex={DefaultZIndexes.activeBar}
+              key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+            >
+              <RadialBarSector {...radialBarSectorProps} />
+            </ZIndexLayer>
+          );
+        }
+
         return (
           <RadialBarSector
             key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key

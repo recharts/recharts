@@ -101,7 +101,7 @@ describe('Cursor', () => {
       };
       const { container } = render(
         <svg width={100} height={100}>
-          <CursorInternal {...props} coordinate={coordinate} />
+          <CursorInternal {...props} coordinate={coordinate} zIndex={0} />
         </svg>,
       );
       const cursor = container.querySelector('.recharts-sector');
@@ -115,7 +115,7 @@ describe('Cursor', () => {
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>
           <svg width={100} height={100}>
-            <Cursor {...defaultProps} coordinate={baseCoord} />
+            <Cursor {...defaultProps} coordinate={baseCoord} zIndex={0} />
           </svg>
         </RechartsStoreProvider>,
       );
@@ -136,7 +136,7 @@ describe('Cursor', () => {
       const { getByText } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>
           <svg width={100} height={100}>
-            <Cursor {...props} />
+            <Cursor {...props} zIndex={0} />
           </svg>
         </RechartsStoreProvider>,
       );
@@ -152,7 +152,7 @@ describe('Cursor', () => {
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedScatterState}>
           <svg width={100} height={100}>
-            <Cursor {...defaultProps} coordinate={baseCoord} />
+            <Cursor {...defaultProps} coordinate={baseCoord} zIndex={0} />
           </svg>
         </RechartsStoreProvider>,
       );
@@ -167,7 +167,7 @@ describe('Cursor', () => {
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedRadialState}>
           <svg width={100} height={100}>
-            <Cursor {...defaultProps} coordinate={coordinate} payload={payload} />
+            <Cursor {...defaultProps} coordinate={coordinate} payload={payload} zIndex={0} />
           </svg>
         </RechartsStoreProvider>,
       );

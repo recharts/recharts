@@ -21,7 +21,7 @@ import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /**
@@ -121,13 +121,14 @@ export function Cursor(props: CursorProps) {
   }
 
   return (
-    <CursorInternal
-      {...props}
-      offset={offset}
-      layout={layout}
-      tooltipAxisBandSize={tooltipAxisBandSize}
-      chartName={chartName}
-      zIndex={props.zIndex ?? DefaultZIndexes.cursor}
-    />
+    <ZIndexLayer zIndex={props.zIndex ?? DefaultZIndexes.cursor}>
+      <CursorInternal
+        {...props}
+        offset={offset}
+        layout={layout}
+        tooltipAxisBandSize={tooltipAxisBandSize}
+        chartName={chartName}
+      />
+    </ZIndexLayer>
   );
 }

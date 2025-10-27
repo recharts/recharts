@@ -15,7 +15,7 @@ type ExpectedLabel = {
 function expectYAxisLabel(container: Element, expectedLabels: ReadonlyArray<ExpectedLabel>): ReadonlyArray<Element> {
   assertNotNull(container);
 
-  const labelElements = Array.from(container.querySelectorAll('.recharts-yAxis .recharts-label'));
+  const labelElements = Array.from(container.querySelectorAll('.recharts-label'));
 
   const actualLabels: ReadonlyArray<ExpectedLabel> = labelElements.map(label => ({
     textContent: label.textContent,

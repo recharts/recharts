@@ -1876,6 +1876,7 @@ describe('<Legend />', () => {
               stroke: '#3182bd',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.area,
             },
           },
         ]);
