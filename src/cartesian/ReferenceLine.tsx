@@ -19,7 +19,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /**
@@ -261,13 +261,15 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   const rect = rectWithCoords({ x1, y1, x2, y2 });
 
   return (
-    <Layer className={clsx('recharts-reference-line', className)}>
-      {renderLine(shape, lineProps)}
-      <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
-        <CartesianLabelFromLabelProp label={props.label} />
-        {props.children}
-      </CartesianLabelContextProvider>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-reference-line', className)}>
+        {renderLine(shape, lineProps)}
+        <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+          <CartesianLabelFromLabelProp label={props.label} />
+          {props.children}
+        </CartesianLabelContextProvider>
+      </Layer>
+    </ZIndexLayer>
   );
 }
 

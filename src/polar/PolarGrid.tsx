@@ -180,10 +180,10 @@ export const PolarGrid = ({
     cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
     innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
     outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
-    zIndex: inputs.zIndex ?? DefaultZIndexes.grid,
     polarAngles,
     polarRadius,
     ...inputs,
+    zIndex: inputs.zIndex ?? DefaultZIndexes.grid,
   };
 
   const { outerRadius } = props;

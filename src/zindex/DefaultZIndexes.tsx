@@ -44,7 +44,7 @@ export const DefaultZIndexes = {
   /**
    * LabelList and Label, including Axis labels
    */
-  label: 600,
+  label: 700,
 
   /**
    * Hovering over a Bar or RadialBar renders a highlight rectangle

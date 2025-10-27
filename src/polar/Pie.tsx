@@ -56,7 +56,7 @@ import {
   Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type ChartDataInput = Record<string, unknown>;
@@ -147,7 +147,7 @@ export type PieSectorDataItem = PiePresentationProps & PieCoordinate & PieSector
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps extends PieDef {
+interface InternalPieProps extends PieDef, ZIndexable {
   id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
@@ -753,12 +753,12 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   }
 
   return (
-    <>
+    <ZIndexLayer zIndex={props.zIndex}>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
       </Layer>
-    </>
+    </ZIndexLayer>
   );
 }
 

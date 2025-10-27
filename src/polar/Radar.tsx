@@ -41,7 +41,7 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface RadarPoint {
@@ -482,7 +482,7 @@ function RadarWithState(props: InternalProps) {
   const layerClass = clsx('recharts-radar', className);
 
   return (
-    <>
+    <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={layerClass}>
         <RenderPolygon {...props} />
       </Layer>
@@ -492,7 +492,7 @@ function RadarWithState(props: InternalProps) {
         itemDataKey={props.dataKey}
         activeDot={props.activeDot}
       />
-    </>
+    </ZIndexLayer>
   );
 }
 

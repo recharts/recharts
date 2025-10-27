@@ -36,6 +36,7 @@ const initialState: ZIndexState = {
       ...acc,
       [current]: {
         elementId: undefined,
+        panoramaElementId: undefined,
         consumers: 0,
       },
     }),

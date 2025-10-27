@@ -16,7 +16,7 @@ import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { ZIndexable } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface ReferenceDotProps extends ZIndexable {
@@ -118,20 +118,22 @@ function ReferenceDotImpl(props: PropsWithDefaults) {
   };
 
   return (
-    <Layer className={clsx('recharts-reference-dot', className)}>
-      {renderDot(shape, dotProps)}
-      <CartesianLabelContextProvider
-        x={cx - r}
-        y={cy - r}
-        width={2 * r}
-        height={2 * r}
-        upperWidth={2 * r}
-        lowerWidth={2 * r}
-      >
-        <CartesianLabelFromLabelProp label={props.label} />
-        {props.children}
-      </CartesianLabelContextProvider>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-reference-dot', className)}>
+        {renderDot(shape, dotProps)}
+        <CartesianLabelContextProvider
+          x={cx - r}
+          y={cy - r}
+          width={2 * r}
+          height={2 * r}
+          upperWidth={2 * r}
+          lowerWidth={2 * r}
+        >
+          <CartesianLabelFromLabelProp label={props.label} />
+          {props.children}
+        </CartesianLabelContextProvider>
+      </Layer>
+    </ZIndexLayer>
   );
 }
 
