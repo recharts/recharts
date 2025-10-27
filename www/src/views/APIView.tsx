@@ -2,9 +2,9 @@
 import { PureComponent } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import API from '../docs/api';
+import { allExamples as API } from '../docs/api';
 import { allApiExamples } from '../docs/apiExamples';
-import Highlight from '../utils/Highlight.tsx';
+import { Highlight } from '../utils/Highlight.tsx';
 import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
 import './APIView.scss';
 import { SupportedLocale } from '../locale';
@@ -16,7 +16,7 @@ type APIViewState = {
   activeDataCodeIndexes: number[];
 };
 
-class APIView extends PureComponent<RouteComponentProps, APIViewState> {
+class APIViewImpl extends PureComponent<RouteComponentProps, APIViewState> {
   state: APIViewState = {
     indexesPage: '',
     activeDataCodeIndexes: [],
@@ -226,4 +226,4 @@ class APIView extends PureComponent<RouteComponentProps, APIViewState> {
   }
 }
 
-export default withRouter(APIView);
+export const APIView = withRouter(APIViewImpl);

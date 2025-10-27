@@ -1,4 +1,4 @@
-export default {
+export const ZAxisAPI = {
   name: 'ZAxis',
   props: [
     {

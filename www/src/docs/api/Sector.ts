@@ -1,4 +1,4 @@
-export default {
+export const SectorAPI = {
   name: 'Sector',
   props: [
     {

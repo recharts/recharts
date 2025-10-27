@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const RadialBarChart: ApiDoc = {
+export const RadialBarChartAPI: ApiDoc = {
   name: 'RadialBarChart',
   props: [
     {
@@ -202,4 +202,3 @@ const RadialBarChart: ApiDoc = {
     'validate svg elements...',
   ],
 };
-export default RadialBarChart;

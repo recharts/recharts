@@ -1,4 +1,4 @@
-export default {
+export const ReferenceAreaAPI = {
   name: 'ReferenceArea',
   props: [
     {

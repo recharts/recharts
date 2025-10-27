@@ -1,4 +1,4 @@
-export default {
+export const CellAPI = {
   name: 'Cell',
   desc: {
     'en-US': `Cell can be wrapped by Pie, Bar, or RadialBar to specify attributes of each child.

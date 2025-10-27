@@ -1,4 +1,4 @@
-export default {
+export const CurveAPI = {
   name: 'Curve',
   props: [
     {

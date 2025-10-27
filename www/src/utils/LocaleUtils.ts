@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useParams } from 'react-router';
-import Locale, { SupportedLocale, supportedLocales } from '../locale';
+import { localeMap as Locale, SupportedLocale, supportedLocales } from '../locale';
 import { RouteComponentProps } from '../routes/withRouter.tsx';
 
 export const defaultLocale = 'en-US';

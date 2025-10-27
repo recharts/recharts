@@ -1,4 +1,4 @@
-export default {
+export const LineChartAPI = {
   name: 'LineChart',
   props: [
     {

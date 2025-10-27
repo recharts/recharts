@@ -6,7 +6,7 @@ import composedResponsiveContainerSource from './ComposedResponsiveContainer?raw
 import pieResponsiveContainerSource from './PieResponsiveContainer?raw';
 import { ChartExample } from '../types.ts';
 
-const responsiveContainerExamples: Record<string, ChartExample> = {
+export const responsiveContainerExamples: Record<string, ChartExample> = {
   AreaResponsiveContainer: {
     Component: AreaResponsiveContainer,
     sourceCode: areaResponsiveContainerSource,
@@ -23,5 +23,3 @@ const responsiveContainerExamples: Record<string, ChartExample> = {
     name: 'Pie Responsive Container',
   },
 };
-
-export default responsiveContainerExamples;

@@ -1,8 +1,8 @@
-import Highlight from '../../utils/Highlight.tsx';
+import { Highlight } from '../../utils/Highlight.tsx';
 import { localeGet } from '../../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../../locale';
 
-function Installation({ locale }: { locale: SupportedLocale }) {
+export function Installation({ locale }: { locale: SupportedLocale }) {
   return (
     <div className="mod-installation" id="Installation">
       <h3 className="page-title">{localeGet(locale, 'installation', 'installation')}</h3>
@@ -46,5 +46,3 @@ function Installation({ locale }: { locale: SupportedLocale }) {
     </div>
   );
 }
-
-export default Installation;

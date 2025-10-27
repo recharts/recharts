@@ -6,7 +6,7 @@ type CustomAxisTickProps = {
   };
 };
 
-const renderCustomAxisTick = ({ x, y, payload }: CustomAxisTickProps) => {
+export const renderCustomAxisTick = ({ x, y, payload }: CustomAxisTickProps) => {
   let path = '';
 
   switch (payload.value) {
@@ -44,5 +44,3 @@ const renderCustomAxisTick = ({ x, y, payload }: CustomAxisTickProps) => {
     </svg>
   );
 };
-
-export default renderCustomAxisTick;

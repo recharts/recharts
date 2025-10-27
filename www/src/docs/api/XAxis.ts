@@ -1,4 +1,4 @@
-export default {
+export const XAxisAPI = {
   name: 'XAxis',
   props: [
     {

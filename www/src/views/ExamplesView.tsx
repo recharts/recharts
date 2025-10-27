@@ -47,7 +47,7 @@ type ExamplesViewState = {
   exampleCode: string | null;
 };
 
-class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
+class ExamplesViewImpl extends PureComponent<ExamplesViewProps, ExamplesViewState> {
   state: ExamplesViewState = {
     name: null,
     exampleCode: null,
@@ -191,4 +191,4 @@ class ExamplesView extends PureComponent<ExamplesViewProps, ExamplesViewState> {
   }
 }
 
-export default withRouter(ExamplesView);
+export const ExamplesView = withRouter(ExamplesViewImpl);

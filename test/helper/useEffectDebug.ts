@@ -67,7 +67,6 @@ export const useEffectDebug = (
         }),
       );
       const curr = Object.fromEntries(changedKeys.map(key => [key, changedDeps[key].after]));
-      // eslint-disable-next-line no-console
       console.log('[use-effect-debugger]', debuggerName, changedKeys.join(', '), {
         prev,
         curr,

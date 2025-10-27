@@ -1,4 +1,4 @@
-export default {
+export const CrossAPI = {
   name: 'Cross',
   props: [
     {

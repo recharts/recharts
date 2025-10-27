@@ -8,8 +8,8 @@ import { radarChartExamples, RadarChartNavExample } from './RadarChart';
 import { radialBarChartExamples, RadialBarChartNavExample } from './RadialBarChart';
 import { treeMapExamples, TreeMapNavExample } from './TreeMap';
 import { tooltipExamples } from './Tooltip';
-import LegendExamples from './Legend';
-import ResponsiveContainerExamples from './ResponsiveContainer';
+import { legendExamples as LegendExamples } from './Legend';
+import { responsiveContainerExamples as ResponsiveContainerExamples } from './ResponsiveContainer';
 import { AllExamples } from './types';
 
 export const allExamples: AllExamples = {

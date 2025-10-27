@@ -1,4 +1,4 @@
-export default {
+export const ErrorBarAPI = {
   name: 'ErrorBar',
   props: [
     {

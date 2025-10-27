@@ -1,4 +1,4 @@
-export default {
+export const RadialBarAPI = {
   name: 'RadialBar',
   props: [
     {

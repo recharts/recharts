@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const SankeyChart: ApiDoc = {
+export const SankeyChartAPI: ApiDoc = {
   name: 'SankeyChart',
   props: [
     {
@@ -224,4 +224,3 @@ const SankeyChart: ApiDoc = {
   ],
   childrenComponents: ['Tooltip'],
 };
-export default SankeyChart;

@@ -1,4 +1,4 @@
-export default {
+export const TooltipAPI = {
   name: 'Tooltip',
   desc: {
     'en-US': 'Tooltip is rendered by html nodes.',

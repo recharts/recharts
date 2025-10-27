@@ -1,5 +1,5 @@
-export default {
-  name: 'BarChart',
+export const FunnelChartAPI = {
+  name: 'FunnelChart',
   props: [
     {
       name: 'layout',

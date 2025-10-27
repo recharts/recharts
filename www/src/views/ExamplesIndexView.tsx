@@ -8,7 +8,7 @@ import './ExamplesIndexView.scss';
 
 type ExamplesIndexViewProps = RouteComponentProps;
 
-class ExamplesIndexView extends PureComponent<ExamplesIndexViewProps> {
+class ExamplesIndexViewImpl extends PureComponent<ExamplesIndexViewProps> {
   render() {
     const locale = getLocaleType(this.props);
 
@@ -52,4 +52,4 @@ class ExamplesIndexView extends PureComponent<ExamplesIndexViewProps> {
   }
 }
 
-export default withRouter(ExamplesIndexView);
+export const ExamplesIndexView = withRouter(ExamplesIndexViewImpl);

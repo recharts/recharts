@@ -1,4 +1,4 @@
-const map = {
+export const map = {
   index: {
     loading: 'Loading',
     success: 'Success',
@@ -110,5 +110,3 @@ const map = {
     'radialbar-title': 'The "position" in view box of RadialBarChart',
   },
 };
-
-export default map;

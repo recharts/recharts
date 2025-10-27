@@ -1,4 +1,4 @@
-export default {
+export const FunnelAPI = {
   name: 'Funnel',
   props: [
     {

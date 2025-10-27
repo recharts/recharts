@@ -1,6 +1,6 @@
 import { ApiDoc } from './types.ts';
 
-const AreaChartExample: ApiDoc = {
+export const AreaChartAPI: ApiDoc = {
   name: 'AreaChart',
   desc: {
     'en-US': 'All svg elements can be added into the AreaChart component, such as defs, linearGradient, etc.',
@@ -187,5 +187,3 @@ const AreaChartExample: ApiDoc = {
     'validate svg elements...',
   ],
 };
-
-export default AreaChartExample;

@@ -1,4 +1,4 @@
-export default {
+export const CartesianGridAPI = {
   name: 'CartesianGrid',
   props: [
     {

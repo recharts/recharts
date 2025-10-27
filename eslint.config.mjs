@@ -269,8 +269,8 @@ const overridesConfig = [
     },
   },
   {
-    name: 'x/override-4',
-    files: ['scripts/*.js'],
+    name: 'scripts override',
+    files: ['scripts/*.js', 'scripts/*.mjs', 'www/scripts/*.tsx'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
@@ -324,6 +324,16 @@ const overridesConfig = [
     files: ['**/vite.config*', '**/vitest.config*'],
     rules: {
       'import/no-default-export': 'off',
+    },
+  },
+  {
+    name: 'test-helpers-override',
+    /*
+     * Test helpers sometimes use console logs for debugging purposes.
+     */
+    files: ['test/helper/**'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ];
