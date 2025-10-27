@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router';
-import { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook } from '../views';
+import { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook, NotFoundView } from '../views';
 import { Frame } from '../layouts/Frame';
 
 export function routes() {
@@ -110,7 +110,7 @@ export function routes() {
         path="*"
         element={
           <Frame>
-            <IndexView />
+            <NotFoundView />
           </Frame>
         }
       />
