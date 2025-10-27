@@ -6,6 +6,8 @@ import { Layer } from '../container/Layer';
 import { DataKey, DotItemDotProps, DotType } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export interface DotPoint {
   readonly x: number | null;
@@ -47,7 +49,7 @@ function shouldRenderDots(points: ReadonlyArray<DotPoint> | undefined, dot: DotT
 
 export type DotsDotProps = Omit<DotProps, 'cx' | 'cy' | 'key' | 'index' | 'dataKey' | 'value' | 'payload'>;
 
-type DotsProps = {
+interface DotsProps extends ZIndexable {
   /**
    * Points to render dots for
    */
@@ -81,9 +83,19 @@ type DotsProps = {
    * Clip path ID (cartesian only)
    */
   clipPathId?: string;
-};
+}
 
-export function Dots({ points, dot, className, dotClassName, dataKey, baseProps, needClip, clipPathId }: DotsProps) {
+export function Dots({
+  points,
+  dot,
+  className,
+  dotClassName,
+  dataKey,
+  baseProps,
+  needClip,
+  clipPathId,
+  zIndex = DefaultZIndexes.scatter,
+}: DotsProps) {
   if (!shouldRenderDots(points, dot)) {
     return null;
   }
@@ -114,8 +126,10 @@ export function Dots({ points, dot, className, dotClassName, dataKey, baseProps,
   }
 
   return (
-    <Layer className={className} {...layerProps}>
-      {dots}
-    </Layer>
+    <ZIndexLayer zIndex={zIndex}>
+      <Layer className={className} {...layerProps}>
+        {dots}
+      </Layer>
+    </ZIndexLayer>
   );
 }

@@ -39,7 +39,6 @@ export const DefaultZIndexes = {
   /**
    * Scatter and ReferenceDot,
    * and Dots of Line and Area and Radar if they have dot=true
-   * TODO dot support
    */
   scatter: 600,
 

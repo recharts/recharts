@@ -51,17 +51,11 @@ const ActivePoint = ({
     value: point.value,
   };
 
-  // @ts-expect-error activeDot is contributing unknown props
-  const dotProps: ActiveDotProps = {
-    ...dotPropsTyped,
-    ...svgPropertiesNoEventsFromUnknown(activeDot),
-    ...adaptEventHandlers(activeDot),
-  };
-
   // @ts-expect-error svgPropertiesNoEventsFromUnknown(activeDot) is contributing unknown props
   const dotProps: ActiveDotProps = {
     ...dotPropsTyped,
     ...svgPropertiesNoEventsFromUnknown(activeDot),
+    ...adaptEventHandlers(activeDot),
   };
 
   let dot;
