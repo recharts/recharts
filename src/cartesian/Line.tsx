@@ -322,15 +322,7 @@ function StaticCurve({
 
   return (
     <>
-      {points?.length > 1 && (
-        <Shape
-          shapeType="curve"
-          // propTransformer={typeguardBarRectangleProps}
-          option={shape}
-          {...curveProps}
-          pathRef={pathRef}
-        />
-      )}
+      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
