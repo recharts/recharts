@@ -339,9 +339,7 @@ export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
  * @param obj - The object to filter
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
-export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(
-  obj: T | boolean,
-): SVGPropsNoEvents<T> | null {
+export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(obj: T | boolean): SVGPropsNoEvents<T> {
   const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key) || isDataAttribute(key));
   return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
 }

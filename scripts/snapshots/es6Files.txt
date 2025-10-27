@@ -53,6 +53,7 @@
   "es6/component/Customized.js",
   "es6/component/DefaultLegendContent.js",
   "es6/component/DefaultTooltipContent.js",
+  "es6/component/Dots.js",
   "es6/component/Label.js",
   "es6/component/LabelList.js",
   "es6/component/Legend.js",

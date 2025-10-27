@@ -1,7 +1,7 @@
-import { ActiveDotType } from './types';
+import { ActiveDotType, DotType } from './types';
 import { svgPropertiesNoEventsFromUnknown } from './svgPropertiesNoEvents';
 
-export function getRadiusAndStrokeWidthFromDot(dot: ActiveDotType): {
+export function getRadiusAndStrokeWidthFromDot(dot: ActiveDotType | DotType): {
   r: number;
   strokeWidth: number;
 } {

@@ -8,18 +8,19 @@ import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
-import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
   LabelListFromLabelProp,
 } from '../component/LabelList';
+import { Dots } from '../component/Dots';
 import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   DataKey,
+  DotType,
   LegendType,
   TooltipType,
   TrapezoidViewBox,
@@ -37,7 +38,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 
@@ -53,8 +54,6 @@ interface RadarPoint {
   name?: string;
 }
 
-type RadarDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
-
 interface RadarProps {
   className?: string;
   dataKey?: DataKey<any>;
@@ -65,7 +64,7 @@ interface RadarProps {
   isRange?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   activeDot?: ActiveDotType;
-  dot?: RadarDot;
+  dot?: DotType;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   hide?: boolean;
@@ -144,21 +143,22 @@ function getTooltipEntrySettings(props: PropsWithDefaults): TooltipPayloadConfig
   };
 }
 
-function renderDotItem(option: RadarDot, props: DotProps) {
-  let dotItem;
+function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: PropsWithDefaults }) {
+  const { dot, dataKey } = props;
+  const { id, ...propsWithoutId } = props;
 
-  if (React.isValidElement(option)) {
-    // @ts-expect-error typescript is unhappy with cloned props type
-    dotItem = React.cloneElement(option, props);
-  } else if (typeof option === 'function') {
-    dotItem = option(props);
-  } else {
-    dotItem = (
-      <Dot {...props} className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')} />
-    );
-  }
+  const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
-  return dotItem;
+  return (
+    <Dots
+      points={points}
+      dot={dot}
+      className="recharts-radar-dots"
+      dotClassName="recharts-radar-dot"
+      dataKey={dataKey}
+      baseProps={baseProps}
+    />
+  );
 }
 
 export function computeRadarPoints({
@@ -225,36 +225,6 @@ export function computeRadarPoints({
   return { points, isRange, baseLinePoints };
 }
 
-function Dots({ points, props }: { points: ReadonlyArray<RadarPoint>; props: Props }) {
-  const { dot, dataKey } = props;
-  if (!dot) {
-    return null;
-  }
-  const { id, ...propsWithoutId } = props;
-
-  const baseProps = svgPropertiesNoEvents(propsWithoutId);
-  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
-
-  const dots = points.map((entry, i) => {
-    const dotProps: DotProps = {
-      key: `dot-${i}`,
-      r: 3,
-      ...baseProps,
-      ...customDotProps,
-      // @ts-expect-error we're passing in a dataKey that Dot did not ask for
-      dataKey,
-      cx: entry.x,
-      cy: entry.y,
-      index: i,
-      payload: entry,
-    };
-
-    return renderDotItem(dot, dotProps);
-  });
-
-  return <Layer className="recharts-radar-dots">{dots}</Layer>;
-}
-
 function RadarLabelListProvider({
   showLabels,
   points,
@@ -319,7 +289,7 @@ function StaticPolygon({
 }: {
   points: ReadonlyArray<RadarPoint>;
   baseLinePoints: ReadonlyArray<RadarPoint>;
-  props: Props;
+  props: PropsWithDefaults;
 }) {
   if (points == null) {
     return null;
@@ -364,7 +334,7 @@ function StaticPolygon({
   return (
     <Layer className="recharts-radar-polygon">
       {radar}
-      <Dots props={props} points={points} />
+      <RadarDotsWrapper props={props} points={points} />
     </Layer>
   );
 }

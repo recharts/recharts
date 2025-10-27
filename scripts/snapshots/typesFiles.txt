@@ -53,6 +53,7 @@
   "types/component/Customized.d.ts",
   "types/component/DefaultLegendContent.d.ts",
   "types/component/DefaultTooltipContent.d.ts",
+  "types/component/Dots.d.ts",
   "types/component/Label.d.ts",
   "types/component/LabelList.d.ts",
   "types/component/Legend.d.ts",

@@ -2,13 +2,13 @@ import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
-import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
   LabelListFromLabelProp,
 } from '../component/LabelList';
+import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber } from '../util/DataUtils';
 import {
@@ -19,11 +19,11 @@ import {
   StackId,
 } from '../util/ChartUtils';
 import {
-  ActiveDotProps,
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   DataKey,
+  DotType,
   LegendType,
   NullableCoordinate,
   TickItem,
@@ -55,7 +55,7 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
-import { svgPropertiesAndEvents, svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -74,7 +74,7 @@ interface InternalAreaProps {
   connectNulls: boolean;
   data?: any[];
   dataKey: DataKey<any>;
-  dot: ActiveDotType;
+  dot: DotType;
   height: number;
   hide: boolean;
 
@@ -124,7 +124,7 @@ interface AreaProps {
    * imply the dataKey, but Area always needs an explicit dataKey.
    */
   dataKey: DataKey<any>;
-  dot?: ActiveDotType;
+  dot?: DotType;
   hide?: boolean;
   id?: string;
 
@@ -193,33 +193,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   };
 }
 
-const renderDotItem = (option: ActiveDotType, props: ActiveDotProps) => {
-  let dotItem;
-
-  if (React.isValidElement(option)) {
-    // @ts-expect-error when cloning, the event handler types do not match
-    dotItem = React.cloneElement(option, props);
-  } else if (typeof option === 'function') {
-    dotItem = option(props);
-  } else {
-    const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
-    dotItem = <Dot {...props} className={className} />;
-  }
-
-  return dotItem;
-};
-
-function shouldRenderDots(points: ReadonlyArray<AreaPointItem>, dot: InternalProps['dot']): boolean {
-  if (points == null) {
-    return false;
-  }
-  if (dot) {
-    return true;
-  }
-  return points.length === 1;
-}
-
-function Dots({
+function AreaDotsWrapper({
   clipPathId,
   points,
   props,
@@ -229,40 +203,19 @@ function Dots({
   props: WithoutId<InternalProps>;
 }) {
   const { needClip, dot, dataKey } = props;
+  const areaProps: DotsDotProps = svgPropertiesNoEvents(props);
 
-  if (!shouldRenderDots(points, dot)) {
-    return null;
-  }
-
-  const clipDot = isClipDot(dot);
-  const areaProps = svgPropertiesNoEvents(props);
-  const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
-
-  const dots = points.map((entry: AreaPointItem, i: number) => {
-    const dotProps: ActiveDotProps = {
-      key: `dot-${i}`,
-      r: 3,
-      ...areaProps,
-      ...customDotProps,
-      index: i,
-      cx: entry.x ?? undefined,
-      cy: entry.y ?? undefined,
-      dataKey,
-      value: entry.value,
-      payload: entry.payload,
-      // @ts-expect-error we're passing extra property 'points' that the props are not expecting
-      points,
-    };
-
-    return renderDotItem(dot, dotProps);
-  });
-  const dotsProps = {
-    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined,
-  };
   return (
-    <Layer className="recharts-area-dots" {...dotsProps}>
-      {dots}
-    </Layer>
+    <Dots
+      points={points}
+      dot={dot}
+      className="recharts-area-dots"
+      dotClassName="recharts-area-dot"
+      dataKey={dataKey}
+      baseProps={areaProps}
+      needClip={needClip}
+      clipPathId={clipPathId}
+    />
   );
 }
 
@@ -359,7 +312,7 @@ function StaticArea({
           )}
         </Layer>
       )}
-      <Dots points={points} props={propsWithoutId} clipPathId={clipPathId} />
+      <AreaDotsWrapper points={points} props={propsWithoutId} clipPathId={clipPathId} />
     </>
   );
 }

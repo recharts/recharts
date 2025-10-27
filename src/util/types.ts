@@ -29,6 +29,8 @@ import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
 import { SyncMethod } from '../synchronisation/types';
 import { isEventKey } from './excludeEventProps';
+import { DotPoint } from '../component/Dots';
+import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 
 /**
  * Determines how values are stacked:
@@ -185,7 +187,7 @@ type TransitionEventHandler<P, T = Element> = EventHandler<P, TransitionEvent<T>
 export interface DOMAttributesWithProps<P, T> {
   children?: ReactNode;
   dangerouslySetInnerHTML?: {
-    __html: string;
+    __html: string | TrustedHTML;
   };
 
   // Clipboard Events
@@ -938,7 +940,7 @@ export interface SankeyLink {
 export type Size = { width: number; height: number };
 
 /**
- * These are the props we are going to pass to an `activeDot` if it is a function or a custom Component
+ * These are the props we are going to pass to an `activeDot` or `dot` if it is a function or a custom Component
  */
 export type ActiveDotProps = DotProps & {
   payload: any;
@@ -981,6 +983,53 @@ export type ActiveDotType =
   | Partial<ActiveDotProps>
   /**
    * activeDot can be an element; it will get cloned and will receive new extra props.
+   * I do not recommend this way! Use React component instead, that way you get more predictable props.
+   */
+  | ReactElement<SVGProps<SVGElement>>;
+
+/**
+ * Inside the dot event handlers we provide extra information about the dot point
+ * that the Dot component itself does not need but users might find useful.
+ */
+export type DotItemDotProps = SVGPropsNoEvents<Omit<DotProps, 'points' | 'ref'>> & {
+  points: ReadonlyArray<DotPoint>;
+  index: number;
+  payload: any;
+  dataKey: DataKey<any> | undefined;
+  value: any;
+};
+
+/**
+ * This is the type of `dot` prop on:
+ * - Area
+ * - Line
+ * - Radar
+ */
+export type DotType =
+  /**
+   * true | false will turn the default dot on and off, respectively
+   */
+  | boolean
+  /**
+   * dot can be a custom React Component.
+   * It should return an SVG element because we are in SVG context - HTML won't work here.
+   * Unfortunately, if you write a regular old functional component and have it return SVG element,
+   * its default, inferred return type is `JSX.Element` and so if this return type was `SVGElement`
+   * then it would look like a type error (even when doing the right thing).
+   * So instead here we have ReactNode return type which is invalid in runtime
+   * (remember, we are in SVG context so HTML elements won't work, we need SVGElement).
+   * But better than forcing everyone to re-type their components I guess.
+   *
+   * Not that when a function, or a component is used, the props received are {@link DotItemDotProps}
+   * which contain some extra information compared to {@link DotProps}.
+   */
+  | ((props: DotItemDotProps) => ReactNode)
+  /**
+   * dot can be an object; props from here will be appended to the default dot
+   */
+  | Partial<DotProps>
+  /**
+   * dot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
   | ReactElement<SVGProps<SVGElement>>;
