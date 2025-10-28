@@ -11,27 +11,44 @@
     border: 1px solid #f5f5f5;
   }
 
-  .monaco-editor-wrapper {
-    .monaco-editor-toolbar {
+  .codemirror-wrapper {
+    .codemirror-toolbar {
       background-color: #f6f6f6;
       height: 40px;
-      line-height: 40px;
       padding: 0 10px;
+      padding-left: 20px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 8px;
 
-      .monaco-editor-toolbar-item {
-        display: inline-block;
+      .codemirror-toolbar-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         cursor: pointer;
-        line-height: 36px;
+        padding: 6px 12px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.2s;
+        line-height: 1;
 
         &:hover {
-          color: variables.$brand-primary;
+          background: variables.$brand-primary;
+          border-color: variables.$brand-primary;
+          color: white;
+        }
+
+        i {
+          font-size: 14px;
         }
       }
     }
 
-    #monaco-editor-container {
+    #codemirror-container {
       width: 720px;
       height: calc(100vh - 40px);
       resize: both;

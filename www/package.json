@@ -36,6 +36,12 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.10.0",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.6",
+    "@lezer/highlight": "^1.2.3",
     "@monaco-editor/react": "^4.7.0",
     "@stackblitz/sdk": "^1.11.0",
     "d3-scale": "^4.0.2",

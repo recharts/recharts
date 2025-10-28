@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
-import { TargetBlankLink } from './TargetBlankLink.tsx';
 import { sendEvent } from '../analytics.ts';
 
 type StackBlitzLinkProps = Readonly<{
@@ -108,15 +107,16 @@ export default defineConfig({
 `;
 
 /*
- * This creates a link that creates a new StackBlitz project
+ * This creates a button that creates a new StackBlitz project
  * with the provided code and opens it in a new tab.
  * This assumes that the code is a Recharts example component which exports the React component as the default export.
  * This uses TypeScript with full type checking enabled.
  */
 export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
   return (
-    <TargetBlankLink
-      href="#stackblitz-open-project"
+    <button
+      type="button"
+      className="codemirror-toolbar-item"
       onClick={e => {
         e.preventDefault();
         sendEvent({
@@ -165,6 +165,6 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
       }}
     >
       {children}
-    </TargetBlankLink>
+    </button>
   );
 }

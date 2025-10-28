@@ -1,7 +1,7 @@
 import { IndexView } from './IndexView';
 import { GuideView } from './GuideView';
 import { APIView } from './APIView';
-import { ExamplesView } from './ExamplesView';
+import { ExamplesViewNew as ExamplesView } from './ExamplesViewNew';
 import { ExamplesIndexView } from './ExamplesIndexView';
 import { Storybook } from './Storybook';
 import { NotFoundView } from './NotFoundView';
