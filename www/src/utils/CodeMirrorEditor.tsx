@@ -93,6 +93,9 @@ export function CodeMirrorEditor({ value, onChange, readOnly = true, className =
         '.cm-foldGutter': {
           width: '20px',
         },
+        '.cm-content': {
+          maxWidth: '100%',
+        },
       }),
       editableCompartment.current.of([]),
     ];

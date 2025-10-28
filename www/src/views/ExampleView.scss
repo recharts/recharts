@@ -50,6 +50,7 @@
 
     #codemirror-container {
       width: 720px;
+      max-width: 100%;
       height: calc(100vh - 40px);
       resize: both;
       overflow: auto;
@@ -75,7 +76,7 @@
       align-items: stretch;
     }
 
-    .monaco-editor-wrapper #monaco-editor-container {
+    .codemirror-wrapper #codemirror-container {
       width: 100%;
       height: calc(min(100vh, 500px) - 40px);
       resize: vertical;
