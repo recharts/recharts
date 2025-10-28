@@ -40,6 +40,7 @@ export const map = {
     customize: 'Customize',
     activeIndex: 'Active Index',
     sizes: 'Chart size',
+    domainAndTicks: 'Domain and Ticks',
   },
   installation: {
     installation: 'Installation',
