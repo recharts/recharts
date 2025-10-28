@@ -25,6 +25,31 @@ type CodeEditorWithPreviewProps = {
   analyticsLabel?: string;
 };
 
+type PreviewResultProps = {
+  Component: ComponentType;
+  isEditMode: boolean;
+  codeToRun: string | null;
+  Runner: any;
+};
+
+const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner }: PreviewResultProps) => {
+  // If in edit mode and code has been run, use react-runner
+  if (isEditMode && codeToRun && Runner) {
+    const scope = {
+      import: {
+        react: React,
+        recharts: RechartsScope,
+        'd3-shape': D3ShapeScope,
+      },
+    };
+
+    return <Runner code={codeToRun} scope={scope} />;
+  }
+
+  // Otherwise, render the actual component (faster, no parsing needed)
+  return <Component />;
+});
+
 /**
  * A component that displays a live preview of a React component alongside
  * an editable code editor. Supports lazy-loading of editing features.
@@ -81,29 +106,11 @@ export function CodeEditorWithPreview({
     setCodeToRun(editedCode);
   };
 
-  const renderResult = () => {
-    // If in edit mode and code has been run, use react-runner
-    if (isEditMode && codeToRun && Runner) {
-      const scope = {
-        import: {
-          react: React,
-          recharts: RechartsScope,
-          'd3-shape': D3ShapeScope,
-        },
-      };
-
-      return <Runner code={codeToRun} scope={scope} />;
-    }
-
-    // Otherwise, render the actual component (faster, no parsing needed)
-    return <Component />;
-  };
-
   const codeToDisplay = editedCode ?? sourceCode;
 
   return (
     <>
-      {renderResult()}
+      <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
       <div className="codemirror-wrapper">
         <div className="codemirror-toolbar">
           {!isEditMode ? (
