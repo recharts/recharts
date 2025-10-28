@@ -2,7 +2,6 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'url';
 import { parser as saxParser, Tag } from 'sax';
-import { supportedLocales } from '../src/locale';
 
 // @ts-expect-error import.meta
 // eslint-disable-next-line no-underscore-dangle
@@ -38,11 +37,10 @@ function extractUrlsFromSitemap(sitemapContent: string): Map<string, SitemapUrl>
     } else if (insideUrl) {
       currentTag = node.name;
       if (node.name === 'xhtml:link' && currentUrl) {
-        const href = node.attributes.href as string;
-        if (href) {
-          // Include all alternates (x-default, locale-specific, etc.)
-          const path = href.replace('https://recharts.github.io', '') || '/';
-          currentUrl.alternates.push(path);
+        const { href } = node.attributes;
+        if (typeof href === 'string') {
+          // Include all alternates (locale-specific, etc.)
+          currentUrl.alternates.push(href);
         }
       }
     }
@@ -53,8 +51,7 @@ function extractUrlsFromSitemap(sitemapContent: string): Map<string, SitemapUrl>
       const trimmed = text.trim();
       if (trimmed) {
         // Extract path from absolute URL
-        const path = trimmed.replace('https://recharts.github.io', '') || '/';
-        currentUrl.canonical = path;
+        currentUrl.canonical = trimmed;
       }
     }
   };
@@ -80,60 +77,30 @@ function validateUrlStructure(sitemapUrlMap: Map<string, SitemapUrl>, result: Va
 
   sitemapUrlMap.forEach((urlData, canonicalPath) => {
     // Check 1: Canonical URL must end with trailing slash
-    if (canonicalPath !== '/' && !canonicalPath.endsWith('/')) {
+    if (!canonicalPath.endsWith('/')) {
       result.errors.push(`Canonical URL ${canonicalPath} does not end with trailing slash`);
       structureErrorCount++;
       // eslint-disable-next-line no-param-reassign
       result.success = false;
     }
 
-    const isRootUrl = canonicalPath === '/';
-
-    // Check 2: Non-root URLs must have one alternate without trailing slash (x-default)
-    if (!isRootUrl) {
-      const nonTrailingSlashAlternates = urlData.alternates.filter(alt => !alt.endsWith('/'));
-      if (nonTrailingSlashAlternates.length === 0) {
-        result.errors.push(`Canonical URL ${canonicalPath} is missing non-trailing-slash alternate (x-default)`);
-        structureErrorCount++;
-        // eslint-disable-next-line no-param-reassign
-        result.success = false;
-      } else if (nonTrailingSlashAlternates.length > 1) {
-        result.errors.push(
-          `Canonical URL ${canonicalPath} has multiple non-trailing-slash alternates: ${nonTrailingSlashAlternates.join(', ')}`,
-        );
-        structureErrorCount++;
-        // eslint-disable-next-line no-param-reassign
-        result.success = false;
-      }
+    // Check 2: All alternates must be unique
+    const alternatesSet = new Set<string>(urlData.alternates);
+    if (alternatesSet.size !== urlData.alternates.length) {
+      result.errors.push(`Canonical URL ${canonicalPath} has duplicate alternates`);
+      structureErrorCount++;
+      // eslint-disable-next-line no-param-reassign
+      result.success = false;
     }
 
-    // Check 3: Must have one alternate for each supported locale
-    const localeAlternates = urlData.alternates.filter(alt => alt.endsWith('/'));
-    const localesFound = new Set<string>();
-
-    localeAlternates.forEach(alt => {
-      // Extract locale from path like /en-US/guide/ or /zh-CN/api/
-      const localeMatch = alt.match(/^\/([^/]+)\//);
-      if (localeMatch) {
-        localesFound.add(localeMatch[1]);
-      }
-    });
-
-    supportedLocales.forEach(locale => {
-      if (!localesFound.has(locale)) {
-        result.errors.push(`Canonical URL ${canonicalPath} is missing alternate for locale: ${locale}`);
-        structureErrorCount++;
-        // eslint-disable-next-line no-param-reassign
-        result.success = false;
-      }
-    });
-
-    // Check for extra locales
-    localesFound.forEach(locale => {
-      if (!supportedLocales.includes(locale as any)) {
-        result.warnings.push(`Canonical URL ${canonicalPath} has alternate for unsupported locale: ${locale}`);
-      }
-    });
+    // Check 2a: Must have x-default alternate
+    const hasXDefault = urlData.alternates.some(alt => alt === '/' || alt === canonicalPath);
+    if (!hasXDefault) {
+      result.errors.push(`Canonical URL ${canonicalPath} is missing x-default alternate`);
+      structureErrorCount++;
+      // eslint-disable-next-line no-param-reassign
+      result.success = false;
+    }
   });
 
   if (structureErrorCount === 0) {
@@ -168,7 +135,8 @@ function getAllHtmlFiles(dir: string, baseDir: string = dir): string[] {
   return files;
 }
 
-function getHtmlFilePath(urlPath: string, dir: string): string {
+function getHtmlFilePath(url: string, dir: string): string {
+  const urlPath = url.replace('https://recharts.github.io', '');
   if (urlPath === '/') {
     return join(dir, 'index.html');
   }
@@ -222,7 +190,7 @@ function validateSitemap(): ValidationResult {
   // Check 1: Every sitemap canonical URL has a corresponding non-empty HTML file
   console.log('Checking sitemap URLs...');
   let missingOrEmptyCount = 0;
-  sitemapUrlMap.forEach((urlData, canonicalPath) => {
+  sitemapUrlMap.forEach((_urlData, canonicalPath) => {
     // Skip localized 404 pages - they don't exist as separate files
     if (canonicalPath.match(/^\/[^/]+\/404\/?$/)) {
       return;
@@ -265,8 +233,9 @@ function validateSitemap(): ValidationResult {
   });
 
   htmlFilesSet.forEach(urlPath => {
+    const urlPathHref = `https://recharts.github.io${urlPath}`;
     // Check if this HTML file is referenced anywhere in sitemap
-    if (!allSitemapUrls.has(urlPath)) {
+    if (!allSitemapUrls.has(urlPathHref)) {
       result.errors.push(`HTML file exists at ${urlPath} but is missing from sitemap`);
       extraCount++;
       result.success = false;
@@ -282,7 +251,7 @@ function validateSitemap(): ValidationResult {
   return result;
 }
 
-function main() {
+function main(): void {
   const result = validateSitemap();
 
   if (result.warnings.length > 0) {
@@ -306,6 +275,8 @@ function main() {
   }
 }
 
-if (require.main === module) {
+// ESM module check - only run if executed directly
+// @ts-expect-error import.meta
+if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

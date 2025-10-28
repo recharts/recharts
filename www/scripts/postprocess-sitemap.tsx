@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve, dirname } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'url';
 import { parser as saxParser, Tag } from 'sax';
 
@@ -24,7 +24,21 @@ interface UrlEntry {
   alternates: AlternateLink[];
 }
 
-function postprocessSitemap() {
+function makeCanonicalUrl(url: string): string {
+  if (url.endsWith('/')) {
+    return url;
+  }
+  return `${url}/`;
+}
+
+function makeAlternateUrl(url: string): string {
+  if (url.endsWith('/')) {
+    return url.slice(0, -1);
+  }
+  return url;
+}
+
+function postprocessSitemap(): void {
   console.log('\n🔧 Postprocessing sitemap...\n');
 
   const sitemapContent = readFileSync(sitemapPath, 'utf-8');
@@ -47,9 +61,8 @@ function postprocessSitemap() {
     } else if (insideUrl && currentUrl) {
       currentTag = node.name;
       if (node.name === 'xhtml:link') {
-        const href = node.attributes.href as string;
-        const hreflang = node.attributes.hreflang as string;
-        if (href && hreflang) {
+        const { href, hreflang } = node.attributes;
+        if (typeof href === 'string' && typeof hreflang === 'string') {
           currentUrl.alternates.push({ href, hreflang });
         }
       }
@@ -94,50 +107,56 @@ function postprocessSitemap() {
   output += ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
   output += ' xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">';
 
-  let addedCount = 0;
+  let processedCount = 0;
 
   urlEntries.forEach(entry => {
     const { loc } = entry;
 
-    // Determine canonical URL (with trailing slash) and alternate (without)
-    const isRootUrl = loc.endsWith('recharts.github.io/');
-    const canonicalUrl = isRootUrl || loc.endsWith('/') ? loc : `${loc}/`;
-    const shouldAddNonTrailingSlashAlternate = !isRootUrl;
+    // Security: Validate URL starts with expected domain
+    if (!loc.startsWith('https://recharts.github.io')) {
+      console.warn(`⚠️  Skipping invalid URL: ${loc}`);
+      return;
+    }
 
     output += '<url>';
-    output += `<loc>${canonicalUrl}</loc>`;
-    if (entry.lastmod) output += `<lastmod>${entry.lastmod}</lastmod>`;
+    // Determine canonical URL (with trailing slash) and set that as the default
+    output += `<loc>${makeCanonicalUrl(loc)}</loc>`;
+    // add x-default for the canonical variant
+    output += `<xhtml:link rel="alternate" hreflang="x-default" href="${makeCanonicalUrl(loc)}"/>`;
+    // Add xhtml:link for canonical URL without trailing slash
+    output += `<xhtml:link rel="alternate" href="${makeAlternateUrl(loc)}"/>`;
+
+    // Add locale alternates with and without trailing slashes to match HTML file structure
+    entry.alternates.forEach(alt => {
+      // Security: Validate alternate URL
+      if (!alt.href.startsWith('https://recharts.github.io')) {
+        return;
+      }
+
+      output += `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${makeCanonicalUrl(alt.href)}"/>`;
+      output += `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${makeAlternateUrl(alt.href)}"/>`;
+    });
+
+    // other metadata
+    if (entry.lastmod) {
+      output += `<lastmod>${entry.lastmod}</lastmod>`;
+    }
     output += `<changefreq>${entry.changefreq}</changefreq>`;
     output += `<priority>${entry.priority}</priority>`;
 
-    // Add non-trailing-slash alternate (x-default) for all non-root URLs
-    if (shouldAddNonTrailingSlashAlternate) {
-      const noTrailingSlash = canonicalUrl.slice(0, -1);
-      output += `<xhtml:link rel="alternate" hreflang="x-default" href="${noTrailingSlash}"/>`;
-      addedCount++;
-    }
-
-    // Re-add existing alternates (locale links) - skip x-default as we add it ourselves
-    // Also ensure locale alternates have trailing slashes to match HTML file structure
-    entry.alternates.forEach(alt => {
-      if (alt.hreflang !== 'x-default') {
-        // Ensure locale URLs also have trailing slashes
-        let altHref = alt.href;
-        if (!altHref.endsWith('/') && !altHref.endsWith('recharts.github.io')) {
-          altHref += '/';
-        }
-        output += `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${altHref}"/>`;
-      }
-    });
-
     output += '</url>';
+    processedCount++;
   });
 
   output += '</urlset>';
 
   writeFileSync(sitemapPath, output);
-  console.log(`✓ Added ${addedCount} non-trailing-slash alternates to sitemap`);
+  console.log(`✓ Processed ${processedCount} URLs with locale alternates`);
   console.log('✨ Sitemap postprocessing complete!\n');
 }
 
-postprocessSitemap();
+// ESM module check - only run if executed directly
+// @ts-expect-error import.meta
+if (import.meta.url === `file://${process.argv[1]}`) {
+  postprocessSitemap();
+}
