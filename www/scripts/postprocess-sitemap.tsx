@@ -31,13 +31,6 @@ function makeCanonicalUrl(url: string): string {
   return `${url}/`;
 }
 
-function makeAlternateUrl(url: string): string {
-  if (url.endsWith('/')) {
-    return url.slice(0, -1);
-  }
-  return url;
-}
-
 function isRootUrl(url: string): boolean {
   return url === 'https://recharts.github.io/';
 }
@@ -133,8 +126,6 @@ function postprocessSitemap(): void {
     if (isRootUrl(loc)) {
       output += `<xhtml:link rel="alternate" hreflang="x-default" href="${makeCanonicalUrl(loc)}"/>`;
     }
-    // Add xhtml:link for canonical URL without trailing slash
-    output += `<xhtml:link rel="alternate" href="${makeAlternateUrl(loc)}"/>`;
 
     // Add locale alternates with and without trailing slashes to match HTML file structure
     entry.alternates.forEach(alt => {
@@ -144,7 +135,6 @@ function postprocessSitemap(): void {
       }
 
       output += `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${makeCanonicalUrl(alt.href)}"/>`;
-      output += `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${makeAlternateUrl(alt.href)}"/>`;
     });
 
     // other metadata

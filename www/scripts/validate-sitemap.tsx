@@ -95,7 +95,7 @@ function validateUrlStructure(sitemapUrlMap: Map<string, SitemapUrl>, result: Va
   });
 
   if (structureErrorCount === 0) {
-    console.log('✓ All URLs have correct structure (trailing slash, x-default, and locale alternates)\n');
+    console.log('✓ All URLs have correct structure (trailing slash, and unique alternates)\n');
   } else {
     console.log(`✗ Found ${structureErrorCount} URL structure errors\n`);
   }
