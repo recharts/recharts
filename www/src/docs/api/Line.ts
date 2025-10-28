@@ -67,6 +67,19 @@ export const LineAPI: ApiDoc = {
       },
     },
     {
+      name: 'shape',
+      type: 'ReactElement | Function',
+      defaultVal: 'undefined',
+      isOptional: true,
+      desc: {
+        'en-US':
+          'If set a ReactElement, the shape of line can be customized. If set a function, the function will be called to render customized shape.',
+        'zh-CN':
+          '线条的图形配置，接收多种配置。当值是一个 React Element ，会克隆这个 React Element 来渲染"线条"。当值是函数时，会调用这个函数去渲染自定义的"线条"。',
+      },
+      format: ['<Line dataKey="value" shape={<CustomizedShape/>}/>', '<Line dataKey="value" shape={renderShape}/>'],
+    },
+    {
       name: 'dot',
       type: 'Boolean | Object | ReactElement | Function',
       defaultVal: 'true',

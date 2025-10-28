@@ -7,6 +7,7 @@ import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { Symbols, SymbolsProps } from '../shape/Symbols';
+import { Curve } from '../shape/Curve';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -21,7 +22,7 @@ import { Symbols, SymbolsProps } from '../shape/Symbols';
  * to the value of props.shapeType that is passed to the root.
  *
  */
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
+type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols' | 'curve';
 
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
@@ -61,6 +62,8 @@ function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
         return <Symbols {...elementProps} />;
       }
       break;
+    case 'curve':
+      return <Curve {...elementProps} />;
     default:
       return null;
   }

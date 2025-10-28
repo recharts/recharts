@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, MutableRefObject, ReactNode, Ref, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
-import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
+import { CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -18,6 +18,7 @@ import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveDotType,
+  ActiveShape,
   AnimationDuration,
   AnimationTiming,
   DataKey,
@@ -50,6 +51,7 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
+import { Shape } from '../util/ActiveShapeUtils';
 
 export interface LinePointItem {
   readonly value: number;
@@ -85,6 +87,7 @@ interface InternalLineProps {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
+  shape?: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -123,6 +126,7 @@ interface LineProps {
 
   label?: ImplicitLabelListType;
   legendType?: LegendType;
+  shape?: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   onAnimationEnd?: () => void;
@@ -303,7 +307,7 @@ function StaticCurve({
   props: InternalProps;
   strokeDasharray?: string;
 }) {
-  const { type, layout, connectNulls, needClip, ...others } = props;
+  const { type, layout, connectNulls, needClip, shape, ...others } = props;
   const curveProps: CurveProps = {
     ...svgPropertiesAndEvents(others),
     fill: 'none',
@@ -318,7 +322,7 @@ function StaticCurve({
 
   return (
     <>
-      {points?.length > 1 && <Curve {...curveProps} pathRef={pathRef} />}
+      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
