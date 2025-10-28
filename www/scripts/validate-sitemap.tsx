@@ -92,15 +92,6 @@ function validateUrlStructure(sitemapUrlMap: Map<string, SitemapUrl>, result: Va
       // eslint-disable-next-line no-param-reassign
       result.success = false;
     }
-
-    // Check 2a: Must have x-default alternate
-    const hasXDefault = urlData.alternates.some(alt => alt === '/' || alt === canonicalPath);
-    if (!hasXDefault) {
-      result.errors.push(`Canonical URL ${canonicalPath} is missing x-default alternate`);
-      structureErrorCount++;
-      // eslint-disable-next-line no-param-reassign
-      result.success = false;
-    }
   });
 
   if (structureErrorCount === 0) {

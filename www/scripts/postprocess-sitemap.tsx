@@ -38,6 +38,14 @@ function makeAlternateUrl(url: string): string {
   return url;
 }
 
+function isRootUrl(url: string): boolean {
+  return url === 'https://recharts.github.io/';
+}
+
+function isLegitRechartsUrl(url: string): boolean {
+  return url === 'https://recharts.github.io' || url.startsWith('https://recharts.github.io/');
+}
+
 function postprocessSitemap(): void {
   console.log('\n🔧 Postprocessing sitemap...\n');
 
@@ -113,7 +121,7 @@ function postprocessSitemap(): void {
     const { loc } = entry;
 
     // Security: Validate URL starts with expected domain
-    if (!loc.startsWith('https://recharts.github.io')) {
+    if (!isLegitRechartsUrl(loc)) {
       console.warn(`⚠️  Skipping invalid URL: ${loc}`);
       return;
     }
@@ -121,15 +129,17 @@ function postprocessSitemap(): void {
     output += '<url>';
     // Determine canonical URL (with trailing slash) and set that as the default
     output += `<loc>${makeCanonicalUrl(loc)}</loc>`;
-    // add x-default for the canonical variant
-    output += `<xhtml:link rel="alternate" hreflang="x-default" href="${makeCanonicalUrl(loc)}"/>`;
+    // add x-default for the canonical variant for root URL only
+    if (isRootUrl(loc)) {
+      output += `<xhtml:link rel="alternate" hreflang="x-default" href="${makeCanonicalUrl(loc)}"/>`;
+    }
     // Add xhtml:link for canonical URL without trailing slash
     output += `<xhtml:link rel="alternate" href="${makeAlternateUrl(loc)}"/>`;
 
     // Add locale alternates with and without trailing slashes to match HTML file structure
     entry.alternates.forEach(alt => {
       // Security: Validate alternate URL
-      if (!alt.href.startsWith('https://recharts.github.io')) {
+      if (!isLegitRechartsUrl(alt.href)) {
         return;
       }
 
