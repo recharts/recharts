@@ -20,7 +20,7 @@ export function Frame(props: FrameProps) {
       <Helmet titleTemplate="%s | Recharts" />
       <header>
         <h1 className="logo">
-          <Link className="nav-logo" to={`/${locale}`}>
+          <Link className="nav-logo" to={`/${locale}/`}>
             &lt;Recharts /&gt;
           </Link>
         </h1>

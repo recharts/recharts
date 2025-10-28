@@ -152,7 +152,7 @@ class APIViewImpl extends PureComponent<RouteComponentProps, APIViewState> {
             <li key={entry} className="api-component-item">
               {entry.indexOf('svg') < 0 ? (
                 <code>
-                  <Link to={`/${locale}/api/${entry}`}>{`<${entry} />`}</Link>
+                  <Link to={`/${locale}/api/${entry}/`}>{`<${entry} />`}</Link>
                 </code>
               ) : (
                 <span>{entry}</span>
@@ -173,7 +173,7 @@ class APIViewImpl extends PureComponent<RouteComponentProps, APIViewState> {
             <li key={entry} className="api-component-item">
               {entry.indexOf('svg') < 0 ? (
                 <code>
-                  <Link to={`/${locale}/api/${entry}`}>{`<${entry} />`}</Link>
+                  <Link to={`/${locale}/api/${entry}/`}>{`<${entry} />`}</Link>
                 </code>
               ) : (
                 <span>{entry}</span>

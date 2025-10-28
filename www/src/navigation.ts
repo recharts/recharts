@@ -59,7 +59,7 @@ function guideNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
   const items = allGuides.map(name => ({
     key: name,
     displayName: localeGet(locale, 'guide', name),
-    url: `/${locale}/guide/${name}`,
+    url: `/${locale}/guide/${name}/`,
   }));
   // The "Guide" page has only one category, without any names. As we add more categories in the future, we will adjust this.
   return [
@@ -80,7 +80,7 @@ function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       items: items.map(compName => ({
         key: compName,
         displayName: compName,
-        url: `/${locale}/api/${compName}`,
+        url: `/${locale}/api/${compName}/`,
       })),
       NavPreview: null,
     }),
@@ -96,7 +96,7 @@ function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       items: Object.keys(allExamples[cate].examples).map(name => ({
         key: name,
         displayName: allExamples[cate].examples[name].name,
-        url: `/${locale}/examples/${name}`,
+        url: `/${locale}/examples/${name}/`,
       })),
       NavPreview: allExamples[cate].NavPreview,
     }),
@@ -108,22 +108,22 @@ export function getAllNavigationItems(locale: SupportedLocale): Navigation {
     {
       key: 'guide',
       displayName: localeGet(locale, 'frame', 'guide'),
-      url: `/${locale}/guide`,
+      url: `/${locale}/guide/`,
       categories: guideNavItems(locale),
     },
     {
       key: 'api',
       displayName: localeGet(locale, 'frame', 'api'),
-      url: `/${locale}/api`,
+      url: `/${locale}/api/`,
       categories: apiNavItems(locale),
     },
     {
       key: 'examples',
       displayName: localeGet(locale, 'frame', 'examples'),
-      url: `/${locale}/examples`,
+      url: `/${locale}/examples/`,
       categories: exampleNavItems(locale),
     },
-    { key: 'storybook', displayName: localeGet(locale, 'frame', 'storybook'), url: `/${locale}/storybook` },
+    { key: 'storybook', displayName: localeGet(locale, 'frame', 'storybook'), url: `/${locale}/storybook/` },
     { key: 'wiki', displayName: 'Wiki', url: 'https://github.com/recharts/recharts/wiki', targetBlank: true },
     { key: 'github', displayName: 'GitHub', url: 'https://github.com/recharts/recharts', targetBlank: true },
   ];

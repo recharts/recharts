@@ -110,7 +110,7 @@ export function ChartSizing() {
         chart component itself (by setting its <code>style</code>).
       </p>
       <p>
-        See <Link to={`/${locale}/examples/PieChartInFlexbox`}>this example of a PieChart in a flexbox container</Link>{' '}
+        See <Link to={`/${locale}/examples/PieChartInFlexbox/`}>this example of a PieChart in a flexbox container</Link>{' '}
         for a demonstration.
       </p>
       <h2>Usage with CSS grid</h2>
@@ -119,7 +119,7 @@ export function ChartSizing() {
         they will adapt to the size of the cell.
       </p>
       <p>
-        See <Link to={`/${locale}/examples/PieChartInGrid`}>this example of a PieChart in a grid container</Link> for a
+        See <Link to={`/${locale}/examples/PieChartInGrid/`}>this example of a PieChart in a grid container</Link> for a
         demonstration.
       </p>
       <h2>Automatic resizing on older Recharts versions</h2>
@@ -127,13 +127,13 @@ export function ChartSizing() {
         The <code>responsive</code> prop is only available in Recharts 3.3 and later. If you are using an older version
         of Recharts, you can use the{' '}
         <code>
-          <Link to={`/${locale}/api/ResponsiveContainer`}>ResponsiveContainer</Link>
+          <Link to={`/${locale}/api/ResponsiveContainer/`}>ResponsiveContainer</Link>
         </code>{' '}
         component to achieve similar effect. It is not quite as flexible as the <code>responsive</code> prop, but it
         works.
       </p>
       <p>
-        See the <Link to={`/${locale}/api/ResponsiveContainer`}>API docs</Link> for more details and examples.
+        See the <Link to={`/${locale}/api/ResponsiveContainer/`}>API docs</Link> for more details and examples.
       </p>
       <div style={{ height: '400px' }}>
         <ResponsiveContainer width="100%" maxHeight={400}>

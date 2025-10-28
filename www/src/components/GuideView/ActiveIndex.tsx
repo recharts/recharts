@@ -19,8 +19,8 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
       </p>
       <h2>What should I do instead?</h2>
       <p>
-        <Link to={`/${locale}/api/Tooltip`}>Tooltip</Link> component is controlling user interaction with the chart. Use
-        Tooltip!
+        <Link to={`/${locale}/api/Tooltip/`}>Tooltip</Link> component is controlling user interaction with the chart.
+        Use Tooltip!
       </p>
       <p>Tooltip has several props that allow you to control the interaction in detail:</p>
       <ul>
