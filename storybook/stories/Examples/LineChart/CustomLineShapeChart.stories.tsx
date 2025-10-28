@@ -25,13 +25,13 @@ export default {
   },
 };
 
-type CustomLineShape = {
+type CustomLineShapeProps = {
   tick: ReactElement;
   tickInterval?: number;
 };
 
-const CustomLineShape = (props: CustomLineShape) => {
-  const { tick, tickInterval = 30, ...restProps } = props as CustomLineShape & CurveProps;
+const CustomLineShapeProps = (props: CurveProps & CustomLineShapeProps) => {
+  const { tick, tickInterval = 30, ...restProps } = props;
   const { points } = restProps;
 
   const ticks: ReactElement[] = [];
@@ -100,13 +100,20 @@ export const CustomLineShapeChart = {
             dataKey="pv"
             stroke="#8884d8"
             activeDot={{ r: 8 }}
-            shape={<CustomLineShape tick={<circle r={5} fill="currentColor" />} />}
+            shape={(payload: CurveProps) => (
+              <CustomLineShapeProps {...payload} tick={<circle r={5} fill="currentColor" />} />
+            )}
           />
           <Line
             type="linear"
             dataKey="uv"
             stroke="#82ca9d"
-            shape={<CustomLineShape tick={<rect x={-5} y={-5} width={10} height={10} fill="currentColor" />} />}
+            shape={(payload: CurveProps) => (
+              <CustomLineShapeProps
+                {...payload}
+                tick={<rect x={-5} y={-5} width={10} height={10} fill="currentColor" />}
+              />
+            )}
           />
           <RechartsHookInspector />
         </LineChart>
