@@ -1,4 +1,3 @@
-import { areaChartApiExamples } from './AreaChart';
 import { barChartApiExamples } from './BarChart';
 import { composedChartApiExamples } from './ComposedChart';
 import { lineChartApiExamples } from './LineChart';
@@ -18,10 +17,11 @@ import { errorBarApiExamples } from './ErrorBar';
 import { labelApiExamples } from './Label.tsx';
 import { labelListApiExamples } from './LabelList';
 import { funnelChartApiExamples } from './FunnelChart';
-import { ApiExample } from '../api/types';
 import { funnelApiExamples } from './Funnel.tsx';
+import { ChartExample } from '../exampleComponents/types.ts';
+import { areaChartApiExamples } from './AreaChart';
 
-export const allApiExamples: Record<string, ReadonlyArray<ApiExample>> = {
+export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
   BarChart: barChartApiExamples,
   LineChart: lineChartApiExamples,
