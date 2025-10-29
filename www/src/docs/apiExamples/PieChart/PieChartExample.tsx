@@ -1,5 +1,6 @@
 import { PieChart, Pie } from 'recharts';
 
+// #region Sample data
 const data01 = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -18,6 +19,7 @@ const data02 = [
   { name: 'Group F', value: 4800 },
 ];
 
+// #endregion
 export const PieChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <PieChart
     style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}

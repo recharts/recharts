@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell } from 'recharts';
 
+// #region Sample data
 const data = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
@@ -10,6 +11,7 @@ const data = [
 ];
 const colors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 'url(#pattern-checkers)'];
 
+// #endregion
 const CellPieExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive>
     <defs>

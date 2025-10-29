@@ -1,5 +1,6 @@
 import { BarChart, XAxis, YAxis, Tooltip, Bar } from 'recharts';
 
+// #region Sample data
 const rangeData = [
   { day: '05-01', temperature: [-1, 10] },
   { day: '05-02', temperature: [2, 15] },
@@ -12,6 +13,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
+// #endregion
 const BarChartRangeExample = ({ isAnimationActive = true }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

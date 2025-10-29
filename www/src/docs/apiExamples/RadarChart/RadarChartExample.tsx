@@ -1,5 +1,6 @@
 import { RadarChart, Radar, PolarAngleAxis, PolarRadiusAxis, Legend, PolarGrid } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     subject: 'Math',
@@ -39,6 +40,7 @@ const data = [
   },
 ];
 
+// #endregion
 export const RadarChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <RadarChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive data={data}>
     <PolarGrid />

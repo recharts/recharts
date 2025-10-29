@@ -1,5 +1,6 @@
 import { ResponsiveContainer, AreaChart, ReferenceLine, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 export const ResponsiveContainerExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <ResponsiveContainer width="100%" aspect={1.618} maxHeight={500}>
     <AreaChart

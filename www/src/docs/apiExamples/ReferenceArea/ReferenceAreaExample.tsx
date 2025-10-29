@@ -1,5 +1,6 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ReferenceArea } from 'recharts';
 
+// #region Sample data
 const data01 = [
   { x: 100, y: 200, z: 200 },
   { x: 120, y: 100, z: 260 },
@@ -18,6 +19,7 @@ const data02 = [
   { x: 210, y: 220, z: 230 },
 ];
 
+// #endregion
 const ReferenceAreaExample = ({ isAnimationActive = true }) => (
   <ScatterChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

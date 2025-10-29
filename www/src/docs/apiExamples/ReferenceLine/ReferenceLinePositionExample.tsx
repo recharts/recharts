@@ -1,5 +1,6 @@
 import { ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts';
 
+// #region Sample data
 const smallData = [
   {
     name: 'Page A',
@@ -15,6 +16,7 @@ const smallData = [
   },
 ];
 
+// #endregion
 export const ReferenceLinePositionExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

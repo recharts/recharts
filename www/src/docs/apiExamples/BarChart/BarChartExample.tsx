@@ -1,5 +1,6 @@
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -38,6 +39,7 @@ const data = [
   },
 ];
 
+// #endregion
 const BarChartExample = ({ isAnimationActive = true }) => (
   <BarChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
     <CartesianGrid strokeDasharray="3 3" />

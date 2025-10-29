@@ -1,5 +1,6 @@
 import { Label, LineChart, PlotArea, Rectangle, usePlotArea } from 'recharts';
 
+// #region helper component
 const PlotAreaRectangle = () => {
   const plotArea: PlotArea | undefined = usePlotArea();
   if (plotArea == null) {
@@ -17,6 +18,7 @@ const PlotAreaRectangle = () => {
   );
 };
 
+// #endregion
 const LabelCartesianPositions = () => {
   return (
     <LineChart

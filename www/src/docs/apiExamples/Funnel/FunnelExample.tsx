@@ -1,6 +1,7 @@
 import { FunnelChart, Funnel, LabelList, Trapezoid, Label } from 'recharts';
 import { FunnelTrapezoidItem } from 'recharts/types/cartesian/Funnel';
 
+// #region Sample data
 const data = [
   { value: 100, name: 'Impression', fill: '#8884d8' },
   { value: 80, name: 'Click', fill: '#83a6ed' },
@@ -26,6 +27,7 @@ const FunnelWithDimensions = (props: FunnelTrapezoidItem) => {
   );
 };
 
+// #endregion
 const FunnelExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => {
   return (
     <FunnelChart

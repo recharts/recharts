@@ -1,5 +1,6 @@
 import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter, ErrorBar } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     x: 45,
@@ -52,6 +53,7 @@ const data = [
   },
 ];
 
+// #endregion
 const ErrorBarExample = ({ isAnimationActive = true }) => (
   <ScatterChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

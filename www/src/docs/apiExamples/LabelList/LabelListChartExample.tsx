@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Label, LabelList } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -27,6 +28,7 @@ const data = [
   },
 ];
 
+// #endregion
 const LabelListChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

@@ -6,6 +6,7 @@ type DataEntry = {
   z?: number;
 };
 
+// #region Sample data
 const data: DataEntry[] = [
   { x: 100, y: 200, z: 200 },
   { x: 120, y: 100, z: 260 },
@@ -31,6 +32,7 @@ const getMeanValue = (o: ReadonlyArray<DataEntry>) => {
   );
 };
 
+// #endregion
 export const ReferenceDotExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => {
   const mean = getMeanValue(data);
 

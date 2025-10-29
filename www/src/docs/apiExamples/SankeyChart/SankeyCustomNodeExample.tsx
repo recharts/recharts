@@ -1,5 +1,6 @@
 import { ResponsiveContainer, Sankey, Tooltip, useChartWidth, Layer, Rectangle } from 'recharts';
 
+// #region Sample data
 const data0 = {
   nodes: [
     { name: 'Visit' },
@@ -16,6 +17,7 @@ const data0 = {
   ],
 };
 
+// #endregion
 function MyCustomSankeyNode({ x, y, width, height, index, payload }: any) {
   const containerWidth = useChartWidth();
   if (containerWidth == null) {

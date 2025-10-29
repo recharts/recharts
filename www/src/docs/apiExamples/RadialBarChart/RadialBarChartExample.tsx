@@ -1,5 +1,6 @@
 import { RadialBarChart, RadialBar, Legend, Tooltip } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: '18-24',
@@ -45,6 +46,7 @@ const data = [
   },
 ];
 
+// #endregion
 export const RadialBarChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <RadialBarChart
     style={{ width: '100%', maxWidth: '500px', aspectRatio: 2 }}

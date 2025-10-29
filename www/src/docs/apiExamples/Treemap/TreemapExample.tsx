@@ -1,5 +1,6 @@
 import { ResponsiveContainer, Treemap } from 'recharts';
 
+// #region Sample data
 const data = [
   {
     name: 'axis',
@@ -133,6 +134,7 @@ const data = [
   },
 ];
 
+// #endregion
 export const TreemapExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <ResponsiveContainer width="100%" aspect={4 / 3}>
     <Treemap
