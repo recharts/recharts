@@ -47,7 +47,7 @@ describe('<ComposedChart />', () => {
         <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId="right" />
       </ComposedChart>,
     );
-    expect(container.querySelectorAll('.recharts-line .recharts-line-dot')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-bar .recharts-bar-rectangle')).toHaveLength(1);
   });
 

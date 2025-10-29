@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Key, MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
+import {
+  ComponentType,
+  Key,
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
@@ -70,6 +80,8 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type Rectangle = {
   x: number | null;
@@ -92,7 +104,7 @@ export interface BarRectangleItem extends RectangleProps {
   height: number;
 }
 
-export interface BarProps {
+export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
   xAxisId?: string | number;
@@ -361,6 +373,21 @@ function BarRectangleWithActiveState(props: {
   const isActive: boolean =
     activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
   const option = isActive ? activeBar : shape;
+  if (isActive) {
+    return (
+      <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
+        <BarRectangle
+          {...baseProps}
+          name={String(baseProps.name)}
+          {...entry}
+          isActive={isActive}
+          option={option}
+          index={index}
+          dataKey={dataKey}
+        />
+      </ZIndexLayer>
+    );
+  }
   return (
     <BarRectangle
       {...baseProps}
@@ -632,6 +659,7 @@ const defaultBarProps = {
   minPointSize: defaultMinPointSize,
   xAxisId: 0,
   yAxisId: 0,
+  zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<Props>;
 
 type BarImplProps = Omit<InternalBarProps, 'layout' | 'data'> & { children?: ReactNode };
@@ -844,12 +872,14 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
           />
-          <BarImpl {...props} id={id} />
+          <ZIndexLayer zIndex={props.zIndex}>
+            <BarImpl {...props} id={id} />
+          </ZIndexLayer>
         </>
       )}
     </RegisterGraphicalItemId>
   );
 }
 
-export const Bar = React.memo(BarFn);
+export const Bar: ComponentType<Props> = React.memo(BarFn);
 Bar.displayName = 'Bar';

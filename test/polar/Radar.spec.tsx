@@ -11,6 +11,7 @@ import { RadarSettings } from '../../src/state/types/RadarSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 type Point = { x?: number | string; y?: number | string };
 const CustomizedShape = ({ points }: { points: Point[] }) => {
@@ -315,6 +316,7 @@ describe('<Radar />', () => {
           onMouseLeave: handleMouseLeave,
           points,
           radiusAxisId: 0,
+          zIndex: DefaultZIndexes.area,
         },
         expect.any(Object),
       );
@@ -341,6 +343,7 @@ describe('<Radar />', () => {
           onMouseLeave: handleMouseLeave,
           points,
           radiusAxisId: 0,
+          zIndex: DefaultZIndexes.area,
         },
         expect.any(Object),
       );

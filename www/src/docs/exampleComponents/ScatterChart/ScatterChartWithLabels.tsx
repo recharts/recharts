@@ -1,4 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, LabelList } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, ZAxis } from 'recharts';
 
 // #region Sample data
 const data = [
@@ -14,7 +14,7 @@ const data = [
 const ScatterChartWithLabels = () => {
   return (
     <ScatterChart
-      style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
       margin={{
         top: 20,
@@ -28,8 +28,9 @@ const ScatterChartWithLabels = () => {
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter name="A school" data={data} fill="#8884d8">
-        <LabelList dataKey="x" position="top" />
+        <LabelList dataKey="x" fill="black" />
       </Scatter>
+      <ZAxis range={[900, 4000]} dataKey="z" />
     </ScatterChart>
   );
 };

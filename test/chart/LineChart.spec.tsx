@@ -422,8 +422,8 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(container.querySelectorAll('.recharts-line .recharts-line-curve')).toHaveLength(0);
-    expect(container.querySelectorAll('.recharts-line .recharts-line-dot')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(1);
   });
 
   test('Renders 6 labels when label = true', () => {
@@ -766,7 +766,7 @@ describe('<LineChart />', () => {
       </LineChart>,
     );
 
-    const lineDots = container.querySelectorAll('.recharts-line .recharts-line-dots');
+    const lineDots = container.querySelectorAll('.recharts-line-dots');
     expect(lineDots).toHaveLength(1);
     expect(lineDots[0].children).toHaveLength(6);
 
@@ -791,7 +791,7 @@ describe('<LineChart />', () => {
     fireEvent.mouseUp(window);
 
     // we should only have three dots now
-    const newLineDots = container.querySelectorAll('.recharts-line .recharts-line-dots');
+    const newLineDots = container.querySelectorAll('.recharts-line-dots');
     expect(newLineDots).toHaveLength(1);
     expect(newLineDots[0].children).toHaveLength(3);
 

@@ -1,4 +1,5 @@
 import { Props } from './PolarAngleAxis';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export const defaultPolarAngleAxisProps = {
   allowDecimals: false,
@@ -14,4 +15,5 @@ export const defaultPolarAngleAxisProps = {
   tickLine: true,
   tickSize: 8,
   type: 'category',
+  zIndex: DefaultZIndexes.axis,
 } as const satisfies Props;

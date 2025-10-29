@@ -59,6 +59,8 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -157,6 +159,17 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           isActive,
           option: isActive ? activeShape : shape,
         };
+
+        if (isActive) {
+          return (
+            <ZIndexLayer
+              zIndex={DefaultZIndexes.activeBar}
+              key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+            >
+              <RadialBarSector {...radialBarSectorProps} />
+            </ZIndexLayer>
+          );
+        }
 
         return (
           <RadialBarSector
@@ -261,7 +274,7 @@ function RenderSectors(props: RadialBarProps) {
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
-interface InternalRadialBarProps {
+interface InternalRadialBarProps extends ZIndexable {
   className?: string;
   angleAxisId?: AxisId;
   radiusAxisId?: AxisId;
@@ -369,13 +382,14 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
     const layerClass = clsx('recharts-area', className);
 
     return (
-      <Layer className={layerClass}>
-        {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
-
-        <Layer className="recharts-radial-bar-sectors">
-          <RenderSectors {...this.props} />
+      <ZIndexLayer zIndex={this.props.zIndex}>
+        <Layer className={layerClass}>
+          {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
+          <Layer className="recharts-radial-bar-sectors">
+            <RenderSectors {...this.props} />
+          </Layer>
         </Layer>
-      </Layer>
+      </ZIndexLayer>
     );
   }
 }
@@ -420,6 +434,7 @@ const defaultRadialBarProps = {
   animationEasing: 'ease',
   forceCornerRadius: false,
   cornerIsExternal: false,
+  zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 
 type PropsWithDefaults = RequiresDefaultProps<RadialBarProps, typeof defaultRadialBarProps>;

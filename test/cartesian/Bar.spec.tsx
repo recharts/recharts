@@ -15,7 +15,7 @@ import {
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { expectBarIsActive, expectBarIsNotActive, expectBars, getAllBars } from '../helper/expectBars';
+import { expectActiveBars, expectBars, getAllBars } from '../helper/expectBars';
 import { expectLabels } from '../helper/expectLabel';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import {
@@ -1029,6 +1029,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
+            zIndex: 0,
           },
           {}, // second argument is a ref object
         );
@@ -1449,8 +1450,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
     it('should render all bars inactive before user interaction', () => {
       const { container } = renderTestCase();
       const bars = getAllBars(container);
-      expectBarIsNotActive(bars[0]);
-      expectBarIsNotActive(bars[1]);
+      expectActiveBars(container, []);
       expect(bars).toHaveLength(2);
     });
 
@@ -1480,11 +1480,28 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
     it('should make both bars active when hovering over the chart', () => {
       const { container } = renderTestCase();
 
+      expectActiveBars(container, []);
+
       showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
 
-      const bars = getAllBars(container);
-      expectBarIsActive(bars[0]);
-      expectBarIsActive(bars[1]);
+      expectActiveBars(container, [
+        {
+          d: 'M 14,65.00000000000001 h 72 v 29.999999999999986 h -72 Z',
+          height: '29.999999999999986',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '65.00000000000001',
+        },
+        {
+          d: 'M 14,5 h 72 v 60.000000000000014 h -72 Z',
+          height: '60.000000000000014',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '5',
+        },
+      ]);
     });
   });
 
@@ -1526,8 +1543,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       const { container } = renderTestCase();
       const bars = getAllBars(container);
 
-      expectBarIsNotActive(bars[0]);
-      expectBarIsNotActive(bars[1]);
+      expectActiveBars(container, []);
       expect(bars).toHaveLength(2);
     });
 
@@ -1711,10 +1727,19 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
     it('should make the first bar active - but not the second one - when hovering over it', () => {
       const { container } = renderTestCase();
       const bars = getAllBars(container);
+      expectActiveBars(container, []);
 
       showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
-      expectBarIsActive(bars[0]);
-      expectBarIsNotActive(bars[1]);
+      expectActiveBars(container, [
+        {
+          d: 'M 14,65.00000000000001 h 72 v 29.999999999999986 h -72 Z',
+          height: '29.999999999999986',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '65.00000000000001',
+        },
+      ]);
     });
   });
 

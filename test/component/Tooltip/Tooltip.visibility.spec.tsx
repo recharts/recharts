@@ -88,6 +88,7 @@ import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipA
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { DefaultZIndexes } from '../../../src/zindex/DefaultZIndexes';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -556,12 +557,12 @@ describe('Tooltip visibility', () => {
           const tooltipWrapper = container.querySelector('.recharts-tooltip-wrapper');
 
           expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
-          expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+          expect(tooltipWrapper).not.toHaveStyle({ position: 'absolute' });
 
           fireEvent.mouseLeave(container, mouseHoverSelector);
 
           expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
-          expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+          expect(tooltipWrapper).not.toHaveStyle({ position: 'absolute' });
 
           expect(
             container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
@@ -785,6 +786,7 @@ describe('Tooltip visibility', () => {
             strokeWidth: 1,
             xAxisId: 0,
             yAxisId: 0,
+            zIndex: DefaultZIndexes.line,
           },
           type: 'line',
           value: 'uv',

@@ -36,6 +36,7 @@ import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -471,6 +472,7 @@ describe('<Legend />', () => {
               type: 'monotone',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.line,
             },
             type: 'line',
             value: 'pv',
@@ -498,6 +500,7 @@ describe('<Legend />', () => {
               type: 'monotone',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.line,
             },
             type: 'line',
             value: 'uv',
@@ -814,6 +817,7 @@ describe('<Legend />', () => {
               type: 'monotone',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.line,
             },
             type: 'line',
             value: 'pv',
@@ -841,6 +845,7 @@ describe('<Legend />', () => {
               type: 'monotone',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.line,
             },
             type: 'line',
             value: 'uv',
@@ -1871,6 +1876,7 @@ describe('<Legend />', () => {
               stroke: '#3182bd',
               xAxisId: 0,
               yAxisId: 0,
+              zIndex: DefaultZIndexes.area,
             },
           },
         ]);

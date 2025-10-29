@@ -56,6 +56,8 @@ import {
   Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 type ChartDataInput = Record<string, unknown>;
 
@@ -145,7 +147,7 @@ export type PieSectorDataItem = PiePresentationProps & PieCoordinate & PieSector
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps extends PieDef {
+interface InternalPieProps extends PieDef, ZIndexable {
   id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
@@ -176,7 +178,7 @@ interface InternalPieProps extends PieDef {
   rootTabIndex?: number;
 }
 
-interface PieProps extends PieDef {
+interface PieProps extends PieDef, ZIndexable {
   id?: string;
   className?: string;
   /**
@@ -398,11 +400,16 @@ function PieLabels({
     };
 
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
-        {labelLine && renderLabelLineItem(labelLine, lineProps)}
-        {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
-      </Layer>
+      <ZIndexLayer
+        zIndex={DefaultZIndexes.label}
+        // eslint-disable-next-line react/no-array-index-key
+        key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}
+      >
+        <Layer>
+          {labelLine && renderLabelLineItem(labelLine, lineProps)}
+          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+        </Layer>
+      </ZIndexLayer>
     );
   });
 
@@ -730,6 +737,7 @@ const defaultPieProps = {
   rootTabIndex: 0,
   startAngle: 0,
   stroke: '#fff',
+  zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
 function PieImpl(props: Omit<InternalProps, 'sectors'>) {
@@ -750,12 +758,12 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   }
 
   return (
-    <>
+    <ZIndexLayer zIndex={props.zIndex}>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
       </Layer>
-    </>
+    </ZIndexLayer>
   );
 }
 

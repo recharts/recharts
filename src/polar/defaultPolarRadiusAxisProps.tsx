@@ -1,4 +1,5 @@
 import { Props } from './PolarRadiusAxis';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export const defaultPolarRadiusAxisProps = {
   allowDataOverflow: false,
@@ -17,4 +18,5 @@ export const defaultPolarRadiusAxisProps = {
   tick: true,
   tickCount: 5,
   type: 'number',
+  zIndex: DefaultZIndexes.axis,
 } as const satisfies Props;

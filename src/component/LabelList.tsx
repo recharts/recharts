@@ -9,6 +9,8 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface BaseLabelListEntry {
   /**
@@ -47,7 +49,7 @@ export interface PolarLabelListEntry extends BaseLabelListEntry {
   clockWise?: boolean;
 }
 
-interface LabelListProps {
+interface LabelListProps extends ZIndexable {
   id?: string;
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number | undefined;
   clockWise?: boolean;
@@ -101,46 +103,53 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 }
 
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
-  const { dataKey, clockWise, id, textBreakAll, ...others } = restProps;
+  const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
   const data = cartesianData || polarData;
-
   if (!data || !data.length) {
     return null;
   }
 
   return (
-    <Layer className="recharts-label-list">
-      {data.map((entry, index) => {
-        const value = isNullish(dataKey)
-          ? valueAccessor(entry, index)
-          : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
+    <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
+      <Layer className="recharts-label-list">
+        {data.map((entry, index) => {
+          const value = isNullish(dataKey)
+            ? valueAccessor(entry, index)
+            : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
 
-        const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+          const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-        return (
-          <Label
-            key={`label-${index}`} // eslint-disable-line react/no-array-index-key
-            {...svgPropertiesAndEvents(entry)}
-            {...others}
-            {...idProps}
-            /*
-             * Prefer to use the explicit fill from LabelList props.
-             * Only in an absence of that, fall back to the fill of the entry.
-             * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-             * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-             */
-            fill={restProps.fill ?? entry.fill}
-            parentViewBox={entry.parentViewBox}
-            value={value}
-            textBreakAll={textBreakAll}
-            viewBox={entry.viewBox}
-            index={index}
-          />
-        );
-      })}
-    </Layer>
+          return (
+            <Label
+              key={`label-${index}`} // eslint-disable-line react/no-array-index-key
+              {...svgPropertiesAndEvents(entry)}
+              {...others}
+              {...idProps}
+              /*
+               * Prefer to use the explicit fill from LabelList props.
+               * Only in an absence of that, fall back to the fill of the entry.
+               * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
+               * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+               */
+              fill={restProps.fill ?? entry.fill}
+              parentViewBox={entry.parentViewBox}
+              value={value}
+              textBreakAll={textBreakAll}
+              viewBox={entry.viewBox}
+              index={index}
+              /*
+               * Here we don't want to use the default Label zIndex,
+               * we want it to inherit the zIndex of the LabelList itself
+               * which means just rendering as a regular child, without portaling anywhere.
+               */
+              zIndex={0}
+            />
+          );
+        })}
+      </Layer>
+    </ZIndexLayer>
   );
 }
 

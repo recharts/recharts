@@ -30,6 +30,8 @@ import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
   { ChartElement: ComposedChart, testName: 'ComposedChart' },
@@ -1328,6 +1330,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y1: expect.any(Number),
             y2: expect.any(Number),
             index: expect.any(Number),
+            zIndex: DefaultZIndexes.grid,
             offset: {
               bottom: 5,
               brushBottom: 5,
@@ -1423,6 +1426,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y1: expect.any(Number),
             y2: expect.any(Number),
             index: expect.any(Number),
+            zIndex: DefaultZIndexes.grid,
             offset: {
               bottom: 5,
               brushBottom: 5,
@@ -1514,6 +1518,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y1: 2,
             y2: 202,
             index: expect.any(Number),
+            zIndex: DefaultZIndexes.grid,
             offset: {
               bottom: 5,
               brushBottom: 5,
@@ -1601,6 +1606,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             verticalFill: [],
             verticalPoints,
             vertical: <Vertical />,
+            zIndex: DefaultZIndexes.grid,
             offset: {
               bottom: 5,
               brushBottom: 5,

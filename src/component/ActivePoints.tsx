@@ -8,6 +8,8 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useActiveTooltipDataPoints } from '../hooks';
 import { isNullish } from '../util/DataUtils';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export interface PointType {
   readonly x: number | null;
@@ -16,7 +18,7 @@ export interface PointType {
   readonly payload?: any;
 }
 
-const renderActivePoint = ({
+const ActivePoint = ({
   point,
   childIndex,
   mainColor,
@@ -47,13 +49,13 @@ const renderActivePoint = ({
     stroke: '#fff',
     payload: point.payload,
     value: point.value,
-    ...adaptEventHandlers(activeDot),
   };
 
   // @ts-expect-error svgPropertiesNoEventsFromUnknown(activeDot) is contributing unknown props
   const dotProps: ActiveDotProps = {
     ...dotPropsTyped,
     ...svgPropertiesNoEventsFromUnknown(activeDot),
+    ...adaptEventHandlers(activeDot),
   };
 
   let dot;
@@ -70,7 +72,7 @@ const renderActivePoint = ({
   return <Layer className="recharts-active-dot">{dot}</Layer>;
 };
 
-type ActivePointsProps = {
+interface ActivePointsProps extends ZIndexable {
   points: ReadonlyArray<PointType>;
   /**
    * Different graphical elements have different opinion on what is their main color.
@@ -80,9 +82,15 @@ type ActivePointsProps = {
   mainColor: string | undefined;
   itemDataKey: DataKey<any> | undefined;
   activeDot: ActiveDotType;
-};
+}
 
-export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
+export function ActivePoints({
+  points,
+  mainColor,
+  activeDot,
+  itemDataKey,
+  zIndex = DefaultZIndexes.activeDot,
+}: ActivePointsProps) {
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataPoints = useActiveTooltipDataPoints();
   if (points == null || activeDataPoints == null) {
@@ -95,11 +103,15 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     return null;
   }
 
-  return renderActivePoint({
-    point: activePoint,
-    childIndex: Number(activeTooltipIndex),
-    mainColor,
-    dataKey: itemDataKey,
-    activeDot,
-  });
+  return (
+    <ZIndexLayer zIndex={zIndex}>
+      <ActivePoint
+        point={activePoint}
+        childIndex={Number(activeTooltipIndex)}
+        mainColor={mainColor}
+        dataKey={itemDataKey}
+        activeDot={activeDot}
+      />
+    </ZIndexLayer>
+  );
 }

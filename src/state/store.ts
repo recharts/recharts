@@ -18,6 +18,7 @@ import { externalEventsMiddleware } from './externalEventsMiddleware';
 import { touchEventMiddleware } from './touchEventsMiddleware';
 import { errorBarReducer } from './errorBarSlice';
 import { Global } from '../util/Global';
+import { zIndexReducer } from './zIndexSlice';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   referenceElements: referenceElementsReducer,
   rootProps: rootPropsReducer,
   tooltip: tooltipReducer,
+  zIndex: zIndexReducer,
 });
 
 export const createRechartsStore = (

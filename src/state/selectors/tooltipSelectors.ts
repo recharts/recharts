@@ -83,7 +83,7 @@ import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/c
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
-import { arrayEqualityCheck } from './arrayEqualityCheck';
+import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -106,7 +106,7 @@ export const selectAllGraphicalItemsSettings = createSelector(
   combineGraphicalItemsSettings,
   {
     memoizeOptions: {
-      resultEqualityCheck: arrayEqualityCheck,
+      resultEqualityCheck: emptyArraysAreEqualCheck,
     },
   },
 );
@@ -123,7 +123,7 @@ export const selectTooltipGraphicalItemsData = createSelector(
   combineGraphicalItemsData,
   {
     memoizeOptions: {
-      resultEqualityCheck: arrayEqualityCheck,
+      resultEqualityCheck: emptyArraysAreEqualCheck,
     },
   },
 );

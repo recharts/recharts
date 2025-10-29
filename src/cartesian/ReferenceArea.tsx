@@ -18,8 +18,10 @@ import { useClipPathId } from '../container/ClipPathProvider';
 import { RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
-interface ReferenceAreaProps {
+interface ReferenceAreaProps extends ZIndexable {
   ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
@@ -125,15 +127,17 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
   const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (
-    <Layer className={clsx('recharts-reference-area', className)}>
-      {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
-      {rect != null && (
-        <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
-          <CartesianLabelFromLabelProp label={props.label} />
-          {props.children}
-        </CartesianLabelContextProvider>
-      )}
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-reference-area', className)}>
+        {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
+        {rect != null && (
+          <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+            <CartesianLabelFromLabelProp label={props.label} />
+            {props.children}
+          </CartesianLabelContextProvider>
+        )}
+      </Layer>
+    </ZIndexLayer>
   );
 }
 
@@ -146,6 +150,7 @@ const referenceAreaDefaultProps = {
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
+  zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;

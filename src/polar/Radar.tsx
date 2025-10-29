@@ -41,6 +41,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 interface RadarPoint {
   x: number;
@@ -54,7 +56,7 @@ interface RadarPoint {
   name?: string;
 }
 
-interface RadarProps {
+interface RadarProps extends ZIndexable {
   className?: string;
   dataKey?: DataKey<any>;
   angleAxisId?: string | number;
@@ -463,6 +465,7 @@ const defaultRadarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
@@ -479,7 +482,7 @@ function RadarWithState(props: InternalProps) {
   const layerClass = clsx('recharts-radar', className);
 
   return (
-    <>
+    <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={layerClass}>
         <RenderPolygon {...props} />
       </Layer>
@@ -489,7 +492,7 @@ function RadarWithState(props: InternalProps) {
         itemDataKey={props.dataKey}
         activeDot={props.activeDot}
       />
-    </>
+    </ZIndexLayer>
   );
 }
 

@@ -5,6 +5,7 @@ import { Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } 
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
+import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -302,6 +303,7 @@ describe('<Label />', () => {
               content: fn,
               offset: 5,
               position: 'center',
+              zIndex: DefaultZIndexes.label,
               viewBox: {
                 height: 200,
                 width: 200,
@@ -462,6 +464,7 @@ describe('<Label />', () => {
             content: contentFn,
             offset: 5,
             position: 'center',
+            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -495,6 +498,7 @@ describe('<Label />', () => {
             content: contentFn,
             offset: 5,
             position: 'center',
+            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -531,6 +535,7 @@ describe('<Label />', () => {
             content: contentFn,
             offset: 5,
             position: 'center',
+            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -602,6 +607,7 @@ describe('<Label />', () => {
             content: contentFn,
             position: 'center',
             offset: 5,
+            zIndex: DefaultZIndexes.label,
           },
           {},
         );
@@ -630,6 +636,7 @@ describe('<Label />', () => {
             content: contentFn,
             position: 'insideEnd',
             offset: 5,
+            zIndex: DefaultZIndexes.label,
           },
           {},
         );
@@ -661,6 +668,7 @@ describe('<Label />', () => {
             content: contentFn,
             position: 'center',
             offset: 5,
+            zIndex: DefaultZIndexes.label,
           },
           {},
         );

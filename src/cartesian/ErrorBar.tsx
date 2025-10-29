@@ -14,6 +14,8 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 export interface ErrorBarDataItem {
   x: number | undefined;
@@ -42,7 +44,7 @@ export type ErrorBarDataPointFormatter = (
 /**
  * External ErrorBar props, visible for users of the library
  */
-interface ErrorBarProps {
+interface ErrorBarProps extends ZIndexable {
   dataKey: DataKey<any>;
   /** the width of the error bar ends */
   width?: number;
@@ -211,12 +213,13 @@ const errorBarDefaultProps = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease-in-out',
+  zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
 function ErrorBarInternal(props: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
 
-  const { width, isAnimationActive, animationBegin, animationDuration, animationEasing } = resolveDefaultProps(
+  const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = resolveDefaultProps(
     props,
     errorBarDefaultProps,
   );
@@ -224,15 +227,17 @@ function ErrorBarInternal(props: Props) {
   return (
     <>
       <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
-      <ErrorBarImpl
-        {...props}
-        direction={realDirection}
-        width={width}
-        isAnimationActive={isAnimationActive}
-        animationBegin={animationBegin}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-      />
+      <ZIndexLayer zIndex={zIndex}>
+        <ErrorBarImpl
+          {...props}
+          direction={realDirection}
+          width={width}
+          isAnimationActive={isAnimationActive}
+          animationBegin={animationBegin}
+          animationDuration={animationDuration}
+          animationEasing={animationEasing}
+        />
+      </ZIndexLayer>
     </>
   );
 }

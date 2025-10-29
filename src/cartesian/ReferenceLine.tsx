@@ -9,28 +9,18 @@ import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLab
 import { IfOverflow } from '../util/IfOverflow';
 import { isNan, isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { CartesianViewBox, CartesianViewBoxRequired } from '../util/types';
+import { CartesianViewBoxRequired } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import {
-  BaseAxisWithScale,
-  selectAxisScale,
-  selectXAxisSettings,
-  selectYAxisSettings,
-} from '../state/selectors/axisSelectors';
+import { selectAxisScale, selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-
-interface InternalReferenceLineProps {
-  viewBox?: CartesianViewBox;
-  xAxis?: BaseAxisWithScale;
-  yAxis?: BaseAxisWithScale;
-  clipPathId?: number | string;
-}
+import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
 
 /**
  * Single point that defines one end of a segment.
@@ -49,7 +39,7 @@ export type Segment = {
 
 export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
-interface ReferenceLineProps extends InternalReferenceLineProps {
+interface ReferenceLineProps extends ZIndexable {
   ifOverflow?: IfOverflow;
 
   /**
@@ -271,13 +261,15 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   const rect = rectWithCoords({ x1, y1, x2, y2 });
 
   return (
-    <Layer className={clsx('recharts-reference-line', className)}>
-      {renderLine(shape, lineProps)}
-      <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
-        <CartesianLabelFromLabelProp label={props.label} />
-        {props.children}
-      </CartesianLabelContextProvider>
-    </Layer>
+    <ZIndexLayer zIndex={props.zIndex}>
+      <Layer className={clsx('recharts-reference-line', className)}>
+        {renderLine(shape, lineProps)}
+        <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+          <CartesianLabelFromLabelProp label={props.label} />
+          {props.children}
+        </CartesianLabelContextProvider>
+      </Layer>
+    </ZIndexLayer>
   );
 }
 
@@ -290,6 +282,7 @@ const referenceLineDefaultProps = {
   fillOpacity: 1,
   strokeWidth: 1,
   position: 'middle',
+  zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
