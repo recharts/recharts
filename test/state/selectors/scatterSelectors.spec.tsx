@@ -60,7 +60,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 590,
               payload: {
@@ -70,8 +70,11 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 590,
               payload: {
@@ -81,7 +84,10 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 11.428571428571429,
@@ -112,7 +118,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 590,
               payload: {
@@ -122,8 +128,11 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 590,
               payload: {
@@ -133,7 +142,10 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 24.285714285714285,
@@ -164,7 +176,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 868,
               payload: {
@@ -174,8 +186,11 @@ describe('selectScatterPoints', () => {
                 amt: 1506,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 868,
               payload: {
@@ -185,7 +200,10 @@ describe('selectScatterPoints', () => {
                 amt: 1506,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 37.142857142857146,
@@ -216,7 +234,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 1397,
               payload: {
@@ -226,8 +244,11 @@ describe('selectScatterPoints', () => {
                 amt: 989,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 1397,
               payload: {
@@ -237,7 +258,10 @@ describe('selectScatterPoints', () => {
                 amt: 989,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 50,
@@ -268,7 +292,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 1480,
               payload: {
@@ -278,8 +302,11 @@ describe('selectScatterPoints', () => {
                 amt: 1228,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 1480,
               payload: {
@@ -289,7 +316,10 @@ describe('selectScatterPoints', () => {
                 amt: 1228,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 62.85714285714286,
@@ -320,7 +350,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 1520,
               payload: {
@@ -330,8 +360,11 @@ describe('selectScatterPoints', () => {
                 amt: 1100,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 1520,
               payload: {
@@ -341,7 +374,10 @@ describe('selectScatterPoints', () => {
                 amt: 1100,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 75.71428571428572,
@@ -372,7 +408,7 @@ describe('selectScatterPoints', () => {
             z: '-',
           },
           tooltipPayload: [
-            {
+            expect.objectContaining({
               unit: '',
               value: 1400,
               payload: {
@@ -382,8 +418,11 @@ describe('selectScatterPoints', () => {
                 amt: 1700,
               },
               dataKey: 'uv',
-            },
-            {
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
+            expect.objectContaining({
               unit: '',
               value: 1400,
               payload: {
@@ -393,7 +432,10 @@ describe('selectScatterPoints', () => {
                 amt: 1700,
               },
               dataKey: 'uv',
-            },
+              graphicalItemId: 'scatter-id',
+              name: undefined,
+              type: undefined,
+            }),
           ],
           tooltipPosition: {
             x: 88.57142857142857,
@@ -407,8 +449,10 @@ describe('selectScatterPoints', () => {
           },
         },
       ];
+      // The selector emits undefined first because the scatter item is not registered until the next tick.
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenCalledWith(expectedPoints);
+      expect(spy).toHaveBeenNthCalledWith(1, undefined);
+      expect(spy).toHaveBeenNthCalledWith(2, expectedPoints);
     });
   });
 });

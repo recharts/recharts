@@ -133,6 +133,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -146,6 +147,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -161,6 +163,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -174,6 +177,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -189,6 +193,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -202,6 +207,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -217,6 +223,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -230,6 +237,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -245,6 +253,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -258,6 +267,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -273,6 +283,7 @@ describe('itemSorter in ComposedChart', () => {
               [
                 {
                   dataKey: 'name',
+                  graphicalItemId: expect.any(String),
                   name: 'name',
                   payload: {
                     amt: 2400,
@@ -286,6 +297,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -299,6 +311,7 @@ describe('itemSorter in ComposedChart', () => {
                 },
               ],
             ],
+            graphicalItemId: expect.any(String),
             positions: [
               { x: 84.16666666666667, y: 202.6 },
               { x: 122.50000000000001, y: 146.258 },
@@ -387,6 +400,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'name',
             fill: undefined,
+            graphicalItemId: expect.any(String),
             hide: false,
             name: 'name',
             nameKey: undefined,
@@ -406,6 +420,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: expect.any(String),
             hide: false,
             name: 'pv',
             nameKey: undefined,
@@ -547,6 +562,7 @@ describe('itemSorter in ComposedChart', () => {
         expect(spy).toHaveBeenNthCalledWith(4, {
           color: undefined,
           dataKey: 'name',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'name',
@@ -566,6 +582,7 @@ describe('itemSorter in ComposedChart', () => {
         expect(spy).toHaveBeenNthCalledWith(5, {
           color: undefined,
           dataKey: 'pv',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'pv',
@@ -682,6 +699,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'name',
             fill: undefined,
+            graphicalItemId: expect.any(String),
             hide: false,
             name: 'XAxis',
             nameKey: undefined,
@@ -701,6 +719,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: expect.any(String),
             hide: false,
             name: 'YAxis',
             nameKey: undefined,
@@ -842,6 +861,7 @@ describe('itemSorter in ComposedChart', () => {
         expect(spy).toHaveBeenNthCalledWith(4, {
           color: undefined,
           dataKey: 'name',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'XAxis',
@@ -861,6 +881,7 @@ describe('itemSorter in ComposedChart', () => {
         expect(spy).toHaveBeenNthCalledWith(5, {
           color: undefined,
           dataKey: 'pv',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'YAxis',
