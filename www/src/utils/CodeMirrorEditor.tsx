@@ -10,6 +10,7 @@ import {
   foldService,
   foldEffect,
 } from '@codemirror/language';
+import './CodeMirrorEditor.css';
 
 type CodeMirrorEditorProps = {
   value: string;
