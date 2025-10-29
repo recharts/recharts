@@ -1,6 +1,6 @@
-import { Highlight } from '../../utils/Highlight.tsx';
 import { localeGet } from '../../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../../locale';
+import { CodeMirrorEditor } from '../../utils/CodeMirrorEditor.tsx';
 
 export function Installation({ locale }: { locale: SupportedLocale }) {
   return (
@@ -14,10 +14,7 @@ export function Installation({ locale }: { locale: SupportedLocale }) {
         </a>
         {localeGet(locale, 'installation', 'dot')}
       </p>
-      <Highlight className="sh">
-        {`  # latest stable
-  $ npm install recharts`}
-      </Highlight>
+      <CodeMirrorEditor className="sh" value="npm install recharts" readOnly />
       <h4 className="sub-title">UMD</h4>
       <p className="paragraph-title">
         {localeGet(locale, 'installation', 'umd-desc')}
@@ -27,22 +24,26 @@ export function Installation({ locale }: { locale: SupportedLocale }) {
         </a>
         &nbsp;)&nbsp; &nbsp;:
       </p>
-      <Highlight className="html">
-        {`<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+      <CodeMirrorEditor
+        value={`<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>`}
-      </Highlight>
+        readOnly
+        className="html"
+      />
       <p className="paragraph-title">
         {localeGet(locale, 'installation', 'umd-use')}
         <code>window.Recharts</code>
       </p>
       <h4 className="sub-title">{localeGet(locale, 'installation', 'dev-build')}</h4>
-      <Highlight className="sh">
-        {`  $ git clone https://github.com/recharts/recharts.git
-  $ cd recharts
-  $ npm install
-  $ npm run build`}
-      </Highlight>
+      <CodeMirrorEditor
+        className="sh"
+        value={`git clone https://github.com/recharts/recharts.git
+cd recharts
+npm install
+npm run build`}
+        readOnly
+      />
     </div>
   );
 }
