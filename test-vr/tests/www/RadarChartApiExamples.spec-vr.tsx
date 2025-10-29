@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { RadarChartExample } from '../../../www/src/docs/apiExamples/RadarChart';
+
+import RadarChartExample from '../../../www/src/docs/apiExamples/RadarChart/RadarChartExample';
 import SimpleRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SimpleRadarChart';
 import SpecifiedDomainRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SpecifiedDomainRadarChart';
 import RadarChartNavExample from '../../../www/src/docs/exampleComponents/RadarChart/RadarChartNavExample';
@@ -21,6 +22,6 @@ test('SimpleRadarChart', async ({ mount }) => {
 });
 
 test('RadarChartExample', async ({ mount }) => {
-  const component = await mount(<RadarChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<RadarChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

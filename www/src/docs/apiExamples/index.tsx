@@ -1,25 +1,25 @@
+import { areaChartApiExamples } from './AreaChart';
 import { barChartApiExamples } from './BarChart';
+import { cellApiExamples } from './Cell';
 import { composedChartApiExamples } from './ComposedChart';
+import { errorBarApiExamples } from './ErrorBar';
+import { funnelApiExamples } from './Funnel';
+import { funnelChartApiExamples } from './FunnelChart';
+import { labelApiExamples } from './Label';
+import { labelListApiExamples } from './LabelList';
+import { legendApiExamples } from './Legend';
 import { lineChartApiExamples } from './LineChart';
 import { pieChartApiExamples } from './PieChart';
-import { scatterChartApiExamples } from './ScatterChart';
 import { radarChartApiExamples } from './RadarChart';
 import { radialBarApiExamples } from './RadialBarChart';
-import { sankeyApiExamples } from './SankeyChart';
-import { treemapApiExamples } from './Treemap';
-import { responsiveContainerApiExamples } from './ResponsiveContainer';
-import { cellApiExamples } from './Cell';
-import { legendApiExamples } from './Legend';
 import { referenceAreaApiExamples } from './ReferenceArea';
 import { referenceDotApiExamples } from './ReferenceDot';
 import { referenceLineApiExamples } from './ReferenceLine';
-import { errorBarApiExamples } from './ErrorBar';
-import { labelApiExamples } from './Label.tsx';
-import { labelListApiExamples } from './LabelList';
-import { funnelChartApiExamples } from './FunnelChart';
-import { funnelApiExamples } from './Funnel.tsx';
+import { responsiveContainerApiExamples } from './ResponsiveContainer';
+import { sankeyApiExamples } from './SankeyChart';
+import { scatterChartApiExamples } from './ScatterChart';
+import { treemapApiExamples } from './Treemap';
 import { ChartExample } from '../exampleComponents/types.ts';
-import { areaChartApiExamples } from './AreaChart';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,

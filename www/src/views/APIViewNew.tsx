@@ -1,7 +1,7 @@
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import { allExamples as API } from '../docs/api';
-import { getLocaleType, localeGet, parseLocalObj } from '../utils/LocaleUtils.ts';
+import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
 import './APIView.scss';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -10,10 +10,7 @@ import { ChartExample } from '../docs/exampleComponents/types.ts';
 import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview.tsx';
 import { allApiExamples } from '../docs/apiExamples';
 
-type APIViewNewImplProps = RouteComponentProps & {
-  // Map of component name to array of ChartExamples
-  apiExamples: Record<string, ReadonlyArray<ChartExample>>;
-};
+type APIViewNewImplProps = RouteComponentProps;
 
 type PropsExamplesProps = {
   examples: ReadonlyArray<PropExample>;
@@ -159,7 +156,6 @@ function ApiExamples({ examples, componentName }: ApiExamplesProps) {
       <div className="example-list">
         {examples.map((example, i) => (
           <div key={`example-${i}`} className="example-item">
-            {example.name && <h5 className="example-title">{example.name}</h5>}
             <div className="example-wrapper">
               <div className="example-inner-wrapper">
                 <CodeEditorWithPreview
@@ -178,6 +174,7 @@ function ApiExamples({ examples, componentName }: ApiExamplesProps) {
 }
 
 function APIViewNewImpl({ params }: APIViewNewImplProps) {
+  const locale = useLocale();
   const page = params?.name ?? 'AreaChart';
 
   if (!(page in API)) {
@@ -194,7 +191,6 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
 
   const api: ApiDoc = API[page];
   const examples = allApiExamples[page];
-  const locale = getLocaleType({ params });
 
   return (
     <div className="page page-api">

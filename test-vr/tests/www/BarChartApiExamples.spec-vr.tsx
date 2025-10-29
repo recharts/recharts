@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { BarChartExample, BarChartRangeExample } from '../../../www/src/docs/apiExamples/BarChart';
+import BarChartExample from '../../../www/src/docs/apiExamples/BarChart/BarChartExample';
+import BarChartRangeExample from '../../../www/src/docs/apiExamples/BarChart/BarChartRangeExample';
 import TinyBarChart from '../../../www/src/docs/exampleComponents/BarChart/TinyBarChart';
 import SimpleBarChart from '../../../www/src/docs/exampleComponents/BarChart/SimpleBarChart';
 import StackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/StackedBarChart';

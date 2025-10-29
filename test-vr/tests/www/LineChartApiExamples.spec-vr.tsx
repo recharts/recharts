@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { LineChartExample } from '../../../www/src/docs/apiExamples/LineChart';
+import LineChartExample from '../../../www/src/docs/apiExamples/LineChart/LineChartExample';
 import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart';
 import TinyLineChart from '../../../www/src/docs/exampleComponents/LineChart/TinyLineChart';
 import DashedLineChart from '../../../www/src/docs/exampleComponents/LineChart/DashedLineChart';
