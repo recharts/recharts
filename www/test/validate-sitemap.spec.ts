@@ -1,18 +1,61 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { parser as saxParser } from 'sax';
+import { MAX_URLS } from '../scripts/validate-sitemap';
 
-// Mock the file system
-vi.mock('node:fs', () => ({
-  readFileSync: vi.fn(),
-  readdirSync: vi.fn(),
-  statSync: vi.fn(),
-}));
+// Helper function to parse sitemap XML and extract URLs
+function parseSitemapXml(sitemapContent: string): Map<string, { canonical: string; alternates: string[] }> {
+  const urlMap = new Map<string, { canonical: string; alternates: string[] }>();
+  const parser = saxParser(true);
+
+  let currentUrl: { canonical: string; alternates: string[] } | null = null;
+  let currentTag = '';
+  let insideUrl = false;
+
+  parser.onopentag = (node: any) => {
+    if (node.name === 'url') {
+      insideUrl = true;
+      currentUrl = { canonical: '', alternates: [] };
+    } else if (insideUrl) {
+      currentTag = node.name;
+      if (node.name === 'xhtml:link' && currentUrl) {
+        const { href } = node.attributes;
+        if (typeof href === 'string') {
+          currentUrl.alternates.push(href);
+        }
+      }
+    }
+  };
+
+  parser.ontext = (text: string) => {
+    if (insideUrl && currentUrl && currentTag === 'loc') {
+      const trimmed = text.trim();
+      if (trimmed) {
+        currentUrl.canonical = trimmed;
+      }
+    }
+  };
+
+  parser.onclosetag = (tagName: string) => {
+    if (tagName === 'url' && currentUrl && currentUrl.canonical) {
+      urlMap.set(currentUrl.canonical, currentUrl);
+      currentUrl = null;
+      insideUrl = false;
+    }
+    if (tagName !== 'url') {
+      currentTag = '';
+    }
+  };
+
+  parser.write(sitemapContent).close();
+  return urlMap;
+}
+
+// Helper function to calculate total URLs (canonical + alternates)
+function calculateTotalUrls(urlMap: Map<string, { canonical: string; alternates: string[] }>): number {
+  return Array.from(urlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+}
 
 describe('validate-sitemap URL count validation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should calculate total URLs correctly (canonical + alternates)', () => {
     // Create a mock sitemap with known number of URLs
     const mockSitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -30,53 +73,8 @@ describe('validate-sitemap URL count validation', () => {
   </url>
 </urlset>`;
 
-    // Parse the sitemap and count URLs
-    const urlMap = new Map<string, { canonical: string; alternates: string[] }>();
-    const parser = saxParser(true);
-
-    let currentUrl: { canonical: string; alternates: string[] } | null = null;
-    let currentTag = '';
-    let insideUrl = false;
-
-    parser.onopentag = (node: any) => {
-      if (node.name === 'url') {
-        insideUrl = true;
-        currentUrl = { canonical: '', alternates: [] };
-      } else if (insideUrl) {
-        currentTag = node.name;
-        if (node.name === 'xhtml:link' && currentUrl) {
-          const { href } = node.attributes;
-          if (typeof href === 'string') {
-            currentUrl.alternates.push(href);
-          }
-        }
-      }
-    };
-
-    parser.ontext = (text: string) => {
-      if (insideUrl && currentUrl && currentTag === 'loc') {
-        const trimmed = text.trim();
-        if (trimmed) {
-          currentUrl.canonical = trimmed;
-        }
-      }
-    };
-
-    parser.onclosetag = (tagName: string) => {
-      if (tagName === 'url' && currentUrl && currentUrl.canonical) {
-        urlMap.set(currentUrl.canonical, currentUrl);
-        currentUrl = null;
-        insideUrl = false;
-      }
-      if (tagName !== 'url') {
-        currentTag = '';
-      }
-    };
-
-    parser.write(mockSitemap).close();
-
-    // Calculate total URLs (canonical + alternates)
-    const totalUrls = Array.from(urlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+    const urlMap = parseSitemapXml(mockSitemap);
+    const totalUrls = calculateTotalUrls(urlMap);
 
     // Expected: 2 canonical URLs + (2 alternates * 2 URLs) = 6 total URLs
     expect(urlMap.size).toBe(2);
@@ -98,50 +96,12 @@ describe('validate-sitemap URL count validation', () => {
 
     mockSitemap += '\n</urlset>';
 
-    const urlMap = new Map<string, { canonical: string; alternates: string[] }>();
-    const parser = saxParser(true);
-
-    let currentUrl: { canonical: string; alternates: string[] } | null = null;
-    let currentTag = '';
-    let insideUrl = false;
-
-    parser.onopentag = (node: any) => {
-      if (node.name === 'url') {
-        insideUrl = true;
-        currentUrl = { canonical: '', alternates: [] };
-      } else if (insideUrl) {
-        currentTag = node.name;
-      }
-    };
-
-    parser.ontext = (text: string) => {
-      if (insideUrl && currentUrl && currentTag === 'loc') {
-        const trimmed = text.trim();
-        if (trimmed) {
-          currentUrl.canonical = trimmed;
-        }
-      }
-    };
-
-    parser.onclosetag = (tagName: string) => {
-      if (tagName === 'url' && currentUrl && currentUrl.canonical) {
-        urlMap.set(currentUrl.canonical, currentUrl);
-        currentUrl = null;
-        insideUrl = false;
-      }
-      if (tagName !== 'url') {
-        currentTag = '';
-      }
-    };
-
-    parser.write(mockSitemap).close();
-
-    const totalUrls = Array.from(urlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+    const urlMap = parseSitemapXml(mockSitemap);
+    const totalUrls = calculateTotalUrls(urlMap);
 
     expect(totalUrls).toBe(1000);
 
     // Validation should pass
-    const MAX_URLS = 1000;
     expect(totalUrls).toBeLessThanOrEqual(MAX_URLS);
   });
 
@@ -160,50 +120,12 @@ describe('validate-sitemap URL count validation', () => {
 
     mockSitemap += '\n</urlset>';
 
-    const urlMap = new Map<string, { canonical: string; alternates: string[] }>();
-    const parser = saxParser(true);
-
-    let currentUrl: { canonical: string; alternates: string[] } | null = null;
-    let currentTag = '';
-    let insideUrl = false;
-
-    parser.onopentag = (node: any) => {
-      if (node.name === 'url') {
-        insideUrl = true;
-        currentUrl = { canonical: '', alternates: [] };
-      } else if (insideUrl) {
-        currentTag = node.name;
-      }
-    };
-
-    parser.ontext = (text: string) => {
-      if (insideUrl && currentUrl && currentTag === 'loc') {
-        const trimmed = text.trim();
-        if (trimmed) {
-          currentUrl.canonical = trimmed;
-        }
-      }
-    };
-
-    parser.onclosetag = (tagName: string) => {
-      if (tagName === 'url' && currentUrl && currentUrl.canonical) {
-        urlMap.set(currentUrl.canonical, currentUrl);
-        currentUrl = null;
-        insideUrl = false;
-      }
-      if (tagName !== 'url') {
-        currentTag = '';
-      }
-    };
-
-    parser.write(mockSitemap).close();
-
-    const totalUrls = Array.from(urlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+    const urlMap = parseSitemapXml(mockSitemap);
+    const totalUrls = calculateTotalUrls(urlMap);
 
     expect(totalUrls).toBe(1001);
 
     // Validation should fail
-    const MAX_URLS = 1000;
     expect(totalUrls).toBeGreaterThan(MAX_URLS);
   });
 
@@ -225,58 +147,14 @@ describe('validate-sitemap URL count validation', () => {
 
     mockSitemap += '\n</urlset>';
 
-    const urlMap = new Map<string, { canonical: string; alternates: string[] }>();
-    const parser = saxParser(true);
-
-    let currentUrl: { canonical: string; alternates: string[] } | null = null;
-    let currentTag = '';
-    let insideUrl = false;
-
-    parser.onopentag = (node: any) => {
-      if (node.name === 'url') {
-        insideUrl = true;
-        currentUrl = { canonical: '', alternates: [] };
-      } else if (insideUrl) {
-        currentTag = node.name;
-        if (node.name === 'xhtml:link' && currentUrl) {
-          const { href } = node.attributes;
-          if (typeof href === 'string') {
-            currentUrl.alternates.push(href);
-          }
-        }
-      }
-    };
-
-    parser.ontext = (text: string) => {
-      if (insideUrl && currentUrl && currentTag === 'loc') {
-        const trimmed = text.trim();
-        if (trimmed) {
-          currentUrl.canonical = trimmed;
-        }
-      }
-    };
-
-    parser.onclosetag = (tagName: string) => {
-      if (tagName === 'url' && currentUrl && currentUrl.canonical) {
-        urlMap.set(currentUrl.canonical, currentUrl);
-        currentUrl = null;
-        insideUrl = false;
-      }
-      if (tagName !== 'url') {
-        currentTag = '';
-      }
-    };
-
-    parser.write(mockSitemap).close();
-
-    const totalUrls = Array.from(urlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
+    const urlMap = parseSitemapXml(mockSitemap);
+    const totalUrls = calculateTotalUrls(urlMap);
 
     // Should be 334 canonical + 668 alternates = 1002
     expect(urlMap.size).toBe(334);
     expect(totalUrls).toBe(1002);
 
     // Validation should fail
-    const MAX_URLS = 1000;
     expect(totalUrls).toBeGreaterThan(MAX_URLS);
   });
 });
