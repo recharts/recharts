@@ -16,6 +16,7 @@ describe('eventCenter', () => {
         active: true,
         coordinate: { x: 1, y: 2 },
         dataKey: 'key',
+        graphicalItemId: undefined,
         index: '9',
         label: 'foo',
         sourceViewBox: {
@@ -35,6 +36,7 @@ describe('eventCenter', () => {
         active: true,
         coordinate: { x: 1, y: 2 },
         dataKey: 'key',
+        graphicalItemId: undefined,
         index: '9',
         label: 'foo',
         sourceViewBox: {

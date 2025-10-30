@@ -1088,6 +1088,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 7,
@@ -1098,6 +1099,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 7,
@@ -1110,6 +1112,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 8,
@@ -1120,6 +1123,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 8,
@@ -1132,6 +1136,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 9,
@@ -1142,6 +1147,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 x: 9,
@@ -1156,6 +1162,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 70,
@@ -1166,6 +1173,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 70,
@@ -1178,6 +1186,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 80,
@@ -1188,6 +1197,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 80,
@@ -1200,6 +1210,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           [
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 90,
@@ -1210,6 +1221,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: undefined,
               payload: {
                 y: 90,

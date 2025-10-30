@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Coordinate, DataKey } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { mouseLeaveItem, setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 export type TooltipPayloadType = any[];
 
@@ -21,6 +22,7 @@ export type ActivateTooltipAction<T extends TooltipPayloadType> = (
 export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
   onMouseEnterFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any> | undefined,
+  graphicalItemId?: GraphicalItemId,
 ) => {
   const dispatch = useAppDispatch();
   return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
@@ -30,6 +32,7 @@ export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
         activeIndex: String(index),
         activeDataKey: dataKey,
         activeCoordinate: data.tooltipPosition,
+        graphicalItemId,
       }),
     );
   };
@@ -48,6 +51,7 @@ export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
 export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
   onMouseClickFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any> | undefined,
+  graphicalItemId?: GraphicalItemId,
 ) => {
   const dispatch = useAppDispatch();
   return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
@@ -57,6 +61,7 @@ export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
         activeIndex: String(index),
         activeDataKey: dataKey,
         activeCoordinate: data.tooltipPosition,
+        graphicalItemId,
       }),
     );
   };

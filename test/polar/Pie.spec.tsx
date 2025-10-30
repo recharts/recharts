@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
+import { noInteraction } from '../../src/state/tooltipSlice';
 import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
@@ -762,18 +763,8 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
-          hover: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         });
         expectTooltipNotVisible(container);
       });
@@ -787,13 +778,9 @@ describe('<Pie />', () => {
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
           hover: {
+            ...noInteraction,
             active: true,
             index: '0',
             dataKey: 'cy',
@@ -801,6 +788,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: undefined,
           },
         });
 
@@ -1007,18 +995,8 @@ describe('<Pie />', () => {
 
         expect(spy).toHaveBeenCalledTimes(1);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            coordinate: undefined,
-            dataKey: undefined,
-            index: null,
-          },
-          hover: {
-            active: false,
-            coordinate: undefined,
-            dataKey: undefined,
-            index: null,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         });
 
         showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
@@ -1028,17 +1006,14 @@ describe('<Pie />', () => {
 
         expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            coordinate: undefined,
-            dataKey: undefined,
-            index: null,
-          },
+          click: noInteraction,
           hover: {
+            ...noInteraction,
             active: true,
             coordinate: { x: 122, y: 200 },
             dataKey: 'cy',
             index: '2',
+            graphicalItemId: undefined,
           },
         });
       });
@@ -1399,18 +1374,8 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
-          hover: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         });
         expectTooltipPayload(container, '', ['A : 250']);
         expectTooltipCoordinate(container, { x: 273.1033255612459, y: 164.15275032118709 });
@@ -1425,13 +1390,9 @@ describe('<Pie />', () => {
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
           hover: {
+            ...noInteraction,
             active: true,
             index: '0',
             dataKey: 'cy',
@@ -1439,6 +1400,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: undefined,
           },
         });
 

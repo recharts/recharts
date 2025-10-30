@@ -55,4 +55,9 @@ export const DATA_ITEM_INDEX_ATTRIBUTE_NAME = 'data-recharts-item-index';
  */
 export const DATA_ITEM_DATAKEY_ATTRIBUTE_NAME = 'data-recharts-item-data-key';
 
+/**
+ * We use this attribute to identify which graphical item rendered a DOM node. Unlike dataKey it is always unique.
+ */
+export const DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME = 'data-recharts-item-id';
+
 export const DEFAULT_Y_AXIS_WIDTH = 60;
