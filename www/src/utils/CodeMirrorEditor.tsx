@@ -18,7 +18,7 @@ type CodeMirrorEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
-  extraToolbarItems: ReactNode[];
+  extraToolbarItems?: ReactNode[];
 };
 
 // Custom fold service for #region/#endregion

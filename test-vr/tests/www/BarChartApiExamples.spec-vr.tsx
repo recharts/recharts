@@ -88,11 +88,11 @@ test('TinyBarChart', async ({ mount }) => {
 });
 
 test('BarChartExample', async ({ mount }) => {
-  const component = await mount(<BarChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<BarChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
 test('BarChartRangeExample', async ({ mount }) => {
-  const component = await mount(<BarChartRangeExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<BarChartRangeExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
