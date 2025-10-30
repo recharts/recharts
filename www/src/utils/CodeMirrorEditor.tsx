@@ -11,6 +11,7 @@ import {
   foldEffect,
 } from '@codemirror/language';
 import './CodeMirrorEditor.css';
+import { CopyButton } from './CopyButton.tsx';
 
 type CodeMirrorEditorProps = {
   value: string;
@@ -205,5 +206,18 @@ export function CodeMirrorEditor({ value, onChange, readOnly = true, className =
     });
   }, [readOnly, editExtensions, onChange]);
 
-  return <div ref={editorRef} className={className} />;
+  const handleCopy = () => {
+    if (viewRef.current) {
+      const content = viewRef.current.state.doc.toString();
+      return navigator.clipboard.writeText(content);
+    }
+    return Promise.reject();
+  };
+
+  return (
+    <div style={{ position: 'relative', height: '100%' }}>
+      <CopyButton handleCopy={handleCopy} />
+      <div ref={editorRef} className={className} style={{ height: '100%' }} />
+    </div>
+  );
 }
