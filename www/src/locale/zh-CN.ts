@@ -18,10 +18,6 @@ export const map = {
     'get-started': '起步',
     whoUse: '谁在使用 recharts ?',
     feature: '特性',
-    logoDesc: '这里的 logo 是有公司或者项目分别提交的。',
-    addUser: '想要添加您的公司或者项目请',
-    edit: '编辑 wiki!',
-    logoSize: '您需要提供 300x100 (3:1) 的图片作为 logo 。',
   },
   examples: {
     placeholder: 'Search',

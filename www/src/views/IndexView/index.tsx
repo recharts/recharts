@@ -64,42 +64,6 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           </ul>
         </div>
 
-        <div className="who block">
-          <h2 className="block-title">{localeGet(locale, 'home', 'whoUse')}</h2>
-
-          <ul className="users">
-            {users.map(entry => (
-              <li className="user" key={`user-${entry.url}`}>
-                <a href={entry.url} target="_blank" title={entry.name} rel="noreferrer">
-                  <img src={entry.logoImgUrl} title={entry.name} alt={entry.name} />
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <div className="users-desc">
-            <p>{localeGet(locale, 'home', 'logoDesc')}</p>
-            <p>
-              {localeGet(locale, 'home', 'addUser')}
-              &nbsp;
-              <a target="_self" href="https://github.com/recharts/recharts/wiki/Who-uses-recharts%3F">
-                {localeGet(locale, 'home', 'edit')}
-              </a>
-            </p>
-            <p>{localeGet(locale, 'home', 'logoSize')}</p>
-          </div>
-        </div>
-
-        <div className="like block">
-          <i className="icon-rocket" />
-          <p className="text">{localeGet(locale, 'home', 'like')}</p>
-          <p className="btn">
-            <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
-              {localeGet(locale, 'home', 'get-started')}
-            </Link>
-          </p>
-        </div>
-
         <div className="block">
           <h2 className="block-title">Thanks to our sponsors</h2>
           <p style={{ fontSize: '21px', color: 'black' }}>
@@ -117,6 +81,31 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
                 alt="LambdaTest"
               />
             </a>
+          </p>
+        </div>
+
+        <div className="who block">
+          <h2 className="block-title">{localeGet(locale, 'home', 'whoUse')}</h2>
+
+          <ul className="users">
+            {users.map(entry => (
+              <li className="user" key={`user-${entry.url}`}>
+                <a href={entry.url} target="_blank" title={entry.name} rel="noreferrer">
+                  <img src={entry.logoImgUrl} title={entry.name} alt={entry.name} />
+                  <span className="user-name">{entry.name}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="like block">
+          <i className="icon-rocket" />
+          <p className="text">{localeGet(locale, 'home', 'like')}</p>
+          <p className="btn">
+            <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
+              {localeGet(locale, 'home', 'get-started')}
+            </Link>
           </p>
         </div>
       </div>

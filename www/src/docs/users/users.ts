@@ -1,5 +1,15 @@
 export const users = [
   {
+    name: 'shadcn/ui',
+    url: 'https://ui.shadcn.com/charts/area',
+    logoImgUrl: '/assets/shadcn-ui.svg',
+  },
+  {
+    name: 'EvilCharts',
+    url: 'https://evilcharts.com/',
+    logoImgUrl: '/assets/evilcharts.png',
+  },
+  {
     name: '阿里指数',
     url: 'https://alizs.taobao.com',
     logoImgUrl: '/assets/ali-index.png',
