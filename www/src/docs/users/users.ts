@@ -22,21 +22,10 @@ export const users = [
     url: 'https://de.tobit.software/mostwanted',
     logoImgUrl: '/assets/chayns.png',
   },
-
-  {
-    name: 'Tracktl',
-    url: 'https://www.tracktl.com/',
-    logoImgUrl: '/assets/tracktl.png',
-  },
   {
     name: 'Demisto',
     url: 'https://www.demisto.com/',
     logoImgUrl: '/assets/demisto.jpeg',
-  },
-  {
-    name: 'Rebla',
-    url: 'http://boka-objekt.se/',
-    logoImgUrl: '/assets/rebla.png',
   },
   {
     name: 'Squadlytics',
