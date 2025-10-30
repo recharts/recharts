@@ -99,6 +99,26 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
             </Link>
           </p>
         </div>
+
+        <div className="block">
+          <h2 className="block-title">Thanks to our sponsors</h2>
+          <p style={{ fontSize: '21px', color: 'black' }}>
+            Browser testing via{' '}
+            <a
+              href="https://www.lambdatest.com/?utm_source=recharts&utm_medium=sponsor"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img
+                src="https://www.lambdatest.com/blue-logo.png"
+                style={{ verticalAlign: 'middle' }}
+                width="250"
+                height="45"
+                alt="LambdaTest"
+              />
+            </a>
+          </p>
+        </div>
       </div>
     );
   }
