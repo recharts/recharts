@@ -4,7 +4,6 @@ import * as D3ShapeScope from 'd3-shape';
 import { CodeMirrorEditor } from '../utils/CodeMirrorEditor.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink.tsx';
 import { sendEvent } from './analytics.ts';
-import '../views/ExampleView.scss';
 
 type CodeEditorWithPreviewProps = {
   /**
