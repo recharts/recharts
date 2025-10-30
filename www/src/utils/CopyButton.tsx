@@ -1,10 +1,20 @@
 import { useState } from 'react';
+import { EditorView } from '@codemirror/view';
 import { SuccessIcon } from './SuccessIcon.tsx';
 import { CopyIcon } from './CopyIcon.tsx';
 import { sendEvent } from '../components/analytics.ts';
 
-export function CopyButton({ handleCopy }: { handleCopy: () => Promise<void> }) {
+export function CopyButton({ viewRef }: { viewRef: React.RefObject<EditorView | null> }) {
   const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (viewRef?.current) {
+      const content = viewRef.current.state.doc.toString();
+      return navigator.clipboard.writeText(content);
+    }
+    return Promise.reject();
+  };
+
   const onClick = () => {
     sendEvent({
       category: 'Code',
@@ -27,16 +37,7 @@ export function CopyButton({ handleCopy }: { handleCopy: () => Promise<void> }) 
       });
   };
   return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: '4px 8px',
-        cursor: 'pointer',
-        display: 'flex',
-        gap: '1ex',
-      }}
-      type="button"
-    >
+    <button onClick={onClick} className="codemirror-toolbar-item" type="button">
       {copied ? <SuccessIcon /> : <CopyIcon />}
       Copy
     </button>

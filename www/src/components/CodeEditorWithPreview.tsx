@@ -111,33 +111,30 @@ export function CodeEditorWithPreview({
   return (
     <>
       <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
-      <div className="codemirror-wrapper">
-        <div className="codemirror-toolbar">
-          {!isEditMode ? (
-            <button type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
-              <i className="icon-pencil" />
-              <span>Edit</span>
-            </button>
-          ) : (
-            <button type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
+
+      <CodeMirrorEditor
+        value={codeToDisplay}
+        onChange={isEditMode ? setEditedCode : undefined}
+        readOnly={!isEditMode}
+        className="tsx"
+        extraToolbarItems={[
+          isEditMode ? (
+            <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
               <i className="icon-control-play" />
               <span>Run</span>
             </button>
-          )}
-          <StackBlitzLink code={codeToDisplay} title={stackBlitzTitle}>
+          ) : (
+            <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
+              <i className="icon-pencil" />
+              <span>Edit</span>
+            </button>
+          ),
+          <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
             <i className="icon-share" />
             <span>Open in StackBlitz</span>
-          </StackBlitzLink>
-        </div>
-        <div id="codemirror-container">
-          <CodeMirrorEditor
-            value={codeToDisplay}
-            onChange={isEditMode ? setEditedCode : undefined}
-            readOnly={!isEditMode}
-            className="codemirror-example-editor"
-          />
-        </div>
-      </div>
+          </StackBlitzLink>,
+        ]}
+      />
     </>
   );
 }

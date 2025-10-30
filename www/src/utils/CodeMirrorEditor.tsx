@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { EditorView, keymap } from '@codemirror/view';
 import { EditorState, Extension, Compartment } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
@@ -18,6 +18,7 @@ type CodeMirrorEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
+  extraToolbarItems: ReactNode[];
 };
 
 // Custom fold service for #region/#endregion
@@ -58,9 +59,15 @@ const regionFoldService = foldService.of((state, from, _to) => {
  * By default, the editor is read-only with syntax highlighting and code folding.
  * When readOnly is set to false, editing extensions are loaded dynamically.
  */
-export function CodeMirrorEditor({ value, onChange, readOnly = true, className = '' }: CodeMirrorEditorProps) {
+export function CodeMirrorEditor({
+  value,
+  onChange,
+  extraToolbarItems,
+  readOnly = true,
+  className = '',
+}: CodeMirrorEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
-  const viewRef = useRef<EditorView | null>(null);
+  const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
 
@@ -206,18 +213,15 @@ export function CodeMirrorEditor({ value, onChange, readOnly = true, className =
     });
   }, [readOnly, editExtensions, onChange]);
 
-  const handleCopy = () => {
-    if (viewRef.current) {
-      const content = viewRef.current.state.doc.toString();
-      return navigator.clipboard.writeText(content);
-    }
-    return Promise.reject();
-  };
-
   return (
-    <div style={{ position: 'relative', height: '100%' }}>
-      <CopyButton handleCopy={handleCopy} />
-      <div ref={editorRef} className={className} style={{ height: '100%' }} />
+    <div className="codemirror-wrapper">
+      <div id="codemirror-container">
+        <div className="codemirror-toolbar">
+          <CopyButton viewRef={viewRef} />
+          {extraToolbarItems}
+        </div>
+        <div ref={editorRef} className={`codemirror-example-editor ${className}`} style={{ height: '100%' }} />
+      </div>
     </div>
   );
 }

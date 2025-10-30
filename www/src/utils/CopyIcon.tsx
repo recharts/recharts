@@ -6,8 +6,8 @@ const RoundedRectangle = (props: RectangleProps) => {
       isAnimationActive
       isUpdateAnimationActive
       fill="none"
-      stroke="#555"
-      strokeWidth={2}
+      stroke="var(--var-text-color)"
+      strokeWidth={1}
       radius={2}
       width={10}
       height={10}
