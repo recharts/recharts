@@ -1,8 +1,11 @@
 import { Link } from 'react-router';
-import { Bar, BarChart, Pie, PieChart, Tooltip } from 'recharts';
-import { SupportedLocale } from '../../locale';
-import { TargetBlankLink } from '../Shared/TargetBlankLink.tsx';
-import { Highlight } from '../../utils/Highlight.tsx';
+import { SupportedLocale } from '../../../locale';
+import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
+import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
+import PieChartDefaultIndex from './PieChartDefaultIndex.tsx';
+import PieChartDefaultIndexSource from './PieChartDefaultIndex.tsx?raw';
+import BarChartClickable from './BarChartClickable.tsx';
+import BarChartClickableSource from './BarChartClickable.tsx?raw';
 
 export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
   return (
@@ -52,38 +55,11 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
           GitHub issue #5999 for discussion.
         </TargetBlankLink>
       </p>
-      <PieChart width={400} height={400}>
-        <Pie
-          activeShape={{
-            fill: 'red',
-          }}
-          data={[
-            { name: 'Page A', uv: 590 },
-            { name: 'Page B', uv: 590 },
-            { name: 'Page C', uv: 868 },
-          ]}
-          dataKey="uv"
-        />
-        <Tooltip defaultIndex={2} />
-      </PieChart>
-      <Highlight className="jsx">
-        {`import { Pie, PieChart, Tooltip } from 'recharts';
-
-<PieChart width={400} height={400}>
-<Pie
-  activeShape={{
-    fill: 'red',
-  }}
-  data={[
-    { name: 'Page A', uv: 590 },
-    { name: 'Page B', uv: 590 },
-    { name: 'Page C', uv: 868 },
-  ]}
-  dataKey="uv"
-/>
-<Tooltip defaultIndex={2} />
-</PieChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={PieChartDefaultIndex}
+        sourceCode={PieChartDefaultIndexSource}
+        stackBlitzTitle="Recharts PieChart Default Index Example"
+      />
       <p>
         <TargetBlankLink href="https://main--63da8268a0da9970db6992aa.chromatic.com/?path=/story/api-chart-piechart--simple">
           View this example in Storybook
@@ -101,34 +77,11 @@ export function ActiveIndex({ locale }: { locale: SupportedLocale }) {
           GitHub issue #6047 for discussion.
         </TargetBlankLink>
       </p>
-      <BarChart
-        width={550}
-        height={240}
-        data={[
-          { name: 'Page A', uv: 590 },
-          { name: 'Page B', uv: 290 },
-          { name: 'Page C', uv: 868 },
-        ]}
-      >
-        <Tooltip trigger="click" content={() => null} cursor={false} shared={false} />
-        <Bar dataKey="uv" stackId="a" fill="green" activeBar={{ stroke: 'black', strokeWidth: 7 }} />
-      </BarChart>
-      <Highlight className="jsx">
-        {`import { Bar, BarChart, Tooltip } from 'recharts';
-
-<BarChart
-  width={550}
-  height={240}
-  data={[
-    { name: 'Page A', uv: 590 },
-    { name: 'Page B', uv: 290 },
-    { name: 'Page C', uv: 868 },
-  ]}
->
-  <Tooltip trigger="click" content={() => null} cursor={false} shared={false} />
-  <Bar dataKey="uv" stackId="a" fill="green" activeBar={{ stroke: 'black', strokeWidth: 7 }} />
-</BarChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={BarChartClickable}
+        sourceCode={BarChartClickableSource}
+        stackBlitzTitle="Recharts BarChart Clickable Example"
+      />
     </article>
   );
 }
