@@ -95,7 +95,7 @@ test('TinyLineChart', async ({ mount }) => {
 });
 
 test('LineChartExample', async ({ mount }) => {
-  const component = await mount(<LineChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<LineChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
