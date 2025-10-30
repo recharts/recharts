@@ -1,8 +1,19 @@
 import React, { ReactNode } from 'react';
 import { expect, it, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { Label, LabelProps, Pie, PieChart, PieLabel, PieProps, Sector, SectorProps, Tooltip } from '../../src';
-import { PieLabelRenderProps, PieSectorDataItem } from '../../src/polar/Pie';
+import {
+  Label,
+  LabelProps,
+  Pie,
+  PieChart,
+  PieLabel,
+  PieLabelRenderProps,
+  PieProps,
+  PieSectorDataItem,
+  Sector,
+  SectorProps,
+  Tooltip,
+} from '../../src';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
 import {
@@ -554,7 +565,7 @@ describe('<Pie />', () => {
         expect(ir).toBe(0);
         const or: number = props.outerRadius;
         expect(or).toBe(200);
-        const p: number = props.percent;
+        const p: number | undefined = props.percent;
         expect(p).toBeGreaterThanOrEqual(0);
         expect(p).toBeLessThanOrEqual(1);
         const { name, value } = props;

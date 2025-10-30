@@ -141,21 +141,21 @@ export type PieSectorData = GeometrySector & {
   value: number;
 };
 
-type PieSectorDataItemKnown = PiePresentationProps &
+/**
+ * We spread the data object into the sector data item,
+ * so we can't really know what is going to be inside.
+ *
+ * This type represents our best effort, but it all depends on the input data
+ * and what is inside of it.
+ *
+ * https://github.com/recharts/recharts/issues/6380
+ * https://github.com/recharts/recharts/discussions/6375
+ */
+export type PieSectorDataItem = PiePresentationProps &
   PieCoordinate &
   PieSectorData & {
     cornerRadius: number | undefined;
   };
-
-/**
- * We spread the data object into the sector data item,
- * so we can't really know what is going to be inside.
- * There are however some known properties so let's omit those from RealPieData
- * to prevent getting unknowns on the outside.
- * https://github.com/recharts/recharts/issues/6380
- * https://github.com/recharts/recharts/discussions/6375
- */
-export type PieSectorDataItem = PieSectorDataItemKnown & Omit<RealPieData, keyof PieSectorDataItemKnown>;
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
