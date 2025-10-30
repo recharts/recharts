@@ -128,21 +128,34 @@ export type PieLabel =
    */
   | ReactElement<SVGElement>;
 
-export type PieSectorData = ChartDataInput &
-  GeometrySector & {
-    dataKey?: string;
-    midAngle?: number;
-    middleRadius?: number;
-    name?: string | number;
-    paddingAngle?: number;
-    payload?: any;
-    percent?: number;
-    tooltipPayload?: TooltipPayload;
-    tooltipPosition: Coordinate;
-    value: number;
-  };
+export type PieSectorData = GeometrySector & {
+  dataKey?: string;
+  midAngle?: number;
+  middleRadius?: number;
+  name?: string | number;
+  paddingAngle?: number;
+  payload?: any;
+  percent?: number;
+  tooltipPayload?: TooltipPayload;
+  tooltipPosition: Coordinate;
+  value: number;
+};
 
-export type PieSectorDataItem = PiePresentationProps & PieCoordinate & PieSectorData;
+/**
+ * We spread the data object into the sector data item,
+ * so we can't really know what is going to be inside.
+ *
+ * This type represents our best effort, but it all depends on the input data
+ * and what is inside of it.
+ *
+ * https://github.com/recharts/recharts/issues/6380
+ * https://github.com/recharts/recharts/discussions/6375
+ */
+export type PieSectorDataItem = PiePresentationProps &
+  PieCoordinate &
+  PieSectorData & {
+    cornerRadius: number | undefined;
+  };
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -552,14 +565,14 @@ export function computePieSectors({
 
       prev = {
         ...pieSettings.presentationProps,
+        ...entryWithCellInfo,
         percent,
-        cornerRadius,
+        cornerRadius: typeof cornerRadius === 'string' ? parseFloat(cornerRadius) : cornerRadius,
         name,
         tooltipPayload,
         midAngle,
         middleRadius,
         tooltipPosition,
-        ...entryWithCellInfo,
         ...coordinate,
         value: val,
         startAngle: tempStartAngle,

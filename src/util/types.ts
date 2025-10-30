@@ -109,7 +109,7 @@ export type RectanglePosition = {
 
 /**
  * @deprecated do not use: too many properties, mixing too many concepts, cartesian and polar together, everything optional.
- * Instead use either `Coordinate` or `PolarCoordinate`.
+ * Instead, use either `Coordinate` or `PolarCoordinate`.
  */
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;

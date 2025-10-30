@@ -4,11 +4,10 @@ import { act } from '@testing-library/react';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 import { selectPieSectors } from '../../../src/state/selectors/pieSelectors';
 import { pageData } from '../../../storybook/stories/data';
-import { Pie, PieChart } from '../../../src';
+import { Pie, PieChart, PieSectorDataItem } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { RechartsRootState } from '../../../src/state/store';
-import { PieSectorDataItem } from '../../../src/polar/Pie';
 
 const cells: ReadonlyArray<ReactElement> = [];
 
@@ -46,6 +45,7 @@ describe('selectPieSectors', () => {
       const { container, spy } = renderTestCase(selector);
       const expectedResultBefore: ReadonlyArray<PieSectorDataItem> = [
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -91,6 +91,7 @@ describe('selectPieSectors', () => {
           value: 590,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -136,6 +137,7 @@ describe('selectPieSectors', () => {
           value: 590,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1506,
           cornerRadius: undefined,
           cx: 200,
@@ -181,6 +183,7 @@ describe('selectPieSectors', () => {
           value: 868,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 989,
           cornerRadius: undefined,
           cx: 200,
@@ -226,6 +229,7 @@ describe('selectPieSectors', () => {
           value: 1397,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1228,
           cornerRadius: undefined,
           cx: 200,
@@ -271,6 +275,7 @@ describe('selectPieSectors', () => {
           value: 1480,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1100,
           cornerRadius: undefined,
           cx: 200,
@@ -316,6 +321,7 @@ describe('selectPieSectors', () => {
           value: 1520,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1700,
           cornerRadius: undefined,
           cx: 200,
@@ -374,6 +380,7 @@ describe('selectPieSectors', () => {
 
       const expectedResultAfter: ReturnType<typeof selectPieSectors> = [
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -419,6 +426,7 @@ describe('selectPieSectors', () => {
           value: 800,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -464,6 +472,7 @@ describe('selectPieSectors', () => {
           value: 800,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1506,
           cornerRadius: undefined,
           cx: 200,
@@ -509,6 +518,7 @@ describe('selectPieSectors', () => {
           value: 967,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 989,
           cornerRadius: undefined,
           cx: 200,
@@ -554,6 +564,7 @@ describe('selectPieSectors', () => {
           value: 1098,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1228,
           cornerRadius: undefined,
           cx: 200,
@@ -599,6 +610,7 @@ describe('selectPieSectors', () => {
           value: 1200,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1100,
           cornerRadius: undefined,
           cx: 200,
@@ -644,6 +656,7 @@ describe('selectPieSectors', () => {
           value: 1108,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1700,
           cornerRadius: undefined,
           cx: 200,
