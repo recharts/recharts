@@ -8,11 +8,16 @@ import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSli
 import { useIsInChartContext } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 
+/**
+ * @since 3.4
+ */
 export interface ZIndexable {
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
    * Components with higher zIndex will appear in front of components with lower zIndex.
+   * @since 3.4
+   * @defaultValue 0
    */
   zIndex?: number;
 }

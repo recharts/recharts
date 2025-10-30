@@ -544,6 +544,19 @@ describe('<Pie />', () => {
 
     test('Render customized label when label is a function', () => {
       const renderLabel: PieLabel = (props: PieLabelRenderProps) => {
+        /*
+         * Sometimes these props can be typed as `unknown` because we spread the whole data object here
+         * so let's have a type assertion to detect it.
+         * https://github.com/recharts/recharts/discussions/6375
+         * https://github.com/recharts/recharts/issues/6380
+         */
+        const ir: number = props.innerRadius;
+        expect(ir).toBe(0);
+        const or: number = props.outerRadius;
+        expect(or).toBe(200);
+        const p: number = props.percent;
+        expect(p).toBeGreaterThanOrEqual(0);
+        expect(p).toBeLessThanOrEqual(1);
         const { name, value } = props;
         return `${name}: ${value}`;
       };
