@@ -6,6 +6,11 @@ export const DefaultZIndexes = {
    * CartesianGrid and PolarGrid
    */
   grid: -100,
+  /**
+   * Background of Bar and RadialBar.
+   * This is not visible by default but can be enabled by setting background={true} on Bar or RadialBar.
+   */
+  barBackground: -50,
 
   /*
    * other chart elements or custom elements without specific zIndex

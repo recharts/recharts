@@ -246,6 +246,13 @@ type BarBackgroundProps = {
   allOtherBarProps: Props;
 };
 
+function getZIndex(background: ActiveShape<BarProps, SVGPathElement> | undefined): number {
+  if (background && typeof background === 'object' && 'zIndex' in background && typeof background.zIndex === 'number') {
+    return background.zIndex;
+  }
+  return DefaultZIndexes.barBackground;
+}
+
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
@@ -271,7 +278,7 @@ function BarBackground(props: BarBackgroundProps) {
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
 
   return (
-    <>
+    <ZIndexLayer zIndex={getZIndex(backgroundFromProps)}>
       {data.map((entry: BarRectangleItem, i: number) => {
         const { value, background: backgroundFromDataEntry, tooltipPosition, ...rest } = entry;
 
@@ -305,7 +312,7 @@ function BarBackground(props: BarBackgroundProps) {
 
         return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
       })}
-    </>
+    </ZIndexLayer>
   );
 }
 
