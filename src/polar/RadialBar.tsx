@@ -335,6 +335,18 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
   };
 }
 
+function getZIndexForRadialBarBackground(background: RadialBarBackground | undefined): number {
+  if (
+    background != null &&
+    typeof background === 'object' &&
+    'zIndex' in background &&
+    typeof background.zIndex === 'number'
+  ) {
+    return background.zIndex;
+  }
+  return DefaultZIndexes.barBackground;
+}
+
 class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
     if (sectors == null) {
@@ -342,34 +354,38 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
     }
     const { cornerRadius } = this.props;
     const backgroundProps = svgPropertiesNoEventsFromUnknown(this.props.background);
-    return sectors.map((entry, i) => {
-      const { value, background, ...rest } = entry;
+    return (
+      <ZIndexLayer zIndex={getZIndexForRadialBarBackground(this.props.background)}>
+        {sectors.map((entry, i) => {
+          const { value, background, ...rest } = entry;
 
-      if (!background) {
-        return null;
-      }
+          if (!background) {
+            return null;
+          }
 
-      const props: RadialBarSectorProps = {
-        cornerRadius: parseCornerRadius(cornerRadius),
-        ...rest,
-        // @ts-expect-error backgroundProps is contributing unknown props
-        fill: '#eee',
-        ...background,
-        ...backgroundProps,
-        ...adaptEventsOfChild(this.props, entry, i),
-        index: i,
-        className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
-        option: background,
-        isActive: false,
-      };
+          const props: RadialBarSectorProps = {
+            cornerRadius: parseCornerRadius(cornerRadius),
+            ...rest,
+            // @ts-expect-error backgroundProps is contributing unknown props
+            fill: '#eee',
+            ...background,
+            ...backgroundProps,
+            ...adaptEventsOfChild(this.props, entry, i),
+            index: i,
+            className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+            option: background,
+            isActive: false,
+          };
 
-      return (
-        <RadialBarSector
-          key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
-          {...props}
-        />
-      );
-    });
+          return (
+            <RadialBarSector
+              key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+              {...props}
+            />
+          );
+        })}
+      </ZIndexLayer>
+    );
   }
 
   render() {
