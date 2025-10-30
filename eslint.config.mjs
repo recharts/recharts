@@ -304,12 +304,12 @@ const overridesConfig = [
   {
     name: 'default-export-override',
     /*
-     * Files in the ./www/docs/exampleComponents, that are not `index.ts`,
+     * Files in the ./www/docs, that are not index,
      * must have only default export, because they are passed to react-runner
      * which requires default export.
      */
-    basePath: './www/src/docs/exampleComponents',
-    files: ['**/*.tsx', '**/*.ts'],
+    basePath: './www/src/docs',
+    files: ['exampleComponents/**/*.tsx', 'exampleComponents/**/*.ts', 'apiExamples/**/*.tsx', 'apiExamples/**/*.ts'],
     ignores: ['**/index.ts', '**/index.tsx'],
     rules: {
       'import/no-default-export': 'off',

@@ -4,8 +4,8 @@ import { Installation, GettingStarted, Customize } from '../components/GuideView
 import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
-import { ActiveIndex } from '../components/GuideView/ActiveIndex.tsx';
-import { ChartSizing } from '../components/GuideView/ChartSizing.tsx';
+import { ActiveIndex } from '../components/GuideView/ActiveIndex';
+import { ChartSizing } from '../components/GuideView/ChartSizing';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,

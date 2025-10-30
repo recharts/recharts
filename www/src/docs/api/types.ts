@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { SupportedLocale } from '../../locale';
 
 export type PropExample = {
@@ -24,12 +23,4 @@ export type ApiDoc = {
   props: ReadonlyArray<ApiProps>;
   parentComponents?: ReadonlyArray<string>;
   childrenComponents?: ReadonlyArray<string>;
-};
-
-export type ApiExampleDemo = (props: { locale: SupportedLocale; isAnimationActive: boolean }) => ReactNode;
-
-export type ApiExample = {
-  demo: ApiExampleDemo;
-  code: string;
-  dataCode?: string;
 };
