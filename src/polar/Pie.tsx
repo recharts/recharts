@@ -158,7 +158,7 @@ export type PieSectorDataItem = PiePresentationProps &
   };
 
 type PieSectorContentProps = PieSectorDataItem & { isActive: boolean };
-type PieContentType = ReactNode | ((props: PieSectorContentProps) => React.ReactElement);
+type PieShape = ReactNode | ((props: PieSectorContentProps) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -180,7 +180,7 @@ interface InternalPieProps extends PieDef, ZIndexable {
   sectors: ReadonlyArray<PieSectorDataItem>;
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
-  content?: PieContentType;
+  shape?: PieShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
   animationEasing?: AnimationTiming;
@@ -222,7 +222,7 @@ interface PieProps extends PieDef, ZIndexable {
    * @deprecated use the `content` prop to modify each sector
    */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
-  content?: PieContentType;
+  shape?: PieShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
   animationEasing?: AnimationTiming;
@@ -273,7 +273,7 @@ type PieSectorsProps = {
    * @deprecated
    */
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
-  content: PieContentType;
+  shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
 };
 
@@ -464,20 +464,20 @@ function PieLabelList({
   return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
 }
 
-function PieSectorContent({
+function PieSectorShape({
   contentProps,
-  content,
+  shape,
   sectorOptions,
 }: {
   contentProps: PieSectorContentProps;
-  content: PieContentType;
-  sectorOptions: ActiveShape<Readonly<PieSectorDataItem>>;
+  shape: PieShape;
+  sectorOptions?: ActiveShape<Readonly<PieSectorDataItem>>;
 }) {
-  if (React.isValidElement(content)) {
-    return React.cloneElement(content, contentProps);
+  if (React.isValidElement(shape)) {
+    return React.cloneElement(shape, contentProps);
   }
-  if (typeof content === 'function') {
-    return content(contentProps);
+  if (typeof shape === 'function') {
+    return shape(contentProps);
   }
   const { isActive, ...sectorProps } = contentProps;
 
@@ -485,7 +485,7 @@ function PieSectorContent({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, content } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -534,7 +534,7 @@ function PieSectors(props: PieSectorsProps) {
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
-            <PieSectorContent content={content} contentProps={contentProps} sectorOptions={sectorOptions} />
+            <PieSectorShape shape={shape} contentProps={contentProps} sectorOptions={sectorOptions ?? undefined} />
           </Layer>
         );
       })}
@@ -759,7 +759,7 @@ function SectorsWithAnimation({
                 activeShape={activeShape}
                 inactiveShape={inactiveShape}
                 allOtherPieProps={props}
-                content={props.content}
+                shape={props.shape}
               />
             </Layer>
           );
