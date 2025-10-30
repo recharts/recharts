@@ -1,12 +1,18 @@
-import { Line, LineChart, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router';
-import { Highlight } from '../../utils/Highlight.tsx';
-import { useLocale } from '../../utils/LocaleUtils.ts';
-
-const data = [
-  { x: 1, y: 1 },
-  { x: 2, y: 4 },
-];
+import { useLocale } from '../../../utils/LocaleUtils.ts';
+import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
+import ChartWithoutSize from './ChartWithoutSize.tsx';
+import ChartWithoutSizeSource from './ChartWithoutSize.tsx?raw';
+import StaticDimensionChart from './StaticDimensionChart.tsx';
+import StaticDimensionChartSource from './StaticDimensionChart.tsx?raw';
+import SizeInPercentChart from './SizeInPercentChart.tsx';
+import SizeInPercentChartSource from './SizeInPercentChart.tsx?raw';
+import SizeInStyleChart from './SizeInStyleChart.tsx';
+import SizeInStyleChartSource from './SizeInStyleChart.tsx?raw';
+import ResponsiveChart from './ResponsiveChart.tsx';
+import ResponsiveChartSource from './ResponsiveChart.tsx?raw';
+import ResponsiveContainerResponsiveChart from './ResponsiveContainerResponsiveChart.tsx';
+import ResponsiveContainerResponsiveChartSource from './ResponsiveContainerResponsiveChart.tsx?raw';
 
 export function ChartSizing() {
   const locale = useLocale();
@@ -15,64 +21,38 @@ export function ChartSizing() {
       <h1>Chart size</h1>
       <p>Recharts chart needs width or height specified to render a chart.</p>
       <p>Chart without any sizes does not render anything:</p>
-      <LineChart data={data}>
-        <Line dataKey="y" />
-      </LineChart>
-      <Highlight className="jsx">
-        {`<LineChart data={data}>
-  <Line dataKey="y" />
-</LineChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={ChartWithoutSize}
+        sourceCode={ChartWithoutSizeSource}
+        stackBlitzTitle="Recharts Chart Without Size Example"
+      />
+
       <h2>Static chart size</h2>
       <p>The easiest way is to set the sizes as a number in pixels:</p>
-      <LineChart width={200} height={200} data={data}>
-        <Line dataKey="y" />
-      </LineChart>
-      <Highlight className="jsx">
-        {`<LineChart width={200} height={200} data={data}>
-  <Line dataKey="y" />
-</LineChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={StaticDimensionChart}
+        sourceCode={StaticDimensionChartSource}
+        stackBlitzTitle="Recharts Static Dimension Chart Example"
+      />
+
       <p>You can also use percents instead of pixels:</p>
-      <LineChart width="20%" height={100} data={data}>
-        <Line dataKey="y" />
-      </LineChart>
-      <Highlight className="jsx">
-        {`<LineChart width='20%' height={100} data={data}>
-  <Line dataKey="y" />
-</LineChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={SizeInPercentChart}
+        sourceCode={SizeInPercentChartSource}
+        stackBlitzTitle="Recharts Size In Percent Chart Example"
+      />
       <p>
         You can also choose to use CSS to set the sizes. In this case, you need to set the style attribute. I find it
         useful to set the <code>maxWidth</code> and <code>maxHeight</code> to limit the chart size on large screens, and
         use <code>width: 100%</code> to make the chart responsive. Also, setting <code>aspectRatio</code> is useful to
         maintain the aspect ratio of the chart.
       </p>
-      <LineChart
-        style={{
-          width: '100%',
-          maxWidth: '400px',
-          maxHeight: '80vh',
-          aspectRatio: 1.618,
-        }}
-        responsive
-        data={data}
-      >
-        <Line dataKey="y" />
-      </LineChart>
-      <Highlight className="jsx">
-        {`<LineChart
-  style={{
-    width: '100%',
-    maxWidth: '400px',
-    maxHeight: '80vh',
-    aspectRatio: 1.618
-  }}
-  data={data}
->
-  <Line dataKey="y" />
-</LineChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={SizeInStyleChart}
+        sourceCode={SizeInStyleChartSource}
+        stackBlitzTitle="Recharts Size In Style Chart Example"
+      />
+
       <h2>Automatic resizing</h2>
       <p>
         You will find that the chart is rendered once, and does not resize when the parent dimensions change. Try to
@@ -83,27 +63,11 @@ export function ChartSizing() {
         the parent dimensions change.
       </p>
       <p>This prop was introduced in Recharts 3.3.</p>
-      <LineChart
-        style={{ width: '100%', maxWidth: '400px', maxHeight: '80vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-      >
-        <Line dataKey="y" />
-      </LineChart>
-      <Highlight className="jsx">
-        {`<LineChart
-  style={{
-    width: '100%',
-    maxWidth: '400px',
-    maxHeight: '80vh',
-    aspectRatio: 1.618
-  }}
-  responsive
-  data={data}
->
-  <Line dataKey="y" />
-</LineChart>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={ResponsiveChart}
+        sourceCode={ResponsiveChartSource}
+        stackBlitzTitle="Recharts Responsive Chart Example"
+      />
       <h2>Usage with flexbox</h2>
       <p>
         You can control the chart&apos;s size and behavior using flex properties on the chart&apos;s parent or on the
@@ -135,25 +99,11 @@ export function ChartSizing() {
       <p>
         See the <Link to={`/${locale}/api/ResponsiveContainer/`}>API docs</Link> for more details and examples.
       </p>
-      <div style={{ height: '400px' }}>
-        <ResponsiveContainer width="100%" maxHeight={400}>
-          <LineChart data={data}>
-            <Line dataKey="y" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <Highlight className="jsx">
-        {`<div style={{ height: '400px' }}>
-  <ResponsiveContainer
-    width="100%"
-    maxHeight={400}
-  >
-    <LineChart data={data}>
-      <Line dataKey="y" />
-    </LineChart>
-  </ResponsiveContainer>
-</div>`}
-      </Highlight>
+      <CodeEditorWithPreview
+        Component={ResponsiveContainerResponsiveChart}
+        sourceCode={ResponsiveContainerResponsiveChartSource}
+        stackBlitzTitle="Recharts ResponsiveContainer Responsive Chart Example"
+      />
       <p>
         Note that the <code>ResponsiveContainer</code> component must have a parent with a defined size. In the example
         above, the parent is a <code>div</code> with a style that sets its size.
