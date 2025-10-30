@@ -106,11 +106,10 @@ export const combineTooltipPayload = (
             value: getValueByDataKey(item.payload, item.dataKey),
             name: item.name,
           });
-          const tooltipEntryWithId: TooltipPayloadEntry = { ...entry };
           if (graphicalItemId != null) {
-            tooltipEntryWithId.graphicalItemId = graphicalItemId;
+            entry.graphicalItemId = graphicalItemId;
           }
-          agg.push(tooltipEntryWithId);
+          agg.push(entry);
         });
       } else {
         // I am not quite sure why these two branches (Array vs Array of Arrays) have to behave differently - I imagine we should unify these. 3.x breaking change?
@@ -123,11 +122,10 @@ export const combineTooltipPayload = (
           // @ts-expect-error getValueByDataKey does not validate the output type
           name: getValueByDataKey(tooltipPayload, finalNameKey) ?? settings?.name,
         });
-        const tooltipEntryWithId: TooltipPayloadEntry = { ...entry };
         if (graphicalItemId != null) {
-          tooltipEntryWithId.graphicalItemId = graphicalItemId;
+          entry.graphicalItemId = graphicalItemId;
         }
-        agg.push(tooltipEntryWithId);
+        agg.push(entry);
       }
       return agg;
     },
