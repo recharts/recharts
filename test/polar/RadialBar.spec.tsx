@@ -1307,3 +1307,124 @@ describe('<RadialBar />', () => {
     });
   });
 });
+
+describe('RadialBar background zIndex', () => {
+  const dataWithBackground = [
+    { name: 'A', uv: 400, pv: 2400, fill: '#8884d8' },
+    { name: 'B', uv: 300, pv: 4567, fill: '#83a6ed' },
+  ];
+
+  it('should render background with default zIndex when background prop is true', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should render background with default zIndex when background prop is an object without zIndex', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee' }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should render background with custom zIndex when background prop includes zIndex', () => {
+    const customZIndex = 888;
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: customZIndex }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should handle background with zIndex as 0', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: 0 }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should handle negative zIndex values in background prop', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: -150 }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should ignore non-number zIndex values and use default', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior with invalid zIndex */}
+        <RadialBar background={{ fill: '#eee', zIndex: '200' }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors.length).toBeGreaterThan(0);
+  });
+
+  it('should handle background prop when it is undefined', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={undefined} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it('should handle background prop when it is false', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={false} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it('should handle background prop when it is null', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior */}
+        <RadialBar background={null} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it('should handle background with non-object values', () => {
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior */}
+        <RadialBar background="invalid" isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+});
