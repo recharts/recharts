@@ -1,64 +1,17 @@
 import { PureComponent } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Link } from 'react-router';
-import { Highlight } from '../utils/Highlight.tsx';
-import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
+import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
 import './IndexView.scss';
 import 'simple-line-icons/scss/simple-line-icons.scss';
-import { users } from '../docs/users/users';
-import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
-
-const data = [
-  {
-    name: 'A',
-    uv: 400,
-    pv: 240,
-    amt: 2400,
-  },
-  {
-    name: 'B',
-    uv: 300,
-    pv: 456,
-    amt: 2400,
-  },
-  {
-    name: 'C',
-    uv: 300,
-    pv: 139,
-    amt: 2400,
-  },
-  {
-    name: 'D',
-    uv: 200,
-    pv: 980,
-    amt: 2400,
-  },
-  {
-    name: 'E',
-    uv: 278,
-    pv: 390,
-    amt: 2400,
-  },
-  {
-    name: 'F',
-    uv: 189,
-    pv: 480,
-    amt: 2400,
-  },
-];
+import { users } from '../../docs/users/users';
+import { RouteComponentProps, withRouter } from '../../routes/withRouter.tsx';
+import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.tsx';
+import IndexLineChart from './IndexLineChart.tsx';
+import IndexLineChartSource from './IndexLineChart.tsx?raw';
 
 class IndexViewImpl extends PureComponent<RouteComponentProps> {
   render() {
     const locale = getLocaleType(this.props);
-
-    const exCode = `<LineChart width={500} height={300} data={data}>
-  <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-  <XAxis dataKey="name"/>
-  <YAxis/>
-  <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-  <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-</LineChart>`;
-
     return (
       <div className="page page-index">
         <div className="desc">
@@ -83,20 +36,11 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
         </div>
 
         <div className="examples">
-          <LineChart
-            style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600, margin: 'auto' }}
-            responsive
-            data={data}
-          >
-            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-            <XAxis dataKey="name" />
-            <YAxis width="auto" />
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-          </LineChart>
-          <div className="ex-code">
-            <Highlight className="jsx">{exCode}</Highlight>
-          </div>
+          <CodeEditorWithPreview
+            Component={IndexLineChart}
+            sourceCode={IndexLineChartSource}
+            stackBlitzTitle="Recharts Line Chart Example"
+          />
         </div>
 
         <div className="features block">
