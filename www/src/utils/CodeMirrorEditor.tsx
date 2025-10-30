@@ -71,6 +71,9 @@ export function CodeMirrorEditor({
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
 
+  // remove trailing newline from the value to save on vertical space
+  const valueWithoutTrailingNewline = value.endsWith('\n') ? value.slice(0, -1) : value;
+
   // Lazy load editing extensions when switching to editable mode
   useEffect(() => {
     if (!readOnly && editExtensions.length === 0) {
@@ -111,7 +114,7 @@ export function CodeMirrorEditor({
 
     // Create new view
     const startState = EditorState.create({
-      doc: value,
+      doc: valueWithoutTrailingNewline,
       extensions,
     });
 
@@ -174,16 +177,16 @@ export function CodeMirrorEditor({
     if (!viewRef.current) return;
 
     const currentValue = viewRef.current.state.doc.toString();
-    if (currentValue !== value) {
+    if (currentValue !== valueWithoutTrailingNewline) {
       viewRef.current.dispatch({
         changes: {
           from: 0,
           to: currentValue.length,
-          insert: value,
+          insert: valueWithoutTrailingNewline,
         },
       });
     }
-  }, [value]);
+  }, [valueWithoutTrailingNewline]);
 
   // Update editable extensions when switching between read-only and editable
   useEffect(() => {
