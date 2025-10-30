@@ -1647,6 +1647,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
               y: 80,
             },
             dataKey: 'x',
+            graphicalItemId: undefined,
             index: '0',
           },
         },

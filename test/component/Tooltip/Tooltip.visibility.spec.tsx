@@ -74,7 +74,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
-import { TooltipIndex, TooltipState } from '../../../src/state/tooltipSlice';
+import { noInteraction, TooltipIndex, TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 import { selectChartOffsetInternal } from '../../../src/state/selectors/selectChartOffsetInternal';
 import {
@@ -1056,44 +1056,16 @@ describe('Tooltip visibility', () => {
 
       const expectedBeforeHover: TooltipState = {
         axisInteraction: {
-          click: {
-            active: false,
-            dataKey: undefined,
-            index: null,
-            coordinate: undefined,
-          },
-          hover: {
-            active: false,
-            dataKey: undefined,
-            index: null,
-            coordinate: undefined,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         },
         itemInteraction: {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
-          hover: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         },
-        keyboardInteraction: {
-          active: false,
-          dataKey: undefined,
-          index: null,
-          coordinate: undefined,
-        },
+        keyboardInteraction: noInteraction,
         syncInteraction: {
-          active: false,
-          dataKey: undefined,
-          index: null,
-          coordinate: undefined,
+          ...noInteraction,
           label: undefined,
           sourceViewBox: undefined,
         },
@@ -1129,15 +1101,10 @@ describe('Tooltip visibility', () => {
 
       const expectedAfterHover: TooltipState = {
         axisInteraction: {
-          click: {
-            active: false,
-            dataKey: undefined,
-            index: null,
-            coordinate: undefined,
-          },
+          click: noInteraction,
           hover: {
+            ...noInteraction,
             active: true,
-            dataKey: undefined,
             index: '5',
             coordinate: {
               angle: -210,
@@ -1155,30 +1122,12 @@ describe('Tooltip visibility', () => {
           },
         },
         itemInteraction: {
-          click: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
-          hover: {
-            active: false,
-            index: null,
-            dataKey: undefined,
-            coordinate: undefined,
-          },
+          click: noInteraction,
+          hover: noInteraction,
         },
-        keyboardInteraction: {
-          active: false,
-          dataKey: undefined,
-          index: null,
-          coordinate: undefined,
-        },
+        keyboardInteraction: noInteraction,
         syncInteraction: {
-          active: false,
-          dataKey: undefined,
-          index: null,
-          coordinate: undefined,
+          ...noInteraction,
           label: undefined,
           sourceViewBox: undefined,
         },
