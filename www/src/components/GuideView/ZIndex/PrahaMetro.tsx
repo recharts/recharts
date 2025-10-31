@@ -309,7 +309,7 @@ export default function PrahaMetro() {
           dx: 15,
         }}
         r={20}
-        // one lower zIndex so that these dots render as a background behind the line dots
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineC.color}
         stroke="#fff"
@@ -328,7 +328,7 @@ export default function PrahaMetro() {
           dx: 0,
         }}
         r={20}
-        // one lower zIndex so that these dots render as a background behind the line dots
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineA.color}
         stroke="#fff"
