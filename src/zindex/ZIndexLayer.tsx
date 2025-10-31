@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { noop } from 'es-toolkit';
+import { noop } from '../util/DataUtils';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexPortalId } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';

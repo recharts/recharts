@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import range from 'es-toolkit/compat/range';
 import * as d3Scales from 'victory-vendor/d3-scale';
-import { isNotNil } from 'es-toolkit';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   checkDomainOfScale,
@@ -44,7 +43,16 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
+import {
+  getPercentValue,
+  hasDuplicate,
+  isNan,
+  isNumber,
+  isNumOrStr,
+  mathSign,
+  upperFirst,
+  isNotNil,
+} from '../../util/DataUtils';
 import {
   CartesianGraphicalItemSettings,
   GraphicalItemSettings,

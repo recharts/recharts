@@ -14,12 +14,11 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
-import { noop } from 'es-toolkit';
+import { isNumber, noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { isNumber } from '../util/DataUtils';
 
 export interface Props {
   /**

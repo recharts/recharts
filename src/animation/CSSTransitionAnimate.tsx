@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
-import { noop } from 'es-toolkit';
+import { noop } from '../util/DataUtils';
 import { AnimationManager, ReactSmoothStyle } from './AnimationManager';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';

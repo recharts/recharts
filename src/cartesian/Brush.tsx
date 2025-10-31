@@ -13,11 +13,10 @@ import {
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import range from 'es-toolkit/compat/range';
-import { isNotNil } from 'es-toolkit';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, isNotNil } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
