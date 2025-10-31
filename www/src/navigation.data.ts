@@ -128,7 +128,7 @@ export const guidePages = [
   'activeIndex',
   'sizes',
   'domainAndTicks',
-  'zindex',
+  'zIndex',
 ];
 
 export function getSiteRoutes(): string[] {
