@@ -1,7 +1,7 @@
 import React, { createContext, useCallback } from 'react';
 import { StoryFn } from '@storybook/react-vite';
 import { useGlobals } from 'storybook/preview-api';
-import { noop } from 'es-toolkit';
+import { noop } from '../../src/util/DataUtils';
 import { PARAM_CROSSHAIR_CONTROLS_KEY, PARAM_MANUAL_ANIMATIONS_KEY, PARAM_POSITION_KEY, Position } from './constants';
 import { HookInspectorLayout } from './HookInspectorWrapper';
 import { RechartsContextProperties } from './RechartsStoryContext';
