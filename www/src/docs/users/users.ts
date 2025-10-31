@@ -1,5 +1,15 @@
 export const users = [
   {
+    name: 'shadcn/ui',
+    url: 'https://ui.shadcn.com/charts/area',
+    logoImgUrl: '/assets/shadcn-ui.svg',
+  },
+  {
+    name: 'EvilCharts',
+    url: 'https://evilcharts.com/',
+    logoImgUrl: '/assets/evilcharts.png',
+  },
+  {
     name: '阿里指数',
     url: 'https://alizs.taobao.com',
     logoImgUrl: '/assets/ali-index.png',
@@ -22,21 +32,10 @@ export const users = [
     url: 'https://de.tobit.software/mostwanted',
     logoImgUrl: '/assets/chayns.png',
   },
-
-  {
-    name: 'Tracktl',
-    url: 'https://www.tracktl.com/',
-    logoImgUrl: '/assets/tracktl.png',
-  },
   {
     name: 'Demisto',
     url: 'https://www.demisto.com/',
     logoImgUrl: '/assets/demisto.jpeg',
-  },
-  {
-    name: 'Rebla',
-    url: 'http://boka-objekt.se/',
-    logoImgUrl: '/assets/rebla.png',
   },
   {
     name: 'Squadlytics',

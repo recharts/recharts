@@ -1,5 +1,4 @@
 @use '../../styles/variables';
-@use '../../styles/mixins';
 
 .page-index {
   .block {
@@ -124,43 +123,50 @@
   }
 
   .who {
-    .users-desc {
-      text-align: center;
-      padding-top: 20px;
-      line-height: 20px;
-
-      a {
-        color: variables.$brand-primary;
-      }
-    }
-
     .users {
-      @include mixins.clearfix();
-      max-width: 1000px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      max-width: 1600px;
       margin: auto;
+      gap: 20px;
+
+      @media (min-width: 1600px) {
+        grid-template-columns: repeat(5, 1fr);
+      }
 
       .user {
-        float: left;
-        width: 20%;
         text-align: center;
-        height: 90px;
 
         > a {
-          position: relative;
-          display: block;
-          max-width: 150px;
-          width: 80%;
-          height: 100%;
-          padding: 20px 0;
-          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          border-radius: 8px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: #f5f5f5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            .user-name {
+              color: variables.$brand-info;
+            }
+          }
 
           img {
-            position: absolute;
             width: 100%;
-            height: auto;
-            left: 0;
-            top: 50%;
-            transform: translate(0, -50%);
+            max-width: 300px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 12px;
+          }
+
+          .user-name {
+            font-size: variables.$font-size-base;
+            transition: color 0.3s ease;
           }
         }
       }
