@@ -4,8 +4,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectChartLayout } from '../context/chartLayoutContext';
 import { useAppDispatch, useAppSelector } from './hooks';
 import { addLegendPayload, removeLegendPayload } from './legendSlice';
-
-const noop = () => {};
+import { noop } from '../util/DataUtils';
 
 export function SetLegendPayload({ legendPayload }: { legendPayload: ReadonlyArray<LegendPayload> }): null {
   const dispatch = useAppDispatch();

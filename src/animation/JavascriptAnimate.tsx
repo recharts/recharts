@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { noop } from 'es-toolkit';
+import { noop } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import configUpdate from './configUpdate';
 import { configEasing, EasingInput } from './easing';
