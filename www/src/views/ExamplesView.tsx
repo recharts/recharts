@@ -3,9 +3,9 @@ import Helmet from 'react-helmet';
 import { allExamples } from '../docs/exampleComponents';
 import './ExampleView.scss';
 import 'simple-line-icons/scss/simple-line-icons.scss';
-import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
+import { RouteComponentProps, withRouter } from '../routes/withRouter';
 import { ComponentExamples } from '../docs/exampleComponents/types.ts';
-import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview.tsx';
+import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview';
 
 type ExampleComponent = {
   cateName: string;
