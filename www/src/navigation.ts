@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { SupportedLocale } from './locale';
-import { localeGet, useLocale } from './utils/LocaleUtils.ts';
-import { apiCates } from './docs/apiCates.ts';
+import { useLocation } from 'react-router';
+import { SupportedLocale, supportedLocales } from './locale';
+import { defaultLocale, localeGet, useLocale } from './utils/LocaleUtils';
+import { apiCates } from './docs/apiCates';
 import { allExamples } from './docs/exampleComponents';
-import { allGuides } from './views/GuideView.tsx';
+import { allGuides } from './views/GuideView';
 
 /**
  * Represents a single navigation link in the navigation menu.
@@ -132,4 +133,22 @@ export function getAllNavigationItems(locale: SupportedLocale): Navigation {
 export function useAllNavigationItems(): Navigation {
   const locale = useLocale();
   return getAllNavigationItems(locale);
+}
+
+export function normalizePathnameToLocale(pathname: string) {
+  for (let i = 0; i < supportedLocales.length; i++) {
+    const locale = supportedLocales[i];
+    if (pathname.startsWith(`/${locale}/`)) {
+      return pathname;
+    }
+  }
+  // If no supported locale is found in the pathname, prepend the default locale.
+  return `/${defaultLocale}${pathname.startsWith('/') ? '' : '/'}${pathname}`;
+}
+
+export function useCurrentNavItem(): NavItem | undefined {
+  const allNavigationItems = useAllNavigationItems();
+  const location = useLocation();
+  const normalizedLocationPathname = normalizePathnameToLocale(location.pathname);
+  return allNavigationItems.find(item => normalizedLocationPathname.includes(item.url));
 }
