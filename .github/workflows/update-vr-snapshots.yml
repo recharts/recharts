@@ -1,0 +1,170 @@
+# This workflow updates visual regression baseline snapshots.
+# It can be triggered manually and will:
+# - Run on main branch: create a new branch, commit changes, and open a PR
+# - Run in a PR: commit and push changes to the current PR branch
+
+name: Update VR Snapshots
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+
+env:
+  NODE_VERSION: 20.x
+
+jobs:
+  update_snapshots:
+    name: Update Visual Regression Snapshots
+    runs-on: ubuntu-latest
+    # Only run if manually triggered OR if comment contains the trigger phrase
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' && 
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '/update-snapshots'))
+    steps:
+      - name: React to comment
+        if: github.event_name == 'issue_comment'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+
+      - name: Get PR branch
+        if: github.event_name == 'issue_comment'
+        id: get_pr_branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            core.setOutput('ref', pr.data.head.ref);
+            core.setOutput('sha', pr.data.head.sha);
+            core.setOutput('is_open', pr.data.state === 'open');
+            core.setOutput('base_branch', pr.data.base.ref);
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history to allow branch creation
+          fetch-depth: 0
+          # Use a token that can create PRs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # For comment triggers, checkout the PR branch
+          ref: ${{ github.event_name == 'issue_comment' && steps.get_pr_branch.outputs.ref || github.ref }}
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Docker Image
+        run: npm run test-vr:prepare
+
+      - name: Update VR Snapshots
+        run: npm run test-vr:update
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in VR snapshots"
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in VR snapshots"
+          fi
+
+      - name: Configure Git
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push on Main Branch
+        if: steps.check_changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="update-vr-snapshots-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m "chore: update visual regression snapshots"
+          git push origin "$BRANCH_NAME"
+          gh pr create \
+            --title "chore: update visual regression snapshots" \
+            --body "This PR updates the visual regression baseline snapshots. Please review the changes carefully before merging." \
+            --base main \
+            --head "$BRANCH_NAME"
+
+      - name: Commit and Push on PR Branch
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'issue_comment' && steps.get_pr_branch.outputs.is_open == 'true'
+        run: |
+          git add .
+          git commit -m "chore: update visual regression snapshots"
+          git push
+
+      - name: Create New PR for Closed PR
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'issue_comment' && steps.get_pr_branch.outputs.is_open == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="update-vr-snapshots-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m "chore: update visual regression snapshots"
+          git push origin "$BRANCH_NAME"
+          PR_URL=$(gh pr create \
+            --title "chore: update visual regression snapshots" \
+            --body "This PR updates the visual regression baseline snapshots based on #${{ github.event.issue.number }}. Please review the changes carefully before merging." \
+            --base ${{ steps.get_pr_branch.outputs.base_branch }} \
+            --head "$BRANCH_NAME")
+          
+          # Comment on the original closed PR with link to new PR
+          gh issue comment ${{ github.event.issue.number }} --body "✅ Visual regression snapshots have been updated in a new PR: $PR_URL"
+
+      - name: Comment on PR with success
+        if: github.event_name == 'issue_comment' && steps.check_changes.outputs.has_changes == 'true' && steps.get_pr_branch.outputs.is_open == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ Visual regression snapshots have been updated and committed to this PR.'
+            });
+
+      - name: Comment on PR with no changes
+        if: github.event_name == 'issue_comment' && steps.check_changes.outputs.has_changes == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'ℹ️ No snapshot updates needed. All visual regression snapshots are up to date.'
+            });
+
+      - name: No Changes
+        if: steps.check_changes.outputs.has_changes == 'false'
+        run: echo "No snapshot updates needed. Workflow completed successfully."
