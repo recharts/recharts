@@ -275,6 +275,10 @@ jobs:
 
           - **Artifact Download:** [Download report artifact]($ARTIFACT_URL)
             *This link provides a stable copy of the report for this specific run.*
+
+          ---
+
+          **To update snapshots:** Comment \`/update-snapshots\` on this PR to automatically update the baseline screenshots.
           EOF
           )
           gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
