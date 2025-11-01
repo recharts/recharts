@@ -1942,3 +1942,131 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
     });
   });
 });
+
+describe('Bar background zIndex', () => {
+  const composedDataWithBackground = [
+    {
+      x: 10,
+      y: 50,
+      width: 20,
+      height: 20,
+      value: 40,
+      label: 'test',
+      background: { x: 10, y: 50, width: 20, height: 50 },
+    },
+    {
+      x: 50,
+      y: 50,
+      width: 20,
+      height: 50,
+      value: 100,
+      label: 'test',
+      background: { x: 50, y: 50, width: 20, height: 50 },
+    },
+  ];
+
+  it('should use default barBackground zIndex when background prop is true', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    // Background rectangles should be rendered
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should use default barBackground zIndex when background prop is an object without zIndex', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee' }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should use custom zIndex when background prop is an object with zIndex', () => {
+    const customZIndex = 999;
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: customZIndex }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should handle background prop with zIndex as 0', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: 0 }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should handle negative zIndex values in background prop', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: -200 }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should ignore non-number zIndex values in background prop', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior with invalid zIndex */}
+        <Bar background={{ fill: '#eee', zIndex: '100' }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should handle background prop when it is a function', () => {
+    const backgroundComponent = () => <rect className="custom-background" />;
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={backgroundComponent} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const customBackgrounds = container.querySelectorAll('.custom-background');
+    expect(customBackgrounds).toHaveLength(composedDataWithBackground.length);
+  });
+
+  it('should handle background prop when it is undefined', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={undefined} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    // No background rectangles should be rendered
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(0);
+  });
+
+  it('should handle background prop when it is false', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={false} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    // No background rectangles should be rendered
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(0);
+  });
+});
