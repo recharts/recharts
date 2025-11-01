@@ -41,6 +41,7 @@ export type StorybookArg = {
       detail?: string;
     };
     category?: 'Content' | 'Styles' | 'Position' | 'Internal' | string;
+    disable?: boolean;
   };
   hide?: boolean;
   disable?: boolean;

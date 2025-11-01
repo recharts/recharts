@@ -56,6 +56,10 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
+export function isValidTextAnchor(value: string | undefined): value is TextAnchor {
+  return value === 'start' || value === 'middle' || value === 'end' || value === 'inherit';
+}
+
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
 export type RenderableText = string | number | boolean | null | undefined;

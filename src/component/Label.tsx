@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
+import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
 import { getPercentValue, isNullish, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import {
@@ -353,7 +353,7 @@ export const getAttrsOfCartesianLabel = (
   if (position === 'top') {
     const attrs: LabelPositionAttributes = {
       x: upperX + upperWidth / 2,
-      y: y - verticalSign * offset,
+      y: y - verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
     };
@@ -618,6 +618,11 @@ export function Label(outerProps: Props) {
         className={clsx('recharts-label', className)}
         {...attrs}
         {...positionAttrs}
+        /*
+         * textAnchor is decided by default based on the `position`
+         * but we allow overriding via props for precise control.
+         */
+        textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
         breakAll={textBreakAll}
       >
         {label}

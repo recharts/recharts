@@ -34,7 +34,7 @@ export const positionProp: StorybookArg = {
         'insideBottomLeft, insideTopRight, insideBottomRight, ' +
         'insideStart, insideEnd, end, center, centerTop, centerBottom, middle',
     },
-    category: 'General',
+    category: 'Position',
   },
 };
 
