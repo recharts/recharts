@@ -41,6 +41,7 @@ export const map = {
     activeIndex: '活动索引',
     // chart size
     sizes: '图表尺寸',
+    domainAndTicks: '定义域与刻度',
   },
   installation: {
     installation: '安装',
