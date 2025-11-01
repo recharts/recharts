@@ -111,7 +111,7 @@ jobs:
 
       # When running on main branch, create a new branch, commit changes, and open a PR
       - name: Commit and create PR on main branch
-        if: steps.check_changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
