@@ -240,8 +240,8 @@ test('Chart Reversed By Both Angles And Reverse Axis', async ({ mount }) => {
       <RadialBar dataKey="rings" />
       <Legend />
       <PolarGrid gridType="circle" />
-      <PolarAngleAxis type="number" />
-      <PolarRadiusAxis type="category" stroke="black" />
+      <PolarAngleAxis type="number" reversed />
+      <PolarRadiusAxis type="category" stroke="black" reversed />
       <Tooltip />
       <RechartsHookInspector />
     </RadialBarChart>,
