@@ -39,8 +39,8 @@ export const map = {
     'getting-started': '起步',
     customize: '组件自定义',
     activeIndex: '活动索引',
-    // chart size
     sizes: '图表尺寸',
+    zIndex: 'Z-Index 和图层',
   },
   installation: {
     installation: '安装',

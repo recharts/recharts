@@ -109,6 +109,9 @@ export type { Props as TrapezoidProps } from './shape/Trapezoid';
 export { Global } from './util/Global';
 export type { LegendType } from './util/types';
 
+export { ZIndexLayer } from './zindex/ZIndexLayer';
+export { DefaultZIndexes } from './zindex/DefaultZIndexes';
+
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
 

@@ -1,12 +1,6 @@
-import { Link, NavLink, useLocation } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import './SidebarNav.scss';
-import { NavCategory, NavItem, useAllNavigationItems } from '../../../navigation.ts';
-
-function useCurrentNavItem(): NavItem | undefined {
-  const allNavigationItems = useAllNavigationItems();
-  const location = useLocation();
-  return allNavigationItems.find(item => location.pathname.includes(item.url));
-}
+import { NavCategory, useCurrentNavItem } from '../../../navigation.ts';
 
 export function SidebarNav() {
   const currentNavItem = useCurrentNavItem();
