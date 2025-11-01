@@ -2,6 +2,7 @@
 # It can be triggered manually and will:
 # - Run on main branch: create a new branch, commit changes, and open a PR
 # - Run in a PR: commit and push changes to the current PR branch
+# when pushing, this script runs without hooks (--no-verify) to save time and save on installing dependencies.
 
 name: Update VR Snapshots
 
@@ -24,7 +25,7 @@ jobs:
     # Only run if manually triggered OR if comment contains the trigger phrase
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issue_comment' && 
+      (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&
        contains(github.event.comment.body, '/update-snapshots'))
     steps:
@@ -40,6 +41,15 @@ jobs:
               content: 'rocket'
             });
 
+      - name: Print Event Info
+        run: |
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Issue number: ${{ github.event.issue.number || 'N/A' }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Actor: ${{ github.actor }}"
+
       - name: Get PR branch
         if: github.event_name == 'issue_comment'
         id: get_pr_branch
@@ -51,7 +61,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            
+
             core.setOutput('ref', pr.data.head.ref);
             core.setOutput('sha', pr.data.head.sha);
             core.setOutput('is_open', pr.data.state === 'open');
@@ -99,29 +109,32 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and Push on Main Branch
-        if: steps.check_changes.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+      # When running on main branch, create a new branch, commit changes, and open a PR
+      - name: Commit and create PR on main branch
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="update-vr-snapshots-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH_NAME"
           git add .
-          git commit -m "chore: update visual regression snapshots"
-          git push origin "$BRANCH_NAME"
+          git commit --no-verify -m "chore: update visual regression snapshots"
+          git push --no-verify origin "$BRANCH_NAME"
           gh pr create \
             --title "chore: update visual regression snapshots" \
             --body "This PR updates the visual regression baseline snapshots. Please review the changes carefully before merging." \
             --base main \
             --head "$BRANCH_NAME"
 
+      # When running in a PR, commit and push changes to the current PR branch
       - name: Commit and Push on PR Branch
         if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'issue_comment' && steps.get_pr_branch.outputs.is_open == 'true'
         run: |
           git add .
-          git commit -m "chore: update visual regression snapshots"
-          git push
+          git commit --no-verify -m "chore: update visual regression snapshots"
+          git push --no-verify
 
+      # When someone comments on a PR that was already closed, create a new PR with the updates
       - name: Create New PR for Closed PR
         if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'issue_comment' && steps.get_pr_branch.outputs.is_open == 'false'
         env:
@@ -130,14 +143,14 @@ jobs:
           BRANCH_NAME="update-vr-snapshots-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH_NAME"
           git add .
-          git commit -m "chore: update visual regression snapshots"
-          git push origin "$BRANCH_NAME"
+          git commit --no-verify -m "chore: update visual regression snapshots"
+          git push --no-verify origin "$BRANCH_NAME"
           PR_URL=$(gh pr create \
             --title "chore: update visual regression snapshots" \
             --body "This PR updates the visual regression baseline snapshots based on #${{ github.event.issue.number }}. Please review the changes carefully before merging." \
             --base ${{ steps.get_pr_branch.outputs.base_branch }} \
             --head "$BRANCH_NAME")
-          
+
           # Comment on the original closed PR with link to new PR
           gh issue comment ${{ github.event.issue.number }} --body "✅ Visual regression snapshots have been updated in a new PR: $PR_URL"
 
