@@ -6,12 +6,14 @@ import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ActiveIndex } from '../components/GuideView/ActiveIndex';
 import { ChartSizing } from '../components/GuideView/ChartSizing';
+import { DomainAndTicks } from '../components/GuideView/DomainAndTicks';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
   'getting-started': GettingStarted,
   customize: Customize,
   activeIndex: ActiveIndex,
+  domainAndTicks: DomainAndTicks,
   sizes: ChartSizing,
 };
 
