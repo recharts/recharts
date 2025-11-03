@@ -116,7 +116,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')).toHaveLength(2);
     expectXAxisTicks(container, [
       {
         textContent: '0',
@@ -170,7 +169,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
     expectXAxisTicks(container, [
       {
         textContent: '0',
@@ -230,7 +228,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(lineData.length);
     expectXAxisTicks(container, [
       {
         textContent: 'Page A',
@@ -339,7 +336,6 @@ describe('<XAxis />', () => {
       );
 
       expect(scaleTypeSpy).toHaveBeenLastCalledWith('scaleTime');
-      expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
           textContent: 'Thu, Jul 04, 2019, 00:00:00 Coordinated Universal Time',
@@ -420,7 +416,6 @@ describe('<XAxis />', () => {
       );
 
       expect(scaleTypeSpy).toHaveBeenLastCalledWith(undefined);
-      expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
           textContent: 'Thu 04',
@@ -771,7 +766,7 @@ describe('<XAxis />', () => {
         );
 
         expectLastCalledWith(spy, [90, 170]);
-        const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
+        const allTicks = container.querySelectorAll('.recharts-xAxis-ticks .recharts-cartesian-axis-tick-value');
         expect(allTicks).toHaveLength(expectedTickCount);
       },
     );
@@ -1263,7 +1258,7 @@ describe('<XAxis />', () => {
       </BarChart>,
     );
 
-    const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
+    const tick = container.querySelector('.recharts-xAxis-ticks .recharts-cartesian-axis-tick-value');
     assertNotNull(tick);
     expect(tick).toBeInTheDocument();
     expect(tick.textContent).toEqual('90');
@@ -3190,7 +3185,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           {
@@ -3266,7 +3261,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           { textContent: '90', x: '5', y: '243' },
@@ -4176,7 +4171,7 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
             </LineChart>,
           );
-          const allXAxes = container.querySelectorAll('.recharts-xAxis');
+          const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
           expect(allXAxes).toHaveLength(2);
           expectXAxisTicks(allXAxes[0], [
             {

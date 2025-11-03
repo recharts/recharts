@@ -923,15 +923,33 @@ describe('<YAxis />', () => {
         <Tooltip />
       </LineChart>,
     );
-    const allLabels = container.querySelectorAll('.recharts-yAxis .recharts-text.recharts-cartesian-axis-tick-value');
-    expect.soft(allLabels).toHaveLength(5);
-    const allText = Array.from(allLabels).map(el => el.textContent);
-    expect.soft(allText).toHaveLength(5);
-    expect(allText).toContain('0');
-    expect(allText).toContain('400');
-    expect(allText).toContain('800');
-    expect(allText).toContain('1200');
-    expect(allText).toContain('1600');
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '52',
+        y: '295',
+      },
+      {
+        textContent: '400',
+        x: '52',
+        y: '222.5',
+      },
+      {
+        textContent: '800',
+        x: '52',
+        y: '150',
+      },
+      {
+        textContent: '1200',
+        x: '52',
+        y: '77.5',
+      },
+      {
+        textContent: '1600',
+        x: '52',
+        y: '5',
+      },
+    ]);
   });
 
   describe('state integration', () => {

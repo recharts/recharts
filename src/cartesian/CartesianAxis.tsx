@@ -39,6 +39,7 @@ export type TickFormatter = (value: any, index: number) => string;
 
 export interface CartesianAxisProps extends ZIndexable {
   className?: string;
+  axisType?: 'xAxis' | 'yAxis';
   x?: number;
   y?: number;
   width?: number;
@@ -295,6 +296,7 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
 }
 
 type TicksProps = {
+  axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
   fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
@@ -317,7 +319,7 @@ type TicksProps = {
   y: number;
 };
 
-function Ticks(props: TicksProps) {
+const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   const {
     ticks = [],
     tick,
@@ -339,6 +341,7 @@ function Ticks(props: TicksProps) {
     letterSpacing,
     getTicksConfig,
     events,
+    axisType,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
@@ -411,14 +414,20 @@ function Ticks(props: TicksProps) {
   });
 
   if (items.length > 0) {
-    return <g className="recharts-cartesian-axis-ticks">{items}</g>;
+    return (
+      <ZIndexLayer zIndex={DefaultZIndexes.label}>
+        <g className={clsx('recharts-cartesian-axis-ticks', `recharts-${axisType}-ticks`)} ref={ref}>
+          {items}
+        </g>
+      </ZIndexLayer>
+    );
   }
 
   return null;
-}
+});
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
-  const { axisLine, width, height, className, hide, ticks, ...rest } = props;
+  const { axisLine, width, height, className, hide, ticks, axisType, ...rest } = props;
   const [fontSize, setFontSize] = useState('');
   const [letterSpacing, setLetterSpacing] = useState('');
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
@@ -473,7 +482,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
-      <Layer className={clsx('recharts-cartesian-axis', className)} ref={layerRef}>
+      <Layer className={clsx('recharts-cartesian-axis', className)}>
         <AxisLine
           x={props.x}
           y={props.y}
@@ -485,6 +494,8 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           otherSvgProps={svgPropertiesNoEvents(props)}
         />
         <Ticks
+          ref={layerRef}
+          axisType={axisType}
           events={rest}
           fontSize={fontSize}
           getTicksConfig={props}

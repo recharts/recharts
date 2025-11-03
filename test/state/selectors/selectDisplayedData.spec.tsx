@@ -287,9 +287,9 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    const allAxes = container.querySelectorAll('.recharts-xAxis');
-    expect(allAxes).toHaveLength(2);
-    expectXAxisTicks(allAxes[0], [
+    const allAxisTicks = container.querySelectorAll('.recharts-xAxis-ticks');
+    expect(allAxisTicks).toHaveLength(2);
+    expectXAxisTicks(allAxisTicks[0], [
       {
         textContent: '280',
         x: '5',
@@ -316,7 +316,7 @@ describe('selectDisplayedData', () => {
         y: '43',
       },
     ]);
-    expectXAxisTicks(allAxes[1], [
+    expectXAxisTicks(allAxisTicks[1], [
       {
         textContent: '481',
         x: '5',
