@@ -349,20 +349,29 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         };
 
         return (
-          <Layer
+          <ZIndexLayer
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
-            className="recharts-scatter-symbol"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            /*
+             * inactive Scatters use the parent zIndex, which is represented by undefined here.
+             * ZIndexLayer will render undefined zIndex as-is, as regular children, without portals.
+             * Active Scatters use the activeDot zIndex so they render above other elements.
+             */
+            zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
           >
-            <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
-          </Layer>
+            <Layer
+              className="recharts-scatter-symbol"
+              {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onMouseEnter={onMouseEnterFromContext(entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onMouseLeave={onMouseLeaveFromContext(entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onClick={onClickFromContext(entry, i)}
+            >
+              <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+            </Layer>
+          </ZIndexLayer>
         );
       })}
     </>
