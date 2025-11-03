@@ -39,9 +39,6 @@ export type Segment = {
 
 export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
-/**
- * @inline
- */
 interface ReferenceLineProps extends ZIndexable {
   ifOverflow?: IfOverflow;
 
