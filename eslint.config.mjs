@@ -338,6 +338,19 @@ const overridesConfig = [
   },
 ];
 
+const omnidocOverrides = [
+  {
+    name: 'omnidoc-overrides',
+    files: ['omnidoc/**'],
+    rules: {
+      // we allow generators in omnidoc scripts
+      'no-restricted-syntax': ['off'],
+      // we allow `continue`
+      'no-continue': ['off'],
+    },
+  },
+];
+
 const settings = [
   {
     name: 'x/settings',
@@ -376,4 +389,6 @@ export default [
   ...overridesConfig,
   // Settings
   ...settings,
+  // Omnidoc Overrides
+  ...omnidocOverrides,
 ];
