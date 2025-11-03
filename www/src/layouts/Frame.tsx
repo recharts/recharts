@@ -27,7 +27,7 @@ export function Frame(props: FrameProps) {
         <Navigation />
       </header>
       <SidebarNav />
-      {children}
+      <main>{children}</main>
       <footer>
         <p>
           <span>Released under the </span>

@@ -13,18 +13,18 @@ $white: #fff !default;
 
 $gray-base: #666 !default;
 $gray-dark: color.adjust($gray-base, $lightness: -20%, $space: hsl) !default; // #333
-$gray-light: color.adjust($gray-base, $lightness: 20%, $space: hsl) !default; // #999
+$gray-light: #757575 !default; // Changed from color.adjust for better contrast
 $gray-lighter: color.adjust($gray-base, $lightness: 40%, $space: hsl) !default; // #ccc
 $gray-lightest: color.adjust($gray-base, $lightness: 53.3333%, $space: hsl) !default; // #eee
 $whitesmoke: color.adjust($gray-base, $lightness: 56%, $space: hsl) !default; // #f5f5f5
 
-$brand-primary: #1281ca !default;
+$brand-primary: #1074b6 !default;
 $brand-second: #2e96ea !default;
 $brand-third: #12b5f4 !default;
-$brand-info: #22b5bf !default;
+$brand-info: #18828a !default;
 body {
-  --var-brand-primary: #1281ca;
-  --var-brand-info: #22b5bf;
+  --var-brand-primary: #1074b6;
+  --var-brand-info: #18828a;
 }
 $brand-warning: #ff7300 !default;
 
