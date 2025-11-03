@@ -347,6 +347,8 @@ const omnidocOverrides = [
       'no-restricted-syntax': ['off'],
       // we allow `continue`
       'no-continue': ['off'],
+      // class methods are not required to use `this` in omnidoc scripts
+      'class-methods-use-this': ['off'],
     },
   },
 ];
