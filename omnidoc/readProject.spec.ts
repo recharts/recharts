@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
-import { getPropertiesOf, getPropsOf, getPublicSymbolNames, getSVGParentOf } from './readProject';
+import { ProjectDocReader } from './readProject';
 
 describe('readProject', () => {
+  const reader = new ProjectDocReader();
   it('should identify all exported symbols', () => {
-    expect(getPublicSymbolNames()).toMatchInlineSnapshot(`
+    expect(reader.getPublicSymbolNames()).toMatchInlineSnapshot(`
       [
         "Area",
         "AreaChart",
@@ -125,11 +126,11 @@ describe('readProject', () => {
         "ZAxisProps",
       ]
     `);
-  }, 10000);
+  });
 
   it('should filter symbols by kind', () => {
     // this is a list of exported runtime objects, looks useful. Where is ZAxis though? Maybe ZAxis is a function.
-    expect(getPublicSymbolNames(SymbolFlags.Variable)).toMatchInlineSnapshot(`
+    expect(reader.getPublicSymbolNames(SymbolFlags.Variable)).toMatchInlineSnapshot(`
       [
         "Area",
         "AreaChart",
@@ -181,7 +182,7 @@ describe('readProject', () => {
 
   it('should return properties', () => {
     // this is not entirely helpful for what we need to do
-    expect(getPropertiesOf('Funnel')).toMatchInlineSnapshot(`
+    expect(reader.getPropertiesOf('Funnel')).toMatchInlineSnapshot(`
       [
         "render",
         "context",
@@ -207,7 +208,7 @@ describe('readProject', () => {
   });
 
   it('should return props', () => {
-    expect(getPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
+    expect(reader.getPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
       [
         "className",
         "ifOverflow",
@@ -225,6 +226,6 @@ describe('readProject', () => {
   });
 
   it('should return SVG component that this component extends', () => {
-    expect(getSVGParentOf('ReferenceLine')).toBe('SVGLineElement');
+    expect(reader.getSVGParentOf('ReferenceLine')).toBe('SVGLineElement');
   });
 });
