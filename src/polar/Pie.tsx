@@ -565,7 +565,6 @@ export function computePieSectors({
 
       prev = {
         ...pieSettings.presentationProps,
-        ...entryWithCellInfo,
         percent,
         cornerRadius: typeof cornerRadius === 'string' ? parseFloat(cornerRadius) : cornerRadius,
         name,
@@ -573,6 +572,7 @@ export function computePieSectors({
         midAngle,
         middleRadius,
         tooltipPosition,
+        ...entryWithCellInfo,
         ...coordinate,
         value: val,
         startAngle: tempStartAngle,

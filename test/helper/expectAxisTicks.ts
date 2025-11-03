@@ -10,7 +10,7 @@ export type ExpectedTick = {
 };
 
 export function expectXAxisTicks(container: Element, expectedTicks: ReadonlyArray<ExpectedTick>) {
-  const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
+  const allTicks = container.querySelectorAll('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
   const ticksContexts = Array.from(allTicks).map(tick => ({
     textContent: tick.textContent,
@@ -21,7 +21,7 @@ export function expectXAxisTicks(container: Element, expectedTicks: ReadonlyArra
 }
 
 export function expectYAxisTicks(container: Element, ticks: ReadonlyArray<ExpectedTick>) {
-  const allTicks = container.querySelectorAll('.recharts-yAxis .recharts-cartesian-axis-tick-value');
+  const allTicks = container.querySelectorAll('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
   const ticksContexts = Array.from(allTicks).map(tick => ({
     textContent: tick.textContent,

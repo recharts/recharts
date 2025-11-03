@@ -39,6 +39,7 @@ export type TickFormatter = (value: any, index: number) => string;
 
 export interface CartesianAxisProps extends ZIndexable {
   className?: string;
+  axisType?: 'xAxis' | 'yAxis';
   x?: number;
   y?: number;
   width?: number;
@@ -295,6 +296,7 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
 }
 
 type TicksProps = {
+  axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
   fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
@@ -317,7 +319,7 @@ type TicksProps = {
   y: number;
 };
 
-function Ticks(props: TicksProps) {
+const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   const {
     ticks = [],
     tick,
@@ -339,6 +341,7 @@ function Ticks(props: TicksProps) {
     letterSpacing,
     getTicksConfig,
     events,
+    axisType,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
@@ -355,18 +358,30 @@ function Ticks(props: TicksProps) {
     fill: 'none',
     ...tickLinePropsObject,
   };
-  const items = finalTicks.map((entry: CartesianTickItem, i) => {
-    const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
-      entry,
-      x,
-      y,
-      width,
-      height,
-      orientation,
-      tickSize,
-      mirror,
-      tickMargin,
+
+  const tickLineCoords = finalTicks.map((entry: CartesianTickItem) => ({
+    entry,
+    ...getTickLineCoord(entry, x, y, width, height, orientation, tickSize, mirror, tickMargin),
+  }));
+
+  const tickLines = tickLineCoords.map(({ entry, line: lineCoord }) => {
+    return (
+      <Layer
+        className="recharts-cartesian-axis-tick"
+        key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
+      >
+        {tickLine && (
+          <line
+            {...tickLineProps}
+            {...lineCoord}
+            className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
+          />
+        )}
+      </Layer>
     );
+  });
+
+  const tickLabels = tickLineCoords.map(({ entry, tick: tickCoord }, i) => {
     const tickProps: TextProps = {
       // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
       textAnchor,
@@ -385,20 +400,12 @@ function Ticks(props: TicksProps) {
       padding,
       ...tickTextProps,
     };
-
     return (
       <Layer
-        className="recharts-cartesian-axis-tick"
-        key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
+        className="recharts-cartesian-axis-tick-label"
+        key={`tick-label-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
         {...adaptEventsOfChild(events, entry, i)}
       >
-        {tickLine && (
-          <line
-            {...tickLineProps}
-            {...lineCoord}
-            className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
-          />
-        )}
         {tick && (
           <TickItem
             option={tick}
@@ -410,15 +417,24 @@ function Ticks(props: TicksProps) {
     );
   });
 
-  if (items.length > 0) {
-    return <g className="recharts-cartesian-axis-ticks">{items}</g>;
-  }
-
-  return null;
-}
+  return (
+    <g className={`recharts-cartesian-axis-ticks recharts-${axisType}-ticks`}>
+      {tickLabels.length > 0 && (
+        <ZIndexLayer zIndex={DefaultZIndexes.label}>
+          <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref}>
+            {tickLabels}
+          </g>
+        </ZIndexLayer>
+      )}
+      {tickLines.length > 0 && (
+        <g className={`recharts-cartesian-axis-tick-lines recharts-${axisType}-tick-lines`}>{tickLines}</g>
+      )}
+    </g>
+  );
+});
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
-  const { axisLine, width, height, className, hide, ticks, ...rest } = props;
+  const { axisLine, width, height, className, hide, ticks, axisType, ...rest } = props;
   const [fontSize, setFontSize] = useState('');
   const [letterSpacing, setLetterSpacing] = useState('');
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
@@ -473,7 +489,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
-      <Layer className={clsx('recharts-cartesian-axis', className)} ref={layerRef}>
+      <Layer className={clsx('recharts-cartesian-axis', className)}>
         <AxisLine
           x={props.x}
           y={props.y}
@@ -485,6 +501,8 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           otherSvgProps={svgPropertiesNoEvents(props)}
         />
         <Ticks
+          ref={layerRef}
+          axisType={axisType}
           events={rest}
           fontSize={fontSize}
           getTicksConfig={props}

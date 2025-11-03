@@ -46,6 +46,21 @@ export type CursorConnectedProps = CursorProps & {
   chartName: string;
 };
 
+function RenderCursor({
+  cursor,
+  cursorComp,
+  cursorProps,
+}: {
+  cursor: CursorDefinition;
+  cursorComp: React.ComponentType<any>;
+  cursorProps: any;
+}) {
+  if (isValidElement(cursor)) {
+    return cloneElement(cursor, cursorProps);
+  }
+  return createElement(cursorComp, cursorProps);
+}
+
 export function CursorInternal(props: CursorConnectedProps) {
   const { coordinate, payload, index, offset, tooltipAxisBandSize, layout, cursor, tooltipEventType, chartName } =
     props;
@@ -57,14 +72,16 @@ export function CursorInternal(props: CursorConnectedProps) {
   if (!cursor || !activeCoordinate || (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')) {
     return null;
   }
-  let restProps, cursorComp: React.ComponentType<any>;
+  let restProps, cursorComp: React.ComponentType<any>, preferredZIndex: number;
 
   if (chartName === 'ScatterChart') {
     restProps = activeCoordinate;
     cursorComp = Cross;
+    preferredZIndex = DefaultZIndexes.cursorLine;
   } else if (chartName === 'BarChart') {
     restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
     cursorComp = Rectangle;
+    preferredZIndex = DefaultZIndexes.cursorRectangle;
   } else if (layout === 'radial' && isPolarCoordinate(activeCoordinate)) {
     const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
     restProps = {
@@ -76,9 +93,11 @@ export function CursorInternal(props: CursorConnectedProps) {
       outerRadius: radius,
     };
     cursorComp = Sector;
+    preferredZIndex = DefaultZIndexes.cursorLine;
   } else {
     restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
     cursorComp = Curve;
+    preferredZIndex = DefaultZIndexes.cursorLine;
   }
 
   const extraClassName: string | undefined =
@@ -95,11 +114,11 @@ export function CursorInternal(props: CursorConnectedProps) {
     className: clsx('recharts-tooltip-cursor', extraClassName),
   };
 
-  if (isValidElement(cursor)) {
-    // @ts-expect-error we don't know if cursorProps are correct for this element
-    return cloneElement(cursor, cursorProps);
-  }
-  return createElement(cursorComp, cursorProps);
+  return (
+    <ZIndexLayer zIndex={props.zIndex ?? preferredZIndex}>
+      <RenderCursor cursor={cursor} cursorComp={cursorComp} cursorProps={cursorProps} />
+    </ZIndexLayer>
+  );
 }
 
 /*
@@ -121,14 +140,12 @@ export function Cursor(props: CursorProps) {
   }
 
   return (
-    <ZIndexLayer zIndex={props.zIndex ?? DefaultZIndexes.cursor}>
-      <CursorInternal
-        {...props}
-        offset={offset}
-        layout={layout}
-        tooltipAxisBandSize={tooltipAxisBandSize}
-        chartName={chartName}
-      />
-    </ZIndexLayer>
+    <CursorInternal
+      {...props}
+      offset={offset}
+      layout={layout}
+      tooltipAxisBandSize={tooltipAxisBandSize}
+      chartName={chartName}
+    />
   );
 }

@@ -470,7 +470,7 @@ describe('<ReferenceLine />', () => {
     const refLine = container.querySelectorAll('.recharts-reference-line-line');
     const yAxis = container.querySelector('.recharts-yAxis');
     assertNotNull(yAxis);
-    const ticks = yAxis.querySelectorAll('.recharts-cartesian-axis-tick-value');
+    const ticks = container.querySelectorAll('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value');
     const topTick = ticks[ticks.length - 1];
     expect(refLine).toHaveLength(1);
 

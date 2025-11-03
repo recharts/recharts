@@ -145,6 +145,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={viewBox}
       ticks={cartesianTickItems}
+      axisType={axisType}
     />
   );
 };
