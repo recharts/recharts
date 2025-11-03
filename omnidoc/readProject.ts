@@ -1,7 +1,7 @@
 /**
  * @fileOverview reads props from the source code using ts-morph
  */
-import { Project, SymbolFlags, Type } from 'ts-morph';
+import { ExportedDeclarations, Project, SymbolFlags, Type } from 'ts-morph';
 
 let project: Project;
 
@@ -50,12 +50,7 @@ export function getPublicSymbolNames(kind?: SymbolFlags): string[] {
   return names.sort((a, b) => a.localeCompare(b));
 }
 
-/**
- * This returns properties of a symbol. So if you pass a React component, you get back React lifecycle methods,
- * and displayName.
- * @param component
- */
-export function getPropertiesOf(component: string): string[] | undefined {
+function getComponentDeclaration(component: string): ExportedDeclarations {
   const proj = initializeProject();
   const sourceFile = proj.getSourceFileOrThrow('src/index.ts');
   const exportedDeclarations = sourceFile.getExportedDeclarations();
@@ -65,8 +60,22 @@ export function getPropertiesOf(component: string): string[] | undefined {
     throw new Error(`Unknown component ${component}`);
   }
 
-  const declaration = declarations[0];
-  const type = declaration.getType();
+  return declarations[0];
+}
+
+function getComponentType(component: string): Type {
+  const declaration = getComponentDeclaration(component);
+
+  return declaration.getType();
+}
+
+/**
+ * This returns properties of a symbol. So if you pass a React component, you get back React lifecycle methods,
+ * and displayName.
+ * @param component
+ */
+export function getPropertiesOf(component: string): string[] | undefined {
+  const type = getComponentType(component);
 
   const properties = type.getProperties();
   return properties.map(p => p.getName());
@@ -161,17 +170,8 @@ function extractSVGElementFromType(type: Type): string | null {
   return null;
 }
 
-export function getPropsOf(component: string): string[] {
-  const proj = initializeProject();
-  const sourceFile = proj.getSourceFileOrThrow('src/index.ts');
-  const exportedDeclarations = sourceFile.getExportedDeclarations();
-
-  const declarations = exportedDeclarations.get(component);
-  if (!declarations || declarations.length === 0) {
-    throw new Error(`Unknown component ${component}`);
-  }
-
-  const declaration = declarations[0];
+function getFirstParamType(component: string): Type {
+  const declaration = getComponentDeclaration(component);
   const type = declaration.getType();
 
   // Get call signatures (for function components)
@@ -187,38 +187,15 @@ export function getPropsOf(component: string): string[] {
   }
 
   const firstParameter = parameters[0];
-  const paramType = firstParameter.getTypeAtLocation(declaration);
+  return firstParameter.getTypeAtLocation(declaration);
+}
 
+export function getPropsOf(component: string): string[] {
+  const paramType = getFirstParamType(component);
   return collectPropertiesFromType(paramType);
 }
 
 export function getSVGParentOf(component: string): string | null {
-  const proj = initializeProject();
-  const sourceFile = proj.getSourceFileOrThrow('src/index.ts');
-  const exportedDeclarations = sourceFile.getExportedDeclarations();
-
-  const declarations = exportedDeclarations.get(component);
-  if (!declarations || declarations.length === 0) {
-    throw new Error(`Unknown component ${component}`);
-  }
-
-  const declaration = declarations[0];
-  const type = declaration.getType();
-
-  // Get call signatures (for function components)
-  const callSignatures = type.getCallSignatures();
-  if (callSignatures.length === 0) {
-    throw new Error(`Expected to find at least one call signature for component ${component}, but found none.`);
-  }
-
-  const firstSignature = callSignatures[0];
-  const parameters = firstSignature.getParameters();
-  if (parameters.length === 0) {
-    throw new Error(`Expected to find at least one parameter for component ${component}, but found none.`);
-  }
-
-  const firstParameter = parameters[0];
-  const paramType = firstParameter.getTypeAtLocation(declaration);
-
+  const paramType = getFirstParamType(component);
   return extractSVGElementFromType(paramType);
 }
