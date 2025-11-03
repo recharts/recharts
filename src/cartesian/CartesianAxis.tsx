@@ -358,18 +358,30 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     fill: 'none',
     ...tickLinePropsObject,
   };
-  const items = finalTicks.map((entry: CartesianTickItem, i) => {
-    const { line: lineCoord, tick: tickCoord } = getTickLineCoord(
-      entry,
-      x,
-      y,
-      width,
-      height,
-      orientation,
-      tickSize,
-      mirror,
-      tickMargin,
+
+  const tickLineCoords = finalTicks.map((entry: CartesianTickItem) => ({
+    entry,
+    ...getTickLineCoord(entry, x, y, width, height, orientation, tickSize, mirror, tickMargin),
+  }));
+
+  const tickLines = tickLineCoords.map(({ entry, line: lineCoord }) => {
+    return (
+      <Layer
+        className="recharts-cartesian-axis-tick"
+        key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
+      >
+        {tickLine && (
+          <line
+            {...tickLineProps}
+            {...lineCoord}
+            className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
+          />
+        )}
+      </Layer>
     );
+  });
+
+  const tickLabels = tickLineCoords.map(({ entry, tick: tickCoord }, i) => {
     const tickProps: TextProps = {
       // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
       textAnchor,
@@ -388,20 +400,12 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
       padding,
       ...tickTextProps,
     };
-
     return (
       <Layer
-        className="recharts-cartesian-axis-tick"
-        key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
+        className="recharts-cartesian-axis-tick-label"
+        key={`tick-label-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
         {...adaptEventsOfChild(events, entry, i)}
       >
-        {tickLine && (
-          <line
-            {...tickLineProps}
-            {...lineCoord}
-            className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
-          />
-        )}
         {tick && (
           <TickItem
             option={tick}
@@ -413,17 +417,20 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     );
   });
 
-  if (items.length > 0) {
-    return (
-      <ZIndexLayer zIndex={DefaultZIndexes.label}>
-        <g className={clsx('recharts-cartesian-axis-ticks', `recharts-${axisType}-ticks`)} ref={ref}>
-          {items}
-        </g>
-      </ZIndexLayer>
-    );
-  }
-
-  return null;
+  return (
+    <g className={`recharts-cartesian-axis-ticks recharts-${axisType}-ticks`}>
+      {tickLabels.length > 0 && (
+        <ZIndexLayer zIndex={DefaultZIndexes.label}>
+          <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref}>
+            {tickLabels}
+          </g>
+        </ZIndexLayer>
+      )}
+      {tickLines.length > 0 && (
+        <g className={`recharts-cartesian-axis-tick-lines recharts-${axisType}-tick-lines`}>{tickLines}</g>
+      )}
+    </g>
+  );
 });
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {

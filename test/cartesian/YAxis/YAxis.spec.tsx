@@ -586,7 +586,7 @@ describe('<YAxis />', () => {
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-label');
     expect(ticksGroup).toHaveLength(4);
 
     const firstTick = ticksGroup[0];
@@ -630,7 +630,7 @@ describe('<YAxis />', () => {
     );
 
     // all ticks
-    const ticks = document.querySelectorAll('.recharts-cartesian-axis-tick');
+    const ticks = document.querySelectorAll('.recharts-cartesian-axis-tick-label');
 
     // value of each tick
     const tickValues: number[] = [];

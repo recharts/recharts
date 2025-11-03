@@ -140,7 +140,7 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-label');
     expect(ticksGroup).toHaveLength(2);
 
     const firstTick = ticksGroup[0];
@@ -766,7 +766,7 @@ describe('<XAxis />', () => {
         );
 
         expectLastCalledWith(spy, [90, 170]);
-        const allTicks = container.querySelectorAll('.recharts-xAxis-ticks .recharts-cartesian-axis-tick-value');
+        const allTicks = container.querySelectorAll('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
         expect(allTicks).toHaveLength(expectedTickCount);
       },
     );
@@ -1258,7 +1258,7 @@ describe('<XAxis />', () => {
       </BarChart>,
     );
 
-    const tick = container.querySelector('.recharts-xAxis-ticks .recharts-cartesian-axis-tick-value');
+    const tick = container.querySelector('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
     assertNotNull(tick);
     expect(tick).toBeInTheDocument();
     expect(tick.textContent).toEqual('90');
@@ -3185,7 +3185,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           {
@@ -3261,7 +3261,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           { textContent: '90', x: '5', y: '243' },
@@ -4171,7 +4171,7 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
             </LineChart>,
           );
-          const allXAxes = container.querySelectorAll('.recharts-xAxis-ticks');
+          const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
           expect(allXAxes).toHaveLength(2);
           expectXAxisTicks(allXAxes[0], [
             {

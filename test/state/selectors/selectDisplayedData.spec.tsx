@@ -287,7 +287,7 @@ describe('selectDisplayedData', () => {
         <Comp />
       </LineChart>,
     );
-    const allAxisTicks = container.querySelectorAll('.recharts-xAxis-ticks');
+    const allAxisTicks = container.querySelectorAll('.recharts-xAxis-tick-labels');
     expect(allAxisTicks).toHaveLength(2);
     expectXAxisTicks(allAxisTicks[0], [
       {
