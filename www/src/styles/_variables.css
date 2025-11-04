@@ -6,12 +6,12 @@
   --background-color: #fff;
   --text-color: #666;
   --title-color: #333;
-  --subtitle-text-color: #999;
+  --subtitle-text-color: #757575;
   --border-color: #ccc;
 
-  --brand-primary: #1281ca;
+  --brand-primary: #1074b6;
   --brand-second: #2e96ea;
-  --brand-info: #22b5bf;
+  --brand-info: #18828a;
 
   --link-color: var(--text-color);
   --link-color-hover: #333;
