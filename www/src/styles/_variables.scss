@@ -7,50 +7,34 @@ $mobile-breakpoint: 991px;
 
 // Color
 // --------------------------------------------------
-$black: #000 !default;
-$white: #fff !default;
+$background-color: #fff !default;
 
-$gray-base: #666 !default;
-$gray-dark: #333 !default;
-$gray-light: #999 !default;
-$gray-lighter: #ccc !default;
-$gray-lightest: #ededed !default;
-$whitesmoke: #f4f4f4 !default;
+$text-color: #666 !default;
+$title-color: #333 !default;
+$subtitle-text-color: #999 !default;
+$border-color: #ccc !default;
 
 $brand-primary: #1281ca !default;
 $brand-second: #2e96ea !default;
-$brand-third: #12b5f4 !default;
 $brand-info: #22b5bf !default;
 :root {
   --var-brand-primary: #1281ca;
   --var-brand-info: #22b5bf;
 }
-$brand-warning: #ff7300 !default;
 
-$link-color: $gray-base !default;
-$link-color-hover: $gray-dark !default;
+$link-color: $text-color !default;
+$link-color-hover: #333 !default;
 
-$text-color-title: $gray-dark !default;
-$text-color-body: $gray-base !default;
+$text-color-body: $text-color !default;
 
 // Font Size
 // --------------------------------------------------
 $font-size-base: 14px !default;
 
-$font-size-xs: 10px !default;
-$font-size-sm: 12px !default;
 $font-size-lg: 16px !default;
 $font-size-xl: 18px !default;
 $font-size-xxl: 20px !default;
 $font-size-xxxl: 24px !default;
-
-$font-size-body: $font-size-base !default;
-$font-size-list: $font-size-sm !default;
-$font-size-second: $font-size-sm !default;
-
-$font-size-num: $font-size-sm !default;
-$font-size-num-lg: $font-size-xl !default;
-$font-size-num-xl: $font-size-xxl !default;
 
 // Font
 // --------------------------------------------------
