@@ -2,6 +2,7 @@
 @use 'scaffolding';
 @use 'container';
 @use 'responsive';
+@use 'variables';
 
 .no-wrap {
   white-space: nowrap;

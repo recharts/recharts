@@ -1,5 +1,3 @@
-@use '../styles/variables' as variables;
-
 header {
   width: 100%;
   background-color: #fcfcfc;
@@ -16,7 +14,7 @@ header {
   .logo {
     margin: 0;
     padding: 0 2rem;
-    font-family: var(--font-family-code);
+    font-family: var(--font-family-code), sans-serif;
     font-weight: 300;
     font-size: var(--font-size-xl);
     white-space: nowrap;
