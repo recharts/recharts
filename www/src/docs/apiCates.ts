@@ -12,7 +12,7 @@ export const apiCates = [
       'ScatterChart',
       'FunnelChart',
       'Treemap',
-      'SankeyChart',
+      'Sankey',
     ],
   },
   {
