@@ -103,9 +103,9 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/Treemap/",
           },
           {
-            "displayName": "SankeyChart",
-            "key": "SankeyChart",
-            "url": "/en-US/api/SankeyChart/",
+            "displayName": "Sankey",
+            "key": "Sankey",
+            "url": "/en-US/api/Sankey/",
           },
         ],
         "key": "charts",

@@ -9,6 +9,7 @@ export const apiComponents = [
   'ScatterChart',
   'FunnelChart',
   'Treemap',
+  'Sankey',
   'SankeyChart',
   'ResponsiveContainer',
   'Legend',

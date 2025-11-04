@@ -1,7 +1,7 @@
 import { ApiDoc } from './types.ts';
 
-export const SankeyChartAPI: ApiDoc = {
-  name: 'SankeyChart',
+export const SankeyAPI: ApiDoc = {
+  name: 'Sankey',
   props: [
     {
       name: 'nameKey',
