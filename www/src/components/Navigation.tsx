@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router';
 import { Bar, BarChart, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
-import './navigation.scss';
+import './navigation.css';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
 
 function DesktopNav() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { allExamples } from '../docs/exampleComponents';
-import './ExampleView.scss';
+import './ExampleView.css';
 import 'simple-line-icons/scss/simple-line-icons.scss';
 import { RouteComponentProps, withRouter } from '../routes/withRouter';
 import { ComponentExamples } from '../docs/exampleComponents/types.ts';

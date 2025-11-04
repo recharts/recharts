@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
-import './IndexView.scss';
+import './IndexView.css';
 import 'simple-line-icons/scss/simple-line-icons.scss';
 import { users } from '../../docs/users/users';
 import { RouteComponentProps, withRouter } from '../../routes/withRouter.tsx';

@@ -1,4 +1,4 @@
-import './iframe.scss';
+import './iframe.css';
 
 export function Storybook() {
   return (

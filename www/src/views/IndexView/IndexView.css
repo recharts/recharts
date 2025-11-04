@@ -24,7 +24,7 @@
 
     .title {
       font-size: 64px;
-      font-family: var(--font-family-logo);
+      font-family: var(--font-family-logo), sans-serif;
       color: var(--brand-info);
     }
 

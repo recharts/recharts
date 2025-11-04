@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import { useLocale } from '../utils/LocaleUtils.ts';
 import '../styles/app.scss';
-import './frame.scss';
+import './frame.css';
 import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
 
