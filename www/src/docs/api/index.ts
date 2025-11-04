@@ -6,7 +6,6 @@ import { PieChartAPI as PieChart } from './PieChart';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI as RadarChart } from './RadarChart';
 import { SankeyAPI } from './Sankey';
-import { SankeyChartAPI } from './SankeyChart';
 import { RadialBarChartAPI } from './RadialBarChart';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
@@ -63,7 +62,6 @@ export const allExamples: Record<string, ApiDoc> = {
   RadialBarChart: RadialBarChartAPI,
   FunnelChart,
   Sankey: SankeyAPI,
-  SankeyChart: SankeyChartAPI,
   Treemap: TreemapAPI,
 
   Area,
