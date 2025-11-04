@@ -36,9 +36,5 @@
 
   #codemirror-container {
     max-width: 120ex;
-    /*max-width: 100%;*/
-    /*height: calc(100vh - 40px);*/
-    /*resize: both;*/
-    /*overflow: auto;*/
   }
 }
