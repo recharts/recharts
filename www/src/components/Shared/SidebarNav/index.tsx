@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router';
-import './SidebarNav.scss';
+import './SidebarNav.css';
 import { NavCategory, useCurrentNavItem } from '../../../navigation.ts';
 
 export function SidebarNav() {

@@ -1,12 +1,13 @@
-//
-// Scaffolding
-// --------------------------------------------------
+/*
+ * Scaffolding
+ * --------------------------------------------------
 
-// Reset the box-sizing
-//
-// Heads up! This reset may cause conflicts with some third-party widgets.
-// For recommendations on resolving such conflicts, see
-// http://getbootstrap.com/getting-started/#third-box-sizing
+ * Reset the box-sizing
+ *
+ * Heads up! This reset may cause conflicts with some third-party widgets.
+ * For recommendations on resolving such conflicts, see
+ * http://getbootstrap.com/getting-started/#third-box-sizing
+ */
 * {
   box-sizing: border-box;
 }
@@ -15,7 +16,7 @@
   box-sizing: border-box;
 }
 
-// Body reset
+/* Body reset*/
 
 html {
   font-size: 10px;
@@ -31,7 +32,7 @@ body {
   background-color: var(--background-color);
 }
 
-// Reset fonts for relevant elements
+/* Reset fonts for relevant elements*/
 input,
 button,
 select,
@@ -41,7 +42,7 @@ textarea {
   line-height: inherit;
 }
 
-// Links
+/* Links */
 
 a {
   color: var(--link-color);
@@ -53,22 +54,24 @@ a {
 
   &:focus {
     outline: thin dotted;
-    // WebKit
+    /* WebKit*/
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
   }
 }
 
-// Figures
-//
-// We reset this here because previously Normalize had no `figure` margins. This
-// ensures we don't break anyone's use of the element.
+/*
+ * Figures
+
+ * We reset this here because previously Normalize had no `figure` margins. This
+ * ensures we don't break anyone's use of the element.
+ */
 
 figure {
   margin: 0;
 }
 
-// Images
+/* Images*/
 
 img {
   vertical-align: middle;
@@ -106,11 +109,11 @@ td {
   padding: 0;
 }
 
-// Button
+/* Button*/
 
 a.button {
   display: inline-block;
-  font-family: var(--font-family-code);
+  font-family: var(--font-family-code), sans-serif;
   font-weight: 700;
   color: #fff;
   background-color: var(--brand-primary);
