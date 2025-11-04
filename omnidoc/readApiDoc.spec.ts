@@ -15,7 +15,7 @@ describe('readApiDoc', () => {
         "ScatterChart",
         "RadialBarChart",
         "FunnelChart",
-        "SankeyChart",
+        "Sankey",
         "Treemap",
         "Area",
         "Bar",
