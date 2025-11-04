@@ -28,7 +28,6 @@
     "@types/react-helmet": "^6.1.11",
     "@types/sax": "^1.2.7",
     "@vitejs/plugin-react": "^4.7.0",
-    "sass": "^1.93.2",
     "sax": "^1.4.1",
     "tsx": "^4.20.6",
     "vite": "^6.4.1",

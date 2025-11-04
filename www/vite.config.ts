@@ -53,13 +53,6 @@ export default defineConfig(({ mode }) => ({
     exclude: [],
     loader: 'tsx',
   },
-  css: {
-    preprocessorOptions: {
-      sass: {
-        includePaths: [resolve(__dirname, './src/styles'), resolve(__dirname, './node_module/simple-line-icons/sass')],
-      },
-    },
-  },
   resolve: {
     alias:
       mode === 'development'
