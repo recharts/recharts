@@ -1,8 +1,6 @@
 @use "variables";
 @use "zindex";
 
-@use "sass:color";
-
 //
 // Scaffolding
 // --------------------------------------------------
@@ -125,6 +123,6 @@ a.button {
   transition: all 0.15s ease;
 
   &:hover {
-    background-color: color.adjust(variables.$brand-primary, $lightness: -3%, $space: hsl);
+    background-color: #1078bb;
   }
 }
