@@ -1,43 +1,39 @@
 @charset "utf-8";
 
-// Base variables
-// --------------------------------------------------
-
-$mobile-breakpoint: 991px;
-
-// Color
-// --------------------------------------------------
-$background-color: #fff !default;
-
-$text-color: #666 !default;
-$title-color: #333 !default;
-$subtitle-text-color: #999 !default;
-$border-color: #ccc !default;
-
-$brand-primary: #1281ca !default;
-$brand-second: #2e96ea !default;
-$brand-info: #22b5bf !default;
 :root {
-  --var-brand-primary: #1281ca;
-  --var-brand-info: #22b5bf;
+  /* Breakpoints */
+  --mobile-breakpoint: 991px;
+
+  /* Colors */
+  --background-color: #fff;
+  --text-color: #666;
+  --title-color: #333;
+  --subtitle-text-color: #999;
+  --border-color: #ccc;
+
+  --brand-primary: #1281ca;
+  --brand-second: #2e96ea;
+  --brand-info: #22b5bf;
+
+  --link-color: var(--text-color);
+  --link-color-hover: #333;
+
+  --text-color-body: var(--text-color);
+
+  /* Font sizes */
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 20px;
+  --font-size-xxxl: 24px;
+
+  /* Font families */
+  --font-family-code: 'Roboto Mono', Consolas, 'Liberation Mono', 'Courier New', Courier, monospace;
+  --font-family-base: 'Source Sans Pro', 'Hiragino Sans GB', Arial, sans-serif;
+  --font-family-logo: 'Oswald', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Z-index values */
+  --z-index-sidebar-content: 1020;
+  --z-index-header: 1030;
+  --z-index-main-nav: 1040;
 }
-
-$link-color: $text-color !default;
-$link-color-hover: #333 !default;
-
-$text-color-body: $text-color !default;
-
-// Font Size
-// --------------------------------------------------
-$font-size-base: 14px !default;
-
-$font-size-lg: 16px !default;
-$font-size-xl: 18px !default;
-$font-size-xxl: 20px !default;
-$font-size-xxxl: 24px !default;
-
-// Font
-// --------------------------------------------------
-$font-family-code: 'Roboto Mono', Consolas, 'Liberation Mono', 'Courier New', Courier, monospace !default;
-$font-family-base: 'Source Sans Pro', 'Hiragino Sans GB', Arial, sans-serif !default;
-$font-family-logo: 'Oswald', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif !default;

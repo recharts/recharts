@@ -233,7 +233,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: variables.$font-family-code;
+  font-family: var(--font-family-code);
   font-size: 1em;
 }
 

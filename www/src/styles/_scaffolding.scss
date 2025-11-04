@@ -28,10 +28,10 @@ html {
 }
 
 body {
-  font-family: variables.$font-family-base;
-  font-size: variables.$font-size-base;
-  color: variables.$text-color-body;
-  background-color: variables.$background-color;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  color: var(--text-color-body);
+  background-color: var(--background-color);
 }
 
 // Reset fonts for relevant elements
@@ -47,11 +47,11 @@ textarea {
 // Links
 
 a {
-  color: variables.$link-color;
+  color: var(--link-color);
 
   &:hover,
   &:focus {
-    color: variables.$link-color-hover;
+    color: var(--link-color-hover);
   }
 
   &:focus {
@@ -83,7 +83,7 @@ ol {
 }
 
 code {
-  font-size: variables.$font-size-base;
+  font-size: var(--font-size-base);
 }
 
 div,
@@ -113,11 +113,11 @@ td {
 
 a.button {
   display: inline-block;
-  font-family: variables.$font-family-code;
+  font-family: var(--font-family-code);
   font-weight: 700;
   color: #fff;
-  background-color: variables.$brand-primary;
-  border-bottom: 2px solid variables.$brand-second;
+  background-color: var(--brand-primary);
+  border-bottom: 2px solid var(--brand-second);
   padding: 12px 14px;
   border-radius: 4px;
   transition: all 0.15s ease;

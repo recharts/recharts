@@ -16,13 +16,13 @@ header {
   .logo {
     margin: 0;
     padding: 0 2rem;
-    font-family: variables.$font-family-code;
+    font-family: var(--font-family-code);
     font-weight: 300;
-    font-size: variables.$font-size-xl;
+    font-size: var(--font-size-xl);
     white-space: nowrap;
 
     > a {
-      color: variables.$brand-info;
+      color: var(--brand-info);
       text-decoration: none;
     }
   }

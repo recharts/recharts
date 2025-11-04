@@ -35,7 +35,7 @@ function HamburgerIcon() {
       data={[{ v: 1 }, { v: 1 }, { v: 1 }]}
       layout="vertical"
     >
-      <Bar dataKey="v" fill="var(--var-brand-info)" barSize={3} radius={[2, 2, 2, 2]} />
+      <Bar dataKey="v" fill="var(--brand-info)" barSize={3} radius={[2, 2, 2, 2]} />
       <XAxis dataKey="v" type="number" hide />
       <YAxis type="category" hide />
     </BarChart>

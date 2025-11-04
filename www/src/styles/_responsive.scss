@@ -5,7 +5,7 @@
   display: none;
 }
 
-@media (max-width: variables.$mobile-breakpoint) {
+@media (max-width: 991px) {
   .mobile-only {
     display: block;
   }
