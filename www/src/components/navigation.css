@@ -1,6 +1,4 @@
-@use '../styles/variables' as variables;
-
-@media (max-width: variables.$mobile-breakpoint) {
+@media (max-width: 991px) {
   nav.mobile-only {
     display: flex;
     align-items: center;
@@ -22,14 +20,14 @@
   gap: 8px;
 
   &:focus {
-    outline: 2px solid variables.$brand-info;
+    outline: 2px solid var(--brand-info);
   }
 
   .hamburger-icon span {
     display: block;
     width: 24px;
     height: 3px;
-    background-color: variables.$brand-info;
+    background-color: var(--brand-info);
     margin-bottom: 5px;
     transition: transform 0.3s, opacity 0.3s;
 
@@ -57,7 +55,7 @@
   }
 }
 
-@media (min-width: variables.$mobile-breakpoint) {
+@media (min-width: 991px) {
   nav.desktop-only {
     display: flex;
     flex-direction: row;
@@ -75,12 +73,12 @@
       a {
         display: inline-block;
         height: 61px;
-        font-size: variables.$font-size-lg;
+        font-size: var(--font-size-lg);
         text-decoration: none;
 
         &.active {
-          color: variables.$brand-primary;
-          border-bottom: 2px solid variables.$brand-primary;
+          color: var(--brand-primary);
+          border-bottom: 2px solid var(--brand-primary);
           cursor: default;
         }
       }
@@ -121,10 +119,10 @@
 
     a {
       padding: 8px 20px;
-      font-size: variables.$font-size-lg;
+      font-size: var(--font-size-lg);
 
       &.active {
-        color: variables.$brand-primary;
+        color: var(--brand-primary);
         text-decoration: underline;
       }
     }
@@ -139,7 +137,7 @@
         border: none;
         color: inherit;
         font-family: inherit;
-        font-size: variables.$font-size-lg;
+        font-size: var(--font-size-lg);
         padding: 8px 20px;
         cursor: pointer;
         text-align: left;
@@ -177,7 +175,7 @@ body.no-scroll {
     align-items: stretch;
 
     h4 {
-      font-size: variables.$font-size-lg;
+      font-size: var(--font-size-lg);
       flex-grow: 3;
       margin: 1rem 0;
     }

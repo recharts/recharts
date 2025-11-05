@@ -1,4 +1,4 @@
-import './NotFoundView.scss';
+import './NotFoundView.css';
 
 export function NotFoundView() {
   return (

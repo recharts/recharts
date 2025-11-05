@@ -1,5 +1,3 @@
-@use "variables";
-
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 
 /**
@@ -233,7 +231,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: variables.$font-family-code;
+  font-family: var(--font-family-code);
   font-size: 1em;
 }
 

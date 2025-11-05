@@ -1,5 +1,3 @@
-@use '../../styles/variables';
-
 .page-index {
   .block {
     max-width: 1000px;
@@ -26,14 +24,14 @@
 
     .title {
       font-size: 64px;
-      font-family: variables.$font-family-logo;
-      color: variables.$brand-info;
+      font-family: var(--font-family-logo), sans-serif;
+      color: var(--brand-info);
     }
 
     .subtitle {
       margin: 20px 0;
       font-size: 24px;
-      color: variables.$gray-light;
+      color: var(--subtitle-text-color);
     }
 
     .github-button {
@@ -82,14 +80,14 @@
         }
 
         strong {
-          font-size: variables.$font-size-xxl;
+          font-size: var(--font-size-xxl);
           font-weight: 700;
           display: block;
           margin: 8px auto;
         }
 
         .text {
-          font-size: variables.$font-size-lg;
+          font-size: var(--font-size-lg);
           line-height: 1.5;
         }
       }
@@ -106,7 +104,7 @@
 
     .text {
       padding-top: 20px;
-      font-size: variables.$font-size-xxxl;
+      font-size: var(--font-size-xxxl);
     }
 
     .btn {
@@ -152,7 +150,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
             .user-name {
-              color: variables.$brand-info;
+              color: var(--brand-info);
             }
           }
 
@@ -165,7 +163,7 @@
           }
 
           .user-name {
-            font-size: variables.$font-size-base;
+            font-size: var(--font-size-base);
             transition: color 0.3s ease;
           }
         }

@@ -2,7 +2,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import { allExamples as API } from '../docs/api';
 import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
-import './APIView.scss';
+import './APIView.css';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ApiDoc, ApiProps, PropExample } from '../docs/api/types.ts';

@@ -1,8 +1,8 @@
 import { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
-import './IndexView.scss';
-import 'simple-line-icons/scss/simple-line-icons.scss';
+import './IndexView.css';
+import 'simple-line-icons/css/simple-line-icons.css';
 import { users } from '../../docs/users/users';
 import { RouteComponentProps, withRouter } from '../../routes/withRouter.tsx';
 import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.tsx';

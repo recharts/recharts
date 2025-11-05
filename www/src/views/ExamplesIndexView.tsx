@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { allExamples } from '../docs/exampleComponents';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { getLocaleType } from '../utils/LocaleUtils.ts';
-import './ExamplesIndexView.scss';
+import './ExamplesIndexView.css';
 
 type ExamplesIndexViewProps = RouteComponentProps;
 

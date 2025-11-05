@@ -1,5 +1,3 @@
-@use '../styles/variables';
-
 .page.page-examples .example-wrapper {
   .example-inner-wrapper {
     display: flex;
@@ -15,7 +13,7 @@
     margin: 0;
 
     .example-code-sandbox-link {
-      color: variables.$brand-primary;
+      color: var(--brand-primary);
       font-weight: 700;
       font-size: 14px;
     }

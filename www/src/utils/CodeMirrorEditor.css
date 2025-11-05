@@ -18,16 +18,14 @@
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
-      --var-text-color: #333;
       color: #333;
       transition: all 0.2s;
       line-height: 1;
 
       &:hover {
-        background: var(--var-brand-primary);
-        border-color: var(--var-brand-primary);
+        background: var(--brand-primary);
+        border-color: var(--brand-primary);
         color: white;
-        --var-text-color: white;
       }
 
       i {
@@ -38,9 +36,5 @@
 
   #codemirror-container {
     max-width: 120ex;
-    /*max-width: 100%;*/
-    /*height: calc(100vh - 40px);*/
-    /*resize: both;*/
-    /*overflow: auto;*/
   }
 }

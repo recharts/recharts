@@ -1,5 +1,3 @@
-@use '../../../styles/variables' as variables;
-
 .sidebar {
   position: fixed;
   top: 60px;
@@ -18,7 +16,7 @@
     li {
       padding-left: 10px;
       line-height: 1.5;
-      font-size: variables.$font-size-lg;
+      font-size: var(--font-size-lg);
     }
 
     a {
@@ -26,12 +24,12 @@
       text-decoration: none;
 
       &:hover {
-        color: variables.$brand-primary;
+        color: var(--brand-primary);
       }
 
       &.active {
         text-decoration: underline;
-        color: variables.$brand-primary;
+        color: var(--brand-primary);
         font-weight: 700;
       }
     }

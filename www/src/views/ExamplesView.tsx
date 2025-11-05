@@ -1,8 +1,8 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { allExamples } from '../docs/exampleComponents';
-import './ExampleView.scss';
-import 'simple-line-icons/scss/simple-line-icons.scss';
+import './ExampleView.css';
+import 'simple-line-icons/css/simple-line-icons.css';
 import { RouteComponentProps, withRouter } from '../routes/withRouter';
 import { ComponentExamples } from '../docs/exampleComponents/types.ts';
 import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview';

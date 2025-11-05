@@ -7,16 +7,8 @@ import { supportedLocales } from './src/locale';
 
 export default defineConfig(({ mode }) => ({
   base: process.env.BASE_URL || '/',
-  loader: { '.js': 'jsx' },
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ['@babel/plugin-proposal-decorators', { legacy: true }],
-          ['@babel/plugin-proposal-class-properties', { loose: true }],
-        ],
-      },
-    }),
+    react(),
     sitemap({
       hostname: 'https://recharts.github.io',
       dynamicRoutes: getSiteRoutes(),
@@ -47,18 +39,6 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: resolve(__dirname, 'docs'),
-  },
-  esbuild: {
-    include: /\.[jt]s[x]?$/,
-    exclude: [],
-    loader: 'tsx',
-  },
-  css: {
-    preprocessorOptions: {
-      sass: {
-        includePaths: [resolve(__dirname, './src/styles'), resolve(__dirname, './node_module/simple-line-icons/sass')],
-      },
-    },
   },
   resolve: {
     alias:

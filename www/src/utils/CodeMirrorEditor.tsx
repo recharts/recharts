@@ -4,14 +4,40 @@ import { EditorState, Extension, Compartment } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import {
   syntaxHighlighting,
-  defaultHighlightStyle,
   foldGutter,
   foldKeymap,
   foldService,
   foldEffect,
+  HighlightStyle,
 } from '@codemirror/language';
+import { tags as t } from '@lezer/highlight';
 import './CodeMirrorEditor.css';
 import { CopyButton } from './CopyButton.tsx';
+
+// Custom highlight style with improved color contrast for accessibility
+const accessibleHighlightStyle = HighlightStyle.define([
+  { tag: t.keyword, color: '#0077aa' },
+  { tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName], color: '#116329' },
+  { tag: [t.function(t.variableName), t.labelName], color: '#6639ba' },
+  { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#0550ae' },
+  { tag: [t.definition(t.name), t.separator], color: '#24292f' },
+  {
+    tag: [t.typeName, t.className, t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace],
+    color: '#953800',
+  },
+  { tag: [t.operator, t.operatorKeyword, t.url, t.escape, t.regexp, t.link, t.special(t.string)], color: '#0550ae' },
+  { tag: [t.meta, t.comment], color: '#6a737d', fontStyle: 'italic' },
+  { tag: t.strong, fontWeight: 'bold' },
+  { tag: t.emphasis, fontStyle: 'italic' },
+  { tag: t.strikethrough, textDecoration: 'line-through' },
+  { tag: t.link, color: '#0550ae', textDecoration: 'underline' },
+  { tag: t.heading, fontWeight: 'bold', color: '#0550ae' },
+  { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#0550ae' },
+  { tag: [t.processingInstruction, t.string, t.inserted], color: '#0a3069' },
+  { tag: t.invalid, color: '#82071e' },
+  // Property names and attribute names - fixed for better contrast
+  { tag: [t.attributeName], color: '#007070' }, // Changed from #008080 to meet 4.5:1 contrast
+]);
 
 type CodeMirrorEditorProps = {
   value: string;
@@ -89,7 +115,7 @@ export function CodeMirrorEditor({
 
     const extensions: Extension[] = [
       javascript({ jsx: true, typescript: true }),
-      syntaxHighlighting(defaultHighlightStyle),
+      syntaxHighlighting(accessibleHighlightStyle),
       regionFoldService,
       foldGutter(),
       keymap.of(foldKeymap),

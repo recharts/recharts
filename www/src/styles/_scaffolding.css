@@ -1,0 +1,128 @@
+/*
+ * Scaffolding
+ * --------------------------------------------------
+
+ * Reset the box-sizing
+ *
+ * Heads up! This reset may cause conflicts with some third-party widgets.
+ * For recommendations on resolving such conflicts, see
+ * http://getbootstrap.com/getting-started/#third-box-sizing
+ */
+* {
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+/* Body reset*/
+
+html {
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+body {
+  font-family: var(--font-family-base), serif;
+  font-size: var(--font-size-base);
+  color: var(--text-color-body);
+  background-color: var(--background-color);
+}
+
+/* Reset fonts for relevant elements*/
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Links */
+
+a {
+  color: var(--link-color);
+
+  &:hover,
+  &:focus {
+    color: var(--link-color-hover);
+  }
+
+  &:focus {
+    outline: thin dotted;
+    /* WebKit*/
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+}
+
+/*
+ * Figures
+
+ * We reset this here because previously Normalize had no `figure` margins. This
+ * ensures we don't break anyone's use of the element.
+ */
+
+figure {
+  margin: 0;
+}
+
+/* Images*/
+
+img {
+  vertical-align: middle;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+code {
+  font-size: var(--font-size-base);
+}
+
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+/* Button*/
+
+a.button {
+  display: inline-block;
+  font-family: var(--font-family-code), sans-serif;
+  font-weight: 700;
+  color: #fff;
+  background-color: var(--brand-primary);
+  border-bottom: 2px solid var(--brand-second);
+  padding: 12px 14px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #1078bb;
+  }
+}
