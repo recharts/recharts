@@ -14,7 +14,7 @@ header {
   .logo {
     margin: 0;
     padding: 0 2rem;
-    font-family: var(--font-family-code), sans-serif;
+    font-family: var(--font-family-code), monospace;
     font-weight: 300;
     font-size: var(--font-size-xl);
     white-space: nowrap;
