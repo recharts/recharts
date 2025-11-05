@@ -221,6 +221,16 @@ export const SankeyAPI: ApiDoc = {
         'en-US': 'The target of Y-axis',
       },
     },
+    {
+      name: 'align',
+      type: "'left' | 'justify'",
+      defaultVal: 'justify',
+      isOptional: true,
+      desc: {
+        'en-US':
+          "If set to 'justify', the start nodes will be aligned to the left edge of the chart and the end nodes will be aligned to the right edge of the chart. If set to 'left', the start nodes will be aligned to the left edge of the chart.",
+      },
+    },
   ],
   childrenComponents: ['Tooltip'],
 };
