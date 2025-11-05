@@ -33,11 +33,11 @@ export const YAxisAPI = {
     },
     {
       name: 'width',
-      type: 'Number',
+      type: `Number | 'auto'`,
       defaultVal: '60',
       isOptional: false,
       desc: {
-        'en-US': 'The width of axis, which can be setted by user.',
+        'en-US': `The width of the axis, which can be set by user. 'auto' will attempt to resize the axis based on its content.`,
         'zh-CN': 'y 轴的宽度，这个可以根据需要进行配置。',
       },
     },
