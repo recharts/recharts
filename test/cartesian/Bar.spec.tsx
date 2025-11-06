@@ -2040,7 +2040,7 @@ describe('Bar background zIndex', () => {
     const { container } = renderWithStrictMode(
       <BarChart width={500} height={300} data={composedDataWithBackground}>
         {/* @ts-expect-error testing runtime behavior with invalid zIndex */}
-        <Bar background={{ fill: '#eee', zIndex: '100' }} isAnimationActive={false} dataKey="value" />
+        <Bar background={{ fill: '#eee', zIndex: '1100' }} isAnimationActive={false} dataKey="value" />
       </BarChart>,
     );
 
@@ -2063,15 +2063,19 @@ describe('Bar background zIndex', () => {
     assertZIndexLayerOrder({ front: bars[0], back: customBackgrounds[0] });
   });
 
-  it.each([false, undefined] as const)('should not render any background elements when background=%s', background => {
-    const { container } = renderWithStrictMode(
-      <BarChart width={500} height={300} data={composedDataWithBackground}>
-        <Bar background={background} isAnimationActive={false} dataKey="value" />
-      </BarChart>,
-    );
+  it.each([null, false, undefined] as const)(
+    'should not render any background elements when background=%s',
+    background => {
+      const { container } = renderWithStrictMode(
+        <BarChart width={500} height={300} data={composedDataWithBackground}>
+          {/* @ts-expect-error testing runtime behavior */}
+          <Bar background={background} isAnimationActive={false} dataKey="value" />
+        </BarChart>,
+      );
 
-    // No background rectangles should be rendered
-    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
-    expect(backgroundRects).toHaveLength(0);
-  });
+      // No background rectangles should be rendered
+      const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+      expect(backgroundRects).toHaveLength(0);
+    },
+  );
 });

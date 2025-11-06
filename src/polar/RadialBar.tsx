@@ -71,7 +71,7 @@ export type RadialBarDataItem = SectorProps &
     background?: SectorProps;
   };
 
-type RadialBarBackground = ActiveShape<SectorProps>;
+type RadialBarBackground = ActiveShape<SectorProps> & ZIndexable;
 
 type RadialBarSectorsProps = {
   sectors: ReadonlyArray<RadialBarDataItem>;
