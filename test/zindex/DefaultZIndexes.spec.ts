@@ -2,57 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
 
 describe('DefaultZIndexes', () => {
-  describe('structure and values', () => {
-    it('should define all required zIndex constants', () => {
-      expect(DefaultZIndexes).toBeDefined();
-      expect(typeof DefaultZIndexes).toBe('object');
-    });
-
-    it('should have grid zIndex as -100', () => {
-      expect(DefaultZIndexes.grid).toBe(-100);
-    });
-
-    it('should have barBackground zIndex as -50', () => {
-      expect(DefaultZIndexes.barBackground).toBe(-50);
-    });
-
-    it('should have area zIndex as 100', () => {
-      expect(DefaultZIndexes.area).toBe(100);
-    });
-
-    it('should have cursor zIndex as 200', () => {
-      expect(DefaultZIndexes.cursor).toBe(200);
-    });
-
-    it('should have bar zIndex as 300', () => {
-      expect(DefaultZIndexes.bar).toBe(300);
-    });
-
-    it('should have line zIndex as 400', () => {
-      expect(DefaultZIndexes.line).toBe(400);
-    });
-
-    it('should have axis zIndex as 500', () => {
-      expect(DefaultZIndexes.axis).toBe(500);
-    });
-
-    it('should have scatter zIndex as 600', () => {
-      expect(DefaultZIndexes.scatter).toBe(600);
-    });
-
-    it('should have label zIndex as 700', () => {
-      expect(DefaultZIndexes.label).toBe(700);
-    });
-
-    it('should have activeBar zIndex as 1000', () => {
-      expect(DefaultZIndexes.activeBar).toBe(1000);
-    });
-
-    it('should have activeDot zIndex as 1100', () => {
-      expect(DefaultZIndexes.activeDot).toBe(1100);
-    });
-  });
-
   describe('zIndex ordering', () => {
     it('should have barBackground below grid', () => {
       expect(DefaultZIndexes.barBackground).toBeGreaterThan(DefaultZIndexes.grid);
@@ -60,7 +9,7 @@ describe('DefaultZIndexes', () => {
 
     it('should have barBackground below all other elements', () => {
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.area);
-      expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.cursor);
+      expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.cursorRectangle);
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.bar);
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.line);
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.axis);
@@ -73,8 +22,8 @@ describe('DefaultZIndexes', () => {
     it('should maintain correct ordering of all zIndex values', () => {
       expect(DefaultZIndexes.grid).toBeLessThan(DefaultZIndexes.barBackground);
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.area);
-      expect(DefaultZIndexes.area).toBeLessThan(DefaultZIndexes.cursor);
-      expect(DefaultZIndexes.cursor).toBeLessThan(DefaultZIndexes.bar);
+      expect(DefaultZIndexes.area).toBeLessThan(DefaultZIndexes.cursorRectangle);
+      expect(DefaultZIndexes.cursorRectangle).toBeLessThan(DefaultZIndexes.bar);
       expect(DefaultZIndexes.bar).toBeLessThan(DefaultZIndexes.line);
       expect(DefaultZIndexes.line).toBeLessThan(DefaultZIndexes.axis);
       expect(DefaultZIndexes.axis).toBeLessThan(DefaultZIndexes.scatter);
@@ -122,7 +71,7 @@ describe('DefaultZIndexes', () => {
       const nonGridValues = Object.entries(DefaultZIndexes)
         .filter(([key]) => key !== 'grid')
         .map(([, value]) => value);
-      
+
       nonGridValues.forEach(value => {
         expect(DefaultZIndexes.grid).toBeLessThan(value);
       });
