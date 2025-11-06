@@ -28,7 +28,7 @@ describe('DefaultZIndexes', () => {
       expect(DefaultZIndexes.line).toBeLessThan(DefaultZIndexes.axis);
       expect(DefaultZIndexes.axis).toBeLessThan(DefaultZIndexes.scatter);
       expect(DefaultZIndexes.scatter).toBeLessThan(DefaultZIndexes.label);
-      expect(DefaultZIndexes.label).toBeLessThan(DefaultZIndexes.activeBar);
+      expect(DefaultZIndexes.activeBar).toBeLessThan(DefaultZIndexes.label);
       expect(DefaultZIndexes.activeBar).toBeLessThan(DefaultZIndexes.activeDot);
     });
   });

@@ -61,6 +61,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
 import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../zindex/getZIndexFromUnknown';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -335,18 +336,6 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
   };
 }
 
-function getZIndexForRadialBarBackground(background: RadialBarBackground | undefined): number {
-  if (
-    background != null &&
-    typeof background === 'object' &&
-    'zIndex' in background &&
-    typeof background.zIndex === 'number'
-  ) {
-    return background.zIndex;
-  }
-  return DefaultZIndexes.barBackground;
-}
-
 class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
     if (sectors == null) {
@@ -355,7 +344,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
     const { cornerRadius } = this.props;
     const backgroundProps = svgPropertiesNoEventsFromUnknown(this.props.background);
     return (
-      <ZIndexLayer zIndex={getZIndexForRadialBarBackground(this.props.background)}>
+      <ZIndexLayer zIndex={getZIndexFromUnknown(this.props.background, DefaultZIndexes.barBackground)}>
         {sectors.map((entry, i) => {
           const { value, background, ...rest } = entry;
 
