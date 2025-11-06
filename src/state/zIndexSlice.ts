@@ -4,7 +4,7 @@
  */
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 type ZIndexEntry = {
   /**

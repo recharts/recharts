@@ -1,5 +1,5 @@
 import { Props } from './PolarRadiusAxis';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export const defaultPolarRadiusAxisProps = {
   allowDataOverflow: false,

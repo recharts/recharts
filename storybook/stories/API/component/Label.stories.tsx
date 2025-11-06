@@ -18,7 +18,7 @@ import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { positionProp } from '../props/LabelListProps';
-import { DefaultZIndexes } from '../../../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 const LabelProps: StorybookArgs = {

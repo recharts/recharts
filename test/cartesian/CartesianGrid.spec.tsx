@@ -30,7 +30,7 @@ import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },

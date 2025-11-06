@@ -36,7 +36,7 @@ import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('DefaultZIndexes', () => {
   describe('zIndex ordering', () => {

@@ -8,8 +8,8 @@ import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { PolarViewBoxRequired } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface PolarGridProps extends ZIndexable {
   cx?: number;

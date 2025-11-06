@@ -11,7 +11,7 @@ import { RadarSettings } from '../../src/state/types/RadarSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type Point = { x?: number | string; y?: number | string };
 const CustomizedShape = ({ points }: { points: Point[] }) => {

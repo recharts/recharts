@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
-import { getZIndexFromUnknown } from '../../src/zindex/getZIndexFromUnknown';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../../src/zIndex/getZIndexFromUnknown';
 
 describe('getZIndexFromUnknown', () => {
   it.each([undefined, null, true, false, 'invalid', 42, { fill: '#000' }] as const)(

@@ -40,7 +40,7 @@ import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {

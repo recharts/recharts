@@ -63,8 +63,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface ScatterPointNode {
   x?: number | string;
