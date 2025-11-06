@@ -121,7 +121,7 @@ export interface BarProps extends ZIndexable {
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
