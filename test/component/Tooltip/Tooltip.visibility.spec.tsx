@@ -88,7 +88,7 @@ import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipA
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running

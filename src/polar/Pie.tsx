@@ -56,8 +56,8 @@ import {
   Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 type ChartDataInput = Record<string, unknown>;
 

@@ -7,7 +7,7 @@ import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { assertNotNull } from '../helper/assertNotNull';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('Legend.itemSorter', () => {
   describe('with default content', () => {

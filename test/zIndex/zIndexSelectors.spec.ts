@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
 
-import { selectZIndexPortalId, selectAllRegisteredZIndexes } from '../../src/zindex/zIndexSelectors';
+import { selectZIndexPortalId, selectAllRegisteredZIndexes } from '../../src/zIndex/zIndexSelectors';
 import {
   registerZIndexPortal,
   registerZIndexPortalId,

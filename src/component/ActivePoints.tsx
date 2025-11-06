@@ -8,8 +8,8 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useActiveTooltipDataPoints } from '../hooks';
 import { isNullish } from '../util/DataUtils';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export interface PointType {
   readonly x: number | null;

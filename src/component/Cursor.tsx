@@ -21,8 +21,8 @@ import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 /**
  * If set false, no cursor will be drawn when tooltip is active.

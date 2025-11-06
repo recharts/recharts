@@ -3,13 +3,13 @@ import type { Store } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act, render } from '@testing-library/react';
-import { AllZIndexPortals } from '../../src/zindex/ZIndexPortal';
+import { AllZIndexPortals } from '../../src/zIndex/ZIndexPortal';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { RechartsReduxContext, RechartsReduxContextValue } from '../../src/state/RechartsReduxContext';
 import { registerZIndexPortal } from '../../src/state/zIndexSlice';
-import { selectAllRegisteredZIndexes } from '../../src/zindex/zIndexSelectors';
+import { selectAllRegisteredZIndexes } from '../../src/zIndex/zIndexSelectors';
 
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
 const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;

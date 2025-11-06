@@ -1,5 +1,5 @@
 import { Props } from './PolarAngleAxis';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export const defaultPolarAngleAxisProps = {
   allowDecimals: false,

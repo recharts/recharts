@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { renderWithStrictMode } from '../helper/renderWithStrictMode';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
@@ -17,7 +17,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { expectActiveBars, expectBars, getAllBars } from '../helper/expectBars';
 import { expectLabels } from '../helper/expectLabel';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import {
   expectTooltipCoordinate,
   expectTooltipPayload,
@@ -31,6 +31,8 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
+import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1941,4 +1943,139 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       );
     });
   });
+});
+
+describe('Bar background zIndex', () => {
+  const composedDataWithBackground = [
+    {
+      x: 10,
+      y: 50,
+      width: 20,
+      height: 20,
+      value: 40,
+      label: 'test',
+      background: { x: 10, y: 50, width: 20, height: 50 },
+    },
+    {
+      x: 50,
+      y: 50,
+      width: 20,
+      height: 50,
+      value: 100,
+      label: 'test',
+      background: { x: 50, y: 50, width: 20, height: 50 },
+    },
+  ];
+
+  it('should use default barBackground zIndex when background prop is true', () => {
+    const { container, debug } = rechartsTestRender(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+    debug();
+
+    // Background rectangles should be rendered
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: backgroundRects[0] });
+  });
+
+  it('should use default barBackground zIndex when background prop is an object without zIndex', () => {
+    const { container } = rechartsTestRender(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee' }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    expect(backgroundRects).toHaveLength(composedDataWithBackground.length);
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: backgroundRects[0] });
+  });
+
+  it('should use custom zIndex when background prop is an object with zIndex', () => {
+    const customZIndex = DefaultZIndexes.bar + 1;
+    const { container } = rechartsTestRender(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: customZIndex }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+    // because we use custom zIndex, we need to run timers to ensure layers are updated
+    act(() => vi.runOnlyPendingTimers());
+
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    // now with custom zIndex, background should be in front of bars
+    assertZIndexLayerOrder({ back: bars[0], front: backgroundRects[0] });
+  });
+
+  it('should handle background prop with zIndex as 0', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: 0 }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: backgroundRects[0] });
+  });
+
+  it('should handle negative zIndex values in background prop', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={{ fill: '#eee', zIndex: -200 }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+    act(() => vi.runOnlyPendingTimers());
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: backgroundRects[0] });
+  });
+
+  it('should ignore non-number zIndex values in background prop', () => {
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior with invalid zIndex */}
+        <Bar background={{ fill: '#eee', zIndex: '1100' }} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: backgroundRects[0] });
+  });
+
+  it('should handle background prop when it is a function', () => {
+    const backgroundComponent = () => <rect className="custom-background" />;
+    const { container } = renderWithStrictMode(
+      <BarChart width={500} height={300} data={composedDataWithBackground}>
+        <Bar background={backgroundComponent} isAnimationActive={false} dataKey="value" />
+      </BarChart>,
+    );
+
+    const customBackgrounds = container.querySelectorAll('.custom-background');
+    expect(customBackgrounds).toHaveLength(composedDataWithBackground.length);
+    const bars = container.querySelectorAll('.recharts-bar-rectangle');
+    assertZIndexLayerOrder({ front: bars[0], back: customBackgrounds[0] });
+  });
+
+  it.each([null, false, undefined] as const)(
+    'should not render any background elements when background=%s',
+    background => {
+      const { container } = renderWithStrictMode(
+        <BarChart width={500} height={300} data={composedDataWithBackground}>
+          {/* @ts-expect-error testing runtime behavior */}
+          <Bar background={background} isAnimationActive={false} dataKey="value" />
+        </BarChart>,
+      );
+
+      // No background rectangles should be rendered
+      const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
+      expect(backgroundRects).toHaveLength(0);
+    },
+  );
 });

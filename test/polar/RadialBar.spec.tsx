@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
 import {
   Customized,
@@ -14,7 +14,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PageData, ringsData } from '../_data';
 import { expectRadialBars } from '../helper/expectRadialBars';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import {
   selectPolarAxisScale,
@@ -39,6 +39,8 @@ import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
+import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
@@ -1305,5 +1307,141 @@ describe('<RadialBar />', () => {
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
       expect(polarItemsSpy).toHaveBeenCalledTimes(4);
     });
+  });
+});
+
+describe('RadialBar background zIndex', () => {
+  const dataWithBackground = [
+    { name: 'A', uv: 400, pv: 2400, fill: '#8884d8' },
+    { name: 'B', uv: 300, pv: 4567, fill: '#83a6ed' },
+  ];
+
+  it('should render background with default zIndex when background prop is true', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ front: radialBarSectors[0], back: backgroundSectors[0] });
+  });
+
+  it('should render background with default zIndex when background prop is an object without zIndex', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee' }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ front: radialBarSectors[0], back: backgroundSectors[0] });
+  });
+
+  it('should render background with custom zIndex when background prop includes zIndex', () => {
+    const customZIndex = DefaultZIndexes.bar + 1;
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: customZIndex }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+    act(() => vi.runOnlyPendingTimers());
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ back: radialBarSectors[0], front: backgroundSectors[0] });
+  });
+
+  it('should handle background with zIndex as 0', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: 0 }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ front: radialBarSectors[0], back: backgroundSectors[0] });
+  });
+
+  it('should handle negative zIndex values in background prop', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={{ fill: '#eee', zIndex: -150 }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+    act(() => vi.runOnlyPendingTimers());
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ front: radialBarSectors[0], back: backgroundSectors[0] });
+  });
+
+  it('should ignore non-number zIndex values and use default', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior with invalid zIndex */}
+        <RadialBar background={{ fill: '#eee', zIndex: '1200' }} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+    act(() => vi.runOnlyPendingTimers());
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
+    const radialBarSectors = container.querySelectorAll('.recharts-radial-bar-sector');
+    assertZIndexLayerOrder({ front: radialBarSectors[0], back: backgroundSectors[0] });
+  });
+
+  it('should handle background prop when it is undefined', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={undefined} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it('should handle background prop when it is false', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        <RadialBar background={false} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it.each([null, false, undefined] as const)('should not render any background when background=%s', background => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior */}
+        <RadialBar background={background} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(0);
+  });
+
+  it('should render backgrounds with non-object values - typescript says it will not but it does!', () => {
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={dataWithBackground}>
+        {/* @ts-expect-error testing runtime behavior */}
+        <RadialBar background="invalid" isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    const backgroundSectors = container.querySelectorAll('.recharts-radial-bar-background-sector');
+    expect(backgroundSectors).toHaveLength(dataWithBackground.length);
   });
 });

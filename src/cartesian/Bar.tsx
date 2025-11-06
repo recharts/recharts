@@ -19,8 +19,8 @@ import { Cell } from '../component/Cell';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
-  LabelListFromLabelProp,
   ImplicitLabelListType,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
@@ -80,8 +80,9 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 
 type Rectangle = {
   x: number | null;
@@ -121,7 +122,7 @@ export interface BarProps extends ZIndexable {
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
@@ -246,13 +247,6 @@ type BarBackgroundProps = {
   allOtherBarProps: Props;
 };
 
-function getZIndex(background: ActiveShape<BarProps, SVGPathElement> | undefined): number {
-  if (background && typeof background === 'object' && 'zIndex' in background && typeof background.zIndex === 'number') {
-    return background.zIndex;
-  }
-  return DefaultZIndexes.barBackground;
-}
-
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
@@ -278,7 +272,7 @@ function BarBackground(props: BarBackgroundProps) {
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
 
   return (
-    <ZIndexLayer zIndex={getZIndex(backgroundFromProps)}>
+    <ZIndexLayer zIndex={getZIndexFromUnknown(backgroundFromProps, DefaultZIndexes.barBackground)}>
       {data.map((entry: BarRectangleItem, i: number) => {
         const { value, background: backgroundFromDataEntry, tooltipPosition, ...rest } = entry;
 

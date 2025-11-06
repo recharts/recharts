@@ -4,8 +4,8 @@ import { getChartPointer } from '../../../../src/util/getChartPointer';
 
 import { ChartPointer } from '../../../../src/util/types';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { ZIndexLayer } from '../../../../src/zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../../../../src/zindex/DefaultZIndexes';
+import { ZIndexLayer } from '../../../../src/zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
 
 export default {
   component: Pie,
