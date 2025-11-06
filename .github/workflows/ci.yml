@@ -98,6 +98,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: omnidoc - documentation test
+        run: npm run test-omnidoc
+
       - name: Storybook doctor
         run: npm run storybook-doctor
 
