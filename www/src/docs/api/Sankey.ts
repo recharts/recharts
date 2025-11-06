@@ -231,6 +231,16 @@ export const SankeyAPI: ApiDoc = {
           "If set to 'justify', the start nodes will be aligned to the left edge of the chart and the end nodes will be aligned to the right edge of the chart. If set to 'left', the start nodes will be aligned to the left edge of the chart.",
       },
     },
+    {
+      name: 'verticalAlign',
+      type: "'justify' | 'top'",
+      defaultVal: 'justify',
+      isOptional: true,
+      desc: {
+        'en-US':
+          "Controls the vertical spacing of nodes within a depth. 'justify' distributes nodes evenly and balances link paths, while 'top' positions the group starting from the top edge of the chart.",
+      },
+    },
   ],
   childrenComponents: ['Tooltip'],
 };
