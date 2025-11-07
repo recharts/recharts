@@ -5,10 +5,21 @@ export interface DocReader {
   getPublicSymbolNames(): ReadonlyArray<string>;
 
   /**
+   * Returns all exported component names from the project, excluding hooks and utilities.
+   */
+  getPublicComponentNames(): ReadonlyArray<string>;
+
+  /**
    * Returns prop names of a given component.
    * Only returns Rechart-specific props, it excludes the ones inherited from SVGElement
    */
-  getPropsOf(component: string): ReadonlyArray<string>;
+  getRechartsPropsOf(component: string): ReadonlyArray<string>;
+
+  /**
+   * Returns prop names of a given component.
+   * Returns Rechart-specific props combined with those inherited from SVGElement
+   */
+  getAllPropsOf(component: string): ReadonlyArray<string>;
 
   /**
    * Returns name of the SVG element that this component extends, or null if it does not extend any SVG element.

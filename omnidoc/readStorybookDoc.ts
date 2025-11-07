@@ -12,7 +12,21 @@ export class StorybookDocReader implements DocReader {
     return Array.from(this.componentCache!.keys()).sort();
   }
 
-  getPropsOf(component: string): ReadonlyArray<string> {
+  getPublicComponentNames(): ReadonlyArray<string> {
+    return this.getPublicSymbolNames().filter(name => {
+      // Exclude hooks (start with 'use')
+      if (name.startsWith('use')) {
+        return false;
+      }
+      // Exclude utility functions
+      if (name === 'getNiceTickValues') {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  getRechartsPropsOf(component: string): ReadonlyArray<string> {
     this.ensureCache();
     return this.componentCache!.get(component) || [];
   }

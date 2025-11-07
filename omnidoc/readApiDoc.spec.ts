@@ -58,7 +58,7 @@ describe('readApiDoc', () => {
   });
 
   it('should return props', () => {
-    expect(reader.getPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
+    expect(reader.getRechartsPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
       [
         "xAxisId",
         "yAxisId",
@@ -82,6 +82,6 @@ describe('readApiDoc', () => {
   });
 
   it('should return empty array for unknown component props', () => {
-    expect(reader.getPropsOf('UnknownComponent')).toEqual([]);
+    expect(reader.getRechartsPropsOf('UnknownComponent')).toEqual([]);
   });
 });
