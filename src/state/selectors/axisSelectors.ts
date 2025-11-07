@@ -19,6 +19,7 @@ import {
   CategoricalDomain,
   ChartOffsetInternal,
   Coordinate,
+  DataKey,
   LayoutType,
   NumberDomain,
   Size,
@@ -80,25 +81,15 @@ import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithRev
 import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
-import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
+import { selectTooltipAxisType, XorYorZType, XorYType } from './selectTooltipAxisType';
+import { selectTooltipAxisId } from './selectTooltipAxisId';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
-
-/**
- * angle, radius, X, Y, and Z axes all have domain and range and scale and associated settings
- */
-type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis';
-
-/**
- * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
- * and tick settings.
- */
-export type XorYType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 
 export type AxisWithTicksSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
 
@@ -591,6 +582,17 @@ export function getErrorDomainByDataKey(
     }),
   );
 }
+
+export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
+  const axisType = selectTooltipAxisType(state);
+  const axisId = selectTooltipAxisId(state);
+  return selectAxisSettings(state, axisType, axisId);
+};
+
+export const selectTooltipAxisDataKey: (state: RechartsRootState) => DataKey<any> | undefined = createSelector(
+  [selectTooltipAxis],
+  (axis: AxisWithTicksSettings | undefined): DataKey<any> | undefined => axis?.dataKey,
+);
 
 export const selectDisplayedStackedData: (
   state: RechartsRootState,

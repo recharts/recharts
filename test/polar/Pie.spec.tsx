@@ -49,12 +49,12 @@ import {
 import { useAppSelector } from '../../src/state/hooks';
 import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
-import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 import { expectPieSectors } from '../helper/expectPieSectors';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { PieSettings } from '../../src/state/types/PieSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { Coordinate } from '../../src/util/types';
+import { selectTooltipAxis } from '../../src/state/selectors/axisSelectors';
 
 type CustomizedLabelLineProps = { points?: Array<Coordinate> };
 

@@ -32,7 +32,8 @@ import {
   selectReferenceAreas,
   selectReferenceDots,
   selectReferenceLines,
-  XorYType,
+  selectTooltipAxis,
+  selectTooltipAxisDataKey,
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
@@ -77,8 +78,7 @@ import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { selectTooltipAxisType } from './selectTooltipAxisType';
-import { selectTooltipAxis, selectTooltipAxisDataKey } from './selectTooltipAxis';
+import { selectTooltipAxisType, XorYType } from './selectTooltipAxisType';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
