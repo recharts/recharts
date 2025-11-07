@@ -119,6 +119,7 @@ const reactConfig = [
         'error',
         {
           devDependencies: true,
+          packageDir: ['.', './www'],
         },
       ],
       'import/prefer-default-export': 'off',
@@ -304,12 +305,21 @@ const overridesConfig = [
   {
     name: 'default-export-override',
     /*
-     * Files in the ./www/docs, that are not index,
+     * Files on the website, that are not index, and that are public examples
      * must have only default export, because they are passed to react-runner
      * which requires default export.
      */
-    basePath: './www/src/docs',
-    files: ['exampleComponents/**/*.tsx', 'exampleComponents/**/*.ts', 'apiExamples/**/*.tsx', 'apiExamples/**/*.ts'],
+    basePath: './www/src',
+    files: [
+      'docs/exampleComponents/**/*.tsx',
+      'docs/exampleComponents/**/*.ts',
+      'docs/apiExamples/**/*.tsx',
+      'docs/apiExamples/**/*.ts',
+      'components/GuideView/*/*.tsx',
+      'components/GuideView/*/*.ts',
+      'views/IndexView/*.tsx',
+      'views/IndexView/*.ts',
+    ],
     ignores: ['**/index.ts', '**/index.tsx'],
     rules: {
       'import/no-default-export': 'off',
