@@ -913,7 +913,21 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
       modifiedLinks: newModifiedLinks,
       modifiedNodes: newModifiedNodes,
     };
-  }, [data, width, height, margin, iterations, nodeWidth, nodePadding, sort, link, node, linkCurvature, align, verticalAlign]);
+  }, [
+    data,
+    width,
+    height,
+    margin,
+    iterations,
+    nodeWidth,
+    nodePadding,
+    sort,
+    link,
+    node,
+    linkCurvature,
+    align,
+    verticalAlign,
+  ]);
 
   const handleMouseEnter = useCallback(
     (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
