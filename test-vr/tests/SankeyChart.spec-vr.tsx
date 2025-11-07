@@ -35,3 +35,21 @@ test('Sankey align left', async ({ mount }) => {
   );
   await expect(component).toHaveScreenshot();
 });
+
+test('Sankey verticalAlign justify', async ({ mount }) => {
+  const component = await mount(
+    <Sankey width={1000} height={500} data={data} verticalAlign="justify">
+      <Tooltip />
+    </Sankey>,
+  );
+  await expect(component).toHaveScreenshot();
+});
+
+test('Sankey verticalAlign top', async ({ mount }) => {
+  const component = await mount(
+    <Sankey width={1000} height={500} data={data} verticalAlign="top">
+      <Tooltip />
+    </Sankey>,
+  );
+  await expect(component).toHaveScreenshot();
+});
