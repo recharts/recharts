@@ -14,19 +14,17 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
     const locale = getLocaleType(this.props);
     return (
       <div className="page page-index">
-        <div className="desc">
-          <p className="title">Recharts</p>
+        <div className="desc block">
+          <h1>Recharts</h1>
           <p className="subtitle">{localeGet(locale, 'home', 'slogan')}</p>
-          <p>
-            <Link to={`/${locale}/guide/installation/`} className="button install-btn">
-              <i className="icon-energy" />
-              &nbsp;
-              {localeGet(locale, 'home', 'install')}
-              {import.meta.env.VITE_RECHARTS_LATEST_VERSION
-                ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
-                : undefined}
-            </Link>
-          </p>
+          <Link to={`/${locale}/guide/installation/`} className="button install-btn">
+            <i className="icon-energy" />
+            &nbsp;
+            {localeGet(locale, 'home', 'install')}
+            {import.meta.env.VITE_RECHARTS_LATEST_VERSION
+              ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
+              : undefined}
+          </Link>
           <iframe
             title="star"
             src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
@@ -102,11 +100,9 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
         <div className="like block">
           <i className="icon-rocket" />
           <p className="text">{localeGet(locale, 'home', 'like')}</p>
-          <p className="btn">
-            <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
-              {localeGet(locale, 'home', 'get-started')}
-            </Link>
-          </p>
+          <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
+            {localeGet(locale, 'home', 'get-started')}
+          </Link>
         </div>
       </div>
     );
