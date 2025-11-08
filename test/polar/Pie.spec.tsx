@@ -742,34 +742,30 @@ describe('<Pie />', () => {
       onClick.mockClear();
     });
 
-    test(
-      'should call external handlers',
-      async () => {
-        const user = userEventSetup();
-        const { container } = renderTestCase();
+    test('should call external handlers', async () => {
+      const user = userEventSetup();
+      const { container } = renderTestCase();
 
-        expect(onMouseEnter).toHaveBeenCalledTimes(0);
-        expect(onMouseLeave).toHaveBeenCalledTimes(0);
-        expect(onClick).toHaveBeenCalledTimes(0);
+      expect(onMouseEnter).toHaveBeenCalledTimes(0);
+      expect(onMouseLeave).toHaveBeenCalledTimes(0);
+      expect(onClick).toHaveBeenCalledTimes(0);
 
-        const sector = container.querySelectorAll('.recharts-layer')[4];
+      const sector = container.querySelectorAll('.recharts-layer')[4];
 
-        await user.hover(sector);
-        expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      await user.hover(sector);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
 
-        await user.unhover(sector);
-        expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      await user.unhover(sector);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
 
-        await user.click(sector);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        // click also includes enter in it? ok
-        expect(onMouseEnter).toHaveBeenCalledTimes(2);
+      await user.click(sector);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      // click also includes enter in it? ok
+      expect(onMouseEnter).toHaveBeenCalledTimes(2);
 
-        expect(onMouseLeave).toHaveBeenCalledTimes(1);
-        expect(onClick).toHaveBeenCalledTimes(1);
-      },
-      { timeout: 1000 },
-    );
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    }, 1000);
   });
 
   describe('Tooltip integration', () => {

@@ -1968,12 +1968,11 @@ describe('Bar background zIndex', () => {
   ];
 
   it('should use default barBackground zIndex when background prop is true', () => {
-    const { container, debug } = rechartsTestRender(
+    const { container } = rechartsTestRender(
       <BarChart width={500} height={300} data={composedDataWithBackground}>
         <Bar background isAnimationActive={false} dataKey="value" />
       </BarChart>,
     );
-    debug();
 
     // Background rectangles should be rendered
     const backgroundRects = container.querySelectorAll('.recharts-bar-background-rectangle');
