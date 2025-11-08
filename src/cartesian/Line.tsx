@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Component, MutableRefObject, ReactNode, Ref, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  Component,
+  ComponentType,
+  MutableRefObject,
+  ReactNode,
+  Ref,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
@@ -765,5 +775,5 @@ function LineFn(outsideProps: Props) {
   );
 }
 
-export const Line = React.memo(LineFn);
+export const Line: ComponentType<Props> = React.memo(LineFn);
 Line.displayName = 'Line';

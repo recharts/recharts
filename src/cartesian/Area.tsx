@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
+import { ComponentType, MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -918,5 +918,5 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
-export const Area = React.memo(AreaFn);
+export const Area: ComponentType<Props> = React.memo(AreaFn);
 Area.displayName = 'Area';

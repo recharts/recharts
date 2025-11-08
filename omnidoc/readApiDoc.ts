@@ -9,12 +9,30 @@ export class ApiDocReader implements DocReader {
     return Object.keys(allExamples);
   }
 
-  getPropsOf(component: string): ReadonlyArray<string> {
+  getPublicComponentNames(): ReadonlyArray<string> {
+    return this.getPublicSymbolNames().filter(name => {
+      // Exclude hooks (start with 'use')
+      if (name.startsWith('use')) {
+        return false;
+      }
+      // Exclude utility functions
+      if (name === 'getNiceTickValues') {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  getRechartsPropsOf(component: string): ReadonlyArray<string> {
     const apiDoc = allExamples[component];
     if (!apiDoc) {
       return [];
     }
     return apiDoc.props.map(prop => prop.name);
+  }
+
+  getAllPropsOf(component: string): ReadonlyArray<string> {
+    return this.getRechartsPropsOf(component);
   }
 
   getSVGParentOf(_component: string): string | null {

@@ -61,7 +61,7 @@ describe('readStorybookDoc', () => {
   });
 
   it('should return props for ReferenceLine', () => {
-    expect(reader.getPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
+    expect(reader.getRechartsPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
       [
         "clipPathId",
         "dangerouslySetInnerHTML",
@@ -89,11 +89,11 @@ describe('readStorybookDoc', () => {
   });
 
   it('should return empty array for unknown component props', () => {
-    expect(reader.getPropsOf('UnknownComponent')).toEqual([]);
+    expect(reader.getRechartsPropsOf('UnknownComponent')).toEqual([]);
   });
 
   it('should return props for known components', () => {
-    const referenceLineProps = reader.getPropsOf('ReferenceLine');
+    const referenceLineProps = reader.getRechartsPropsOf('ReferenceLine');
     expect(referenceLineProps.length).toBeGreaterThan(0);
     expect(referenceLineProps).toContain('x');
     expect(referenceLineProps).toContain('y');
@@ -110,13 +110,13 @@ describe('readStorybookDoc', () => {
   });
 
   it('should return props for different components', () => {
-    expect(reader.getPropsOf('AreaChart').length).toBeGreaterThan(0);
-    expect(reader.getPropsOf('BarChart').length).toBeGreaterThan(0);
-    expect(reader.getPropsOf('LineChart').length).toBeGreaterThan(0);
+    expect(reader.getRechartsPropsOf('AreaChart').length).toBeGreaterThan(0);
+    expect(reader.getRechartsPropsOf('BarChart').length).toBeGreaterThan(0);
+    expect(reader.getRechartsPropsOf('LineChart').length).toBeGreaterThan(0);
   });
 
   it('should return props for Area component', () => {
-    const areaProps = reader.getPropsOf('Area');
+    const areaProps = reader.getRechartsPropsOf('Area');
     expect(areaProps.length).toBeGreaterThan(0);
     expect(areaProps).toMatchInlineSnapshot(`
       [
@@ -153,7 +153,7 @@ describe('readStorybookDoc', () => {
   });
 
   it('should return props for Bar component', () => {
-    const barProps = reader.getPropsOf('Bar');
+    const barProps = reader.getRechartsPropsOf('Bar');
     expect(barProps.length).toBeGreaterThan(0);
   });
 
@@ -183,13 +183,13 @@ describe('readStorybookDoc', () => {
   });
 
   it('should return sorted prop names', () => {
-    const props = reader.getPropsOf('ReferenceLine');
+    const props = reader.getRechartsPropsOf('ReferenceLine');
     const sorted = [...props].sort();
     expect(props).toEqual(sorted);
   });
 
   it('should handle ResponsiveContainer - which has no argTypes', () => {
-    const props = reader.getPropsOf('ResponsiveContainer');
+    const props = reader.getRechartsPropsOf('ResponsiveContainer');
     expect(props.length).toBe(0);
   });
 });
