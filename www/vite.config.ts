@@ -50,13 +50,6 @@ export default defineConfig(({ mode }) => ({
              * This also gives us hot module reload for free!
              */
             recharts: resolve(__dirname, '../src'),
-            /*
-             * Ensure that we are using the same React instance
-             * to avoid issues with hooks and context.
-             */
-            react: resolve(__dirname, 'node_modules/react'),
-            'react-dom': resolve(__dirname, 'node_modules/react-dom'),
-            'react-is': resolve(__dirname, 'node_modules/react-is'),
           }
         : undefined,
   },

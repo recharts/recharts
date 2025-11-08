@@ -20,11 +20,9 @@ export function Frame(props: FrameProps) {
     <div className="container">
       <Helmet titleTemplate="%s | Recharts" />
       <header>
-        <h1 className="logo">
-          <Link className="nav-logo" to={`/${locale}/`}>
-            <RechartsLogo />
-          </Link>
-        </h1>
+        <Link className="logo" to={`/${locale}/`}>
+          <RechartsLogo />
+        </Link>
         <Navigation />
       </header>
       <SidebarNav />

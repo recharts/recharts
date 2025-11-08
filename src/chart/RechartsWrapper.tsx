@@ -106,7 +106,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
       if (typeof ref === 'function') {
         ref(node);
       }
-      if (node != null) {
+      if (node != null && typeof ResizeObserver !== 'undefined') {
         const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
         setContainerSize(containerWidth, containerHeight);
         const callback = (entries: ResizeObserverEntry[]) => {

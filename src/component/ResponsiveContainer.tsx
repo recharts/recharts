@@ -162,7 +162,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
     }, []);
 
     useEffect(() => {
-      if (containerRef.current == null) {
+      if (containerRef.current == null || typeof ResizeObserver === 'undefined') {
         return noop;
       }
       let callback = (entries: ResizeObserverEntry[]) => {

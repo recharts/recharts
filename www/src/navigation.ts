@@ -146,9 +146,13 @@ export function normalizePathnameToLocale(pathname: string) {
   return `/${defaultLocale}${pathname.startsWith('/') ? '' : '/'}${pathname}`;
 }
 
+function stripTrailingSlash(path: string): string {
+  return path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+}
+
 export function useCurrentNavItem(): NavItem | undefined {
   const allNavigationItems = useAllNavigationItems();
   const location = useLocation();
   const normalizedLocationPathname = normalizePathnameToLocale(location.pathname);
-  return allNavigationItems.find(item => normalizedLocationPathname.includes(item.url));
+  return allNavigationItems.find(item => normalizedLocationPathname.startsWith(stripTrailingSlash(item.url)));
 }
