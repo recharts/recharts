@@ -74,11 +74,10 @@ import {
   selectTooltipGraphicalItemsData,
 } from '../../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
-import { selectAxisDomain } from '../../../src/state/selectors/axisSelectors';
+import { selectAxisDomain, selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
-import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { LineSettings } from '../../../src/state/types/LineSettings';
 

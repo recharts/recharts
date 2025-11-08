@@ -86,9 +86,9 @@ import { mockTouchingElement } from '../../helper/mockTouchingElement';
 import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
-import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
+import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running

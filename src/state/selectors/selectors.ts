@@ -26,7 +26,7 @@ import {
 import { TooltipTrigger } from '../../chart/types';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
-import { AxisRange } from './axisSelectors';
+import { AxisRange, selectTooltipAxisDataKey } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
@@ -39,7 +39,6 @@ import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipP
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
-import { selectTooltipAxisDataKey } from './selectTooltipAxis';
 import {
   calculateActiveTickIndex,
   getActiveCartesianCoordinate,
