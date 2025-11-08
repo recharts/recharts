@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
+import { ComponentType, FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
 import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
@@ -217,6 +217,6 @@ const YAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Pro
   return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
 };
 
-export const YAxis = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
+export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
 
 YAxis.displayName = 'YAxis';

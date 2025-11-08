@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ComponentType,
+  MutableRefObject,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -737,6 +746,6 @@ function ScatterFn(outsideProps: Props) {
   );
 }
 
-export const Scatter = React.memo(ScatterFn);
+export const Scatter: ComponentType<Props> = React.memo(ScatterFn);
 
 Scatter.displayName = 'Scatter';
