@@ -70,16 +70,6 @@ export const ReferenceAreaAPI = {
       },
     },
     {
-      name: 'alwaysShow',
-      type: 'Boolean',
-      defaultVal: 'false',
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US': "Use 'ifOverflow' instead.",
-      },
-    },
-    {
       name: 'ifOverflow',
       type: "'discard' | 'hidden' | 'visible' | 'extendDomain'",
       defaultVal: "'discard'",
@@ -113,26 +103,6 @@ export const ReferenceAreaAPI = {
         'en-US':
           'The box of viewing area, which has the shape of {x: someVal, y: someVal, width: someVal, height: someVal}, usually calculated internally.',
         'zh-CN': '图表的可视区域。',
-      },
-    },
-    {
-      name: 'xAxis',
-      type: 'Object',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The configuration of the corresponding x-axis, usually calculated internally.',
-        'zh-CN': 'x 轴配置。',
-      },
-    },
-    {
-      name: 'yAxis',
-      type: 'Object',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The configuration of the corresponding y-axis, usually calculated internally.',
-        'zh-CN': 'y 轴配置。',
       },
     },
     {
@@ -172,16 +142,6 @@ export const ReferenceAreaAPI = {
           isExternal: true,
         },
       ],
-    },
-    {
-      name: 'isFront',
-      type: 'Boolean',
-      defaultVal: 'false',
-      isOptional: false,
-      desc: {
-        'en-US': 'If set true, the line will be rendered in front of bars in BarChart, etc.',
-        'zh-CN': '是否展示在图表的最上层。',
-      },
     },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'LineChart', 'ComposedChart', 'ScatterChart'],

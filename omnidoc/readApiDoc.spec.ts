@@ -64,13 +64,8 @@ describe('readApiDoc', () => {
         "yAxisId",
         "x",
         "y",
-        "alwaysShow",
         "ifOverflow",
-        "viewBox",
-        "xAxis",
-        "yAxis",
         "label",
-        "isFront",
         "strokeWidth",
         "segment",
       ]

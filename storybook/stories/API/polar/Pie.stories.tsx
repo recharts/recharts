@@ -113,7 +113,6 @@ const GeneralProps: Args = {
     description: 'The source data which each element is an object.',
     table: { type: { summary: 'Array' }, category: 'General' },
   },
-  activeIndex: ActiveShapeProps.activeIndex,
   activeShape: ActiveShapeProps.activeShape,
   inactiveShape: {
     description: 'The shape of inactive sector.',

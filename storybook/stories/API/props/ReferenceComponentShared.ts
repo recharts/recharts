@@ -22,19 +22,3 @@ export const ReferenceComponentGeneralArgs: StorybookArgs = {
     table: { type: { summary: 'string | number' }, category: 'General' },
   },
 };
-
-export const ReferenceComponentInternalArgs: StorybookArgs = {
-  xAxis: {
-    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
-    table: { type: { summary: 'Object' }, category: 'Internal' },
-  },
-  yAxis: {
-    description: 'The configuration of the corresponding y-axis, usually calculated internally.',
-    table: { type: { summary: 'Object' }, category: 'Internal' },
-  },
-  clipPathId: {
-    description: `Used as the id for the clip path which is used to clip the reference component if
-    'ifOverflow' is set to 'hidden'"`,
-    table: { type: { summary: 'number | string' }, category: 'Internal' },
-  },
-};

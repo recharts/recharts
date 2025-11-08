@@ -2,16 +2,6 @@ export const BarAPI = {
   name: 'Bar',
   props: [
     {
-      name: 'layout',
-      type: "'horizontal' | 'vertical'",
-      defaultVal: 'undefined',
-      isOptional: true,
-      desc: {
-        'en-US': 'The layout of bar in the chart, usually inherited from parent.',
-        'zh-CN': '布局类型，通常继承父组件的布局类型。',
-      },
-    },
-    {
       name: 'dataKey',
       type: 'String | Number | Function',
       defaultVal: 'undefined',
@@ -67,17 +57,6 @@ export const BarAPI = {
         '<Bar dataKey="value" label={{ fill: \'red\', fontSize: 20 }} />',
         '<Bar dataKey="value" label={<CustomizedLabel />} />',
       ],
-    },
-    {
-      name: 'data',
-      type: 'Array',
-      defaultVal: 'undefined',
-      isOptional: false,
-      desc: {
-        'en-US':
-          'The position information of all the rectangles, usually calculated internally. Will only take effect if `data` is also present on `BarChart`.',
-        'zh-CN': '描述所有柱条的坐标、尺寸数据。',
-      },
     },
     {
       name: 'barSize',

@@ -115,17 +115,6 @@ export const RadarChartAPI = {
       format: ['{ top: 5, right: 5, bottom: 5, left: 5 }'],
     },
     {
-      name: 'clockWise',
-      type: 'Bool',
-      deprecated: true,
-      defaultVal: 'true',
-      isOptional: false,
-      desc: {
-        'en-US': 'The direction of clockwise.',
-        'zh-CN': '是否顺时针',
-      },
-    },
-    {
       name: 'onMouseEnter',
       type: 'Function',
       defaultVal: 'null',

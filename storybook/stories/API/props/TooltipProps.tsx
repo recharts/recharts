@@ -73,19 +73,6 @@ export const TooltipProps: StorybookArgs = {
       category: 'Styles',
     },
   },
-  viewBox: {
-    description: `The box of viewing area.
-    Has the shape of { x: number, y: number, width: number, height: number }.
-    Usually calculated internally.`,
-    defaultValue: { x: 0, y: 0, height: 0, width: 0 },
-    table: {
-      type: {
-        summary: 'Object',
-        detail: '{ x: number, y: number, width: number, height: number },',
-      },
-      category: 'Internal',
-    },
-  },
   allowEscapeViewBox: {
     description: 'Allows the tooltip to extend beyond the viewBox of the chart itself.',
     defaultValue: { x: false, y: false },
@@ -104,36 +91,6 @@ export const TooltipProps: StorybookArgs = {
       type: {
         summary: 'Object',
         detail: '{ x: number, y: number }',
-      },
-    },
-  },
-  coordinate: {
-    description: 'The coordinate of tooltip position, usually calculated internally.',
-    table: {
-      category: 'Internal',
-      type: {
-        summary: 'Object',
-        detail: '{ x: number, y: number }',
-      },
-    },
-    defaultValue: '{ x: 0, y: 0 }',
-  },
-  payload: {
-    description: 'The source data of the content to be displayed in the tooltip, usually calculated internally.',
-    table: {
-      category: 'Internal',
-      type: {
-        summary: 'Array',
-        detail: "[{ name: '05-01', value: 12, unit: 'kg' }]",
-      },
-    },
-  },
-  label: {
-    description: 'The label value which is active now, usually calculated internally.',
-    table: {
-      category: 'Internal',
-      type: {
-        summary: 'string | number',
       },
     },
   },

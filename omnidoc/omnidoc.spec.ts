@@ -81,10 +81,6 @@ describe('omnidoc - documentation consistency', () => {
     expect(missingProps).toMatchInlineSnapshot(`
       [
         {
-          "component": "RadarChart",
-          "prop": "clockWise",
-        },
-        {
           "component": "ScatterChart",
           "prop": "onMouseOver",
         },
@@ -113,116 +109,12 @@ describe('omnidoc - documentation consistency', () => {
           "prop": "targetControlX",
         },
         {
-          "component": "Area",
-          "prop": "points",
-        },
-        {
-          "component": "Bar",
-          "prop": "layout",
-        },
-        {
-          "component": "Bar",
-          "prop": "data",
-        },
-        {
-          "component": "Line",
-          "prop": "points",
-        },
-        {
-          "component": "Scatter",
-          "prop": "points",
-        },
-        {
-          "component": "Brush",
-          "prop": "data",
-        },
-        {
-          "component": "Funnel",
-          "prop": "trapezoids",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "viewBox",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "coordinate",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "payload",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "label",
-        },
-        {
-          "component": "LabelList",
-          "prop": "data",
-        },
-        {
-          "component": "Pie",
-          "prop": "valueKey",
-        },
-        {
           "component": "RadialBar",
           "prop": "maxAngle",
         },
         {
           "component": "RadialBar",
           "prop": "minAngle",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "alwaysShow",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "viewBox",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "xAxis",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "yAxis",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "isFront",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "alwaysShow",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "xAxis",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "yAxis",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "isFront",
-        },
-        {
-          "component": "ReferenceArea",
-          "prop": "alwaysShow",
-        },
-        {
-          "component": "ReferenceArea",
-          "prop": "xAxis",
-        },
-        {
-          "component": "ReferenceArea",
-          "prop": "yAxis",
-        },
-        {
-          "component": "ReferenceArea",
-          "prop": "isFront",
         },
       ]
     `);
@@ -257,24 +149,12 @@ describe('omnidoc - documentation consistency', () => {
     expect(missingProps).toMatchInlineSnapshot(`
       [
         {
-          "component": "AreaChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "BarChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
           "component": "Cell",
           "prop": "onPointerEnterCapture",
         },
         {
           "component": "Cell",
           "prop": "onPointerLeaveCapture",
-        },
-        {
-          "component": "ComposedChart",
-          "prop": "defaultShowTooltip",
         },
         {
           "component": "Funnel",
@@ -302,127 +182,19 @@ describe('omnidoc - documentation consistency', () => {
         },
         {
           "component": "FunnelChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "FunnelChart",
           "prop": "shape",
-        },
-        {
-          "component": "LineChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "Pie",
-          "prop": "activeIndex",
-        },
-        {
-          "component": "PieChart",
-          "prop": "activeIndex",
         },
         {
           "component": "PieChart",
           "prop": "activeShape",
         },
         {
-          "component": "PieChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "RadarChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "RadialBar",
-          "prop": "activeIndex",
-        },
-        {
-          "component": "RadialBarChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "clipPathId",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "xAxis",
-        },
-        {
-          "component": "ReferenceDot",
-          "prop": "yAxis",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "clipPathId",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "viewBox",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "xAxis",
-        },
-        {
-          "component": "ReferenceLine",
-          "prop": "yAxis",
-        },
-        {
-          "component": "ScatterChart",
-          "prop": "defaultShowTooltip",
-        },
-        {
-          "component": "Sector",
-          "prop": "animationBegin",
-        },
-        {
-          "component": "Sector",
-          "prop": "animationDuration",
-        },
-        {
-          "component": "Sector",
-          "prop": "animationEasing",
-        },
-        {
-          "component": "Sector",
-          "prop": "dangerouslySetInnerHTML",
-        },
-        {
-          "component": "Sector",
-          "prop": "isAnimationActive",
-        },
-        {
           "component": "SunburstChart",
           "prop": "margin",
         },
         {
-          "component": "Text",
-          "prop": "content",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "coordinate",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "label",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "payload",
-        },
-        {
-          "component": "Tooltip",
-          "prop": "viewBox",
-        },
-        {
           "component": "Trapezoid",
           "prop": "isAnimationActive",
-        },
-        {
-          "component": "YAxis",
-          "prop": "xAxisId",
         },
       ]
     `);

@@ -63,7 +63,6 @@ describe('readStorybookDoc', () => {
   it('should return props for ReferenceLine', () => {
     expect(reader.getRechartsPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
       [
-        "clipPathId",
         "dangerouslySetInnerHTML",
         "ifOverflow",
         "label",
@@ -73,12 +72,9 @@ describe('readStorybookDoc', () => {
         "stroke",
         "strokeDasharray",
         "strokeWidth",
-        "viewBox",
         "x",
-        "xAxis",
         "xAxisId",
         "y",
-        "yAxis",
         "yAxisId",
       ]
     `);
