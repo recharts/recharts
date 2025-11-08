@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { pageData } from '../../storybook/stories/data';
-import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import { pageData } from '../../../storybook/stories/data';
+import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../../src';
 
 test('data on chart root', async ({ mount }) => {
   const component = await mount(
