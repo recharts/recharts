@@ -81,14 +81,6 @@ describe('omnidoc - documentation consistency', () => {
     expect(missingProps).toMatchInlineSnapshot(`
       [
         {
-          "component": "AreaChart",
-          "prop": "baseValue",
-        },
-        {
-          "component": "ComposedChart",
-          "prop": "baseValue",
-        },
-        {
           "component": "RadarChart",
           "prop": "clockWise",
         },
