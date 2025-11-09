@@ -1,4 +1,8 @@
 .page-index {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   .block {
     max-width: 1000px;
     padding: 50px 20px;
@@ -18,7 +22,6 @@
 
   .desc {
     max-width: 1000px;
-    margin: 0 auto;
     padding: 60px 20px 0;
 
     a {
@@ -103,7 +106,8 @@
     }
   }
 
-  .who {
+  .who.block {
+    max-width: 100%;
     .users {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
