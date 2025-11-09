@@ -942,18 +942,42 @@ export const combineAreasDomain = (
 
 const selectReferenceAreasDomain = createSelector([selectReferenceAreasByAxis, pickAxisType], combineAreasDomain);
 
+function extractXCoordinates(line: ReferenceLineSettings): ReadonlyArray<number> {
+  if (line.x != null) {
+    return onlyAllowNumbers([line.x]);
+  }
+  const segmentCoordinates: ReadonlyArray<string | number | undefined> | undefined = line.segment?.map(s => s.x);
+  if (segmentCoordinates == null || segmentCoordinates.length === 0) {
+    return [];
+  }
+  return onlyAllowNumbers(segmentCoordinates);
+}
+
+function extractYCoordinates(line: ReferenceLineSettings): ReadonlyArray<number> {
+  if (line.y != null) {
+    return onlyAllowNumbers([line.y]);
+  }
+  const segmentCoordinates: ReadonlyArray<string | number | undefined> | undefined = line.segment?.map(s => s.y);
+  if (segmentCoordinates == null || segmentCoordinates.length === 0) {
+    return [];
+  }
+  return onlyAllowNumbers(segmentCoordinates);
+}
+
 export const combineLinesDomain = (
   lines: ReadonlyArray<ReferenceLineSettings>,
   axisType: XorYType,
 ): NumberDomain | undefined => {
-  const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
+  const allCoords: ReadonlyArray<number> = lines.flatMap(line =>
+    axisType === 'xAxis' ? extractXCoordinates(line) : extractYCoordinates(line),
+  );
   if (allCoords.length === 0) {
     return undefined;
   }
   return [Math.min(...allCoords), Math.max(...allCoords)];
 };
 
-const selectReferenceLinesDomain = createSelector(selectReferenceLinesByAxis, pickAxisType, combineLinesDomain);
+const selectReferenceLinesDomain = createSelector([selectReferenceLinesByAxis, pickAxisType], combineLinesDomain);
 
 const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
