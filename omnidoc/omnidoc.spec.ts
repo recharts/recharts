@@ -157,34 +157,6 @@ describe('omnidoc - documentation consistency', () => {
           "prop": "onPointerLeaveCapture",
         },
         {
-          "component": "Funnel",
-          "prop": "activeDot",
-        },
-        {
-          "component": "Funnel",
-          "prop": "unit",
-        },
-        {
-          "component": "Funnel",
-          "prop": "xAxisId",
-        },
-        {
-          "component": "Funnel",
-          "prop": "yAxisId",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "activeIndex",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "activeShape",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "shape",
-        },
-        {
           "component": "PieChart",
           "prop": "activeShape",
         },
