@@ -17,16 +17,6 @@ export const nameKey: StorybookArg = {
   },
 };
 
-export const activeShape: StorybookArg = {
-  description: '',
-  table: {
-    type: {
-      summary: 'Object | ReactElement | Function | boolean',
-    },
-    category: 'General',
-  },
-};
-
 export const xAxisId: StorybookArg = {
   description: 'The id of x-axis which is corresponding to the data.',
   table: { type: { summary: 'string | number' }, category: 'General' },

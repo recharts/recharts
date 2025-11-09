@@ -71,53 +71,7 @@ describe('omnidoc - documentation consistency', () => {
       }
     }
 
-    if (missingProps.length > 0) {
-      console.error(
-        `Found ${missingProps.length} prop(s) documented in API docs but not exported from the project:`,
-        missingProps,
-      );
-    }
-
-    expect(missingProps).toMatchInlineSnapshot(`
-      [
-        {
-          "component": "ScatterChart",
-          "prop": "onMouseOver",
-        },
-        {
-          "component": "ScatterChart",
-          "prop": "onMouseOut",
-        },
-        {
-          "component": "Sankey",
-          "prop": "linkWidth",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceX",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceY",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceControlX",
-        },
-        {
-          "component": "Sankey",
-          "prop": "targetControlX",
-        },
-        {
-          "component": "RadialBar",
-          "prop": "maxAngle",
-        },
-        {
-          "component": "RadialBar",
-          "prop": "minAngle",
-        },
-      ]
-    `);
+    expect(missingProps).toEqual([]);
   });
 
   it('all Storybook props must exist in the project', () => {
@@ -155,34 +109,6 @@ describe('omnidoc - documentation consistency', () => {
         {
           "component": "Cell",
           "prop": "onPointerLeaveCapture",
-        },
-        {
-          "component": "Funnel",
-          "prop": "activeDot",
-        },
-        {
-          "component": "Funnel",
-          "prop": "unit",
-        },
-        {
-          "component": "Funnel",
-          "prop": "xAxisId",
-        },
-        {
-          "component": "Funnel",
-          "prop": "yAxisId",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "activeIndex",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "activeShape",
-        },
-        {
-          "component": "FunnelChart",
-          "prop": "shape",
         },
         {
           "component": "PieChart",

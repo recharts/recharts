@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { nameKey, activeShape, General } from '../props/CartesianComponentShared';
+import { nameKey, General, dataKey } from '../props/CartesianComponentShared';
 import { legendType } from '../props/Legend';
 import { AnimationProps } from '../props/AnimationProps';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer } from '../../../../src';
@@ -19,22 +19,22 @@ import {
   onMouseOver,
   onMouseUp,
 } from '../props/EventHandlers';
-import { ResponsiveProps } from '../props/Tooltip';
 import { GeneralStyle } from '../props/Styles';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
     nameKey,
     legendType,
-    shape: activeShape,
-    activeShape,
+    ...ActiveShapeProps,
     ...AnimationProps,
-    ...General,
+    dataKey,
+    id: General.id,
+    name: General.name,
     ...GeneralStyle,
     ...ChartSizeProps,
     ...EventHandlers,
-    ...ResponsiveProps,
     onAnimationStart,
     onAnimationEnd,
     onClick,

@@ -2,16 +2,12 @@ import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-    ...ActiveShapeProps,
-  },
+  argTypes: CategoricalChartProps,
   component: FunnelChart,
 };
 
