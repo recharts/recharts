@@ -18,6 +18,7 @@ import { selectAxisRangeWithReverse, selectReferenceLinesByAxis } from '../../..
 import { pageData } from '../../../storybook/stories/data';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { selectBrushDimensions, selectBrushSettings } from '../../../src/state/selectors/brushSelectors';
+import { PageData } from '../../_data';
 
 type ExpectedReferenceLine = {
   x1: string;
@@ -515,6 +516,42 @@ describe('<ReferenceLine />', () => {
 
       expect(lineSpy).toHaveBeenLastCalledWith([]);
       expect(lineSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('should report segment prop to Redux state', () => {
+      const lineSpy = vi.fn();
+      const Comp = (): null => {
+        lineSpy(useAppSelector(state => selectReferenceLinesByAxis(state, 'yAxis', 0)));
+        return null;
+      };
+      render(
+        <BarChart width={1100} height={250} data={PageData}>
+          <XAxis />
+          <YAxis />
+          <ReferenceLine
+            y={20}
+            segment={[
+              { x: 'Page A', y: 200 },
+              { x: 'Page B', y: 20 },
+            ]}
+            ifOverflow="extendDomain"
+          />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expect(lineSpy).toHaveBeenLastCalledWith([
+        {
+          ifOverflow: 'extendDomain',
+          segment: [
+            { x: 'Page A', y: 200 },
+            { x: 'Page B', y: 20 },
+          ],
+          x: undefined,
+          xAxisId: 0,
+          y: 20,
+          yAxisId: 0,
+        },
+      ]);
     });
   });
 
