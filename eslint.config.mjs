@@ -160,7 +160,12 @@ const reactConfig = [
       'react/require-default-props': 'off',
       'react/default-props-match-prop-types': 'off',
       'react/function-component-definition': 'off',
-      'react/no-array-index-key': 'warn',
+      /**
+       * In a chart, using the index as key is acceptable because the order of items
+       * has meaning. Reordering, or removing elements creates a whole new chart.
+       * For Recharts, array index is a good identifier.
+       */
+      'react/no-array-index-key': 'off',
       'react/no-access-state-in-setstate': 'off',
       'react/destructuring-assignment': 'off',
       'react/jsx-closing-tag-location': 'error',

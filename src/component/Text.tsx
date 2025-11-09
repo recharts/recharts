@@ -432,8 +432,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       {wordsByLines.map((line, index) => {
         const words = line.words.join(breakAll ? '' : ' ');
         return (
-          // duplicate words will cause duplicate keys
-          // eslint-disable-next-line react/no-array-index-key
+          // duplicate words will cause duplicate keys which is why we add the array index here
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
             {words}
           </tspan>

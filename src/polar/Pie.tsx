@@ -415,7 +415,6 @@ function PieLabels({
     return (
       <ZIndexLayer
         zIndex={DefaultZIndexes.label}
-        // eslint-disable-next-line react/no-array-index-key
         key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}
       >
         <Layer>
@@ -481,7 +480,6 @@ function PieSectors(props: PieSectorsProps) {
 
         return (
           <Layer
-            // eslint-disable-next-line react/no-array-index-key
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
             tabIndex={-1}
             className="recharts-pie-sector"
