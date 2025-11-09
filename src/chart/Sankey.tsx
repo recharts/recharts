@@ -533,14 +533,6 @@ type Props = SVGProps<SVGSVGElement> & SankeyProps;
 
 type SankeyElementType = 'node' | 'link';
 
-// Why is margin not a Sankey prop? No clue. Probably it should be
-const defaultSankeyMargin: Margin = {
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-};
-
 function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
@@ -996,7 +988,7 @@ export function Sankey(outsideProps: Props) {
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
       <ReportChartSize width={width} height={height} />
-      <ReportChartMargin margin={defaultSankeyMargin} />
+      <ReportChartMargin margin={props.margin} />
       <RechartsWrapper
         className={className}
         style={style}

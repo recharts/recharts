@@ -189,10 +189,6 @@ describe('omnidoc - documentation consistency', () => {
           "prop": "activeShape",
         },
         {
-          "component": "SunburstChart",
-          "prop": "margin",
-        },
-        {
           "component": "Trapezoid",
           "prop": "isAnimationActive",
         },
