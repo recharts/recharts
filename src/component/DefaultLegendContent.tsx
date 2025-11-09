@@ -165,13 +165,7 @@ function Items(props: InternalProps) {
     const finalValue = finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value;
 
     return (
-      <li
-        className={className}
-        style={itemStyle}
-        // eslint-disable-next-line react/no-array-index-key
-        key={`legend-item-${i}`}
-        {...adaptEventsOfChild(props, entry, i)}
-      >
+      <li className={className} style={itemStyle} key={`legend-item-${i}`} {...adaptEventsOfChild(props, entry, i)}>
         <Surface
           width={iconSize}
           height={iconSize}

@@ -195,16 +195,16 @@ type LineItemProps = Props & {
   index: number;
 };
 
-function renderLineItem(option: GridLineType, props: LineItemProps) {
+function LineItem({ option, lineItemProps }: { option: GridLineType; lineItemProps: LineItemProps }) {
   let lineItem;
 
   if (React.isValidElement(option)) {
     // @ts-expect-error typescript does not see the props type when cloning an element
-    lineItem = React.cloneElement(option, props);
+    lineItem = React.cloneElement(option, lineItemProps);
   } else if (typeof option === 'function') {
-    lineItem = option(props);
+    lineItem = option(lineItemProps);
   } else {
-    const { x1, y1, x2, y2, key, ...others } = props;
+    const { x1, y1, x2, y2, key, ...others } = lineItemProps;
     const { offset: __, ...restOfFilteredProps } = svgPropertiesNoEvents(others) ?? {};
     lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
   }
@@ -238,7 +238,7 @@ function HorizontalGridLines(props: GridLinesProps) {
       index: i,
     };
 
-    return renderLineItem(horizontal, lineItemProps);
+    return <LineItem key={`line-${i}`} option={horizontal} lineItemProps={lineItemProps} />;
   });
 
   return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
@@ -264,7 +264,7 @@ function VerticalGridLines(props: GridLinesProps) {
       index: i,
     };
 
-    return renderLineItem(vertical, lineItemProps);
+    return <LineItem option={vertical} lineItemProps={lineItemProps} key={`line-${i}`} />;
   });
 
   return <g className="recharts-cartesian-grid-vertical">{items}</g>;
@@ -292,7 +292,7 @@ function HorizontalStripes(props: CartesianGridInternalProps) {
     const colorIndex = i % horizontalFill.length;
     return (
       <rect
-        key={`react-${i}`} // eslint-disable-line react/no-array-index-key
+        key={`react-${i}`}
         y={entry}
         x={x}
         height={lineHeight}
@@ -330,7 +330,7 @@ function VerticalStripes(props: CartesianGridInternalProps) {
     const colorIndex = i % verticalFill.length;
     return (
       <rect
-        key={`react-${i}`} // eslint-disable-line react/no-array-index-key
+        key={`react-${i}`}
         x={entry}
         y={y}
         width={lineWidth}

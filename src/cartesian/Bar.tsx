@@ -457,7 +457,6 @@ function BarRectangles({
         return (
           <Layer
             // https://github.com/recharts/recharts/issues/5415
-            // eslint-disable-next-line react/no-array-index-key
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}

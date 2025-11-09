@@ -285,7 +285,6 @@ const SunburstChartImpl = ({
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
-        // eslint-disable-next-line react/no-array-index-key
         <g key={`sunburst-sector-${d.name}-${i}`}>
           <Sector
             onClick={() => handleClick(nodeWithIndex)}

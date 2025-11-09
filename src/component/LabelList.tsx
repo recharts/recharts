@@ -123,7 +123,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
           return (
             <Label
-              key={`label-${index}`} // eslint-disable-line react/no-array-index-key
+              key={`label-${index}`}
               {...svgPropertiesAndEvents(entry)}
               {...others}
               {...idProps}

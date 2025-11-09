@@ -359,7 +359,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 
         return (
           <ZIndexLayer
-            // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             /*
              * inactive Scatters use the parent zIndex, which is represented by undefined here.
