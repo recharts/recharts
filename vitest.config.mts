@@ -48,7 +48,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'omnidoc',
+          name: 'unit:omnidoc',
           include: ['omnidoc/**/*.spec.ts', 'omnidoc/**/*.spec.tsx'],
         },
       },
