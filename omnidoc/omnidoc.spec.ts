@@ -78,18 +78,7 @@ describe('omnidoc - documentation consistency', () => {
       );
     }
 
-    expect(missingProps).toMatchInlineSnapshot(`
-      [
-        {
-          "component": "ScatterChart",
-          "prop": "onMouseOver",
-        },
-        {
-          "component": "ScatterChart",
-          "prop": "onMouseOut",
-        },
-      ]
-    `);
+    expect(missingProps).toMatchInlineSnapshot(`[]`);
   });
 
   it('all Storybook props must exist in the project', () => {
