@@ -9,7 +9,6 @@ import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 export default {
   argTypes: {
     ...CategoricalChartProps,
-    activeIndex: ActiveShapeProps.activeIndex,
     activeShape: ActiveShapeProps.activeShape,
   },
   component: PieChart,

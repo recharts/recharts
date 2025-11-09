@@ -153,23 +153,11 @@ export const AreaAPI = {
       defaultVal: 'undefined',
       isOptional: false,
       desc: {
-        'en-US': 'The value which can describle the line, usually calculated internally.',
+        'en-US': 'The value which can describe the line, usually calculated internally.',
         'zh-CN': `基准线，可以是一个数值，这种情况会根据 layout 解析成 x = \${baseLine} 或者 y = \${baseLine}。当使用 AreaChart
            或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。`,
       },
       format: ['<Area dataKey="value" baseLine={8} />', '<Area dataKey="value" baseLine={[{ x: 12, y: 15 }]} />'],
-    },
-    {
-      name: 'points',
-      type: 'Array',
-      defaultVal: 'undefined',
-      isOptional: false,
-      desc: {
-        'en-US': 'The coordinates of all the points in the area, usually calculated internally.',
-        'zh-CN':
-          '曲线上点的坐标。当使用 AreaChart 或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。',
-      },
-      format: ['[{ x: 12, y: 12, value: 240 }]'],
     },
     {
       name: 'stackId',

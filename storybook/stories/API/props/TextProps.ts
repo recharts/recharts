@@ -1,9 +1,6 @@
 import { StorybookArgs } from '../../../StorybookArgs';
 
 export const TextProps: StorybookArgs = {
-  content: {
-    description: 'The content of text.',
-  },
   lineHeight: {
     description: 'The height of each line of text in pixels.',
     table: {
