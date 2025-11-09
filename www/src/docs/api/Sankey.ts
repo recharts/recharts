@@ -92,14 +92,6 @@ export const SankeyAPI: ApiDoc = {
       },
     },
     {
-      name: 'linkWidth',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The width of link',
-      },
-    },
-    {
       name: 'linkCurvature',
       type: 'Number',
       defaultVal: '0.5',
@@ -171,54 +163,6 @@ export const SankeyAPI: ApiDoc = {
       isOptional: true,
       desc: {
         'en-US': 'The customized event handler of mouseleave on the area in this group',
-      },
-    },
-    {
-      name: 'sourceX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source number of X-axis',
-      },
-    },
-    {
-      name: 'sourceY',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source number of Y-axis',
-      },
-    },
-    {
-      name: 'sourceControlX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source control of X-axis',
-      },
-    },
-    {
-      name: 'targetControlX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target control of X-axis',
-      },
-    },
-    {
-      name: 'targetX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target of X-axis',
-      },
-    },
-    {
-      name: 'targetY',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target of Y-axis',
       },
     },
     {

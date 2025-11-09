@@ -89,26 +89,6 @@ describe('omnidoc - documentation consistency', () => {
           "prop": "onMouseOut",
         },
         {
-          "component": "Sankey",
-          "prop": "linkWidth",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceX",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceY",
-        },
-        {
-          "component": "Sankey",
-          "prop": "sourceControlX",
-        },
-        {
-          "component": "Sankey",
-          "prop": "targetControlX",
-        },
-        {
           "component": "RadialBar",
           "prop": "maxAngle",
         },
