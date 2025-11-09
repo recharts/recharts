@@ -88,14 +88,6 @@ describe('omnidoc - documentation consistency', () => {
           "component": "ScatterChart",
           "prop": "onMouseOut",
         },
-        {
-          "component": "RadialBar",
-          "prop": "maxAngle",
-        },
-        {
-          "component": "RadialBar",
-          "prop": "minAngle",
-        },
       ]
     `);
   });
