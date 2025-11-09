@@ -71,14 +71,7 @@ describe('omnidoc - documentation consistency', () => {
       }
     }
 
-    if (missingProps.length > 0) {
-      console.error(
-        `Found ${missingProps.length} prop(s) documented in API docs but not exported from the project:`,
-        missingProps,
-      );
-    }
-
-    expect(missingProps).toMatchInlineSnapshot(`[]`);
+    expect(missingProps).toEqual([]);
   });
 
   it('all Storybook props must exist in the project', () => {
