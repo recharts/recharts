@@ -1865,20 +1865,21 @@ export const combineAxisTicks = (
         offset,
       };
     });
-
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
+    return result.filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    return categoricalDomain
+      .map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          offset,
+        }),
+      )
+      .filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
   }
 
   if (scale.ticks) {

@@ -24,7 +24,6 @@ export const IGNORE_WARNINGS: Array<string | RegExp> = [
   /An update to (.+) inside a test was not wrapped in act/,
   'A props object containing a "key" prop is being spread into JSX',
   /React does not recognize the (.+) prop on a DOM element/,
-  /Received NaN for the (.+) attribute/,
   'verticalCoordinatesGenerator should return Array but instead it returned',
   'horizontalCoordinatesGenerator should return Array but instead it returned',
 ];

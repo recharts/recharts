@@ -8,6 +8,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -392,6 +393,10 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
   const x = Number(propsX) + (isNumber(dx) ? dx : 0);
   const y = Number(propsY) + (isNumber(dy) ? dy : 0);
+
+  if (!isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
+    return null;
+  }
 
   let startDy: string;
   switch (verticalAnchor) {
