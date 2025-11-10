@@ -38,6 +38,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "sizes",
             "url": "/en-US/guide/sizes/",
           },
+          {
+            "displayName": "Z-Index and layers",
+            "key": "zIndex",
+            "url": "/en-US/guide/zIndex/",
+          },
         ],
         "key": "guide",
       },
