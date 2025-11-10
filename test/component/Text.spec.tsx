@@ -189,7 +189,7 @@ describe('<Text />', () => {
     }, 1000);
   });
 
-  test('Render text when x or y is a percentage', () => {
+  test('Renders nothing when x or y is a percentage', () => {
     render(
       <Surface width={300} height={200}>
         <Text role="img" x="50%" y="50%">
@@ -198,12 +198,8 @@ describe('<Text />', () => {
       </Surface>,
     );
 
-    const text = screen.getByRole('img');
-    expect(text).toBeInTheDocument();
-
-    setTimeout(() => {
-      expect(text.textContent).toContain('anything');
-    }, 1000);
+    const text = screen.queryByRole('img');
+    expect(text).not.toBeInTheDocument();
   });
 
   test("Don't Render text when x or y is NaN", () => {
