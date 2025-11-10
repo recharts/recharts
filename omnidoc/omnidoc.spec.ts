@@ -93,32 +93,6 @@ describe('omnidoc - documentation consistency', () => {
       }
     }
 
-    if (missingProps.length > 0) {
-      console.error(
-        `Found ${missingProps.length} prop(s) documented in Storybook but not exported from the project:`,
-        missingProps,
-      );
-    }
-
-    expect(missingProps).toMatchInlineSnapshot(`
-      [
-        {
-          "component": "Cell",
-          "prop": "onPointerEnterCapture",
-        },
-        {
-          "component": "Cell",
-          "prop": "onPointerLeaveCapture",
-        },
-        {
-          "component": "PieChart",
-          "prop": "activeShape",
-        },
-        {
-          "component": "Trapezoid",
-          "prop": "isAnimationActive",
-        },
-      ]
-    `);
+    expect(missingProps).toEqual([]);
   });
 });
