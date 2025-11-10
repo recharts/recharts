@@ -6,6 +6,7 @@ import '../styles/app.css';
 import './frame.css';
 import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
+import { RechartsLogo } from './RechartsLogo.tsx';
 
 type FrameProps = {
   children: ReactNode;
@@ -19,11 +20,9 @@ export function Frame(props: FrameProps) {
     <div className="container">
       <Helmet titleTemplate="%s | Recharts" />
       <header>
-        <h1 className="logo">
-          <Link className="nav-logo" to={`/${locale}/`}>
-            &lt;Recharts /&gt;
-          </Link>
-        </h1>
+        <Link className="logo" to={`/${locale}/`}>
+          <RechartsLogo />
+        </Link>
         <Navigation />
       </header>
       <SidebarNav />

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ReferenceLinePosition, getEndPoints } from '../../../src/cartesian/ReferenceLine';
+import { ReferenceLinePosition, getEndPoints, ReferenceLineSegment } from '../../../src/cartesian/ReferenceLine';
 import { CartesianViewBoxRequired } from '../../../src/util/types';
 
 describe('getEndPoints', () => {
@@ -356,6 +356,7 @@ describe('getEndPoints', () => {
     };
     it('should return null if segment array is empty', () => {
       const result = getEndPoints(null, viewBox, undefined, undefined, undefined, {
+        // @ts-expect-error typescript is correct here - segment should have two items always
         segment: [],
         ifOverflow: 'visible',
       });
@@ -363,7 +364,7 @@ describe('getEndPoints', () => {
     });
 
     it('should pass every segment into scales function', () => {
-      const segment = [{ x: 1 }, { x: 2 }];
+      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
       const scales = {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(),
@@ -380,7 +381,7 @@ describe('getEndPoints', () => {
     });
 
     it('should pass every segment into isInRange function if overflow set to discard', () => {
-      const segment = [{ x: 1 }, { x: 2 }];
+      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
       const scales = {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => true),
@@ -394,7 +395,7 @@ describe('getEndPoints', () => {
     });
 
     it('should return null if outside of scale and overflow set to discard', () => {
-      const segment = [{ x: 1 }, { x: 2 }];
+      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
       const scales = {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => false),
@@ -407,7 +408,7 @@ describe('getEndPoints', () => {
     });
 
     it('should return whatever scales returned if in range', () => {
-      const segment = [{ x: 1 }, { x: 2 }];
+      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
       const scales = {
         apply: vi.fn(({ x }) => x * 2),
         isInRange: vi.fn(() => true),

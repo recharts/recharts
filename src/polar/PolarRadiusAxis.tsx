@@ -24,7 +24,7 @@ import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsScale } from '../util/ChartUtils';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 

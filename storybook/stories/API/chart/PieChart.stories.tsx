@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageDataWithFillColor } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-    activeIndex: ActiveShapeProps.activeIndex,
-    activeShape: ActiveShapeProps.activeShape,
-  },
+  argTypes: CategoricalChartProps,
   component: PieChart,
 };
 

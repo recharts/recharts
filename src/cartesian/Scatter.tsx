@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ComponentType,
+  MutableRefObject,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -63,8 +72,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -350,7 +359,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 
         return (
           <ZIndexLayer
-            // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             /*
              * inactive Scatters use the parent zIndex, which is represented by undefined here.
@@ -737,6 +745,6 @@ function ScatterFn(outsideProps: Props) {
   );
 }
 
-export const Scatter = React.memo(ScatterFn);
+export const Scatter: ComponentType<Props> = React.memo(ScatterFn);
 
 Scatter.displayName = 'Scatter';

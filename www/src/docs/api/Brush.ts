@@ -52,16 +52,6 @@ export const BrushAPI = {
       },
     },
     {
-      name: 'data',
-      type: 'Array',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The original data of a LineChart, a BarChart or an AreaChart.',
-        'zh-CN': '类目图表的输入数据。',
-      },
-    },
-    {
       name: 'travellerWidth',
       type: 'Number',
       defaultVal: '5',

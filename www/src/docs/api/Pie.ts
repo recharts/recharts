@@ -114,17 +114,6 @@ export const PieAPI = {
       },
     },
     {
-      name: 'valueKey',
-      type: 'String',
-      defaultVal: "'value'",
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US': "Use 'dataKey' alternatively, The key of each sector's value.",
-        'zh-CN': '"value" 属性对应的 key。',
-      },
-    },
-    {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
       defaultVal: "'rect'",

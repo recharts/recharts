@@ -81,6 +81,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
       <ChartDataContextProvider chartData={polarChartProps.data} />
       <ReportMainChartProps layout={layout} margin={polarChartProps.margin} />
       <ReportChartProps
+        baseValue={undefined}
         accessibilityLayer={polarChartProps.accessibilityLayer}
         barCategoryGap={polarChartProps.barCategoryGap}
         maxBarSize={polarChartProps.maxBarSize}

@@ -6,11 +6,7 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { EventHandlers } from '../props/EventHandlers';
 import { r } from '../props/DotProps';
 import { GeneralStyle } from '../props/Styles';
-import {
-  ReferenceComponentGeneralArgs,
-  ReferenceComponentInternalArgs,
-  ReferenceComponentStyle,
-} from '../props/ReferenceComponentShared';
+import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
@@ -67,7 +63,6 @@ export default {
     ...StyleProps,
     ...GeneralProps,
     ...LabelProps,
-    ...ReferenceComponentInternalArgs,
     ...EventHandlers,
     // Dot
     r,

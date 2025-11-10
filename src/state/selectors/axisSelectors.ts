@@ -19,6 +19,7 @@ import {
   CategoricalDomain,
   ChartOffsetInternal,
   Coordinate,
+  DataKey,
   LayoutType,
   NumberDomain,
   Size,
@@ -80,25 +81,15 @@ import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithRev
 import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
-import { selectTooltipAxis } from './selectTooltipAxis';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
+import { selectTooltipAxisType, XorYorZType, XorYType } from './selectTooltipAxisType';
+import { selectTooltipAxisId } from './selectTooltipAxisId';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
-
-/**
- * angle, radius, X, Y, and Z axes all have domain and range and scale and associated settings
- */
-type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis';
-
-/**
- * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
- * and tick settings.
- */
-export type XorYType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 
 export type AxisWithTicksSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
 
@@ -592,6 +583,17 @@ export function getErrorDomainByDataKey(
   );
 }
 
+export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
+  const axisType = selectTooltipAxisType(state);
+  const axisId = selectTooltipAxisId(state);
+  return selectAxisSettings(state, axisType, axisId);
+};
+
+export const selectTooltipAxisDataKey: (state: RechartsRootState) => DataKey<any> | undefined = createSelector(
+  [selectTooltipAxis],
+  (axis: AxisWithTicksSettings | undefined): DataKey<any> | undefined => axis?.dataKey,
+);
+
 export const selectDisplayedStackedData: (
   state: RechartsRootState,
   axisType: XorYorZType,
@@ -940,18 +942,42 @@ export const combineAreasDomain = (
 
 const selectReferenceAreasDomain = createSelector([selectReferenceAreasByAxis, pickAxisType], combineAreasDomain);
 
+function extractXCoordinates(line: ReferenceLineSettings): ReadonlyArray<number> {
+  if (line.x != null) {
+    return onlyAllowNumbers([line.x]);
+  }
+  const segmentCoordinates: ReadonlyArray<string | number | undefined> | undefined = line.segment?.map(s => s.x);
+  if (segmentCoordinates == null || segmentCoordinates.length === 0) {
+    return [];
+  }
+  return onlyAllowNumbers(segmentCoordinates);
+}
+
+function extractYCoordinates(line: ReferenceLineSettings): ReadonlyArray<number> {
+  if (line.y != null) {
+    return onlyAllowNumbers([line.y]);
+  }
+  const segmentCoordinates: ReadonlyArray<string | number | undefined> | undefined = line.segment?.map(s => s.y);
+  if (segmentCoordinates == null || segmentCoordinates.length === 0) {
+    return [];
+  }
+  return onlyAllowNumbers(segmentCoordinates);
+}
+
 export const combineLinesDomain = (
   lines: ReadonlyArray<ReferenceLineSettings>,
   axisType: XorYType,
 ): NumberDomain | undefined => {
-  const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
+  const allCoords: ReadonlyArray<number> = lines.flatMap(line =>
+    axisType === 'xAxis' ? extractXCoordinates(line) : extractYCoordinates(line),
+  );
   if (allCoords.length === 0) {
     return undefined;
   }
   return [Math.min(...allCoords), Math.max(...allCoords)];
 };
 
-const selectReferenceLinesDomain = createSelector(selectReferenceLinesByAxis, pickAxisType, combineLinesDomain);
+const selectReferenceLinesDomain = createSelector([selectReferenceLinesByAxis, pickAxisType], combineLinesDomain);
 
 const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
@@ -1839,20 +1865,21 @@ export const combineAxisTicks = (
         offset,
       };
     });
-
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
+    return result.filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    return categoricalDomain
+      .map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          offset,
+        }),
+      )
+      .filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
   }
 
   if (scale.ticks) {

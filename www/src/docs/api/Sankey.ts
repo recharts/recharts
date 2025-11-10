@@ -92,14 +92,6 @@ export const SankeyAPI: ApiDoc = {
       },
     },
     {
-      name: 'linkWidth',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The width of link',
-      },
-    },
-    {
       name: 'linkCurvature',
       type: 'Number',
       defaultVal: '0.5',
@@ -174,54 +166,6 @@ export const SankeyAPI: ApiDoc = {
       },
     },
     {
-      name: 'sourceX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source number of X-axis',
-      },
-    },
-    {
-      name: 'sourceY',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source number of Y-axis',
-      },
-    },
-    {
-      name: 'sourceControlX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The source control of X-axis',
-      },
-    },
-    {
-      name: 'targetControlX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target control of X-axis',
-      },
-    },
-    {
-      name: 'targetX',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target of X-axis',
-      },
-    },
-    {
-      name: 'targetY',
-      type: 'Number',
-      isOptional: false,
-      desc: {
-        'en-US': 'The target of Y-axis',
-      },
-    },
-    {
       name: 'align',
       type: "'left' | 'justify'",
       defaultVal: 'justify',
@@ -229,6 +173,16 @@ export const SankeyAPI: ApiDoc = {
       desc: {
         'en-US':
           "If set to 'justify', the start nodes will be aligned to the left edge of the chart and the end nodes will be aligned to the right edge of the chart. If set to 'left', the start nodes will be aligned to the left edge of the chart.",
+      },
+    },
+    {
+      name: 'verticalAlign',
+      type: "'justify' | 'top'",
+      defaultVal: 'justify',
+      isOptional: true,
+      desc: {
+        'en-US':
+          "Controls the vertical spacing of nodes within a depth. 'justify' distributes nodes evenly and balances link paths, while 'top' positions the group starting from the top edge of the chart.",
       },
     },
   ],

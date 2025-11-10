@@ -64,6 +64,7 @@ describe('referenceElementsSlice', () => {
       xAxisId: 2,
       y: 'category 3',
       yAxisId: 4,
+      segment: undefined,
     };
 
     store.dispatch(addLine(line));

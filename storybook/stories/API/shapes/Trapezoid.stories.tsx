@@ -182,7 +182,7 @@ export default {
     animationBegin,
     animationDuration,
     animationEasing,
-    isAnimationActive,
+    isUpdateAnimationActive: isAnimationActive,
     stroke: GeneralStyle.stroke,
     fill: GeneralStyle.fill,
     // Deprecated

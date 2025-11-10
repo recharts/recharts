@@ -78,4 +78,4 @@ export const DefaultZIndexes = {
    * LabelList and Label, including Axis labels
    */
   label: 2000,
-};
+} as const satisfies Record<string, number>;

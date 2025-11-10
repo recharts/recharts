@@ -976,7 +976,7 @@ describe('<PolarRadiusAxis />', () => {
 
         expectRadiusAxisLabel(container, {
           textContent: 'test',
-          x: '299',
+          x: '348',
           y: '250',
         });
       });
@@ -1084,7 +1084,7 @@ describe('<PolarRadiusAxis />', () => {
 
       expectRadiusAxisLabel(container, {
         textContent: 'test',
-        x: '299',
+        x: '348',
         y: '250',
       });
     });

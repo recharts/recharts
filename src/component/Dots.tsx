@@ -6,8 +6,8 @@ import { Layer } from '../container/Layer';
 import { DataKey, DotItemDotProps, DotType } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export interface DotPoint {
   readonly x: number | null;

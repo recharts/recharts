@@ -23,7 +23,7 @@ import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));

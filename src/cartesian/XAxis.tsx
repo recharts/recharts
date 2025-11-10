@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ReactNode, useLayoutEffect } from 'react';
+import { ComponentType, ReactNode, useLayoutEffect } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
@@ -165,6 +165,6 @@ const XAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Pro
   return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
 };
 
-export const XAxis = React.memo(XAxisSettingsDispatcher, XAxisMemoComparator);
+export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, XAxisMemoComparator);
 
 XAxis.displayName = 'XAxis';

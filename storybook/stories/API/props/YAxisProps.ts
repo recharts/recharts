@@ -3,8 +3,8 @@ import { sharedAxisProps } from './SharedAxisProps';
 
 export const YAxisProps: StorybookArgs = {
   ...sharedAxisProps,
-  xAxisId: {
-    description: 'The unique id of x-axis.',
+  yAxisId: {
+    description: 'The unique id of y-axis.',
     table: {
       type: {
         summary: 'String | Number',

@@ -19,8 +19,8 @@ import { Cell } from '../component/Cell';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
-  LabelListFromLabelProp,
   ImplicitLabelListType,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
@@ -80,8 +80,9 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 
 type Rectangle = {
   x: number | null;
@@ -102,6 +103,10 @@ export interface BarRectangleItem extends RectangleProps {
   y: number;
   width: number;
   height: number;
+  /**
+   * Chart range coordinate of the baseValue of the first bar in a stack.
+   */
+  stackedBarStart: number;
 }
 
 export interface BarProps extends ZIndexable {
@@ -121,7 +126,7 @@ export interface BarProps extends ZIndexable {
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
@@ -246,13 +251,6 @@ type BarBackgroundProps = {
   allOtherBarProps: Props;
 };
 
-function getZIndex(background: ActiveShape<BarProps, SVGPathElement> | undefined): number {
-  if (background && typeof background === 'object' && 'zIndex' in background && typeof background.zIndex === 'number') {
-    return background.zIndex;
-  }
-  return DefaultZIndexes.barBackground;
-}
-
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
@@ -278,7 +276,7 @@ function BarBackground(props: BarBackgroundProps) {
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
 
   return (
-    <ZIndexLayer zIndex={getZIndex(backgroundFromProps)}>
+    <ZIndexLayer zIndex={getZIndexFromUnknown(backgroundFromProps, DefaultZIndexes.barBackground)}>
       {data.map((entry: BarRectangleItem, i: number) => {
         const { value, background: backgroundFromDataEntry, tooltipPosition, ...rest } = entry;
 
@@ -463,7 +461,6 @@ function BarRectangles({
         return (
           <Layer
             // https://github.com/recharts/recharts/issues/5415
-            // eslint-disable-next-line react/no-array-index-key
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
@@ -569,18 +566,20 @@ function RectanglesWithAnimation({
                   }
 
                   if (layout === 'horizontal') {
-                    const h = interpolate(0, entry.height, t);
+                    const height = interpolate(0, entry.height, t);
+                    const y = interpolate(entry.stackedBarStart, entry.y, t);
 
                     return {
                       ...entry,
-                      y: entry.y + entry.height - h,
-                      height: h,
+                      y,
+                      height,
                     };
                   }
 
                   const w = interpolate(0, entry.width, t);
+                  const x = interpolate(entry.stackedBarStart, entry.x, t);
 
-                  return { ...entry, width: w };
+                  return { ...entry, width: w, x };
                 });
 
           if (t > 0) {
@@ -769,6 +768,7 @@ export function computeBarRectangles({
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
+  const stackedBarStart: number = numericAxis.scale(baseValue);
 
   return displayedData
     .map((entry, index): BarRectangleItem | null => {
@@ -836,6 +836,7 @@ export function computeBarRectangles({
 
       const barRectangleItem: BarRectangleItem = {
         ...entry,
+        stackedBarStart,
         x,
         y,
         width,

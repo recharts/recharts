@@ -61,7 +61,7 @@ describe('<Sankey />', () => {
         </Sankey>,
       );
       expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
-      expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 1000, height: 500 });
+      expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 990, height: 490 });
       expect(viewBoxSpy).toHaveBeenCalledTimes(1);
     });
 

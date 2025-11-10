@@ -1,7 +1,6 @@
 import React from 'react';
 import { Sector } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
 import { SectorProps } from '../props/SectorProps';
 import {
   onAbort,
@@ -168,14 +167,8 @@ export default {
   component: Sector,
   argTypes: {
     ...SectorProps,
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    isAnimationActive,
     stroke: GeneralStyle.stroke,
     fill: GeneralStyle.fill,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated', disable: true } },
     // Event Handlers available
     onCopy,
     onCopyCapture,

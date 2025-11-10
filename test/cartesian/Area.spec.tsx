@@ -22,7 +22,7 @@ import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { DotItemDotProps } from '../../src/util/types';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type TestCase = CartesianChartTestCase;
 

@@ -78,10 +78,6 @@ jobs:
       - name: Check Playwright versions
         run: npm run check-playwright-versions
 
-      - name: Install dependencies for the website
-        working-directory: www
-        run: npm ci
-
       - name: Build main lib
         run: npm run build
 
@@ -97,6 +93,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: omnidoc - documentation test
+        run: npm run test-omnidoc
 
       - name: Storybook doctor
         run: npm run storybook-doctor

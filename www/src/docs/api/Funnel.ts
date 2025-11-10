@@ -63,17 +63,6 @@ export const FunnelAPI = {
       },
     },
     {
-      name: 'trapezoids',
-      type: 'Array',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The coordinates of all the trapezoids in the funnel, usually calculated internally.',
-        'zh-CN': '梯形的坐标点。当使用 FunnelChart 作为父组件的时候，不需要自己计算，父组件会计算好。',
-      },
-      format: ['[{x: 12, y: 12, upperWidth: 240, lowerWidth: 22, height: 80,}]'],
-    },
-    {
       name: 'isAnimationActive',
       type: 'Boolean',
       defaultVal: 'true in CSR, and false in SSR',

@@ -20,17 +20,12 @@
   "devDependencies": {
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-react": "^7.28.5",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
     "@types/react-helmet": "^6.1.11",
     "@types/sax": "^1.2.7",
-    "@vitejs/plugin-react": "^4.7.0",
-    "sax": "^1.4.1",
+    "sax": "^1.4.3",
     "tsx": "^4.20.6",
     "vite": "^6.4.1",
-    "vite-plugin-sitemap": "^0.8.2",
-    "vitest": "^3.2.4"
+    "vite-plugin-sitemap": "^0.8.2"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.0",
@@ -42,13 +37,12 @@
     "@stackblitz/sdk": "^1.11.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^2.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "react-ga4": "^2.1.0",
     "react-helmet": "^6.1.0",
     "react-router": "^7.9.5",
+    "react-router-dom": "^7.9.5",
     "react-runner": "^1.0.5",
-    "recharts": "^3.3.0",
+    "recharts": "^3.4.0",
     "simple-line-icons": "^2.5.5"
   },
   "license": "MIT"

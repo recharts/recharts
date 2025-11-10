@@ -41,8 +41,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface RadarPoint {
   x: number;

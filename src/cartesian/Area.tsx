@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
+import { ComponentType, MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -56,8 +56,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -918,5 +918,5 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
-export const Area = React.memo(AreaFn);
+export const Area: ComponentType<Props> = React.memo(AreaFn);
 Area.displayName = 'Area';

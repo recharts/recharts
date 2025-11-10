@@ -793,6 +793,7 @@ describe('<BarChart />', () => {
             },
             // @ts-expect-error extra properties not expected in the type
             pv: 2400,
+            stackedBarStart: 45,
             tooltipPosition: {
               x: 68.75,
               y: 38.599999999999994,
@@ -825,6 +826,7 @@ describe('<BarChart />', () => {
             },
             // @ts-expect-error extra properties not expected in the type
             pv: 4567,
+            stackedBarStart: 45,
             tooltipPosition: {
               x: 76.25,
               y: 34.666,
@@ -857,6 +859,7 @@ describe('<BarChart />', () => {
             },
             // @ts-expect-error extra properties not expected in the type
             pv: 1398,
+            stackedBarStart: 45,
             tooltipPosition: {
               x: 83.75,
               y: 41.004,
@@ -889,6 +892,7 @@ describe('<BarChart />', () => {
             },
             // @ts-expect-error extra properties not expected in the type
             pv: 9800,
+            stackedBarStart: 45,
             tooltipPosition: {
               x: 91.25,
               y: 24.6,
@@ -2464,6 +2468,7 @@ describe('<BarChart />', () => {
           topWhisker: 200,
         },
         size: 150,
+        stackedBarStart: 165,
         tooltipPosition: {
           x: 120,
           y: 55,
@@ -2503,6 +2508,7 @@ describe('<BarChart />', () => {
           topWhisker: 100,
         },
         size: 250,
+        stackedBarStart: 165,
         tooltipPosition: {
           x: 230,
           y: 15,
@@ -2542,6 +2548,7 @@ describe('<BarChart />', () => {
           topWhisker: 200,
         },
         size: 350,
+        stackedBarStart: 165,
         tooltipPosition: {
           x: 340,
           y: 25,

@@ -2039,6 +2039,7 @@ describe('<YAxis />', () => {
       it('should extend domain when ifOverflow=extendDomain', () => {
         const domainSpy = vi.fn();
         const { container } = render(<ChartWithReferenceLine ifOverflow="extendDomain" domainSpy={domainSpy} />);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
         expectYAxisTicks(container, [
           {
             textContent: '0',
@@ -2066,7 +2067,6 @@ describe('<YAxis />', () => {
             y: '5',
           },
         ]);
-        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
       });
     });
 
@@ -2132,7 +2132,8 @@ describe('<YAxis />', () => {
         expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
       });
 
-      it(`should NOT extend domain even when ifOverflow=extendDomain ! No clue why, this looks to me like a bug`, () => {
+      it(`should extend domain when ifOverflow=extendDomain`, () => {
+        // https://github.com/recharts/recharts/issues/3379
         const domainSpy = vi.fn();
         const { container } = render(
           <ChartWithReferenceLineWithSegment ifOverflow="extendDomain" domainSpy={domainSpy} />,
@@ -2144,27 +2145,27 @@ describe('<YAxis />', () => {
             y: '95',
           },
           {
-            textContent: '300',
+            textContent: '500',
             x: '57',
             y: '72.5',
           },
           {
-            textContent: '600',
+            textContent: '1000',
             x: '57',
             y: '50',
           },
           {
-            textContent: '900',
+            textContent: '1500',
             x: '57',
             y: '27.5',
           },
           {
-            textContent: '1200',
+            textContent: '2000',
             x: '57',
             y: '5',
           },
         ]);
-        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
       });
     });
   });
