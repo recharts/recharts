@@ -1,10 +1,14 @@
-import { DocReader } from './DocReader';
+import { DefaultValue, DocReader } from './DocReader';
 import * as allStories from '../storybook/stories/API/allStories';
 
 /**
  * @fileOverview reads API docs from Storybook stories
  */
 export class StorybookDocReader implements DocReader {
+  getAllPropsOf(component: string): ReadonlyArray<string> {
+    return this.getRechartsPropsOf(component);
+  }
+
   private componentCache: Map<string, ReadonlyArray<string>> | null = null;
 
   getPublicSymbolNames(): ReadonlyArray<string> {
@@ -77,5 +81,44 @@ export class StorybookDocReader implements DocReader {
 
   private extractPropsFromArgTypes(argTypes: Record<string, unknown>): ReadonlyArray<string> {
     return Object.keys(argTypes).sort();
+  }
+
+  getDefaultValueOf(component: string, prop: string): DefaultValue {
+    this.ensureCache();
+
+    const storyModule = Object.entries(allStories).find(([exportName]) => {
+      const componentName = exportName.replace(/Story$/, '');
+      return componentName === component;
+    });
+
+    if (!storyModule) {
+      return { type: 'unreadable' };
+    }
+
+    const [, storyDefault] = storyModule;
+    if (typeof storyDefault !== 'object' || storyDefault === null || !('argTypes' in storyDefault)) {
+      return { type: 'unreadable' };
+    }
+
+    const { argTypes } = storyDefault;
+    if (!argTypes || typeof argTypes !== 'object') {
+      return { type: 'unreadable' };
+    }
+
+    const argType = (argTypes as Record<string, any>)[prop];
+    if (!argType) {
+      return { type: 'unreadable' };
+    }
+
+    if (!('defaultValue' in argType)) {
+      return { type: 'none' };
+    }
+
+    const { defaultValue } = argType;
+    if (defaultValue === undefined) {
+      return { type: 'known', value: undefined };
+    }
+
+    return { type: 'known', value: defaultValue };
   }
 }

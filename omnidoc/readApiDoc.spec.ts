@@ -79,4 +79,8 @@ describe('readApiDoc', () => {
   it('should return empty array for unknown component props', () => {
     expect(reader.getRechartsPropsOf('UnknownComponent')).toEqual([]);
   });
+
+  it('should get default value of a prop', () => {
+    expect(reader.getDefaultValueOf('ReferenceLine', 'strokeWidth')).toEqual({ type: 'known', value: 1 });
+  });
 });

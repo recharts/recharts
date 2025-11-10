@@ -1,3 +1,5 @@
+export type DefaultValue = { type: 'known'; value: unknown | undefined } | { type: 'none' } | { type: 'unreadable' };
+
 export interface DocReader {
   /**
    * Returns all exported public symbol names from the project.
@@ -25,4 +27,9 @@ export interface DocReader {
    * Returns name of the SVG element that this component extends, or null if it does not extend any SVG element.
    */
   getSVGParentOf(component: string): string | null;
+
+  /**
+   * Returns the default value of a given prop of a given component.
+   */
+  getDefaultValueOf(component: string, prop: string): DefaultValue;
 }

@@ -1,8 +1,21 @@
 /**
  * @fileOverview reads props from the source code using ts-morph
  */
-import { ExportedDeclarations, Project, SymbolFlags, Type } from 'ts-morph';
-import { DocReader } from './DocReader';
+import { ExportedDeclarations, Project, SymbolFlags, Type, Symbol as TsMorphSymbol, Node } from 'ts-morph';
+import { DefaultValue, DocReader } from './DocReader';
+import { componentMetaMap } from './componentsAndDefaultPropsMap';
+
+type PropOrigin = 'recharts' | 'dom' | 'other';
+
+type PropMeta = {
+  /**
+   * The name is not unique! Both Recharts and DOM props can and do have the same name.
+   */
+  name: string;
+  origin: PropOrigin;
+  defaultValueFromObject: DefaultValue;
+  defaultValueFromJSDoc: DefaultValue;
+};
 
 export class ProjectDocReader implements DocReader {
   private project: Project;
@@ -85,44 +98,54 @@ export class ProjectDocReader implements DocReader {
    * and displayName.
    * @param component
    */
-  getPropertiesOf(component: string): string[] | undefined {
+  getPropertiesOf(component: string): ReadonlyArray<string> | undefined {
     const type = this.getComponentType(component);
 
     const properties = type.getProperties();
     return properties.map(p => p.getName());
   }
 
-  private collectPropertiesFromType(type: Type, visited = new Set<Type>()): ReadonlyArray<string> {
-    // Prevent infinite recursion
-    if (visited.has(type)) {
-      return [];
+  private getDeclarationOrigin(declaration: Node): PropOrigin {
+    const sourceFile = declaration.getSourceFile();
+    const filePath = sourceFile.getFilePath();
+
+    if (filePath.includes('node_modules/@types/react')) {
+      return 'dom';
     }
-    visited.add(type);
+    if (filePath.includes('/src/')) {
+      return 'recharts';
+    }
+    return 'other';
+  }
 
-    const properties: string[] = [];
-
-    // Handle intersection types - we need to extract only the component-specific props
-    if (type.isIntersection()) {
-      for (const intersectionType of type.getIntersectionTypes()) {
-        const aliasSymbol = intersectionType.getAliasSymbol();
-        if (aliasSymbol) {
-          const fqn = aliasSymbol.getFullyQualifiedName();
-          if (fqn === 'Partial') {
-            properties.push(...this.collectPropertiesFromType(intersectionType.getAliasTypeArguments()[0], visited));
-          }
-          continue;
+  private getDefaultValueFromJSDoc(prop: TsMorphSymbol): DefaultValue {
+    const tags = prop.getJsDocTags();
+    for (const tag of tags) {
+      if (tag.getName() === 'default' || tag.getName() === 'defaultValue') {
+        const text = tag.getText();
+        if (text && text.length > 0) {
+          return { type: 'known', value: text.map(t => t.text).join(' ') };
         }
-        const typeText = intersectionType.getText();
-
-        // Skip SVGProps types (both direct and wrapped in Omit)
-        if (typeText.includes('SVGProps<') || (typeText.startsWith('Omit<') && typeText.includes('SVGProps'))) {
-          continue;
-        }
-
-        properties.push(...this.collectPropertiesFromType(intersectionType, visited));
+        return { type: 'known', value: undefined };
       }
-      return properties.sort((a, b) => a.localeCompare(b));
     }
+    return { type: 'none' };
+  }
+
+  private getDefaultValueFromObject(component: string, propName: string): DefaultValue {
+    const defaultValueObject = componentMetaMap[component]?.defaultProps;
+    if (defaultValueObject == null) {
+      return { type: 'unreadable' };
+    }
+    if (propName in defaultValueObject) {
+      const value = defaultValueObject[propName];
+      return { type: 'known', value: String(value) };
+    }
+    return { type: 'none' };
+  }
+
+  private collectPropertiesFromType(componentName: string, type: Type): ReadonlyArray<PropMeta> {
+    const properties: PropMeta[] = [];
 
     // Get direct properties
     const typeProperties = type.getProperties();
@@ -130,33 +153,66 @@ export class ProjectDocReader implements DocReader {
       const propName = prop.getName();
       // Skip built-in React properties and methods
       if (
-        !propName.startsWith('UNSAFE_') &&
-        propName !== 'constructor' &&
-        propName !== 'context' &&
-        propName !== 'props' &&
-        propName !== 'refs' &&
-        propName !== 'state' &&
-        propName !== 'contextType' &&
-        propName !== 'defaultProps' &&
-        propName !== 'displayName' &&
-        propName !== 'componentDidCatch' &&
-        propName !== 'componentDidMount' &&
-        propName !== 'componentDidUpdate' &&
-        propName !== 'componentWillMount' &&
-        propName !== 'componentWillReceiveProps' &&
-        propName !== 'componentWillUnmount' &&
-        propName !== 'componentWillUpdate' &&
-        propName !== 'forceUpdate' &&
-        propName !== 'getSnapshotBeforeUpdate' &&
-        propName !== 'render' &&
-        propName !== 'setState' &&
-        propName !== 'shouldComponentUpdate'
+        !(
+          !propName.startsWith('UNSAFE_') &&
+          propName !== 'constructor' &&
+          propName !== 'context' &&
+          propName !== 'props' &&
+          propName !== 'refs' &&
+          propName !== 'state' &&
+          propName !== 'contextType' &&
+          propName !== 'defaultProps' &&
+          propName !== 'displayName' &&
+          propName !== 'componentDidCatch' &&
+          propName !== 'componentDidMount' &&
+          propName !== 'componentDidUpdate' &&
+          propName !== 'componentWillMount' &&
+          propName !== 'componentWillReceiveProps' &&
+          propName !== 'componentWillUnmount' &&
+          propName !== 'componentWillUpdate' &&
+          propName !== 'forceUpdate' &&
+          propName !== 'getSnapshotBeforeUpdate' &&
+          propName !== 'render' &&
+          propName !== 'setState' &&
+          propName !== 'shouldComponentUpdate'
+        )
       ) {
-        properties.push(propName);
+        continue;
       }
+
+      // Check where this property is declared
+      const declarations = prop.getDeclarations();
+      if (declarations.length === 0) {
+        properties.push({
+          name: propName,
+          origin: 'other',
+          defaultValueFromObject: { type: 'unreadable' },
+          defaultValueFromJSDoc: { type: 'unreadable' },
+        });
+        continue;
+      }
+
+      declarations.forEach(declaration => {
+        const origin = this.getDeclarationOrigin(declaration);
+        const propMeta: PropMeta = {
+          name: propName,
+          origin,
+          defaultValueFromObject:
+            origin === 'recharts' ? this.getDefaultValueFromObject(componentName, propName) : { type: 'unreadable' },
+          defaultValueFromJSDoc: this.getDefaultValueFromJSDoc(prop),
+        };
+
+        properties.push(propMeta);
+      });
     }
 
     return properties;
+  }
+
+  getPropMeta(component: string, prop: string): ReadonlyArray<PropMeta> {
+    const paramType = this.getPropsType(component);
+    const properties = this.collectPropertiesFromType(component, paramType);
+    return properties.filter(p => p.name === prop);
   }
 
   private extractSVGElementFromType(type: Type): string | null {
@@ -260,31 +316,36 @@ export class ProjectDocReader implements DocReader {
     return this.getTypeArgumentOfFunctionCallSignature(declaration);
   }
 
+  getDefaultValueOf(component: string, prop: string): DefaultValue {
+    return this.getPropMeta(component, prop).reduce(
+      (acc: DefaultValue, meta: PropMeta): DefaultValue => {
+        if (acc.type === 'known') {
+          return acc;
+        }
+        if (meta.defaultValueFromObject.type === 'known') {
+          return meta.defaultValueFromObject;
+        }
+        if (meta.defaultValueFromJSDoc.type === 'known') {
+          return meta.defaultValueFromJSDoc;
+        }
+        return acc;
+      },
+      { type: 'none' },
+    );
+  }
+
+  private metaToNames(propMeta: ReadonlyArray<PropMeta>): ReadonlyArray<string> {
+    return Array.from(new Set(propMeta.map(p => p.name))).sort((a, b) => a.localeCompare(b));
+  }
+
   getRechartsPropsOf(component: string): ReadonlyArray<string> {
     const paramType = this.getPropsType(component);
-    return this.collectPropertiesFromType(paramType);
+    return this.metaToNames(this.collectPropertiesFromType(component, paramType).filter(p => p.origin === 'recharts'));
   }
 
   getAllPropsOf(component: string): ReadonlyArray<string> {
     const paramType = this.getPropsType(component);
-    const properties: string[] = [];
-    const visited = new Set<Type>();
-
-    if (paramType.isIntersection()) {
-      for (const intersectionType of paramType.getIntersectionTypes()) {
-        const typeText = intersectionType.getText();
-
-        if (typeText.includes('SVGProps<') || (typeText.startsWith('Omit<') && typeText.includes('SVGProps'))) {
-          properties.push(...this.collectPropertiesFromType(intersectionType, visited));
-        } else {
-          properties.push(...this.collectPropertiesFromType(intersectionType, visited));
-        }
-      }
-    } else {
-      properties.push(...this.collectPropertiesFromType(paramType, visited));
-    }
-
-    return properties.sort((a, b) => a.localeCompare(b));
+    return this.metaToNames(this.collectPropertiesFromType(component, paramType));
   }
 
   getSVGParentOf(component: string): string | null {
