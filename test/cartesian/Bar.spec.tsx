@@ -853,6 +853,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           x: expect.any(Number),
           y: 50,
         },
+        stackedBarStart: expect.any(Number),
         width: 196,
         x: expect.any(Number),
         y: 5,
@@ -1784,6 +1785,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             x: 50,
             y: 50,
           },
+          stackedBarStart: 195,
           tooltipPosition: {
             x: 61.8,
             y: 163.33333333333334,
@@ -1837,6 +1839,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             x: 50,
             y: 50,
           },
+          stackedBarStart: 195,
           tooltipPosition: {
             x: 61.8,
             y: 163.33333333333334,
@@ -1877,6 +1880,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             x: 50,
             y: 50,
           },
+          stackedBarStart: 195,
           tooltipPosition: {
             x: 61.8,
             y: 163.33333333333334,
@@ -1929,6 +1933,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             x: 10,
             y: 50,
           },
+          stackedBarStart: 195,
           tooltipPosition: {
             x: 23.8,
             y: 179.16666666666669,
