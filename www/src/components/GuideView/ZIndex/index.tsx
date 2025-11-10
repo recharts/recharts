@@ -21,7 +21,7 @@ export function ZIndex() {
       </p>
       <p>
         You can see the specific defaults in{' '}
-        <TargetBlankLink href="https://github.com/recharts/recharts/blob/main/src/zindex/DefaultZIndexes.tsx">
+        <TargetBlankLink href="https://github.com/recharts/recharts/blob/main/src/zIndex/DefaultZIndexes.tsx">
           <code>DefaultZIndexes.tsx</code>
         </TargetBlankLink>
         .
