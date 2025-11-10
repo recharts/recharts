@@ -33,6 +33,7 @@ describe('readProject', () => {
         "DefaultLegendContentProps",
         "DefaultTooltipContent",
         "DefaultTooltipContentProps",
+        "DefaultZIndexes",
         "Dot",
         "DotItemDotProps",
         "DotProps",
@@ -126,6 +127,7 @@ describe('readProject', () => {
         "YAxisProps",
         "ZAxis",
         "ZAxisProps",
+        "ZIndexLayer",
       ]
     `);
   });
@@ -145,6 +147,7 @@ describe('readProject', () => {
         "Curve",
         "DefaultLegendContent",
         "DefaultTooltipContent",
+        "DefaultZIndexes",
         "Dot",
         "FunnelChart",
         "getNiceTickValues",
