@@ -103,6 +103,10 @@ export interface BarRectangleItem extends RectangleProps {
   y: number;
   width: number;
   height: number;
+  /**
+   * Chart range coordinate of the baseValue of the first bar in a stack.
+   */
+  stackedBarStart: number;
 }
 
 export interface BarProps extends ZIndexable {
@@ -562,18 +566,20 @@ function RectanglesWithAnimation({
                   }
 
                   if (layout === 'horizontal') {
-                    const h = interpolate(0, entry.height, t);
+                    const height = interpolate(0, entry.height, t);
+                    const y = interpolate(entry.stackedBarStart, entry.y, t);
 
                     return {
                       ...entry,
-                      y: entry.y + entry.height - h,
-                      height: h,
+                      y,
+                      height,
                     };
                   }
 
                   const w = interpolate(0, entry.width, t);
+                  const x = interpolate(entry.stackedBarStart, entry.x, t);
 
-                  return { ...entry, width: w };
+                  return { ...entry, width: w, x };
                 });
 
           if (t > 0) {
@@ -762,6 +768,7 @@ export function computeBarRectangles({
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
+  const stackedBarStart: number = numericAxis.scale(baseValue);
 
   return displayedData
     .map((entry, index): BarRectangleItem | null => {
@@ -829,6 +836,7 @@ export function computeBarRectangles({
 
       const barRectangleItem: BarRectangleItem = {
         ...entry,
+        stackedBarStart,
         x,
         y,
         width,
