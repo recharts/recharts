@@ -112,6 +112,9 @@ interface InternalAreaProps extends ZIndexable {
  * External props, intended for end users to fill in
  */
 interface AreaProps extends ZIndexable {
+  /**
+   * @default true
+   */
   activeDot?: ActiveDotType;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
@@ -146,6 +149,11 @@ interface AreaProps extends ZIndexable {
   unit?: string | number;
   xAxisId?: string | number;
   yAxisId?: string | number;
+  /**
+   * @since 3.4
+   * @defaultValue 100
+   */
+  zIndex?: number;
 }
 
 /**
@@ -660,7 +668,7 @@ class AreaWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultAreaProps = {
+export const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
   animationDuration: 1500,

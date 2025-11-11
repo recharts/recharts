@@ -40,7 +40,7 @@ export const ResponsiveContainerAPI = {
     {
       name: 'minWidth',
       type: 'Number',
-      defaultVal: 'null',
+      defaultVal: '0',
       isOptional: true,
       desc: {
         'en-US': 'The minimum width of the container.',

@@ -1,7 +1,7 @@
 /**
  * @fileOverview reads props from the source code using ts-morph
  */
-import { ExportedDeclarations, Project, SymbolFlags, Type, Symbol as TsMorphSymbol, Node } from 'ts-morph';
+import { ExportedDeclarations, Node, Project, Symbol as TsMorphSymbol, SymbolFlags, Type } from 'ts-morph';
 import { DefaultValue, DocReader } from './DocReader';
 import { componentMetaMap } from './componentsAndDefaultPropsMap';
 
@@ -59,18 +59,15 @@ export class ProjectDocReader implements DocReader {
   }
 
   getPublicComponentNames(): ReadonlyArray<string> {
-    return this.getPublicSymbolNames().filter(name => {
+    return this.getPublicSymbolNames(SymbolFlags.Variable).filter(name => {
       // Exclude hooks (start with 'use')
       if (name.startsWith('use')) {
         return false;
       }
-      // Exclude utility functions
-      if (name === 'getNiceTickValues') {
+      // Exclude known utilities
+      if (['getNiceTickValues', 'DefaultZIndexes', 'Global'].includes(name)) {
         return false;
       }
-      // Exclude type-only exports (they end with 'Props', 'Type', etc.)
-      // Actually, we want to keep components even if their name suggests type
-      // So we'll be conservative and only filter by 'use' prefix
       return true;
     });
   }
@@ -129,7 +126,8 @@ export class ProjectDocReader implements DocReader {
         return { type: 'known', value: undefined };
       }
     }
-    return { type: 'none' };
+    // absence of @default tag doesn't mean there is no default value - it may be defined in defaultProps and undocumented
+    return { type: 'unreadable' };
   }
 
   private getDefaultValueFromObject(component: string, propName: string): DefaultValue {
@@ -257,7 +255,7 @@ export class ProjectDocReader implements DocReader {
       // For ComponentType<Props>, the first alias type argument is the Props type
       return aliasTypeArgs[0];
     }
-    throw new Error(`Expected to find type arguments for type ${type}, but found none.`);
+    throw new Error(`Expected to find type arguments for type ${type.getText()}, but found none.`);
   }
 
   private getTypeArgumentOfFunctionCallSignature(declaration: ExportedDeclarations): Type {
@@ -291,12 +289,16 @@ export class ProjectDocReader implements DocReader {
         return propsProperty.getTypeAtLocation(declaration);
       }
 
-      throw new Error(`Expected to find at least one call signature for declaration ${declaration}, but found none.`);
+      throw new Error(
+        `Expected to find at least one call signature for declaration ${declaration.getText()}, but found none.`,
+      );
     }
     const firstSignature = callSignatures[0];
     const parameters = firstSignature.getParameters();
     if (parameters.length === 0) {
-      throw new Error(`Expected to find at least one parameter for declaration ${declaration}, but found none.`);
+      throw new Error(
+        `Expected to find at least one parameter for declaration ${declaration.getText()}, but found none.`,
+      );
     }
 
     const firstParameter = parameters[0];
@@ -306,6 +308,12 @@ export class ProjectDocReader implements DocReader {
   private getPropsType(component: string): Type {
     const declaration = this.getComponentDeclaration(component);
     const type = declaration.getType();
+
+    const symbolName = type.getSymbol()?.getName();
+    if (symbolName === 'ForwardRefExoticComponent' || symbolName === 'MemoExoticComponent') {
+      // Wrapped component, unwrap it
+      return type.getTypeArguments()[0];
+    }
 
     // If this is a type alias (like ComponentType), resolve the alias
     const aliasSymbol = type.getAliasSymbol();
@@ -319,18 +327,18 @@ export class ProjectDocReader implements DocReader {
   getDefaultValueOf(component: string, prop: string): DefaultValue {
     return this.getPropMeta(component, prop).reduce(
       (acc: DefaultValue, meta: PropMeta): DefaultValue => {
-        if (acc.type === 'known') {
+        if (acc.type === 'known' || acc.type === 'none') {
           return acc;
         }
-        if (meta.defaultValueFromObject.type === 'known') {
+        if (meta.defaultValueFromObject.type !== 'unreadable') {
           return meta.defaultValueFromObject;
         }
-        if (meta.defaultValueFromJSDoc.type === 'known') {
+        if (meta.defaultValueFromJSDoc.type !== 'unreadable') {
           return meta.defaultValueFromJSDoc;
         }
         return acc;
       },
-      { type: 'none' },
+      { type: 'unreadable' },
     );
   }
 

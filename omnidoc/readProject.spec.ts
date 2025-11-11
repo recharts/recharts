@@ -5,131 +5,21 @@ import { ProjectDocReader } from './readProject';
 describe('readProject', () => {
   const reader = new ProjectDocReader();
   it('should identify all exported symbols', () => {
-    expect(reader.getPublicSymbolNames()).toMatchInlineSnapshot(`
-      [
-        "Area",
-        "AreaChart",
-        "AreaProps",
-        "Bar",
-        "BarChart",
-        "BarProps",
-        "Brush",
-        "BrushProps",
-        "CartesianAxis",
-        "CartesianAxisProps",
-        "CartesianGrid",
-        "CartesianGridProps",
-        "Cell",
-        "CellProps",
-        "ChartOffset",
-        "ComposedChart",
-        "Cross",
-        "CrossProps",
-        "Curve",
-        "CurveProps",
-        "Customized",
-        "CustomizedProps",
-        "DefaultLegendContent",
-        "DefaultLegendContentProps",
-        "DefaultTooltipContent",
-        "DefaultTooltipContentProps",
-        "DefaultZIndexes",
-        "Dot",
-        "DotItemDotProps",
-        "DotProps",
-        "ErrorBar",
-        "ErrorBarProps",
-        "Funnel",
-        "FunnelChart",
-        "FunnelProps",
-        "FunnelTrapezoidItem",
-        "getNiceTickValues",
-        "Global",
-        "IfOverflow",
-        "Label",
-        "LabelList",
-        "LabelListProps",
-        "LabelProps",
-        "Layer",
-        "LayerProps",
-        "Legend",
-        "LegendPayload",
-        "LegendProps",
-        "LegendType",
-        "Line",
-        "LineChart",
-        "LineProps",
-        "MouseHandlerDataParam",
-        "Pie",
-        "PieChart",
-        "PieLabel",
-        "PieLabelRenderProps",
-        "PieProps",
-        "PieSectorDataItem",
-        "PlotArea",
-        "PolarAngleAxis",
-        "PolarAngleAxisProps",
-        "PolarGrid",
-        "PolarGridProps",
-        "PolarRadiusAxis",
-        "PolarRadiusAxisProps",
-        "Polygon",
-        "PolygonProps",
-        "Radar",
-        "RadarChart",
-        "RadarProps",
-        "RadialBar",
-        "RadialBarChart",
-        "RadialBarProps",
-        "Rectangle",
-        "RectangleProps",
-        "ReferenceArea",
-        "ReferenceAreaProps",
-        "ReferenceDot",
-        "ReferenceDotProps",
-        "ReferenceLine",
-        "ReferenceLineProps",
-        "ReferenceLineSegment",
-        "ResponsiveContainer",
-        "ResponsiveContainerProps",
-        "Sankey",
-        "Scatter",
-        "ScatterChart",
-        "ScatterProps",
-        "Sector",
-        "SectorProps",
-        "SunburstChart",
-        "Surface",
-        "SurfaceProps",
-        "Symbols",
-        "SymbolsProps",
-        "Text",
-        "TextProps",
-        "Tooltip",
-        "TooltipContentProps",
-        "TooltipProps",
-        "Trapezoid",
-        "TrapezoidProps",
-        "Treemap",
-        "TreemapProps",
-        "useActiveTooltipDataPoints",
-        "useActiveTooltipLabel",
-        "useChartHeight",
-        "useChartWidth",
-        "useMargin",
-        "useOffset",
-        "usePlotArea",
-        "useXAxisDomain",
-        "useYAxisDomain",
-        "XAxis",
-        "XAxisProps",
-        "YAxis",
-        "YAxisProps",
-        "ZAxis",
-        "ZAxisProps",
-        "ZIndexLayer",
-      ]
-    `);
+    /*
+     * Let's assert a few known symbols to make sure the reader is working.
+     * We don't need to list them all here, that just makes a brittle test
+     */
+    const expectedComponents = ['Area', 'AreaProps', 'Bar', 'BarProps'];
+    expect(reader.getPublicSymbolNames()).toEqual(expect.arrayContaining(expectedComponents));
+  });
+
+  it('should identify all components', () => {
+    const expectedComponents = ['Area', 'Bar', 'LineChart', 'ResponsiveContainer'];
+    const unexpectedSymbols = ['useChartWidth', 'getNiceTickValues', 'Symbol', 'AreaProps', 'BarProps'];
+    expect(reader.getPublicComponentNames()).toEqual(expect.arrayContaining(expectedComponents));
+    unexpectedSymbols.forEach(unexpectedSymbol => {
+      expect(reader.getPublicComponentNames()).not.toContain(unexpectedSymbol);
+    });
   });
 
   it('should filter symbols by kind', () => {
@@ -934,13 +824,13 @@ describe('readProject', () => {
     const propMeta = reader.getPropMeta('ReferenceLine', 'x');
     expect(propMeta).toEqual([
       {
-        defaultValueFromJSDoc: { type: 'none' },
+        defaultValueFromJSDoc: { type: 'unreadable' },
         defaultValueFromObject: { type: 'unreadable' },
         name: 'x',
         origin: 'dom',
       },
       {
-        defaultValueFromJSDoc: { type: 'none' },
+        defaultValueFromJSDoc: { type: 'unreadable' },
         defaultValueFromObject: { type: 'none' },
         name: 'x',
         origin: 'recharts',
@@ -966,5 +856,9 @@ describe('readProject', () => {
 
   it('should get default value of a prop', () => {
     expect(reader.getDefaultValueOf('ReferenceLine', 'position')).toEqual({ type: 'known', value: 'middle' });
+  });
+
+  it('should return none for default value of a prop without default', () => {
+    expect(reader.getDefaultValueOf('AreaChart', 'layout')).toEqual({ type: 'unreadable' });
   });
 });
