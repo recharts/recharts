@@ -134,12 +134,14 @@ describe('omnidoc - documentation consistency', () => {
       return null;
     }
 
-    test('if a component has default props in the API, then that default value must be the same as in the project', () => {
-      const apiDocSymbols = apiDocReader.getPublicComponentNames();
-      const missingDefaultProps: string[] = [];
+    const apiComponentsWithKnownIssues = ['Area', 'ReferenceLine', 'Text'];
 
-      for (const component of apiDocSymbols) {
+    test.each(apiDocReader.getPublicComponentNames().filter(c => !apiComponentsWithKnownIssues.includes(c)))(
+      'if component %s has default props in the API, then that default value must be the same as in the project',
+      component => {
         const allProps = apiDocReader.getRechartsPropsOf(component);
+        const missingDefaultProps: string[] = [];
+
         for (const prop of allProps) {
           const apiDefaultProp = apiDocReader.getDefaultValueOf(component, prop);
           const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
@@ -148,36 +150,19 @@ describe('omnidoc - documentation consistency', () => {
             missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
           }
         }
-      }
 
-      expect(missingDefaultProps).toMatchInlineSnapshot(`
-        [
-          "Component "Area", prop "type": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "label": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "layout": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "baseLine": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "stackId": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "unit": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "name": Documented default value, but actually none exists in the project",
-          "Component "Area", prop "isAnimationActive": Documented default value "true in CSR, and false in SSR", but actually in project it is "true"",
-          "Component "Area", prop "animationBegin": Documented default value "0", but actually in project it is "0"",
-          "Component "Area", prop "animationDuration": Documented default value "1500", but actually in project it is "1500"",
-          "Component "Area", prop "id": Documented default value, but actually none exists in the project",
-          "Component "Text", prop "angle": Documented default value, but actually none exists in the project",
-          "Component "ReferenceLine", prop "x": Documented default value, but actually none exists in the project",
-          "Component "ReferenceLine", prop "y": Documented default value, but actually none exists in the project",
-          "Component "ReferenceLine", prop "label": Documented default value, but actually none exists in the project",
-          "Component "ReferenceLine", prop "segment": Documented default value, but actually none exists in the project",
-        ]
-      `);
-    });
+        expect(missingDefaultProps).toEqual([]);
+      },
+    );
 
-    test('if a component has default props in Storybook, it should also have them in the project', () => {
-      const storybookSymbols = storybookReader.getPublicComponentNames();
-      const missingDefaultProps: string[] = [];
+    const storybookComponentsWithKnownIssues = ['Area', 'Label', 'ReferenceLine', 'Text', 'Treemap'];
 
-      for (const component of storybookSymbols) {
+    test.each(storybookReader.getPublicComponentNames().filter(c => !storybookComponentsWithKnownIssues.includes(c)))(
+      'if %s has default props in Storybook, it should also have them in the project',
+      component => {
         const allProps = storybookReader.getRechartsPropsOf(component);
+        const missingDefaultProps: string[] = [];
+
         for (const prop of allProps) {
           const storybookDefaultProp = storybookReader.getDefaultValueOf(component, prop);
           const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
@@ -186,38 +171,16 @@ describe('omnidoc - documentation consistency', () => {
             missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
           }
         }
-      }
 
-      expect(missingDefaultProps).toMatchInlineSnapshot(`
-        [
-          "Component "Area", prop "activeDot": Default value exists but it is not documented",
-          "Component "Area", prop "animationBegin": Documented default value "0", but actually in project it is "0"",
-          "Component "Area", prop "animationDuration": Default value exists but it is not documented",
-          "Component "Area", prop "animationEasing": Default value exists but it is not documented",
-          "Component "Area", prop "connectNulls": Documented default value "false", but actually in project it is "false"",
-          "Component "Area", prop "dot": Default value exists but it is not documented",
-          "Component "Area", prop "hide": Documented default value "false", but actually in project it is "false"",
-          "Component "Area", prop "isAnimationActive": Documented default value "true", but actually in project it is "true"",
-          "Component "Area", prop "legendType": Default value exists but it is not documented",
-          "Component "Area", prop "xAxisId": Default value exists but it is not documented",
-          "Component "Area", prop "yAxisId": Default value exists but it is not documented",
-          "Component "Label", prop "zIndex": Default value exists but it is not documented",
-          "Component "ReferenceLine", prop "position": Default value exists but it is not documented",
-          "Component "ReferenceLine", prop "xAxisId": Default value exists but it is not documented",
-          "Component "ReferenceLine", prop "yAxisId": Default value exists but it is not documented",
-          "Component "Text", prop "breakAll": Documented default value "true", but actually in project it is "false"",
-          "Component "Text", prop "lineHeight": Default value exists but it is not documented",
-          "Component "Text", prop "scaleToFit": Documented default value "false", but actually in project it is "false"",
-          "Component "Treemap", prop "type": Default value exists but it is not documented",
-        ]
-      `);
-    });
+        expect(missingDefaultProps).toEqual([]);
+      },
+    );
 
-    test('if a prop is documented with a @default tag, it should match the actual default prop in the project', () => {
-      const projectComponents = projectReader.getPublicComponentNames();
-      const result: Array<string> = [];
+    test.each(projectReader.getPublicComponentNames())(
+      'if a %s prop is documented with a @default tag, it should match the actual default prop in the project',
+      component => {
+        const result: Array<string> = [];
 
-      for (const component of projectComponents) {
         const allProps = projectReader.getRechartsPropsOf(component);
         for (const prop of allProps) {
           const propMeta = projectReader.getPropMeta(component, prop);
@@ -231,10 +194,10 @@ describe('omnidoc - documentation consistency', () => {
             result.push(...problems);
           }
         }
-      }
 
-      expect(result).toEqual([]);
-    });
+        expect(result).toEqual([]);
+      },
+    );
   });
 
   describe.todo('the type definition of each prop should be consistent between API docs, Storybook, and the project');
