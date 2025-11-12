@@ -1137,3 +1137,52 @@ export const ChangingDataKey = {
     },
   },
 };
+
+const activeDotExcludedDomainData = [
+  { timestamp: 0.9, pv: 120 },
+  { timestamp: 1.3, pv: 160 },
+];
+
+export const ActiveDotExcludedFromDomain = {
+  render: (args: Args & { allowDataOverflow: boolean }) => {
+    const { allowDataOverflow, ...chartArgs } = args;
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart {...chartArgs}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={[1.01, 1.15]}
+            allowDataOverflow={allowDataOverflow}
+            tickFormatter={value => value.toFixed(2)}
+          />
+          <YAxis type="number" domain={[80, 200]} allowDataOverflow={allowDataOverflow} />
+          <Tooltip cursor={{ stroke: '#999', strokeWidth: 1 }} />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={false} />
+          <RechartsHookInspector />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    width: 480,
+    height: 260,
+    data: activeDotExcludedDomainData,
+    margin: {
+      top: 20,
+      right: 36,
+      left: 36,
+      bottom: 16,
+    },
+    allowDataOverflow: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Hover inside the plot area. Because the X domain excludes all data points, the tooltip remains inactive and no active dot renders, even with margins and allowDataOverflow enabled.',
+      },
+    },
+  },
+};

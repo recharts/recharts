@@ -24,6 +24,7 @@ const ActivePoint = ({
   mainColor,
   activeDot,
   dataKey,
+  clipPath,
 }: {
   point: PointType;
   activeDot: ActiveDotType;
@@ -34,6 +35,7 @@ const ActivePoint = ({
    * Sometimes stroke, sometimes fill, sometimes combination.
    */
   mainColor: string | undefined;
+  clipPath?: string;
 }) => {
   if (activeDot === false || point.x == null || point.y == null) {
     return null;
@@ -69,7 +71,11 @@ const ActivePoint = ({
     dot = <Dot {...dotProps} />;
   }
 
-  return <Layer className="recharts-active-dot">{dot}</Layer>;
+  return (
+    <Layer className="recharts-active-dot" clipPath={clipPath}>
+      {dot}
+    </Layer>
+  );
 };
 
 interface ActivePointsProps extends ZIndexable {
@@ -82,6 +88,7 @@ interface ActivePointsProps extends ZIndexable {
   mainColor: string | undefined;
   itemDataKey: DataKey<any> | undefined;
   activeDot: ActiveDotType;
+  clipPath?: string;
 }
 
 export function ActivePoints({
@@ -89,6 +96,7 @@ export function ActivePoints({
   mainColor,
   activeDot,
   itemDataKey,
+  clipPath,
   zIndex = DefaultZIndexes.activeDot,
 }: ActivePointsProps) {
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
@@ -111,6 +119,7 @@ export function ActivePoints({
         mainColor={mainColor}
         dataKey={itemDataKey}
         activeDot={activeDot}
+        clipPath={clipPath}
       />
     </ZIndexLayer>
   );

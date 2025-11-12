@@ -1,9 +1,20 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Area, AreaChart, ComposedChart, Line, LineChart, Radar, RadarChart, Tooltip } from '../../../src';
+import {
+  Area,
+  AreaChart,
+  ComposedChart,
+  Line,
+  LineChart,
+  Radar,
+  RadarChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import { PageData } from '../../_data';
-import { showTooltip } from './tooltipTestHelpers';
+import { expectTooltipNotVisible, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   composedChartMouseHoverTooltipSelector,
@@ -263,6 +274,35 @@ describe('ActiveDot', () => {
       fireEvent.mouseOut(tooltipTrigger);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
+  });
+
+  describe('LineChart domain visibility guard', () => {
+    const domainTestData = [
+      { x: 0.9, y: 10 },
+      { x: 1.3, y: 12 },
+    ];
+    const chartMargin = { top: 20, right: 20, bottom: 20, left: 20 };
+
+    it.each([true, false])(
+      'should suppress active dot and tooltip when all data is outside the visible domain (allowDataOverflow=%s)',
+      allowDataOverflow => {
+        const { container } = render(
+          <LineChart width={400} height={240} data={domainTestData} margin={chartMargin}>
+            <XAxis dataKey="x" type="number" domain={[1.01, 1.15]} allowDataOverflow={allowDataOverflow} />
+            <YAxis type="number" domain={[0, 20]} allowDataOverflow={allowDataOverflow} />
+            <Tooltip />
+            <Line dataKey="y" isAnimationActive={false} />
+          </LineChart>,
+        );
+
+        showTooltip(container, lineChartMouseHoverTooltipSelector);
+
+        expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
+        expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+        expect(container.querySelector('.recharts-tooltip-wrapper')).toBeInTheDocument();
+        expectTooltipNotVisible(container);
+      },
+    );
   });
 
   describe('as a child of ComposedChart with Line', () => {

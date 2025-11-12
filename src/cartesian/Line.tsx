@@ -577,6 +577,7 @@ class LineWithState extends Component<InternalProps> {
     const { r, strokeWidth } = getRadiusAndStrokeWidthFromDot(dot);
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
+    const activePointsClipPath = needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined;
 
     return (
       <ZIndexLayer zIndex={zIndex}>
@@ -611,6 +612,7 @@ class LineWithState extends Component<InternalProps> {
           points={points}
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
+          clipPath={activePointsClipPath}
         />
       </ZIndexLayer>
     );
