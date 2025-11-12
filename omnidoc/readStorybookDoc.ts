@@ -1,5 +1,6 @@
 import { DefaultValue, DocReader } from './DocReader';
 import * as allStories from '../storybook/stories/API/allStories';
+import { StorybookArg } from '../storybook/StorybookArgs';
 
 /**
  * @fileOverview reads API docs from Storybook stories
@@ -105,15 +106,23 @@ export class StorybookDocReader implements DocReader {
       return { type: 'unreadable' };
     }
 
-    const argType = (argTypes as Record<string, any>)[prop];
+    // @ts-expect-error our storybook types are not great
+    const argType: StorybookArg = argTypes[prop];
     if (!argType) {
       return { type: 'unreadable' };
     }
 
+    const tableDefaultValue = argType?.table?.defaultValue;
+    if (tableDefaultValue != null && typeof tableDefaultValue === 'object' && 'summary' in tableDefaultValue) {
+      return { type: 'known', value: tableDefaultValue.summary };
+    }
+
+    if (tableDefaultValue != null) {
+      return { type: 'known', value: tableDefaultValue };
+    }
     if (!('defaultValue' in argType)) {
       return { type: 'none' };
     }
-
     const { defaultValue } = argType;
     if (defaultValue === undefined) {
       return { type: 'known', value: undefined };

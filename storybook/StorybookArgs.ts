@@ -28,7 +28,7 @@ export type StorybookArg = {
    */
   type?: SBType | SBType['name'];
   table?: {
-    defaultValue?: { summary: string; detail?: string } | unknown;
+    defaultValue?: unknown;
     /**
      * The documented type of the argType.
      * summary is typically used for the type itself,
