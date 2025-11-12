@@ -1,4 +1,4 @@
-import { DocReader } from './DocReader';
+import { DefaultValue, DocReader } from './DocReader';
 import { allExamples } from '../www/src/docs/api';
 
 /**
@@ -40,5 +40,28 @@ export class ApiDocReader implements DocReader {
      * API docs do not contain info about SVG parent elements
      */
     return null;
+  }
+
+  getDefaultValueOf(component: string, prop: string): DefaultValue {
+    const apiDoc = allExamples[component];
+    if (!apiDoc) {
+      return { type: 'unreadable' };
+    }
+
+    const propDoc = apiDoc.props.find(p => p.name === prop);
+    if (!propDoc) {
+      return { type: 'unreadable' };
+    }
+
+    if (!('defaultVal' in propDoc)) {
+      return { type: 'none' };
+    }
+
+    const { defaultVal } = propDoc;
+    if (defaultVal === 'undefined') {
+      return { type: 'known', value: undefined };
+    }
+
+    return { type: 'known', value: defaultVal };
   }
 }

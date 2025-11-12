@@ -349,7 +349,7 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 
 const DEFAULT_FILL = '#808080';
 
-const textDefaultProps = {
+export const textDefaultProps = {
   breakAll: false,
   // Magic number from d3
   capHeight: '0.71em',

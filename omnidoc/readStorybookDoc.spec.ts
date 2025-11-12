@@ -188,4 +188,8 @@ describe('readStorybookDoc', () => {
     const props = reader.getRechartsPropsOf('ResponsiveContainer');
     expect(props.length).toBe(0);
   });
+
+  it('should get default value of a prop', () => {
+    expect(reader.getDefaultValueOf('ReferenceLine', 'strokeWidth')).toEqual({ type: 'known', value: 1 });
+  });
 });

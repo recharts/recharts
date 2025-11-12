@@ -95,7 +95,7 @@ export const ReferenceLineAPI = {
     {
       name: 'strokeWidth',
       type: 'String | Number',
-      defaultVal: '1',
+      defaultVal: 1,
       isOptional: true,
       desc: {
         'en-US': 'The width of the stroke',

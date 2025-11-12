@@ -26,7 +26,6 @@ export const AreaAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The key of a group of data which should be unique in an area chart.',

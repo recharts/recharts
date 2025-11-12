@@ -95,6 +95,7 @@ interface ReferenceLineProps extends ZIndexable {
    * The position of the reference line when the axis has bandwidth
    * (e.g., a band scale). This determines where within the band
    * the line is drawn.
+   * @defaultValue 'middle'
    */
   position?: ReferenceLinePosition;
 
@@ -288,7 +289,7 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   );
 }
 
-const referenceLineDefaultProps = {
+export const referenceLineDefaultProps = {
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
