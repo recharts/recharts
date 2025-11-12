@@ -96,6 +96,31 @@ export const selectPolarAxisTicks: (
   combineAxisTicks,
 );
 
+export const selectPolarAngleAxisTicks: (
+  state: RechartsRootState,
+  axisType: 'angleAxis',
+  polarAxisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<CartesianTickItem> | undefined = createSelector([selectPolarAxisTicks], ticks => {
+  /*
+   * Angle axis is circular; so here we need to look for ticks that overlap (i.e., 0 and 360 degrees)
+   * and remove the duplicate tick to avoid rendering issues.
+   */
+  if (!ticks) {
+    return undefined;
+  }
+
+  const uniqueTicksMap = new Map<number, CartesianTickItem>();
+  ticks.forEach(tick => {
+    const normalizedCoordinate = (tick.coordinate + 360) % 360;
+    if (!uniqueTicksMap.has(normalizedCoordinate)) {
+      uniqueTicksMap.set(normalizedCoordinate, tick);
+    }
+  });
+
+  return Array.from(uniqueTicksMap.values());
+});
+
 export const selectPolarGraphicalItemAxisTicks: (
   state: RechartsRootState,
   axisType: 'angleAxis' | 'radiusAxis',

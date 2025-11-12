@@ -20,7 +20,6 @@
  */
 export const IGNORE_WARNINGS: Array<string | RegExp> = [
   // Add patterns here to suppress warnings
-  'Encountered two children with the same key',
   /An update to (.+) inside a test was not wrapped in act/,
   'A props object containing a "key" prop is being spread into JSX',
   /React does not recognize the (.+) prop on a DOM element/,
