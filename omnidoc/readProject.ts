@@ -331,6 +331,10 @@ export class ProjectDocReader implements DocReader {
         if (acc.type === 'known' || acc.type === 'none') {
           return acc;
         }
+        /*
+         * Here we intentionally prioritize default value from object over JSDoc,
+         * because JSDoc may be missing or outdated.
+         */
         if (meta.defaultValueFromObject.type !== 'unreadable') {
           return meta.defaultValueFromObject;
         }
