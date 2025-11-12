@@ -105,11 +105,12 @@ export class ProjectDocReader implements DocReader {
   private getDeclarationOrigin(declaration: Node): PropOrigin {
     const sourceFile = declaration.getSourceFile();
     const filePath = sourceFile.getFilePath();
+    const normalizedPath = filePath.replace(/\\/g, '/');
 
-    if (filePath.includes('node_modules/@types/react')) {
+    if (normalizedPath.includes('node_modules/@types/react')) {
       return 'dom';
     }
-    if (filePath.includes('/src/')) {
+    if (normalizedPath.includes('/src/')) {
       return 'recharts';
     }
     return 'other';
