@@ -119,6 +119,7 @@ export const exampleComponents = [
   'AreaResponsiveContainer',
   'ComposedResponsiveContainer',
   'PieResponsiveContainer',
+  'TargetPriceChart',
 ];
 
 export const guidePages = [
