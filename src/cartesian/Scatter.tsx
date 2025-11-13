@@ -350,7 +350,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const isActive: boolean = hasActiveShape && activeIndex === String(i);
         const option = hasActiveShape && isActive ? activeShape : shape;
         const symbolProps = {
-          key: `symbol-${i}`,
           ...baseProps,
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,

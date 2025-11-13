@@ -338,7 +338,9 @@ const renderLabelLineItem = (option: PieLabelLine, props: CurveProps) => {
   }
 
   const className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
-  return <Curve {...props} type="linear" className={className} />;
+  // React doesn't like it when we spread a key property onto an element
+  const { key, ...otherProps } = props;
+  return <Curve {...otherProps} type="linear" className={className} />;
 };
 
 const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: unknown) => {
