@@ -49,7 +49,7 @@ import { selectChartOffsetInternal } from '../../src/state/selectors/selectChart
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 
 describe('<XAxis />', () => {
   const data = [
@@ -2032,7 +2032,7 @@ describe('<XAxis />', () => {
         spy({ foo, bar });
         return null;
       };
-      const { rerender } = render(
+      const { rerender } = rechartsTestRender(
         <BarChart width={100} height={100}>
           <XAxis xAxisId="foo" scale="log" type="number" />
           <Customized component={Comp} />

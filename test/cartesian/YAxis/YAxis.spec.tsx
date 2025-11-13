@@ -34,7 +34,7 @@ import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('<YAxis />', () => {
@@ -1026,7 +1026,7 @@ describe('<YAxis />', () => {
         spy({ foo, bar });
         return null;
       };
-      const { rerender } = render(
+      const { rerender } = rechartsTestRender(
         <BarChart width={100} height={100}>
           <YAxis yAxisId="foo" scale="log" type="number" />
           <Comp />

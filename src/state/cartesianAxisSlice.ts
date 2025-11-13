@@ -120,6 +120,15 @@ const cartesianAxisSlice = createSlice({
       },
       prepare: prepareAutoBatched<XAxisSettings>(),
     },
+    replaceXAxis: {
+      reducer(state, action: PayloadAction<{ prev: XAxisSettings; next: XAxisSettings }>) {
+        const { prev, next } = action.payload;
+        if (state.xAxis[prev.id] !== undefined) {
+          state.xAxis[next.id] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<{ prev: XAxisSettings; next: XAxisSettings }>(),
+    },
     removeXAxis: {
       reducer(state, action: PayloadAction<XAxisSettings>) {
         delete state.xAxis[action.payload.id];
@@ -132,6 +141,15 @@ const cartesianAxisSlice = createSlice({
       },
       prepare: prepareAutoBatched<YAxisSettings>(),
     },
+    replaceYAxis: {
+      reducer(state, action: PayloadAction<{ prev: YAxisSettings; next: YAxisSettings }>) {
+        const { prev, next } = action.payload;
+        if (state.yAxis[prev.id] !== undefined) {
+          state.yAxis[next.id] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<{ prev: YAxisSettings; next: YAxisSettings }>(),
+    },
     removeYAxis: {
       reducer(state, action: PayloadAction<YAxisSettings>) {
         delete state.yAxis[action.payload.id];
@@ -143,6 +161,15 @@ const cartesianAxisSlice = createSlice({
         state.zAxis[action.payload.id] = castDraft(action.payload);
       },
       prepare: prepareAutoBatched<ZAxisSettings>(),
+    },
+    replaceZAxis: {
+      reducer(state, action: PayloadAction<{ prev: ZAxisSettings; next: ZAxisSettings }>) {
+        const { prev, next } = action.payload;
+        if (state.zAxis[prev.id] !== undefined) {
+          state.zAxis[next.id] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<{ prev: ZAxisSettings; next: ZAxisSettings }>(),
     },
     removeZAxis: {
       reducer(state, action: PayloadAction<ZAxisSettings>) {
@@ -177,7 +204,17 @@ const cartesianAxisSlice = createSlice({
   },
 });
 
-export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis, updateYAxisWidth } =
-  cartesianAxisSlice.actions;
+export const {
+  addXAxis,
+  replaceXAxis,
+  removeXAxis,
+  addYAxis,
+  replaceYAxis,
+  removeYAxis,
+  addZAxis,
+  replaceZAxis,
+  removeZAxis,
+  updateYAxisWidth,
+} = cartesianAxisSlice.actions;
 
 export const cartesianAxisReducer = cartesianAxisSlice.reducer;

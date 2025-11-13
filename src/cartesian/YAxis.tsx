@@ -5,6 +5,7 @@ import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChild
 import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
 import {
   addYAxis,
+  replaceYAxis,
   removeYAxis,
   updateYAxisWidth,
   YAxisOrientation,
@@ -55,12 +56,26 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 
 function SetYAxisSettings(settings: YAxisSettings): null {
   const dispatch = useAppDispatch();
+  const prevSettingsRef = useRef<YAxisSettings | null>(null);
+
   useLayoutEffect(() => {
-    dispatch(addYAxis(settings));
-    return () => {
-      dispatch(removeYAxis(settings));
-    };
+    if (prevSettingsRef.current === null) {
+      dispatch(addYAxis(settings));
+    } else if (prevSettingsRef.current !== settings) {
+      dispatch(replaceYAxis({ prev: prevSettingsRef.current, next: settings }));
+    }
+    prevSettingsRef.current = settings;
   }, [settings, dispatch]);
+
+  useLayoutEffect(() => {
+    return () => {
+      if (prevSettingsRef.current) {
+        dispatch(removeYAxis(prevSettingsRef.current));
+        prevSettingsRef.current = null;
+      }
+    };
+  }, [dispatch]);
+
   return null;
 }
 
