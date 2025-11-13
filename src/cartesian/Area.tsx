@@ -6,6 +6,7 @@ import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
+  ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
@@ -87,7 +88,7 @@ interface InternalAreaProps extends ZIndexable {
   id: string;
   isAnimationActive: boolean;
   isRange?: boolean;
-  label?: any;
+  label?: ImplicitLabelListType;
   left: number;
 
   legendType: LegendType;
@@ -135,7 +136,7 @@ interface AreaProps extends ZIndexable {
 
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
-  label?: any;
+  label?: ImplicitLabelListType;
   legendType?: LegendType;
 
   name?: string | number;
