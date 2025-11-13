@@ -21,6 +21,11 @@
 export const IGNORE_WARNINGS: Array<string | RegExp> = [
   // Add patterns here to suppress warnings
   /An update to (.+) inside a test was not wrapped in act/,
+  /*
+   * There are unfortunately many cases where we put arbitrary props on DOM elements
+   * because of the element cloning - we can't tell what we have cloned.
+   * This warning will stay with us as long as we support cloning.
+   */
   /React does not recognize the (.+) prop on a DOM element/,
   'verticalCoordinatesGenerator should return Array but instead it returned',
   'horizontalCoordinatesGenerator should return Array but instead it returned',

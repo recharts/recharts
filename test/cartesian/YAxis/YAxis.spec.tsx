@@ -1,21 +1,21 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import {
-  AreaChart,
   Area,
-  BarChart,
+  AreaChart,
   Bar,
-  LineChart,
-  Line,
+  BarChart,
   CartesianGrid,
-  Tooltip,
-  YAxis,
-  ReferenceDot,
-  ReferenceArea,
-  ReferenceLine,
-  XAxis,
   ComposedChart,
+  Line,
+  LineChart,
+  ReferenceArea,
+  ReferenceDot,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
   YAxisProps,
 } from '../../../src';
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
@@ -2244,12 +2244,12 @@ describe('<YAxis />', () => {
     }
 
     it('should pass object padding to custom tick component', () => {
-      let receivedPadding: { top?: number; bottom?: number } | undefined;
       const expectedPadding = { top: 20, bottom: 30 };
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2258,17 +2258,15 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass string padding to custom tick component', () => {
-      let receivedPadding: string | undefined;
       const expectedPadding = 'gap';
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as string;
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toBe(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2277,17 +2275,15 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toBe(expectedPadding);
     });
 
     it('should pass padding to function-based custom tick', () => {
-      let receivedPadding: { top?: number; bottom?: number } | undefined;
       const expectedPadding = { top: 15, bottom: 25 };
+      expect.assertions(5);
 
       const customTickFunction = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Function Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Function Tick</text>;
       };
 
       render(
@@ -2296,16 +2292,14 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass default padding when no padding is specified', () => {
-      let receivedPadding: { top?: number; bottom?: number } | string = 'not-called';
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual({ top: 0, bottom: 0 });
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2314,8 +2308,6 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual({ top: 0, bottom: 0 });
     });
   });
 });
