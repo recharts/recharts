@@ -105,13 +105,6 @@ export function CodeEditorWithPreview({
     setCodeToRun(editedCode);
   };
 
-  // Reset editor state when navigating to a different example
-  useEffect(() => {
-    setIsEditMode(false);
-    setEditedCode(null);
-    setCodeToRun(null);
-  }, [sourceCode, stackBlitzTitle, analyticsLabel]);
-
   const codeToDisplay = editedCode ?? sourceCode;
 
   return (
