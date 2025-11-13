@@ -199,7 +199,8 @@ export function Legend(outsideProps: Props) {
         verticalAlign={props.verticalAlign}
         itemSorter={props.itemSorter}
       />
-      <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />
+      {/* if we have a portal from props nothing should need the size of the legend */}
+      {!portalFromProps && <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />}
       <LegendContent
         {...props}
         {...widthOrHeight}
