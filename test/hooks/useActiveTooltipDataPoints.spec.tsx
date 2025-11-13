@@ -347,4 +347,34 @@ describe('useActiveTooltipDataPoints', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('when activeDot is defined as inline object', () => {
+    const ChartContent = () => {
+      useActiveTooltipDataPoints();
+
+      return (
+        <Line
+          activeDot={{
+            strokeWidth: 1.5,
+            fill: 'white',
+            stroke: 'black',
+            r: 3,
+          }}
+        />
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(() => (
+      <ComposedChart width={400} height={400} data={PageData}>
+        <ChartContent />
+      </ComposedChart>
+    ));
+
+    it('should render and show tooltip without infinite loop', () => {
+      // https://github.com/recharts/recharts/issues/6613
+      const { container } = renderTestCase();
+      showTooltip(container, composedChartMouseHoverTooltipSelector);
+      expect(container).toBeDefined();
+    });
+  });
 });
