@@ -171,11 +171,7 @@ describe('<ReferenceDot />', () => {
   });
 
   test('Render custom label when label is set to be a react element', () => {
-    const Label = ({ text, ...props }: { text: string }) => (
-      <text className="customized-label" {...props}>
-        {text}
-      </text>
-    );
+    const Label = ({ text }: { text: string }) => <text className="customized-label">{text}</text>;
     render(
       <BarChart
         width={1100}
