@@ -27,6 +27,9 @@ export const positionProp: StorybookArg = {
     'middle',
   ],
   table: {
+    defaultValue: {
+      summary: 'middle',
+    },
     type: {
       summary:
         'top, left, right, bottom, inside, outside, insideLeft, ' +

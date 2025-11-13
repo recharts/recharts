@@ -121,7 +121,7 @@ describe('omnidoc - documentation consistency', () => {
       }
       if (documentedDefaultValue.type === 'known' && actualDefaultValue.type === 'known') {
         if (!compareValues(documentedDefaultValue.value, actualDefaultValue.value)) {
-          return `Documented default value "${documentedDefaultValue.value}", but actually in project it is "${actualDefaultValue.value}"`;
+          return `Documented default value "${documentedDefaultValue.value}" [${typeof documentedDefaultValue.value}], but actually in project it is "${actualDefaultValue.value}" [${typeof actualDefaultValue.value}]`;
         }
         return null;
       }
@@ -137,7 +137,7 @@ describe('omnidoc - documentation consistency', () => {
     const apiComponentsWithKnownIssues = ['ReferenceLine', 'Text'];
 
     test.each(apiDocReader.getPublicComponentNames().filter(c => !apiComponentsWithKnownIssues.includes(c)))(
-      'if component %s has default props in the API, then that default value must be the same as in the project',
+      'if %s has default props in the API, then that default value must be the same as in the project',
       component => {
         const allProps = apiDocReader.getRechartsPropsOf(component);
         const missingDefaultProps: string[] = [];
@@ -155,7 +155,7 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
-    const storybookComponentsWithKnownIssues = ['Label', 'ReferenceLine', 'Text', 'Treemap'];
+    const storybookComponentsWithKnownIssues = ['ReferenceLine', 'Text', 'Treemap'];
 
     test.each(storybookReader.getPublicComponentNames().filter(c => !storybookComponentsWithKnownIssues.includes(c)))(
       'if %s has default props in Storybook, it should also have them in the project',
