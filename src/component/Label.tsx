@@ -70,15 +70,32 @@ interface LabelProps extends ZIndexable {
   parentViewBox?: ViewBox;
   formatter?: LabelFormatter;
   value?: RenderableText;
+  /**
+   * @defaultValue 5
+   */
   offset?: number;
+  /**
+   * @defaultValue middle
+   */
   position?: LabelPosition;
   children?: RenderableText;
   className?: string;
   content?: LabelContentType;
+  /**
+   * @defaultValue false
+   */
   textBreakAll?: boolean;
+  /**
+   * @defaultValue 0
+   */
   angle?: number;
   index?: number;
   labelRef?: React.RefObject<SVGTextElement> | null;
+  /**
+   * @since 3.4
+   * @defaultValue 2000
+   */
+  zIndex?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -534,9 +551,12 @@ export const getAttrsOfCartesianLabel = (
   };
 };
 
-const defaultLabelProps = {
+export const defaultLabelProps = {
+  angle: 0,
   offset: 5,
   zIndex: DefaultZIndexes.label,
+  position: 'middle',
+  textBreakAll: false,
 } as const satisfies Partial<Props>;
 
 export function Label(outerProps: Props) {

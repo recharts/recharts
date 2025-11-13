@@ -328,15 +328,17 @@ export class ProjectDocReader implements DocReader {
   getDefaultValueOf(component: string, prop: string): DefaultValue {
     return this.getPropMeta(component, prop).reduce(
       (acc: DefaultValue, meta: PropMeta): DefaultValue => {
-        if (acc.type === 'known' || acc.type === 'none') {
-          return acc;
-        }
         /*
          * Here we intentionally prioritize default value from object over JSDoc,
          * because JSDoc may be missing or outdated.
+         * Sometimes JSDoc in the react TS types is also present, and also a string
+         * - so we prefer the actual defaultProps value from the source code.
          */
         if (meta.defaultValueFromObject.type !== 'unreadable') {
           return meta.defaultValueFromObject;
+        }
+        if (acc.type === 'known' || acc.type === 'none') {
+          return acc;
         }
         if (meta.defaultValueFromJSDoc.type !== 'unreadable') {
           return meta.defaultValueFromJSDoc;

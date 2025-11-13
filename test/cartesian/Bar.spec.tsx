@@ -2,7 +2,18 @@ import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { act, fireEvent } from '@testing-library/react';
 import { renderWithStrictMode } from '../helper/renderWithStrictMode';
-import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  BarProps,
+  Customized,
+  DefaultZIndexes,
+  Legend,
+  LegendType,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 import {
   allCartesianChartsExcept,
   AreaChartCase,
@@ -32,7 +43,6 @@ import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1009,6 +1019,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         expect(spy).toHaveBeenCalledTimes(data.length * 2);
         expect(spy).toBeCalledWith(
           {
+            angle: 0,
             content: spy,
             height: expect.any(Number),
             index: expect.any(Number),
@@ -1019,7 +1030,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
               x: expect.any(Number),
               y: expect.any(Number),
             },
-            textBreakAll: undefined,
+            textBreakAll: false,
+            position: 'middle',
             value: expect.any(Number),
             viewBox: {
               height: expect.any(Number),

@@ -1,11 +1,10 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
+import { describe, expect, it, vi } from 'vitest';
+import { DefaultZIndexes, Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -300,9 +299,11 @@ describe('<Label />', () => {
           expect(fn).toHaveBeenCalledTimes(1);
           expect(fn).toHaveBeenLastCalledWith(
             {
+              angle: 0,
               content: fn,
               offset: 5,
               position: 'center',
+              textBreakAll: false,
               zIndex: DefaultZIndexes.label,
               viewBox: {
                 height: 200,
@@ -460,9 +461,11 @@ describe('<Label />', () => {
         expect(contentFn).toHaveBeenCalledTimes(1);
         expect(contentFn).toHaveBeenLastCalledWith(
           {
+            angle: 0,
             children: 'label from children',
             content: contentFn,
             offset: 5,
+            textBreakAll: false,
             position: 'center',
             zIndex: DefaultZIndexes.label,
             viewBox: {
@@ -494,9 +497,11 @@ describe('<Label />', () => {
         expect(contentFn).toHaveBeenCalledTimes(1);
         expect(contentFn).toHaveBeenLastCalledWith(
           {
+            angle: 0,
             value: 'label from value',
             content: contentFn,
             offset: 5,
+            textBreakAll: false,
             position: 'center',
             zIndex: DefaultZIndexes.label,
             viewBox: {
@@ -530,9 +535,11 @@ describe('<Label />', () => {
         expect(contentFn).toHaveBeenCalledTimes(1);
         expect(contentFn).toHaveBeenLastCalledWith(
           {
+            angle: 0,
             children: 'label from children',
             value: 'label from value',
             content: contentFn,
+            textBreakAll: false,
             offset: 5,
             position: 'center',
             zIndex: DefaultZIndexes.label,
@@ -603,8 +610,10 @@ describe('<Label />', () => {
               x: 5,
               y: 5,
             },
+            angle: 0,
             value: 'text',
             content: contentFn,
+            textBreakAll: false,
             position: 'center',
             offset: 5,
             zIndex: DefaultZIndexes.label,
@@ -632,8 +641,10 @@ describe('<Label />', () => {
               outerRadius: 36,
               startAngle: 0,
             },
+            angle: 0,
             value: 'text',
             content: contentFn,
+            textBreakAll: false,
             position: 'insideEnd',
             offset: 5,
             zIndex: DefaultZIndexes.label,
@@ -664,8 +675,10 @@ describe('<Label />', () => {
               x: 5,
               y: 5,
             },
+            angle: 0,
             value: 'text',
             content: contentFn,
+            textBreakAll: false,
             position: 'center',
             offset: 5,
             zIndex: DefaultZIndexes.label,
