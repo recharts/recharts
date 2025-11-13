@@ -174,7 +174,7 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
 };
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
+  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit, tooltipType } = props;
   return {
     dataDefinedOnItem: data,
     positions: undefined,
@@ -186,8 +186,8 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       nameKey: undefined,
       name: getTooltipNameProp(name, dataKey),
       hide,
-      type: props.tooltipType,
-      color: props.stroke,
+      type: tooltipType,
+      color: stroke,
       unit,
     },
   };
