@@ -1,11 +1,13 @@
-export const AreaAPI = {
+import { ApiDoc } from './types.ts';
+
+export const AreaAPI: ApiDoc = {
   name: 'Area',
   props: [
     {
       name: 'type',
       type: `'basis' | 'basisClosed' | 'basisOpen' | 'bumpX' | 'bumpY' | 'bump' | 'linear' | 'linearClosed' | 'natural' |
       'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | Function`,
-      defaultVal: "'linear'",
+      defaultVal: 'linear',
       isOptional: false,
       desc: {
         'en-US': 'The interpolation type of area. And customized interpolation function can be set to type.',
@@ -35,7 +37,7 @@ export const AreaAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -45,7 +47,7 @@ export const AreaAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -55,7 +57,7 @@ export const AreaAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'line'",
+      defaultVal: 'line',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -65,7 +67,7 @@ export const AreaAPI = {
     {
       name: 'dot',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -83,7 +85,7 @@ export const AreaAPI = {
     {
       name: 'activeDot',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -101,7 +103,7 @@ export const AreaAPI = {
     {
       name: 'label',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -137,20 +139,9 @@ export const AreaAPI = {
       },
     },
     {
-      name: 'layout',
-      type: "'horizontal' | 'vertical'",
-      defaultVal: 'undefined',
-      isOptional: true,
-      desc: {
-        'en-US': 'The layout of area, usually inherited from parent.',
-        'zh-CN': '布局类型，通常继承父组件的布局类型。',
-      },
-    },
-    {
       name: 'baseLine',
       type: 'Number | Array',
-      defaultVal: 'undefined',
-      isOptional: false,
+      isOptional: true,
       desc: {
         'en-US': 'The value which can describe the line, usually calculated internally.',
         'zh-CN': `基准线，可以是一个数值，这种情况会根据 layout 解析成 x = \${baseLine} 或者 y = \${baseLine}。当使用 AreaChart
@@ -161,7 +152,6 @@ export const AreaAPI = {
     {
       name: 'stackId',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -188,7 +178,7 @@ export const AreaAPI = {
     {
       name: 'connectNulls',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Whether to connect a graph area across null points.',
@@ -204,7 +194,6 @@ export const AreaAPI = {
     {
       name: 'unit',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': 'The unit of data. This option will be used in tooltip.',
@@ -214,7 +203,6 @@ export const AreaAPI = {
     {
       name: 'name',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -225,11 +213,12 @@ export const AreaAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: "Boolean | 'auto'",
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
-        'en-US': 'If set false, animation of area will be disabled.',
+        'en-US':
+          'If set false, animation of area will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.',
         'zh-CN': '当值为 false，不开启动画。',
       },
     },
@@ -256,7 +245,7 @@ export const AreaAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',
@@ -266,7 +255,6 @@ export const AreaAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

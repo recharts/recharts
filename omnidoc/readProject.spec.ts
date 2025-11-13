@@ -858,6 +858,10 @@ describe('readProject', () => {
     expect(reader.getDefaultValueOf('ReferenceLine', 'position')).toEqual({ type: 'known', value: 'middle' });
   });
 
+  it('should get integer default value', () => {
+    expect(reader.getDefaultValueOf('Area', 'animationDuration')).toEqual({ type: 'known', value: 1500 });
+  });
+
   it('should return none for default value of a prop without default', () => {
     expect(reader.getDefaultValueOf('AreaChart', 'layout')).toEqual({ type: 'unreadable' });
   });

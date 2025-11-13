@@ -138,7 +138,7 @@ export class ProjectDocReader implements DocReader {
     }
     if (propName in defaultValueObject) {
       const value = defaultValueObject[propName];
-      return { type: 'known', value: String(value) };
+      return { type: 'known', value };
     }
     return { type: 'none' };
   }

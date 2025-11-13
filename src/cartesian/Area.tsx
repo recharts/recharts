@@ -22,6 +22,7 @@ import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
+  CartesianLayout,
   DataKey,
   DotType,
   LegendType,
@@ -40,7 +41,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { useChartLayout } from '../context/chartLayoutContext';
+import { useCartesianChartLayout, useChartLayout } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
@@ -87,7 +88,6 @@ interface InternalAreaProps extends ZIndexable {
   isAnimationActive: boolean;
   isRange?: boolean;
   label?: any;
-  layout: 'horizontal' | 'vertical';
   left: number;
 
   legendType: LegendType;
@@ -133,10 +133,9 @@ interface AreaProps extends ZIndexable {
   hide?: boolean;
   id?: string;
 
-  isAnimationActive?: boolean;
+  isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
   label?: any;
-  layout?: 'horizontal' | 'vertical';
   legendType?: LegendType;
 
   name?: string | number;
@@ -413,7 +412,7 @@ function ClipRect({
   strokeWidth,
 }: {
   alpha: number;
-  layout: 'horizontal' | 'vertical';
+  layout: CartesianLayout;
   points: ReadonlyArray<AreaPointItem>;
   baseLine: Props['baseLine'];
   strokeWidth: Props['strokeWidth'];
@@ -449,6 +448,7 @@ function AreaWithAnimation({
     onAnimationEnd,
   } = props;
   const animationId = useAnimationId(props, 'recharts-area-');
+  const layout = useCartesianChartLayout();
 
   const [isAnimating, setIsAnimating] = useState(false);
   const showLabels = !isAnimating;
@@ -466,6 +466,10 @@ function AreaWithAnimation({
     }
     setIsAnimating(true);
   }, [onAnimationStart]);
+
+  if (layout == null) {
+    return null;
+  }
 
   const prevPoints = previousPointsRef.current;
   const prevBaseLine = previousBaselineRef.current;
@@ -563,7 +567,7 @@ function AreaWithAnimation({
                       alpha={t}
                       points={points}
                       baseLine={baseLine}
-                      layout={props.layout}
+                      layout={layout}
                       strokeWidth={props.strokeWidth}
                     />
                   </clipPath>
@@ -678,9 +682,11 @@ export const defaultAreaProps = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   hide: false,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
   legendType: 'line',
   stroke: '#3182bd',
+  type: 'linear',
+  label: false,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.area,
@@ -744,7 +750,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
       height={height}
       hide={hide}
       layout={layout}
-      isAnimationActive={isAnimationActive}
+      isAnimationActive={isAnimationActive === 'auto' ? !Global.isSsr : isAnimationActive}
       isRange={isRange}
       legendType={legendType}
       needClip={needClip}

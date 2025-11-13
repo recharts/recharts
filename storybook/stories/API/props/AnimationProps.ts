@@ -10,16 +10,17 @@ export const animationBegin: StorybookArg = {
   type: { name: 'number' },
   defaultValue: 0,
   table: {
-    defaultValue: { summary: '0' },
     category: 'Animation',
   },
 };
 export const animationDuration: StorybookArg = {
+  defaultValue: 1500,
   table: {
     category: 'Animation',
   },
 };
 export const animationEasing: StorybookArg = {
+  defaultValue: 'ease',
   table: {
     category: 'Animation',
   },
@@ -27,12 +28,11 @@ export const animationEasing: StorybookArg = {
 
 export const isAnimationActive: StorybookArg = {
   description: 'If set false, animation of component will be disabled.',
+  defaultValue: 'auto',
   table: {
-    type: { summary: 'boolean' },
-    defaultValue: { summary: 'true in CSR, and false in SSR' },
+    type: { summary: 'boolean | "auto"' },
     category: 'Animation',
   },
-  defaultValue: true,
 };
 
 /**
