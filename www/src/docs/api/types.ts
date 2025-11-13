@@ -9,7 +9,7 @@ export type PropExample = {
 export type ApiProps = {
   name: string;
   type: string;
-  defaultVal?: string | number | null;
+  defaultVal?: string | number | boolean | null;
   isOptional?: boolean;
   desc?: string | Partial<Record<SupportedLocale, string>>;
   format?: ReadonlyArray<string>;

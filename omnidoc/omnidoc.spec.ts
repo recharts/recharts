@@ -134,7 +134,7 @@ describe('omnidoc - documentation consistency', () => {
       return null;
     }
 
-    const apiComponentsWithKnownIssues = ['Area', 'ReferenceLine', 'Text'];
+    const apiComponentsWithKnownIssues = ['ReferenceLine', 'Text'];
 
     test.each(apiDocReader.getPublicComponentNames().filter(c => !apiComponentsWithKnownIssues.includes(c)))(
       'if component %s has default props in the API, then that default value must be the same as in the project',
@@ -155,7 +155,7 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
-    const storybookComponentsWithKnownIssues = ['Area', 'Label', 'ReferenceLine', 'Text', 'Treemap'];
+    const storybookComponentsWithKnownIssues = ['Label', 'ReferenceLine', 'Text', 'Treemap'];
 
     test.each(storybookReader.getPublicComponentNames().filter(c => !storybookComponentsWithKnownIssues.includes(c)))(
       'if %s has default props in Storybook, it should also have them in the project',
@@ -176,6 +176,16 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
+    function stringifyDefaultValue(defaultValue: DefaultValue): DefaultValue {
+      if (defaultValue.type === 'known') {
+        return {
+          type: 'known',
+          value: String(defaultValue.value),
+        };
+      }
+      return defaultValue;
+    }
+
     test.each(projectReader.getPublicComponentNames())(
       'if a %s prop is documented with a @default tag, it should match the actual default prop in the project',
       component => {
@@ -186,7 +196,14 @@ describe('omnidoc - documentation consistency', () => {
           const propMeta = projectReader.getPropMeta(component, prop);
           const problems = propMeta
             .map(meta => {
-              return compareDefaultValues(meta.defaultValueFromJSDoc, meta.defaultValueFromObject);
+              /*
+               * Because everything coming out of the JSDoc is a string,
+               * we need to convert the actual default value to string for comparison.
+               */
+              return compareDefaultValues(
+                meta.defaultValueFromJSDoc,
+                stringifyDefaultValue(meta.defaultValueFromObject),
+              );
             })
             .filter(isNotNil)
             .map(description => `Component "${component}", prop "${prop}": ${description}`);

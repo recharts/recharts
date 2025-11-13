@@ -125,7 +125,7 @@ export const LineStyle: Args = {
       'stepBefore',
       'stepAfter',
     ],
-    default: 'linear',
+    defaultValue: 'linear',
     control: {
       type: 'select',
     },

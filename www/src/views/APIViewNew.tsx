@@ -64,7 +64,7 @@ function PropsList({ props, locale }: PropsListProps) {
           entry.defaultVal !== 'undefined' ? (
             <p className="default">
               <span className="title">{localeGet(locale, 'api', 'default')}</span>
-              <span>{entry.defaultVal}</span>
+              <code>{JSON.stringify(entry.defaultVal)}</code>
             </p>
           ) : null}
           {entry.format && entry.format.length ? (
