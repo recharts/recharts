@@ -49,6 +49,7 @@ export const createRechartsStore = (
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
+        immutableCheck: !['commonjs', 'es6', 'production'].includes(process.env.NODE_ENV ?? ''),
       }).concat([
         mouseClickMiddleware.middleware,
         mouseMoveMiddleware.middleware,
