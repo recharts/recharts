@@ -51,6 +51,7 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
           <div className="example-wrapper">
             <div className="example-inner-wrapper">
               <CodeEditorWithPreview
+                key={page}
                 Component={exampleResult.ExampleComponent}
                 sourceCode={exampleResult.sourceCode}
                 stackBlitzTitle={`Recharts example: ${exampleResult.cateName} - ${exampleResult.exampleName}`}
