@@ -3,6 +3,7 @@ updates:
   # Enable version updates for npm
   - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
+    # With npm workspaces, all dependencies (including workspace packages) are managed from the root
     directory: '/'
     # Check the npm registry for updates every day
     schedule:
@@ -36,19 +37,3 @@ updates:
         patterns:
           - 'playwright'
           - '@playwright/experimental-ct-react'
-
-  - package-ecosystem: 'npm'
-    directory: '/www'
-    schedule:
-      interval: 'daily'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
-    versioning-strategy: auto
-    labels:
-      - 'dependencies'
-    open-pull-requests-limit: 10
-    groups:
-      babel:
-        patterns:
-          - '@babel*'
