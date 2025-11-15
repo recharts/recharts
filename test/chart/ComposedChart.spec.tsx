@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { it, vi } from 'vitest';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -69,7 +69,11 @@ describe('<ComposedChart />', () => {
 
     const chart = container.querySelector('.recharts-wrapper');
     assertNotNull(chart);
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 100 });
+    fireEvent.mouseEnter(chart, { clientX: 200, clientY: 100 });
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -512,6 +512,10 @@ describe('<PieChart />', () => {
 
       expect(onClick).toHaveBeenCalledTimes(0);
       await user.click(sector);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(onClick).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenLastCalledWith(
         {
@@ -540,20 +544,23 @@ describe('<PieChart />', () => {
 
       expect(onMouseEnter).toHaveBeenCalledTimes(0);
       await user.hover(sector);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
-      // why are the coordinates undefined and index null? Looks like a bug to me
-      expect(onMouseEnter).toHaveBeenLastCalledWith(
-        {
-          activeCoordinate: undefined,
-          activeDataKey: undefined,
-          activeIndex: null,
-          activeLabel: undefined,
-          activeTooltipIndex: null,
-          isTooltipActive: false,
+      const firstArg = onMouseEnter.mock.calls[0][0];
+      expect(firstArg).toEqual({
+        activeCoordinate: {
+          x: 165.08751071020006,
+          y: 207.64446567223055,
         },
-        // second argument is the synthetic event from React
-        expect.any(Object),
-      );
+        activeDataKey: 'value',
+        activeIndex: '2',
+        activeLabel: 2,
+        activeTooltipIndex: '2',
+        isTooltipActive: true,
+      });
     });
 
     test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
@@ -565,8 +572,16 @@ describe('<PieChart />', () => {
       const sector = sectors[2];
 
       await user.hover(sector);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(onMouseLeave).toHaveBeenCalledTimes(0);
       await user.unhover(sector);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
       expect(onMouseLeave).toHaveBeenLastCalledWith(
         {

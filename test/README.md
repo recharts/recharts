@@ -93,3 +93,10 @@ You can also use the helper function `userEventSetup` from `test/helper/userEven
 
 https://github.com/testing-library/user-event/issues/1034
 https://github.com/testing-library/react-testing-library/issues/1197
+
+### Testing tooltips
+
+When testing that tooltips appear on hover, you need to take into account
+that the mouse move middleware is hidden behind requestAnimationFrame calls.
+You can either use vi.runOnlyPendingTimers() after each userEvent.hover call,
+or use `showTooltip` helper function exported from `tooltipTestHelpers.ts`.

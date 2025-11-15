@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { BarChart } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
@@ -21,10 +21,18 @@ describe('RechartsWrapper', () => {
 
     fireEvent.mouseEnter(wrapper);
 
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
     expect(onMouseEnterSpy).toHaveBeenCalledTimes(1);
     expect(onMouseLeaveSpy).not.toHaveBeenCalled();
 
     fireEvent.mouseLeave(wrapper);
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     expect(onMouseEnterSpy).toHaveBeenCalledTimes(1);
     expect(onMouseLeaveSpy).toHaveBeenCalledTimes(1);

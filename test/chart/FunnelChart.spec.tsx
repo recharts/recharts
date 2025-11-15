@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 import { Funnel, FunnelChart } from '../../src';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -96,6 +96,10 @@ describe('<FunnelChart />', () => {
       );
 
       fireEvent[event](container.querySelectorAll('.recharts-funnel-trapezoid')[2]);
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
       expect(onEventMock).toHaveBeenCalled();
     });

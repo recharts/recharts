@@ -1,5 +1,5 @@
 import { expect } from 'vitest';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { Coordinate } from '../../../src/util/types';
 
@@ -51,6 +51,13 @@ function showTooltipWithEvent(
       throw new Error('Unexpected event type');
     }
   }
+  act(() => {
+    /*
+     * Because the mouse event will trigger a requestAnimationFrame in the middleware, we need to run pending timers to ensure
+     * that the tooltip state is updated before we return.
+     */
+    vi.runOnlyPendingTimers();
+  });
   return tooltipTriggerElement;
 }
 

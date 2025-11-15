@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { AxisDomain, DataKey, ScaleType } from '../util/types';
-import { addZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
+import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsScale } from '../util/ChartUtils';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
@@ -9,12 +9,26 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(addZAxis(settings));
-    return () => {
-      dispatch(removeZAxis(settings));
-    };
+  const prevSettingsRef = useRef<ZAxisSettings | null>(null);
+
+  useLayoutEffect(() => {
+    if (prevSettingsRef.current === null) {
+      dispatch(addZAxis(settings));
+    } else if (prevSettingsRef.current !== settings) {
+      dispatch(replaceZAxis({ prev: prevSettingsRef.current, next: settings }));
+    }
+    prevSettingsRef.current = settings;
   }, [settings, dispatch]);
+
+  useLayoutEffect(() => {
+    return () => {
+      if (prevSettingsRef.current) {
+        dispatch(removeZAxis(prevSettingsRef.current));
+        prevSettingsRef.current = null;
+      }
+    };
+  }, [dispatch]);
+
   return null;
 }
 

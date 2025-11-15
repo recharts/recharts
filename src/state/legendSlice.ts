@@ -62,6 +62,25 @@ const legendSlice = createSlice({
       },
       prepare: prepareAutoBatched<ReadonlyArray<LegendPayload>>(),
     },
+    replaceLegendPayload: {
+      reducer(
+        state,
+        action: PayloadAction<{
+          prev: ReadonlyArray<LegendPayload>;
+          next: ReadonlyArray<LegendPayload>;
+        }>,
+      ) {
+        const { prev, next } = action.payload;
+        const index = current(state).payload.indexOf(castDraft(prev));
+        if (index > -1) {
+          state.payload[index] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<{
+        prev: ReadonlyArray<LegendPayload>;
+        next: ReadonlyArray<LegendPayload>;
+      }>(),
+    },
     removeLegendPayload: {
       reducer(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
         const index = current(state).payload.indexOf(castDraft(action.payload));
@@ -74,6 +93,7 @@ const legendSlice = createSlice({
   },
 });
 
-export const { setLegendSize, setLegendSettings, addLegendPayload, removeLegendPayload } = legendSlice.actions;
+export const { setLegendSize, setLegendSettings, addLegendPayload, replaceLegendPayload, removeLegendPayload } =
+  legendSlice.actions;
 
 export const legendReducer = legendSlice.reducer;

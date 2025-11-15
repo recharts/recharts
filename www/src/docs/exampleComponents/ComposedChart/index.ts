@@ -12,6 +12,8 @@ import scatterAndLineOfBestFitSource from './ScatterAndLineOfBestFit?raw';
 import bandedChartSource from './BandedChart?raw';
 import { ChartExample } from '../types.ts';
 import ComposedChartNavExample from './ComposedChartNavExample';
+import TargetPriceChart from './TargetPriceChart.tsx';
+import targetPriceChartSource from './TargetPriceChart.tsx?raw';
 
 export { ComposedChartNavExample };
 
@@ -45,5 +47,10 @@ export const composedChartExamples: Record<string, ChartExample> = {
     Component: BandedChart,
     sourceCode: bandedChartSource,
     name: 'Banded Chart',
+  },
+  TargetPriceChart: {
+    Component: TargetPriceChart,
+    sourceCode: targetPriceChartSource,
+    name: 'Target Price Chart with active Label',
   },
 };

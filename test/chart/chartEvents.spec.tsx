@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { describe, it, expect, vi, Mock, beforeEach } from 'vitest';
 import {
   SankeyChartCase,
@@ -67,6 +67,11 @@ describe('chart wrapper events', () => {
     it('should call onClick when user clicks on the chart', () => {
       const { container } = render(<ChartElement onClick={spies.onClick} />);
       fireEvent.click(getSurface(container), { clientX: 10, clientY: 10 });
+      act(() => {
+        // external handler middleware is called within requestAnimationFrame
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onClick).toHaveBeenCalled();
     });
 
@@ -79,13 +84,25 @@ describe('chart wrapper events', () => {
         />,
       );
       fireEvent.mouseOver(getSurface(container), { clientX: 10, clientY: 10 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onMouseEnter).toHaveBeenCalledTimes(1);
       expect(spies.onMouseMove).not.toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
       fireEvent.mouseMove(getSurface(container), { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onMouseMove).toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
       fireEvent.mouseLeave(getSurface(container));
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onMouseLeave).toHaveBeenCalled();
     });
 
@@ -100,17 +117,29 @@ describe('chart wrapper events', () => {
       fireEvent.touchStart(getSurface(container), {
         changedTouches: [{ pageX: 10, pageY: 10 }],
       });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onTouchStart).toHaveBeenCalled();
       expect(spies.onTouchMove).not.toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
       fireEvent.touchMove(getSurface(container), {
         changedTouches: [{ pageX: 20, pageY: 20 }],
       });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onTouchMove).toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
       fireEvent.touchEnd(getSurface(container), {
         changedTouches: [{ pageX: 20, pageY: 20 }],
       });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(spies.onTouchEnd).toHaveBeenCalled();
     });
   });
@@ -181,6 +210,10 @@ describe('chart wrapper event data', () => {
     it('should pass tooltip state to onClick when user clicks on the chart', () => {
       const { container } = renderTestCase();
       fireEvent.click(getSurface(container), { clientX: 10, clientY: 10 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expectLastCalledWithData(spies.onClick, {
         activeCoordinate: { x: 37.5, y: 10 },
         activeDataKey: undefined,
@@ -204,7 +237,12 @@ describe('chart wrapper event data', () => {
 
     it('should pass tooltip state to onMouseEnter, onMouseMove, and onMouseLeave when user hovers over the chart', () => {
       const { container } = renderTestCase();
+      expect(spies.onMouseEnter).toHaveBeenCalledTimes(0);
       fireEvent.mouseOver(getSurface(container), { clientX: 10, clientY: 10 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+      expect(spies.onMouseEnter).toHaveBeenCalledTimes(1);
       expectLastCalledWithData(spies.onMouseEnter, {
         activeCoordinate: { x: 37.5, y: 10 },
         activeDataKey: undefined,
@@ -214,6 +252,10 @@ describe('chart wrapper event data', () => {
         isTooltipActive: true,
       });
       fireEvent.mouseMove(getSurface(container), { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expectLastCalledWithData(spies.onMouseMove, {
         activeCoordinate: { x: 37.5, y: 20 },
         activeDataKey: undefined,
@@ -223,6 +265,10 @@ describe('chart wrapper event data', () => {
         isTooltipActive: true,
       });
       fireEvent.mouseLeave(getSurface(container));
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expectLastCalledWithData(spies.onMouseLeave, {
         activeCoordinate: {
           x: 37.5,

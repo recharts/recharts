@@ -313,12 +313,13 @@ const SVGElementPropKeys = [
 
 export type SVGElementPropKeysType = (typeof SVGElementPropKeys)[number];
 
+const SVGElementPropKeySet = new Set<string>(SVGElementPropKeys);
+
 export function isSvgElementPropKey(key: PropertyKey): boolean {
   if (typeof key !== 'string') {
     return false;
   }
-  const allowedSvgKeys: ReadonlyArray<string> = SVGElementPropKeys;
-  return allowedSvgKeys.includes(key);
+  return SVGElementPropKeySet.has(key);
 }
 
 export type DataAttributeKeyType = `data-${string}`;
@@ -340,8 +341,19 @@ export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
 export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(obj: T | boolean): SVGPropsNoEvents<T> {
-  const filteredEntries = Object.entries(obj).filter(([key]) => isSvgElementPropKey(key) || isDataAttribute(key));
-  return Object.fromEntries(filteredEntries) as SVGPropsNoEvents<T>;
+  if (typeof obj !== 'object' || obj === null) {
+    return {} as SVGPropsNoEvents<T>;
+  }
+  const result: Record<PropertyKey, any> = {};
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (isSvgElementPropKey(key) || isDataAttribute(key)) {
+        result[key] = obj[key];
+      }
+    }
+  }
+  return result as SVGPropsNoEvents<T>;
 }
 
 /**
