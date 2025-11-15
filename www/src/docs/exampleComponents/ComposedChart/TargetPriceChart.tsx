@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { ComposedChart, CartesianGrid, Tooltip, XAxis, YAxis, Area, Line, LabelList } from 'recharts';
+import { ComposedChart, CartesianGrid, Tooltip, XAxis, YAxis, Area, Line, LabelList, LabelProps } from 'recharts';
+import { useCallback } from 'react';
+import { MouseHandlerDataParam } from '../../../../../src';
 
 // #region Sample data
 export const startingTimestamp = 1695333600000;
@@ -107,28 +109,59 @@ export const chartData = [
 ];
 // #endregion
 
-function ActiveLabel(props: any) {
+function ActiveLabel(props: LabelProps) {
+  if (props.x == null || props.y == null || props.value == null) {
+    return null;
+  }
   return (
-    <text x={props.x + 10} y={props.y + 5} style={{ opacity: props.isVisible ? 1 : 0 }}>
+    <text x={Number(props.x) + 10} y={Number(props.y) + 5}>
       {props.value}
     </text>
   );
 }
 
-export default function TargetPriceChart() {
-  const [activeIndex, setActiveIndex] = React.useState(-1);
+const tickFormatter = (value: string): string => {
+  const date = new Date(value);
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+};
+
+function useActiveIndexState(defaultValue?: number) {
+  const [state, setState] = React.useState<number | undefined>(defaultValue);
+
+  const setActiveIndex = useCallback(
+    (props: MouseHandlerDataParam) => {
+      setState(Number(props.activeTooltipIndex));
+    },
+    [setState],
+  );
+
+  const clearActiveIndex = useCallback(() => {
+    setState(undefined);
+  }, [setState]);
+
+  return [state, setActiveIndex, clearActiveIndex] as const;
+}
+
+const showNothing = () => null;
+
+export default function TargetPriceChart({
+  isAnimationActive = true,
+  defaultIndex,
+}: {
+  isAnimationActive?: boolean;
+  defaultIndex?: number;
+}) {
+  const [activeIndex, setActiveIndex, clearActiveIndex] = useActiveIndexState(defaultIndex);
 
   return (
     <ComposedChart
       id="TargetPriceChart"
-      style={{ width: '100vw', height: '50vh' }}
+      style={{ width: '100%', height: '50vh' }}
       responsive
       data={chartData}
       margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-      onMouseMove={props => {
-        setActiveIndex(Number.isNaN(props.activeTooltipIndex) ? -1 : Number(props.activeTooltipIndex));
-      }}
-      onMouseLeave={() => setActiveIndex(-1)}
+      onMouseMove={setActiveIndex}
+      onMouseLeave={clearActiveIndex}
     >
       <CartesianGrid vertical />
       <XAxis
@@ -137,41 +170,45 @@ export default function TargetPriceChart() {
         dataKey="timestamp"
         interval="preserveStartEnd"
         domain={[startingTimestamp, endingTimestamp]}
-        tickFormatter={value => {
-          const date = new Date(value);
-          return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-        }}
+        tickFormatter={tickFormatter}
       />
       <YAxis interval="preserveStartEnd" orientation="right" />
-      <Area connectNulls dataKey="lowHigh" fill="orange" stroke="orange" fillOpacity={0.12} isAnimationActive={false}>
+      <Area
+        connectNulls
+        dataKey="lowHigh"
+        fill="orange"
+        stroke="orange"
+        fillOpacity={0.12}
+        isAnimationActive={isAnimationActive}
+      >
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => <ActiveLabel isVisible={activeIndex === labelProps.index} {...labelProps} />}
+          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Area>
-      <Line dataKey="low" stroke="none" dot={false} isAnimationActive={false}>
+      <Line dataKey="low" stroke="none" dot={false} isAnimationActive={isAnimationActive}>
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => <ActiveLabel isVisible={activeIndex === labelProps.index} {...labelProps} />}
+          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Line dataKey="price" color="darkslateblue" dot={false} isAnimationActive={false}>
+      <Line dataKey="price" color="darkslateblue" dot={false} isAnimationActive={isAnimationActive}>
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => <ActiveLabel isVisible={activeIndex === labelProps.index} {...labelProps} />}
+          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Line dataKey="targetPrice" stroke="darkorange" dot={false} isAnimationActive={false}>
+      <Line dataKey="targetPrice" stroke="darkorange" dot={false} isAnimationActive={isAnimationActive}>
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => <ActiveLabel isVisible={activeIndex === labelProps.index} {...labelProps} />}
+          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Tooltip content={() => null} />
+      <Tooltip content={showNothing} defaultIndex={defaultIndex} />
     </ComposedChart>
   );
 }

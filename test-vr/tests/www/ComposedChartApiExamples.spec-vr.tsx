@@ -12,7 +12,7 @@ import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/Com
 import TargetPriceChart from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
 
 test('TargetPriceChart', async ({ mount }) => {
-  const component = await mount(<TargetPriceChart />);
+  const component = await mount(<TargetPriceChart isAnimationActive={false} defaultIndex={50} />);
   await expect(component).toHaveScreenshot();
 });
 
