@@ -3,6 +3,7 @@ import { ChartData } from '../../chartDataSlice';
 import { isWellBehavedNumber } from '../../../util/isWellBehavedNumber';
 import { DataKey, CategoricalDomain, NumberDomain } from '../../../util/types';
 import { getValueByDataKey } from '../../../util/ChartUtils';
+import { isWellFormedNumberDomain } from '../../../util/isDomainSpecifiedByUser';
 
 function toFiniteNumber(value: unknown): number | undefined {
   if (typeof value === 'number') {
@@ -18,10 +19,10 @@ function toFiniteNumber(value: unknown): number | undefined {
 
 function isValueWithinNumberDomain(value: unknown, domain: NumberDomain): boolean {
   const numericValue = toFiniteNumber(value);
-  const lowerBound = toFiniteNumber(domain[0]);
-  const upperBound = toFiniteNumber(domain[1]);
+  const lowerBound = domain[0];
+  const upperBound = domain[1];
 
-  if (numericValue == null || lowerBound == null || upperBound == null) {
+  if (numericValue === undefined) {
     return false;
   }
 
@@ -44,36 +45,11 @@ function isValueWithinDomain(
     return true;
   }
 
-  if (Array.isArray(domain) && domain.length !== 2) {
+  if (!isWellFormedNumberDomain(domain)) {
     return true;
   }
 
-  const domainValues = Array.isArray(domain) ? domain : [domain];
-  const numericValue = toFiniteNumber(value);
-
-  if (Array.isArray(domain) && domain.length === 2) {
-    const lowerBound = toFiniteNumber(domain[0]);
-    const upperBound = toFiniteNumber(domain[1]);
-    if (lowerBound != null && upperBound != null && numericValue != null) {
-      return isValueWithinNumberDomain(numericValue, [lowerBound, upperBound]);
-    }
-    if (lowerBound == null || upperBound == null) {
-      return true;
-    }
-  }
-
-  return domainValues.some(domainValue => {
-    if (domainValue === value) {
-      return true;
-    }
-    if (numericValue != null) {
-      const domainNumericValue = toFiniteNumber(domainValue);
-      if (domainNumericValue != null && domainNumericValue === numericValue) {
-        return true;
-      }
-    }
-    return false;
-  });
+  return isValueWithinNumberDomain(value, domain);
 }
 
 export const combineActiveTooltipIndex = (
