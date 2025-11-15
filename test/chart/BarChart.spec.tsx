@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 import {
@@ -61,11 +61,20 @@ type DataType = {
 function assertActiveBarInteractions(container: HTMLElement) {
   const chart = container.querySelector('.recharts-wrapper');
   assertNotNull(chart);
+  expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(0);
 
   fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
+  act(() => {
+    vi.runOnlyPendingTimers();
+  });
+
   expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(1);
 
   fireEvent.mouseOut(chart);
+  act(() => {
+    vi.runOnlyPendingTimers();
+  });
+
   expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(0);
 }
 
@@ -3542,11 +3551,19 @@ describe('<BarChart />', () => {
       expect(tooltips0[1]).not.toBeVisible();
 
       fireEvent.mouseOver(barCharts[0], { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips1 = container.querySelectorAll('.recharts-tooltip-wrapper');
       expect(tooltips1[0]).toBeVisible();
       expect(tooltips1[1]).not.toBeVisible();
 
       fireEvent.mouseOver(barCharts[1], { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips2 = container.querySelectorAll('.recharts-tooltip-wrapper');
       expect(tooltips2[0]).toBeVisible();
       expectTooltipPayload(barCharts[0], '0', ['uv : 400']);
@@ -3554,11 +3571,19 @@ describe('<BarChart />', () => {
       expectTooltipPayload(barCharts[1], '0', ['pv : 2400']);
 
       fireEvent.mouseOut(barCharts[0]);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
       expect(tooltips3[0]).not.toBeVisible();
       expect(tooltips3[1]).toBeVisible();
 
       fireEvent.mouseOut(barCharts[1]);
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');
       expect(tooltips4[0]).not.toBeVisible();
       expect(tooltips4[1]).not.toBeVisible();
@@ -3587,6 +3612,10 @@ describe('<BarChart />', () => {
       expect(tooltips0[1]).not.toBeVisible();
 
       fireEvent.mouseOver(barCharts[0], { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips1 = container.querySelectorAll('.recharts-tooltip-wrapper');
       // Tooltips are synchronized, but each chart still shows their own data
       expect(tooltips1[0]).toBeVisible();
@@ -3595,6 +3624,10 @@ describe('<BarChart />', () => {
       expectTooltipPayload(barCharts[1], '0', ['pv : 2400']);
 
       fireEvent.mouseOver(barCharts[1], { clientX: 20, clientY: 20 });
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       const tooltips2 = container.querySelectorAll('.recharts-tooltip-wrapper');
       expect(tooltips2[0]).toBeVisible();
       expect(tooltips2[1]).toBeVisible();

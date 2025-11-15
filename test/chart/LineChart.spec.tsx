@@ -407,6 +407,9 @@ describe('<LineChart />', () => {
     expect(container.querySelectorAll('.customized-active-dot')).toHaveLength(0);
 
     fireEvent.mouseOver(chart, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     expect(container.querySelectorAll('.customized-active-dot')).toHaveLength(1);
   });
@@ -709,7 +712,10 @@ describe('<LineChart />', () => {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
     });
-    // fireEvent.mouseEnter(container, { clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     const tooltipCursors1 = container.querySelectorAll('.recharts-tooltip-cursor');
     expect(tooltipCursors1).toHaveLength(1);
@@ -743,6 +749,10 @@ describe('<LineChart />', () => {
     const expectedX2 = margin.left + dotSpacing * 2;
     expect(expectedX2).toEqual(164);
     fireEvent.mouseMove(tooltipTrigger, { clientX: expectedX2 + 0.1 * dotSpacing, clientY: height / 2 });
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     const tooltipCursors2 = container.querySelectorAll('.recharts-tooltip-cursor');
     expect(tooltipCursors2).toHaveLength(1);
@@ -1515,7 +1525,10 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
     });
-    vi.advanceTimersByTime(100);
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
   }
 
   describe.each(['index', undefined] as const)('when syncMethod=%s', syncMethod => {
