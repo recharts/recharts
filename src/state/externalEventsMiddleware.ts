@@ -50,25 +50,27 @@ externalEventsMiddleware.startListening({
     }
 
     const rafId = requestAnimationFrame(() => {
-      /*
-       * Here it is important that we get the latest state inside the animation frame callback,
-       * not from the outer scope, because there may have been other actions dispatched
-       * between the time the event was fired and the animation frame callback is executed.
-       * One of those actions is the one that actually sets the active tooltip state!
-       */
-      const state: RechartsRootState = listenerApi.getState();
-      const nextState: MouseHandlerDataParam = {
-        activeCoordinate: selectActiveTooltipCoordinate(state),
-        activeDataKey: selectActiveTooltipDataKey(state),
-        activeIndex: selectActiveTooltipIndex(state),
-        activeLabel: selectActiveLabel(state),
-        activeTooltipIndex: selectActiveTooltipIndex(state),
-        isTooltipActive: selectIsTooltipActive(state),
-      };
+      try {
+        /*
+         * Here it is important that we get the latest state inside the animation frame callback,
+         * not from the outer scope, because there may have been other actions dispatched
+         * between the time the event was fired and the animation frame callback is executed.
+         * One of those actions is the one that actually sets the active tooltip state!
+         */
+        const state: RechartsRootState = listenerApi.getState();
+        const nextState: MouseHandlerDataParam = {
+          activeCoordinate: selectActiveTooltipCoordinate(state),
+          activeDataKey: selectActiveTooltipDataKey(state),
+          activeIndex: selectActiveTooltipIndex(state),
+          activeLabel: selectActiveLabel(state),
+          activeTooltipIndex: selectActiveTooltipIndex(state),
+          isTooltipActive: selectIsTooltipActive(state),
+        };
 
-      handler(nextState, reactEvent);
-
-      rafIdMap.delete(eventType);
+        handler(nextState, reactEvent);
+      } finally {
+        rafIdMap.delete(eventType);
+      }
     });
 
     rafIdMap.set(eventType, rafId);
