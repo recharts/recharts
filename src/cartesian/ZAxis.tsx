@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { AxisDomain, DataKey, ScaleType } from '../util/types';
 import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
@@ -11,7 +11,7 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
   const prevSettingsRef = useRef<ZAxisSettings | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (prevSettingsRef.current === null) {
       dispatch(addZAxis(settings));
     } else if (prevSettingsRef.current !== settings) {
@@ -20,7 +20,7 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
     prevSettingsRef.current = settings;
   }, [settings, dispatch]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       if (prevSettingsRef.current) {
         dispatch(removeZAxis(prevSettingsRef.current));

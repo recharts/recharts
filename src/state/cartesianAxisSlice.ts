@@ -124,6 +124,9 @@ const cartesianAxisSlice = createSlice({
       reducer(state, action: PayloadAction<{ prev: XAxisSettings; next: XAxisSettings }>) {
         const { prev, next } = action.payload;
         if (state.xAxis[prev.id] !== undefined) {
+          if (prev.id !== next.id) {
+            delete state.xAxis[prev.id];
+          }
           state.xAxis[next.id] = castDraft(next);
         }
       },
@@ -145,6 +148,9 @@ const cartesianAxisSlice = createSlice({
       reducer(state, action: PayloadAction<{ prev: YAxisSettings; next: YAxisSettings }>) {
         const { prev, next } = action.payload;
         if (state.yAxis[prev.id] !== undefined) {
+          if (prev.id !== next.id) {
+            delete state.yAxis[prev.id];
+          }
           state.yAxis[next.id] = castDraft(next);
         }
       },
@@ -166,6 +172,9 @@ const cartesianAxisSlice = createSlice({
       reducer(state, action: PayloadAction<{ prev: ZAxisSettings; next: ZAxisSettings }>) {
         const { prev, next } = action.payload;
         if (state.zAxis[prev.id] !== undefined) {
+          if (prev.id !== next.id) {
+            delete state.zAxis[prev.id];
+          }
           state.zAxis[next.id] = castDraft(next);
         }
       },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { timeFormat } from 'd3-time-format';
@@ -2192,6 +2192,42 @@ describe('<XAxis />', () => {
         foo: implicitXAxis,
         bar: implicitXAxis,
       });
+    });
+
+    it('should remove old ID configuration when the ID changes', () => {
+      const IDChangingComponent = ({ children }: { children: ReactNode }) => {
+        const [id, setId] = React.useState('1');
+        const onClick = () => setId('2');
+        return (
+          <>
+            <button type="button" className="pushbutton" onClick={onClick}>
+              Change ID
+            </button>
+            <BarChart width={100} height={100}>
+              <XAxis xAxisId={id} scale="log" type="number" />
+              {children}
+            </BarChart>
+          </>
+        );
+      };
+      const renderTestCase = createSelectorTestCase(IDChangingComponent);
+
+      const { spy, container } = renderTestCase(state => state.cartesianAxis.xAxis);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // only id "1" exists
+      const lastCallArgs1 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs1);
+      expect(Object.keys(lastCallArgs1)).toEqual(['1']);
+
+      fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      // only id "2" exists
+      const lastCallArgs2 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs2);
+      expect(Object.keys(lastCallArgs2)).toEqual(['2']);
     });
 
     it('should return stable reference when chart re-renders', () => {
