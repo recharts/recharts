@@ -14,9 +14,6 @@ import {
 import { useCallback } from 'react';
 
 // #region Sample data
-export const startingTimestamp = 1695333600000;
-export const endingTimestamp = 1757628000000;
-
 export const chartData = [
   { timestamp: 1695333600000, price: 317.01, targetPrice: 396.556098, low: 298.1, lowHigh: [298.1, 440] },
   { timestamp: 1695592800000, price: 317.54, targetPrice: 396.556098, low: 298.1, lowHigh: [298.1, 440] },
@@ -179,7 +176,7 @@ export default function TargetPriceChart({
         scale="time"
         dataKey="timestamp"
         interval="preserveStartEnd"
-        domain={[startingTimestamp, endingTimestamp]}
+        domain={['dataMin', 'dataMax']}
         tickFormatter={tickFormatter}
       />
       <YAxis interval="preserveStartEnd" orientation="right" />
