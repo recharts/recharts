@@ -204,7 +204,7 @@ export default function TargetPriceChart({
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Line dataKey="price" color="darkslateblue" dot={false} isAnimationActive={isAnimationActive}>
+      <Line dataKey="price" stroke="darkslateblue" dot={false} isAnimationActive={isAnimationActive}>
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
