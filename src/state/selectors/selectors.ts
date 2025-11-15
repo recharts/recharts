@@ -25,7 +25,7 @@ import {
 } from '../../util/types';
 import { TooltipTrigger } from '../../chart/types';
 import { selectChartDataWithIndexes } from './dataSelectors';
-import { selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
+import { selectTooltipAxisDomain, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
 import { AxisRange, selectTooltipAxisDataKey } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -89,7 +89,7 @@ export const selectActiveIndex: (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipIndex | null = createSelector(
-  [selectTooltipInteractionState, selectTooltipDisplayedData],
+  [selectTooltipInteractionState, selectTooltipDisplayedData, selectTooltipAxisDataKey, selectTooltipAxisDomain],
   combineActiveTooltipIndex,
 );
 
@@ -189,10 +189,10 @@ export const selectIsTooltipActive: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => { isActive: boolean; activeIndex: TooltipIndex | undefined } = createSelector(
-  [selectTooltipInteractionState],
-  (tooltipInteractionState: TooltipInteractionState) => {
-    return { isActive: tooltipInteractionState.active, activeIndex: tooltipInteractionState.index };
+) => { isActive: boolean; activeIndex: TooltipIndex | null } = createSelector(
+  [selectTooltipInteractionState, selectActiveIndex],
+  (tooltipInteractionState: TooltipInteractionState, activeIndex: TooltipIndex | null) => {
+    return { isActive: tooltipInteractionState.active && activeIndex != null, activeIndex };
   },
 );
 

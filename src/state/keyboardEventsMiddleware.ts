@@ -1,9 +1,13 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI } from '@reduxjs/toolkit';
 import { setKeyboardInteraction } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
-import { selectTooltipAxisTicks, selectTooltipDisplayedData } from './selectors/tooltipSelectors';
+import {
+  selectTooltipAxisDomain,
+  selectTooltipAxisTicks,
+  selectTooltipDisplayedData,
+} from './selectors/tooltipSelectors';
 import { selectCoordinateForDefaultIndex } from './selectors/selectors';
-import { selectChartDirection } from './selectors/axisSelectors';
+import { selectChartDirection, selectTooltipAxisDataKey } from './selectors/axisSelectors';
 import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTooltipIndex';
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
@@ -29,9 +33,16 @@ keyboardEventsMiddleware.startListening({
     }
 
     // TODO this is lacking index for charts that do not support numeric indexes
-    const currentIndex: number = Number(
-      combineActiveTooltipIndex(keyboardInteraction, selectTooltipDisplayedData(state)),
+    const resolvedIndex = combineActiveTooltipIndex(
+      keyboardInteraction,
+      selectTooltipDisplayedData(state),
+      selectTooltipAxisDataKey(state),
+      selectTooltipAxisDomain(state),
     );
+    const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
+    if (!Number.isFinite(currentIndex) || currentIndex < 0) {
+      return;
+    }
     const tooltipTicks = selectTooltipAxisTicks(state);
     if (key === 'Enter') {
       const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(keyboardInteraction.index));

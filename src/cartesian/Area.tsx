@@ -633,6 +633,7 @@ class AreaWithState extends PureComponent<InternalProps> {
     const { r, strokeWidth } = getRadiusAndStrokeWidthFromDot(dot);
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
+    const activePointsClipPath = needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined;
 
     return (
       <ZIndexLayer zIndex={zIndex}>
@@ -659,6 +660,7 @@ class AreaWithState extends PureComponent<InternalProps> {
           mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}
+          clipPath={activePointsClipPath}
         />
         {this.props.isRange && Array.isArray(baseLine) && (
           <ActivePoints
@@ -666,6 +668,7 @@ class AreaWithState extends PureComponent<InternalProps> {
             mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
             itemDataKey={this.props.dataKey}
             activeDot={this.props.activeDot}
+            clipPath={activePointsClipPath}
           />
         )}
       </ZIndexLayer>
