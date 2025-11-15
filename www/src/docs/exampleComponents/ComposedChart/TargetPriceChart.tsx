@@ -1,7 +1,17 @@
 import * as React from 'react';
-import { ComposedChart, CartesianGrid, Tooltip, XAxis, YAxis, Area, Line, LabelList, LabelProps } from 'recharts';
+import {
+  ComposedChart,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Area,
+  Line,
+  LabelList,
+  LabelProps,
+  MouseHandlerDataParam,
+} from 'recharts';
 import { useCallback } from 'react';
-import { MouseHandlerDataParam } from '../../../../../src';
 
 // #region Sample data
 export const startingTimestamp = 1695333600000;
