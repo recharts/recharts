@@ -134,7 +134,7 @@ describe('omnidoc - documentation consistency', () => {
       return null;
     }
 
-    const apiComponentsWithKnownIssues = ['ReferenceLine', 'Text'];
+    const apiComponentsWithKnownIssues = ['Text'];
 
     test.each(apiDocReader.getPublicComponentNames().filter(c => !apiComponentsWithKnownIssues.includes(c)))(
       'if %s has default props in the API, then that default value must be the same as in the project',
@@ -155,7 +155,7 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
-    const storybookComponentsWithKnownIssues = ['ReferenceLine', 'Text', 'Treemap'];
+    const storybookComponentsWithKnownIssues = ['Text', 'Treemap'];
 
     test.each(storybookReader.getPublicComponentNames().filter(c => !storybookComponentsWithKnownIssues.includes(c)))(
       'if %s has default props in Storybook, it should also have them in the project',
