@@ -179,13 +179,7 @@ import {
 } from '../props/EventHandlers';
 import { legendType } from '../props/Legend';
 import { GeneralStyle, hide } from '../props/Styles';
-import {
-  animationBegin,
-  animationDuration,
-  animationEasing,
-  AnimationProps,
-  isAnimationActive,
-} from '../props/AnimationProps';
+import { animationBegin, animationEasing, AnimationProps, isAnimationActive } from '../props/AnimationProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
@@ -369,9 +363,10 @@ const StyleProps: Args = {
   background: {
     description: `If false set, background of bars will not be drawn. If true set,
     background of bars will be drawn which have the props calculated internally.
-    If object set, background of bars will be drawn which have the props mergered by the internal calculated props
+    If object set, background of bars will be drawn which have the props merged by the internal calculated props
      and the option. If ReactElement set, the option can be the custom background element.
       If set a function, the function will be called to render customized background.`,
+    defaultValue: false,
     table: { category: 'Style' },
   },
   barSize: {
@@ -385,6 +380,7 @@ const StyleProps: Args = {
   },
   legendType: {
     ...legendType,
+    defaultValue: 'rect',
     table: { category: 'Style' },
   },
   shape: {
@@ -398,6 +394,7 @@ const StyleProps: Args = {
     and the internally calculated props will be merged with the key value pairs of the passed object.
     If passed a ReactElement, the option can be the custom active bar element.
     If passed a function, the function will be called to render a customized active bar.`,
+    defaultValue: false,
     table: {
       type: {
         summary: 'Boolean | Object | ReactElement | Function',
@@ -410,6 +407,7 @@ const StyleProps: Args = {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
+    defaultValue: false,
     table: {
       type: {
         summary: 'string | number | ReactElement | Function',
@@ -421,6 +419,7 @@ const StyleProps: Args = {
     table: {
       category: 'Style',
     },
+    defaultValue: 0,
     description: `The minimal height of a bar in a horizontal BarChart, or the minimal width of a bar
     in a vertical BarChart. By default, 0 values are not shown. To visualize a 0 (or close to zero) point,
     set the minimal point size to a pixel value like 3. In stacked bar charts,
@@ -441,7 +440,12 @@ const GeneralBarProps: Args = {
 const AnimationPropsForBar: Args = {
   animationBegin,
   animationEasing,
-  animationDuration,
+  animationDuration: {
+    defaultValue: 400,
+    table: {
+      category: 'Animation',
+    },
+  },
   isAnimationActive,
 };
 

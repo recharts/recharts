@@ -4,7 +4,6 @@ export const BarAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The key of a group of data which should be unique in an area chart.',
@@ -14,7 +13,7 @@ export const BarAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -24,7 +23,7 @@ export const BarAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -34,7 +33,7 @@ export const BarAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'rect'",
+      defaultVal: 'rect',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -44,7 +43,7 @@ export const BarAPI = {
     {
       name: 'label',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -61,7 +60,6 @@ export const BarAPI = {
     {
       name: 'barSize',
       type: 'Number | Percentage',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -73,7 +71,6 @@ export const BarAPI = {
     {
       name: 'maxBarSize',
       type: 'Number',
-      defaultVal: '',
       desc: {
         'en-US': 'The maximum width of bar in a horizontal BarChart, or maximum height in a vertical BarChart.',
         'zh-CN':
@@ -102,7 +99,7 @@ export const BarAPI = {
     {
       name: 'background',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -120,7 +117,6 @@ export const BarAPI = {
     {
       name: 'shape',
       type: 'ReactElement | Function',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -139,7 +135,7 @@ export const BarAPI = {
     {
       name: 'activeBar',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'true',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -163,7 +159,6 @@ export const BarAPI = {
     {
       name: 'stackId',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -192,7 +187,6 @@ export const BarAPI = {
     {
       name: 'unit',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': 'The unit of data. This option will be used in tooltip.',
@@ -202,7 +196,6 @@ export const BarAPI = {
     {
       name: 'name',
       type: 'String | Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -214,8 +207,8 @@ export const BarAPI = {
     {
       name: 'isAnimationActive',
       type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
-      isOptional: false,
+      defaultVal: 'auto',
+      isOptional: true,
       desc: {
         'en-US': 'If set false, animation of bar will be disabled.',
         'zh-CN': '当值为 false，不开启动画。',
@@ -234,7 +227,7 @@ export const BarAPI = {
     {
       name: 'animationDuration',
       type: 'Number',
-      defaultVal: 1500,
+      defaultVal: 400,
       isOptional: false,
       desc: {
         'en-US': 'Specifies the duration of animation, the unit of this option is ms.',
@@ -254,7 +247,6 @@ export const BarAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

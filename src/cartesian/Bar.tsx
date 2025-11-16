@@ -24,7 +24,6 @@ import {
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import {
   BarPositionPosition,
   getBaseValueOfBar,
@@ -112,7 +111,13 @@ export interface BarRectangleItem extends RectangleProps {
 export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: string | number;
+  /**
+   * @defaultValue 0
+   */
   yAxisId?: string | number;
   stackId?: StackId;
   barSize?: string | number;
@@ -120,24 +125,53 @@ export interface BarProps extends ZIndexable {
   name?: string | number;
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
+  /**
+   * @defaultValue rect
+   */
   legendType?: LegendType;
+  /**
+   * @defaultValue 0
+   */
   minPointSize?: MinPointSize;
   maxBarSize?: number;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
+
+  /**
+   * @defaultValue false
+   */
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
+  /**
+   * @defaultValue false
+   */
   background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
 
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
   animationBegin?: number;
+  /**
+   * @defaultValue 400
+   */
   animationDuration?: AnimationDuration;
   animationEasing?: EasingInput;
   id?: string;
+  /**
+   * @defaultValue false
+   */
   label?: ImplicitLabelListType;
+  /**
+   * @defaultValue 300
+   */
+  zIndex?: number;
 }
 
 type BarMouseEvent = (
@@ -169,7 +203,7 @@ type InternalBarProps = {
   legendType: LegendType;
   minPointSize: MinPointSize;
   activeBar: ActiveShape<BarProps, SVGPathElement>;
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
@@ -665,13 +699,15 @@ class BarWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultBarProps = {
+export const defaultBarProps = {
   activeBar: false,
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',
+  background: false,
   hide: false,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
+  label: false,
   legendType: 'rect',
   minPointSize: defaultMinPointSize,
   xAxisId: 0,

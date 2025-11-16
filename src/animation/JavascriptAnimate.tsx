@@ -6,6 +6,7 @@ import configUpdate from './configUpdate';
 import { configEasing, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
+import { Global } from '../util/Global';
 
 type JavascriptAnimateProps = {
   animationId: string;
@@ -13,7 +14,7 @@ type JavascriptAnimateProps = {
   duration?: number;
   begin?: number;
   easing?: EasingInput;
-  isActive?: boolean;
+  isActive?: boolean | 'auto';
   canBegin?: boolean;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
@@ -39,7 +40,18 @@ const to: TimeAsObject = { t: 1 };
 
 export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
-  const { isActive, canBegin, duration, easing, begin, onAnimationEnd, onAnimationStart, children } = props;
+  const {
+    isActive: isActiveProp,
+    canBegin,
+    duration,
+    easing,
+    begin,
+    onAnimationEnd,
+    onAnimationStart,
+    children,
+  } = props;
+
+  const isActive = isActiveProp === 'auto' ? !Global.isSsr : isActiveProp;
 
   const animationManager = useAnimationManager(props.animationId, props.animationManager);
 
