@@ -276,9 +276,7 @@ const tooltipSlice = createSlice({
         const { prev, next } = action.payload;
         const index = current(state).tooltipItemPayloads.indexOf(castDraft(prev));
         if (index > -1) {
-          state.tooltipItemPayloads[index].settings = castDraft(next.settings);
-          state.tooltipItemPayloads[index].dataDefinedOnItem = castDraft(next.dataDefinedOnItem);
-          state.tooltipItemPayloads[index].positions = castDraft(next.positions);
+          state.tooltipItemPayloads[index] = castDraft(next);
         }
       },
       prepare: prepareAutoBatched<{ prev: TooltipPayloadConfiguration; next: TooltipPayloadConfiguration }>(),

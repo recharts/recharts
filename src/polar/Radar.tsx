@@ -119,31 +119,41 @@ const computeLegendPayloadFromRadarSectors = (props: PropsWithDefaults): Readonl
   ];
 };
 
-function getTooltipEntrySettings(props: PropsWithDefaults): TooltipPayloadConfiguration {
-  const { dataKey, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
-  return {
-    /*
-     * I suppose this here _could_ return props.points
-     * because while Radar does not support item tooltip mode, it _could_ support it.
-     * But when I actually do return the points here, a defaultIndex test starts failing.
-     * So, undefined it is.
-     */
-    dataDefinedOnItem: undefined,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      nameKey: undefined, // RadarChart does not have nameKey unfortunately
-      dataKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: getLegendItemColor(stroke, fill),
-      unit: '', // why doesn't Radar support unit?
-    },
-  };
-}
+const SetRadarTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+  }: Pick<PropsWithDefaults, 'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType'>) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      /*
+       * I suppose this here _could_ return props.points
+       * because while Radar does not support item tooltip mode, it _could_ support it.
+       * But when I actually do return the points here, a defaultIndex test starts failing.
+       * So, undefined it is.
+       */
+      dataDefinedOnItem: undefined,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        nameKey: undefined, // RadarChart does not have nameKey unfortunately
+        dataKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: getLegendItemColor(stroke, fill),
+        unit: '', // why doesn't Radar support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: PropsWithDefaults }) {
   const { dot, dataKey } = props;
@@ -532,7 +542,15 @@ export function Radar(outsideProps: Props) {
             radiusAxisId={props.radiusAxisId}
           />
           <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props)} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetRadarTooltipEntrySettings
+            dataKey={props.dataKey}
+            stroke={props.stroke}
+            strokeWidth={props.strokeWidth}
+            fill={props.fill}
+            name={props.name}
+            hide={props.hide}
+            tooltipType={props.tooltipType}
+          />
           <RadarImpl {...props} id={id} />
         </>
       )}

@@ -316,25 +316,39 @@ function SetRadialBarPayloadLegend(props: RadialBarProps) {
   return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
 }
 
-function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, name, hide, fill, tooltipType } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      nameKey: undefined, // RadialBar does not have nameKey, why?
-      dataKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // Why does RadialBar not support unit?
-    },
-  };
-}
+const SetRadialBarTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    data,
+    stroke,
+    strokeWidth,
+    name,
+    hide,
+    fill,
+    tooltipType,
+  }: Pick<
+    RadialBarProps,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        nameKey: undefined, // RadialBar does not have nameKey, why?
+        dataKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // Why does RadialBar not support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
@@ -420,7 +434,16 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     ) ?? STABLE_EMPTY_ARRAY;
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
+      <SetRadialBarTooltipEntrySettings
+        dataKey={props.dataKey}
+        data={data}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        name={props.name}
+        hide={props.hide}
+        fill={props.fill}
+        tooltipType={props.tooltipType}
+      />
       <RadialBarWithState {...props} data={data} />
     </>
   );

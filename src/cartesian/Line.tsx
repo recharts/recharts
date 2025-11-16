@@ -173,25 +173,40 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
   ];
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit, tooltipType } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey: undefined,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: stroke,
-      unit,
-    },
-  };
-}
+const SetLineTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    data,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    unit,
+    tooltipType,
+  }: Pick<
+    Props,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey: undefined,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: stroke,
+        unit,
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 const generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
   return `${length}px ${totalLength - length}px`;
@@ -756,7 +771,17 @@ function LineFn(outsideProps: Props) {
       {id => (
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetLineTooltipEntrySettings
+            dataKey={props.dataKey}
+            data={props.data}
+            stroke={props.stroke}
+            strokeWidth={props.strokeWidth}
+            fill={props.fill}
+            name={props.name}
+            hide={props.hide}
+            unit={props.unit}
+            tooltipType={props.tooltipType}
+          />
           <SetCartesianGraphicalItem
             type="line"
             id={id}

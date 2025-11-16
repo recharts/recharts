@@ -5,9 +5,9 @@ import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
-import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate, Percent } from '../util/types';
+import { Coordinate, DataKey, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -440,23 +440,35 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, stroke, strokeWidth, fill, name, data } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      name,
-      nameKey,
-      color: fill,
-      unit: '', // Sankey does not have unit, why?
-    },
-  };
-}
+const SetSankeyTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    data,
+  }: Pick<Props, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data'>) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        name,
+        nameKey,
+        hide: false,
+        type: undefined,
+        color: fill,
+        unit: '',
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 interface LinkDataItem {
   source: number;
@@ -986,7 +998,15 @@ export function Sankey(outsideProps: Props) {
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <SetSankeyTooltipEntrySettings
+        dataKey={props.dataKey}
+        nameKey={props.nameKey}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        data={props.data}
+      />
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={props.margin} />
       <RechartsWrapper
