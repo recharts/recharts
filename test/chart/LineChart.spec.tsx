@@ -1586,7 +1586,6 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
       // simulate leaving the area
       fireEvent.mouseLeave(firstChart);
-      vi.advanceTimersByTime(100);
       expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
       // hover on the same spot again
