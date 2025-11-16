@@ -17,10 +17,17 @@ type SVGPropsAndEvents<T> = Pick<T, Extract<keyof T, SVGElementPropsAndEventsTyp
  * @returns A new object containing only valid SVG properties, data attributes, and event handlers.
  */
 export function svgPropertiesAndEvents<T extends Record<PropertyKey, any>>(obj: T): SVGPropsAndEvents<T> {
-  const filteredEntries = Object.entries(obj).filter(
-    ([key]) => isSvgElementPropKey(key) || isDataAttribute(key) || isEventKey(key),
-  );
-  return Object.fromEntries(filteredEntries) as SVGPropsAndEvents<T>;
+  const result: Record<PropertyKey, any> = {};
+  // for ... in loop is 10x faster than Object.entries + filter + Object.fromEntries in Chrome
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (isSvgElementPropKey(key) || isDataAttribute(key) || isEventKey(key)) {
+        result[key] = obj[key];
+      }
+    }
+  }
+  return result as SVGPropsAndEvents<T>;
 }
 
 /**

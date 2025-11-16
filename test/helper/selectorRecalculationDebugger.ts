@@ -5,7 +5,7 @@
  * It also logs the previous and current values of the selector, and names of the dependencies that caused the recalculation.
  *
  * Example usage:
- * const debug = selectorRecalculationDebugger('mySelector', ['a', 'b']);
+ * const debug = selectorRecalculationDebugger('mySelector');
  * const selector = createSelector(
  *   [state => state.a, state => state.b],
  *   (a, b) => {

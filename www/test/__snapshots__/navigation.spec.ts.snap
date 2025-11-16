@@ -570,6 +570,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "BandedChart",
             "url": "/en-US/examples/BandedChart/",
           },
+          {
+            "displayName": "Target Price Chart with active Label",
+            "key": "TargetPriceChart",
+            "url": "/en-US/examples/TargetPriceChart/",
+          },
         ],
         "key": "ComposedChart",
       },

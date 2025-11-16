@@ -376,7 +376,7 @@ function CurveWithAnimation({
   } = props;
 
   const prevPoints = previousPointsRef.current;
-  const animationId = useAnimationId(props, 'recharts-line-');
+  const animationId = useAnimationId(points, 'recharts-line-');
 
   const [isAnimating, setIsAnimating] = useState(false);
   const showLabels = !isAnimating;

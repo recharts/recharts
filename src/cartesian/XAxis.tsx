@@ -2,12 +2,19 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ComponentType, ReactNode, useLayoutEffect } from 'react';
+import { ComponentType, ReactNode, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/cartesianAxisSlice';
+import {
+  addXAxis,
+  replaceXAxis,
+  removeXAxis,
+  XAxisOrientation,
+  XAxisPadding,
+  XAxisSettings,
+} from '../state/cartesianAxisSlice';
 import {
   implicitXAxis,
   selectAxisScale,
@@ -46,13 +53,26 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 
 function SetXAxisSettings(settings: XAxisSettings): ReactNode {
   const dispatch = useAppDispatch();
+  const prevSettingsRef = useRef<XAxisSettings | null>(null);
 
   useLayoutEffect(() => {
-    dispatch(addXAxis(settings));
-    return () => {
-      dispatch(removeXAxis(settings));
-    };
+    if (prevSettingsRef.current === null) {
+      dispatch(addXAxis(settings));
+    } else if (prevSettingsRef.current !== settings) {
+      dispatch(replaceXAxis({ prev: prevSettingsRef.current, next: settings }));
+    }
+    prevSettingsRef.current = settings;
   }, [settings, dispatch]);
+
+  useLayoutEffect(() => {
+    return () => {
+      if (prevSettingsRef.current) {
+        dispatch(removeXAxis(prevSettingsRef.current));
+        prevSettingsRef.current = null;
+      }
+    };
+  }, [dispatch]);
+
   return null;
 }
 

@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { ComponentType, MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
+import {
+  ComponentType,
+  MutableRefObject,
+  PureComponent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -448,7 +457,8 @@ function AreaWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
-  const animationId = useAnimationId(props, 'recharts-area-');
+  const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
+  const animationId = useAnimationId(animationInput, 'recharts-area-');
   const layout = useCartesianChartLayout();
 
   const [isAnimating, setIsAnimating] = useState(false);
