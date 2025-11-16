@@ -2,6 +2,7 @@ import { referenceLineDefaultProps } from '../src/cartesian/ReferenceLine';
 import { textDefaultProps } from '../src/component/Text';
 import { defaultAreaProps } from '../src/cartesian/Area';
 import { defaultLabelProps } from '../src/component/Label';
+import { defaultTreeMapProps } from '../src/chart/Treemap';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -12,4 +13,5 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
   Text: { defaultProps: textDefaultProps },
   Label: { defaultProps: defaultLabelProps },
+  Treemap: { defaultProps: defaultTreeMapProps },
 };

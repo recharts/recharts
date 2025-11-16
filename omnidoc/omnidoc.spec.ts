@@ -153,9 +153,7 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
-    const storybookComponentsWithKnownIssues = ['Treemap'];
-
-    test.each(storybookReader.getPublicComponentNames().filter(c => !storybookComponentsWithKnownIssues.includes(c)))(
+    test.each(storybookReader.getPublicComponentNames())(
       'if %s has default props in Storybook, it should also have them in the project',
       component => {
         const allProps = storybookReader.getRechartsPropsOf(component);
