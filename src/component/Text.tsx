@@ -85,6 +85,8 @@ interface TextProps {
    * The text will be rotated around the (x, y) coordinates as the pivot point.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
    * The rotation transform is applied as `rotate(angle, x, y)`.
+   *
+   * @defaultValue 0
    */
   angle?: number;
 
@@ -350,6 +352,7 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 const DEFAULT_FILL = '#808080';
 
 export const textDefaultProps = {
+  angle: 0,
   breakAll: false,
   // Magic number from d3
   capHeight: '0.71em',

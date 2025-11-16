@@ -2,14 +2,15 @@ import { StorybookArgs } from '../../../StorybookArgs';
 
 export const TextProps: StorybookArgs = {
   lineHeight: {
-    description: 'The height of each line of text in pixels.',
+    description: 'The height of each line of text in CSS units.',
+    defaultValue: '1em',
     table: {
       type: { summary: 'string' },
     },
   },
   breakAll: {
     description: 'Break words if the text exceeds the width.',
-    defaultValue: true,
+    defaultValue: false,
   },
   maxLines: {
     description: 'The max number of lines for text wrapping.',
@@ -27,6 +28,7 @@ export const TextProps: StorybookArgs = {
 
   angle: {
     description: 'The rotate angle of Text. (Optional)',
+    defaultValue: 0,
     table: {
       type: { summary: 'number' },
     },
