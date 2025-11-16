@@ -92,14 +92,6 @@ describe('<BarChart />', () => {
     mockGetBoundingClientRect({ width: 100, height: 100 });
   });
 
-  beforeAll(() => {
-    vi.useFakeTimers();
-  });
-
-  afterAll(() => {
-    vi.useRealTimers();
-  });
-
   describe('labels', () => {
     test('Render 4 labels when label=true', () => {
       const { container } = render(
@@ -152,8 +144,6 @@ describe('<BarChart />', () => {
 
   describe('activeBar', () => {
     test('Does not render an active bar by default', () => {
-      vi.useFakeTimers();
-
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -168,7 +158,9 @@ describe('<BarChart />', () => {
       assertNotNull(chart);
       fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-      vi.advanceTimersByTime(100);
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
       const bar = container.querySelectorAll('.recharts-active-bar');
       expect(bar).toHaveLength(0);
     });
@@ -237,7 +229,9 @@ describe('<BarChart />', () => {
       assertNotNull(chart);
       fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-      vi.advanceTimersByTime(100);
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
       const bar = container.querySelectorAll('.recharts-active-bar');
       expect(bar).toHaveLength(0);
     });
@@ -249,7 +243,6 @@ describe('<BarChart />', () => {
             <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar={{ strokeWidth: 4, fill: 'green' }} />
             <Tooltip />
           </BarChart>
-          ,
         </div>,
       );
 

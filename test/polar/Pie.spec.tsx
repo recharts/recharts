@@ -1595,25 +1595,30 @@ describe('<Pie />', () => {
       );
 
       expect(document.activeElement).toBe(document.body);
+      // indeed on first render, the tooltip shows info for "B"
+      expectTooltipPayload(container, '', ['B : 250']);
+
       const pie = focusTestHelper(container, '.recharts-pie', debug);
       expect(document.activeElement).toBe(pie);
 
       const allSectors = pie.querySelectorAll('.recharts-pie-sector');
       expect(allSectors).toHaveLength(5);
 
-      expectTooltipPayload(container, '', ['B : 250']);
-
-      // unsure why two are needed but they are in order to advance one
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
+      // now after focus we start iterating from the first sector "A"
+      expectTooltipPayload(container, '', ['A : 250']);
 
       // ArrowRight goes forwards
+      await user.keyboard('{ArrowRight}');
+      expectTooltipPayload(container, '', ['B : 250']);
+
+      await user.keyboard('{ArrowRight}');
       expectTooltipPayload(container, '', ['C : 250']);
 
-      await user.keyboard('{ArrowLeft}');
-      await user.keyboard('{ArrowLeft}');
-
       // ArrowLeft goes back
+      await user.keyboard('{ArrowLeft}');
+      expectTooltipPayload(container, '', ['B : 250']);
+
+      await user.keyboard('{ArrowLeft}');
       expectTooltipPayload(container, '', ['A : 250']);
     });
 

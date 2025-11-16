@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import { assertNotNull } from './assertNotNull';
 
 export function focusTestHelper(
@@ -11,7 +12,9 @@ export function focusTestHelper(
   }
   assertNotNull(element);
   if (element instanceof HTMLElement || element instanceof SVGElement) {
-    element.focus();
+    act(() => {
+      element.focus();
+    });
     return element;
   }
   throw new Error(`Expected instance of HTMLElement or SVGElement, instead got: ${element}`);

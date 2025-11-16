@@ -1,7 +1,18 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { Brush, CartesianGrid, Customized, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Brush,
+  CartesianGrid,
+  Customized,
+  Legend,
+  Line,
+  LineChart,
+  MouseHandlerDataParam,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -15,7 +26,6 @@ import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../h
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { TickItem } from '../../src/util/types';
-import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLines } from '../helper/expectLine';
@@ -1630,7 +1640,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
       // simulate leaving the area
       fireEvent.mouseLeave(firstChart);
-      vi.advanceTimersByTime(100);
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
     });
@@ -1710,7 +1722,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
       // simulate leaving the area
       fireEvent.mouseLeave(firstChart);
-      vi.advanceTimersByTime(100);
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
     });
@@ -1778,7 +1792,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
       // simulate leaving the area
       fireEvent.mouseLeave(firstChart);
-      vi.advanceTimersByTime(100);
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
     });
   });
