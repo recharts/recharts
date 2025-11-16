@@ -541,31 +541,33 @@ function ContentItemWithEvents(props: ContentItemProps) {
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
-function getTooltipEntrySettings({
-  props,
-  currentRoot,
-}: {
-  props: Props;
-  currentRoot: TreemapNode | null;
-}): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, stroke, fill } = props;
-  return {
-    dataDefinedOnItem: currentRoot,
-    positions: undefined, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
-    settings: {
-      stroke,
-      strokeWidth: undefined,
-      fill,
-      dataKey,
-      nameKey,
-      name: undefined, // Each TreemapNode has its own name
-      hide: false,
-      type: undefined,
-      color: fill,
-      unit: '',
-    },
-  };
-}
+const SetTreemapTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    stroke,
+    fill,
+    currentRoot,
+  }: Pick<Props, 'dataKey' | 'nameKey' | 'stroke' | 'fill'> & { currentRoot: TreemapNode | null }) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: currentRoot,
+      positions: undefined, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
+      settings: {
+        stroke,
+        strokeWidth: undefined,
+        fill,
+        dataKey,
+        nameKey,
+        name: undefined, // Each TreemapNode has its own name
+        hide: false,
+        type: undefined,
+        color: fill,
+        unit: '',
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 // Why is margin not a treemap prop? No clue. Probably it should be
 const defaultTreemapMargin: Margin = {
@@ -906,9 +908,12 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
     return (
       <>
-        <SetTooltipEntrySettings
-          fn={getTooltipEntrySettings}
-          args={{ props: this.props, currentRoot: this.state.currentRoot }}
+        <SetTreemapTooltipEntrySettings
+          dataKey={this.props.dataKey}
+          nameKey={this.props.nameKey}
+          stroke={this.props.stroke}
+          fill={this.props.fill}
+          currentRoot={this.state.currentRoot}
         />
         <Surface
           {...attrs}

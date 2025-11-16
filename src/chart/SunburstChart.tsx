@@ -123,36 +123,39 @@ function convertMapToRecord<K extends keyof any, V>(map: Map<K, V>): Record<K, V
   return record;
 }
 
-function getTooltipEntrySettings({
-  dataKey,
-  nameKey,
-  data,
-  stroke,
-  fill,
-  positions,
-}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'> & {
-  positions: SunburstPositionMap;
-}): TooltipPayloadConfiguration {
-  return {
-    dataDefinedOnItem: data.children,
-    // Redux store will not accept a Map because it's not serializable
-    positions: convertMapToRecord(positions),
-    // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
-    settings: {
-      stroke,
-      strokeWidth: undefined,
-      fill,
-      nameKey,
-      dataKey,
-      // if there is a nameKey use it, otherwise make the name of the tooltip the dataKey itself
-      name: nameKey ? undefined : dataKey,
-      hide: false,
-      type: undefined,
-      color: fill,
-      unit: '',
-    },
-  };
-}
+const SetSunburstTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    data,
+    stroke,
+    fill,
+    positions,
+  }: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'> & {
+    positions: SunburstPositionMap;
+  }) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data.children,
+      // Redux store will not accept a Map because it's not serializable
+      positions: convertMapToRecord(positions),
+      // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
+      settings: {
+        stroke,
+        strokeWidth: undefined,
+        fill,
+        nameKey,
+        dataKey,
+        // if there is a nameKey use it, otherwise make the name of the tooltip the dataKey itself
+        name: nameKey ? undefined : dataKey,
+        hide: false,
+        type: undefined,
+        color: fill,
+        unit: '',
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 // Why is margin not a sunburst prop? No clue. Probably it should be
 const defaultSunburstMargin: Margin = {
@@ -353,9 +356,13 @@ const SunburstChartImpl = ({
       >
         <Surface width={width} height={height}>
           <Layer className={layerClass}>{sectors}</Layer>
-          <SetTooltipEntrySettings
-            fn={getTooltipEntrySettings}
-            args={{ dataKey, data, stroke, fill, nameKey, positions }}
+          <SetSunburstTooltipEntrySettings
+            dataKey={dataKey}
+            nameKey={nameKey}
+            data={data}
+            stroke={stroke}
+            fill={fill}
+            positions={positions}
           />
           {children}
         </Surface>

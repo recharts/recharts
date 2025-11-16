@@ -224,25 +224,36 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
   ];
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, stroke, strokeWidth, fill, name, hide, unit } = props;
-  return {
-    dataDefinedOnItem: undefined,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey: undefined,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: props.tooltipType,
-      color: props.fill,
-      unit,
-    },
-  };
-}
+const SetBarTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    unit,
+    tooltipType,
+  }: Pick<Props, 'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'>) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: undefined,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey: undefined,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit,
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
@@ -863,7 +874,16 @@ function BarFn(outsideProps: Props) {
       {id => (
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetBarTooltipEntrySettings
+            dataKey={props.dataKey}
+            stroke={props.stroke}
+            strokeWidth={props.strokeWidth}
+            fill={props.fill}
+            name={props.name}
+            hide={props.hide}
+            unit={props.unit}
+            tooltipType={props.tooltipType}
+          />
           <SetCartesianGraphicalItem
             type="bar"
             id={id}

@@ -258,25 +258,40 @@ type PieSectorsProps = {
   allOtherPieProps: WithoutId<InternalProps>;
 };
 
-function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
-  return {
-    dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
-    positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // why doesn't Pie support unit?
-    },
-  };
-}
+const SetPieTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    sectors,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+  }: Pick<
+    InternalProps,
+    'dataKey' | 'nameKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
+      positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // why doesn't Pie support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 const getTextAnchor = (x: number, cx: number) => {
   if (x > cx) {
@@ -772,7 +787,17 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
+      <SetPieTooltipEntrySettings
+        dataKey={props.dataKey}
+        nameKey={props.nameKey}
+        sectors={sectors}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        hide={props.hide}
+        tooltipType={props.tooltipType}
+      />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
       </Layer>

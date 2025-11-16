@@ -15,8 +15,8 @@ import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
-  LabelListFromLabelProp,
   ImplicitLabelListType,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -214,6 +214,48 @@ const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<Legen
     },
   ];
 };
+
+type InputRequiredToComputeTooltipEntrySettings = {
+  dataKey?: DataKey<any> | undefined;
+  points?: ReadonlyArray<ScatterPointItem>;
+  stroke?: string;
+  strokeWidth?: number | string;
+  fill?: string;
+  name?: string;
+  hide?: boolean;
+  tooltipType?: TooltipType;
+};
+
+const SetScatterTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    points,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+  }: InputRequiredToComputeTooltipEntrySettings) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
+      positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        nameKey: undefined,
+        dataKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // why doesn't Scatter support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 type ScatterSymbolsProps = {
   points: ReadonlyArray<ScatterPointItem>;
@@ -464,37 +506,6 @@ function SymbolsWithAnimation({
   );
 }
 
-type InputRequiredToComputeTooltipEntrySettings = {
-  dataKey?: DataKey<any> | undefined;
-  points?: ReadonlyArray<ScatterPointItem>;
-  stroke?: string;
-  strokeWidth?: number | string;
-  fill?: string;
-  name?: string;
-  hide?: boolean;
-  tooltipType?: TooltipType;
-};
-
-function getTooltipEntrySettings(props: InputRequiredToComputeTooltipEntrySettings): TooltipPayloadConfiguration {
-  const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
-  return {
-    dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
-    positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      nameKey: undefined,
-      dataKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // why doesn't Scatter support unit?
-    },
-  };
-}
-
 export function computeScatterPoints({
   displayedData,
   xAxis,
@@ -694,7 +705,16 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   }
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
+      <SetScatterTooltipEntrySettings
+        dataKey={props.dataKey}
+        points={points}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        hide={props.hide}
+        tooltipType={props.tooltipType}
+      />
       <ScatterWithId
         {...everythingElse}
         xAxisId={xAxisId}
