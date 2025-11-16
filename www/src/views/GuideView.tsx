@@ -40,7 +40,7 @@ class GuideViewImpl extends PureComponent<RouteComponentProps> {
       <div className="page page-guide">
         <Helmet title={title} />
         <div className="content">
-          <Guide locale={locale} page={page} />
+          <Guide locale={locale} page={page} key={page} />
         </div>
       </div>
     );

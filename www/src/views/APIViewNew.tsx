@@ -195,7 +195,7 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
   return (
     <div className="page page-api">
       <Helmet title={page} />
-      <div className="content">
+      <div className="content" key={page}>
         <h3 className="page-title">{page}</h3>
         {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
         <ApiExamples examples={examples} componentName={page} />
