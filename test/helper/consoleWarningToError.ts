@@ -5,12 +5,10 @@
  * warning types into test failures, fix them incrementally, and prevent regressions.
  *
  * Quick Start:
- * 1. Add warning patterns to WARNINGS_AS_ERRORS array below
+ * 1. Remove the exception pattern from IGNORE_WARNINGS
  * 2. Run tests - they will fail when those warnings occur
  * 3. Fix the issues in source code
- * 4. Tests pass - the warning pattern stays to prevent regressions
- *
- * See ./CONSOLE_WARNINGS.md for detailed documentation and examples.
+ * 4. Tests pass
  */
 
 /**
@@ -19,8 +17,6 @@
  * Try to keep this list small and temporary.
  */
 export const IGNORE_WARNINGS: Array<string | RegExp> = [
-  // Add patterns here to suppress warnings
-  /An update to (.+) inside a test was not wrapped in act/,
   /*
    * There are unfortunately many cases where we put arbitrary props on DOM elements
    * because of the element cloning - we can't tell what we have cloned.
