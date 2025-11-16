@@ -44,9 +44,18 @@ interface BrushProps {
 
   ariaLabel?: string;
 
+  /**
+   * @defaultValue 40
+   */
   height?: number;
+  /**
+   * @defaultValue 5
+   */
   travellerWidth?: number;
   traveller?: BrushTravellerType;
+  /**
+   * @defaultValue 1
+   */
   gap?: number;
   padding?: Padding;
 
@@ -59,7 +68,13 @@ interface BrushProps {
 
   onChange?: OnBrushUpdate;
   onDragEnd?: OnBrushUpdate;
+  /**
+   * @defaultValue 1000
+   */
   leaveTimeOut?: number;
+  /**
+   * @defaultValue false
+   */
   alwaysShowText?: boolean;
 }
 
@@ -981,7 +996,7 @@ function BrushSettingsDispatcher(props: BrushSettings): null {
   return null;
 }
 
-const defaultBrushProps = {
+export const defaultBrushProps = {
   height: 40,
   travellerWidth: 5,
   gap: 1,
