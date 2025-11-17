@@ -4,7 +4,6 @@
  * @date 2015-09-17
  */
 import Decimal from 'decimal.js-light';
-import { curry } from './utils';
 
 /**
  * Get the digit count of a number.
@@ -52,52 +51,4 @@ function rangeStep(start: Decimal, end: Decimal, step: Decimal): Array<number> {
   return result;
 }
 
-/**
- * Linear interpolation of numbers.
- *
- * @param  {Number} a  Endpoint of the domain
- * @param  {Number} b  Endpoint of the domain
- * @param  {Number} t  A value in [0, 1]
- * @return {Number}    A value in the domain
- */
-const interpolateNumber = curry((a: number, b: number, t: number) => {
-  const newA = +a;
-  const newB = +b;
-
-  return newA + t * (newB - newA);
-});
-
-/**
- * Inverse operation of linear interpolation.
- *
- * @param  {Number} a Endpoint of the domain
- * @param  {Number} b Endpoint of the domain
- * @param  {Number} x Can be considered as an output value after interpolation
- * @return {Number}   When x is in the range a ~ b, the return value is in [0, 1]
- */
-const uninterpolateNumber = curry((a: number, b: number, x: number) => {
-  let diff = b - +a;
-
-  diff = diff || Infinity;
-
-  return (x - a) / diff;
-});
-
-/**
- * Inverse operation of linear interpolation with truncation.
- *
- * @param  {Number} a Endpoint of the domain
- * @param  {Number} b Endpoint of the domain
- * @param  {Number} x Can be considered as an output value after interpolation
- * @return {Number}   When x is in the interval a ~ b, the return value is in [0, 1].
- *                    When x is not in the interval a ~ b, it will be truncated to the interval a ~ b.
- */
-const uninterpolateTruncation = curry((a: number, b: number, x: number) => {
-  let diff = b - +a;
-
-  diff = diff || Infinity;
-
-  return Math.max(0, Math.min(1, (x - a) / diff));
-});
-
-export { rangeStep, getDigitCount, interpolateNumber, uninterpolateNumber, uninterpolateTruncation };
+export { rangeStep, getDigitCount };

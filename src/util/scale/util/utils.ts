@@ -81,19 +81,3 @@ export const reverse = <T extends any[] | string>(arr: T): T => {
   // can be string
   return arr.split('').reverse().join('') as T;
 };
-
-export const memoize = <F extends (...args: unknown[]) => any>(fn: F): F => {
-  let lastArgs: unknown[] | null = null;
-  let lastResult: unknown[] | null = null;
-
-  return ((...args: Parameters<F>) => {
-    if (lastArgs && args.every((val, i) => val === lastArgs?.[i])) {
-      return lastResult;
-    }
-
-    lastArgs = args;
-    lastResult = fn(...args);
-
-    return lastResult;
-  }) as F;
-};

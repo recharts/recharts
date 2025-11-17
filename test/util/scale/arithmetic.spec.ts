@@ -1,12 +1,6 @@
 import { describe, expect } from 'vitest';
 import Decimal from 'decimal.js-light';
-import {
-  getDigitCount,
-  rangeStep,
-  interpolateNumber,
-  uninterpolateNumber,
-  uninterpolateTruncation,
-} from '../../../src/util/scale/util/arithmetic';
+import { getDigitCount, rangeStep } from '../../../src/util/scale/util/arithmetic';
 
 describe('arithmetic', () => {
   describe('getDigitCount', () => {
@@ -59,25 +53,6 @@ describe('arithmetic', () => {
       expect(result).toEqual([
         0, 0.00000035, 0.0000007, 0.00000105, 0.0000014, 0.00000175, 0.0000021, 0.00000245, 0.0000028, 0.00000315,
       ]);
-    });
-  });
-
-  describe('interpolate', () => {
-    it('should interpolate between two numbers', () => {
-      const interpolate = interpolateNumber(0, 10, 0.5);
-      expect(interpolate).toBe(5);
-    });
-
-    it('should uninterpolate between two numbers', () => {
-      const uninterpolate = uninterpolateNumber(0, 10, 7);
-      expect(uninterpolate).toBe(0.7);
-    });
-
-    it('should uninterpolate with truncation', () => {
-      const uninterpolateTruncZero = uninterpolateTruncation(0, 10, -5);
-      const uninterpolateTruncOne = uninterpolateTruncation(0, 10, 15);
-      expect(uninterpolateTruncZero).toBe(0);
-      expect(uninterpolateTruncOne).toBe(1);
     });
   });
 });
