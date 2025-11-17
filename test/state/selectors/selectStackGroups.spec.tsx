@@ -315,4 +315,151 @@ describe('selectStackGroups', () => {
       });
     });
   });
+
+  describe('reverseStackOrder', () => {
+    it('should reverse the order of graphical items and stacked data when reverseStackOrder is true', () => {
+      const stackGroupsSpy = vi.fn();
+      const Comp = (): null => {
+        const isPanorama = useIsPanorama();
+        stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
+        return null;
+      };
+      render(
+        <BarChart width={100} height={100} data={PageData} reverseStackOrder>
+          <Bar dataKey="uv" stackId="a" />
+          <Bar dataKey="pv" stackId="a" />
+          <Comp />
+        </BarChart>,
+      );
+      expectLastCalledWith(stackGroupsSpy, {
+        a: {
+          graphicalItems: [
+            // Order should be reversed compared to JSX order
+            {
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              barSize: undefined,
+              data: undefined,
+              dataKey: 'pv',
+              hide: false,
+              isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
+              stackId: 'a',
+              type: 'bar',
+              xAxisId: 0,
+              yAxisId: 0,
+              zAxisId: 0,
+            },
+            {
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              barSize: undefined,
+              data: undefined,
+              dataKey: 'uv',
+              hide: false,
+              isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
+              stackId: 'a',
+              type: 'bar',
+              xAxisId: 0,
+              yAxisId: 0,
+              zAxisId: 0,
+            },
+          ],
+          stackedData: expect.toBeRechartsStackedData([
+            // Stacked data order should also be reversed
+            [
+              [0, 2400],
+              [0, 4567],
+              [0, 1398],
+              [0, 9800],
+              [0, 3908],
+              [0, 4800],
+            ],
+            [
+              [2400, 2800],
+              [4567, 4867],
+              [1398, 1698],
+              [9800, 10000],
+              [3908, 4186],
+              [4800, 4989],
+            ],
+          ]),
+        },
+      });
+      expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should maintain original order when reverseStackOrder is false', () => {
+      const stackGroupsSpy = vi.fn();
+      const Comp = (): null => {
+        const isPanorama = useIsPanorama();
+        stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
+        return null;
+      };
+      render(
+        <BarChart width={100} height={100} data={PageData} reverseStackOrder={false}>
+          <Bar dataKey="uv" stackId="a" />
+          <Bar dataKey="pv" stackId="a" />
+          <Comp />
+        </BarChart>,
+      );
+      expectLastCalledWith(stackGroupsSpy, {
+        a: {
+          graphicalItems: [
+            // Order should match JSX order
+            {
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              barSize: undefined,
+              data: undefined,
+              dataKey: 'uv',
+              hide: false,
+              isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
+              stackId: 'a',
+              type: 'bar',
+              xAxisId: 0,
+              yAxisId: 0,
+              zAxisId: 0,
+            },
+            {
+              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              barSize: undefined,
+              data: undefined,
+              dataKey: 'pv',
+              hide: false,
+              isPanorama: false,
+              maxBarSize: undefined,
+              minPointSize: 0,
+              stackId: 'a',
+              type: 'bar',
+              xAxisId: 0,
+              yAxisId: 0,
+              zAxisId: 0,
+            },
+          ],
+          stackedData: expect.toBeRechartsStackedData([
+            [
+              [0, 400],
+              [0, 300],
+              [0, 300],
+              [0, 200],
+              [0, 278],
+              [0, 189],
+            ],
+            [
+              [400, 2800],
+              [300, 4867],
+              [300, 1698],
+              [200, 10000],
+              [278, 4186],
+              [189, 4989],
+            ],
+          ]),
+        },
+      });
+      expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
+    });
+  });
 });

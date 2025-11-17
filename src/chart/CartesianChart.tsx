@@ -74,6 +74,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         syncId={rootChartProps.syncId}
         syncMethod={rootChartProps.syncMethod}
         className={rootChartProps.className}
+        reverseStackOrder={rootChartProps.reverseStackOrder}
       />
       <CategoricalChart {...rootChartProps} ref={ref} />
     </RechartsStoreProvider>

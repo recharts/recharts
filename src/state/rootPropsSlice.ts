@@ -25,6 +25,11 @@ export type UpdatableChartOptions = {
   syncId: number | string | undefined;
   syncMethod: SyncMethod;
   baseValue: BaseValue | undefined;
+  /**
+   * If false, stacked items will be rendered left to right. If true, stacked items will be rendered right to left.
+   * (Render direction affects SVG layering, not x position.)
+   */
+  reverseStackOrder: boolean;
 };
 
 export const initialState: UpdatableChartOptions = {
@@ -38,6 +43,7 @@ export const initialState: UpdatableChartOptions = {
   syncId: undefined,
   syncMethod: 'index',
   baseValue: undefined,
+  reverseStackOrder: false,
 };
 
 const rootPropsSlice = createSlice({
@@ -55,6 +61,7 @@ const rootPropsSlice = createSlice({
       state.syncMethod = action.payload.syncMethod;
       state.className = action.payload.className;
       state.baseValue = action.payload.baseValue;
+      state.reverseStackOrder = action.payload.reverseStackOrder;
     },
   },
 });

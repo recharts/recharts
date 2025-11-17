@@ -28,6 +28,7 @@ import {
 import {
   selectBarCategoryGap,
   selectBarGap,
+  selectReverseStackOrder,
   selectRootBarSize,
   selectRootMaxBarSize,
   selectStackOffsetType,
@@ -348,7 +349,7 @@ const selectStackGroups: (
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => AllStackGroups | undefined = createSelector(
-  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType],
+  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType, selectReverseStackOrder],
   combineStackGroups,
 );
 

@@ -51,7 +51,7 @@ import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
-import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
+import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
@@ -170,7 +170,7 @@ const selectAllStackedGraphicalItems: (state: RechartsRootState) => ReadonlyArra
   );
 
 const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(
-  [selectTooltipStackedData, selectAllStackedGraphicalItems, selectStackOffsetType],
+  [selectTooltipStackedData, selectAllStackedGraphicalItems, selectStackOffsetType, selectReverseStackOrder],
   combineStackGroups,
 );
 
