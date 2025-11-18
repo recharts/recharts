@@ -31,6 +31,8 @@ import lineChartHasMultiSeriesSource from './LineChartHasMultiSeries?raw';
 import lineChartAxisIntervalSource from './LineChartAxisInterval?raw';
 import lineChartNegativeValuesWithReferenceLinesSource from './LineChartNegativeValuesWithReferenceLines?raw';
 import { ChartExample } from '../types.ts';
+import CompareTwoLines from './CompareTwoLines.tsx';
+import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
 
 export const lineChartExamples = {
   SimpleLineChart: {
@@ -112,6 +114,11 @@ export const lineChartExamples = {
     Component: LineChartNegativeValuesWithReferenceLines,
     sourceCode: lineChartNegativeValuesWithReferenceLinesSource,
     name: 'Line Chart Negative Values With Reference Lines',
+  },
+  CompareTwoLines: {
+    Component: CompareTwoLines,
+    sourceCode: CompareTwoLinesSource,
+    name: 'Compare Two Lines',
   },
 } satisfies Record<string, ChartExample>;
 
