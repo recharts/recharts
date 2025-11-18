@@ -220,6 +220,7 @@ const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<Legen
 };
 
 type InputRequiredToComputeTooltipEntrySettings = {
+  id: GraphicalItemId;
   dataKey?: DataKey<any> | undefined;
   points?: ReadonlyArray<ScatterPointItem>;
   stroke?: string;
@@ -232,6 +233,7 @@ type InputRequiredToComputeTooltipEntrySettings = {
 
 const SetScatterTooltipEntrySettings = React.memo(
   ({
+    id,
     dataKey,
     points,
     stroke,
@@ -244,6 +246,7 @@ const SetScatterTooltipEntrySettings = React.memo(
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
       positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
+      graphicalItemId: id,
       settings: {
         stroke,
         strokeWidth,
@@ -715,6 +718,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   return (
     <>
       <SetScatterTooltipEntrySettings
+        id={props.id}
         dataKey={props.dataKey}
         points={points}
         stroke={props.stroke}
