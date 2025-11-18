@@ -11,6 +11,9 @@ const root = resolve(__dirname, '..');
 const outDir = resolve(root, 'docs');
 const sitemapPath = join(outDir, 'sitemap.xml');
 
+// Google's limit for a single sitemap file
+const MAX_URLS = 1000;
+
 interface ValidationResult {
   success: boolean;
   errors: string[];
@@ -164,6 +167,18 @@ function validateSitemap(): ValidationResult {
   const totalUrls = Array.from(sitemapUrlMap.values()).reduce((sum, url) => sum + 1 + url.alternates.length, 0);
   console.log(`✓ Found ${sitemapUrlMap.size} canonical URLs with ${totalUrls} total URLs in sitemap\n`);
 
+  // Check: Total URLs should not exceed MAX_URLS (Google's limit for a single sitemap)
+  if (totalUrls > MAX_URLS) {
+    result.errors.push(
+      `Sitemap contains ${totalUrls} total URLs, which exceeds the maximum limit of ${MAX_URLS}. ` +
+        `Please split the sitemap into multiple files.`,
+    );
+    result.success = false;
+    console.log(`✗ Sitemap exceeds maximum URL count (${totalUrls} > ${MAX_URLS})\n`);
+  } else {
+    console.log(`✓ Sitemap URL count is within limits (${totalUrls} ≤ ${MAX_URLS})\n`);
+  }
+
   // Get all HTML files
   const htmlFiles = getAllHtmlFiles(outDir);
   const htmlFilesSet = new Set(
@@ -271,3 +286,5 @@ function main(): void {
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }
+
+export { MAX_URLS };
