@@ -506,7 +506,7 @@ describe('<PieChart />', () => {
       const user = userEventSetup();
       const onClick = vi.fn();
 
-      const { container, debug } = rechartsTestRender(getPieChart({ onClick }));
+      const { container } = rechartsTestRender(getPieChart({ onClick }));
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
       expect(sector).not.toBeNull();
@@ -519,8 +519,6 @@ describe('<PieChart />', () => {
       act(() => {
         vi.runOnlyPendingTimers();
       });
-
-      debug();
 
       expect(onClick).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenLastCalledWith(

@@ -170,10 +170,21 @@ export const PieAPI = {
       },
     },
     {
+      name: 'shape',
+      type: 'Object | ReactElement | Function',
+      defaultVal: 'null',
+      isOptional: true,
+      desc: {
+        'en-US': 'The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.',
+        'zh-CN': 'Pie 楔子的自定义形状。也可以通过检查 isActive 来渲染激活的楔子。',
+      },
+    },
+    {
       name: 'activeShape',
       type: 'Object | ReactElement | Function',
       defaultVal: 'null',
-      isOptional: false,
+      isOptional: true,
+      deprecated: true,
       desc: {
         'en-US': 'The shape of active sector.',
         'zh-CN': '激活楔子的形状。',
@@ -189,7 +200,8 @@ export const PieAPI = {
       name: 'inactiveShape',
       type: 'Object | ReactElement | Function',
       defaultVal: 'null',
-      isOptional: false,
+      isOptional: true,
+      deprecated: true,
       desc: {
         'en-US': 'The shape of inactive sector.',
         'zh-CN': '未激活楔子的形状。',
