@@ -157,8 +157,8 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-type PieSectorContentProps = PieSectorDataItem & { isActive: boolean };
-type PieShape = ReactNode | ((props: PieSectorContentProps) => React.ReactElement);
+type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean };
+type PieShape = ReactNode | ((props: PieSectorShapeProps) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -178,7 +178,9 @@ interface InternalPieProps extends PieDef, ZIndexable {
   /** the input data */
   data?: ChartDataInput[];
   sectors: ReadonlyArray<PieSectorDataItem>;
+  /** @deprecated */
   activeShape?: ActiveShape<PieSectorDataItem>;
+  /** @deprecated */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   shape?: PieShape;
   labelLine?: PieLabelLine;
@@ -214,12 +216,12 @@ interface PieProps extends PieDef, ZIndexable {
   /** the input data */
   data?: ChartDataInput[];
   /**
-   * @deprecated use the `content` prop to create each sector
+   * @deprecated use the `shape` prop to create each sector
    * `isActive` designates the "active" shape
    */
   activeShape?: ActiveShape<PieSectorDataItem>;
   /**
-   * @deprecated use the `content` prop to modify each sector
+   * @deprecated use the `shape` prop to modify each sector
    */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   shape?: PieShape;
@@ -480,26 +482,6 @@ function PieLabelList({
   return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
 }
 
-function PieSectorShape({
-  contentProps,
-  shape,
-  sectorOptions,
-}: {
-  contentProps: PieSectorContentProps;
-  shape: PieShape;
-  sectorOptions?: ActiveShape<Readonly<PieSectorDataItem>>;
-}) {
-  if (React.isValidElement(shape)) {
-    return React.cloneElement(shape, contentProps);
-  }
-  if (typeof shape === 'function') {
-    return shape(contentProps);
-  }
-  const { isActive, ...sectorProps } = contentProps;
-
-  return <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />;
-}
-
 function PieSectors(props: PieSectorsProps) {
   const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape } = props;
 
@@ -534,7 +516,6 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
-        const contentProps = { ...sectorProps, isActive };
 
         return (
           <Layer
@@ -549,7 +530,7 @@ function PieSectors(props: PieSectorsProps) {
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
-            <PieSectorShape shape={shape} contentProps={contentProps} sectorOptions={sectorOptions ?? undefined} />
+            <Shape option={shape ?? sectorOptions} shapeType="sector" isActive={isActive} {...sectorProps} />
           </Layer>
         );
       })}

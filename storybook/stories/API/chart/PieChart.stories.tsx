@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Label, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { pageDataWithFillColor } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -16,7 +16,13 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <PieChart {...args}>
-          <Pie data={data} dataKey="uv" activeShape={activeShape} />
+          <Pie
+            data={data}
+            dataKey="uv"
+            shape={({ isActive, ...props }) => {
+              return <Sector {...props} fill={isActive ? activeShape.fill : props.fill} />;
+            }}
+          />
           <Tooltip defaultIndex={3} />
           <RechartsHookInspector />
         </PieChart>
