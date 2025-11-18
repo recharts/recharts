@@ -11,7 +11,7 @@ import { selectTooltipCoordinate } from './selectors/touchSelectors';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
-export const touchEventMiddleware = createListenerMiddleware();
+export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
 
 touchEventMiddleware.startListening({
   actionCreator: touchEventAction,

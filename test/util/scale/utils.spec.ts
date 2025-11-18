@@ -1,5 +1,5 @@
 import { describe, expect } from 'vitest';
-import { compose, curry, map, memoize, range, reverse } from '../../../src/util/scale/util/utils';
+import { compose, curry, map, range, reverse } from '../../../src/util/scale/util/utils';
 
 describe('functional utilities', () => {
   describe('curry', () => {
@@ -52,23 +52,6 @@ describe('functional utilities', () => {
 
     it('should reverse strings', () => {
       expect(reverse('hello')).toBe('olleh');
-    });
-  });
-
-  describe('memoize', () => {
-    let callCount = 0;
-    const add = (a: number, b: number) => {
-      callCount++;
-      return a + b;
-    };
-    const memoizedAdd = memoize(add);
-
-    // if memoize works correctly, the call count should be 1 after the first call
-    it('should memoize a function', () => {
-      expect(memoizedAdd(1, 2)).toBe(3);
-      expect(callCount).toBe(1);
-      expect(memoizedAdd(1, 2)).toBe(3);
-      expect(callCount).toBe(1);
     });
   });
 });

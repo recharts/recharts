@@ -4,7 +4,7 @@
  * @date 2015-09-17
  */
 import Decimal from 'decimal.js-light';
-import { compose, range, memoize, map, reverse } from './util/utils';
+import { compose, range, map, reverse } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 import { NumberDomain } from '../types';
 
@@ -172,7 +172,7 @@ export const calculateStep = (
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-function getNiceTickValuesFn([min, max]: NumberDomain, tickCount = 6, allowDecimals = true): number[] {
+export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allowDecimals = true): number[] => {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -196,7 +196,7 @@ function getNiceTickValuesFn([min, max]: NumberDomain, tickCount = 6, allowDecim
   const values = rangeStep(tickMin, tickMax.add(new Decimal(0.1).mul(step)), step);
 
   return min > max ? reverse(values) : values;
-}
+};
 
 /**
  * Calculate the ticks of an interval.
@@ -207,7 +207,7 @@ function getNiceTickValuesFn([min, max]: NumberDomain, tickCount = 6, allowDecim
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-function getTickValuesFixedDomainFn([min, max]: NumberDomain, tickCount: number, allowDecimals = true) {
+export const getTickValuesFixedDomain = ([min, max]: NumberDomain, tickCount: number, allowDecimals = true) => {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
 
@@ -234,7 +234,4 @@ function getTickValuesFixedDomainFn([min, max]: NumberDomain, tickCount: number,
   }
 
   return min > max ? reverse(values) : values;
-}
-
-export const getNiceTickValues = memoize(getNiceTickValuesFn);
-export const getTickValuesFixedDomain = memoize(getTickValuesFixedDomainFn);
+};
