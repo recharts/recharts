@@ -10,7 +10,7 @@ const useAnimationProgress = (allAnimationManagers: Map<string, MockAnimationMan
   useEffect(() => {
     setProgressMap(prev => {
       const newMap = new Map<string, number>();
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const animationId of allAnimationManagers.keys()) {
         newMap.set(animationId, prev.get(animationId) ?? 0);
       }
@@ -28,7 +28,7 @@ const useAnimationProgress = (allAnimationManagers: Map<string, MockAnimationMan
       }
     } else {
       const newProgressMap = new Map(progressMap);
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const [id, manager] of allAnimationManagers.entries()) {
         // eslint-disable-next-line no-await-in-loop
         await manager.setAnimationProgress(safeProgress);

@@ -345,7 +345,7 @@ export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(obj: T
     return {} as SVGPropsNoEvents<T>;
   }
   const result: Record<PropertyKey, any> = {};
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       if (isSvgElementPropKey(key) || isDataAttribute(key)) {

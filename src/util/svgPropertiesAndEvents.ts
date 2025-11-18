@@ -19,7 +19,7 @@ type SVGPropsAndEvents<T> = Pick<T, Extract<keyof T, SVGElementPropsAndEventsTyp
 export function svgPropertiesAndEvents<T extends Record<PropertyKey, any>>(obj: T): SVGPropsAndEvents<T> {
   const result: Record<PropertyKey, any> = {};
   // for ... in loop is 10x faster than Object.entries + filter + Object.fromEntries in Chrome
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       if (isSvgElementPropKey(key) || isDataAttribute(key) || isEventKey(key)) {
