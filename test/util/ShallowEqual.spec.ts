@@ -1,4 +1,4 @@
-import { shallowEqual } from '../../src/util/ShallowEqual';
+import { shallowEqual } from 'react-redux';
 
 const arrayValue = [1];
 const objectValue = { foo: 'bar' };

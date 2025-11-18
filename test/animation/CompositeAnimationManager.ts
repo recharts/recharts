@@ -32,7 +32,6 @@ export class CompositeAnimationManager implements MockAnimationManager {
       throw new Error('No active animation managers available');
     }
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const [, manager] of animatingManagers) {
       /*
        * Here it's important that we process the managers one by one, with await in-between.
@@ -52,7 +51,6 @@ export class CompositeAnimationManager implements MockAnimationManager {
       throw new Error('No active animation managers available');
     }
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const [, manager] of animatingManagers) {
       // eslint-disable-next-line no-await-in-loop
       await manager.completeAnimation();
@@ -77,7 +75,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
 
   public getAnimatingManagers(): Map<string, MockAnimationManager> {
     const animatingManagers = new Map<string, MockAnimationManager>();
-    // eslint-disable-next-line no-restricted-syntax
+
     for (const [id, manager] of this.animationManagers) {
       if (manager.isAnimating()) {
         animatingManagers.set(id, manager);

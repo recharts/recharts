@@ -8,6 +8,7 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import reactPerf from 'eslint-plugin-react-perf';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -251,6 +252,31 @@ const overridesConfig = [
     },
   },
   {
+    // https://github.com/airbnb/javascript/issues/1271#issuecomment-548688952
+    name: 'allow-for-loop',
+    files: allFiles,
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'LabeledStatement',
+          message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
+        },
+        {
+          selector: 'WithStatement',
+          message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
+        },
+      ],
+    },
+  },
+  {
+    name: 'allow-continue',
+    files: allFiles,
+    rules: {
+      'no-continue': 'off',
+    },
+  },
+  {
     name: 'x/override-2',
     files: ['./storybook/**/*.stories.@(ts|tsx)', './storybook/**/*.@(ts|tsx)', '*.js'],
     rules: {
@@ -358,10 +384,6 @@ const omnidocOverrides = [
     name: 'omnidoc-overrides',
     files: ['omnidoc/**'],
     rules: {
-      // we allow generators in omnidoc scripts
-      'no-restricted-syntax': 'off',
-      // we allow `continue`
-      'no-continue': 'off',
       // class methods are not required to use `this` in omnidoc scripts
       'class-methods-use-this': 'off',
       // omnidoc can use console logs
@@ -384,6 +406,19 @@ const settings = [
     },
   },
 ];
+
+const perfOptimization = {
+  name: 'perf-optimization-examples',
+  files: ['./www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx'],
+  plugins: { 'react-perf': reactPerf },
+  rules: {
+    // new object as prop creates a new reference on each render - but we can memo this one
+    // 'react-perf/jsx-no-new-object-as-prop': 'error',
+    'react-perf/jsx-no-new-array-as-prop': 'error',
+    'react-perf/jsx-no-new-function-as-prop': 'error',
+    'react-perf/jsx-no-jsx-as-prop': 'error',
+  },
+};
 
 export default [
   // Ignore .gitignore files/folder in eslint
@@ -410,4 +445,5 @@ export default [
   ...settings,
   // Omnidoc Overrides
   ...omnidocOverrides,
+  perfOptimization,
 ];

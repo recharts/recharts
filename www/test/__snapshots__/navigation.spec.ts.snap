@@ -414,6 +414,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "LineChartNegativeValuesWithReferenceLines",
             "url": "/en-US/examples/LineChartNegativeValuesWithReferenceLines/",
           },
+          {
+            "displayName": "Compare Two Lines",
+            "key": "CompareTwoLines",
+            "url": "/en-US/examples/CompareTwoLines/",
+          },
         ],
         "key": "LineChart",
       },

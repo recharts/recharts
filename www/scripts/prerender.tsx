@@ -72,7 +72,6 @@ async function prerender() {
   let successCount = 0;
   let failCount = 0;
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const route of allRoutes) {
     try {
       const filePath = route === '/' ? join(outDir, 'index.html') : join(outDir, route, 'index.html');

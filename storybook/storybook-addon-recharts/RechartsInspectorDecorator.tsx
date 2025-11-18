@@ -1,4 +1,4 @@
-import React, { createContext, useCallback } from 'react';
+import React, { createContext, useCallback, useMemo } from 'react';
 import { StoryFn } from '@storybook/react-vite';
 import { useGlobals } from 'storybook/preview-api';
 import { noop } from '../../src/util/DataUtils';
@@ -89,22 +89,32 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
     rechartsSetInspectorPosition: setPosition,
   };
 
+  const inspectorContextValue = useMemo(
+    () => ({
+      enabled: position !== 'hidden' && position != null,
+      position,
+      setPosition,
+      manualAnimationsEnabled,
+      setManualAnimationsEnabled,
+      crosshairControlsEnabled,
+      setCrosshairControlsEnabled,
+    }),
+    [
+      position,
+      setPosition,
+      manualAnimationsEnabled,
+      setManualAnimationsEnabled,
+      crosshairControlsEnabled,
+      setCrosshairControlsEnabled,
+    ],
+  );
+
   return (
     <AnimationManagerControlsContext.Provider value={animationManager}>
       <AnimationManagerContext.Provider
         value={manualAnimationsEnabled ? animationManager.factory : createDefaultAnimationManager}
       >
-        <RechartsInspectorContext.Provider
-          value={{
-            enabled: position !== 'hidden' && position != null,
-            position,
-            setPosition,
-            manualAnimationsEnabled,
-            setManualAnimationsEnabled,
-            crosshairControlsEnabled,
-            setCrosshairControlsEnabled,
-          }}
-        >
+        <RechartsInspectorContext.Provider value={inspectorContextValue}>
           <HookInspectorLayout position={position}>
             <Story {...context} />
           </HookInspectorLayout>

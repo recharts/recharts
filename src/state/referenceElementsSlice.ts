@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
-import { WritableDraft } from 'immer';
+import { castDraft, WritableDraft } from 'immer';
 import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
 import { ReferenceLineSegment } from '../cartesian/ReferenceLine';
@@ -64,7 +64,7 @@ export const referenceElementsSlice = createSlice({
       }
     },
     addLine: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceLineSettings>) => {
-      state.lines.push(action.payload);
+      state.lines.push(castDraft(action.payload));
     },
     removeLine: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceLineSettings>) => {
       const index = current(state).lines.findIndex(line => line === action.payload);

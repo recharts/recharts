@@ -64,6 +64,7 @@ import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthF
 import { Shape } from '../util/ActiveShapeUtils';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 export interface LinePointItem {
   readonly value: number;
@@ -819,5 +820,5 @@ function LineFn(outsideProps: Props) {
   );
 }
 
-export const Line: ComponentType<Props> = React.memo(LineFn);
+export const Line: ComponentType<Props> = React.memo(LineFn, propsAreEqual);
 Line.displayName = 'Line';

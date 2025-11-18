@@ -25,8 +25,8 @@ import {
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { isLabelContentAFunction } from '../component/Label';
-import { shallowEqual } from '../util/ShallowEqual';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -218,20 +218,6 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
   );
 };
 
-const YAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Props>): boolean => {
-  const { domain: prevDomain, ...prevRest } = prevProps;
-  const { domain: nextDomain, ...nextRest } = nextProps;
-  if (!shallowEqual(prevRest, nextRest)) {
-    return false;
-  }
-
-  if (Array.isArray(prevDomain) && prevDomain.length === 2 && Array.isArray(nextDomain) && nextDomain.length === 2) {
-    return prevDomain[0] === nextDomain[0] && prevDomain[1] === nextDomain[1];
-  }
-
-  return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
-};
-
-export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
+export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual);
 
 YAxis.displayName = 'YAxis';

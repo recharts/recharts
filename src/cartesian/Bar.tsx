@@ -82,6 +82,7 @@ import { WithoutId } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 type Rectangle = {
   x: number | null;
@@ -945,5 +946,5 @@ function BarFn(outsideProps: Props) {
   );
 }
 
-export const Bar: ComponentType<Props> = React.memo(BarFn);
+export const Bar: ComponentType<Props> = React.memo(BarFn, propsAreEqual);
 Bar.displayName = 'Bar';

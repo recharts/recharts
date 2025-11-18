@@ -25,8 +25,8 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { shallowEqual } from '../util/ShallowEqual';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -170,21 +170,6 @@ const XAxisSettingsDispatcher = (outsideProps: Props) => {
   );
 };
 
-const XAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Props>): boolean => {
-  const { domain: prevDomain, ...prevRest } = prevProps;
-  const { domain: nextDomain, ...nextRest } = nextProps;
-
-  if (!shallowEqual(prevRest, nextRest)) {
-    return false;
-  }
-
-  if (Array.isArray(prevDomain) && prevDomain.length === 2 && Array.isArray(nextDomain) && nextDomain.length === 2) {
-    return prevDomain[0] === nextDomain[0] && prevDomain[1] === nextDomain[1];
-  }
-
-  return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
-};
-
-export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, XAxisMemoComparator);
+export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual);
 
 XAxis.displayName = 'XAxis';
