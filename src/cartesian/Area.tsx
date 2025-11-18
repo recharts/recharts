@@ -69,6 +69,7 @@ import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthF
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -968,5 +969,5 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
-export const Area: ComponentType<Props> = React.memo(AreaFn);
+export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
 Area.displayName = 'Area';

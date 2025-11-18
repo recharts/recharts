@@ -6,7 +6,6 @@ import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandl
 
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
-import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
@@ -540,15 +539,9 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   );
 });
 
-const MemoCartesianAxis = React.memo(CartesianAxisComponent, (prevProps, nextProps) => {
-  const { viewBox: prevViewBox, ...prevRestProps } = prevProps;
-  const { viewBox: nextViewBox, ...nextRestProps } = nextProps;
-  return shallowEqual(prevViewBox, nextViewBox) && shallowEqual(prevRestProps, nextRestProps);
-});
-
 export const CartesianAxis = React.forwardRef((outsideProps: Props, ref: React.Ref<CartesianAxisRef>) => {
   const props = resolveDefaultProps(outsideProps, defaultCartesianAxisProps);
-  return <MemoCartesianAxis {...props} ref={ref} />;
+  return <CartesianAxisComponent {...props} ref={ref} />;
 });
 
 CartesianAxis.displayName = 'CartesianAxis';

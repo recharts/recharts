@@ -33,7 +33,7 @@ import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
  * Likewise for numbers. If your x-axis goes from 0 to 100,
  * and you want the line to end at 50, you would provide `50` here.
  */
-export type ReferenceLineSegment = [
+export type ReferenceLineSegment = readonly [
   {
     x?: number | string;
     y?: number | string;

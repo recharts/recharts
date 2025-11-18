@@ -1,8 +1,9 @@
-import { ReactNode, useEffect } from 'react';
+import { memo, ReactNode, useEffect } from 'react';
 import { LayoutType, Margin } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { setLayout, setMargin } from './layoutSlice';
 import { useAppDispatch } from './hooks';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 /**
  * "Main" props are props that are only accepted on the main chart,
@@ -13,7 +14,7 @@ type MainChartProps = {
   margin: Partial<Margin>;
 };
 
-export function ReportMainChartProps({ layout, margin }: MainChartProps): ReactNode {
+function ReportMainChartPropsImpl({ layout, margin }: MainChartProps): ReactNode {
   const dispatch = useAppDispatch();
 
   /*
@@ -37,3 +38,5 @@ export function ReportMainChartProps({ layout, margin }: MainChartProps): ReactN
   }, [dispatch, isPanorama, layout, margin]);
   return null;
 }
+
+export const ReportMainChartProps = memo(ReportMainChartPropsImpl, propsAreEqual);

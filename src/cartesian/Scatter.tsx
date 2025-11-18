@@ -74,6 +74,7 @@ import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -764,6 +765,6 @@ function ScatterFn(outsideProps: Props) {
   );
 }
 
-export const Scatter: ComponentType<Props> = React.memo(ScatterFn);
+export const Scatter: ComponentType<Props> = React.memo(ScatterFn, propsAreEqual);
 
 Scatter.displayName = 'Scatter';
