@@ -56,6 +56,7 @@ const StyleProps: StorybookArgs = {
   position: {
     description:
       "Defines at which position of an axis point the line will start/end if the axis does not have type 'number'.",
+    defaultValue: 'middle',
     table: { type: { summary: "'start' | 'middle' | 'end'" }, category: 'Style' },
   },
   shape: {

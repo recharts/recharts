@@ -6,7 +6,7 @@ export const TextAPI: ApiDoc = {
     {
       name: 'scaleToFit',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Scale the text to fit the width or not.',
@@ -16,7 +16,7 @@ export const TextAPI: ApiDoc = {
     {
       name: 'angle',
       type: 'Number',
-      defaultVal: 'null',
+      defaultVal: 0,
       isOptional: true,
       desc: {
         'en-US': 'The rotate angle of Text.',

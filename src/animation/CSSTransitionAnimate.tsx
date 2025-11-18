@@ -5,6 +5,7 @@ import { AnimationManager, ReactSmoothStyle } from './AnimationManager';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';
 import { getTransitionVal } from './util';
+import { Global } from '../util/Global';
 
 type CSSTransitionAnimateProps<T extends ReactSmoothStyle> = {
   animationId: string;
@@ -12,7 +13,7 @@ type CSSTransitionAnimateProps<T extends ReactSmoothStyle> = {
   duration?: number;
   begin?: number;
   easing?: string;
-  isActive?: boolean;
+  isActive?: boolean | 'auto';
   canBegin?: boolean;
   from: T;
   to: T;
@@ -39,7 +40,7 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
     from,
     to,
     attributeName,
-    isActive,
+    isActive: isActiveProp,
     canBegin,
     duration,
     easing,
@@ -48,6 +49,8 @@ export function CSSTransitionAnimate<T extends ReactSmoothStyle>(outsideProps: C
     onAnimationStart: onAnimationStartFromProps,
     children,
   } = props;
+
+  const isActive = isActiveProp === 'auto' ? !Global.isSsr : isActiveProp;
 
   const animationManager = useAnimationManager(animationId + attributeName, props.animationManager);
   const [style, setStyle] = useState<T>(() => {

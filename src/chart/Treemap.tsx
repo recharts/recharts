@@ -11,7 +11,6 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
-import { Global } from '../util/Global';
 import {
   AnimationDuration,
   AnimationTiming,
@@ -388,9 +387,9 @@ export interface Props {
 
   onClick?: (node: TreemapNode) => void;
 
-  isAnimationActive?: boolean;
+  isAnimationActive?: boolean | 'auto';
 
-  isUpdateAnimationActive?: boolean;
+  isUpdateAnimationActive?: boolean | 'auto';
 
   animationBegin?: number;
 
@@ -412,13 +411,13 @@ interface State {
   prevAspectRatio: number;
 }
 
-const defaultTreeMapProps = {
+export const defaultTreeMapProps = {
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
   dataKey: 'value',
   nameKey: 'name',
   type: 'flat',
-  isAnimationActive: !Global.isSsr,
-  isUpdateAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
+  isUpdateAnimationActive: 'auto',
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear',

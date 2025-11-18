@@ -15,10 +15,12 @@ export const ReferenceComponentStyle: StorybookArgs = {
 export const ReferenceComponentGeneralArgs: StorybookArgs = {
   xAxisId: {
     description: 'The id of x-axis which is corresponding to the data.',
+    defaultValue: 0,
     table: { type: { summary: 'string | number' }, category: 'General' },
   },
   yAxisId: {
     description: 'The id of y-axis which is corresponding to the data.',
+    defaultValue: 0,
     table: { type: { summary: 'string | number' }, category: 'General' },
   },
 };

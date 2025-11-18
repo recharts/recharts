@@ -4,7 +4,7 @@ export const ReferenceLineAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -14,7 +14,7 @@ export const ReferenceLineAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -24,7 +24,6 @@ export const ReferenceLineAPI = {
     {
       name: 'x',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -36,7 +35,6 @@ export const ReferenceLineAPI = {
     {
       name: 'y',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -73,7 +71,6 @@ export const ReferenceLineAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -105,7 +102,6 @@ export const ReferenceLineAPI = {
     {
       name: 'segment',
       type: 'Array',
-      defaultVal: undefined,
       isOptional: true,
       desc: {
         'en-US': 'Array of endpoints in { x, y } format. These endpoints would be used to draw the ReferenceLine.',
