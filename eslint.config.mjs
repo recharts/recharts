@@ -8,6 +8,7 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import reactPerf from 'eslint-plugin-react-perf';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -385,6 +386,19 @@ const settings = [
   },
 ];
 
+const perfOptimization = {
+  name: 'perf-optimization-examples',
+  files: ['./www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx'],
+  plugins: { 'react-perf': reactPerf },
+  rules: {
+    // new object as prop creates a new reference on each render - but we can memo this one
+    // 'react-perf/jsx-no-new-object-as-prop': 'error',
+    'react-perf/jsx-no-new-array-as-prop': 'error',
+    'react-perf/jsx-no-new-function-as-prop': 'error',
+    'react-perf/jsx-no-jsx-as-prop': 'error',
+  },
+};
+
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -410,4 +424,5 @@ export default [
   ...settings,
   // Omnidoc Overrides
   ...omnidocOverrides,
+  perfOptimization,
 ];
