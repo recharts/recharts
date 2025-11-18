@@ -72,7 +72,12 @@ import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
-import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
+import {
+  selectBarCategoryGap,
+  selectChartName,
+  selectReverseStackOrder,
+  selectStackOffsetType,
+} from './rootPropsSelectors';
 import { selectAngleAxis, selectAngleAxisRange, selectRadiusAxis, selectRadiusAxisRange } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
@@ -608,6 +613,7 @@ export const combineStackGroups = (
   displayedData: DisplayedStackedData,
   items: ReadonlyArray<DefinitelyStackedGraphicalItem>,
   stackOffsetType: StackOffsetType,
+  reverseStackOrder: boolean,
 ): AllStackGroups => {
   const initialItemsGroups: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
   const itemsGroup: Record<StackId, ReadonlyArray<DefinitelyStackedGraphicalItem>> = items.reduce(
@@ -626,13 +632,14 @@ export const combineStackGroups = (
 
   return Object.fromEntries(
     Object.entries(itemsGroup).map(([stackId, graphicalItems]): [StackId, StackGroup] => {
-      const dataKeys = graphicalItems.map(getStackSeriesIdentifier);
+      const orderedGraphicalItems = reverseStackOrder ? [...graphicalItems].reverse() : graphicalItems;
+      const dataKeys = orderedGraphicalItems.map(getStackSeriesIdentifier);
       return [
         stackId,
         {
           // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
           stackedData: getStackedData(displayedData, dataKeys, stackOffsetType),
-          graphicalItems,
+          graphicalItems: orderedGraphicalItems,
         },
       ];
     }),
@@ -650,7 +657,7 @@ export const selectStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => AllStackGroups | undefined = createSelector(
-  [selectDisplayedStackedData, selectStackedCartesianItemsSettings, selectStackOffsetType],
+  [selectDisplayedStackedData, selectStackedCartesianItemsSettings, selectStackOffsetType, selectReverseStackOrder],
   combineStackGroups,
 );
 

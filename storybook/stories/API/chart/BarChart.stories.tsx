@@ -98,6 +98,7 @@ export const Stacked = {
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
     id: 'BarChart-Stacked',
+    reverseStackOrder: false,
     margin: {
       top: 0,
       right: 0,
