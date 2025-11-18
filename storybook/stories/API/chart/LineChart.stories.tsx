@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
@@ -12,10 +12,26 @@ export default {
 
 export const Simple = {
   render: (args: Args) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const onMouseEnter = useCallback(() => {
+      setIsHovered(true);
+    }, [setIsHovered]);
+
+    const onMouseLeave = useCallback(() => {
+      setIsHovered(false);
+    }, [setIsHovered]);
+
     return (
       <ResponsiveContainer width="100%" height={400}>
         <LineChart {...args}>
-          <Line dataKey="uv" />
+          <Line
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            dataKey="uv"
+            strokeWidth={isHovered ? 8 : 4}
+            animationDuration={5000}
+          />
           <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>

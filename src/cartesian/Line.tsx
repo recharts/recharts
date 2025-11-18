@@ -392,6 +392,7 @@ function CurveWithAnimation({
 
   const prevPoints = previousPointsRef.current;
   const animationId = useAnimationId(points, 'recharts-line-');
+  const animationIdRef = useRef<string>(animationId);
 
   const [isAnimating, setIsAnimating] = useState(false);
   const showLabels = !isAnimating;
@@ -426,8 +427,22 @@ function CurveWithAnimation({
    * If you want to see this in action, try to change the dataKey of the line chart while the initial animation is running.
    * The Line begins with zero length and slowly grows to the full length. While this growth is in progress,
    * change the dataKey and the Line will continue growing from where it has grown so far.
+   *
+   * This is for the case when new animation triggers. When that happens we get new points, everything re-renders,
+   * and we get fresh new state in this component and use the ref stored above.
+   *
+   * In case when we get render without new animation - for example when opacity changes, or color changes,
+   * then the animationId remains the same, and we do not update the starting point.
+   * See https://github.com/recharts/recharts/issues/6044
    */
-  const startingPoint = longestAnimatedLengthRef.current;
+  const startingPointRef = useRef(0);
+
+  if (animationIdRef.current !== animationId) {
+    startingPointRef.current = longestAnimatedLengthRef.current;
+    animationIdRef.current = animationId;
+  }
+
+  const startingPoint = startingPointRef.current;
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -455,6 +470,43 @@ function CurveWithAnimation({
             }
           } else {
             currentStrokeDasharray = strokeDasharray == null ? undefined : String(strokeDasharray);
+          }
+
+          /*
+           * Here it is important to wait a little bit with updating the previousPointsRef
+           * before the animation has a time to initialize.
+           * If we set the previous pointsRef immediately, we set it before the Legend height it calculated
+           * and before pathRef is set.
+           * If that happens, the Line will re-render again after Legend had reported its height
+           * which will start a new animation with the previous points as the starting point
+           * which gives the effect of the Line animating slightly upwards (where the animation distance equals the Legend height).
+           * Waiting for t > 0 is indirect but good enough to ensure that the Legend height is calculated and animation works properly.
+           *
+           * Total length similarly is calculated from the pathRef. We should not update the previousPointsRef
+           * before the pathRef is set, otherwise we will have a wrong total length.
+           */
+          if (t > 0 && totalLength > 0) {
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = points;
+            /*
+             * totalLength is set from a ref and is not updated in the first tick of the animation.
+             * It defaults to zero which is exactly what we want here because we want to grow from zero,
+             * however the same happens when the data change.
+             *
+             * In that case we want to remember the previous length and continue from there, and only animate the shape.
+             *
+             * Therefore the totalLength > 0 check.
+             *
+             * The Animate is about to fire handleAnimationStart which will update the state
+             * and cause a re-render and read a new proper totalLength which will be used in the next tick
+             * and update the longestAnimatedLengthRef.
+             *
+             * Why Math.max? Sometimes the curve goes through a smaller length than previously recorded.
+             * If we just set it to curLength, then the next animation would start from a smaller length
+             * which looks weird. So we keep the longest length ever reached and then animate from there.
+             */
+            // eslint-disable-next-line no-param-reassign
+            longestAnimatedLengthRef.current = Math.max(longestAnimatedLengthRef.current, curLength);
           }
 
           if (prevPoints) {
@@ -498,39 +550,6 @@ function CurveWithAnimation({
                 strokeDasharray={currentStrokeDasharray}
               />
             );
-          }
-
-          /*
-           * Here it is important to wait a little bit with updating the previousPointsRef
-           * before the animation has a time to initialize.
-           * If we set the previous pointsRef immediately, we set it before the Legend height it calculated
-           * and before pathRef is set.
-           * If that happens, the Line will re-render again after Legend had reported its height
-           * which will start a new animation with the previous points as the starting point
-           * which gives the effect of the Line animating slightly upwards (where the animation distance equals the Legend height).
-           * Waiting for t > 0 is indirect but good enough to ensure that the Legend height is calculated and animation works properly.
-           *
-           * Total length similarly is calculated from the pathRef. We should not update the previousPointsRef
-           * before the pathRef is set, otherwise we will have a wrong total length.
-           */
-          if (t > 0 && totalLength > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = points;
-            /*
-             * totalLength is set from a ref and is not updated in the first tick of the animation.
-             * It defaults to zero which is exactly what we want here because we want to grow from zero,
-             * however the same happens when the data change.
-             *
-             * In that case we want to remember the previous length and continue from there, and only animate the shape.
-             *
-             * Therefore the totalLength > 0 check.
-             *
-             * The Animate is about to fire handleAnimationStart which will update the state
-             * and cause a re-render and read a new proper totalLength which will be used in the next tick
-             * and update the longestAnimatedLengthRef.
-             */
-            // eslint-disable-next-line no-param-reassign
-            longestAnimatedLengthRef.current = curLength;
           }
           return (
             <StaticCurve
