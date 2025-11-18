@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import {
-  AreaChart,
   Area,
-  BarChart,
+  AreaChart,
   Bar,
-  LineChart,
-  Line,
+  BarChart,
   CartesianGrid,
-  Tooltip,
-  YAxis,
-  ReferenceDot,
-  ReferenceArea,
-  ReferenceLine,
-  XAxis,
   ComposedChart,
+  Line,
+  LineChart,
+  ReferenceArea,
+  ReferenceDot,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
   YAxisProps,
 } from '../../../src';
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
@@ -34,7 +34,7 @@ import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('<YAxis />', () => {
@@ -586,7 +586,7 @@ describe('<YAxis />', () => {
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-label');
     expect(ticksGroup).toHaveLength(4);
 
     const firstTick = ticksGroup[0];
@@ -630,7 +630,7 @@ describe('<YAxis />', () => {
     );
 
     // all ticks
-    const ticks = document.querySelectorAll('.recharts-cartesian-axis-tick');
+    const ticks = document.querySelectorAll('.recharts-cartesian-axis-tick-label');
 
     // value of each tick
     const tickValues: number[] = [];
@@ -923,15 +923,33 @@ describe('<YAxis />', () => {
         <Tooltip />
       </LineChart>,
     );
-    const allLabels = container.querySelectorAll('.recharts-yAxis .recharts-text.recharts-cartesian-axis-tick-value');
-    expect.soft(allLabels).toHaveLength(5);
-    const allText = Array.from(allLabels).map(el => el.textContent);
-    expect.soft(allText).toHaveLength(5);
-    expect(allText).toContain('0');
-    expect(allText).toContain('400');
-    expect(allText).toContain('800');
-    expect(allText).toContain('1200');
-    expect(allText).toContain('1600');
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '52',
+        y: '295',
+      },
+      {
+        textContent: '400',
+        x: '52',
+        y: '222.5',
+      },
+      {
+        textContent: '800',
+        x: '52',
+        y: '150',
+      },
+      {
+        textContent: '1200',
+        x: '52',
+        y: '77.5',
+      },
+      {
+        textContent: '1600',
+        x: '52',
+        y: '5',
+      },
+    ]);
   });
 
   describe('state integration', () => {
@@ -1008,7 +1026,7 @@ describe('<YAxis />', () => {
         spy({ foo, bar });
         return null;
       };
-      const { rerender } = render(
+      const { rerender } = rechartsTestRender(
         <BarChart width={100} height={100}>
           <YAxis yAxisId="foo" scale="log" type="number" />
           <Comp />
@@ -1168,6 +1186,42 @@ describe('<YAxis />', () => {
         foo: implicitYAxis,
         bar: implicitYAxis,
       });
+    });
+
+    it('should remove old ID configuration when the ID changes', () => {
+      const IDChangingComponent = ({ children }: { children: ReactNode }) => {
+        const [id, setId] = React.useState('1');
+        const onClick = () => setId('2');
+        return (
+          <>
+            <button type="button" className="pushbutton" onClick={onClick}>
+              Change ID
+            </button>
+            <BarChart width={100} height={100}>
+              <YAxis yAxisId={id} scale="log" type="number" />
+              {children}
+            </BarChart>
+          </>
+        );
+      };
+      const renderTestCase = createSelectorTestCase(IDChangingComponent);
+
+      const { spy, container } = renderTestCase(state => state.cartesianAxis.yAxis);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // only id "1" exists
+      const lastCallArgs1 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs1);
+      expect(Object.keys(lastCallArgs1)).toEqual(['1']);
+
+      fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      // only id "2" exists
+      const lastCallArgs2 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs2);
+      expect(Object.keys(lastCallArgs2)).toEqual(['2']);
     });
   });
 
@@ -2021,6 +2075,7 @@ describe('<YAxis />', () => {
       it('should extend domain when ifOverflow=extendDomain', () => {
         const domainSpy = vi.fn();
         const { container } = render(<ChartWithReferenceLine ifOverflow="extendDomain" domainSpy={domainSpy} />);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
         expectYAxisTicks(container, [
           {
             textContent: '0',
@@ -2048,7 +2103,6 @@ describe('<YAxis />', () => {
             y: '5',
           },
         ]);
-        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
       });
     });
 
@@ -2114,7 +2168,8 @@ describe('<YAxis />', () => {
         expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
       });
 
-      it(`should NOT extend domain even when ifOverflow=extendDomain ! No clue why, this looks to me like a bug`, () => {
+      it(`should extend domain when ifOverflow=extendDomain`, () => {
+        // https://github.com/recharts/recharts/issues/3379
         const domainSpy = vi.fn();
         const { container } = render(
           <ChartWithReferenceLineWithSegment ifOverflow="extendDomain" domainSpy={domainSpy} />,
@@ -2126,27 +2181,27 @@ describe('<YAxis />', () => {
             y: '95',
           },
           {
-            textContent: '300',
+            textContent: '500',
             x: '57',
             y: '72.5',
           },
           {
-            textContent: '600',
+            textContent: '1000',
             x: '57',
             y: '50',
           },
           {
-            textContent: '900',
+            textContent: '1500',
             x: '57',
             y: '27.5',
           },
           {
-            textContent: '1200',
+            textContent: '2000',
             x: '57',
             y: '5',
           },
         ]);
-        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
       });
     });
   });
@@ -2225,12 +2280,12 @@ describe('<YAxis />', () => {
     }
 
     it('should pass object padding to custom tick component', () => {
-      let receivedPadding: { top?: number; bottom?: number } | undefined;
       const expectedPadding = { top: 20, bottom: 30 };
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2239,17 +2294,15 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass string padding to custom tick component', () => {
-      let receivedPadding: string | undefined;
       const expectedPadding = 'gap';
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as string;
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toBe(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2258,17 +2311,15 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toBe(expectedPadding);
     });
 
     it('should pass padding to function-based custom tick', () => {
-      let receivedPadding: { top?: number; bottom?: number } | undefined;
       const expectedPadding = { top: 15, bottom: 25 };
+      expect.assertions(5);
 
       const customTickFunction = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Function Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Function Tick</text>;
       };
 
       render(
@@ -2277,16 +2328,14 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass default padding when no padding is specified', () => {
-      let receivedPadding: { top?: number; bottom?: number } | string = 'not-called';
+      expect.assertions(5);
 
       const CustomYAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { top?: number; bottom?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual({ top: 0, bottom: 0 });
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -2295,8 +2344,6 @@ describe('<YAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual({ top: 0, bottom: 0 });
     });
   });
 });

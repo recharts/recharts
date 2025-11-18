@@ -2,6 +2,7 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { WritableDraft } from 'immer';
 import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
+import { ReferenceLineSegment } from '../cartesian/ReferenceLine';
 
 export type ReferenceElementSettings = {
   yAxisId: AxisId;
@@ -25,6 +26,7 @@ export type ReferenceAreaSettings = ReferenceElementSettings & {
 export type ReferenceLineSettings = ReferenceElementSettings & {
   x: unknown;
   y: unknown;
+  segment: ReferenceLineSegment | undefined;
 };
 
 type ReferenceElementState = {

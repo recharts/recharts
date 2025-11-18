@@ -1,22 +1,18 @@
 import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
-import { Funnel, FunnelChart, FunnelProps, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-    ...ActiveShapeProps,
-  },
+  argTypes: CategoricalChartProps,
   component: FunnelChart,
 };
 
-export const Simple: StoryObj<FunnelProps> = {
-  render: (args: FunnelProps) => {
+export const Simple: StoryObj = {
+  render: (args: Args) => {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={200}>

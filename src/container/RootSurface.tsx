@@ -7,7 +7,7 @@ import { Surface } from './Surface';
 import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { AllZIndexPortals } from '../zindex/ZIndexPortal';
+import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 
 type RootSurfaceProps = {
   children: ReactNode;

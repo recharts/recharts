@@ -1,10 +1,16 @@
-import { Route, Routes } from 'react-router';
+import { Route, Routes, Navigate } from 'react-router';
 import { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook, NotFoundView } from '../views';
 import { Frame } from '../layouts/Frame';
+import { redirects } from './redirects.ts';
 
 export function routes() {
   return (
     <Routes>
+      {/* Redirects for renamed API pages */}
+      {Object.entries(redirects).map(([oldPath, newPath]) => (
+        <Route key={oldPath} path={oldPath} element={<Navigate to={newPath} replace />} />
+      ))}
+
       {/* Routes with explicit locale */}
       <Route
         path="/:locale/guide/:name?/"

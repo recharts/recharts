@@ -11,7 +11,7 @@ import { selectTooltipCoordinate } from './selectors/touchSelectors';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
-export const touchEventMiddleware = createListenerMiddleware();
+export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
 
 touchEventMiddleware.startListening({
   actionCreator: touchEventAction,
@@ -20,6 +20,9 @@ touchEventMiddleware.startListening({
     listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>,
   ) => {
     const touchEvent = action.payload;
+    if (touchEvent.touches == null || touchEvent.touches.length === 0) {
+      return;
+    }
     const state = listenerApi.getState();
     const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
     if (tooltipEventType === 'axis') {
@@ -42,6 +45,9 @@ touchEventMiddleware.startListening({
       }
     } else if (tooltipEventType === 'item') {
       const touch = touchEvent.touches[0];
+      if (document.elementFromPoint == null) {
+        return;
+      }
       const target = document.elementFromPoint(touch.clientX, touch.clientY);
       if (!target || !target.getAttribute) {
         return;

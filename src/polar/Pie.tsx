@@ -56,8 +56,8 @@ import {
   Props as LabelListProps,
 } from '../component/LabelList';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 type ChartDataInput = Record<string, unknown>;
 
@@ -277,25 +277,40 @@ type PieSectorsProps = {
   allOtherPieProps: WithoutId<InternalProps>;
 };
 
-function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
-  return {
-    dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
-    positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // why doesn't Pie support unit?
-    },
-  };
-}
+const SetPieTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    sectors,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+  }: Pick<
+    InternalProps,
+    'dataKey' | 'nameKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
+      positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // why doesn't Pie support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 const getTextAnchor = (x: number, cx: number) => {
   if (x > cx) {
@@ -357,7 +372,9 @@ const renderLabelLineItem = (option: PieLabelLine, props: CurveProps) => {
   }
 
   const className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
-  return <Curve {...props} type="linear" className={className} />;
+  // React doesn't like it when we spread a key property onto an element
+  const { key, ...otherProps } = props;
+  return <Curve {...otherProps} type="linear" className={className} />;
 };
 
 const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: unknown) => {
@@ -434,7 +451,6 @@ function PieLabels({
     return (
       <ZIndexLayer
         zIndex={DefaultZIndexes.label}
-        // eslint-disable-next-line react/no-array-index-key
         key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}
       >
         <Layer>
@@ -522,7 +538,6 @@ function PieSectors(props: PieSectorsProps) {
 
         return (
           <Layer
-            // eslint-disable-next-line react/no-array-index-key
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
             tabIndex={-1}
             className="recharts-pie-sector"
@@ -606,7 +621,6 @@ export function computePieSectors({
 
       prev = {
         ...pieSettings.presentationProps,
-        ...entryWithCellInfo,
         percent,
         cornerRadius: typeof cornerRadius === 'string' ? parseFloat(cornerRadius) : cornerRadius,
         name,
@@ -614,6 +628,7 @@ export function computePieSectors({
         midAngle,
         middleRadius,
         tooltipPosition,
+        ...entryWithCellInfo,
         ...coordinate,
         value: val,
         startAngle: tempStartAngle,
@@ -814,7 +829,17 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
+      <SetPieTooltipEntrySettings
+        dataKey={props.dataKey}
+        nameKey={props.nameKey}
+        sectors={sectors}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        hide={props.hide}
+        tooltipType={props.tooltipType}
+      />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
       </Layer>

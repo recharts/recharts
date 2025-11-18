@@ -125,7 +125,7 @@ export const LineStyle: Args = {
       'stepBefore',
       'stepAfter',
     ],
-    default: 'linear',
+    defaultValue: 'linear',
     control: {
       type: 'select',
     },
@@ -233,16 +233,6 @@ export const RadialBarStyle: Args = {
         detail:
           '<Bar dataKey="value" activeShape={<CustomizedActiveShape />} />\n' +
           '<Bar dataKey="value" activeShape={renderActiveShape} />',
-      },
-      category: 'Style',
-    },
-  },
-  activeIndex: {
-    description: 'The index of the active bar, this option can be changed in mouse event handlers.',
-    table: {
-      type: {
-        summary: 'number | number[]',
-        detail: '<Bar dataKey="value" activeIndex={0} />\n<Bar dataKey="value" activeIndex={[0, 1]} />',
       },
       category: 'Style',
     },

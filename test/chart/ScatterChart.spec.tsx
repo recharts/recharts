@@ -406,9 +406,10 @@ function assertActiveShapeInteractions(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
 
   fireEvent.mouseOver(sector2, { pageX: 200, pageY: 200 });
-  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
+  const activeShapes = container.querySelectorAll('.recharts-active-shape');
+  expect(activeShapes).toHaveLength(1);
 
-  fireEvent.mouseOut(sector2);
+  fireEvent.mouseOut(activeShapes[0]);
   expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(0);
 }
 

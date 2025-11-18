@@ -1,3 +1,4 @@
+// #region Sample data, imports, and helper functions
 import {
   ComposedChart,
   Line,
@@ -13,7 +14,6 @@ import {
 } from 'recharts';
 import { TooltipContentProps } from 'recharts/types/component/Tooltip';
 
-// #region Sample data
 const data = [
   {
     name: 'Page A',
@@ -46,7 +46,6 @@ const data = [
   },
 ];
 
-// #endregion
 const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps<string | number, string>) => {
   const newPayload = payload.filter(x => x.dataKey !== 'a');
   return <DefaultTooltipContent payload={newPayload} {...rest} />;
@@ -56,6 +55,7 @@ const renderLegendWithoutRange = ({ payload, content, ref, ...rest }: DefaultLeg
   const newPayload = payload?.filter(x => x.dataKey !== 'a');
   return <DefaultLegendContent payload={newPayload} {...rest} />;
 };
+// #endregion
 
 export default function BandedChart() {
   return (
@@ -73,10 +73,10 @@ export default function BandedChart() {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Tooltip content={renderTooltipWithoutRange} />
-      <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
-      <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
       <Legend content={renderLegendWithoutRange} />
+      <Tooltip content={renderTooltipWithoutRange} />
+      <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
+      <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
     </ComposedChart>
   );
 }

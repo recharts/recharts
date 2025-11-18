@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router';
 import { Bar, BarChart, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
-import './navigation.scss';
+import './navigation.css';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
 
 function DesktopNav() {
@@ -35,7 +35,7 @@ function HamburgerIcon() {
       data={[{ v: 1 }, { v: 1 }, { v: 1 }]}
       layout="vertical"
     >
-      <Bar dataKey="v" fill="var(--var-brand-info)" barSize={3} radius={[2, 2, 2, 2]} />
+      <Bar dataKey="v" fill="var(--brand-info)" barSize={3} radius={[2, 2, 2, 2]} />
       <XAxis dataKey="v" type="number" hide />
       <YAxis type="category" hide />
     </BarChart>

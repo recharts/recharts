@@ -1,18 +1,21 @@
 import { ComponentType, PureComponent } from 'react';
 import Helmet from 'react-helmet';
-import { Installation, GettingStarted, Customize } from '../components/GuideView';
+import { Installation, GettingStarted, Customize, ZIndex } from '../components/GuideView';
 import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
-import { ActiveIndex } from '../components/GuideView/ActiveIndex.tsx';
-import { ChartSizing } from '../components/GuideView/ChartSizing.tsx';
+import { ActiveIndex } from '../components/GuideView/ActiveIndex';
+import { ChartSizing } from '../components/GuideView/ChartSizing';
+import { DomainAndTicks } from '../components/GuideView/DomainAndTicks';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
   'getting-started': GettingStarted,
   customize: Customize,
   activeIndex: ActiveIndex,
+  domainAndTicks: DomainAndTicks,
   sizes: ChartSizing,
+  zIndex: ZIndex,
 };
 
 export const allGuides = Object.keys(guideMap);
@@ -37,7 +40,7 @@ class GuideViewImpl extends PureComponent<RouteComponentProps> {
       <div className="page page-guide">
         <Helmet title={title} />
         <div className="content">
-          <Guide locale={locale} page={page} />
+          <Guide locale={locale} page={page} key={page} />
         </div>
       </div>
     );

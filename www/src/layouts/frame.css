@@ -1,0 +1,27 @@
+header {
+  width: 100%;
+  background-color: #fcfcfc;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 60px;
+  line-height: 60px;
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+
+  .logo {
+    margin: 0;
+    padding: 0 2rem;
+    font-family: var(--font-family-code), monospace;
+    font-weight: 300;
+    font-size: var(--font-size-xl);
+    white-space: nowrap;
+
+    > a {
+      color: var(--brand-info);
+      text-decoration: none;
+    }
+  }
+}

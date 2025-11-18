@@ -49,12 +49,12 @@ import {
 import { useAppSelector } from '../../src/state/hooks';
 import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
-import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 import { expectPieSectors } from '../helper/expectPieSectors';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { PieSettings } from '../../src/state/types/PieSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { Coordinate } from '../../src/util/types';
+import { selectTooltipAxis } from '../../src/state/selectors/axisSelectors';
 
 type CustomizedLabelLineProps = { points?: Array<Coordinate> };
 
@@ -742,34 +742,30 @@ describe('<Pie />', () => {
       onClick.mockClear();
     });
 
-    test(
-      'should call external handlers',
-      async () => {
-        const user = userEventSetup();
-        const { container } = renderTestCase();
+    test('should call external handlers', async () => {
+      const user = userEventSetup();
+      const { container } = renderTestCase();
 
-        expect(onMouseEnter).toHaveBeenCalledTimes(0);
-        expect(onMouseLeave).toHaveBeenCalledTimes(0);
-        expect(onClick).toHaveBeenCalledTimes(0);
+      expect(onMouseEnter).toHaveBeenCalledTimes(0);
+      expect(onMouseLeave).toHaveBeenCalledTimes(0);
+      expect(onClick).toHaveBeenCalledTimes(0);
 
-        const sector = container.querySelectorAll('.recharts-layer')[4];
+      const sector = container.querySelectorAll('.recharts-layer')[4];
 
-        await user.hover(sector);
-        expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      await user.hover(sector);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
 
-        await user.unhover(sector);
-        expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      await user.unhover(sector);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
 
-        await user.click(sector);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        // click also includes enter in it? ok
-        expect(onMouseEnter).toHaveBeenCalledTimes(2);
+      await user.click(sector);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      // click also includes enter in it? ok
+      expect(onMouseEnter).toHaveBeenCalledTimes(2);
 
-        expect(onMouseLeave).toHaveBeenCalledTimes(1);
-        expect(onClick).toHaveBeenCalledTimes(1);
-      },
-      { timeout: 1000 },
-    );
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    }, 1000);
   });
 
   describe('Tooltip integration', () => {
@@ -1599,25 +1595,30 @@ describe('<Pie />', () => {
       );
 
       expect(document.activeElement).toBe(document.body);
+      // indeed on first render, the tooltip shows info for "B"
+      expectTooltipPayload(container, '', ['B : 250']);
+
       const pie = focusTestHelper(container, '.recharts-pie', debug);
       expect(document.activeElement).toBe(pie);
 
       const allSectors = pie.querySelectorAll('.recharts-pie-sector');
       expect(allSectors).toHaveLength(5);
 
-      expectTooltipPayload(container, '', ['B : 250']);
-
-      // unsure why two are needed but they are in order to advance one
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
+      // now after focus we start iterating from the first sector "A"
+      expectTooltipPayload(container, '', ['A : 250']);
 
       // ArrowRight goes forwards
+      await user.keyboard('{ArrowRight}');
+      expectTooltipPayload(container, '', ['B : 250']);
+
+      await user.keyboard('{ArrowRight}');
       expectTooltipPayload(container, '', ['C : 250']);
 
-      await user.keyboard('{ArrowLeft}');
-      await user.keyboard('{ArrowLeft}');
-
       // ArrowLeft goes back
+      await user.keyboard('{ArrowLeft}');
+      expectTooltipPayload(container, '', ['B : 250']);
+
+      await user.keyboard('{ArrowLeft}');
       expectTooltipPayload(container, '', ['A : 250']);
     });
 

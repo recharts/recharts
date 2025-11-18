@@ -64,6 +64,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
       <ChartDataContextProvider chartData={categoricalChartProps.data} />
       <ReportMainChartProps layout={rootChartProps.layout} margin={rootChartProps.margin} />
       <ReportChartProps
+        baseValue={rootChartProps.baseValue}
         accessibilityLayer={rootChartProps.accessibilityLayer}
         barCategoryGap={rootChartProps.barCategoryGap}
         maxBarSize={rootChartProps.maxBarSize}
@@ -73,6 +74,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         syncId={rootChartProps.syncId}
         syncMethod={rootChartProps.syncMethod}
         className={rootChartProps.className}
+        reverseStackOrder={rootChartProps.reverseStackOrder}
       />
       <CategoricalChart {...rootChartProps} ref={ref} />
     </RechartsStoreProvider>

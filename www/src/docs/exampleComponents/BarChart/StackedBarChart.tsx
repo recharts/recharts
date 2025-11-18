@@ -65,8 +65,8 @@ const StackedBarChart = () => {
       <YAxis width="auto" />
       <Tooltip />
       <Legend />
-      <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-      <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="pv" stackId="a" fill="#8884d8" background />
+      <Bar dataKey="uv" stackId="a" fill="#82ca9d" background />
     </BarChart>
   );
 };

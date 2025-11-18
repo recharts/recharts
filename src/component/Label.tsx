@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
+import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
 import { getPercentValue, isNullish, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import {
@@ -27,8 +27,8 @@ import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export type LabelContentType = ReactElement | ((props: Props) => RenderableText | ReactElement);
 
@@ -70,15 +70,32 @@ interface LabelProps extends ZIndexable {
   parentViewBox?: ViewBox;
   formatter?: LabelFormatter;
   value?: RenderableText;
+  /**
+   * @defaultValue 5
+   */
   offset?: number;
+  /**
+   * @defaultValue middle
+   */
   position?: LabelPosition;
   children?: RenderableText;
   className?: string;
   content?: LabelContentType;
+  /**
+   * @defaultValue false
+   */
   textBreakAll?: boolean;
+  /**
+   * @defaultValue 0
+   */
   angle?: number;
   index?: number;
   labelRef?: React.RefObject<SVGTextElement> | null;
+  /**
+   * @since 3.4
+   * @defaultValue 2000
+   */
+  zIndex?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -353,7 +370,7 @@ export const getAttrsOfCartesianLabel = (
   if (position === 'top') {
     const attrs: LabelPositionAttributes = {
       x: upperX + upperWidth / 2,
-      y: y - verticalSign * offset,
+      y: y - verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
     };
@@ -534,9 +551,12 @@ export const getAttrsOfCartesianLabel = (
   };
 };
 
-const defaultLabelProps = {
+export const defaultLabelProps = {
+  angle: 0,
   offset: 5,
   zIndex: DefaultZIndexes.label,
+  position: 'middle',
+  textBreakAll: false,
 } as const satisfies Partial<Props>;
 
 export function Label(outerProps: Props) {
@@ -618,6 +638,11 @@ export function Label(outerProps: Props) {
         className={clsx('recharts-label', className)}
         {...attrs}
         {...positionAttrs}
+        /*
+         * textAnchor is decided by default based on the `position`
+         * but we allow overriding via props for precise control.
+         */
+        textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
         breakAll={textBreakAll}
       >
         {label}

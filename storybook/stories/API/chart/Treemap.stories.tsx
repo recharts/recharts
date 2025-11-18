@@ -3,7 +3,7 @@ import { Args } from '@storybook/react-vite';
 import { sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { animationBegin, animationDuration, isAnimationActive } from '../props/AnimationProps';
 import { isUpdateAnimationActive } from '../props/RectangleProps';
 import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
 import { dataKey } from '../props/CartesianComponentShared';
@@ -34,6 +34,7 @@ const TreemapPropArgTypes: StorybookArgs = {
   },
   nameKey: {
     ...dataKey, // The name key is a data key.
+    defaultValue: 'name',
     description: "The accessor of the treemap's rectangles' name.",
   },
   content: {
@@ -58,6 +59,7 @@ const TreemapPropArgTypes: StorybookArgs = {
   },
   aspectRatio: {
     description: "The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.",
+    defaultValue: 1.618033988749895,
     table: {
       type: {
         summary: 'Number',
@@ -68,9 +70,22 @@ const TreemapPropArgTypes: StorybookArgs = {
   animationBegin,
   ...ChartSizeProps,
   animationDuration,
-  animationEasing,
+  animationEasing: {
+    defaultValue: 'linear',
+    table: {
+      category: 'Animation',
+    },
+  },
   data,
-  dataKey,
+  dataKey: {
+    description: `The key or getter of a group of data.
+      It could be an accessor function such as (row)=>value`,
+    defaultValue: 'value',
+    table: {
+      type: { summary: 'string | number | function' },
+      category: 'General',
+    },
+  },
   isAnimationActive,
   isUpdateAnimationActive,
   onAnimationEnd,

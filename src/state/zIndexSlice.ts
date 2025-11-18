@@ -4,7 +4,7 @@
  */
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 type ZIndexEntry = {
   /**
@@ -32,7 +32,7 @@ const seed: ZIndexState['zIndexMap'] = {};
 
 const initialState: ZIndexState = {
   zIndexMap: Object.values(DefaultZIndexes).reduce(
-    (acc: ZIndexState, current): ZIndexState => ({
+    (acc: ZIndexState['zIndexMap'], current: number): ZIndexState['zIndexMap'] => ({
       ...acc,
       [current]: {
         elementId: undefined,

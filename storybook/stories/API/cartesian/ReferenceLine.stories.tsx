@@ -4,14 +4,11 @@ import { ComposedChart, Line, ReferenceLine, CartesianGrid, XAxis, YAxis, Respon
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { GeneralStyle } from '../props/Styles';
-import {
-  ReferenceComponentGeneralArgs,
-  ReferenceComponentInternalArgs,
-  ReferenceComponentStyle,
-} from '../props/ReferenceComponentShared';
+import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const GeneralProps: Args = {
+const GeneralProps: StorybookArgs = {
   ...ReferenceComponentGeneralArgs,
   x: {
     description: `If set a string or a number, a vertical line perpendicular to the x-axis specified by xAxisId
@@ -31,7 +28,7 @@ const GeneralProps: Args = {
   },
 };
 
-const LabelProps: Args = {
+const LabelProps: StorybookArgs = {
   label: {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
@@ -48,7 +45,7 @@ const LabelProps: Args = {
   },
 };
 
-const StyleProps: Args = {
+const StyleProps: StorybookArgs = {
   ...ReferenceComponentStyle,
   stroke: {
     ...GeneralStyle.stroke,
@@ -59,6 +56,7 @@ const StyleProps: Args = {
   position: {
     description:
       "Defines at which position of an axis point the line will start/end if the axis does not have type 'number'.",
+    defaultValue: 'middle',
     table: { type: { summary: "'start' | 'middle' | 'end'" }, category: 'Style' },
   },
   shape: {
@@ -73,21 +71,11 @@ const StyleProps: Args = {
   },
 };
 
-const InternalProps: Args = {
-  ...ReferenceComponentInternalArgs,
-  viewBox: {
-    description: 'The box of the viewing area, usually calculated internally.',
-    table: { type: { summary: '{x: number, y: number, width: number, height: number}' }, category: 'Internal' },
-  },
-};
-
 export default {
   argTypes: {
     ...GeneralProps,
     ...LabelProps,
     ...StyleProps,
-    ...ReferenceComponentInternalArgs,
-    ...InternalProps,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
   },

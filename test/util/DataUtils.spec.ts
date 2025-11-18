@@ -12,6 +12,8 @@ import {
   upperFirst,
   isNan,
   interpolate,
+  isNotNil,
+  noop,
 } from '../../src/util/DataUtils';
 
 /**
@@ -280,6 +282,47 @@ describe('isNullish', () => {
     expect(isNullish(0)).toBe(false);
     expect(isNullish('')).toBe(false);
     expect(isNullish('0')).toBe(false);
+  });
+});
+
+describe('isNotNil', () => {
+  it('should return false when value is null', () => {
+    expect(isNotNil(null)).toBe(false);
+  });
+
+  it('should return false when value is undefined', () => {
+    expect(isNotNil(undefined)).toBe(false);
+  });
+
+  it('should return true when value is not null or undefined', () => {
+    expect(isNotNil(0)).toBe(true);
+    expect(isNotNil('')).toBe(true);
+    expect(isNotNil('0')).toBe(true);
+    expect(isNotNil(false)).toBe(true);
+    expect(isNotNil({})).toBe(true);
+    expect(isNotNil([])).toBe(true);
+  });
+
+  it('should allow type refinement', () => {
+    const arr: (number | undefined)[] = [1, undefined, 3];
+    const result: number[] = arr.filter(isNotNil);
+    expect(result).toEqual([1, 3]);
+  });
+});
+
+describe('noop', () => {
+  it('should return undefined', () => {
+    expect(noop()).toBe(undefined);
+  });
+
+  it('should be callable without errors', () => {
+    expect(() => noop()).not.toThrow();
+  });
+
+  it('should be usable as a placeholder callback', () => {
+    const callback: () => void = noop;
+    expect(() => callback()).not.toThrow();
+    expect(callback()).toBe(undefined);
   });
 });
 

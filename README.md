@@ -79,6 +79,12 @@ Thanks to [Chromatic](https://www.chromatic.com/) for providing the visual testi
 
 Thanks to JetBrains for providing OSS development license for their IDEs.
 
+Browser testing via [<img src="https://www.lambdatest.com/blue-logo.png"
+width="250"
+height="45"
+alt="LambdaTest"
+/>](https://www.lambdatest.com/?utm_source=recharts&utm_medium=sponsor)
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)

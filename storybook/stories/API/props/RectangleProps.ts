@@ -19,6 +19,7 @@ export const radius: StorybookArg = {
 
 export const isUpdateAnimationActive: StorybookArg = {
   description: 'If set false, animation of component updates will be disabled.',
+  defaultValue: 'auto',
   table: { category: 'Animation' },
 };
 

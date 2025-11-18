@@ -17,22 +17,14 @@ export const nameKey: StorybookArg = {
   },
 };
 
-export const activeShape: StorybookArg = {
-  description: '',
-  table: {
-    type: {
-      summary: 'Object | ReactElement | Function | boolean',
-    },
-    category: 'General',
-  },
-};
-
 export const xAxisId: StorybookArg = {
   description: 'The id of x-axis which is corresponding to the data.',
+  defaultValue: 0,
   table: { type: { summary: 'string | number' }, category: 'General' },
 };
 export const yAxisId: StorybookArg = {
   description: 'The id of y-axis which is corresponding to the data.',
+  defaultValue: 0,
   table: { type: { summary: 'string | number' }, category: 'General' },
 };
 export const zAxisId: StorybookArg = {

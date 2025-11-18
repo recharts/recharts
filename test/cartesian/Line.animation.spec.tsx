@@ -1720,4 +1720,92 @@ describe('Line animation', () => {
       expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
     });
   });
+
+  describe('when strokeWidth changes during the animation (issue #6044)', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      const [strokeWidth, setStrokeWidth] = useState(1);
+      const changeStrokeWidth = () => {
+        setStrokeWidth(prev => (prev === 1 ? 5 : 1));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeStrokeWidth}>
+            Change strokeWidth
+          </button>
+          <LineChart data={PageData} width={100} height={100}>
+            <Line dataKey="uv" strokeWidth={strokeWidth} animationEasing="linear" />
+            {children}
+          </LineChart>
+        </div>
+      );
+    });
+
+    it('should continue animation from current position when strokeWidth changes', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      // start the initial animation and progress to 30%
+      await animationManager.setAnimationProgress(0.3);
+
+      // verify the line is partially visible at 30%
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 70px');
+
+      // change the strokeWidth while animation is in progress
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      expect(button).toBeInTheDocument();
+      act(() => {
+        button.click();
+      });
+
+      // the animation should continue from 30%, not restart from 0
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 70px');
+
+      // continue animation to 60%
+      await animationManager.setAnimationProgress(0.6);
+
+      // the line should be at 60%, not at 30% (which would indicate a restart)
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '60px 40px');
+
+      // complete the animation
+      await animationManager.completeAnimation();
+
+      // the full line should be visible
+      expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '100px 0px');
+    });
+
+    it('should not reset animation progress when strokeWidth changes multiple times', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      // start the initial animation and progress to 40%
+      await animationManager.setAnimationProgress(0.4);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '40px 60px');
+
+      // change strokeWidth first time
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      // animation should still be at 40%
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '40px 60px');
+
+      // progress to 70%
+      await animationManager.setAnimationProgress(0.7);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '70px 30px');
+
+      // change strokeWidth second time
+      act(() => {
+        button.click();
+      });
+
+      // animation should still be at 70%, not reset to 40% or 0%
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '70px 30px');
+
+      // complete the animation
+      await animationManager.completeAnimation();
+      expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
+    });
+  });
 });

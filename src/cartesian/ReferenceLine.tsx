@@ -19,8 +19,9 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 /**
  * Single point that defines one end of a segment.
@@ -32,10 +33,16 @@ import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
  * Likewise for numbers. If your x-axis goes from 0 to 100,
  * and you want the line to end at 50, you would provide `50` here.
  */
-export type Segment = {
-  x?: number | string;
-  y?: number | string;
-};
+export type ReferenceLineSegment = [
+  {
+    x?: number | string;
+    y?: number | string;
+  },
+  {
+    x?: number | string;
+    y?: number | string;
+  },
+];
 
 export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
@@ -82,12 +89,13 @@ interface ReferenceLineProps extends ZIndexable {
    *
    * This prop is only used if both `x` and `y` props are undefined.
    */
-  segment?: ReadonlyArray<Segment>;
+  segment?: ReferenceLineSegment;
 
   /**
    * The position of the reference line when the axis has bandwidth
    * (e.g., a band scale). This determines where within the band
    * the line is drawn.
+   * @defaultValue 'middle'
    */
   position?: ReferenceLinePosition;
 
@@ -115,6 +123,14 @@ const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLine
   } else if (typeof option === 'function') {
     line = option(props);
   } else {
+    if (
+      !isWellBehavedNumber(props.x1) ||
+      !isWellBehavedNumber(props.y1) ||
+      !isWellBehavedNumber(props.x2) ||
+      !isWellBehavedNumber(props.y2)
+    ) {
+      return null;
+    }
     line = <line {...props} className="recharts-reference-line-line" />;
   }
 
@@ -172,7 +188,7 @@ const getVerticalLineEndPoints = (
 };
 
 const getSegmentLineEndPoints = (
-  segment: ReadonlyArray<Segment>,
+  segment: ReferenceLineSegment,
   ifOverflow: IfOverflow,
   position: Props['position'],
   scales: any,
@@ -273,7 +289,7 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   );
 }
 
-const referenceLineDefaultProps = {
+export const referenceLineDefaultProps = {
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
@@ -297,6 +313,7 @@ export function ReferenceLine(outsideProps: Props) {
         ifOverflow={props.ifOverflow}
         x={props.x}
         y={props.y}
+        segment={props.segment}
       />
       <ReferenceLineImpl {...props} />
     </>

@@ -1,0 +1,37 @@
+:root {
+  /* Breakpoints */
+  --mobile-breakpoint: 991px;
+
+  /* Colors */
+  --background-color: #fff;
+  --text-color: #666;
+  --title-color: #333;
+  --subtitle-text-color: #757575;
+  --border-color: #ccc;
+
+  --brand-primary: #1074b6;
+  --brand-second: #2e96ea;
+  --brand-info: #18828a;
+
+  --link-color: var(--text-color);
+  --link-color-hover: #333;
+
+  --text-color-body: var(--text-color);
+
+  /* Font sizes */
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 20px;
+  --font-size-xxxl: 24px;
+
+  /* Font families */
+  --font-family-code: 'Roboto Mono', Consolas, 'Liberation Mono', 'Courier New', Courier, monospace;
+  --font-family-base: 'Source Sans Pro', 'Hiragino Sans GB', Arial, sans-serif;
+  --font-family-logo: 'Oswald', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Z-index values */
+  --z-index-sidebar-content: 1020;
+  --z-index-header: 1030;
+  --z-index-main-nav: 1040;
+}

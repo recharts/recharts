@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { ComposedChartExample } from '../../../www/src/docs/apiExamples/ComposedChart';
+
+import ComposedChartExample from '../../../www/src/docs/apiExamples/ComposedChart/ComposedChartExample';
 import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
 import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
 import VerticalComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart';
@@ -8,6 +9,12 @@ import ComposedChartWithAxisLabels from '../../../www/src/docs/exampleComponents
 import ScatterAndLineOfBestFit from '../../../www/src/docs/exampleComponents/ComposedChart/ScatterAndLineOfBestFit';
 import BandedChart from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
 import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
+import TargetPriceChart from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
+
+test('TargetPriceChart', async ({ mount }) => {
+  const component = await mount(<TargetPriceChart isAnimationActive={false} defaultIndex={50} />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('ComposedChartNavExample', async ({ mount }) => {
   const component = await mount(<ComposedChartNavExample />);
@@ -45,6 +52,6 @@ test('LineBarAreaComposedChart', async ({ mount }) => {
 });
 
 test('ComposedChartExample', async ({ mount }) => {
-  const component = await mount(<ComposedChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<ComposedChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

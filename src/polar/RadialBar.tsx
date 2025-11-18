@@ -59,8 +59,9 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -71,7 +72,7 @@ export type RadialBarDataItem = SectorProps &
     background?: SectorProps;
   };
 
-type RadialBarBackground = ActiveShape<SectorProps>;
+type RadialBarBackground = ActiveShape<SectorProps> & ZIndexable;
 
 type RadialBarSectorsProps = {
   sectors: ReadonlyArray<RadialBarDataItem>;
@@ -164,7 +165,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           return (
             <ZIndexLayer
               zIndex={DefaultZIndexes.activeBar}
-              key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+              key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`}
             >
               <RadialBarSector {...radialBarSectorProps} />
             </ZIndexLayer>
@@ -173,7 +174,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
 
         return (
           <RadialBarSector
-            key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
+            key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`}
             {...radialBarSectorProps}
           />
         );
@@ -315,25 +316,39 @@ function SetRadialBarPayloadLegend(props: RadialBarProps) {
   return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
 }
 
-function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, name, hide, fill, tooltipType } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      nameKey: undefined, // RadialBar does not have nameKey, why?
-      dataKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // Why does RadialBar not support unit?
-    },
-  };
-}
+const SetRadialBarTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    data,
+    stroke,
+    strokeWidth,
+    name,
+    hide,
+    fill,
+    tooltipType,
+  }: Pick<
+    RadialBarProps,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        nameKey: undefined, // RadialBar does not have nameKey, why?
+        dataKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // Why does RadialBar not support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
@@ -342,34 +357,38 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
     }
     const { cornerRadius } = this.props;
     const backgroundProps = svgPropertiesNoEventsFromUnknown(this.props.background);
-    return sectors.map((entry, i) => {
-      const { value, background, ...rest } = entry;
+    return (
+      <ZIndexLayer zIndex={getZIndexFromUnknown(this.props.background, DefaultZIndexes.barBackground)}>
+        {sectors.map((entry, i) => {
+          const { value, background, ...rest } = entry;
 
-      if (!background) {
-        return null;
-      }
+          if (!background) {
+            return null;
+          }
 
-      const props: RadialBarSectorProps = {
-        cornerRadius: parseCornerRadius(cornerRadius),
-        ...rest,
-        // @ts-expect-error backgroundProps is contributing unknown props
-        fill: '#eee',
-        ...background,
-        ...backgroundProps,
-        ...adaptEventsOfChild(this.props, entry, i),
-        index: i,
-        className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
-        option: background,
-        isActive: false,
-      };
+          const props: RadialBarSectorProps = {
+            cornerRadius: parseCornerRadius(cornerRadius),
+            ...rest,
+            // @ts-expect-error backgroundProps is contributing unknown props
+            fill: '#eee',
+            ...background,
+            ...backgroundProps,
+            ...adaptEventsOfChild(this.props, entry, i),
+            index: i,
+            className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+            option: background,
+            isActive: false,
+          };
 
-      return (
-        <RadialBarSector
-          key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`} // eslint-disable-line react/no-array-index-key
-          {...props}
-        />
-      );
-    });
+          return (
+            <RadialBarSector
+              key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`}
+              {...props}
+            />
+          );
+        })}
+      </ZIndexLayer>
+    );
   }
 
   render() {
@@ -415,7 +434,16 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     ) ?? STABLE_EMPTY_ARRAY;
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
+      <SetRadialBarTooltipEntrySettings
+        dataKey={props.dataKey}
+        data={data}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        name={props.name}
+        hide={props.hide}
+        fill={props.fill}
+        tooltipType={props.tooltipType}
+      />
       <RadialBarWithState {...props} data={data} />
     </>
   );

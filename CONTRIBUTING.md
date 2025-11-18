@@ -82,7 +82,7 @@ We use TypeScript for type safety. Some rules to follow:
 
 - Never use `any` type. Implicit or explicit.
 - Prefer `unknown` over `any`. Refine the type.
-- Always type your function parameters and return values explicitly, do not rely on implicit any or inference
+- Type your function parameters and return values explicitly, do not rely on implicit any or inference. Exceptions are React components and trivial functions where the types are obvious.
 - Do not use `as` type assertions, ever. The only exception is `as const`.
 
 ## <a name="license"></a>License

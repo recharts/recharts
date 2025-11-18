@@ -271,6 +271,16 @@ const tooltipSlice = createSlice({
       },
       prepare: prepareAutoBatched<TooltipPayloadConfiguration>(),
     },
+    replaceTooltipEntrySettings: {
+      reducer(state, action: PayloadAction<{ prev: TooltipPayloadConfiguration; next: TooltipPayloadConfiguration }>) {
+        const { prev, next } = action.payload;
+        const index = current(state).tooltipItemPayloads.indexOf(castDraft(prev));
+        if (index > -1) {
+          state.tooltipItemPayloads[index] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<{ prev: TooltipPayloadConfiguration; next: TooltipPayloadConfiguration }>(),
+    },
     removeTooltipEntrySettings: {
       reducer(state, action: PayloadAction<TooltipPayloadConfiguration>) {
         const index = current(state).tooltipItemPayloads.indexOf(castDraft(action.payload));
@@ -343,6 +353,7 @@ const tooltipSlice = createSlice({
 
 export const {
   addTooltipEntrySettings,
+  replaceTooltipEntrySettings,
   removeTooltipEntrySettings,
   setTooltipSettingsState,
   setActiveMouseOverItemIndex,

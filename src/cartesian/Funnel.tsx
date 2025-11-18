@@ -124,27 +124,43 @@ type FunnelTrapezoidsProps = {
   allOtherFunnelProps: Props;
 };
 
-function getTooltipEntrySettings(
-  props: Props & { trapezoids: ReadonlyArray<FunnelTrapezoidItem> },
-): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, stroke, strokeWidth, fill, name, hide, tooltipType, data } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: props.trapezoids.map(({ tooltipPosition }) => tooltipPosition),
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      name,
-      nameKey,
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // Funnel does not have unit, why?
-    },
-  };
-}
+const SetFunnelTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+    data,
+    trapezoids,
+  }: Pick<
+    Props,
+    'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data'
+  > & {
+    trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
+  }) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: trapezoids.map(({ tooltipPosition }) => tooltipPosition),
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        name,
+        nameKey,
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // Funnel does not have unit, why?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 function FunnelLabelListProvider({
   showLabels,
@@ -420,7 +436,18 @@ function FunnelImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, trapezoids }} />
+      <SetFunnelTooltipEntrySettings
+        dataKey={props.dataKey}
+        nameKey={props.nameKey}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        hide={props.hide}
+        tooltipType={props.tooltipType}
+        data={props.data}
+        trapezoids={trapezoids}
+      />
       <FunnelWithState
         {...everythingElse}
         stroke={stroke}

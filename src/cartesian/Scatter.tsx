@@ -1,13 +1,22 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ComponentType,
+  MutableRefObject,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
-  LabelListFromLabelProp,
   ImplicitLabelListType,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -63,8 +72,8 @@ import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -206,6 +215,48 @@ const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<Legen
   ];
 };
 
+type InputRequiredToComputeTooltipEntrySettings = {
+  dataKey?: DataKey<any> | undefined;
+  points?: ReadonlyArray<ScatterPointItem>;
+  stroke?: string;
+  strokeWidth?: number | string;
+  fill?: string;
+  name?: string;
+  hide?: boolean;
+  tooltipType?: TooltipType;
+};
+
+const SetScatterTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    points,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    tooltipType,
+  }: InputRequiredToComputeTooltipEntrySettings) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
+      positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        nameKey: undefined,
+        dataKey,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit: '', // why doesn't Scatter support unit?
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
+
 type ScatterSymbolsProps = {
   points: ReadonlyArray<ScatterPointItem>;
   showLabels: boolean;
@@ -341,7 +392,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const isActive: boolean = hasActiveShape && activeIndex === String(i);
         const option = hasActiveShape && isActive ? activeShape : shape;
         const symbolProps = {
-          key: `symbol-${i}`,
           ...baseProps,
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
@@ -349,20 +399,28 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         };
 
         return (
-          <Layer
-            // eslint-disable-next-line react/no-array-index-key
+          <ZIndexLayer
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
-            className="recharts-scatter-symbol"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            /*
+             * inactive Scatters use the parent zIndex, which is represented by undefined here.
+             * ZIndexLayer will render undefined zIndex as-is, as regular children, without portals.
+             * Active Scatters use the activeDot zIndex so they render above other elements.
+             */
+            zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
           >
-            <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
-          </Layer>
+            <Layer
+              className="recharts-scatter-symbol"
+              {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onMouseEnter={onMouseEnterFromContext(entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onMouseLeave={onMouseLeaveFromContext(entry, i)}
+              // @ts-expect-error the types need a bit of attention
+              onClick={onClickFromContext(entry, i)}
+            >
+              <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+            </Layer>
+          </ZIndexLayer>
         );
       })}
     </>
@@ -446,37 +504,6 @@ function SymbolsWithAnimation({
       <LabelListFromLabelProp label={props.label} />
     </ScatterLabelListProvider>
   );
-}
-
-type InputRequiredToComputeTooltipEntrySettings = {
-  dataKey?: DataKey<any> | undefined;
-  points?: ReadonlyArray<ScatterPointItem>;
-  stroke?: string;
-  strokeWidth?: number | string;
-  fill?: string;
-  name?: string;
-  hide?: boolean;
-  tooltipType?: TooltipType;
-};
-
-function getTooltipEntrySettings(props: InputRequiredToComputeTooltipEntrySettings): TooltipPayloadConfiguration {
-  const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
-  return {
-    dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
-    positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      nameKey: undefined,
-      dataKey,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: tooltipType,
-      color: fill,
-      unit: '', // why doesn't Scatter support unit?
-    },
-  };
 }
 
 export function computeScatterPoints({
@@ -678,7 +705,16 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   }
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
+      <SetScatterTooltipEntrySettings
+        dataKey={props.dataKey}
+        points={points}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        fill={props.fill}
+        name={props.name}
+        hide={props.hide}
+        tooltipType={props.tooltipType}
+      />
       <ScatterWithId
         {...everythingElse}
         xAxisId={xAxisId}
@@ -728,6 +764,6 @@ function ScatterFn(outsideProps: Props) {
   );
 }
 
-export const Scatter = React.memo(ScatterFn);
+export const Scatter: ComponentType<Props> = React.memo(ScatterFn);
 
 Scatter.displayName = 'Scatter';

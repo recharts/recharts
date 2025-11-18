@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { AreaChartExample, AreaChartRangeExample } from '../../../www/src/docs/apiExamples/AreaChart';
 import SimpleAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SimpleAreaChart';
 import StackedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/StackedAreaChart';
 import AreaChartConnectNulls from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls';
@@ -10,6 +9,8 @@ import SynchronizedAreaChart from '../../../www/src/docs/exampleComponents/AreaC
 import TinyAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
 import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
 import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
+import AreaChartExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartExample';
+import AreaChartRangeExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartRangeExample';
 
 test('AreaChartNavExample', async ({ mount }) => {
   const component = await mount(<AreaChartNavExample />);
@@ -57,11 +58,11 @@ test('SimpleAreaChart', async ({ mount }) => {
 });
 
 test('AreaChartExample', async ({ mount }) => {
-  const component = await mount(<AreaChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<AreaChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
 test('AreaChartRangeExample', async ({ mount }) => {
-  const component = await mount(<AreaChartRangeExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<AreaChartRangeExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

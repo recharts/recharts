@@ -7,8 +7,6 @@ If you want to know the guidelines we follow then read [CONTRIBUTING.md](CONTRIB
 git clone https://github.com/recharts/recharts.git
 cd recharts
 npm install
-cd www
-npm install
 ```
 
 # Linting and types

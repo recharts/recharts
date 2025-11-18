@@ -46,28 +46,6 @@ export const RadialBarAPI = {
       },
     },
     {
-      name: 'maxAngle',
-      type: 'Number',
-      defaultVal: '135',
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US':
-          'The angle of the value which has the max absolute value, which should be a positive number and less than Math.abs(endAngle - startAngle).',
-        'zh-CN': '柱条对应的最大的角度。这个值必须小于 Math.abs(endAngle - startAngle)。',
-      },
-    },
-    {
-      name: 'minAngle',
-      type: 'Number',
-      defaultVal: '0',
-      isOptional: false,
-      desc: {
-        'en-US': 'The minimum angle of each bar.',
-        'zh-CN': '柱条的最小度数。',
-      },
-    },
-    {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
       defaultVal: "'rect'",

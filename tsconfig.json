@@ -6,12 +6,21 @@
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
     "jsx": "react",
     "module": "commonjs",
-    "noImplicitAny": true,
     "outDir": "./build/",
     "preserveConstEnums": true,
     "removeComments": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    // TODO: Enable this option and fix errors https://github.com/recharts/recharts/issues/6645
+    "strictFunctionTypes": false,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    // TODO: Enable this option and fix errors https://github.com/recharts/recharts/issues/6645
+    "noUncheckedIndexedAccess": false,
     "sourceMap": true,
     "target": "es6",
     "types": ["vitest/globals"]

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { RadialBarChartExample } from '../../../www/src/docs/apiExamples/RadialBarChart';
+
+import RadialBarChartExample from '../../../www/src/docs/apiExamples/RadialBarChart/RadialBarChartExample';
 import SimpleRadialBarChart from '../../../www/src/docs/exampleComponents/RadialBarChart/SimpleRadialBarChart';
 import RadialBarChartNavExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample';
 
@@ -15,6 +16,6 @@ test('SimpleRadialBarChart', async ({ mount }) => {
 });
 
 test('RadialBarChartExample', async ({ mount }) => {
-  const component = await mount(<RadialBarChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<RadialBarChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

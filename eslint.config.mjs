@@ -119,6 +119,7 @@ const reactConfig = [
         'error',
         {
           devDependencies: true,
+          packageDir: ['.', './www'],
         },
       ],
       'import/prefer-default-export': 'off',
@@ -159,7 +160,12 @@ const reactConfig = [
       'react/require-default-props': 'off',
       'react/default-props-match-prop-types': 'off',
       'react/function-component-definition': 'off',
-      'react/no-array-index-key': 'warn',
+      /**
+       * In a chart, using the index as key is acceptable because the order of items
+       * has meaning. Reordering, or removing elements creates a whole new chart.
+       * For Recharts, array index is a good identifier.
+       */
+      'react/no-array-index-key': 'off',
       'react/no-access-state-in-setstate': 'off',
       'react/destructuring-assignment': 'off',
       'react/jsx-closing-tag-location': 'error',
@@ -304,12 +310,21 @@ const overridesConfig = [
   {
     name: 'default-export-override',
     /*
-     * Files in the ./www/docs/exampleComponents, that are not `index.ts`,
+     * Files on the website, that are not index, and that are public examples
      * must have only default export, because they are passed to react-runner
      * which requires default export.
      */
-    basePath: './www/src/docs/exampleComponents',
-    files: ['**/*.tsx', '**/*.ts'],
+    basePath: './www/src',
+    files: [
+      'docs/exampleComponents/**/*.tsx',
+      'docs/exampleComponents/**/*.ts',
+      'docs/apiExamples/**/*.tsx',
+      'docs/apiExamples/**/*.ts',
+      'components/GuideView/*/*.tsx',
+      'components/GuideView/*/*.ts',
+      'views/IndexView/*.tsx',
+      'views/IndexView/*.ts',
+    ],
     ignores: ['**/index.ts', '**/index.tsx'],
     rules: {
       'import/no-default-export': 'off',
@@ -333,6 +348,23 @@ const overridesConfig = [
      */
     files: ['test/helper/**'],
     rules: {
+      'no-console': 'off',
+    },
+  },
+];
+
+const omnidocOverrides = [
+  {
+    name: 'omnidoc-overrides',
+    files: ['omnidoc/**'],
+    rules: {
+      // we allow generators in omnidoc scripts
+      'no-restricted-syntax': 'off',
+      // we allow `continue`
+      'no-continue': 'off',
+      // class methods are not required to use `this` in omnidoc scripts
+      'class-methods-use-this': 'off',
+      // omnidoc can use console logs
       'no-console': 'off',
     },
   },
@@ -376,4 +408,6 @@ export default [
   ...overridesConfig,
   // Settings
   ...settings,
+  // Omnidoc Overrides
+  ...omnidocOverrides,
 ];

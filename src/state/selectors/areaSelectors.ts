@@ -18,6 +18,7 @@ import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdenti
 import { StackDataPoint, StackGroup, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { AreaSettings } from '../types/AreaSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
+import { selectChartBaseValue } from './rootPropsSelectors';
 
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
@@ -131,6 +132,7 @@ export const selectArea: (
     selectChartDataWithIndexesIfNotInPanorama,
     selectBandSize,
     selectSynchronisedAreaSettings,
+    selectChartBaseValue,
   ],
   (
     layout,
@@ -142,6 +144,7 @@ export const selectArea: (
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,
     areaSettings,
+    chartBaseValue,
   ) => {
     if (
       areaSettings == null ||
@@ -168,9 +171,6 @@ export const selectArea: (
     if (displayedData == null) {
       return undefined;
     }
-
-    // Where is this supposed to come from? No charts have that as a prop.
-    const chartBaseValue: undefined = undefined;
 
     return computeArea({
       layout,

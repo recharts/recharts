@@ -1,5 +1,4 @@
-import { Pie, PieChart, PieProps, Tooltip } from 'recharts';
-import { PieSectorDataItem } from 'recharts/types/polar/Pie';
+import { Pie, PieChart, PieProps, PieSectorDataItem, Tooltip } from 'recharts';
 
 // #region Sample data
 const chartData = [

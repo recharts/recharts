@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { getSiteRoutes } from '../src/navigation.data';
 import { getAllNavigationItems, NavItem } from '../src/navigation';
 import { defaultLocale } from '../src/utils/LocaleUtils';
+import { redirectsWithoutLocale } from '../src/routes/redirects';
 
 describe('sitemap', () => {
   const hardcodedUrls = getSiteRoutes().sort();
@@ -27,7 +28,8 @@ describe('sitemap', () => {
     };
 
     const liveUrlSet = new Set(extractUrlsFromNavItems(navItems));
-    const sortedLiveUrls = Array.from(liveUrlSet).sort();
+    const redirects = Object.keys(redirectsWithoutLocale);
+    const sortedLiveUrls = Array.from([...liveUrlSet, ...redirects]).sort();
 
     expect(sortedLiveUrls).toEqual(hardcodedUrls);
   });

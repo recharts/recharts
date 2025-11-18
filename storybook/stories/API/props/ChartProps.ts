@@ -137,16 +137,6 @@ toggling between multiple dataKey.`,
       category: 'Internal',
     },
   },
-  defaultShowTooltip: {
-    description: 'If true set, the tooltip will be displayed when the chart is rendered.',
-    table: {
-      type: {
-        summary: 'boolean',
-      },
-      defaultValue: false,
-      category: 'General',
-    },
-  },
   id: {
     description: 'The unique id of chart.',
     table: {

@@ -37,9 +37,9 @@ export const API = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListProps),
     // This API story should have explicit values for all props
     dataKey: 'uv',
     position: 'top',
-    ...getStoryArgsFromArgsTypesObject(LabelListProps),
   },
 };

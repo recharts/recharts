@@ -36,7 +36,7 @@ import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
-import { DefaultZIndexes } from '../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -1871,9 +1871,11 @@ describe('<Legend />', () => {
               fill: '#3182bd',
               fillOpacity: 0.6,
               hide: false,
-              isAnimationActive: true,
+              isAnimationActive: 'auto',
+              label: false,
               legendType: 'line',
               stroke: '#3182bd',
+              type: 'linear',
               xAxisId: 0,
               yAxisId: 0,
               zIndex: DefaultZIndexes.area,

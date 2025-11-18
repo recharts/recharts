@@ -1,0 +1,37 @@
+.sidebar {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  width: 280px;
+  padding: 2rem;
+  overflow: auto;
+  z-index: 1;
+  background: #fff;
+
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding-left: 10px;
+      line-height: 1.5;
+      font-size: var(--font-size-lg);
+    }
+
+    a {
+      display: block;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--brand-primary);
+      }
+
+      &.active {
+        text-decoration: underline;
+        color: var(--brand-primary);
+        font-weight: 700;
+      }
+    }
+  }
+}

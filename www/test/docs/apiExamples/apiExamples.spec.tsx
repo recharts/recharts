@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import { describe, it, expect } from 'vitest';
 import { allApiExamples } from '../../../src/docs/apiExamples';
 
@@ -11,11 +12,11 @@ describe('API Examples', () => {
       examples.forEach((example, index) => {
         describe(`example ${index + 1}`, () => {
           it(`should have a demo source code`, () => {
-            expect(example.code.length).toBeGreaterThan(0);
+            expect(example.sourceCode.length).toBeGreaterThan(10);
           });
 
           it('should have an example that renders something and does not crash', () => {
-            expect(() => example.demo('en-US')).not.toThrow();
+            expect(() => createElement(example.Component)).not.toThrow();
           });
         });
       });

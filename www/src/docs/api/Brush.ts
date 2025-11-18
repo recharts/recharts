@@ -4,7 +4,6 @@ export const BrushAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The key of data displayed in Brush.',
@@ -14,7 +13,6 @@ export const BrushAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of brush.',
@@ -24,7 +22,6 @@ export const BrushAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of brush.',
@@ -34,7 +31,6 @@ export const BrushAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The width of brush.',
@@ -44,7 +40,7 @@ export const BrushAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '40',
+      defaultVal: 40,
       isOptional: false,
       desc: {
         'en-US': 'The height of brush.',
@@ -52,19 +48,9 @@ export const BrushAPI = {
       },
     },
     {
-      name: 'data',
-      type: 'Array',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The original data of a LineChart, a BarChart or an AreaChart.',
-        'zh-CN': '类目图表的输入数据。',
-      },
-    },
-    {
       name: 'travellerWidth',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': 'The width of each traveller.',
@@ -74,7 +60,7 @@ export const BrushAPI = {
     {
       name: 'gap',
       type: 'Number',
-      defaultVal: '1',
+      defaultVal: 1,
       isOptional: true,
       desc: {
         'en-US':
@@ -85,7 +71,6 @@ export const BrushAPI = {
     {
       name: 'startIndex',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The default start index of brush. If the option is not set, the start index will be 0.',
@@ -95,7 +80,6 @@ export const BrushAPI = {
     {
       name: 'endIndex',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -106,7 +90,6 @@ export const BrushAPI = {
     {
       name: 'tickFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of ticks.',
@@ -116,7 +99,6 @@ export const BrushAPI = {
     {
       name: 'onChange',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The handler of changing the active scope of brush.',

@@ -181,7 +181,7 @@ export const isNullish = (value: unknown): value is Nullish => {
 };
 
 /**
- *Uppercase the first letter of a string
+ * Uppercase the first letter of a string
  * @param {string} value The string to uppercase
  * @returns {string} The uppercased string
  */
@@ -192,3 +192,18 @@ export const upperFirst = (value: string): string => {
 
   return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 };
+
+/**
+ * Checks if the value is not null nor undefined.
+ * @param value The value to check
+ * @returns true if the value is not null nor undefined
+ */
+export function isNotNil<T>(value: T): value is NonNullable<T> {
+  return value != null;
+}
+
+/**
+ * No-operation function that does nothing.
+ * Useful as a placeholder or default callback function.
+ */
+export function noop(): void {}
