@@ -6,7 +6,6 @@ import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error storybookTest import not found
-
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
 // @ts-expect-error does not like import.meta
@@ -17,15 +16,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      recharts: path.resolve(__dirname, 'src'),
-      /*
-       * Ensure that we are using the same React instance
-       * to avoid issues with hooks and context.
-       */
-      react: path.resolve(__dirname, 'node_modules', 'react'),
-      'react-dom': path.resolve(__dirname, 'node_modules', 'react-dom'),
-      'react-is': path.resolve(__dirname, 'node_modules', 'react-is'),
-      '@testing-library/react': path.resolve(__dirname, 'node_modules', '@testing-library/react'),
+      recharts: path.resolve(dirname, 'src'),
     },
   },
   test: {
@@ -41,8 +32,32 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'unit',
+          name: 'unit:lib',
           setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
+          include: ['test/**/*.spec.ts?(x)'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:website',
+          include: ['test/**/*.spec.ts?(x)'],
+          root: 'www',
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'unit:omnidoc',
+          include: ['omnidoc/**/*.spec.ts', 'omnidoc/**/*.spec.tsx'],
+        },
+      },
+      {
+        test: {
+          name: 'build-output',
+          include: ['scripts/**/*.test.ts'],
+          environment: 'node',
+          globals: false,
         },
       },
       {

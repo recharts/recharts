@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Area, AreaChart, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
@@ -96,6 +96,10 @@ describe('AreaChart', () => {
     assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
   });
@@ -117,6 +121,10 @@ describe('AreaChart', () => {
     const chart = container.querySelector('.recharts-wrapper');
     assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -750,6 +758,10 @@ describe('AreaChart', () => {
     const chart = container.querySelector('.recharts-wrapper');
     assertNotNull(chart);
     fireEvent.mouseMove(chart, { clientX: 100, clientY: 100 });
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
     const dots = container.querySelectorAll('.customized-active-dot');
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
     expect(dots.length).toBe(2);

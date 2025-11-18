@@ -46,6 +46,7 @@ export type TooltipContentProps<TValue extends ValueType, TName extends NameType
   coordinate: Coordinate | undefined;
   active: boolean;
   accessibilityLayer: boolean;
+  activeIndex: TooltipIndex | undefined;
 };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
@@ -265,6 +266,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
         payload: finalPayload,
         label: finalLabel,
         active: finalIsActive,
+        activeIndex,
         coordinate,
         accessibilityLayer,
       })}

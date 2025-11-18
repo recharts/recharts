@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { timeFormat } from 'd3-time-format';
@@ -49,7 +49,7 @@ import { selectChartOffsetInternal } from '../../src/state/selectors/selectChart
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 
 describe('<XAxis />', () => {
   const data = [
@@ -116,7 +116,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')).toHaveLength(2);
     expectXAxisTicks(container, [
       {
         textContent: '0',
@@ -141,7 +140,7 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-label');
     expect(ticksGroup).toHaveLength(2);
 
     const firstTick = ticksGroup[0];
@@ -170,7 +169,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
     expectXAxisTicks(container, [
       {
         textContent: '0',
@@ -230,7 +228,6 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(lineData.length);
     expectXAxisTicks(container, [
       {
         textContent: 'Page A',
@@ -339,7 +336,6 @@ describe('<XAxis />', () => {
       );
 
       expect(scaleTypeSpy).toHaveBeenLastCalledWith('scaleTime');
-      expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
           textContent: 'Thu, Jul 04, 2019, 00:00:00 Coordinated Universal Time',
@@ -420,7 +416,6 @@ describe('<XAxis />', () => {
       );
 
       expect(scaleTypeSpy).toHaveBeenLastCalledWith(undefined);
-      expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
           textContent: 'Thu 04',
@@ -771,7 +766,7 @@ describe('<XAxis />', () => {
         );
 
         expectLastCalledWith(spy, [90, 170]);
-        const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
+        const allTicks = container.querySelectorAll('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
         expect(allTicks).toHaveLength(expectedTickCount);
       },
     );
@@ -1263,7 +1258,7 @@ describe('<XAxis />', () => {
       </BarChart>,
     );
 
-    const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
+    const tick = container.querySelector('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
     assertNotNull(tick);
     expect(tick).toBeInTheDocument();
     expect(tick.textContent).toEqual('90');
@@ -2037,7 +2032,7 @@ describe('<XAxis />', () => {
         spy({ foo, bar });
         return null;
       };
-      const { rerender } = render(
+      const { rerender } = rechartsTestRender(
         <BarChart width={100} height={100}>
           <XAxis xAxisId="foo" scale="log" type="number" />
           <Customized component={Comp} />
@@ -2197,6 +2192,42 @@ describe('<XAxis />', () => {
         foo: implicitXAxis,
         bar: implicitXAxis,
       });
+    });
+
+    it('should remove old ID configuration when the ID changes', () => {
+      const IDChangingComponent = ({ children }: { children: ReactNode }) => {
+        const [id, setId] = React.useState('1');
+        const onClick = () => setId('2');
+        return (
+          <>
+            <button type="button" className="pushbutton" onClick={onClick}>
+              Change ID
+            </button>
+            <BarChart width={100} height={100}>
+              <XAxis xAxisId={id} scale="log" type="number" />
+              {children}
+            </BarChart>
+          </>
+        );
+      };
+      const renderTestCase = createSelectorTestCase(IDChangingComponent);
+
+      const { spy, container } = renderTestCase(state => state.cartesianAxis.xAxis);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // only id "1" exists
+      const lastCallArgs1 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs1);
+      expect(Object.keys(lastCallArgs1)).toEqual(['1']);
+
+      fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      // only id "2" exists
+      const lastCallArgs2 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs2);
+      expect(Object.keys(lastCallArgs2)).toEqual(['2']);
     });
 
     it('should return stable reference when chart re-renders', () => {
@@ -3190,7 +3221,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           {
@@ -3266,7 +3297,7 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
           </LineChart>,
         );
-        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
           { textContent: '90', x: '5', y: '243' },
@@ -4176,7 +4207,7 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={reduxDomainSpyB} axisType="xAxis" axisId="xb" />} />
             </LineChart>,
           );
-          const allXAxes = container.querySelectorAll('.recharts-xAxis');
+          const allXAxes = container.querySelectorAll('.recharts-xAxis-tick-labels');
           expect(allXAxes).toHaveLength(2);
           expectXAxisTicks(allXAxes[0], [
             {
@@ -4917,12 +4948,12 @@ describe('<XAxis />', () => {
     }
 
     it('should pass object padding to custom tick component', () => {
-      let receivedPadding: { left?: number; right?: number } | undefined;
       const expectedPadding = { left: 20, right: 30 };
+      expect.assertions(6);
 
       const CustomXAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { left?: number; right?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -4931,17 +4962,15 @@ describe('<XAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass string padding to custom tick component', () => {
-      let receivedPadding: string | undefined;
       const expectedPadding = 'gap';
+      expect.assertions(6);
 
       const CustomXAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as string;
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toBe(expectedPadding);
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -4950,17 +4979,15 @@ describe('<XAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toBe(expectedPadding);
     });
 
     it('should pass padding to function-based custom tick', () => {
-      let receivedPadding: { left?: number; right?: number } | undefined;
       const expectedPadding = { left: 15, right: 25 };
+      expect.assertions(6);
 
       const customTickFunction = (props: TickProps) => {
-        receivedPadding = props.padding as { left?: number; right?: number };
-        return <text {...props}>Function Tick</text>;
+        expect(props.padding).toEqual(expectedPadding);
+        return <text>Function Tick</text>;
       };
 
       render(
@@ -4969,16 +4996,14 @@ describe('<XAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual(expectedPadding);
     });
 
     it('should pass default padding when no padding is specified', () => {
-      let receivedPadding: { left?: number; right?: number } | string = 'not-called';
+      expect.assertions(6);
 
       const CustomXAxisTick = (props: TickProps) => {
-        receivedPadding = props.padding as { left?: number; right?: number };
-        return <text {...props}>Custom Tick</text>;
+        expect(props.padding).toEqual({ left: 0, right: 0 });
+        return <text>Custom Tick</text>;
       };
 
       render(
@@ -4987,8 +5012,6 @@ describe('<XAxis />', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
-
-      expect(receivedPadding).toEqual({ left: 0, right: 0 });
     });
   });
 

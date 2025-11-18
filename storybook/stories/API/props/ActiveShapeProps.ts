@@ -1,13 +1,6 @@
 import { StorybookArgs } from '../../../StorybookArgs';
 
 export const ActiveShapeProps: StorybookArgs = {
-  activeIndex: {
-    description:
-      'The index of the individual shapes of the graph element to be marked as active, and render props.activeShape',
-    table: {
-      category: 'General',
-    },
-  },
   shape: {
     description: 'The customized shape to be rendered.',
     table: {

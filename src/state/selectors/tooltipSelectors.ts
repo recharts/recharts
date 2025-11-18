@@ -32,7 +32,8 @@ import {
   selectReferenceAreas,
   selectReferenceDots,
   selectReferenceLines,
-  XorYType,
+  selectTooltipAxis,
+  selectTooltipAxisDataKey,
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
@@ -50,7 +51,7 @@ import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
-import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
+import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
@@ -77,8 +78,7 @@ import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { selectTooltipAxisType } from './selectTooltipAxisType';
-import { selectTooltipAxis, selectTooltipAxisDataKey } from './selectTooltipAxis';
+import { selectTooltipAxisType, XorYType } from './selectTooltipAxisType';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
@@ -170,7 +170,7 @@ const selectAllStackedGraphicalItems: (state: RechartsRootState) => ReadonlyArra
   );
 
 const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(
-  [selectTooltipStackedData, selectAllStackedGraphicalItems, selectStackOffsetType],
+  [selectTooltipStackedData, selectAllStackedGraphicalItems, selectStackOffsetType, selectReverseStackOrder],
   combineStackGroups,
 );
 

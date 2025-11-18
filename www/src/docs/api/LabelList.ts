@@ -73,16 +73,6 @@ export const LabelListAPI = {
       },
     },
     {
-      name: 'data',
-      type: 'Number',
-      defaultVal: 'null',
-      isOptional: true,
-      desc: {
-        'en-US': 'The data input to the charts.',
-        'zh-CN': '图表的输入数据',
-      },
-    },
-    {
       name: 'clockWise',
       type: 'String',
       defaultVal: 'false',

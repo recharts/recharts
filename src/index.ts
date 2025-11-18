@@ -52,7 +52,7 @@ export type { Props as PolarRadiusAxisProps } from './polar/PolarRadiusAxis';
 export { PolarAngleAxis } from './polar/PolarAngleAxis';
 export type { Props as PolarAngleAxisProps } from './polar/PolarAngleAxis';
 export { Pie } from './polar/Pie';
-export type { Props as PieProps, PieLabel, PieLabelRenderProps } from './polar/Pie';
+export type { Props as PieProps, PieLabel, PieLabelRenderProps, PieSectorDataItem } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
@@ -61,7 +61,7 @@ export type { RadialBarProps } from './polar/RadialBar';
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';
 export { ReferenceLine } from './cartesian/ReferenceLine';
-export type { Props as ReferenceLineProps } from './cartesian/ReferenceLine';
+export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
 export type { Props as ReferenceDotProps } from './cartesian/ReferenceDot';
 export { ReferenceArea } from './cartesian/ReferenceArea';
@@ -108,6 +108,10 @@ export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
 export type { LegendType } from './util/types';
+export type { IfOverflow } from './util/IfOverflow';
+
+export { ZIndexLayer } from './zIndex/ZIndexLayer';
+export { DefaultZIndexes } from './zIndex/DefaultZIndexes';
 
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';

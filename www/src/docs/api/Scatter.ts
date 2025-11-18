@@ -99,17 +99,6 @@ export const ScatterAPI = {
       },
     },
     {
-      name: 'points',
-      type: 'Array',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The coordinates of all the scatters.',
-        'zh-CN': '所有散点的坐标。',
-      },
-      format: ['[{ cx: 12, cy: 12, r: 4, payload: {x: 12, y: 45, z: 9 }}]'],
-    },
-    {
       name: 'isAnimationActive',
       type: 'Boolean',
       defaultVal: 'true in CSR, and false in SSR',

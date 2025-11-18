@@ -1,6 +1,6 @@
 import { IndexView } from './IndexView';
 import { GuideView } from './GuideView';
-import { APIView } from './APIView';
+import { APIViewNew as APIView } from './APIViewNew';
 import { ExamplesView } from './ExamplesView';
 import { ExamplesIndexView } from './ExamplesIndexView';
 import { Storybook } from './Storybook';

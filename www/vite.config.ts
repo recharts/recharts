@@ -7,16 +7,8 @@ import { supportedLocales } from './src/locale';
 
 export default defineConfig(({ mode }) => ({
   base: process.env.BASE_URL || '/',
-  loader: { '.js': 'jsx' },
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ['@babel/plugin-proposal-decorators', { legacy: true }],
-          ['@babel/plugin-proposal-class-properties', { loose: true }],
-        ],
-      },
-    }),
+    react(),
     sitemap({
       hostname: 'https://recharts.github.io',
       dynamicRoutes: getSiteRoutes(),
@@ -48,18 +40,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: resolve(__dirname, 'docs'),
   },
-  esbuild: {
-    include: /\.[jt]s[x]?$/,
-    exclude: [],
-    loader: 'tsx',
-  },
-  css: {
-    preprocessorOptions: {
-      sass: {
-        includePaths: [resolve(__dirname, './src/styles'), resolve(__dirname, './node_module/simple-line-icons/sass')],
-      },
-    },
-  },
   resolve: {
     alias:
       mode === 'development'
@@ -70,13 +50,6 @@ export default defineConfig(({ mode }) => ({
              * This also gives us hot module reload for free!
              */
             recharts: resolve(__dirname, '../src'),
-            /*
-             * Ensure that we are using the same React instance
-             * to avoid issues with hooks and context.
-             */
-            react: resolve(__dirname, 'node_modules/react'),
-            'react-dom': resolve(__dirname, 'node_modules/react-dom'),
-            'react-is': resolve(__dirname, 'node_modules/react-is'),
           }
         : undefined,
   },

@@ -163,18 +163,6 @@ export const LineAPI: ApiDoc = {
       examples: [],
     },
     {
-      name: 'points',
-      type: 'Array',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The coordinates of all the points in the line, usually calculated internally.',
-        'zh-CN':
-          '曲线上点的坐标。当使用 LineChart 或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。',
-      },
-      format: ['[{x: 12, y: 12, value: 240}]'],
-    },
-    {
       name: 'stroke',
       type: 'String',
       defaultVal: '#3182bd',

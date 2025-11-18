@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
-import { ScatterChartExample } from '../../../www/src/docs/apiExamples/ScatterChart';
+
+import ScatterChartExample from '../../../www/src/docs/apiExamples/ScatterChart/ScatterChartExample';
 import SimpleScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/SimpleScatterChart';
 import ThreeDimScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart';
 import JointLineScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/JointLineScatterChart';
@@ -51,6 +52,6 @@ test('SimpleScatterChart', async ({ mount }) => {
 });
 
 test('ScatterChartExample', async ({ mount }) => {
-  const component = await mount(<ScatterChartExample locale="en-US" isAnimationActive={false} />);
+  const component = await mount(<ScatterChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

@@ -9,8 +9,8 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface BaseLabelListEntry {
   /**
@@ -123,7 +123,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
           return (
             <Label
-              key={`label-${index}`} // eslint-disable-line react/no-array-index-key
+              key={`label-${index}`}
               {...svgPropertiesAndEvents(entry)}
               {...others}
               {...idProps}

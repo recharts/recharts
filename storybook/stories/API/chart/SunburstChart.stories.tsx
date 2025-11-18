@@ -2,7 +2,7 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
 import { SunburstData } from '../../../../src/chart/SunburstChart';
-import { CategoricalChartProps, ChartSizeProps, data, dataKey, margin } from '../props/ChartProps';
+import { CategoricalChartProps, ChartSizeProps, data, dataKey } from '../props/ChartProps';
 import { PolarChartProps } from '../props/PolarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
@@ -13,7 +13,6 @@ const { onClick, onMouseEnter, onMouseLeave, className } = CategoricalChartProps
 export default {
   argTypes: {
     data,
-    margin,
     ...ChartSizeProps,
     dataKey,
     innerRadius,

@@ -52,7 +52,7 @@ const internalInspectors: Record<string, ComponentType> = {
   selectTooltipAxisType: TooltipAxisTypeInspector,
 };
 
-const isLocalhost = window.location.hostname === 'localhost';
+const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
 
 const allInspectors: Record<string, ComponentType> = {
   ...externalInspectors,

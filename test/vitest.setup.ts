@@ -1,8 +1,12 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { restoreHTMLElementProperties } from './helper/mockHTMLElementProperty';
+import { setupConsoleWarningToError } from './helper/consoleWarningToError';
 
 process.env.TZ = 'UTC';
+
+// Setup console warning/error interception
+setupConsoleWarningToError();
 
 /*
  * We have to fake all timers ahead of time

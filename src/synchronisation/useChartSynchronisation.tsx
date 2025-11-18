@@ -14,8 +14,7 @@ import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { MouseHandlerDataParam } from './types';
-
-const noop = () => {};
+import { noop } from '../util/DataUtils';
 
 function useTooltipSyncEventsListener() {
   const mySyncId = useAppSelector(selectSyncId);

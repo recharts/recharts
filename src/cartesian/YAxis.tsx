@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
+import { ComponentType, FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
 import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
 import {
   addYAxis,
+  replaceYAxis,
   removeYAxis,
   updateYAxisWidth,
   YAxisOrientation,
@@ -55,12 +56,26 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 
 function SetYAxisSettings(settings: YAxisSettings): null {
   const dispatch = useAppDispatch();
+  const prevSettingsRef = useRef<YAxisSettings | null>(null);
+
   useLayoutEffect(() => {
-    dispatch(addYAxis(settings));
-    return () => {
-      dispatch(removeYAxis(settings));
-    };
+    if (prevSettingsRef.current === null) {
+      dispatch(addYAxis(settings));
+    } else if (prevSettingsRef.current !== settings) {
+      dispatch(replaceYAxis({ prev: prevSettingsRef.current, next: settings }));
+    }
+    prevSettingsRef.current = settings;
   }, [settings, dispatch]);
+
+  useLayoutEffect(() => {
+    return () => {
+      if (prevSettingsRef.current) {
+        dispatch(removeYAxis(prevSettingsRef.current));
+        prevSettingsRef.current = null;
+      }
+    };
+  }, [dispatch]);
+
   return null;
 }
 
@@ -145,6 +160,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={viewBox}
       ticks={cartesianTickItems}
+      axisType={axisType}
     />
   );
 };
@@ -216,6 +232,6 @@ const YAxisMemoComparator = (prevProps: Readonly<Props>, nextProps: Readonly<Pro
   return shallowEqual({ domain: prevDomain }, { domain: nextDomain });
 };
 
-export const YAxis = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
+export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, YAxisMemoComparator);
 
 YAxis.displayName = 'YAxis';

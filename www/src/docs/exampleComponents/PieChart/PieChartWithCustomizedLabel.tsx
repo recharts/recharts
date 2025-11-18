@@ -13,17 +13,17 @@ const RADIAN = Math.PI / 180;
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelRenderProps) => {
-  // @ts-expect-error type unknown https://github.com/recharts/recharts/issues/6380
+  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
+    return null;
+  }
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  // @ts-expect-error type unknown https://github.com/recharts/recharts/issues/6380
-  const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  // @ts-expect-error type unknown https://github.com/recharts/recharts/issues/6380
-  const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+  const ncx = Number(cx);
+  const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const ncy = Number(cy);
+  const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
   return (
-    // @ts-expect-error type unknown https://github.com/recharts/recharts/issues/6380
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-      {/* @ts-expect-error type unknown https://github.com/recharts/recharts/issues/6380 */}
+    <text x={x} y={y} fill="white" textAnchor={x > ncx ? 'start' : 'end'} dominantBaseline="central">
       {`${((percent ?? 1) * 100).toFixed(0)}%`}
     </text>
   );

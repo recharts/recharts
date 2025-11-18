@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import {
+  CartesianLayout,
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   LayoutType,
@@ -132,6 +133,14 @@ export const useMargin = (): Margin | undefined => {
 export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
 
 export const useChartLayout = () => useAppSelector(selectChartLayout);
+
+export const useCartesianChartLayout = (): CartesianLayout | undefined => {
+  const layout = useChartLayout();
+  if (layout === 'horizontal' || layout === 'vertical') {
+    return layout;
+  }
+  return undefined;
+};
 
 /**
  * Returns true if the component is rendered inside a chart context.

@@ -4,6 +4,8 @@ import { getChartPointer } from '../../../../src/util/getChartPointer';
 
 import { ChartPointer } from '../../../../src/util/types';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ZIndexLayer } from '../../../../src/zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
 
 export default {
   component: Pie,
@@ -44,7 +46,19 @@ function computeAngle(cx: number, cy: number, e: React.MouseEvent): number {
 function DraggablePoint({ cx, cy, angle, radius }: { cx: number; cy: number; angle: number; radius: number }) {
   const pointCx = cx + radius * Math.cos((angle * Math.PI) / 180);
   const pointCy = cy - radius * Math.sin((angle * Math.PI) / 180);
-  return <circle cx={pointCx} cy={pointCy} r={10} fill="red" />;
+  return (
+    <ZIndexLayer zIndex={DefaultZIndexes.activeDot}>
+      <circle
+        style={{
+          cursor: 'grab',
+        }}
+        cx={pointCx}
+        cy={pointCy}
+        r={10}
+        fill="red"
+      />
+    </ZIndexLayer>
+  );
 }
 
 export const DraggablePie = {

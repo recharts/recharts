@@ -4,11 +4,11 @@ import { act } from '@testing-library/react';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 import { selectPieSectors } from '../../../src/state/selectors/pieSelectors';
 import { pageData } from '../../../storybook/stories/data';
-import { Pie, PieChart } from '../../../src';
+import { Pie, PieChart, PieSectorDataItem } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { RechartsRootState } from '../../../src/state/store';
-import { PieSectorDataItem } from '../../../src/polar/Pie';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const cells: ReadonlyArray<ReactElement> = [];
 
@@ -46,6 +46,7 @@ describe('selectPieSectors', () => {
       const { container, spy } = renderTestCase(selector);
       const expectedResultBefore: ReadonlyArray<PieSectorDataItem> = [
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -91,6 +92,7 @@ describe('selectPieSectors', () => {
           value: 590,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -136,6 +138,7 @@ describe('selectPieSectors', () => {
           value: 590,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1506,
           cornerRadius: undefined,
           cx: 200,
@@ -181,6 +184,7 @@ describe('selectPieSectors', () => {
           value: 868,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 989,
           cornerRadius: undefined,
           cx: 200,
@@ -226,6 +230,7 @@ describe('selectPieSectors', () => {
           value: 1397,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1228,
           cornerRadius: undefined,
           cx: 200,
@@ -271,6 +276,7 @@ describe('selectPieSectors', () => {
           value: 1480,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1100,
           cornerRadius: undefined,
           cx: 200,
@@ -316,6 +322,7 @@ describe('selectPieSectors', () => {
           value: 1520,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1700,
           cornerRadius: undefined,
           cx: 200,
@@ -374,6 +381,7 @@ describe('selectPieSectors', () => {
 
       const expectedResultAfter: ReturnType<typeof selectPieSectors> = [
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -419,6 +427,7 @@ describe('selectPieSectors', () => {
           value: 800,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1400,
           cornerRadius: undefined,
           cx: 200,
@@ -464,6 +473,7 @@ describe('selectPieSectors', () => {
           value: 800,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1506,
           cornerRadius: undefined,
           cx: 200,
@@ -509,6 +519,7 @@ describe('selectPieSectors', () => {
           value: 967,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 989,
           cornerRadius: undefined,
           cx: 200,
@@ -554,6 +565,7 @@ describe('selectPieSectors', () => {
           value: 1098,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1228,
           cornerRadius: undefined,
           cx: 200,
@@ -599,6 +611,7 @@ describe('selectPieSectors', () => {
           value: 1200,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1100,
           cornerRadius: undefined,
           cx: 200,
@@ -644,6 +657,7 @@ describe('selectPieSectors', () => {
           value: 1108,
         },
         {
+          // @ts-expect-error we spread the data array into a soup of everything
           amt: 1700,
           cornerRadius: undefined,
           cx: 200,
@@ -694,5 +708,127 @@ describe('selectPieSectors', () => {
       expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfter);
       expect(spy).toHaveBeenCalledTimes(3);
     });
+  });
+});
+
+describe('PieSectorData and PieSectorDataItem type should include data properties', () => {
+  const customData = [
+    { name: 'Group A', value: 400, customProp: 'test1', extraField: 123 },
+    { name: 'Group B', value: 300, customProp: 'test2', extraField: 456 },
+  ];
+
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <PieChart width={400} height={400}>
+      <Pie
+        data={customData}
+        dataKey="value"
+        nameKey="name"
+        cx={200}
+        cy={200}
+        outerRadius={80}
+        fill="#8884d8"
+        id="mypie"
+      />
+      {children}
+    </PieChart>
+  ));
+
+  // Test that PieSectorData now includes ChartDataInput properties
+  it('should include custom data properties in PieSectorDataItem', () => {
+    const { spy } = renderTestCase(state => selectPieSectors(state, 'mypie', undefined));
+
+    expect(spy).toHaveBeenCalledTimes(2);
+    expectLastCalledWith(spy, [
+      {
+        cornerRadius: undefined,
+        // @ts-expect-error we don't have type for the spread properties
+        customProp: 'test1',
+        cx: 205,
+        cy: 205,
+        endAngle: 205.7142857142857,
+        extraField: 123,
+        fill: '#8884d8',
+        innerRadius: 0,
+        maxRadius: 275.77164466275354,
+        midAngle: 102.85714285714285,
+        middleRadius: 40,
+        name: 'Group A',
+        outerRadius: 80,
+        paddingAngle: 0,
+        payload: {
+          customProp: 'test1',
+          extraField: 123,
+          name: 'Group A',
+          value: 400,
+        },
+        percent: 0.5714285714285714,
+        startAngle: 0,
+        stroke: '#fff',
+        tooltipPayload: [
+          {
+            dataKey: 'value',
+            name: 'Group A',
+            payload: {
+              customProp: 'test1',
+              extraField: 123,
+              name: 'Group A',
+              value: 400,
+            },
+            type: undefined,
+            value: 400,
+          },
+        ],
+        tooltipPosition: {
+          x: 196.09916264174743,
+          y: 166.00288351272707,
+        },
+        value: 400,
+      },
+      {
+        cornerRadius: undefined,
+        // @ts-expect-error we don't have type for the spread properties
+        customProp: 'test2',
+        cx: 205,
+        cy: 205,
+        endAngle: 360,
+        extraField: 456,
+        fill: '#8884d8',
+        innerRadius: 0,
+        maxRadius: 275.77164466275354,
+        midAngle: 282.85714285714283,
+        middleRadius: 40,
+        name: 'Group B',
+        outerRadius: 80,
+        paddingAngle: 0,
+        payload: {
+          customProp: 'test2',
+          extraField: 456,
+          name: 'Group B',
+          value: 300,
+        },
+        percent: 0.42857142857142855,
+        startAngle: 205.7142857142857,
+        stroke: '#fff',
+        tooltipPayload: [
+          {
+            dataKey: 'value',
+            name: 'Group B',
+            payload: {
+              customProp: 'test2',
+              extraField: 456,
+              name: 'Group B',
+              value: 300,
+            },
+            type: undefined,
+            value: 300,
+          },
+        ],
+        tooltipPosition: {
+          x: 213.90083735825257,
+          y: 243.99711648727293,
+        },
+        value: 300,
+      },
+    ]);
   });
 });

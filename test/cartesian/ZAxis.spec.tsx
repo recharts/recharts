@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
+import { fireEvent } from '@testing-library/react';
+import { BarChart, CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
@@ -12,7 +13,7 @@ import {
 import { ZAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
-import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { userEventSetup } from '../helper/userEventSetup';
 
 describe('<ZAxis />', () => {
@@ -154,6 +155,42 @@ describe('<ZAxis />', () => {
         realScaleType: 'linear',
       });
       expect(axisScaleSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should remove old ID configuration when the ID changes', () => {
+      const IDChangingComponent = ({ children }: { children: ReactNode }) => {
+        const [id, setId] = React.useState('1');
+        const onClick = () => setId('2');
+        return (
+          <>
+            <button type="button" className="pushbutton" onClick={onClick}>
+              Change ID
+            </button>
+            <BarChart width={100} height={100}>
+              <ZAxis zAxisId={id} scale="log" type="number" />
+              {children}
+            </BarChart>
+          </>
+        );
+      };
+      const renderTestCase = createSelectorTestCase(IDChangingComponent);
+
+      const { spy, container } = renderTestCase(state => state.cartesianAxis.zAxis);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // only id "1" exists
+      const lastCallArgs1 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs1);
+      expect(Object.keys(lastCallArgs1)).toEqual(['1']);
+
+      fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      // only id "2" exists
+      const lastCallArgs2 = spy.mock.lastCall?.[0];
+      assertNotNull(lastCallArgs2);
+      expect(Object.keys(lastCallArgs2)).toEqual(['2']);
     });
   });
 });

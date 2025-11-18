@@ -26,7 +26,7 @@ export const getCalculatedYAxisWidth = ({
   // find the max width of the tick labels
   let maxTickWidth = 0;
   if (ticks) {
-    Array.from(ticks).forEach((tickNode: Element) => {
+    Array.from(ticks).forEach((tickNode: IGetBoundingClient) => {
       if (tickNode) {
         const bbox = tickNode.getBoundingClientRect();
 

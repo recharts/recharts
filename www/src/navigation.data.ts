@@ -9,6 +9,7 @@ export const apiComponents = [
   'ScatterChart',
   'FunnelChart',
   'Treemap',
+  'Sankey',
   'SankeyChart',
   'ResponsiveContainer',
   'Legend',
@@ -118,9 +119,18 @@ export const exampleComponents = [
   'AreaResponsiveContainer',
   'ComposedResponsiveContainer',
   'PieResponsiveContainer',
+  'TargetPriceChart',
 ];
 
-export const guidePages = ['installation', 'getting-started', 'customize', 'activeIndex', 'sizes'];
+export const guidePages = [
+  'installation',
+  'getting-started',
+  'customize',
+  'activeIndex',
+  'sizes',
+  'domainAndTicks',
+  'zIndex',
+];
 
 export function getSiteRoutes(): string[] {
   // the vite sitemap plugin adds root route by default so we don't need to add it here

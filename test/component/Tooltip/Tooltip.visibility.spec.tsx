@@ -1,6 +1,6 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import { fireEvent, getByText, render } from '@testing-library/react';
+import { act, fireEvent, getByText, render } from '@testing-library/react';
 import {
   Area,
   AreaChart,
@@ -86,9 +86,9 @@ import { mockTouchingElement } from '../../helper/mockTouchingElement';
 import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
-import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../../src/zindex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
+import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -428,6 +428,10 @@ describe('Tooltip visibility', () => {
         expect(tooltip1.getAttribute('style')).toContain('left: 0px');
 
         fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
+
+        act(() => {
+          vi.runOnlyPendingTimers();
+        });
 
         const tooltip2 = getTooltip(container);
 
@@ -1511,7 +1515,7 @@ describe('Tooltip visibility', () => {
   });
 
   it('Should display the data selected by Brush', () => {
-    const { container } = render(
+    const { container, debug } = render(
       <LineChart width={600} height={300} data={PageData}>
         <XAxis dataKey="name" />
         <YAxis />
@@ -1525,8 +1529,15 @@ describe('Tooltip visibility', () => {
     );
 
     const line = container.querySelector('.recharts-cartesian-grid-horizontal line')!;
-    const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: +line.getAttribute('x')! + 1, clientY: 50 });
+    showTooltipOnCoordinate(
+      container,
+      lineChartMouseHoverTooltipSelector,
+      {
+        clientX: +line.getAttribute('x')! + 1,
+        clientY: 50,
+      },
+      debug,
+    );
     expect(getByText(container, '4567')).toBeVisible();
   });
 

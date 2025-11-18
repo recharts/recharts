@@ -8,6 +8,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -56,6 +57,10 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
+export function isValidTextAnchor(value: string | undefined): value is TextAnchor {
+  return value === 'start' || value === 'middle' || value === 'end' || value === 'inherit';
+}
+
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
 export type RenderableText = string | number | boolean | null | undefined;
@@ -80,6 +85,8 @@ interface TextProps {
    * The text will be rotated around the (x, y) coordinates as the pivot point.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
    * The rotation transform is applied as `rotate(angle, x, y)`.
+   *
+   * @defaultValue 0
    */
   angle?: number;
 
@@ -344,7 +351,8 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 
 const DEFAULT_FILL = '#808080';
 
-const textDefaultProps = {
+export const textDefaultProps = {
+  angle: 0,
   breakAll: false,
   // Magic number from d3
   capHeight: '0.71em',
@@ -389,6 +397,10 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const x = Number(propsX) + (isNumber(dx) ? dx : 0);
   const y = Number(propsY) + (isNumber(dy) ? dy : 0);
 
+  if (!isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
+    return null;
+  }
+
   let startDy: string;
   switch (verticalAnchor) {
     case 'start':
@@ -428,8 +440,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       {wordsByLines.map((line, index) => {
         const words = line.words.join(breakAll ? '' : ' ');
         return (
-          // duplicate words will cause duplicate keys
-          // eslint-disable-next-line react/no-array-index-key
+          // duplicate words will cause duplicate keys which is why we add the array index here
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
             {words}
           </tspan>

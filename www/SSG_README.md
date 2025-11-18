@@ -23,7 +23,7 @@ This website uses Static Site Generation (SSG) to pre-render all routes at build
 - `scripts/validate-sitemap.tsx` - Validates sitemap structure and consistency with HTML files using SAX parser
 - `scripts/vite-plugin-prerender.ts` - (Optional, not currently used) Vite plugin approach
 - `src/views/ExamplesIndexView.tsx` - Landing page for examples with category grid
-- `src/views/ExamplesIndexView.scss` - Styling for examples index page
+- `src/views/ExamplesIndexView.css` - Styling for examples index page
 
 ### Modified Files
 - `src/app.tsx` - Changed from `createRoot().render()` to `hydrateRoot()` for proper hydration
@@ -93,7 +93,7 @@ The `scripts/validate-sitemap.tsx` script validates:
    - All canonical URLs end with trailing slash (except root `/`)
    - Non-root URLs have exactly one x-default alternate without trailing slash
    - Each URL has alternates for all supported locales (`zh-CN`, `en-US`)
-   
+
 2. **File Consistency**
    - All sitemap URLs have corresponding non-empty HTML files
    - No HTML files exist that are missing from the sitemap
@@ -110,7 +110,7 @@ The solution pre-renders:
 - All locale-specific routes (`/en-US`, `/zh-CN`)
 - Examples index pages (`/examples`, `/en-US/examples`, `/zh-CN/examples`)
 - All guide pages
-- All API documentation pages  
+- All API documentation pages
 - All example pages
 - Storybook pages
 

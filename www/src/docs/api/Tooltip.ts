@@ -121,18 +121,6 @@ export const TooltipAPI = {
       ],
     },
     {
-      name: 'viewBox',
-      type: 'Object',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US':
-          'The box of viewing area, which has the shape of {x: someVal, y: someVal, width: someVal, height: someVal}, usually calculated internally.',
-        'zh-CN': '图表的可视区域。通常通过 x、y、width、height 来描述。',
-      },
-      format: ['{ x: 0, y: 0, width: 400, height: 400 }'],
-    },
-    {
       name: 'allowEscapeViewBox',
       type: 'Object',
       defaultVal: '{ x: false, y: false }',
@@ -150,7 +138,7 @@ export const TooltipAPI = {
       isOptional: false,
       desc: {
         'en-US':
-          'If set true, the tooltip is displayed. If set false, the tooltip is hidden, usually calculated internally.',
+          'If set true, the tooltip is displayed even after onMouseLeave. If set false, the tooltip is always hidden.',
         'zh-CN':
           '是否处于激活状态。如果值为 true, tooltip 会显示出来。如果值为 false, tooltip 会被隐藏，这个值一般是图表内部控制的。',
       },
@@ -165,39 +153,6 @@ export const TooltipAPI = {
         'zh-CN': '如果设置了此字段，则工具提示位置将固定不变，并且将不再移动。',
       },
       format: ['{ x: 100, y: 140 }'],
-    },
-    {
-      name: 'coordinate',
-      type: 'Object',
-      defaultVal: '{ x: 0, y: 0 }',
-      isOptional: false,
-      desc: {
-        'en-US': 'The coordinate of tooltip position, usually calculated internally.',
-        'zh-CN': '用来描述位置的坐标，也是图表内部计算的值。',
-      },
-      format: ['{ x: 100, y: 140 }'],
-    },
-    {
-      name: 'payload',
-      type: 'Array',
-      defaultVal: '[]',
-      isOptional: false,
-      desc: {
-        'en-US':
-          'The source data of the content to be displayed in the tooltip, always calculated internally and cannot be user set.',
-        'zh-CN': 'Tooltip 展示内容的源数据，通常是图表内部计算的。',
-      },
-      format: ["[{ name: '05-01', value: 12, unit: 'kg' }]"],
-    },
-    {
-      name: 'label',
-      type: 'String | Number',
-      defaultVal: 'null',
-      isOptional: true,
-      desc: {
-        'en-US': 'The label value which is active now, usually calculated internally.',
-        'zh-CN': '当 Tooltip 显示出来的时候，表示类目文字标签。',
-      },
     },
     {
       name: 'content',

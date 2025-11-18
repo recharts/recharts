@@ -6,7 +6,6 @@ export const TreemapAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -16,7 +15,6 @@ export const TreemapAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -46,7 +44,7 @@ export const TreemapAPI: ApiDoc = {
     {
       name: 'aspectRatio',
       type: 'Number',
-      defaultVal: 'null',
+      defaultVal: 1.618033988749895,
       isOptional: false,
       desc: {
         'en-US': "The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.",
@@ -55,8 +53,8 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true',
+      type: 'boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of area will be disabled.',
@@ -86,7 +84,7 @@ export const TreemapAPI: ApiDoc = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'linear',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',

@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import { vi } from 'vitest';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import {
   Area,
   AreaChart,
@@ -22,6 +22,7 @@ import {
 } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { assertNotNull } from '../helper/assertNotNull';
+import { rechartsTestRender } from '../helper/createSelectorTestCase';
 
 type WrapperProps = {
   onClick: () => void;
@@ -185,10 +186,11 @@ describe('CategoricalChart', () => {
   describe.each(testCases)('$name', ({ Wrapper }) => {
     test('should call corresponding callback on mouse events', () => {
       const handleClickMock = vi.fn();
+      handleClickMock.mockName('handleClickMock');
       const handleDoubleClickMock = vi.fn();
       const handleContextMenuMock = vi.fn();
 
-      const { container } = render(
+      const { container } = rechartsTestRender(
         <Wrapper
           onClick={handleClickMock}
           onDoubleClick={handleDoubleClickMock}
@@ -201,6 +203,10 @@ describe('CategoricalChart', () => {
       fireEvent.click(surface);
       fireEvent.doubleClick(surface);
       fireEvent.contextMenu(surface);
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
       expect(handleClickMock).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));
       expect(handleDoubleClickMock).toHaveBeenCalledWith(expect.any(Object), expect.any(Object));

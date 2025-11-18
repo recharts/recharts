@@ -46,16 +46,6 @@ export const ReferenceDotAPI = {
       },
     },
     {
-      name: 'alwaysShow',
-      type: 'Boolean',
-      defaultVal: 'false',
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US': "Use 'ifOverflow' instead.",
-      },
-    },
-    {
       name: 'ifOverflow',
       type: "'discard' | 'hidden' | 'visible' | 'extendDomain'",
       defaultVal: "'discard'",
@@ -74,26 +64,6 @@ export const ReferenceDotAPI = {
       },
     },
     {
-      name: 'xAxis',
-      type: 'Object',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The configuration of the corresponding x-axis, usually calculated internally.',
-        'zh-CN': 'x 轴配置。',
-      },
-    },
-    {
-      name: 'yAxis',
-      type: 'Object',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The configuration of the corresponding y-axis, usually calculated internally.',
-        'zh-CN': 'y 轴配置。',
-      },
-    },
-    {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
       defaultVal: 'null',
@@ -109,16 +79,6 @@ export const ReferenceDotAPI = {
         '<ReferenceDot x="a" y={400} label={<CustomizedLabel />}/>',
         '<ReferenceDot x="a" y={400} label={renderLabel} />',
       ],
-    },
-    {
-      name: 'isFront',
-      type: 'Boolean',
-      defaultVal: 'false',
-      isOptional: false,
-      desc: {
-        'en-US': 'If set true, the dot will be rendered in front of bars in BarChart, etc.',
-        'zh-CN': '是否展示在图表的最上层。',
-      },
     },
     {
       name: 'shape',

@@ -1,11 +1,21 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactNode, useCallback, useRef, useState } from 'react';
+import {
+  ComponentType,
+  MutableRefObject,
+  PureComponent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
+  ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
@@ -22,6 +32,7 @@ import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
+  CartesianLayout,
   DataKey,
   DotType,
   LegendType,
@@ -40,7 +51,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { useChartLayout } from '../context/chartLayoutContext';
+import { useCartesianChartLayout, useChartLayout } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
@@ -56,8 +67,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -86,8 +97,7 @@ interface InternalAreaProps extends ZIndexable {
   id: string;
   isAnimationActive: boolean;
   isRange?: boolean;
-  label?: any;
-  layout: 'horizontal' | 'vertical';
+  label?: ImplicitLabelListType;
   left: number;
 
   legendType: LegendType;
@@ -112,6 +122,9 @@ interface InternalAreaProps extends ZIndexable {
  * External props, intended for end users to fill in
  */
 interface AreaProps extends ZIndexable {
+  /**
+   * @default true
+   */
   activeDot?: ActiveDotType;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
@@ -130,10 +143,9 @@ interface AreaProps extends ZIndexable {
   hide?: boolean;
   id?: string;
 
-  isAnimationActive?: boolean;
+  isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
-  label?: any;
-  layout?: 'horizontal' | 'vertical';
+  label?: ImplicitLabelListType;
   legendType?: LegendType;
 
   name?: string | number;
@@ -146,6 +158,11 @@ interface AreaProps extends ZIndexable {
   unit?: string | number;
   xAxisId?: string | number;
   yAxisId?: string | number;
+  /**
+   * @since 3.4
+   * @defaultValue 100
+   */
+  zIndex?: number;
 }
 
 /**
@@ -175,25 +192,40 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
   ];
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
-  return {
-    dataDefinedOnItem: data,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey: undefined,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: props.tooltipType,
-      color: getLegendItemColor(stroke, fill),
-      unit,
-    },
-  };
-}
+const SetAreaTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    data,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    unit,
+    tooltipType,
+  }: Pick<
+    Props,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'
+  >) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey: undefined,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: getLegendItemColor(stroke, fill),
+        unit,
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 function AreaDotsWrapper({
   clipPathId,
@@ -405,7 +437,7 @@ function ClipRect({
   strokeWidth,
 }: {
   alpha: number;
-  layout: 'horizontal' | 'vertical';
+  layout: CartesianLayout;
   points: ReadonlyArray<AreaPointItem>;
   baseLine: Props['baseLine'];
   strokeWidth: Props['strokeWidth'];
@@ -440,7 +472,9 @@ function AreaWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
-  const animationId = useAnimationId(props, 'recharts-area-');
+  const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
+  const animationId = useAnimationId(animationInput, 'recharts-area-');
+  const layout = useCartesianChartLayout();
 
   const [isAnimating, setIsAnimating] = useState(false);
   const showLabels = !isAnimating;
@@ -458,6 +492,10 @@ function AreaWithAnimation({
     }
     setIsAnimating(true);
   }, [onAnimationStart]);
+
+  if (layout == null) {
+    return null;
+  }
 
   const prevPoints = previousPointsRef.current;
   const prevBaseLine = previousBaselineRef.current;
@@ -555,7 +593,7 @@ function AreaWithAnimation({
                       alpha={t}
                       points={points}
                       baseLine={baseLine}
-                      layout={props.layout}
+                      layout={layout}
                       strokeWidth={props.strokeWidth}
                     />
                   </clipPath>
@@ -660,7 +698,7 @@ class AreaWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultAreaProps = {
+export const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
   animationDuration: 1500,
@@ -670,9 +708,11 @@ const defaultAreaProps = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   hide: false,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
   legendType: 'line',
   stroke: '#3182bd',
+  type: 'linear',
+  label: false,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.area,
@@ -736,7 +776,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
       height={height}
       hide={hide}
       layout={layout}
-      isAnimationActive={isAnimationActive}
+      isAnimationActive={isAnimationActive === 'auto' ? !Global.isSsr : isAnimationActive}
       isRange={isRange}
       legendType={legendType}
       needClip={needClip}
@@ -895,7 +935,17 @@ function AreaFn(outsideProps: Props) {
       {id => (
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetAreaTooltipEntrySettings
+            dataKey={props.dataKey}
+            data={props.data}
+            stroke={props.stroke}
+            strokeWidth={props.strokeWidth}
+            fill={props.fill}
+            name={props.name}
+            hide={props.hide}
+            unit={props.unit}
+            tooltipType={props.tooltipType}
+          />
           <SetCartesianGraphicalItem
             type="area"
             id={id}
@@ -918,5 +968,5 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
-export const Area = React.memo(AreaFn);
+export const Area: ComponentType<Props> = React.memo(AreaFn);
 Area.displayName = 'Area';

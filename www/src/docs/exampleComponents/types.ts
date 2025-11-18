@@ -12,10 +12,6 @@ export type ChartExample = {
    */
   sourceCode: string;
   /**
-   * The key is used to identify the example in the examples list, and is passed through the URL.
-   */
-  // key: string;
-  /**
    * Used to display the example in the sidebar.
    * Human-readable string with spaces and special characters.
    */

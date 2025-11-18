@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StackOffsetType } from '../util/types';
 import { SyncMethod } from '../synchronisation/types';
+import { BaseValue } from '../cartesian/Area';
 
 /**
  * These are chart options that users can choose - which means they can also
@@ -23,6 +24,12 @@ export type UpdatableChartOptions = {
    */
   syncId: number | string | undefined;
   syncMethod: SyncMethod;
+  baseValue: BaseValue | undefined;
+  /**
+   * If false, stacked items will be rendered left to right. If true, stacked items will be rendered right to left.
+   * (Render direction affects SVG layering, not x position.)
+   */
+  reverseStackOrder: boolean;
 };
 
 export const initialState: UpdatableChartOptions = {
@@ -35,6 +42,8 @@ export const initialState: UpdatableChartOptions = {
   stackOffset: 'none',
   syncId: undefined,
   syncMethod: 'index',
+  baseValue: undefined,
+  reverseStackOrder: false,
 };
 
 const rootPropsSlice = createSlice({
@@ -51,6 +60,8 @@ const rootPropsSlice = createSlice({
       state.syncId = action.payload.syncId;
       state.syncMethod = action.payload.syncMethod;
       state.className = action.payload.className;
+      state.baseValue = action.payload.baseValue;
+      state.reverseStackOrder = action.payload.reverseStackOrder;
     },
   },
 });

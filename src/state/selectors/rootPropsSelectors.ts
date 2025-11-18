@@ -1,6 +1,7 @@
 import { RechartsRootState } from '../store';
 import { StackOffsetType } from '../../util/types';
 import { SyncMethod } from '../../synchronisation/types';
+import { BaseValue } from '../../cartesian/Area';
 
 export const selectRootMaxBarSize = (state: RechartsRootState): number | undefined => state.rootProps.maxBarSize;
 export const selectBarGap = (state: RechartsRootState): string | number | undefined => state.rootProps.barGap;
@@ -8,8 +9,11 @@ export const selectBarCategoryGap = (state: RechartsRootState): string | number 
   state.rootProps.barCategoryGap;
 export const selectRootBarSize = (state: RechartsRootState): string | number | undefined => state.rootProps.barSize;
 export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;
+export const selectReverseStackOrder = (state: RechartsRootState): boolean => state.rootProps.reverseStackOrder;
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
 export const selectSyncId = (state: RechartsRootState) => state.rootProps.syncId;
 export const selectSyncMethod = (state: RechartsRootState): SyncMethod => state.rootProps.syncMethod;
 export const selectEventEmitter = (state: RechartsRootState) => state.options.eventEmitter;
+export const selectChartBaseValue: (state: RechartsRootState) => BaseValue | undefined = (state: RechartsRootState) =>
+  state.rootProps.baseValue;

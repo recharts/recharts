@@ -105,6 +105,7 @@ describe('Bar stacked with truncateByDomain', () => {
             losses: 0,
             wins: 0,
           },
+          stackedBarStart: 275,
           tooltipPosition: {
             x: 230,
             y: 275,
@@ -140,6 +141,7 @@ describe('Bar stacked with truncateByDomain', () => {
             losses: -5,
             wins: 3,
           },
+          stackedBarStart: 275,
           tooltipPosition: {
             x: 610,
             y: 248,

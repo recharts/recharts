@@ -4,9 +4,7 @@ import { TextProps } from '../props/TextProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
-  argTypes: {
-    ...TextProps,
-  },
+  argTypes: TextProps,
   component: Text,
 };
 

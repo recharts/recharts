@@ -1,5 +1,4 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
 import { Args } from '@storybook/react-vite';
 import { pageData, rangeData, timeData } from '../data';

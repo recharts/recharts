@@ -19,12 +19,11 @@ import { Cell } from '../component/Cell';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
-  LabelListFromLabelProp,
   ImplicitLabelListType,
+  LabelListFromLabelProp,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import {
   BarPositionPosition,
   getBaseValueOfBar,
@@ -80,8 +79,9 @@ import {
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
-import { DefaultZIndexes } from '../zindex/DefaultZIndexes';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 
 type Rectangle = {
   x: number | null;
@@ -102,12 +102,22 @@ export interface BarRectangleItem extends RectangleProps {
   y: number;
   width: number;
   height: number;
+  /**
+   * Chart range coordinate of the baseValue of the first bar in a stack.
+   */
+  stackedBarStart: number;
 }
 
 export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: string | number;
+  /**
+   * @defaultValue 0
+   */
   yAxisId?: string | number;
   stackId?: StackId;
   barSize?: string | number;
@@ -115,24 +125,53 @@ export interface BarProps extends ZIndexable {
   name?: string | number;
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
+  /**
+   * @defaultValue rect
+   */
   legendType?: LegendType;
+  /**
+   * @defaultValue 0
+   */
   minPointSize?: MinPointSize;
   maxBarSize?: number;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
+
+  /**
+   * @defaultValue false
+   */
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  /**
+   * @defaultValue false
+   */
+  background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
 
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
   animationBegin?: number;
+  /**
+   * @defaultValue 400
+   */
   animationDuration?: AnimationDuration;
   animationEasing?: EasingInput;
   id?: string;
+  /**
+   * @defaultValue false
+   */
   label?: ImplicitLabelListType;
+  /**
+   * @defaultValue 300
+   */
+  zIndex?: number;
 }
 
 type BarMouseEvent = (
@@ -164,7 +203,7 @@ type InternalBarProps = {
   legendType: LegendType;
   minPointSize: MinPointSize;
   activeBar: ActiveShape<BarProps, SVGPathElement>;
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
@@ -219,25 +258,36 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
   ];
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, stroke, strokeWidth, fill, name, hide, unit } = props;
-  return {
-    dataDefinedOnItem: undefined,
-    positions: undefined,
-    settings: {
-      stroke,
-      strokeWidth,
-      fill,
-      dataKey,
-      nameKey: undefined,
-      name: getTooltipNameProp(name, dataKey),
-      hide,
-      type: props.tooltipType,
-      color: props.fill,
-      unit,
-    },
-  };
-}
+const SetBarTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    unit,
+    tooltipType,
+  }: Pick<Props, 'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'>) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: undefined,
+      positions: undefined,
+      settings: {
+        stroke,
+        strokeWidth,
+        fill,
+        dataKey,
+        nameKey: undefined,
+        name: getTooltipNameProp(name, dataKey),
+        hide,
+        type: tooltipType,
+        color: fill,
+        unit,
+      },
+    };
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
@@ -271,7 +321,7 @@ function BarBackground(props: BarBackgroundProps) {
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
 
   return (
-    <>
+    <ZIndexLayer zIndex={getZIndexFromUnknown(backgroundFromProps, DefaultZIndexes.barBackground)}>
       {data.map((entry: BarRectangleItem, i: number) => {
         const { value, background: backgroundFromDataEntry, tooltipPosition, ...rest } = entry;
 
@@ -305,7 +355,7 @@ function BarBackground(props: BarBackgroundProps) {
 
         return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
       })}
-    </>
+    </ZIndexLayer>
   );
 }
 
@@ -456,7 +506,6 @@ function BarRectangles({
         return (
           <Layer
             // https://github.com/recharts/recharts/issues/5415
-            // eslint-disable-next-line react/no-array-index-key
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
@@ -562,18 +611,20 @@ function RectanglesWithAnimation({
                   }
 
                   if (layout === 'horizontal') {
-                    const h = interpolate(0, entry.height, t);
+                    const height = interpolate(0, entry.height, t);
+                    const y = interpolate(entry.stackedBarStart, entry.y, t);
 
                     return {
                       ...entry,
-                      y: entry.y + entry.height - h,
-                      height: h,
+                      y,
+                      height,
                     };
                   }
 
                   const w = interpolate(0, entry.width, t);
+                  const x = interpolate(entry.stackedBarStart, entry.x, t);
 
-                  return { ...entry, width: w };
+                  return { ...entry, width: w, x };
                 });
 
           if (t > 0) {
@@ -648,13 +699,15 @@ class BarWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultBarProps = {
+export const defaultBarProps = {
   activeBar: false,
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',
+  background: false,
   hide: false,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
+  label: false,
   legendType: 'rect',
   minPointSize: defaultMinPointSize,
   xAxisId: 0,
@@ -762,6 +815,7 @@ export function computeBarRectangles({
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
+  const stackedBarStart: number = numericAxis.scale(baseValue);
 
   return displayedData
     .map((entry, index): BarRectangleItem | null => {
@@ -829,6 +883,7 @@ export function computeBarRectangles({
 
       const barRectangleItem: BarRectangleItem = {
         ...entry,
+        stackedBarStart,
         x,
         y,
         width,
@@ -855,7 +910,16 @@ function BarFn(outsideProps: Props) {
       {id => (
         <>
           <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+          <SetBarTooltipEntrySettings
+            dataKey={props.dataKey}
+            stroke={props.stroke}
+            strokeWidth={props.strokeWidth}
+            fill={props.fill}
+            name={props.name}
+            hide={props.hide}
+            unit={props.unit}
+            tooltipType={props.tooltipType}
+          />
           <SetCartesianGraphicalItem
             type="bar"
             id={id}

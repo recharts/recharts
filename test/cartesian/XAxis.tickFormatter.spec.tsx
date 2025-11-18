@@ -19,7 +19,6 @@ describe('XAxis with custom tickFormatter', () => {
   it('should render ticks formatted with tickFormatter', () => {
     const { container } = renderTestCase();
 
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
     expectXAxisTicks(container, [
       { textContent: 'formatted: Page A: 0', x: '20', y: '358' },
       { textContent: 'formatted: Page B: 1', x: '92', y: '358' },

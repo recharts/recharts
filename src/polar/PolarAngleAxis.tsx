@@ -17,13 +17,13 @@ import { degreeToRadian, getTickClassName, polarToCartesian } from '../util/Pola
 import { RechartsScale } from '../util/ChartUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
+import { selectPolarAngleAxisTicks, selectPolarAxisScale } from '../state/selectors/polarScaleSelectors';
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { ZIndexable, ZIndexLayer } from '../zindex/ZIndexLayer';
+import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -257,7 +257,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', angleAxisId));
   const isPanorama = useIsPanorama();
-  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
+  const ticks = useAppSelector(state => selectPolarAngleAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
 
   if (viewBox == null || !ticks || !ticks.length || scale == null) {
     return null;

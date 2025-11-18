@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
+import { Args, Meta } from '@storybook/react-vite';
 import {
   ResponsiveContainer,
   Label,
@@ -18,38 +18,34 @@ import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { positionProp } from '../props/LabelListProps';
+import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const LabelProps: Args = {
-  formatter: {
-    description: 'The formatter function of label value which has only one parameter - the value of label.',
-    table: {
-      control: { type: 'Function' },
-      category: 'General',
-    },
-  },
+const LabelProps: StorybookArgs = {
   value: {
-    description: 'The value of label, which can be specified by this props or the children of <Label />',
+    description: 'The value of label, which can be specified by this prop or the children of <Label />',
+    control: { type: 'text' },
     table: {
-      control: { type: 'String | Number' },
-      summary: '<Label value="any" />',
-      category: 'General',
+      type: { summary: 'string | number' },
+      category: 'Content',
     },
   },
   position: positionProp,
   offset: {
     description: 'The offset to the specified "position"',
+    control: { type: 'number' },
     table: {
-      control: { type: 'Number' },
+      type: { summary: 'number' },
       defaultValue: 5,
-      category: 'General',
+      category: 'Position',
     },
   },
   children: {
     description: 'The value of label, which can be specified by this props or the props "value". (Optional)',
+    control: { type: 'text' },
     table: {
-      control: { type: 'String | Number' },
-      summary: '<Label content={<CustomizedLabel external={external} />} />',
-      category: 'General',
+      type: { summary: 'string | number' },
+      category: 'Content',
     },
   },
   content: {
@@ -57,49 +53,73 @@ const LabelProps: Args = {
       'If set a React element, the option is the custom react element of ' +
       'rendering label. If set a function, the function will be called to render label content. (Optional)',
     table: {
-      control: { type: 'ReactElement | Function' },
-      category: 'General',
+      type: { summary: 'ReactElement | Function' },
+      category: 'Content',
     },
   },
   id: {
     description:
       'The unique id of this component, which will be used to generate ' +
       'unique clip path id internally. This props is suggested to be set in SSR. (Optional)',
+    control: { type: 'text' },
     table: {
-      control: { type: 'String' },
+      type: { summary: 'string' },
       category: 'General',
     },
   },
+  zIndex: {
+    description: 'zIndex decides the vertical stacking order of components.',
+    control: { type: 'number' },
+    table: {
+      type: { summary: 'number' },
+      defaultValue: DefaultZIndexes.label,
+      category: 'Position',
+    },
+  },
+  angle: {
+    description: 'The rotate angle of Text. (Optional)',
+    control: { type: 'number' },
+    table: {
+      type: { summary: 'number' },
+      defaultValue: 0,
+      category: 'Position',
+    },
+  },
+  textAnchor: {
+    description:
+      'The horizontal text anchor position. If undefined, it is set automatically based on the label position.',
+    control: { type: 'select' },
+    options: [undefined, 'start', 'middle', 'end', 'inherit'],
+    table: {
+      type: { summary: 'undefined | start | middle | end | inherit' },
+      category: 'Position',
+      defaultValue: undefined,
+    },
+  },
+  textBreakAll: {
+    description:
+      'When true, enables character-level breaking instead of word-level breaking. When false, breaks at word boundaries.',
+    control: { type: 'boolean' },
+    table: {
+      type: { summary: 'boolean' },
+      defaultValue: false,
+      category: 'Content',
+    },
+  },
+  // Hide uninteresting props, these are more for internal use and set through context
+  viewBox: { table: { disable: true } },
+  parentViewBox: { table: { disable: true } },
+  formatter: { table: { disable: true } },
+  index: { table: { disable: true } },
+  labelRef: { table: { disable: true } },
 };
 
 export default {
   argTypes: LabelProps,
   component: Label,
-};
-
-const availablePositions = [
-  'top',
-  'left',
-  'right',
-  'bottom',
-  'inside',
-  'outside',
-  'insideLeft',
-  'insideRight',
-  'insideTop',
-  'insideBottom',
-  'insideTopLeft',
-  'insideBottomLeft',
-  'insideTopRight',
-  'insideBottomRight',
-  'insideStart',
-  'insideEnd',
-  'end',
-  'center',
-  'centerTop',
-  'centerBottom',
-  'middle',
-] as const;
+  // 👇 Disable auto-generated documentation for this component
+  tags: ['!autodocs'],
+} satisfies Meta<typeof Label>;
 
 export const CartesianPositions = {
   render: (args: Args) => {
@@ -108,8 +128,8 @@ export const CartesianPositions = {
         <LineChart
           data={pageData}
           margin={{
-            top: 30,
-            bottom: 30,
+            top: 100,
+            bottom: 100,
             left: 100,
             right: 100,
           }}
@@ -118,16 +138,13 @@ export const CartesianPositions = {
           <Line type="monotone" dataKey="uv" stroke="#111" />
           <YAxis tick={false} />
           <XAxis dataKey="name" tick={false} />
-          {availablePositions.map(position => (
-            <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
-          ))}
-          <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
+          <Label value={`Position: ${args.position}`} {...args} />
           <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
   },
-  args: { ...getStoryArgsFromArgsTypesObject(LabelProps) },
+  args: { ...getStoryArgsFromArgsTypesObject(LabelProps), position: 'center' },
 };
 
 export const PolarPositions = {
@@ -148,13 +165,10 @@ export const PolarPositions = {
         <PolarGrid />
         <PolarAngleAxis dataKey="name" />
         <PolarRadiusAxis tick={false} />
-        {availablePositions.map(position => (
-          <Label key={position} value={`Position: ${position}`} position={position} className={position} {...args} />
-        ))}
-        <Label value="Position: x: 200, y: 100" position={{ x: 200, y: 100 }} className="custom-position" {...args} />
+        <Label value={`Position: ${args.position}`} {...args} />
         <RechartsHookInspector />
       </RadarChart>
     );
   },
-  args: { ...getStoryArgsFromArgsTypesObject(LabelProps) },
+  args: { ...getStoryArgsFromArgsTypesObject(LabelProps), position: 'center' },
 };

@@ -8,7 +8,7 @@ import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
 import { LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
-import { BaseAxisWithScale, combineStackGroups } from './axisSelectors';
+import { BaseAxisWithScale, combineStackGroups, selectTooltipAxis } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
@@ -28,6 +28,7 @@ import {
 import {
   selectBarCategoryGap,
   selectBarGap,
+  selectReverseStackOrder,
   selectRootBarSize,
   selectRootMaxBarSize,
   selectStackOffsetType,
@@ -40,7 +41,6 @@ import { isNullish } from '../../util/DataUtils';
 
 import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
-import { selectTooltipAxis } from './selectTooltipAxis';
 import { RadialBarSettings } from '../types/RadialBarSettings';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 
@@ -349,7 +349,7 @@ const selectStackGroups: (
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => AllStackGroups | undefined = createSelector(
-  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType],
+  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType, selectReverseStackOrder],
   combineStackGroups,
 );
 

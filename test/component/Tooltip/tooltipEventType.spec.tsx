@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { PageData } from '../../_data';
-import { getTooltip } from './tooltipTestHelpers';
+import { getTooltip, hideTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   Bar,
   BarChart,
@@ -18,6 +18,7 @@ import {
 } from '../../../src';
 import {
   barChartItemMouseHoverTooltipSelector,
+  barChartMouseHoverTooltipSelector,
   funnelChartMouseHoverTooltipSelector,
   pieChartMouseHoverTooltipSelector,
   radialBarMouseHoverTooltipSelector,
@@ -157,13 +158,11 @@ describe('tooltipEventType', () => {
         const { container } = render(<Component tooltipTrigger={tooltipTrigger} />);
         const tooltip = getTooltip(container);
 
-        const trigger = container.querySelector('.recharts-wrapper');
-        assertNotNull(trigger);
-        fireEvent.mouseOver(trigger, { clientX: 200, clientY: 200 });
+        showTooltip(container, barChartMouseHoverTooltipSelector);
 
         expect(tooltip).toBeVisible();
 
-        fireEvent.mouseOut(trigger);
+        hideTooltip(container, barChartMouseHoverTooltipSelector);
 
         expect(tooltip).not.toBeVisible();
       });

@@ -105,7 +105,6 @@ export default function CustomActiveShapePieChart({
       }}
     >
       <Pie
-        // @ts-expect-error the parameter type doesn't match
         activeShape={renderActiveShape}
         data={data}
         cx="50%"
