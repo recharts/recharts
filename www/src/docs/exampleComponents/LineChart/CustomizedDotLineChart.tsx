@@ -1,5 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { DotItemDotProps } from 'recharts/types/util/types';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, DotItemDotProps } from 'recharts';
 
 // #region Sample data
 const data = [
