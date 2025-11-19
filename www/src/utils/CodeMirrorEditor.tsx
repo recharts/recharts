@@ -79,6 +79,8 @@ const regionFoldService = foldService.of((state, from, _to) => {
   return null;
 });
 
+const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/g, '');
+
 /**
  * CodeMirror 6 editor component with lazy-loading of editing features.
  *
@@ -98,7 +100,7 @@ export function CodeMirrorEditor({
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
 
   // remove trailing newline from the value to save on vertical space
-  const valueWithoutTrailingNewline = value.endsWith('\n') ? value.slice(0, -1) : value;
+  const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
   // Lazy load editing extensions when switching to editable mode
   useEffect(() => {

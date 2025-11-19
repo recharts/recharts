@@ -42,6 +42,7 @@ export const map = {
     sizes: '图表尺寸',
     zIndex: 'Z-Index 和图层',
     domainAndTicks: '定义域与刻度',
+    performance: '性能优化',
   },
   installation: {
     installation: '安装',

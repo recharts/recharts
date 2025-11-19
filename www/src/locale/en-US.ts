@@ -42,6 +42,7 @@ export const map = {
     sizes: 'Chart size',
     zIndex: 'Z-Index and layers',
     domainAndTicks: 'Domain and Ticks',
+    performance: 'Performance',
   },
   installation: {
     installation: 'Installation',
