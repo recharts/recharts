@@ -8,7 +8,16 @@ export const apiComponents = Object.keys(allApiDocs).concat([
 
 export const exampleComponents = Object.values(allExamples).flatMap(({ examples }) => Object.keys(examples));
 
-const guidePages = ['installation', 'getting-started', 'customize', 'activeIndex', 'sizes', 'domainAndTicks', 'zIndex'];
+const guidePages = [
+  'installation',
+  'getting-started',
+  'customize',
+  'activeIndex',
+  'sizes',
+  'domainAndTicks',
+  'zIndex',
+  'performance',
+];
 
 export function getSiteRoutes(): string[] {
   // the vite sitemap plugin adds root route by default so we don't need to add it here

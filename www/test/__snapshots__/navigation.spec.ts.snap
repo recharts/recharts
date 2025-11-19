@@ -43,6 +43,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "zIndex",
             "url": "/en-US/guide/zIndex/",
           },
+          {
+            "displayName": "Performance",
+            "key": "performance",
+            "url": "/en-US/guide/performance/",
+          },
         ],
         "key": "guide",
       },
