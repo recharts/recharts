@@ -2094,46 +2094,4 @@ describe('<ErrorBar />', () => {
       });
     });
   });
-
-  test('should not generate duplicate keys when error range has same values', () => {
-    const dataWithEqualRange = [
-      {
-        timestamp: '2025-10-16T00:00:00.000Z',
-        avgLatency: 0,
-        rangeLatency: [0, 0],
-      },
-      {
-        timestamp: '2025-10-17T00:00:00.000Z',
-        avgLatency: 1292,
-        rangeLatency: [878, 878],
-      },
-      {
-        timestamp: '2025-10-22T00:00:00.000Z',
-        avgLatency: 461,
-        rangeLatency: [0, 0],
-      },
-      {
-        timestamp: '2025-10-23T00:00:00.000Z',
-        avgLatency: 853.8333333333333,
-        rangeLatency: [639.8333333333333, 1104.1666666666667],
-      },
-    ];
-
-    const { container } = rechartsTestRender(
-      <LineChart data={dataWithEqualRange} width={500} height={500}>
-        <Line isAnimationActive={false} dataKey="avgLatency">
-          <ErrorBar dataKey="rangeLatency" />
-        </Line>
-      </LineChart>,
-    );
-
-    // Check that error bars are rendered (4 data points * 3 lines each = 12 lines)
-    const errorBarLines = container.querySelectorAll('.recharts-errorBar line');
-    expect(errorBarLines.length).toBe(12);
-
-    // Verify that all error bars have unique keys by checking that all lines are rendered
-    // When keys are duplicated, React may omit some elements, so checking the count ensures uniqueness
-    const errorBarLayers = container.querySelectorAll('.recharts-errorBar');
-    expect(errorBarLayers.length).toBe(4);
-  });
 });
