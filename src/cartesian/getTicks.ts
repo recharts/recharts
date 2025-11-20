@@ -3,7 +3,7 @@ import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { isVisible, getTickBoundaries, getNumberIntervalTicks, getAngledTickWidth } from '../util/TickUtils';
-import { getEquidistantTicks } from './getEquidistantTicks';
+import { getEquidistantTicks, getEquidistantPreserveEndTicks } from './getEquidistantTicks';
 import { CartesianAxisSettings, XAxisOrientation, YAxisOrientation } from '../state/cartesianAxisSlice';
 
 export type Sign = 0 | 1 | -1;
@@ -170,6 +170,9 @@ export function getTicks(
 
   if (interval === 'equidistantPreserveStart') {
     return getEquidistantTicks(sign, boundaries, getTickSize, ticks, minTickGap);
+  }
+  if (interval === 'equidistantPreserveEnd') {
+    return getEquidistantPreserveEndTicks(sign, boundaries, getTickSize, ticks, minTickGap);
   }
 
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
