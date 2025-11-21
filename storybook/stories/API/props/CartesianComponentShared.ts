@@ -29,6 +29,7 @@ export const yAxisId: StorybookArg = {
 };
 export const zAxisId: StorybookArg = {
   description: 'The id of z-axis which is corresponding to the data.',
+  defaultValue: 0,
   table: { type: { summary: 'string | number' }, category: 'General' },
 };
 

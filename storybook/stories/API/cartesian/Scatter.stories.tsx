@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { ComposedChart, Scatter, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
+import { ComposedChart, ResponsiveContainer, Scatter, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { data as dataProp, dataKey as dataKeyProp, xAxisId, yAxisId, zAxisId } from '../props/CartesianComponentShared';
@@ -166,9 +166,8 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { animationBegin, isAnimationActive } from '../props/AnimationProps';
 import { hide } from '../props/Styles';
-import { legendType } from '../props/Legend';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
@@ -337,14 +336,33 @@ const EventHandlers = {
 
 const AnimationProps = {
   animationBegin,
-  animationDuration,
-  animationEasing,
+  animationDuration: {
+    defaultValue: 400,
+    table: {
+      category: 'Animation',
+    },
+  },
+  animationEasing: {
+    defaultValue: 'linear',
+    table: {
+      category: 'Animation',
+    },
+  },
   isAnimationActive,
 };
 
 const StyleProps: StorybookArgs = {
   hide,
-  legendType,
+  legendType: {
+    description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
+    table: {
+      type: {
+        summary: 'line | plainline | square | rect| circle | cross | diamond | square | star | triangle | wye | none',
+      },
+      defaultValue: 'circle',
+      category: 'Style',
+    },
+  },
   line: {
     description: `If false set, line will not be drawn. If true set, line will be drawn which have
     the props calculated internally. If object set, line will be drawn which have the props mergered
@@ -411,6 +429,7 @@ const StyleProps: StorybookArgs = {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
+    defaultValue: false,
     table: {
       type: {
         summary: 'string | number | ReactElement | Function',
@@ -449,7 +468,6 @@ const ReactiveProps = {
       '<Scatter activeShape={<CustomizedDot />} />\n' +
       '<Scatter activeShape={renderDot} />'`,
       },
-      defaultValue: true,
       category: 'Responsive',
     },
   },

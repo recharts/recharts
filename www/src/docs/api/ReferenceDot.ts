@@ -4,7 +4,7 @@ export const ReferenceDotAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -14,7 +14,7 @@ export const ReferenceDotAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -24,7 +24,6 @@ export const ReferenceDotAPI = {
     {
       name: 'x',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US':
@@ -36,7 +35,6 @@ export const ReferenceDotAPI = {
     {
       name: 'y',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US':
@@ -48,7 +46,7 @@ export const ReferenceDotAPI = {
     {
       name: 'ifOverflow',
       type: "'discard' | 'hidden' | 'visible' | 'extendDomain'",
-      defaultVal: "'discard'",
+      defaultVal: 'discard',
       isOptional: false,
       desc: {
         'en-US': `Defines how to draw the reference dot if it falls partly outside the canvas.
@@ -66,7 +64,6 @@ export const ReferenceDotAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -83,7 +80,6 @@ export const ReferenceDotAPI = {
     {
       name: 'shape',
       type: 'ReactElement | Function',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':

@@ -7,9 +7,12 @@ import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
 export const radius: StorybookArg = {
   description:
-    'If set a value, the option is the radius of all the rounderd corners. If set a array, the option' +
+    'If set a value, the option is the radius of all the rounded corners. If set a array, the option' +
     ' are in turn the radiuses of top-left corner, top-right corner, bottom-right corner, bottom-left' +
     ' corner.',
+  control: {
+    type: 'number',
+  },
   table: {
     type: { summary: 'number | number[]' },
     defaultValue: 0,
@@ -24,7 +27,7 @@ export const isUpdateAnimationActive: StorybookArg = {
 };
 
 /**
- * Caveat: If any prop is added here, it would falsely be add to the documentation of the component
+ * Caveat: If any prop is added here, it would falsely be added to the documentation of the component
  * where this group is used. If the group is to be extended, then only single props should be imported
  * by each component that does not use all of them.
  * */

@@ -1,8 +1,8 @@
 import { Args } from '@storybook/react-vite';
 import React from 'react';
-import { Line, ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
+import { CartesianGrid, ComposedChart, Line, ReferenceArea, ResponsiveContainer, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
-import { isUpdateAnimationActive, radius } from '../props/RectangleProps';
+import { radius } from '../props/RectangleProps';
 import {
   onClick,
   onMouseDown,
@@ -13,7 +13,6 @@ import {
   onMouseOver,
   onMouseUp,
 } from '../props/EventHandlers';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
 import { GeneralStyle } from '../props/Styles';
 import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -95,12 +94,6 @@ const referenceAreaArgTypes = {
   onMouseOut,
   onMouseEnter,
   onMouseLeave,
-  // Animation
-  animationBegin,
-  animationDuration,
-  animationEasing,
-  isAnimationActive,
-  isUpdateAnimationActive,
 };
 
 export default {

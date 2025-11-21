@@ -4,7 +4,7 @@ export const ReferenceAreaAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -14,7 +14,7 @@ export const ReferenceAreaAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -24,7 +24,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'x1',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -36,7 +35,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'x2',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -48,7 +46,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'y1',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -60,7 +57,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'y2',
       type: 'Number | String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -72,7 +68,7 @@ export const ReferenceAreaAPI = {
     {
       name: 'ifOverflow',
       type: "'discard' | 'hidden' | 'visible' | 'extendDomain'",
-      defaultVal: "'discard'",
+      defaultVal: 'discard',
       isOptional: false,
       desc: {
         'en-US': `Defines how to draw the reference area if it falls partly outside the canvas.
@@ -97,7 +93,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'viewBox',
       type: 'Object',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US':
@@ -108,7 +103,6 @@ export const ReferenceAreaAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

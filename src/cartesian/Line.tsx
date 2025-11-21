@@ -24,13 +24,13 @@ import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveDotType,
   ActiveShape,
   AnimationDuration,
   AnimationTiming,
+  CartesianLayout,
   DataKey,
   DotType,
   LegendType,
@@ -95,7 +95,7 @@ interface InternalLineProps extends ZIndexable {
   height: number;
   hide: boolean;
   id: string;
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   label: ImplicitLabelListType;
   layout: 'horizontal' | 'vertical';
   left: number;
@@ -123,21 +123,51 @@ interface InternalLineProps extends ZIndexable {
  */
 interface LineProps extends ZIndexable {
   activeDot?: ActiveDotType;
+  /**
+   * @defaultValue true
+   */
   animateNewValues?: boolean;
+  /**
+   * @defaultValue 0
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
   animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
   animationEasing?: AnimationTiming;
   className?: string;
+  /**
+   * @defaultValue false
+   */
   connectNulls?: boolean;
   data?: any;
   dataKey?: DataKey<any>;
+  /**
+   * @defaultValue true
+   */
   dot?: DotType;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
 
   id?: string;
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
 
+  /**
+   * @defaultValue false
+   */
   label?: ImplicitLabelListType;
+  /**
+   * @defaultValue line
+   */
   legendType?: LegendType;
   shape?: ActiveShape<CurveProps, SVGPathElement>;
 
@@ -145,16 +175,29 @@ interface LineProps extends ZIndexable {
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
   tooltipType?: TooltipType;
+  /**
+   * @defaultValue linear
+   */
   type?: CurveType;
   unit?: string | number | null;
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: AxisId;
+  /**
+   * @defaultValue 0
+   */
   yAxisId?: AxisId;
+  /**
+   * @defaultValue 400
+   */
+  zIndex?: number;
 }
 
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref'>;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout'>;
 
 type InternalProps = LineSvgProps & InternalLineProps;
 
@@ -654,7 +697,7 @@ class LineWithState extends Component<InternalProps> {
   }
 }
 
-const defaultLineProps = {
+export const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
   animationBegin: 0,
@@ -664,7 +707,7 @@ const defaultLineProps = {
   dot: true,
   fill: '#fff',
   hide: false,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
   stroke: '#3182bd',
@@ -672,6 +715,7 @@ const defaultLineProps = {
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.line,
+  type: 'linear',
 } as const satisfies Partial<Props>;
 
 function LineImpl(props: WithIdRequired<Props>) {
@@ -745,7 +789,7 @@ export function computeLinePoints({
   bandSize,
   displayedData,
 }: {
-  layout: Props['layout'];
+  layout: CartesianLayout;
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
   xAxisTicks: TickItem[];

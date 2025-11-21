@@ -16,7 +16,7 @@ export const ErrorBarAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: true,
       desc: {
         'en-US': 'The width of the error bar ends.',
@@ -26,7 +26,7 @@ export const ErrorBarAPI = {
     {
       name: 'strokeWidth',
       type: 'String | Number',
-      defaultVal: '1.5',
+      defaultVal: 1.5,
       isOptional: true,
       desc: {
         'en-US': 'The width of the lines used to make the error bars.',
@@ -46,7 +46,6 @@ export const ErrorBarAPI = {
     {
       name: 'direction',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': `Only used for ScatterChart with error bars in two directions. Only accepts a value of

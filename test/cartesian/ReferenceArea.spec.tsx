@@ -333,7 +333,7 @@ describe('<ReferenceArea />', () => {
             x1="201106"
             x2="201110"
             fill="#666"
-            radius={10}
+            radius={20}
             strokeWidth={3}
             fillOpacity={0.7}
             stroke="yellow"
@@ -351,7 +351,6 @@ describe('<ReferenceArea />', () => {
           'fill',
           'fill-opacity',
           'height',
-          'r',
           'radius',
           'stroke',
           'stroke-width',
@@ -365,12 +364,11 @@ describe('<ReferenceArea />', () => {
       expect.soft(area).toHaveAttribute('y', '5');
       expect.soft(area).toHaveAttribute('width', '59.09090909090909');
       expect.soft(area).toHaveAttribute('height', '160');
-      expect.soft(area).toHaveAttribute('radius', '10');
+      expect.soft(area).toHaveAttribute('radius', '20');
       expect.soft(area).toHaveAttribute('x1', '201106');
       expect.soft(area).toHaveAttribute('x2', '201110');
       expect.soft(area).toHaveAttribute('fill', '#666');
       expect.soft(area).toHaveAttribute('stroke-width', '3');
-      expect.soft(area).toHaveAttribute('r', '10');
       expect.soft(area).toHaveAttribute('fill-opacity', '0.7');
       expect.soft(area).toHaveAttribute('stroke', 'yellow');
       expect.soft(area).toHaveAttribute('class', 'recharts-rectangle recharts-reference-area-rect');
@@ -408,7 +406,7 @@ describe('<ReferenceArea />', () => {
             x2="201110"
             fill="#666"
             shape={<g data-testid="my-custom-shape" />}
-            radius={10}
+            radius={20}
             strokeWidth={3}
             fillOpacity={0.7}
             stroke="yellow"
@@ -424,7 +422,6 @@ describe('<ReferenceArea />', () => {
           'fill',
           'fill-opacity',
           'height',
-          'r',
           'radius',
           'stroke',
           'stroke-width',
@@ -438,12 +435,12 @@ describe('<ReferenceArea />', () => {
       expect.soft(area).toHaveAttribute('y', '5');
       expect.soft(area).toHaveAttribute('width', '59.09090909090909');
       expect.soft(area).toHaveAttribute('height', '160');
-      expect.soft(area).toHaveAttribute('radius', '10');
+      expect.soft(area).toHaveAttribute('radius', '20');
       expect.soft(area).toHaveAttribute('x1', '201106');
       expect.soft(area).toHaveAttribute('x2', '201110');
       expect.soft(area).toHaveAttribute('fill', '#666');
       expect.soft(area).toHaveAttribute('stroke-width', '3');
-      expect.soft(area).toHaveAttribute('r', '10');
+      expect.soft(area).toHaveAttribute('radius', '20');
       expect.soft(area).toHaveAttribute('fill-opacity', '0.7');
       expect.soft(area).toHaveAttribute('stroke', 'yellow');
     });
@@ -478,13 +475,12 @@ describe('<ReferenceArea />', () => {
           <ReferenceArea x1="201106" x2="201110" fill="#666" shape={spy} radius={10} strokeWidth={3} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         clipPath: undefined,
         fill: '#666',
         fillOpacity: 0.5,
         height: 160,
-        r: 10,
         radius: 10,
         stroke: 'none',
         strokeWidth: 3,

@@ -22,6 +22,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface ReferenceAreaProps extends ZIndexable {
+  /**
+   * @defaultValue discard
+   */
   ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
@@ -29,10 +32,20 @@ interface ReferenceAreaProps extends ZIndexable {
   y2?: number | string;
 
   className?: number | string;
+  /**
+   * @defaultValue 0
+   */
   yAxisId?: number | string;
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   label?: ImplicitLabelType;
+  /**
+   * @defaultValue 100
+   */
+  zIndex?: number;
 }
 
 export type Props = RectangleProps & ReferenceAreaProps;
@@ -104,7 +117,7 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
   const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
   const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
-  if (xAxisScale == null || !yAxisScale == null) {
+  if (xAxisScale == null || yAxisScale == null) {
     return null;
   }
 
@@ -141,11 +154,11 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
   );
 }
 
-const referenceAreaDefaultProps = {
+export const referenceAreaDefaultProps = {
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
-  r: 10,
+  radius: 0,
   fill: '#ccc',
   fillOpacity: 0.5,
   stroke: 'none',

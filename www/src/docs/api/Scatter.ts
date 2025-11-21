@@ -4,7 +4,7 @@ export const ScatterAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'circle'",
+      defaultVal: 'circle',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -14,7 +14,7 @@ export const ScatterAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of x-axis which is corresponding to the data.',
@@ -24,7 +24,7 @@ export const ScatterAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of y-axis which is corresponding to the data.',
@@ -34,7 +34,7 @@ export const ScatterAPI = {
     {
       name: 'zAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The id of z-axis which is corresponding to the data.',
@@ -44,7 +44,7 @@ export const ScatterAPI = {
     {
       name: 'line',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -67,7 +67,7 @@ export const ScatterAPI = {
     {
       name: 'shape',
       type: "'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | ReactElement | Function",
-      defaultVal: "'circle'",
+      defaultVal: 'circle',
       isOptional: false,
       desc: {
         'en-US':
@@ -90,7 +90,7 @@ export const ScatterAPI = {
     {
       name: 'lineType',
       type: "'joint' , 'fitting'",
-      defaultVal: "'joint'",
+      defaultVal: 'joint',
       isOptional: false,
       desc: {
         'en-US':
@@ -100,8 +100,8 @@ export const ScatterAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of scatters will be disabled.',
@@ -121,7 +121,7 @@ export const ScatterAPI = {
     {
       name: 'animationDuration',
       type: 'Number',
-      defaultVal: 1500,
+      defaultVal: 400,
       isOptional: false,
       desc: {
         'en-US': 'Specifies the duration of animation, the unit of this option is ms.',
@@ -131,7 +131,7 @@ export const ScatterAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'linear',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',
@@ -213,7 +213,6 @@ export const ScatterAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
