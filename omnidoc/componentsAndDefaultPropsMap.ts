@@ -9,6 +9,7 @@ import { defaultLineProps } from '../src/cartesian/Line';
 import { defaultScatterProps } from '../src/cartesian/Scatter';
 import { defaultCartesianGridProps } from '../src/cartesian/CartesianGrid';
 import { errorBarDefaultProps } from '../src/cartesian/ErrorBar';
+import { referenceAreaDefaultProps } from '../src/cartesian/ReferenceArea';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -22,6 +23,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Label: { defaultProps: defaultLabelProps },
   Line: { defaultProps: defaultLineProps },
+  ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
   Scatter: { defaultProps: defaultScatterProps },
   Text: { defaultProps: textDefaultProps },
