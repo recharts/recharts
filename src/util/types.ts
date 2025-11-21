@@ -749,6 +749,7 @@ export interface BaseAxisProps {
  * 'preserveEnd' keeps the right tick on collision and ensures that the last tick is always shown.
  * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks always show.
  * 'equidistantPreserveStart' selects a number N such that every nTh tick will be shown without collision.
+ * 'equidistantPreserveEnd' selects a number N such that every nTh tick will be shown, ensuring the last tick is always visible.
  */
 export type AxisInterval =
   | number
