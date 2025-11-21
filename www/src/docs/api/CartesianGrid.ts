@@ -1,4 +1,6 @@
-export const CartesianGridAPI = {
+import { ApiDoc } from './types.ts';
+
+export const CartesianGridAPI: ApiDoc = {
   name: 'CartesianGrid',
   props: [
     {
