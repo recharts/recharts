@@ -117,7 +117,7 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
   const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
   const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
-  if (xAxisScale == null || !yAxisScale == null) {
+  if (xAxisScale == null || yAxisScale == null) {
     return null;
   }
 
