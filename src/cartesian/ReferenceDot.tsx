@@ -20,8 +20,16 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 interface ReferenceDotProps extends ZIndexable {
+  /**
+   * The radius of the dot.
+   *
+   * @default 10
+   */
   r?: number;
 
+  /**
+   * @defaultValue discard
+   */
   ifOverflow?: IfOverflow;
   /**
    * The x-coordinate of the center of the dot.
@@ -32,7 +40,17 @@ interface ReferenceDotProps extends ZIndexable {
   y?: number | string;
 
   className?: number | string;
+  /**
+   * The id of y-axis which the dot should be attached to.
+   *
+   * @default 0
+   */
   yAxisId?: number | string;
+  /**
+   * The id of x-axis which the dot should be attached to.
+   *
+   * @default 0
+   */
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   label?: ImplicitLabelType;
@@ -137,7 +155,7 @@ function ReferenceDotImpl(props: PropsWithDefaults) {
   );
 }
 
-const referenceDotDefaultProps = {
+export const referenceDotDefaultProps = {
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
