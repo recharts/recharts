@@ -393,7 +393,7 @@ const selectTooltipInteractionState: (state: RechartsRootState) => TooltipIntera
 );
 
 export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | null = createSelector(
-  [selectTooltipInteractionState, selectTooltipDisplayedData],
+  [selectTooltipInteractionState, selectTooltipDisplayedData, selectTooltipAxisDataKey, selectTooltipAxisDomain],
   combineActiveTooltipIndex,
 );
 
