@@ -88,16 +88,26 @@ interface CartesianGridProps extends ZIndexable {
    * If left undefined, it will be computed from the chart's offset and margins.
    */
   y?: number;
+  /**
+   * @defaultValue true
+   */
   horizontal?: GridLineType;
+  /**
+   * @defaultValue true
+   */
   vertical?: GridLineType;
   /**
    * Array of coordinates in pixels where to draw horizontal grid lines.
    * Has priority over syncWithTicks and horizontalValues.
+   *
+   * @defaultValue []
    */
   horizontalPoints?: number[];
   /**
    * Array of coordinates in pixels where to draw vertical grid lines.
    * Has priority over syncWithTicks and horizontalValues.
+   *
+   * @defaultValue []
    */
   verticalPoints?: number[];
   /**
@@ -111,6 +121,8 @@ interface CartesianGridProps extends ZIndexable {
    *
    * If this is undefined, or an empty array, then there is no background fill.
    * Note: Grid lines will be rendered above these background stripes.
+   *
+   * @defaultValue []
    */
   verticalFill?: string[];
   /**
@@ -124,12 +136,16 @@ interface CartesianGridProps extends ZIndexable {
    *
    * If this is undefined, or an empty array, then there is no background fill.
    * Note: Grid lines will be rendered above these background stripes.
+   *
+   * @defaultValue []
    */
   horizontalFill?: string[];
   /**
    * If true, only the lines that correspond to the axes ticks values will be drawn.
    * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks.
    * horizontalPoints, verticalPoints, horizontalValues, verticalValues have priority over syncWithTicks.
+   *
+   * @defaultValue false
    */
   syncWithTicks?: boolean;
   /**
@@ -142,8 +158,18 @@ interface CartesianGridProps extends ZIndexable {
    * Has priority over syncWithTicks but not over verticalValues.
    */
   verticalValues?: number[] | string[];
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: AxisId;
+  /**
+   * @defaultValue 0
+   */
   yAxisId?: AxisId;
+  /**
+   * @defaultValue -100
+   */
+  zIndex?: number;
 }
 
 type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset'>;
@@ -378,7 +404,7 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
     syncWithTicks,
   );
 
-const defaultCartesianGridProps = {
+export const defaultCartesianGridProps = {
   horizontal: true,
   vertical: true,
   // The ordinates of horizontal grid lines

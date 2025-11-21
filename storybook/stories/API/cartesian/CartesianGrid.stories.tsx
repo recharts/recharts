@@ -4,14 +4,13 @@ import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from 
 import { pageData } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
-const GeneralProps: ArgTypes = {
+const CartesianGridArgTypes: ArgTypes = {
   x: {
     description: 'The x-coordinate of grid.',
     table: {
       type: {
         summary: 'Number',
       },
-      defaultValue: { summary: '0' },
       category: 'Position',
     },
   },
@@ -21,8 +20,31 @@ const GeneralProps: ArgTypes = {
       type: {
         summary: 'Number',
       },
-      defaultValue: { summary: '0' },
       category: 'Position',
+    },
+  },
+  xAxisId: {
+    description: 'The id of x-axis which the grid should be attached to.',
+    table: {
+      type: {
+        summary: 'String | Number',
+      },
+      defaultValue: {
+        summary: '0',
+      },
+      category: 'Axis',
+    },
+  },
+  yAxisId: {
+    description: 'The id of y-axis which the grid should be attached to.',
+    table: {
+      type: {
+        summary: 'String | Number',
+      },
+      defaultValue: {
+        summary: '0',
+      },
+      category: 'Axis',
     },
   },
   width: {
@@ -79,6 +101,9 @@ const GeneralProps: ArgTypes = {
       type: {
         summary: 'Array',
       },
+      defaultValue: {
+        summary: '[]',
+      },
       category: 'General',
     },
   },
@@ -87,6 +112,9 @@ const GeneralProps: ArgTypes = {
     table: {
       type: {
         summary: 'Array',
+      },
+      defaultValue: {
+        summary: '[]',
       },
       category: 'General',
     },
@@ -100,13 +128,23 @@ const GeneralProps: ArgTypes = {
       category: 'General',
     },
   },
+  syncWithTicks: {
+    description: 'If true, the grid will align with the axis ticks.',
+    table: {
+      type: {
+        summary: 'Boolean',
+      },
+      defaultValue: {
+        summary: 'false',
+      },
+      category: 'General',
+    },
+  },
 };
 
 export default {
   component: CartesianGrid,
-  argTypes: {
-    ...GeneralProps,
-  },
+  argTypes: CartesianGridArgTypes,
   args: {
     horizontal: true,
     vertical: true,

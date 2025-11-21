@@ -7,6 +7,7 @@ import { defaultBarProps } from '../src/cartesian/Bar';
 import { defaultBrushProps } from '../src/cartesian/Brush';
 import { defaultLineProps } from '../src/cartesian/Line';
 import { defaultScatterProps } from '../src/cartesian/Scatter';
+import { defaultCartesianGridProps } from '../src/cartesian/CartesianGrid';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -16,6 +17,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Area: { defaultProps: defaultAreaProps },
   Bar: { defaultProps: defaultBarProps },
   Brush: { defaultProps: defaultBrushProps },
+  CartesianGrid: { defaultProps: defaultCartesianGridProps },
   Label: { defaultProps: defaultLabelProps },
   Line: { defaultProps: defaultLineProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },

@@ -4,7 +4,6 @@ export const CartesianGridAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of grid.',
@@ -14,7 +13,6 @@ export const CartesianGridAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of grid.',
@@ -24,7 +22,6 @@ export const CartesianGridAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The width of grid.',
@@ -34,7 +31,6 @@ export const CartesianGridAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The height of grid.',
@@ -44,7 +40,7 @@ export const CartesianGridAPI = {
     {
       name: 'horizontal',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'If set false, no horizontal grid lines will be drawn.',
@@ -54,7 +50,7 @@ export const CartesianGridAPI = {
     {
       name: 'vertical',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'If set false, no vertical grid lines will be drawn.',
@@ -64,7 +60,7 @@ export const CartesianGridAPI = {
     {
       name: 'horizontalPoints',
       type: 'Array',
-      defaultVal: '[]',
+      defaultVal: [],
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinates of all horizontal lines.',
@@ -94,7 +90,7 @@ export const CartesianGridAPI = {
     {
       name: 'verticalPoints',
       type: 'Array',
-      defaultVal: '[]',
+      defaultVal: [],
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinates of all vertical lines.',
@@ -124,6 +120,7 @@ export const CartesianGridAPI = {
     {
       name: 'fill',
       type: 'String',
+      defaultVal: 'none',
       isOptional: true,
       desc: {
         'en-US': 'The background color used to fill the space between grid lines',
@@ -147,7 +144,6 @@ export const CartesianGridAPI = {
     {
       name: 'strokeDasharray',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The pattern of dashes and gaps used to paint the lines of the grid',

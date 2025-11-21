@@ -1,4 +1,5 @@
 import { describe, it, expect, test } from 'vitest';
+import { shallowEqual } from 'react-redux';
 import { ProjectDocReader } from './readProject';
 import { ApiDocReader } from './readApiDoc';
 import { StorybookDocReader } from './readStorybookDoc';
@@ -109,6 +110,9 @@ describe('omnidoc - documentation consistency', () => {
     }
 
     function compareValues(val1: unknown, val2: unknown) {
+      if (typeof val1 === 'object') {
+        return shallowEqual(val1, val2);
+      }
       return stripQuotes(val1) === stripQuotes(val2);
     }
 
@@ -153,6 +157,27 @@ describe('omnidoc - documentation consistency', () => {
       },
     );
 
+    function stringify(value: unknown): string {
+      if (typeof value === 'string') {
+        return value;
+      }
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return String(value);
+      }
+    }
+
+    function stringifyDefaultValue(defaultValue: DefaultValue): DefaultValue {
+      if (defaultValue.type === 'known') {
+        return {
+          type: 'known',
+          value: stringify(defaultValue.value),
+        };
+      }
+      return defaultValue;
+    }
+
     test.each(storybookReader.getPublicComponentNames())(
       'if %s has default props in Storybook, it should also have them in the project',
       component => {
@@ -162,7 +187,15 @@ describe('omnidoc - documentation consistency', () => {
         for (const prop of allProps) {
           const storybookDefaultProp = storybookReader.getDefaultValueOf(component, prop);
           const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
-          const problem = compareDefaultValues(storybookDefaultProp, projectDefaultProp);
+          const problem = compareDefaultValues(
+            /*
+             * Storybook types demand that all default values are strings
+             * so let's convert everything to string for comparison.
+             * https://storybook.js.org/docs/api/arg-types#tabledefaultvalue
+             */
+            stringifyDefaultValue(storybookDefaultProp),
+            stringifyDefaultValue(projectDefaultProp),
+          );
           if (problem) {
             missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
           }
@@ -171,16 +204,6 @@ describe('omnidoc - documentation consistency', () => {
         expect(missingDefaultProps).toEqual([]);
       },
     );
-
-    function stringifyDefaultValue(defaultValue: DefaultValue): DefaultValue {
-      if (defaultValue.type === 'known') {
-        return {
-          type: 'known',
-          value: String(defaultValue.value),
-        };
-      }
-      return defaultValue;
-    }
 
     test.each(projectReader.getPublicComponentNames())(
       'if a %s prop is documented with a @default tag, it should match the actual default prop in the project',
