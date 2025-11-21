@@ -204,7 +204,7 @@ function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined)
   return 'x';
 }
 
-const errorBarDefaultProps = {
+export const errorBarDefaultProps = {
   stroke: 'black',
   strokeWidth: 1.5,
   width: 5,
