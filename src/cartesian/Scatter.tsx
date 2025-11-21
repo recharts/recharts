@@ -19,7 +19,6 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -153,7 +152,7 @@ interface ScatterInternalProps extends ZIndexable {
   hide: boolean;
   label?: ImplicitLabelListType;
 
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
@@ -168,29 +167,75 @@ interface ScatterInternalProps extends ZIndexable {
  */
 interface ScatterProps extends ZIndexable {
   data?: any[];
+  /**
+   * @defaultValue 0
+   */
   xAxisId?: AxisId;
-  yAxisId?: string | number;
-  zAxisId?: string | number;
+  /**
+   * @defaultValue 0
+   */
+  yAxisId?: AxisId;
+  /**
+   * @defaultValue 0
+   */
+  zAxisId?: AxisId;
 
   dataKey?: DataKey<any>;
 
+  /**
+   * @defaultValue false
+   */
   line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
+  /**
+   * @defaultValue joint
+   */
   lineType?: 'fitting' | 'joint';
+  /**
+   * @defaultValue linear
+   */
   lineJointType?: CurveType;
+  /**
+   * @defaultValue circle
+   */
   legendType?: LegendType;
   tooltipType?: TooltipType;
   className?: string;
   name?: string;
 
   activeShape?: ScatterCustomizedShape;
+  /**
+   * @defaultValue circle
+   */
   shape?: ScatterCustomizedShape;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
+  /**
+   * @defaultValue false
+   */
   label?: ImplicitLabelListType;
 
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
+  /**
+   * @defaultValue 0
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 400
+   */
   animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue linear
+   */
   animationEasing?: AnimationTiming;
+  /**
+   * @defaultValue 600
+   */
+  zIndex?: number;
 }
 
 /**
@@ -656,18 +701,19 @@ function ScatterWithId(props: InternalProps) {
   );
 }
 
-const defaultScatterProps = {
+export const defaultScatterProps = {
   xAxisId: 0,
   yAxisId: 0,
   zAxisId: 0,
+  label: false,
+  line: false,
   legendType: 'circle',
   lineType: 'joint',
   lineJointType: 'linear',
-  data: [] as any[],
   shape: 'circle',
   hide: false,
 
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'linear',
