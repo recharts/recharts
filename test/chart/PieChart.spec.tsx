@@ -509,9 +509,13 @@ describe('<PieChart />', () => {
       const { container } = rechartsTestRender(getPieChart({ onClick }));
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
+      expect(sector).not.toBeNull();
 
       expect(onClick).toHaveBeenCalledTimes(0);
-      await user.click(sector);
+      // need to hover first to make the sector active because active shapes have an extra layer that events
+      // don't seem to bubble through in tests
+      await user.hover(sector);
+      await user.click(container.querySelector('.recharts-layer .recharts-active-shape')!);
       act(() => {
         vi.runOnlyPendingTimers();
       });
@@ -571,7 +575,10 @@ describe('<PieChart />', () => {
       const sectors = container.querySelectorAll('.recharts-sector');
       const sector = sectors[2];
 
+      // need to hover first to make the sector active because active shapes have an extra layer that events
+      // don't seem to bubble through in tests
       await user.hover(sector);
+      await user.hover(container.querySelector('.recharts-layer .recharts-active-shape')!);
       act(() => {
         vi.runOnlyPendingTimers();
       });

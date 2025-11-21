@@ -157,6 +157,9 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
+type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean };
+type PieShape = ReactNode | ((props: PieSectorShapeProps) => React.ReactElement);
+
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
@@ -175,8 +178,11 @@ interface InternalPieProps extends PieDef, ZIndexable {
   /** the input data */
   data?: ChartDataInput[];
   sectors: ReadonlyArray<PieSectorDataItem>;
+  /** @deprecated */
   activeShape?: ActiveShape<PieSectorDataItem>;
+  /** @deprecated */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
+  shape?: PieShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
   animationEasing?: AnimationTiming;
@@ -209,8 +215,16 @@ interface PieProps extends PieDef, ZIndexable {
   hide?: boolean;
   /** the input data */
   data?: ChartDataInput[];
+  /**
+   * @deprecated use the `shape` prop to create each sector
+   * `isActive` designates the "active" shape
+   */
   activeShape?: ActiveShape<PieSectorDataItem>;
+  /**
+   * @deprecated use the `shape` prop to modify each sector
+   */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
+  shape?: PieShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
   animationEasing?: AnimationTiming;
@@ -253,8 +267,15 @@ function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId 
 
 type PieSectorsProps = {
   sectors: Readonly<PieSectorDataItem[]>;
+  /**
+   * @deprecated
+   */
   activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
+  /**
+   * @deprecated
+   */
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
+  shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
 };
 
@@ -462,7 +483,7 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -484,9 +505,10 @@ function PieSectors(props: PieSectorsProps) {
     <>
       {sectors.map((entry, i) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-        const isSectorActive = activeShape && String(i) === activeIndex;
+
+        const isActive = String(i) === activeIndex;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
-        const sectorOptions = isSectorActive ? activeShape : inactiveShape;
+        const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
         const sectorProps = {
           ...entry,
           stroke: entry.stroke,
@@ -508,7 +530,7 @@ function PieSectors(props: PieSectorsProps) {
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
+            <Shape option={shape ?? sectorOptions} shapeType="sector" isActive={isActive} {...sectorProps} />
           </Layer>
         );
       })}
@@ -733,6 +755,7 @@ function SectorsWithAnimation({
                 activeShape={activeShape}
                 inactiveShape={inactiveShape}
                 allOtherPieProps={props}
+                shape={props.shape}
               />
             </Layer>
           );

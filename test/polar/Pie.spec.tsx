@@ -362,6 +362,7 @@ describe('<Pie />', () => {
       [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
       fill: '#808080',
       innerRadius: 0,
+      isActive: true,
       label: 'Iter: 0',
       maxRadius: 275.77164466275354,
       midAngle: 38.579169175195666,
