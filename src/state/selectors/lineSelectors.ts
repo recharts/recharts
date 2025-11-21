@@ -99,7 +99,8 @@ export const selectLinePoints: (
       yAxisTicks == null ||
       xAxisTicks.length === 0 ||
       yAxisTicks.length === 0 ||
-      bandSize == null
+      bandSize == null ||
+      (layout !== 'horizontal' && layout !== 'vertical')
     ) {
       return undefined;
     }

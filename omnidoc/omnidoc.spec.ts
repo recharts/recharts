@@ -126,10 +126,10 @@ describe('omnidoc - documentation consistency', () => {
         return null;
       }
       if (documentedDefaultValue.type === 'none' && actualDefaultValue.type !== 'none') {
-        return `Default value exists but it is not documented`;
+        return `Default value is ${actualDefaultValue.value} but it is not documented`;
       }
       if (documentedDefaultValue.type !== 'none' && actualDefaultValue.type === 'none') {
-        return `Documented default value, but actually none exists in the project`;
+        return `Documented default value ${documentedDefaultValue.value}, but actually none exists in the project`;
       }
       return null;
     }
