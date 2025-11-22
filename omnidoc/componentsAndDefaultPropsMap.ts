@@ -12,6 +12,7 @@ import { errorBarDefaultProps } from '../src/cartesian/ErrorBar';
 import { referenceAreaDefaultProps } from '../src/cartesian/ReferenceArea';
 import { referenceDotDefaultProps } from '../src/cartesian/ReferenceDot';
 import { xAxisDefaultProps } from '../src/cartesian/XAxis';
+import { yAxisDefaultProps } from '../src/cartesian/YAxis';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -32,4 +33,5 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Text: { defaultProps: textDefaultProps },
   Treemap: { defaultProps: defaultTreeMapProps },
   XAxis: { defaultProps: xAxisDefaultProps },
+  YAxis: { defaultProps: yAxisDefaultProps },
 };
