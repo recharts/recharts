@@ -60,7 +60,7 @@ interface YAxisProps extends BaseAxisProps {
    */
   minTickGap?: number;
   /**
-   * If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd",
+   * If set 0, all the ticks will be shown. If set "preserveStart", "preserveEnd" or "preserveStartEnd",
    * the ticks which is to be shown or hidden will be calculated automatically.
    *
    * @defaultValue preserveEnd
