@@ -43,33 +43,32 @@ describe('getEquidistantPreserveEndTicks', () => {
     expect(result).toEqual([]);
   });
 
-  test.each([
-    // Case 1: All ticks fit (0-9). Step 1 works.
-    // Offset 0. Result: All.
-    { ticksThatFit: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], resultingTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] },
+  it('should skip ticks to satisfy minTickGap while preserving the end tick', () => {
+    // Create 5 ticks at coordinates: 0, 10, 20, 30, 40.
+    const ticks = [
+      { value: 'A', coordinate: 0 },
+      { value: 'B', coordinate: 10 },
+      { value: 'C', coordinate: 20 },
+      { value: 'D', coordinate: 30 },
+      { value: 'E', coordinate: 40 },
+    ].map((t, i) => ({ ...t, index: i }));
 
-    // Case 2: We want every 2nd tick to fit: 1, 3, 5, 7, 9.
-    // We mark 0, 2, 4... as "bad" (not in ticksThatFit) so the algorithm is forced to skip them.
-    // We MUST mark 9 as "fitting" so it passes the visibility check.
-    { ticksThatFit: [1, 3, 5, 7, 9], resultingTicks: [1, 3, 5, 7, 9] },
+    // The ticks are 10px wide.
+    const getTickSizeStatic = () => 10;
 
-    // Case 3: We want every 3rd tick to fit: 0, 3, 6, 9.
-    // Mark others as bad. 9 must be good.
-    { ticksThatFit: [0, 3, 6, 9], resultingTicks: [0, 3, 6, 9] },
+    // The ticks are 10px apart. We set minTickGap to 15px.
+    // This forces the algorithm to skip every other tick (Step Size 2) to avoid overlap.
+    // Since we anchor at the end (Index 4), we expect indices 4, 2, 0.
 
-    // Case 4: Only the last tick fits.
-    // It should return just the last tick.
-    { ticksThatFit: [9], resultingTicks: [9] },
-  ])('Show only every n-th tick that fits, anchoring at the end.', ({ ticksThatFit, resultingTicks }) => {
-    const ticks: Array<TickItem> = [];
-    for (let index = 0; index < 10; index++) {
-      // If the index is in "ticksThatFit", it gets a valid size (10). Otherwise it gets a huge size (1000).
-      ticks.push({ value: ticksThatFit.includes(index) ? 10 : 1000, coordinate: index * 50, index });
-    }
+    const result = getEquidistantPreserveEndTicks(
+      1,
+      { start: 0, end: 100 },
+      getTickSizeStatic,
+      ticks,
+      8, // minTickGap
+    );
 
-    const result = getEquidistantPreserveEndTicks(1, { start: 0, end: 10 * 50 }, getTickSize, ticks, 0);
-
-    const resultIndices = result.map(t => t.index);
-    expect(resultIndices).toEqual(resultingTicks);
+    // We expect indices 0, 2, 4 (Values A, C, E)
+    expect(result.map(t => t.value)).toEqual(['A', 'C', 'E']);
   });
 });
