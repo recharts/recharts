@@ -4,7 +4,6 @@ export const ZAxisAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The key of data displayed in the axis.',
@@ -14,7 +13,7 @@ export const ZAxisAPI = {
     {
       name: 'zAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The unique id of z-axis.',
@@ -24,7 +23,7 @@ export const ZAxisAPI = {
     {
       name: 'range',
       type: 'Array',
-      defaultVal: '[10, 10]',
+      defaultVal: [64, 64],
       isOptional: false,
       desc: {
         'en-US': 'The range of axis.',
@@ -34,7 +33,6 @@ export const ZAxisAPI = {
     {
       name: 'unit',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -45,7 +43,6 @@ export const ZAxisAPI = {
     {
       name: 'name',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

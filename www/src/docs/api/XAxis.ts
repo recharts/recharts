@@ -4,7 +4,7 @@ export const XAxisAPI = {
     {
       name: 'hide',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'If set true, the axis do not display in the chart.',
@@ -14,7 +14,6 @@ export const XAxisAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The key of data displayed in the axis.',
@@ -24,7 +23,7 @@ export const XAxisAPI = {
     {
       name: 'xAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The unique id of x-axis.',
@@ -34,7 +33,6 @@ export const XAxisAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The width of axis which is usually calculated internally.',
@@ -44,7 +42,7 @@ export const XAxisAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '30',
+      defaultVal: 30,
       isOptional: false,
       desc: {
         'en-US': 'The height of axis, which can be setted by user.',
@@ -54,7 +52,7 @@ export const XAxisAPI = {
     {
       name: 'orientation',
       type: "'bottom' , 'top'",
-      defaultVal: "'bottom'",
+      defaultVal: 'bottom',
       isOptional: false,
       desc: {
         'en-US': 'The orientation of axis',
@@ -64,7 +62,7 @@ export const XAxisAPI = {
     {
       name: 'type',
       type: "'number' | 'category'",
-      defaultVal: "'category'",
+      defaultVal: 'category',
       isOptional: false,
       desc: {
         'en-US': 'The type of axis.',
@@ -74,7 +72,7 @@ export const XAxisAPI = {
     {
       name: 'allowDecimals',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'Allow the ticks of XAxis to be decimals or not.',
@@ -84,7 +82,7 @@ export const XAxisAPI = {
     {
       name: 'allowDataOverflow',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -97,7 +95,7 @@ export const XAxisAPI = {
     {
       name: 'allowDuplicatedCategory',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'Allow the axis has duplicated categorys or not when the type of axis is "category".',
@@ -107,7 +105,7 @@ export const XAxisAPI = {
     {
       name: 'angle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The angle of axis ticks.',
@@ -117,7 +115,7 @@ export const XAxisAPI = {
     {
       name: 'tickCount',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': "The count of axis ticks. Not used if 'type' is 'category'.",
@@ -127,7 +125,6 @@ export const XAxisAPI = {
     {
       name: 'domain',
       type: 'Array | Function',
-      defaultVal: "[0, 'auto']",
       isOptional: true,
       desc: {
         'en-US':
@@ -155,7 +152,7 @@ export const XAxisAPI = {
     {
       name: 'includeHidden',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -167,7 +164,7 @@ export const XAxisAPI = {
     {
       name: 'interval',
       type: '"preserveStart" | "preserveEnd" | "preserveStartEnd" | "equidistantPreserveStart" | Number',
-      defaultVal: "'preserveEnd'",
+      defaultVal: 'preserveEnd',
       isOptional: false,
       desc: {
         'en-US':
@@ -185,7 +182,7 @@ export const XAxisAPI = {
     {
       name: 'padding',
       type: 'Object | "gap" | "no-gap"',
-      defaultVal: '{ left: 0, right: 0 }',
+      defaultVal: '{"left":0,"right":0}',
       isOptional: false,
       desc: {
         'en-US': 'Specify the padding of x-axis.',
@@ -208,7 +205,7 @@ export const XAxisAPI = {
     {
       name: 'minTickGap',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': 'The minimum gap between two adjacent labels.',
@@ -218,7 +215,7 @@ export const XAxisAPI = {
     {
       name: 'axisLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -229,7 +226,7 @@ export const XAxisAPI = {
     {
       name: 'tickLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -240,7 +237,7 @@ export const XAxisAPI = {
     {
       name: 'tickSize',
       type: 'Number',
-      defaultVal: '6',
+      defaultVal: 6,
       isOptional: false,
       desc: {
         'en-US': 'The length of tick line.',
@@ -250,7 +247,6 @@ export const XAxisAPI = {
     {
       name: 'tickFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of tick.',
@@ -260,7 +256,6 @@ export const XAxisAPI = {
     {
       name: 'ticks',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'Set the values of axis ticks manually.',
@@ -270,7 +265,7 @@ export const XAxisAPI = {
     {
       name: 'tick',
       type: 'Boolean | Object | ReactElement',
-      defaultVal: 'null',
+      defaultVal: true,
       isOptional: true,
       desc: {
         'en-US':
@@ -293,7 +288,7 @@ export const XAxisAPI = {
     {
       name: 'mirror',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -304,7 +299,7 @@ export const XAxisAPI = {
     {
       name: 'reversed',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Reverse the ticks or not.',
@@ -314,7 +309,6 @@ export const XAxisAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Object',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -361,7 +355,6 @@ const scale = scaleLog().base(Math.E);
     {
       name: 'unit',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -372,7 +365,6 @@ const scale = scaleLog().base(Math.E);
     {
       name: 'name',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

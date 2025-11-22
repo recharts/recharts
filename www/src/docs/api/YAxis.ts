@@ -4,7 +4,7 @@ export const YAxisAPI = {
     {
       name: 'hide',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'If set true, the axis do not display in the chart.',
@@ -14,7 +14,6 @@ export const YAxisAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The key of data displayed in the axis.',
@@ -24,7 +23,7 @@ export const YAxisAPI = {
     {
       name: 'yAxisId',
       type: 'String | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The unique id of y-axis.',
@@ -34,7 +33,7 @@ export const YAxisAPI = {
     {
       name: 'width',
       type: `Number | 'auto'`,
-      defaultVal: '60',
+      defaultVal: 60,
       isOptional: false,
       desc: {
         'en-US': `The width of the axis, which can be set by user. 'auto' will attempt to resize the axis based on its content.`,
@@ -44,7 +43,6 @@ export const YAxisAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
       isOptional: false,
       desc: {
         'en-US': 'The height of axis which is usually calculated internally.',
@@ -54,7 +52,7 @@ export const YAxisAPI = {
     {
       name: 'orientation',
       type: "'left' | 'right'",
-      defaultVal: "'left'",
+      defaultVal: 'left',
       isOptional: false,
       desc: {
         'en-US': 'The orientation of axis.',
@@ -64,7 +62,7 @@ export const YAxisAPI = {
     {
       name: 'type',
       type: "'number' | 'category'",
-      defaultVal: "'number'",
+      defaultVal: 'number',
       isOptional: false,
       desc: {
         'en-US': 'The type of axis.',
@@ -74,7 +72,7 @@ export const YAxisAPI = {
     {
       name: 'tickCount',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': "The count of axis ticks. Not used if 'type' is 'category'.",
@@ -84,7 +82,6 @@ export const YAxisAPI = {
     {
       name: 'domain',
       type: 'Array | Function',
-      defaultVal: "[0, 'auto']",
       isOptional: true,
       desc: {
         'en-US':
@@ -112,7 +109,7 @@ export const YAxisAPI = {
     {
       name: 'includeHidden',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -124,7 +121,7 @@ export const YAxisAPI = {
     {
       name: 'interval',
       type: '"preserveStart" | "preserveEnd" | "preserveStartEnd" | "equidistantPreserveStart" | Number',
-      defaultVal: "'preserveEnd'",
+      defaultVal: 'preserveEnd',
       isOptional: false,
       desc: {
         'en-US':
@@ -142,7 +139,7 @@ export const YAxisAPI = {
     {
       name: 'padding',
       type: 'Object',
-      defaultVal: '{ top: 0, bottom: 0 }',
+      defaultVal: '{"top":0,"bottom":0}',
       isOptional: false,
       desc: {
         'en-US': "Specify the padding of y-axis. It's similar to padding of XAxis.",
@@ -163,7 +160,7 @@ export const YAxisAPI = {
     {
       name: 'minTickGap',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': 'The minimum gap between two adjacent labels.',
@@ -173,7 +170,7 @@ export const YAxisAPI = {
     {
       name: 'allowDecimals',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'Allow the ticks of YAxis to be decimals or not.',
@@ -183,7 +180,7 @@ export const YAxisAPI = {
     {
       name: 'allowDataOverflow',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -196,17 +193,17 @@ export const YAxisAPI = {
     {
       name: 'allowDuplicatedCategory',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
-        'en-US': 'Allow the axis has duplicated categorys or not when the type of axis is "category".',
+        'en-US': 'Allow the axis has duplicated category or not when the type of axis is "category".',
         'zh-CN': '是否允许类目轴有重复的类目。',
       },
     },
     {
       name: 'axisLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -217,7 +214,7 @@ export const YAxisAPI = {
     {
       name: 'tickLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -228,7 +225,7 @@ export const YAxisAPI = {
     {
       name: 'tickSize',
       type: 'Number',
-      defaultVal: '6',
+      defaultVal: 6,
       isOptional: false,
       desc: {
         'en-US': 'The length of tick line.',
@@ -238,7 +235,6 @@ export const YAxisAPI = {
     {
       name: 'tickFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of tick.',
@@ -248,7 +244,6 @@ export const YAxisAPI = {
     {
       name: 'ticks',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'Set the values of axis ticks manually.',
@@ -258,7 +253,7 @@ export const YAxisAPI = {
     {
       name: 'tick',
       type: 'Boolean | Object | ReactElement',
-      defaultVal: 'null',
+      defaultVal: true,
       isOptional: true,
       desc: {
         'en-US':
@@ -275,7 +270,7 @@ export const YAxisAPI = {
     {
       name: 'mirror',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -286,7 +281,7 @@ export const YAxisAPI = {
     {
       name: 'reversed',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Reverse the ticks or not.',
@@ -296,7 +291,6 @@ export const YAxisAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Object',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -342,7 +336,6 @@ const scale = scaleLog().base(Math.E);
     {
       name: 'unit',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -353,7 +346,6 @@ const scale = scaleLog().base(Math.E);
     {
       name: 'name',
       type: 'String | Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

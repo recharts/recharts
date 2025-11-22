@@ -96,7 +96,6 @@ export const sharedAxisProps: StorybookArgs = {
       type: {
         summary: 'Array | Function',
       },
-      defaultValue: [0, 'auto'],
       category: 'Domain',
     },
   },
@@ -174,10 +173,12 @@ export const sharedAxisProps: StorybookArgs = {
   tick: {
     description: `If set false, no ticks will be drawn. If set a object, the option is the configuration of ticks.
       If set a React element, the option is the custom react element of drawing ticks.`,
+    control: 'boolean',
     table: {
       type: {
         summary: 'Boolean | Object | ReactElement',
       },
+      defaultValue: true,
       category: 'Ticks',
     },
   },

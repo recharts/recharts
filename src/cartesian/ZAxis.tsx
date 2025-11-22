@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef } from 'react';
 import { AxisDomain, DataKey, ScaleType } from '../util/types';
-import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
+import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings, AxisId } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsScale } from '../util/ChartUtils';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
@@ -33,23 +33,37 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
 }
 
 export interface Props {
+  /**
+   * @defaultValue number
+   */
   type?: 'number' | 'category';
   /** The name of data displayed in the axis */
   name?: string;
   /** The unit of data displayed in the axis */
   unit?: string;
-  /** The unique id of z-axis */
-  zAxisId?: string | number;
+  /**
+   * The unique id of z-axis
+   *
+   * @defaultValue 0
+   */
+  zAxisId?: AxisId;
   /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
-  /** The range of axis */
+  /**
+   * The range of axis
+   *
+   * @defaultValue [64, 64]
+   */
   range?: AxisRange;
+  /**
+   * @defaultValue auto
+   */
   scale?: ScaleType | RechartsScale | undefined;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
 }
 
-const zAxisDefaultProps = {
+export const zAxisDefaultProps = {
   zAxisId: 0,
   range: implicitZAxis.range,
   scale: implicitZAxis.scale,

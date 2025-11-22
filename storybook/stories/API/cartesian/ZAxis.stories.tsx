@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
+import { Args, ArgTypes } from '@storybook/react-vite';
 import {
   ScatterChart,
   Scatter,
@@ -15,10 +15,14 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { SCALE_TYPES } from '../../../../src/util/ReactUtils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
-const GeneralProps: Args = {
+const ZAxisArgTypes: ArgTypes = {
   zAxisId: {
     description: 'The id of z-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
+    table: {
+      type: { summary: 'string | number' },
+      defaultValue: { summary: '0' },
+      category: 'General',
+    },
   },
   unit: {
     description: 'The unit of data displayed in the axis.',
@@ -26,16 +30,23 @@ const GeneralProps: Args = {
   },
   range: {
     description: 'The range of axis.',
-    table: { type: { summary: 'number[]' }, category: 'General' },
+    table: {
+      type: { summary: 'number[]' },
+      defaultValue: { summary: '[64,64]' },
+      category: 'General',
+    },
   },
   scale: {
     description: 'If "auto" set, the scale function is decided by the type of chart, and the props type.',
     options: SCALE_TYPES,
-    default: 'auto',
     control: {
       type: 'select',
     },
-    table: { type: { summary: 'ScaleType | Function' }, category: 'General' },
+    table: {
+      type: { summary: 'ScaleType | Function' },
+      defaultValue: { summary: 'auto' },
+      category: 'General',
+    },
   },
   domain: {
     description: 'The domain of scale in this axis.',
@@ -44,9 +55,7 @@ const GeneralProps: Args = {
 };
 
 export default {
-  argTypes: {
-    ...GeneralProps,
-  },
+  argTypes: ZAxisArgTypes,
   component: ZAxis,
 };
 
@@ -67,7 +76,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+    ...getStoryArgsFromArgsTypesObject(ZAxisArgTypes),
     unit: 'km',
     name: 'A name',
     dataKey: 'pv',
