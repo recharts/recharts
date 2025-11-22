@@ -39,6 +39,7 @@ export { Polygon } from './shape/Polygon';
 export type { Props as PolygonProps } from './shape/Polygon';
 export { Dot } from './shape/Dot';
 export type { Props as DotProps } from './shape/Dot';
+export type { ActiveDotProps } from './util/types';
 export type { DotItemDotProps } from './util/types';
 export { Cross } from './shape/Cross';
 export type { Props as CrossProps } from './shape/Cross';
