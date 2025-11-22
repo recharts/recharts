@@ -4,11 +4,14 @@ import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { CartesianViewBoxRequired, Coordinate, DataKey, PolarCoordinate } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
+import { GraphicalItemId } from './graphicalItemsSlice';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
  */
-export type TooltipPayloadEntry = Payload<ValueType, NameType>;
+export type TooltipPayloadEntry = Payload<ValueType, NameType> & {
+  graphicalItemId?: GraphicalItemId;
+};
 
 /**
  * So what happens is that the tooltip payload is decided based on the available data, and the dataKey.
@@ -66,6 +69,10 @@ export type TooltipPayloadConfiguration = {
    * with some defaults (like, top/left of the chart).
    */
   positions: Record<NonNullable<TooltipIndex>, Coordinate> | ReadonlyArray<Coordinate> | undefined;
+  /**
+   * Unique identifier of the graphical item that produced this payload configuration.
+   */
+  graphicalItemId?: GraphicalItemId;
 };
 
 export type ActiveTooltipProps = {
@@ -144,6 +151,10 @@ export type TooltipInteractionState = {
    */
   dataKey: DataKey<any> | undefined;
   /**
+   * Unique identifier of the graphical item currently driving the interaction.
+   */
+  graphicalItemId: GraphicalItemId | undefined;
+  /**
    * The Coordinate where user last interacted with the chart. This needs saved so we can continue to render the tooltip at that point.
    * This is undefined on several occasions:
    * - before the user started interacting with the chart,
@@ -173,6 +184,7 @@ export const noInteraction: TooltipInteractionState = {
   active: false,
   index: null,
   dataKey: undefined,
+  graphicalItemId: undefined,
   coordinate: undefined,
 };
 
@@ -241,6 +253,7 @@ export const initialState: TooltipState = {
     active: false,
     index: null,
     dataKey: undefined,
+    graphicalItemId: undefined,
     label: undefined,
     coordinate: undefined,
     sourceViewBox: undefined,
@@ -259,6 +272,7 @@ export type TooltipActionPayload = {
   activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate?: Coordinate | undefined;
+  graphicalItemId?: GraphicalItemId;
 };
 
 const tooltipSlice = createSlice({
@@ -299,6 +313,7 @@ const tooltipSlice = createSlice({
       state.itemInteraction.hover.active = true;
       state.itemInteraction.hover.index = action.payload.activeIndex;
       state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.hover.graphicalItemId = action.payload.graphicalItemId;
       state.itemInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     mouseLeaveChart(state) {
@@ -321,6 +336,7 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.active = false;
       state.itemInteraction.click.index = action.payload.activeIndex;
       state.itemInteraction.click.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.click.graphicalItemId = action.payload.graphicalItemId;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
@@ -329,6 +345,7 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.active = false;
       state.axisInteraction.hover.index = action.payload.activeIndex;
       state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.hover.graphicalItemId = action.payload.graphicalItemId;
       state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
@@ -337,6 +354,7 @@ const tooltipSlice = createSlice({
       state.axisInteraction.click.active = true;
       state.axisInteraction.click.index = action.payload.activeIndex;
       state.axisInteraction.click.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.click.graphicalItemId = action.payload.graphicalItemId;
       state.axisInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
@@ -347,6 +365,7 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
       state.keyboardInteraction.dataKey = action.payload.activeDataKey;
+      state.keyboardInteraction.graphicalItemId = action.payload.graphicalItemId;
     },
   },
 });

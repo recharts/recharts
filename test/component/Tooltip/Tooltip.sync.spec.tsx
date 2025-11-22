@@ -488,6 +488,7 @@ describe('Tooltip synchronization', () => {
           active: true,
           coordinate: { x: 5, y: 6 },
           dataKey: 'uv',
+          graphicalItemId: undefined,
           index: '1',
           label: 'Page B',
           sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
@@ -530,6 +531,7 @@ describe('Tooltip synchronization', () => {
         setSyncInteraction({
           active: true,
           dataKey: 'uv',
+          graphicalItemId: undefined,
           index: '1',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
@@ -570,6 +572,7 @@ describe('Tooltip synchronization', () => {
         setSyncInteraction({
           active: true,
           dataKey: 'uv',
+          graphicalItemId: undefined,
           index: '2',
           label: 'Page B',
           coordinate: { x: 0, y: 0 },

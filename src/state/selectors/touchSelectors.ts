@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { TooltipIndex, TooltipPayloadConfiguration, TooltipPayloadSearcher } from '../tooltipSlice';
 import { Coordinate, DataKey } from '../../util/types';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 
@@ -12,6 +13,7 @@ export const selectTooltipCoordinate: (
   state: RechartsRootState,
   tooltipIndex: TooltipIndex,
   dataKey: DataKey<any> | undefined,
+  graphicalItemId: GraphicalItemId | undefined,
 ) => Coordinate | undefined = createSelector(
   [
     selectAllTooltipPayloadConfiguration,
@@ -23,16 +25,32 @@ export const selectTooltipCoordinate: (
       _tooltipIndex: TooltipIndex,
       dataKey: DataKey<any> | undefined,
     ): DataKey<any> | undefined => dataKey,
+    (
+      _state: RechartsRootState,
+      _tooltipIndex: TooltipIndex,
+      _dataKey: DataKey<any> | undefined,
+      graphicalItemId: GraphicalItemId | undefined,
+    ): GraphicalItemId | undefined => graphicalItemId,
   ],
   (
     allTooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
     tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
     tooltipIndex: TooltipIndex,
     dataKey,
+    graphicalItemId,
   ): Coordinate | undefined => {
-    const mostRelevantTooltipConfiguration = allTooltipConfigurations.find(tooltipConfiguration => {
-      return tooltipConfiguration.settings.dataKey === dataKey;
-    });
+    let mostRelevantTooltipConfiguration =
+      graphicalItemId == null
+        ? undefined
+        : allTooltipConfigurations.find(
+            tooltipConfiguration => tooltipConfiguration.graphicalItemId === graphicalItemId,
+          );
+
+    if (mostRelevantTooltipConfiguration == null) {
+      mostRelevantTooltipConfiguration = allTooltipConfigurations.find(tooltipConfiguration => {
+        return tooltipConfiguration.settings.dataKey === dataKey;
+      });
+    }
     if (mostRelevantTooltipConfiguration == null) {
       return undefined;
     }

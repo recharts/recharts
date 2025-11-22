@@ -60,7 +60,11 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import {
+  DATA_ITEM_DATAKEY_ATTRIBUTE_NAME,
+  DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME,
+  DATA_ITEM_INDEX_ATTRIBUTE_NAME,
+} from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -262,6 +266,7 @@ const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<Legen
 };
 
 type InputRequiredToComputeTooltipEntrySettings = {
+  id: GraphicalItemId;
   dataKey?: DataKey<any> | undefined;
   points?: ReadonlyArray<ScatterPointItem>;
   stroke?: string;
@@ -274,6 +279,7 @@ type InputRequiredToComputeTooltipEntrySettings = {
 
 const SetScatterTooltipEntrySettings = React.memo(
   ({
+    id,
     dataKey,
     points,
     stroke,
@@ -286,6 +292,7 @@ const SetScatterTooltipEntrySettings = React.memo(
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
       positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
+      graphicalItemId: id,
       settings: {
         stroke,
         strokeWidth,
@@ -420,14 +427,15 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     ...restOfAllOtherProps
   } = allOtherScatterProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
+  const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, id);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, id);
   if (!isNonEmptyArray(points)) {
     return null;
   }
 
-  const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
   const baseProps = svgPropertiesNoEvents(allOtherPropsWithoutId);
 
   return (
@@ -442,6 +450,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
         return (
@@ -592,6 +601,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: xAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       },
       {
         name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxis.dataKey),
@@ -601,6 +611,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: yAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       },
     ];
 
@@ -614,6 +625,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: zAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       });
     }
 
@@ -753,6 +765,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   return (
     <>
       <SetScatterTooltipEntrySettings
+        id={props.id}
         dataKey={props.dataKey}
         points={points}
         stroke={props.stroke}
