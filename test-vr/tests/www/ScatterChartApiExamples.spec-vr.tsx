@@ -37,7 +37,7 @@ test('BubbleChart', async ({ mount }) => {
 });
 
 test('JointLineScatterChart', async ({ mount }) => {
-  const component = await mount(<JointLineScatterChart />);
+  const component = await mount(<JointLineScatterChart defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
