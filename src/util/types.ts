@@ -695,9 +695,17 @@ export interface BaseAxisProps {
   type?: AxisDomainType;
   /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
-  /** Whether display the axis */
+  /**
+   * Whether display the axis
+   *
+   * @defaultValue false
+   */
   hide?: boolean;
-  /** The scale type as a string, or scale function */
+  /**
+   * The scale type as a string, or scale function
+   *
+   * @defaultValue auto
+   */
   scale?: ScaleType | RechartsScale;
   /** The option for tick */
   tick?: TickProp;
@@ -717,6 +725,8 @@ export interface BaseAxisProps {
    * the domain will be adjusted when the minimum value of data is smaller than domain[0] or
    * the maximum value of data is greater than domain[1] so that the axis displays all data values.
    * If set to true, graphic elements (line, area, bars) will be clipped to conform to the specified domain.
+   *
+   * @defaultValue false
    */
   allowDataOverflow?: boolean;
   /**
@@ -725,6 +735,8 @@ export interface BaseAxisProps {
   allowDuplicatedCategory?: boolean;
   /**
    * Allow the ticks of axis to be decimals or not.
+   *
+   * @defaultValue true
    */
   allowDecimals?: boolean;
   /** The domain of scale in this axis */

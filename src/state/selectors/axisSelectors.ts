@@ -94,7 +94,7 @@ import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { selectTooltipAxisType, XorYorZType, XorYType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 
-const defaultNumericDomain: AxisDomain = [0, 'auto'];
+export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 export type AxisWithTicksSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
 

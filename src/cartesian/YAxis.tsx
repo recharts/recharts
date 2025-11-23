@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ComponentType, FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
-import { CartesianAxis, CartesianAxisRef } from './CartesianAxis';
+import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
   addYAxis,
   replaceYAxis,
@@ -41,14 +41,41 @@ interface YAxisProps extends BaseAxisProps {
    * When set to 'auto', the width will be calculated dynamically based on tick labels and axis labels.
    */
   width?: YAxisWidth;
+  /**
+   * @defaultValue false
+   */
   mirror?: boolean;
+  /**
+   * @defaultValue left
+   */
   orientation?: YAxisOrientation;
+  /**
+   * @defaultValue {"top":0,"bottom":0}
+   */
   padding?: YAxisPadding;
+  /**
+   * The minimum gap between two adjacent tick labels
+   *
+   * @defaultValue 5
+   */
   minTickGap?: number;
+  /**
+   * If set 0, all the ticks will be shown. If set "preserveStart", "preserveEnd" or "preserveStartEnd",
+   * the ticks which is to be shown or hidden will be calculated automatically.
+   *
+   * @defaultValue preserveEnd
+   */
   interval?: AxisInterval;
+  /**
+   * @defaultValue false
+   */
   reversed?: boolean;
   tickMargin?: number;
-  /** the rotate angle of tick */
+  /**
+   * The rotate angle of tick
+   *
+   * @defaultValue 0
+   */
   angle?: number;
 }
 
@@ -169,13 +196,21 @@ export const yAxisDefaultProps = {
   allowDataOverflow: implicitYAxis.allowDataOverflow,
   allowDecimals: implicitYAxis.allowDecimals,
   allowDuplicatedCategory: implicitYAxis.allowDuplicatedCategory,
+  angle: implicitYAxis.angle,
+  axisLine: defaultCartesianAxisProps.axisLine,
   hide: false,
+  includeHidden: implicitYAxis.includeHidden,
+  interval: implicitYAxis.interval,
+  minTickGap: implicitYAxis.minTickGap,
   mirror: implicitYAxis.mirror,
   orientation: implicitYAxis.orientation,
   padding: implicitYAxis.padding,
   reversed: implicitYAxis.reversed,
   scale: implicitYAxis.scale,
+  tick: implicitYAxis.tick,
   tickCount: implicitYAxis.tickCount,
+  tickLine: defaultCartesianAxisProps.tickLine,
+  tickSize: defaultCartesianAxisProps.tickSize,
   type: implicitYAxis.type,
   width: implicitYAxis.width,
   yAxisId: 0,
@@ -188,7 +223,7 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
   return (
     <>
       <SetYAxisSettings
-        interval={props.interval ?? 'preserveEnd'}
+        interval={props.interval}
         id={props.yAxisId}
         scale={props.scale}
         type={props.type}
@@ -199,7 +234,7 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
         allowDecimals={props.allowDecimals}
         tickCount={props.tickCount}
         padding={props.padding}
-        includeHidden={props.includeHidden ?? false}
+        includeHidden={props.includeHidden}
         reversed={props.reversed}
         ticks={props.ticks}
         width={props.width}
@@ -208,9 +243,9 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
         hide={props.hide}
         unit={props.unit}
         name={props.name}
-        angle={props.angle ?? 0}
-        minTickGap={props.minTickGap ?? 5}
-        tick={props.tick ?? true}
+        angle={props.angle}
+        minTickGap={props.minTickGap}
+        tick={props.tick}
         tickFormatter={props.tickFormatter}
       />
       <YAxisImpl {...props} />

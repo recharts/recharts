@@ -102,15 +102,36 @@ describe('omnidoc - documentation consistency', () => {
   });
 
   describe('default props consistency', () => {
+    function stringify(value: unknown): string {
+      if (typeof value === 'string') {
+        return value;
+      }
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return String(value);
+      }
+    }
+
+    function stringifyDefaultValue(defaultValue: DefaultValue): DefaultValue {
+      if (defaultValue.type === 'known') {
+        return {
+          type: 'known',
+          value: stringify(defaultValue.value),
+        };
+      }
+      return defaultValue;
+    }
+
     function stripQuotes(str: unknown) {
       if (typeof str === 'string') {
         return str.replace(/^['"]|['"]$/g, '');
       }
-      return str;
+      return stringify(str);
     }
 
     function compareValues(val1: unknown, val2: unknown) {
-      if (typeof val1 === 'object') {
+      if (typeof val1 === 'object' && typeof val2 === 'object') {
         return shallowEqual(val1, val2);
       }
       return stripQuotes(val1) === stripQuotes(val2);
@@ -125,7 +146,7 @@ describe('omnidoc - documentation consistency', () => {
       }
       if (documentedDefaultValue.type === 'known' && actualDefaultValue.type === 'known') {
         if (!compareValues(documentedDefaultValue.value, actualDefaultValue.value)) {
-          return `Documented default value "${documentedDefaultValue.value}" [${typeof documentedDefaultValue.value}], but actually in project it is "${actualDefaultValue.value}" [${typeof actualDefaultValue.value}]`;
+          return `Documented default value "${documentedDefaultValue.value}" [${typeof documentedDefaultValue.value}], but actually in project it is "${stringify(actualDefaultValue.value)}" [${typeof actualDefaultValue.value}]`;
         }
         return null;
       }
@@ -156,27 +177,6 @@ describe('omnidoc - documentation consistency', () => {
         expect(missingDefaultProps).toEqual([]);
       },
     );
-
-    function stringify(value: unknown): string {
-      if (typeof value === 'string') {
-        return value;
-      }
-      try {
-        return JSON.stringify(value);
-      } catch {
-        return String(value);
-      }
-    }
-
-    function stringifyDefaultValue(defaultValue: DefaultValue): DefaultValue {
-      if (defaultValue.type === 'known') {
-        return {
-          type: 'known',
-          value: stringify(defaultValue.value),
-        };
-      }
-      return defaultValue;
-    }
 
     test.each(storybookReader.getPublicComponentNames())(
       'if %s has default props in Storybook, it should also have them in the project',
