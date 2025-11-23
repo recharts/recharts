@@ -42,7 +42,7 @@ test('JointLineScatterChart', async ({ mount }) => {
 });
 
 test('ThreeDimScatterChart', async ({ mount }) => {
-  const component = await mount(<ThreeDimScatterChart />);
+  const component = await mount(<ThreeDimScatterChart defaultIndex="3" />);
   await expect(component).toHaveScreenshot();
 });
 
