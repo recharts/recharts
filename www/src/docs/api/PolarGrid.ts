@@ -4,7 +4,6 @@ export const PolarGridAPI = {
     {
       name: 'cx',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of center.',
@@ -14,7 +13,6 @@ export const PolarGridAPI = {
     {
       name: 'cy',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of center.',
@@ -24,7 +22,6 @@ export const PolarGridAPI = {
     {
       name: 'innerRadius',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The radius of the inner polar grid.',
@@ -34,7 +31,6 @@ export const PolarGridAPI = {
     {
       name: 'outerRadius',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The radius of the outer polar grid.',
@@ -44,7 +40,6 @@ export const PolarGridAPI = {
     {
       name: 'polarAngles',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': "The array of every line grid's angle.",
@@ -54,7 +49,6 @@ export const PolarGridAPI = {
     {
       name: 'polarRadius',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': "The array of every circle grid's radius.",
