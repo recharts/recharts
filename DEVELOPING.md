@@ -18,6 +18,23 @@ $ npm run lint
 $ npm run check-types
 ```
 
+## Import restrictions
+
+The project enforces that all imports from `recharts` must use the public API entry point. Imports from internal paths like `recharts/types/*` or `recharts/src/*` are not allowed and will fail the linter.
+
+**Good:**
+```typescript
+import { TooltipIndex, DataKey, BarRectangleItem } from 'recharts';
+```
+
+**Bad:**
+```typescript
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice'; // ❌ Will fail lint
+import { DataKey } from 'recharts/src/util/types'; // ❌ Will fail lint
+```
+
+This ensures that consumers of the library only depend on stable, public APIs.
+
 # Automated testing
 
 ## Running unit tests
