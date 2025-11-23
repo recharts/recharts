@@ -90,7 +90,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   filterNull?: boolean;
   defaultIndex?: number | TooltipIndex;
   isAnimationActive?: boolean;
-  offset?: number;
+  offset?: number | { x: number; y: number };
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
   /**
    * If portal is defined, then Tooltip will use this element as a target

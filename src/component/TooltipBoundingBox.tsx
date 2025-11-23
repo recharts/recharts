@@ -20,7 +20,7 @@ export type TooltipBoundingBoxProps = {
   coordinate: Coordinate | PolarCoordinate | undefined;
   hasPayload: boolean;
   isAnimationActive: boolean;
-  offset: number;
+  offset: number | { x: number; y: number };
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   useTranslate3d: boolean;
