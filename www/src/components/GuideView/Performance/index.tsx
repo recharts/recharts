@@ -236,7 +236,7 @@ export function Performance() {
   "rules": {
     /*
      * New object as prop creates a new reference on each render.
-     * Recharts is optimized for this since 3.4.2.
+     * Recharts is optimized for this since 3.5.0.
      * You may enable this rule if you are using an older version,
      * or if you want to be extra cautious.
      */
