@@ -12,6 +12,7 @@ type ExampleComponent = {
   exampleName: string;
   ExampleComponent: React.ComponentType;
   sourceCode: string;
+  description?: React.ReactNode;
 };
 
 const parseExampleComponent = (compName: string): ExampleComponent | null => {
@@ -29,6 +30,7 @@ const parseExampleComponent = (compName: string): ExampleComponent | null => {
       exampleName: example.name,
       ExampleComponent: example.Component,
       sourceCode: example.sourceCode,
+      description: example.description,
     };
   }
   return null;
@@ -49,6 +51,7 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
         <h3 className="page-title">{title}</h3>
         {exampleResult ? (
           <div className="example-wrapper">
+            {exampleResult.description ? <div className="example-description">{exampleResult.description}</div> : null}
             <div className="example-inner-wrapper">
               <CodeEditorWithPreview
                 key={page}

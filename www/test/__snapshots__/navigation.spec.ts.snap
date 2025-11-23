@@ -774,6 +774,18 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
         ],
         "key": "ResponsiveContainer",
       },
+      {
+        "NavPreview": null,
+        "displayName": "XAxis",
+        "items": [
+          {
+            "displayName": "Multiple X Axes",
+            "key": "MultiXAxisExample",
+            "url": "/en-US/examples/MultiXAxisExample/",
+          },
+        ],
+        "key": "XAxis",
+      },
     ],
     "displayName": "Examples",
     "key": "examples",

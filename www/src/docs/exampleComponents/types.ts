@@ -16,6 +16,10 @@ export type ChartExample = {
    * Human-readable string with spaces and special characters.
    */
   name: string;
+  /**
+   * Extra information about the example.
+   */
+  description?: ReactNode;
 };
 
 export type ComponentExamples = {
