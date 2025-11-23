@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { nameKey, General, dataKey } from '../props/CartesianComponentShared';
-import { legendType } from '../props/Legend';
+import { General, dataKey } from '../props/CartesianComponentShared';
 import { AnimationProps } from '../props/AnimationProps';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer } from '../../../../src';
 import { ChartSizeProps } from '../props/ChartProps';
@@ -25,10 +24,36 @@ import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
-    nameKey,
-    legendType,
+    nameKey: {
+      description: "The key of each sector's name.",
+      table: {
+        type: { summary: 'String' },
+        defaultValue: {
+          summary: 'name',
+        },
+        category: 'General',
+      },
+    },
+    legendType: {
+      description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
+      table: {
+        type: {
+          summary: 'line | plainline | square | rect| circle | cross | diamond | square | star | triangle | wye | none',
+        },
+        defaultValue: 'rect',
+        category: 'Style',
+      },
+    },
     ...ActiveShapeProps,
     ...AnimationProps,
+    animationBegin: {
+      description: 'Delays the start of the animation by the specified number of milliseconds.',
+      type: { name: 'number' },
+      defaultValue: 400,
+      table: {
+        category: 'Animation',
+      },
+    },
     dataKey,
     id: General.id,
     name: General.name,

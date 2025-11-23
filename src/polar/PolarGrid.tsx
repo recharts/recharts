@@ -18,9 +18,21 @@ interface PolarGridProps extends ZIndexable {
   outerRadius?: number;
   polarAngles?: ReadonlyArray<number>;
   polarRadius?: ReadonlyArray<number>;
+  /**
+   * @defaultValue polygon
+   */
   gridType?: 'polygon' | 'circle';
+  /**
+   * @defaultValue true
+   */
   radialLines?: boolean;
+  /**
+   * @defaultValue 0
+   */
   angleAxisId?: AxisId;
+  /**
+   * @defaultValue 0
+   */
   radiusAxisId?: AxisId;
 }
 

@@ -4,7 +4,6 @@ export const RadarAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The key of a group of data which should be unique in a radar chart.',
@@ -14,7 +13,6 @@ export const RadarAPI = {
     {
       name: 'points',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The coordinates of all the vertexes of the radar shape, like [{ x, y }].',
@@ -24,7 +22,6 @@ export const RadarAPI = {
     {
       name: 'shape',
       type: 'Element | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The custom shape element. If set a function, the function will be called to render customized shape.',
@@ -35,7 +32,7 @@ export const RadarAPI = {
     {
       name: 'dot',
       type: 'Bool | Object | Element | Function',
-      defaultVal: 'true',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -47,7 +44,7 @@ export const RadarAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'rect'",
+      defaultVal: 'rect',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -57,7 +54,7 @@ export const RadarAPI = {
     {
       name: 'label',
       type: 'Bool | Object | Element | Function',
-      defaultVal: 'true',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -68,8 +65,8 @@ export const RadarAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of polygon will be disabled.',
@@ -99,7 +96,7 @@ export const RadarAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',

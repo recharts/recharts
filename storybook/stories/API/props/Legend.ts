@@ -14,7 +14,7 @@ export const legendType: StorybookArg = {
 // Caveat: If any prop is added here, it would falsely be add to the documentation of the component
 // where this group is used. If the group is to be extended, then only single props should be imported
 // by each component that does not use all of them.
-export const LegendProps: StorybookArgs = {
+export const LegendArgTypes: StorybookArgs = {
   width: {
     description: 'The width of legend.',
     table: {
@@ -71,6 +71,7 @@ The exact behavior changes depending on \`align\` prop.`,
       type: {
         summary: 'top | middle | bottom',
       },
+      defaultValue: { summary: 'bottom' },
       category: 'General',
     },
   },
@@ -86,7 +87,6 @@ The exact behavior changes depending on \`align\` prop.`,
   },
   iconType: {
     description: 'The type of icon in each legend item.',
-    defaultValue: 'line',
     table: {
       type: {
         summary: 'line | plainline | square | rect | circle | cross | diamond | star | triangle | wye',

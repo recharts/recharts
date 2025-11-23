@@ -19,7 +19,7 @@ export type TooltipBoundingBoxProps = {
   children: ReactNode;
   coordinate: Coordinate | PolarCoordinate | undefined;
   hasPayload: boolean;
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   offset: number;
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;

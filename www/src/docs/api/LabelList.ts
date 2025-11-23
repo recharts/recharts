@@ -13,7 +13,6 @@ export const LabelListAPI = {
     {
       name: 'valueAccessor',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The accessor function to get the value of each label.',
@@ -23,7 +22,6 @@ export const LabelListAPI = {
     {
       name: 'content',
       type: 'ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -45,7 +43,6 @@ export const LabelListAPI = {
     {
       name: 'position',
       type: '"top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "end" | "center"',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The position of each label relative to it view box。',
@@ -55,7 +52,7 @@ export const LabelListAPI = {
     {
       name: 'offset',
       type: 'Number',
-      defaultVal: '5',
+      defaultVal: 5,
       isOptional: false,
       desc: {
         'en-US': 'The offset to the specified "position"',
@@ -65,7 +62,6 @@ export const LabelListAPI = {
     {
       name: 'formatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of label value which has only one parameter - the value of label.',
@@ -74,8 +70,8 @@ export const LabelListAPI = {
     },
     {
       name: 'clockWise',
-      type: 'String',
-      defaultVal: 'false',
+      type: 'boolean',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US': 'The parameter to calculate the view box of label in radial charts.',
@@ -85,7 +81,6 @@ export const LabelListAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

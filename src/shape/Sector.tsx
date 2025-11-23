@@ -198,7 +198,7 @@ interface SectorProps extends GeometrySectorWithCornerRadius {
  */
 export type Props = Omit<SVGProps<SVGPathElement>, 'cx' | 'cy' | 'dangerouslySetInnerHTML'> & Partial<SectorProps>;
 
-const defaultProps = {
+export const defaultSectorProps = {
   cx: 0,
   cy: 0,
   innerRadius: 0,
@@ -211,7 +211,7 @@ const defaultProps = {
 } as const satisfies Partial<Props>;
 
 export const Sector: React.FC<Props> = sectorProps => {
-  const props = resolveDefaultProps(sectorProps, defaultProps);
+  const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
     cx,
     cy,

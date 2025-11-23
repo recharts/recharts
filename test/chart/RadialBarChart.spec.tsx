@@ -386,7 +386,7 @@ describe('<RadialBarChart />', () => {
         barSize={10}
         data={data}
       >
-        <RadialBar startAngle={0} endAngle={180} label={label} background dataKey="uv" isAnimationActive={false} />
+        <RadialBar label={label} background dataKey="uv" isAnimationActive={false} />
       </RadialBarChart>,
     );
     expect(container.querySelectorAll('.recharts-radial-bar-sector')).toHaveLength(7);

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
 import { PolarGrid, Surface } from '../../../../src';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const GeneralProps: Args = {
+const PolarGridArgTypes: StorybookArgs = {
   cx: {
     description: 'The x-coordinate of center.',
     table: { type: { summary: 'number' }, category: 'General' },
@@ -29,11 +29,19 @@ const GeneralProps: Args = {
   },
   gridType: {
     description: 'The type of polar grids.',
-    table: { type: { summary: "'polygon' | 'circle'", defaultValue: 'polygon' }, category: 'General' },
+    table: {
+      type: { summary: "'polygon' | 'circle'" },
+      defaultValue: 'polygon',
+      category: 'General',
+    },
   },
   radialLines: {
     description: 'Whether to display radial lines.',
-    table: { type: { summary: 'boolean', defaultValue: true }, category: 'General' },
+    table: {
+      type: { summary: 'boolean' },
+      defaultValue: true,
+      category: 'General',
+    },
   },
   fill: {
     description: 'Fill color.',
@@ -54,9 +62,7 @@ const GeneralProps: Args = {
 };
 
 export default {
-  argTypes: {
-    ...GeneralProps,
-  },
+  argTypes: PolarGridArgTypes,
   component: PolarGrid,
 };
 

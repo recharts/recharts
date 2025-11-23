@@ -4,7 +4,6 @@ import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
 import { interpolate, isNullish } from '../util/DataUtils';
-import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
@@ -12,6 +11,7 @@ import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
+  ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
@@ -57,31 +57,67 @@ interface RadarPoint {
 }
 
 interface RadarProps extends ZIndexable {
-  className?: string;
-  dataKey?: DataKey<any>;
-  angleAxisId?: string | number;
-  radiusAxisId?: string | number;
-  points?: RadarPoint[];
-  baseLinePoints?: RadarPoint[];
-  isRange?: boolean;
-  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  /**
+   * @defaultValue true
+   */
   activeDot?: ActiveDotType;
-  dot?: DotType;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  hide?: boolean;
-  connectNulls?: boolean;
-
-  label?: any;
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
+  /**
+   * @defaultValue 0
+   */
+  angleAxisId?: string | number;
+  /**
+   * @defaultValue 0
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
   animationDuration?: AnimationDuration;
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue ease
+   */
   animationEasing?: AnimationTiming;
-
+  baseLinePoints?: RadarPoint[];
+  className?: string;
+  connectNulls?: boolean;
+  dataKey?: DataKey<any>;
+  /**
+   * @defaultValue false
+   */
+  dot?: DotType;
+  /**
+   * @defaultValue false
+   */
+  hide?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
+  isRange?: boolean;
+  /**
+   * @defaultValue false
+   */
+  label?: ImplicitLabelListType;
+  /**
+   * @defaultValue rect
+   */
+  legendType?: LegendType;
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
   onMouseEnter?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
+  points?: RadarPoint[];
+  /**
+   * @defaultValue 0
+   */
+  radiusAxisId?: string | number;
+
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  tooltipType?: TooltipType;
+  /**
+   * @defaultValue 100
+   */
+  zIndex?: number;
 }
 
 export type RadiusAxisForRadar = { scale: RechartsScale };
@@ -464,17 +500,18 @@ function RenderPolygon(props: InternalProps) {
   );
 }
 
-const defaultRadarProps = {
-  angleAxisId: 0,
-  radiusAxisId: 0,
-  hide: false,
+export const defaultRadarProps = {
   activeDot: true,
-  dot: false,
-  legendType: 'rect',
-  isAnimationActive: !Global.isSsr,
+  angleAxisId: 0,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  dot: false,
+  hide: false,
+  isAnimationActive: 'auto',
+  label: false,
+  legendType: 'rect',
+  radiusAxisId: 0,
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 

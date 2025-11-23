@@ -109,7 +109,7 @@ export type ImplicitLabelType =
   | string
   | number
   | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
+  | ((props: any) => RenderableText | ReactElement)
   // dataKey is only applicable when label is used implicitly from graphical element props
   | (Props & { dataKey?: DataKey<any> });
 

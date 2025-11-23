@@ -4,7 +4,7 @@ export const LineChartAPI = {
     {
       name: 'layout',
       type: "'horizontal' | 'vertical'",
-      defaultVal: "'horizontal'",
+      defaultVal: 'horizontal',
       isOptional: false,
       desc: {
         'en-US': 'The layout of lines in the chart.',
@@ -31,7 +31,7 @@ export const LineChartAPI = {
     {
       name: 'syncMethod',
       type: "'index' | 'value' | function",
-      defaultVal: "'index'",
+      defaultVal: 'index',
       isOptional: true,
       desc: {
         'en-US':
@@ -41,7 +41,6 @@ export const LineChartAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -51,7 +50,6 @@ export const LineChartAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -61,7 +59,6 @@ export const LineChartAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -72,7 +69,7 @@ export const LineChartAPI = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',

@@ -4,7 +4,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'angle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The angle of radial direction line to display axis text.',
@@ -14,7 +14,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'type',
       type: "'number' | 'category'",
-      defaultVal: "'category'",
+      defaultVal: 'number',
       isOptional: false,
       desc: {
         'en-US': 'The type of axis.',
@@ -24,7 +24,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'allowDuplicatedCategory',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'Allow the axis has duplicated categorys or not when the type of axis is "category".',
@@ -32,29 +32,8 @@ export const PolarRadiusAxisAPI = {
       },
     },
     {
-      name: 'cx',
-      type: 'Number',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The x-coordinate of center.',
-        'zh-CN': '圆心的 x 坐标。',
-      },
-    },
-    {
-      name: 'cy',
-      type: 'Number',
-      defaultVal: 'null',
-      isOptional: false,
-      desc: {
-        'en-US': 'The y-coordinate of center.',
-        'zh-CN': '圆心的 y 坐标。',
-      },
-    },
-    {
       name: 'domain',
       type: 'Array | Function',
-      defaultVal: "[0, 'auto']",
       isOptional: false,
       desc: {
         'en-US':
@@ -72,7 +51,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'reversed',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US': 'If set to true, the ticks of this axis are reversed.',
@@ -82,7 +61,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -104,7 +83,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'axisLine',
       type: 'Bool | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -115,7 +94,7 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'tick',
       type: 'Bool | Object | Element | Function',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -127,7 +106,6 @@ export const PolarRadiusAxisAPI = {
     {
       name: 'tickFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The function to formatting tick.',

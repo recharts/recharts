@@ -4,7 +4,6 @@ export const DotAPI = {
     {
       name: 'cx',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of center.',
@@ -14,7 +13,6 @@ export const DotAPI = {
     {
       name: 'cy',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of center.',
@@ -24,7 +22,6 @@ export const DotAPI = {
     {
       name: 'r',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The radius of dot.',

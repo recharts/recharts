@@ -29,27 +29,67 @@ const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
 export interface PolarAngleAxisProps extends ZIndexable {
+  /**
+   * @defaultValue false
+   */
   allowDecimals?: boolean;
-  domain?: AxisDomain;
+  /**
+   * @defaultValue true
+   */
   allowDuplicatedCategory?: boolean;
+  /**
+   * @defaultValue 0
+   */
   angleAxisId?: string | number;
-  axisLineType?: 'polygon' | 'circle';
-  ticks?: ReadonlyArray<TickItem>;
-  orientation?: 'inner' | 'outer';
+  /**
+   * @defaultValue true
+   */
   axisLine?: boolean | SVGProps<SVGLineElement>;
-  tickSize?: number;
-  tickCount?: number;
-  tickLine?: boolean | SVGProps<SVGLineElement>;
-  tickFormatter?: (value: any, index: number) => string;
-  reversed?: boolean;
+  /**
+   * @defaultValue polygon
+   */
+  axisLineType?: 'polygon' | 'circle';
   dataKey?: DataKey<any>;
+  domain?: AxisDomain;
+  /**
+   * @defaultValue 'outer'
+   */
+  orientation?: 'inner' | 'outer';
+  /**
+   * @defaultValue false
+   */
+  reversed?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  scale?: ScaleType | RechartsScale;
+  /**
+   * @defaultValue true
+   */
   tick?:
     | SVGProps<SVGTextElement>
     | ReactElement<SVGElement>
     | ((props: TickItemTextProps) => ReactElement<SVGElement>)
     | boolean;
-  scale?: ScaleType | RechartsScale;
+  tickCount?: number;
+  tickFormatter?: (value: any, index: number) => string;
+  /**
+   * @defaultValue true
+   */
+  tickLine?: boolean | SVGProps<SVGLineElement>;
+  /**
+   * @defaultValue 8
+   */
+  tickSize?: number;
+  ticks?: ReadonlyArray<TickItem>;
+  /**
+   * @defaultValue category
+   */
   type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
+  /**
+   * @defaultValue 500
+   */
+  zIndex?: number;
 }
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;

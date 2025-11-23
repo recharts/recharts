@@ -4,7 +4,7 @@ export const SectorAPI = {
     {
       name: 'cx',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of center.',
@@ -14,7 +14,7 @@ export const SectorAPI = {
     {
       name: 'cy',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of center.',
@@ -24,7 +24,7 @@ export const SectorAPI = {
     {
       name: 'innerRadius',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The inner radius of the sector.',
@@ -34,7 +34,7 @@ export const SectorAPI = {
     {
       name: 'outerRadius',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The outer radius of the sector.',
@@ -44,7 +44,7 @@ export const SectorAPI = {
     {
       name: 'startAngle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The start angle of the sector.',
@@ -54,7 +54,7 @@ export const SectorAPI = {
     {
       name: 'endAngle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The end angle of the sector.',
@@ -64,7 +64,7 @@ export const SectorAPI = {
     {
       name: 'cornerRadius',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The radius of corners.',
@@ -74,7 +74,7 @@ export const SectorAPI = {
     {
       name: 'forceCornerRadius',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Whether or not force to render round corner when the angle of sector is very small',

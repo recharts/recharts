@@ -4,15 +4,26 @@ import { dataKey } from './CartesianComponentShared';
 export const General: StorybookArgs = {
   angleAxisId: {
     description: 'The id of angle axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
+    table: {
+      type: { summary: 'string | number' },
+      defaultValue: { summary: '0' },
+      category: 'General',
+    },
   },
   stackId: {
     description: 'The stack id of bar, when two bars have the same stackId, then two bars are stacked in order.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
+    table: {
+      type: { summary: 'string | number' },
+      category: 'General',
+    },
   },
   radiusAxisId: {
     description: 'The id of radius axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
+    table: {
+      type: { summary: 'string | number' },
+      category: 'General',
+      defaultValue: { summary: '0' },
+    },
   },
   dataKey,
 };

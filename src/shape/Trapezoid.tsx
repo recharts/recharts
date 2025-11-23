@@ -39,7 +39,7 @@ interface TrapezoidProps {
 
 export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
 
-const defaultProps = {
+export const defaultTrapezoidProps = {
   x: 0,
   y: 0,
   upperWidth: 0,
@@ -52,7 +52,7 @@ const defaultProps = {
 } as const satisfies Partial<Props>;
 
 export const Trapezoid: React.FC<Props> = outsideProps => {
-  const trapezoidProps = resolveDefaultProps(outsideProps, defaultProps);
+  const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
 
   const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
   const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = trapezoidProps;

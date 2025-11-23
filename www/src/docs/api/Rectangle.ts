@@ -4,7 +4,7 @@ export const RectangleAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of top left point of the rectangle.',
@@ -14,7 +14,7 @@ export const RectangleAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of top left point of the rectangle.',
@@ -24,7 +24,7 @@ export const RectangleAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of rectangle.',
@@ -34,7 +34,7 @@ export const RectangleAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The height of rectangle.',
@@ -44,7 +44,7 @@ export const RectangleAPI = {
     {
       name: 'radius',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US':

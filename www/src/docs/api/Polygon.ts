@@ -4,7 +4,6 @@ export const PolygonAPI = {
     {
       name: 'points',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The coordinates of all the vertexes of the polygon, like [{ x, y }].',
