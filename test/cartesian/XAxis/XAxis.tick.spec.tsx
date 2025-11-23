@@ -1,10 +1,11 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Bar, BarChart, Customized, Line, LineChart, XAxis, YAxis } from '../../../src';
+import { Bar, BarChart, ComposedChart, Customized, Line, LineChart, XAxis, YAxis } from '../../../src';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { dateWithValueData } from '../../../storybook/stories/data';
 
 const data = [
   { x: 90, y: 90, z: 90 },
@@ -267,5 +268,91 @@ describe('XAxis tick', () => {
 
     fireEvent.click(firstTick);
     expect(onClickFn).toHaveBeenCalledWith(eventData, eventIndex, eventExpect);
+  });
+
+  it('should render ticks formatted by tickFormatter', () => {
+    const tickFormatter = (value: number) =>
+      new Date(value).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
+
+    const { container } = render(
+      <ComposedChart width={600} height={50} data={dateWithValueData}>
+        <XAxis dataKey="time" type="number" scale="time" domain={['auto', 'auto']} tickFormatter={tickFormatter} />
+        <Line dataKey="value" />
+      </ComposedChart>,
+    );
+
+    expectXAxisTicks(container, [
+      {
+        textContent: '12/31/2016, 12:00 AM',
+        x: '5',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 1:00 AM',
+        x: '64',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 1:30 AM',
+        x: '93.5',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 2:00 AM',
+        x: '123',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 3:00 AM',
+        x: '182',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 3:30 AM',
+        x: '211.5',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 4:00 AM',
+        x: '241',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 5:00 AM',
+        x: '300',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 6:00 AM',
+        x: '359',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 7:00 AM',
+        x: '418',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 8:00 AM',
+        x: '477',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 8:30 AM',
+        x: '506.5',
+        y: '23',
+      },
+      {
+        textContent: '12/31/2016, 10:00 AM',
+        x: '595',
+        y: '23',
+      },
+    ]);
   });
 });
