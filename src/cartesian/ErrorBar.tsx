@@ -46,17 +46,37 @@ export type ErrorBarDataPointFormatter = (
  */
 interface ErrorBarProps extends ZIndexable {
   dataKey: DataKey<any>;
-  /** the width of the error bar ends */
+  /**
+   * Width of the error bar ends
+   *
+   * @defaultValue 5
+   */
   width?: number;
   /**
    * Only used for ScatterChart with error bars in two directions.
    * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
    */
   direction?: ErrorBarDirection;
+  /**
+   * @defaultValue true
+   */
   isAnimationActive?: boolean;
+  /**
+   * @defaultValue 0
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 400
+   */
   animationDuration?: number;
+  /**
+   * @defaultValue ease-in-out
+   */
   animationEasing?: AnimationTiming;
+  /**
+   * @defaultValue 400
+   */
+  zIndex?: number;
 }
 
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
