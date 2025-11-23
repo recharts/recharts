@@ -27,7 +27,7 @@ test('MultipleYAxesScatterChart', async ({ mount }) => {
 });
 
 test('ScatterChartWithLabels', async ({ mount }) => {
-  const component = await mount(<ScatterChartWithLabels />);
+  const component = await mount(<ScatterChartWithLabels defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
