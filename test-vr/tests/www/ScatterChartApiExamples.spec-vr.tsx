@@ -32,7 +32,7 @@ test('ScatterChartWithLabels', async ({ mount }) => {
 });
 
 test('BubbleChart', async ({ mount }) => {
-  const component = await mount(<BubbleChart />);
+  const component = await mount(<BubbleChart defaultIndex="7" />);
   await expect(component).toHaveScreenshot();
 });
 
