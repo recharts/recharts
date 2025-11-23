@@ -5,7 +5,7 @@ export const CurveAPI = {
       name: 'type',
       type: `'basis' | 'basisClosed' | 'basisOpen' | 'bumpX' | 'bumpY' | 'bump' | 'linear' | 'linearClosed' | 'natural' | 'monotoneX'
         | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | Function`,
-      defaultVal: "'linear'",
+      defaultVal: 'linear',
       isOptional: false,
       desc: {
         'en-US': 'The interpolation type of curve. Line and Area use this component to draw line and area.',
@@ -26,7 +26,6 @@ export const CurveAPI = {
     {
       name: 'points',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The coordinates of all the points in the curve.',
@@ -36,7 +35,6 @@ export const CurveAPI = {
     {
       name: 'layout',
       type: "'horizontal' | 'vertical'",
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': `The option can effect the interpolation algorithm when the props type is
@@ -47,7 +45,6 @@ export const CurveAPI = {
     {
       name: 'baseLine',
       type: 'Number | Array',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The value which can describle the line.',
@@ -58,7 +55,7 @@ export const CurveAPI = {
     {
       name: 'connectNulls',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US': 'Whether to connect a curve across null points.',

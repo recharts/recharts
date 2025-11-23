@@ -1,7 +1,7 @@
 import React from 'react';
 import { Rectangle } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { animationBegin, animationDuration, animationEasing } from '../props/AnimationProps';
 import { RectangleProps } from '../props/RectangleProps';
 import {
   onAbort,
@@ -171,7 +171,19 @@ export default {
     animationBegin,
     animationDuration,
     animationEasing,
-    isAnimationActive,
+    isAnimationActive: {
+      description: 'If set false, animation of component will be disabled.',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean | "auto"' },
+        category: 'Animation',
+      },
+    },
+    isUpdateAnimationActive: {
+      description: 'If set false, animation of component updates will be disabled.',
+      defaultValue: false,
+      table: { category: 'Animation' },
+    },
     stroke: GeneralStyle.stroke,
     fill: GeneralStyle.fill,
     // Deprecated

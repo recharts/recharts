@@ -72,21 +72,51 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
 };
 interface RectangleProps {
   className?: string;
+  /**
+   * @defaultValue 0
+   */
   x?: number;
+  /**
+   * @defaultValue 0
+   */
   y?: number;
+  /**
+   * @defaultValue 0
+   */
   width?: number;
+  /**
+   * @defaultValue 0
+   */
   height?: number;
+  /**
+   * @defaultValue 0
+   */
   radius?: number | RectRadius;
+  /**
+   * @defaultValue false
+   */
   isAnimationActive?: boolean;
+  /**
+   * @defaultValue false
+   */
   isUpdateAnimationActive?: boolean;
+  /**
+   * @defaultValue 0
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
   animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
   animationEasing?: EasingInput;
 }
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 
-const defaultProps = {
+export const defaultRectangleProps = {
   x: 0,
   y: 0,
   width: 0,
@@ -103,7 +133,7 @@ const defaultProps = {
 } as const satisfies Partial<Props>;
 
 export const Rectangle: React.FC<Props> = rectangleProps => {
-  const props = resolveDefaultProps(rectangleProps, defaultProps);
+  const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
   const pathRef = useRef<SVGPathElement>(null);
   const [totalLength, setTotalLength] = useState(-1);
 
@@ -158,7 +188,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const transition = getTransitionVal(
     ['strokeDasharray'],
     animationDuration,
-    typeof animationEasing === 'string' ? animationEasing : defaultProps.animationEasing,
+    typeof animationEasing === 'string' ? animationEasing : defaultRectangleProps.animationEasing,
   );
 
   return (

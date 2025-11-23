@@ -18,6 +18,7 @@ import { legendDefaultProps } from '../src/component/Legend';
 import { defaultCartesianChartProps } from '../src/chart/CartesianChart';
 import { defaultFunnelProps } from '../src/cartesian/Funnel';
 import { defaultTooltipProps } from '../src/component/Tooltip';
+import { defaultRectangleProps } from '../src/shape/Rectangle';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -38,6 +39,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
+  Rectangle: { defaultProps: defaultRectangleProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
