@@ -1081,8 +1081,17 @@ export interface ChartPointer {
 }
 
 export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
+  /**
+   * @defaultValue true
+   */
   accessibilityLayer?: boolean;
+  /**
+   * @defaultValue 10%
+   */
   barCategoryGap?: number | string;
+  /**
+   * @defaultValue 4
+   */
   barGap?: number | string;
   barSize?: number | string;
   baseValue?: BaseValue;
@@ -1094,19 +1103,19 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   desc?: string;
   height?: number | Percent;
   id?: string;
+  /**
+   * @defaultValue horizontal
+   */
   layout?: CartesianLayout;
+  /**
+   * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
+   */
   margin?: Partial<Margin>;
   maxBarSize?: number;
+  /**
+   * @defaultValue false
+   */
   reverseStackOrder?: boolean;
-  role?: string;
-  stackOffset?: StackOffsetType;
-  style?: CSSProperties;
-  syncId?: number | string;
-  syncMethod?: SyncMethod;
-  tabIndex?: number;
-  throttleDelay?: number;
-  title?: string;
-  width?: number | Percent;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
    * If false, then it renders the chart at the specified width and height and will stay that way
@@ -1117,6 +1126,21 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * @default false
    */
   responsive?: boolean;
+  role?: string;
+  /**
+   * @defaultValue none
+   */
+  stackOffset?: StackOffsetType;
+  style?: CSSProperties;
+  syncId?: number | string;
+  /**
+   * @defaultValue index
+   */
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  throttleDelay?: number;
+  title?: string;
+  width?: number | Percent;
 }
 
 export interface PolarChartProps extends Partial<ExternalMouseEvents> {

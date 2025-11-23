@@ -7,7 +7,7 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'layout',
       type: "'horizontal' | 'vertical'",
-      defaultVal: "'horizontal'",
+      defaultVal: 'horizontal',
       isOptional: false,
       desc: {
         'en-US': 'The layout of areas, bars, lines in the chart.',
@@ -34,7 +34,7 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'syncMethod',
       type: "'index' | 'value' | function",
-      defaultVal: "'index'",
+      defaultVal: 'index',
       isOptional: true,
       desc: {
         'en-US':
@@ -44,7 +44,6 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -54,7 +53,6 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -64,7 +62,6 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -75,7 +72,7 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -86,7 +83,7 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'barCategoryGap',
       type: 'Percentage | Number',
-      defaultVal: "'10%'",
+      defaultVal: '10%',
       isOptional: false,
       desc: {
         'en-US': 'The gap between two bar categories, which can be a percent value or a fixed value.',
@@ -106,7 +103,6 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'barSize',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -118,7 +114,7 @@ export const ComposedChartAPI: ApiDoc = {
     {
       name: 'reverseStackOrder',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -129,8 +125,7 @@ export const ComposedChartAPI: ApiDoc = {
     },
     {
       name: 'baseValue',
-      type: "Number | 'dataMin' | 'dataMax' | 'auto'",
-      defaultVal: 'auto',
+      type: "Number | 'dataMin' | 'dataMax'",
       isOptional: true,
       desc: {
         'en-US': 'The base value of area.',

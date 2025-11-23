@@ -12,16 +12,16 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
-const defaultProps = {
+export const defaultCartesianChartProps = {
   accessibilityLayer: true,
-  layout: 'horizontal',
-  stackOffset: 'none',
   barCategoryGap: '10%',
   barGap: 4,
+  layout: 'horizontal',
   margin: defaultMargin,
-  reverseStackOrder: false,
-  syncMethod: 'index',
   responsive: false,
+  reverseStackOrder: false,
+  stackOffset: 'none',
+  syncMethod: 'index',
 } as const satisfies Partial<CartesianChartProps>;
 
 /**
@@ -41,7 +41,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
   props: CartesianChartOptions,
   ref,
 ) {
-  const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
+  const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultCartesianChartProps);
 
   const {
     chartName,

@@ -4,7 +4,6 @@ export const ScatterChartAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -14,7 +13,6 @@ export const ScatterChartAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -24,7 +22,7 @@ export const ScatterChartAPI = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: true,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',

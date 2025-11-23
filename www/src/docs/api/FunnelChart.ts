@@ -2,19 +2,8 @@ export const FunnelChartAPI = {
   name: 'FunnelChart',
   props: [
     {
-      name: 'layout',
-      type: '"centric"',
-      defaultVal: '"centric"',
-      isOptional: false,
-      desc: {
-        'en-US': 'The layout of bars in the chart.',
-        'zh-CN': '布局类型，是横向的还是纵向的。',
-      },
-    },
-    {
       name: 'width',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -24,7 +13,6 @@ export const FunnelChartAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -34,7 +22,7 @@ export const FunnelChartAPI = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',

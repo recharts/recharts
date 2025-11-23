@@ -15,6 +15,7 @@ import { xAxisDefaultProps } from '../src/cartesian/XAxis';
 import { yAxisDefaultProps } from '../src/cartesian/YAxis';
 import { zAxisDefaultProps } from '../src/cartesian/ZAxis';
 import { legendDefaultProps } from '../src/component/Legend';
+import { defaultCartesianChartProps } from '../src/chart/CartesianChart';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -22,17 +23,22 @@ type ComponentMeta = {
 
 export const componentMetaMap: Record<string, ComponentMeta> = {
   Area: { defaultProps: defaultAreaProps },
+  AreaChart: { defaultProps: defaultCartesianChartProps },
   Bar: { defaultProps: defaultBarProps },
+  BarChart: { defaultProps: defaultCartesianChartProps },
   Brush: { defaultProps: defaultBrushProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
+  ComposedChart: { defaultProps: defaultCartesianChartProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Label: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
+  LineChart: { defaultProps: defaultCartesianChartProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
   Scatter: { defaultProps: defaultScatterProps },
+  ScatterChart: { defaultProps: defaultCartesianChartProps },
   Text: { defaultProps: textDefaultProps },
   Treemap: { defaultProps: defaultTreeMapProps },
   XAxis: { defaultProps: xAxisDefaultProps },
