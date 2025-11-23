@@ -23,6 +23,8 @@ import { defaultSectorProps } from '../src/shape/Sector';
 import { defaultTrapezoidProps } from '../src/shape/Trapezoid';
 import { defaultPieProps } from '../src/polar/Pie';
 import { defaultRadarProps } from '../src/polar/Radar';
+import { defaultPolarAngleAxisProps } from '../src/polar/defaultPolarAngleAxisProps';
+import { defaultRadialBarProps } from '../src/polar/RadialBar';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -44,7 +46,9 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
   Pie: { defaultProps: defaultPieProps },
+  PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
   Radar: { defaultProps: defaultRadarProps },
+  RadialBar: { defaultProps: defaultRadialBarProps },
   Rectangle: { defaultProps: defaultRectangleProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
