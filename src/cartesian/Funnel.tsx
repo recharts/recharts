@@ -14,7 +14,6 @@ import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
-import { Global } from '../util/Global';
 import { getPercentValue, interpolate } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -73,7 +72,7 @@ interface InternalFunnelProps {
   dataKey: DataKey<any>;
   hide?: boolean;
   id?: string;
-  isAnimationActive?: boolean;
+  isAnimationActive?: boolean | 'auto';
   label?: ImplicitLabelListType;
   lastShapeType?: 'triangle' | 'rectangle';
   legendType?: LegendType;
@@ -91,18 +90,42 @@ interface InternalFunnelProps {
  */
 interface FunnelProps {
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  /**
+   * @defaultValue 400
+   */
   animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
   animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
   animationEasing?: AnimationTiming;
   className?: string;
   data?: any[];
   dataKey: DataKey<any>;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
   id?: string;
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
   label?: ImplicitLabelListType;
+  /**
+   * @defaultValue triangle
+   */
   lastShapeType?: 'triangle' | 'rectangle';
+  /**
+   * @defaultValue rect
+   */
   legendType?: LegendType;
+  /**
+   * @defaultValue name
+   */
   nameKey?: DataKey<any>;
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
@@ -369,17 +392,18 @@ export class FunnelWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultFunnelProps = {
-  stroke: '#fff',
-  fill: '#808080',
-  legendType: 'rect',
-  hide: false,
-  isAnimationActive: !Global.isSsr,
+export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
-  nameKey: 'name',
+  fill: '#808080',
+  hide: false,
+  isAnimationActive: 'auto',
   lastShapeType: 'triangle',
+  legendType: 'rect',
+  nameKey: 'name',
+  reversed: false,
+  stroke: '#fff',
 } as const satisfies Partial<Props>;
 
 function FunnelImpl(props: Props) {

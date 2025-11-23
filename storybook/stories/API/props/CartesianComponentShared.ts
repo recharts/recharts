@@ -9,14 +9,6 @@ export const dataKey: StorybookArg = {
   },
 };
 
-export const nameKey: StorybookArg = {
-  description: "The key of each sector's name.",
-  table: {
-    type: { summary: 'String' },
-    category: 'General',
-  },
-};
-
 export const xAxisId: StorybookArg = {
   description: 'The id of x-axis which is corresponding to the data.',
   defaultValue: 0,

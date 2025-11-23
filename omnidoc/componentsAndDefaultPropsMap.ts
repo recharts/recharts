@@ -16,6 +16,7 @@ import { yAxisDefaultProps } from '../src/cartesian/YAxis';
 import { zAxisDefaultProps } from '../src/cartesian/ZAxis';
 import { legendDefaultProps } from '../src/component/Legend';
 import { defaultCartesianChartProps } from '../src/chart/CartesianChart';
+import { defaultFunnelProps } from '../src/cartesian/Funnel';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -30,6 +31,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
+  Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
   Label: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },
