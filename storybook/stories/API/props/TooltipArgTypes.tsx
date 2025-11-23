@@ -149,7 +149,7 @@ export const TooltipArgTypes: StorybookArgs = {
     table: {
       category: 'Content',
       type: {
-        summary: 'boolean',
+        summary: 'boolean | "auto"',
       },
     },
   },

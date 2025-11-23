@@ -222,7 +222,7 @@ interface PieProps extends PieDef, ZIndexable {
    */
   dataKey?: DataKey<any>;
   /**
-   * TODO: review this as an external prop - it seems to have no effect
+   * If set true, the pie will not be displayed.
    *
    * @defaultValue false
    */

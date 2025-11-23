@@ -70,7 +70,7 @@ export const LabelListAPI = {
     },
     {
       name: 'clockWise',
-      type: 'String',
+      type: 'boolean',
       defaultVal: false,
       isOptional: true,
       desc: {

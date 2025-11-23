@@ -57,7 +57,6 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarRadiusAx
 type InsideProps = Omit<PropsWithDefaults, 'scale'> &
   PolarViewBoxRequired & {
     scale: RechartsScale;
-    radius: number;
   };
 
 const AXIS_TYPE = 'radiusAxis';
@@ -208,7 +207,6 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
     ...defaultsAndInputs,
     scale,
     ...viewBox,
-    radius: viewBox.outerRadius,
   };
 
   const { tick, axisLine } = props;

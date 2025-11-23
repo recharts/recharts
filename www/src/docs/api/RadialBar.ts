@@ -69,7 +69,7 @@ export const RadialBarAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean | "auto',
+      type: 'Boolean | "auto"',
       defaultVal: 'auto',
       isOptional: false,
       desc: {
