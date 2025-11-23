@@ -30,6 +30,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
+  FunnelChart: { defaultProps: defaultCartesianChartProps },
   Label: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
