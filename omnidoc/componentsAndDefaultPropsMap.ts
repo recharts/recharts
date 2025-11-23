@@ -17,6 +17,7 @@ import { zAxisDefaultProps } from '../src/cartesian/ZAxis';
 import { legendDefaultProps } from '../src/component/Legend';
 import { defaultCartesianChartProps } from '../src/chart/CartesianChart';
 import { defaultFunnelProps } from '../src/cartesian/Funnel';
+import { defaultTooltipProps } from '../src/component/Tooltip';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -43,6 +44,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
   Text: { defaultProps: textDefaultProps },
+  Tooltip: { defaultProps: defaultTooltipProps },
   Treemap: { defaultProps: defaultTreeMapProps },
   XAxis: { defaultProps: xAxisDefaultProps },
   YAxis: { defaultProps: yAxisDefaultProps },

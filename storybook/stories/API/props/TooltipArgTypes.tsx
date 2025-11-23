@@ -1,10 +1,9 @@
 import { StorybookArgs } from '../../../StorybookArgs';
 
-export const TooltipProps: StorybookArgs = {
+export const TooltipArgTypes: StorybookArgs = {
   active: {
     description: `When set to true, the tooltip will remain visible, even after the user has moved off of the chart.
       Set \`defaultIndex\` if you want the tooltip to be visible by default, before first mouse enter.`,
-    defaultValue: undefined,
     options: [true, false, undefined],
     control: {
       type: 'inline-radio',
@@ -12,7 +11,6 @@ export const TooltipProps: StorybookArgs = {
   },
   defaultIndex: {
     description: 'The index where the Tooltip should appear *before* the user has interacted with the chart.',
-    defaultValue: undefined,
     control: {
       type: 'text',
     },
@@ -147,7 +145,7 @@ export const TooltipProps: StorybookArgs = {
   },
   isAnimationActive: {
     description: 'If set false, animation of tooltip will be disabled.',
-    defaultValue: 'true in CSR, and false in SSR',
+    defaultValue: 'auto',
     table: {
       category: 'Content',
       type: {
@@ -157,7 +155,7 @@ export const TooltipProps: StorybookArgs = {
   },
   animationDuration: {
     description: 'Specifies (in milliseconds) the duration of animation.',
-    defaultValue: 1500,
+    defaultValue: 400,
     table: {
       category: 'Styles',
       type: {

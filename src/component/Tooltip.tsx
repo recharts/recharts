@@ -10,7 +10,6 @@ import {
 } from './DefaultTooltipContent';
 import { TooltipBoundingBox } from './TooltipBoundingBox';
 
-import { Global } from '../util/Global';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate, PolarCoordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
@@ -73,23 +72,58 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
    * If false, then Tooltip is never displayed.
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
+   *
+   * @defaultValue undefined
    */
   active?: boolean;
+  /**
+   * @defaultValue {"x":false,"y":false}
+   */
+  allowEscapeViewBox?: AllowInDimension;
+  /**
+   * @defaultValue 400
+   */
+  animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
+  animationEasing?: AnimationTiming;
+  /**
+   * Tooltip always attaches itself to the "Tooltip" axis. Which axis is it? Depends on the layout:
+   * - horizontal layout -> X axis
+   * - vertical layout -> Y axis
+   * - radial layout -> radial axis
+   * - centric layout -> angle axis
+   *
+   * Tooltip will use the default axis for the layout, unless you specify an axisId.
+   *
+   * @defaultValue 0
+   */
+  axisId?: AxisId;
+  content?: ContentType<TValue, TName>;
+  /**
+   * @defaultValue true
+   */
+  cursor?: CursorDefinition;
+  defaultIndex?: number | TooltipIndex;
+  /**
+   * @defaultValue true
+   */
+  filterNull?: boolean;
   /**
    * If true, then Tooltip will information about hidden series (defaults to false).
    * Interacting with the hide property of Area, Bar, Line, Scatter.
    *
-   * default: false
+   * @defaultValue false
    */
   includeHidden?: boolean | undefined;
-  allowEscapeViewBox?: AllowInDimension;
-  animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
-  content?: ContentType<TValue, TName>;
-  cursor?: CursorDefinition;
-  filterNull?: boolean;
-  defaultIndex?: number | TooltipIndex;
-  isAnimationActive?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
+  /**
+   * @defaultValue 10
+   */
   offset?: number;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
   /**
@@ -100,12 +134,13 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    */
   portal?: HTMLElement | null;
   position?: Partial<Coordinate>;
+  /**
+   * @defaultValue {"x":false,"y":false}
+   */
   reverseDirection?: AllowInDimension;
   /**
    * If true, tooltip will appear on top of all bars on an axis tick.
    * If false, tooltip will appear on individual bars.
-   * Currently only supported in BarChart and RadialBarChart.
-   * If undefined then defaults to true.
    */
   shared?: boolean;
   /**
@@ -113,26 +148,19 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    *
    * If `click` then the Tooltip shows after clicking and stays active.
    *
-   * Default `hover`
+   * @defaultValue hover
    */
   trigger?: TooltipTrigger;
+  /**
+   * @defaultValue false
+   */
   useTranslate3d?: boolean;
   wrapperStyle?: CSSProperties;
-  /**
-   * Tooltip always attaches itself to the "Tooltip" axis. Which axis is it? Depends on the layout:
-   * - horizontal layout -> X axis
-   * - vertical layout -> Y axis
-   * - radial layout -> radial axis
-   * - centric layout -> angle axis
-   *
-   * Tooltip will use the default axis for the layout, unless you specify an axisId.
-   */
-  axisId?: AxisId;
 };
 
 const emptyPayload: TooltipPayload = [];
 
-const defaultTooltipProps = {
+export const defaultTooltipProps = {
   allowEscapeViewBox: { x: false, y: false },
   animationDuration: 400,
   animationEasing: 'ease',
@@ -140,7 +168,7 @@ const defaultTooltipProps = {
   contentStyle: {},
   cursor: true,
   filterNull: true,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
   itemSorter: 'name',
   itemStyle: {},
   labelStyle: {},
