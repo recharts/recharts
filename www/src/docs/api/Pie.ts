@@ -186,7 +186,7 @@ export const PieAPI = {
       isOptional: true,
       deprecated: true,
       desc: {
-        'en-US': 'The shape of active sector.',
+        'en-US': 'The shape of active sector. DEPRECATED: Use shape instead.',
         'zh-CN': '激活楔子的形状。',
       },
       examples: [
@@ -203,7 +203,7 @@ export const PieAPI = {
       isOptional: true,
       deprecated: true,
       desc: {
-        'en-US': 'The shape of inactive sector.',
+        'en-US': 'The shape of inactive sector. DEPRECATED: Use shape instead.',
         'zh-CN': '未激活楔子的形状。',
       },
     },
