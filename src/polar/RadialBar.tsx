@@ -292,6 +292,9 @@ interface InternalRadialBarProps extends ZIndexable {
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
+  /**
+   * @defaultValue false
+   */
   background?: RadialBarBackground;
   /**
    * So in Bar, this can be a percent value - but that won't work in RadialBar. RadialBar: only numbers.
