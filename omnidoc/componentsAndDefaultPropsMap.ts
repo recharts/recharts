@@ -19,6 +19,7 @@ import { defaultCartesianChartProps } from '../src/chart/CartesianChart';
 import { defaultFunnelProps } from '../src/cartesian/Funnel';
 import { defaultTooltipProps } from '../src/component/Tooltip';
 import { defaultRectangleProps } from '../src/shape/Rectangle';
+import { defaultSectorProps } from '../src/shape/Sector';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -45,6 +46,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
+  Sector: { defaultProps: defaultSectorProps },
   Text: { defaultProps: textDefaultProps },
   Tooltip: { defaultProps: defaultTooltipProps },
   Treemap: { defaultProps: defaultTreeMapProps },
