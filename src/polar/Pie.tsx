@@ -10,7 +10,6 @@ import { Curve, Props as CurveProps } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -186,7 +185,7 @@ interface InternalPieProps extends PieDef, ZIndexable {
   labelLine?: PieLabelLine;
   label?: PieLabel;
   animationEasing?: AnimationTiming;
-  isAnimationActive?: boolean;
+  isAnimationActive?: boolean | 'auto';
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   onAnimationStart?: () => void;
@@ -198,45 +197,84 @@ interface InternalPieProps extends PieDef, ZIndexable {
 }
 
 interface PieProps extends PieDef, ZIndexable {
-  id?: string;
-  className?: string;
-  /**
-   * Defaults to 'value' if not specified.
-   */
-  dataKey?: DataKey<any>;
-  nameKey?: DataKey<any>;
-  /** The minimum angle for no-zero element */
-  minAngle?: number;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  /** TODO: review this as an external prop - it seems to have no effect */
-  /** the max radius of pie */
-  maxRadius?: number;
-  hide?: boolean;
-  /** the input data */
-  data?: ChartDataInput[];
   /**
    * @deprecated use the `shape` prop to create each sector
    * `isActive` designates the "active" shape
    */
   activeShape?: ActiveShape<PieSectorDataItem>;
   /**
+   * @defaultValue 400
+   */
+  animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
+  animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
+  animationEasing?: AnimationTiming;
+  className?: string;
+  /** the input data */
+  data?: ChartDataInput[];
+  /**
+   * @defaultValue value
+   */
+  dataKey?: DataKey<any>;
+  /**
+   * TODO: review this as an external prop - it seems to have no effect
+   *
+   * @defaultValue false
+   */
+  hide?: boolean;
+  id?: string;
+  /**
    * @deprecated use the `shape` prop to modify each sector
    */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
-  shape?: PieShape;
-  labelLine?: PieLabelLine;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
+  /**
+   * @defaultValue false
+   */
   label?: PieLabel;
-  animationEasing?: AnimationTiming;
-  isAnimationActive?: boolean;
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  onAnimationStart?: () => void;
+  /**
+   * @defaultValue true
+   */
+  labelLine?: PieLabelLine;
+  /**
+   * @defaultValue rect
+   */
+  legendType?: LegendType;
+  /** the max radius of pie */
+  maxRadius?: number;
+  /**
+   * The minimum angle for no-zero element
+   *
+   * @defaultValue 0
+   */
+  minAngle?: number;
+  /**
+   * @defaultValue name
+   */
+  nameKey?: DataKey<any>;
   onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
   onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * @defaultValue 0
+   */
   rootTabIndex?: number;
+  shape?: PieShape;
+  tooltipType?: TooltipType;
+  /**
+   * @defaultValue 100
+   */
+  zIndex?: number;
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -767,7 +805,7 @@ function SectorsWithAnimation({
   );
 }
 
-const defaultPieProps = {
+export const defaultPieProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
@@ -778,7 +816,8 @@ const defaultPieProps = {
   fill: '#808080',
   hide: false,
   innerRadius: 0,
-  isAnimationActive: !Global.isSsr,
+  isAnimationActive: 'auto',
+  label: false,
   labelLine: true,
   legendType: 'rect',
   minAngle: 0,

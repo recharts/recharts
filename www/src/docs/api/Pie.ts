@@ -4,7 +4,7 @@ export const PieAPI = {
     {
       name: 'cx',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -15,7 +15,7 @@ export const PieAPI = {
     {
       name: 'cy',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -26,7 +26,7 @@ export const PieAPI = {
     {
       name: 'innerRadius',
       type: 'Percentage | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US':
@@ -38,7 +38,7 @@ export const PieAPI = {
     {
       name: 'outerRadius',
       type: 'Percentage | Number | Function',
-      defaultVal: "'80%'",
+      defaultVal: '80%',
       isOptional: false,
       desc: {
         'en-US':
@@ -71,7 +71,7 @@ export const PieAPI = {
     {
       name: 'minAngle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The minimum angle of each unzero data.',
@@ -81,7 +81,7 @@ export const PieAPI = {
     {
       name: 'paddingAngle',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The angle between two sectors.',
@@ -97,7 +97,7 @@ export const PieAPI = {
     {
       name: 'nameKey',
       type: 'String',
-      defaultVal: "'name'",
+      defaultVal: 'name',
       isOptional: false,
       desc: {
         'en-US': "The key of each sector's name.",
@@ -107,6 +107,7 @@ export const PieAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
+      defaultVal: 'value',
       isOptional: false,
       desc: {
         'en-US': "The key of each sector's value.",
@@ -116,7 +117,7 @@ export const PieAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'rect'",
+      defaultVal: 'rect',
       isOptional: false,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -126,7 +127,7 @@ export const PieAPI = {
     {
       name: 'label',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US':
@@ -144,7 +145,7 @@ export const PieAPI = {
     {
       name: 'labelLine',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -162,7 +163,6 @@ export const PieAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The source data which each element is an object.',
@@ -172,7 +172,6 @@ export const PieAPI = {
     {
       name: 'shape',
       type: 'Object | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.',
@@ -182,7 +181,6 @@ export const PieAPI = {
     {
       name: 'activeShape',
       type: 'Object | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       deprecated: true,
       desc: {
@@ -199,7 +197,6 @@ export const PieAPI = {
     {
       name: 'inactiveShape',
       type: 'Object | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       deprecated: true,
       desc: {
@@ -209,8 +206,8 @@ export const PieAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of pie will be disabled.',
@@ -220,7 +217,7 @@ export const PieAPI = {
     {
       name: 'animationBegin',
       type: 'Number',
-      defaultVal: '400',
+      defaultVal: 400,
       isOptional: false,
       desc: {
         'en-US': 'Specifies when the animation should begin, the unit of this option is ms.',
@@ -230,7 +227,7 @@ export const PieAPI = {
     {
       name: 'animationDuration',
       type: 'Number',
-      defaultVal: '1500',
+      defaultVal: 1500,
       isOptional: false,
       desc: {
         'en-US': 'Specifies the duration of animation, the unit of this option is ms.',
@@ -240,7 +237,7 @@ export const PieAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' | Function",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',
@@ -250,7 +247,7 @@ export const PieAPI = {
     {
       name: 'rootTabIndex',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: true,
       desc: {
         'en-US': 'The tabindex of wrapper surrounding the cells.',

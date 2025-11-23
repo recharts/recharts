@@ -21,6 +21,7 @@ import { defaultTooltipProps } from '../src/component/Tooltip';
 import { defaultRectangleProps } from '../src/shape/Rectangle';
 import { defaultSectorProps } from '../src/shape/Sector';
 import { defaultTrapezoidProps } from '../src/shape/Trapezoid';
+import { defaultPieProps } from '../src/polar/Pie';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -41,6 +42,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
+  Pie: { defaultProps: defaultPieProps },
   Rectangle: { defaultProps: defaultRectangleProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
