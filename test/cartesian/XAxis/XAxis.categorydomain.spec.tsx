@@ -357,7 +357,7 @@ describe('categorical domain', () => {
       const reduxDomainSpy = vi.fn();
       const { container } = render(
         <BarChart width={300} height={300} data={dataWithDecimalNumbers}>
-          <XAxis dataKey="x" type="category" allowDecimals={false} />
+          <XAxis dataKey="x" type="category" allowDecimals={allowDecimals} />
           <Customized component={<ExpectAxisDomain assert={reduxDomainSpy} axisType="xAxis" />} />
         </BarChart>,
       );

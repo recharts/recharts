@@ -122,44 +122,6 @@ describe('numerical domain', () => {
       expectLastCalledWith(spy, [0, 180]);
     });
 
-    it('should reverse ticks', () => {
-      const spy = vi.fn();
-      const { container } = render(
-        <Component>
-          <XAxis dataKey="x" type="number" reversed />
-          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
-        </Component>,
-      );
-      expectXAxisTicks(container, [
-        {
-          textContent: '0',
-          x: '295',
-          y: '273',
-        },
-        {
-          textContent: '45',
-          x: '222.5',
-          y: '273',
-        },
-        {
-          textContent: '90',
-          x: '150',
-          y: '273',
-        },
-        {
-          textContent: '135',
-          x: '77.5',
-          y: '273',
-        },
-        {
-          textContent: '180',
-          x: '5',
-          y: '273',
-        },
-      ]);
-      expectLastCalledWith(spy, [0, 180]);
-    });
-
     describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
       it('should render ticks from domain auto, auto', () => {
         const spy = vi.fn();

@@ -197,7 +197,7 @@ describe('XAxis padding', () => {
     ]);
   });
 
-  it('Render Bars with gap in 10000 width chart and somehow is still decides to render 4 ticks instead of the default 5', () => {
+  it('Render Bars with gap in 10000 width chart', () => {
     const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={10000} height={300} data={data}>
