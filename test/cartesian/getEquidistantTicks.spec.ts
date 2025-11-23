@@ -56,7 +56,7 @@ describe('getEquidistantPreserveEndTicks', () => {
     // The ticks are 10px wide.
     const getTickSizeStatic = () => 10;
 
-    // The ticks are 10px apart. We set minTickGap to 15px.
+    // The ticks are 10px apart. We set minTickGap to 8px.
     // This forces the algorithm to skip every other tick (Step Size 2) to avoid overlap.
     // Since we anchor at the end (Index 4), we expect indices 4, 2, 0.
 
