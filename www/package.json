@@ -42,7 +42,7 @@
     "react-router": "^7.9.5",
     "react-router-dom": "^7.9.5",
     "react-runner": "^1.0.5",
-    "recharts": "^3.4.1",
+    "recharts": "^3.5.0",
     "simple-line-icons": "^2.5.5"
   },
   "license": "MIT"
