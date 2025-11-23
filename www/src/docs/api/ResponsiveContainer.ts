@@ -10,7 +10,6 @@ export const ResponsiveContainerAPI = {
     {
       name: 'aspect',
       type: ' Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'width / height. If specified, the height will be calculated by width / aspect.',
@@ -20,7 +19,7 @@ export const ResponsiveContainerAPI = {
     {
       name: 'width',
       type: 'Percentage | Number',
-      defaultVal: "'100%'",
+      defaultVal: '100%',
       isOptional: false,
       desc: {
         'en-US': "The percentage value of the chart's width or a fixed width.",
@@ -30,7 +29,7 @@ export const ResponsiveContainerAPI = {
     {
       name: 'height',
       type: 'Percentage | Number',
-      defaultVal: "'100%'",
+      defaultVal: '100%',
       isOptional: false,
       desc: {
         'en-US': "The percentage value of the chart's width or a fixed height.",
@@ -40,7 +39,7 @@ export const ResponsiveContainerAPI = {
     {
       name: 'minWidth',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: true,
       desc: {
         'en-US': 'The minimum width of the container.',
@@ -50,7 +49,6 @@ export const ResponsiveContainerAPI = {
     {
       name: 'minHeight',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The minimum height of the container.',
@@ -60,7 +58,7 @@ export const ResponsiveContainerAPI = {
     {
       name: 'debounce',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'If specified a positive number, debounced function will be used to handle the resize event.',
@@ -70,7 +68,6 @@ export const ResponsiveContainerAPI = {
     {
       name: 'onResize',
       type: 'Function',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': 'If specified provides a callback providing the updated chart width and height values.',
