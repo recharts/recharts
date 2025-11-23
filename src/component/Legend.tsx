@@ -107,6 +107,8 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
    *
    * If `null` is provided then the payload is not sorted. Be aware that without sort,
    * the order of items may change between renders!
+   *
+   * @defaultValue value
    */
   itemSorter?: LegendItemSorter | null;
 };
@@ -150,7 +152,7 @@ function getWidthOrHeight(
   return null;
 }
 
-const legendDefaultProps = {
+export const legendDefaultProps = {
   align: 'center',
   iconSize: 14,
   itemSorter: 'value',

@@ -11,7 +11,6 @@ export const LegendAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The width of legend.',
@@ -21,7 +20,6 @@ export const LegendAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The height of legend.',
@@ -31,7 +29,7 @@ export const LegendAPI = {
     {
       name: 'layout',
       type: "'horizontal', 'vertical'",
-      defaultVal: "'horizontal'",
+      defaultVal: 'horizontal',
       isOptional: false,
       desc: {
         'en-US': 'The layout of legend items.',
@@ -41,7 +39,7 @@ export const LegendAPI = {
     {
       name: 'align',
       type: "'left', 'center', 'right'",
-      defaultVal: "'center'",
+      defaultVal: 'center',
       isOptional: false,
       desc: {
         'en-US': `
@@ -56,7 +54,7 @@ export const LegendAPI = {
     {
       name: 'verticalAlign',
       type: "'top', 'middle', 'bottom'",
-      defaultVal: "'bottom'",
+      defaultVal: 'bottom',
       isOptional: false,
       desc: {
         'en-US': `
@@ -71,7 +69,7 @@ export const LegendAPI = {
     {
       name: 'iconSize',
       type: 'Number',
-      defaultVal: '14',
+      defaultVal: 14,
       isOptional: false,
       desc: {
         'en-US': 'The size of icon in each legend item.',
@@ -91,7 +89,6 @@ export const LegendAPI = {
     {
       name: 'content',
       type: 'ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': `If set to a React element, the option will be used to render the legend.
@@ -121,7 +118,6 @@ const renderLegend = (props) => {
     {
       name: 'formatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of each text in legend.',
@@ -139,7 +135,6 @@ const renderLegend = (props) => {
     {
       name: 'wrapperStyle',
       type: 'Object',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': `The style of legend container which is a "position: absolute;" div element.

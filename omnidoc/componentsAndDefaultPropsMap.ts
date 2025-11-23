@@ -14,6 +14,7 @@ import { referenceDotDefaultProps } from '../src/cartesian/ReferenceDot';
 import { xAxisDefaultProps } from '../src/cartesian/XAxis';
 import { yAxisDefaultProps } from '../src/cartesian/YAxis';
 import { zAxisDefaultProps } from '../src/cartesian/ZAxis';
+import { legendDefaultProps } from '../src/component/Legend';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -26,6 +27,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Label: { defaultProps: defaultLabelProps },
+  Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
