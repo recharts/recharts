@@ -15,7 +15,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 export default function ScatterChartWithCells() {
   return (
     <ScatterChart
-      style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
       margin={{
         top: 20,
