@@ -7,7 +7,6 @@ import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../uti
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
-import { Global } from '../util/Global';
 import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
@@ -276,36 +275,73 @@ function RenderSectors(props: RadialBarProps) {
 }
 
 interface InternalRadialBarProps extends ZIndexable {
-  className?: string;
-  angleAxisId?: AxisId;
-  radiusAxisId?: AxisId;
-  startAngle?: number;
-  endAngle?: number;
-  shape?: ActiveShape<SectorProps, SVGPathElement>;
   activeShape?: ActiveShape<SectorProps, SVGPathElement>;
-  dataKey: string | number | ((obj: any) => any);
-  cornerRadius?: string | number;
-  forceCornerRadius?: boolean;
-  cornerIsExternal?: boolean;
-  minPointSize?: number;
+  /**
+   * @defaultValue 0
+   */
+  angleAxisId?: AxisId;
+  /**
+   * @defaultValue 0
+   */
+  animationBegin?: number;
+  /**
+   * @defaultValue 1500
+   */
+  animationDuration?: AnimationDuration;
+  /**
+   * @defaultValue ease
+   */
+  animationEasing?: AnimationTiming;
+  background?: RadialBarBackground;
   /**
    * So in Bar, this can be a percent value - but that won't work in RadialBar. RadialBar: only numbers.
    */
   barSize?: number;
-  maxBarSize?: number;
+  className?: string;
+  /**
+   * @defaultValue false
+   */
+  cornerIsExternal?: boolean;
+  /**
+   * @defaultValue 0
+   */
+  cornerRadius?: string | number;
+  /**
+   * @defaultValue []
+   */
   data?: ReadonlyArray<RadialBarDataItem>;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
+  dataKey: string | number | ((obj: any) => any);
+  /**
+   * @defaultValue false
+   */
+  forceCornerRadius?: boolean;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
+  /**
+   * @defaultValue auto
+   */
+  isAnimationActive?: boolean | 'auto';
   label?: ImplicitLabelListType;
-  stackId?: string | number;
-  background?: RadialBarBackground;
-  onAnimationStart?: () => void;
+  /**
+   * @defaultValue rect
+   */
+  legendType?: LegendType;
+  maxBarSize?: number;
+  /**
+   * @defaultValue 0
+   */
+  minPointSize?: number;
   onAnimationEnd?: () => void;
-  isAnimationActive?: boolean;
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  onAnimationStart?: () => void;
+  /**
+   * @defaultValue 0
+   */
+  radiusAxisId?: AxisId;
+  shape?: ActiveShape<SectorProps, SVGPathElement>;
+  stackId?: string | number;
+  tooltipType?: TooltipType;
 }
 
 export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
@@ -449,19 +485,22 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
   );
 }
 
-const defaultRadialBarProps = {
+export const defaultRadialBarProps = {
   angleAxisId: 0,
-  radiusAxisId: 0,
-  minPointSize: 0,
-  hide: false,
-  legendType: 'rect',
-  data: [] as ReadonlyArray<RadialBarDataItem>,
-  isAnimationActive: !Global.isSsr,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
-  forceCornerRadius: false,
+  background: false,
   cornerIsExternal: false,
+  cornerRadius: 0,
+  data: [] as ReadonlyArray<RadialBarDataItem>,
+  forceCornerRadius: false,
+  hide: false,
+  isAnimationActive: 'auto',
+  label: false,
+  legendType: 'rect',
+  minPointSize: 0,
+  radiusAxisId: 0,
   zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 
