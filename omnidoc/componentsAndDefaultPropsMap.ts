@@ -20,6 +20,7 @@ import { defaultFunnelProps } from '../src/cartesian/Funnel';
 import { defaultTooltipProps } from '../src/component/Tooltip';
 import { defaultRectangleProps } from '../src/shape/Rectangle';
 import { defaultSectorProps } from '../src/shape/Sector';
+import { defaultTrapezoidProps } from '../src/shape/Trapezoid';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -49,6 +50,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Sector: { defaultProps: defaultSectorProps },
   Text: { defaultProps: textDefaultProps },
   Tooltip: { defaultProps: defaultTooltipProps },
+  Trapezoid: { defaultProps: defaultTrapezoidProps },
   Treemap: { defaultProps: defaultTreeMapProps },
   XAxis: { defaultProps: xAxisDefaultProps },
   YAxis: { defaultProps: yAxisDefaultProps },
