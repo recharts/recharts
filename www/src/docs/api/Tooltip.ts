@@ -1,4 +1,6 @@
-export const TooltipAPI = {
+import { ApiDoc } from './types.ts';
+
+export const TooltipAPI: ApiDoc = {
   name: 'Tooltip',
   desc: {
     'en-US': 'Tooltip is rendered by html nodes.',

@@ -4,10 +4,10 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { AnimationProps } from '../props/AnimationProps';
-import { legendType } from '../props/Legend';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const GeneralProps: Args = {
+const GeneralProps: StorybookArgs = {
   dataKey: {
     description: 'The key of a group of data which should be unique in a radar chart.',
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
@@ -21,20 +21,28 @@ const GeneralProps: Args = {
     the props calculated internally. If object set, dots will be drawn which have the props merged
     by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element.
     If set a function, the function will be called to render customized dot.`,
-    table: { type: { summary: 'Bool | Object | Element | Function' }, category: 'General' },
+    table: {
+      type: { summary: 'Bool | Object | Element | Function' },
+      defaultValue: { summary: 'false' },
+      category: 'General',
+    },
   },
 };
 
-const LabelProps: Args = {
+const LabelProps: StorybookArgs = {
   label: {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
-    table: { type: { summary: 'string | number | ReactElement | Function' }, category: 'Label' },
+    table: {
+      type: { summary: 'string | number | ReactElement | Function' },
+      defaultValue: { summary: 'false' },
+      category: 'Label',
+    },
   },
 };
 
-const StyleProps: Args = {
+const StyleProps: StorybookArgs = {
   shape: {
     description: `If set a ReactElement, the shape of dot can be customized. If set a function,
     the function will be called to render customized shape.`,
@@ -53,7 +61,16 @@ export default {
     ...GeneralProps,
     ...LabelProps,
     ...StyleProps,
-    legendType,
+    legendType: {
+      description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
+      table: {
+        type: {
+          summary: 'line | plainline | square | rect| circle | cross | diamond | square | star | triangle | wye | none',
+        },
+        defaultValue: 'rect',
+        category: 'Style',
+      },
+    },
   },
   component: Radar,
 };
