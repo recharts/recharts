@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Bar, BarChart, Cell } from 'recharts';
-import { BarRectangleItem } from 'recharts/types/cartesian/Bar';
+import { Bar, BarChart, Cell, BarRectangleItem } from 'recharts';
 
 const BarChartWithCustomizedEvent = () => {
   const [data] = useState([

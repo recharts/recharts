@@ -11,8 +11,8 @@ import {
   DefaultLegendContent,
   DefaultLegendContentProps,
   DefaultTooltipContent,
+  TooltipContentProps,
 } from 'recharts';
-import { TooltipContentProps } from 'recharts/types/component/Tooltip';
 
 const data = [
   {

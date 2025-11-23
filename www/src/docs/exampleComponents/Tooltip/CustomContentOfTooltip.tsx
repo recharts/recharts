@@ -1,5 +1,14 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, TooltipContentProps } from 'recharts';
-import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  TooltipContentProps,
+  TooltipIndex,
+} from 'recharts';
 
 // #region Sample data
 const data = [

@@ -1,5 +1,4 @@
-import { Treemap } from 'recharts';
-import { TreemapNode } from 'recharts/types/chart/Treemap';
+import { Treemap, TreemapNode } from 'recharts';
 
 // #region Sample data
 const data = [

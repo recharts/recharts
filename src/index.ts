@@ -82,7 +82,7 @@ export type { Props as LineProps } from './cartesian/Line';
 export { Area } from './cartesian/Area';
 export type { Props as AreaProps } from './cartesian/Area';
 export { Bar } from './cartesian/Bar';
-export type { Props as BarProps } from './cartesian/Bar';
+export type { Props as BarProps, BarRectangleItem } from './cartesian/Bar';
 export { Scatter } from './cartesian/Scatter';
 export type { Props as ScatterProps } from './cartesian/Scatter';
 export { XAxis } from './cartesian/XAxis';
@@ -98,7 +98,7 @@ export { LineChart } from './chart/LineChart';
 export { BarChart } from './chart/BarChart';
 export { PieChart } from './chart/PieChart';
 export { Treemap } from './chart/Treemap';
-export type { Props as TreemapProps } from './chart/Treemap';
+export type { Props as TreemapProps, TreemapNode } from './chart/Treemap';
 export { Sankey } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
 export { ScatterChart } from './chart/ScatterChart';
@@ -114,7 +114,7 @@ export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
-export type { LegendType } from './util/types';
+export type { LegendType, DataKey, AxisInterval } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
@@ -137,3 +137,5 @@ export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutC
 export type { ChartOffset, PlotArea } from './types';
 
 export type { MouseHandlerDataParam } from './synchronisation/types';
+
+export type { TooltipIndex } from './state/tooltipSlice';
