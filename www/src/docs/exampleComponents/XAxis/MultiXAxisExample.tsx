@@ -1,4 +1,4 @@
-import { Line, LineChart, Tooltip, XAxis } from '../../../../../src';
+import { Line, LineChart, Tooltip, XAxis } from 'recharts';
 
 // #region Sample data
 const data = [
