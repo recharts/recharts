@@ -47,7 +47,7 @@ test('ThreeDimScatterChart', async ({ mount }) => {
 });
 
 test('SimpleScatterChart', async ({ mount }) => {
-  const component = await mount(<SimpleScatterChart />);
+  const component = await mount(<SimpleScatterChart defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
 
