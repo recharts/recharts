@@ -29,12 +29,22 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 type TickOrientation = 'left' | 'right' | 'middle';
 
 export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'>, ZIndexable {
-  cx?: number;
-  cy?: number;
+  /**
+   * @defaultValue 0
+   */
   radiusAxisId?: string | number;
+  /**
+   * @defaultValue 0
+   */
   angle?: number;
+  /**
+   * @defaultValue right
+   */
   orientation?: TickOrientation;
   ticks?: ReadonlyArray<TickItem>;
+  /**
+   * @defaultValue false
+   */
   reversed?: boolean;
 }
 
@@ -44,10 +54,11 @@ export type Props = AxisSvgProps & PolarRadiusAxisProps;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarRadiusAxisProps>;
 
-type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
-  scale: RechartsScale;
-  radius: number;
-};
+type InsideProps = Omit<PropsWithDefaults, 'scale'> &
+  PolarViewBoxRequired & {
+    scale: RechartsScale;
+    radius: number;
+  };
 
 const AXIS_TYPE = 'radiusAxis';
 

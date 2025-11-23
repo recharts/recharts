@@ -32,6 +32,7 @@ import { isEventKey } from './excludeEventProps';
 import { DotPoint } from '../component/Dots';
 import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 import { BaseValue } from '../cartesian/Area';
+import { ImplicitLabelType } from '../component/Label';
 
 /**
  * Determines how values are stacked:
@@ -751,7 +752,7 @@ export interface BaseAxisProps {
   /** axis react component */
   AxisComp?: any;
   /** Needed to allow usage of the label prop on the X and Y axis */
-  label?: string | number | ReactElement | object;
+  label?: ImplicitLabelType;
   /** The HTML element's class name */
   className?: string;
 }

@@ -25,6 +25,7 @@ import { defaultPieProps } from '../src/polar/Pie';
 import { defaultRadarProps } from '../src/polar/Radar';
 import { defaultPolarAngleAxisProps } from '../src/polar/defaultPolarAngleAxisProps';
 import { defaultRadialBarProps } from '../src/polar/RadialBar';
+import { defaultPolarRadiusAxisProps } from '../src/polar/defaultPolarRadiusAxisProps';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -47,6 +48,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   LineChart: { defaultProps: defaultCartesianChartProps },
   Pie: { defaultProps: defaultPieProps },
   PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
+  PolarRadiusAxis: { defaultProps: defaultPolarRadiusAxisProps },
   Radar: { defaultProps: defaultRadarProps },
   RadialBar: { defaultProps: defaultRadialBarProps },
   Rectangle: { defaultProps: defaultRectangleProps },
