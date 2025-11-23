@@ -4,7 +4,7 @@ export const CrossAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of the vertical line of the cross.',
@@ -14,7 +14,7 @@ export const CrossAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of the horizontal line of the cross.',
@@ -24,7 +24,7 @@ export const CrossAPI = {
     {
       name: 'top',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of the top left point in the boundary box of the cross.',
@@ -34,7 +34,7 @@ export const CrossAPI = {
     {
       name: 'left',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of the top left point in the boundary box of the cross.',
@@ -44,7 +44,7 @@ export const CrossAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of the horizontal line of the cross.',
@@ -54,7 +54,7 @@ export const CrossAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The height of the vertical line of the cross.',
