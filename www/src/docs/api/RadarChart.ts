@@ -4,7 +4,6 @@ export const RadarChartAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -14,7 +13,6 @@ export const RadarChartAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -24,7 +22,6 @@ export const RadarChartAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -38,7 +35,7 @@ export const RadarChartAPI = {
     {
       name: 'cx',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -49,7 +46,7 @@ export const RadarChartAPI = {
     {
       name: 'cy',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -60,7 +57,7 @@ export const RadarChartAPI = {
     {
       name: 'startAngle',
       type: 'Number',
-      defaultVal: '90',
+      defaultVal: 90,
       isOptional: false,
       desc: {
         'en-US': 'The angle of first radial direction line.',
@@ -70,7 +67,7 @@ export const RadarChartAPI = {
     {
       name: 'endAngle',
       type: 'Number',
-      defaultVal: '-270',
+      defaultVal: -270,
       isOptional: false,
       desc: {
         'en-US':
@@ -82,7 +79,7 @@ export const RadarChartAPI = {
     {
       name: 'innerRadius',
       type: 'Percentage | Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US':
@@ -94,7 +91,7 @@ export const RadarChartAPI = {
     {
       name: 'outerRadius',
       type: 'Percentage | Number',
-      defaultVal: "'80%'",
+      defaultVal: '80%',
       isOptional: false,
       desc: {
         'en-US':
@@ -106,7 +103,7 @@ export const RadarChartAPI = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 0, right: 0, bottom: 0, left: 0 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -117,7 +114,6 @@ export const RadarChartAPI = {
     {
       name: 'onMouseEnter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': "The function will be called when mouse enter the 'Radar'.",
@@ -127,7 +123,6 @@ export const RadarChartAPI = {
     {
       name: 'onMouseLeave',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': "The function will be called when mouse leave the 'Radar'.",
@@ -137,7 +132,6 @@ export const RadarChartAPI = {
     {
       name: 'onClick',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': "The function will be called when click the 'Radar'.",

@@ -16,7 +16,7 @@ const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 /**
  * These default props are the same for all PolarChart components.
  */
-const defaultProps = {
+export const defaultPolarChartProps = {
   accessibilityLayer: true,
   stackOffset: 'none',
   barCategoryGap: '10%',
@@ -26,6 +26,10 @@ const defaultProps = {
   syncMethod: 'index',
   layout: 'radial',
   responsive: false,
+  cx: '50%',
+  cy: '50%',
+  innerRadius: 0,
+  outerRadius: '80%',
 } as const satisfies Partial<PolarChartProps>;
 
 /**
@@ -62,7 +66,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
   props: PolarChartOptions,
   ref,
 ) {
-  const polarChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
+  const polarChartProps = resolveDefaultProps(props.categoricalChartProps, defaultPolarChartProps);
 
   const { layout, ...otherCategoricalProps } = polarChartProps;
 

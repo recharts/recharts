@@ -6,7 +6,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -16,7 +15,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -26,7 +24,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: 'The source data which each element is an object.',
       format: ["[{name: 'a', value: 12}]"],
@@ -34,7 +31,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -45,7 +42,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'barCategoryGap',
       type: 'Percentage| Number',
-      defaultVal: "'10%'",
+      defaultVal: '10%',
       isOptional: false,
       desc: {
         'en-US': 'The gap between two bar categories, which can be a percent value or a fixed value.',
@@ -65,7 +62,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'cx',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -76,7 +73,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'cy',
       type: 'Percentage | Number',
-      defaultVal: "'50%'",
+      defaultVal: '50%',
       isOptional: false,
       desc: {
         'en-US':
@@ -107,7 +104,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'innerRadius',
       type: 'Percentage | Number',
-      defaultVal: "'30%'",
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US':
@@ -119,7 +116,7 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'outerRadius',
       type: 'Percentage | Number',
-      defaultVal: "'100%'",
+      defaultVal: '80%',
       isOptional: false,
       desc: {
         'en-US':
@@ -131,7 +128,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'barSize',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -143,7 +139,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'onMouseEnter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when mouse enter bars.',
@@ -154,7 +149,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'onMouseLeave',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when mouse leave bars.',
@@ -165,7 +159,6 @@ export const RadialBarChartAPI: ApiDoc = {
     {
       name: 'onClick',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when click bars.',
