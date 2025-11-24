@@ -404,29 +404,30 @@ export class ProjectDocReader implements DocReader {
 
       // If no description tag, get the main comment text
       const declarations = property.getDeclarations();
-      if (declarations.length > 0) {
-        const declaration = declarations[0];
-        if (!Node.isJSDocable(declaration)) {
-          return undefined;
-        }
-        const jsDocNodes = declaration.getJsDocs();
-        if (jsDocNodes.length > 0) {
-          const comment = jsDocNodes[0].getComment();
-          if (comment) {
-            return typeof comment === 'string'
-              ? comment
-              : comment
-                  .map(c => c?.getText())
-                  .join('')
-                  .trim();
-          }
-        }
-      }
-
-      return undefined;
+      // in case of multiple declarations, use the first one that has JSDoc available
+      return declarations.map(decl => this.getJSDocFromDeclaration(decl)).find(comment => comment !== undefined);
     } catch {
       // Component or prop doesn't exist
       return undefined;
     }
+  }
+
+  private getJSDocFromDeclaration(declaration: Node): string | undefined {
+    if (!Node.isJSDocable(declaration)) {
+      return undefined;
+    }
+    const jsDocNodes = declaration.getJsDocs();
+    if (jsDocNodes.length > 0) {
+      const comment = jsDocNodes[0].getComment();
+      if (comment) {
+        return typeof comment === 'string'
+          ? comment
+          : comment
+              .map(c => c?.getText())
+              .join(' ')
+              .trim();
+      }
+    }
+    return undefined;
   }
 }

@@ -882,4 +882,11 @@ describe('readProject', () => {
   it('should return undefined for comment of unknown prop', () => {
     expect(reader.getCommentOf('ReferenceLine', 'unknownPropThatDoesNotExist')).toBe(undefined);
   });
+
+  it('should return the Recharts description if the prop shadows a DOM prop', () => {
+    // stroke has no JSDoc in React props, but it does in Recharts props
+    const comment = reader.getCommentOf('Area', 'stroke');
+    // In that case, we want to see the Recharts variant here
+    expect(comment).toMatchInlineSnapshot(`"The stroke color. If "none", no line will be drawn."`);
+  });
 });
