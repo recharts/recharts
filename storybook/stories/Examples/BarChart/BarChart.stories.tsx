@@ -30,23 +30,6 @@ export default {
   },
 };
 
-export const Tiny = {
-  render: (args: Args) => {
-    return (
-      <BarChart {...args}>
-        <Bar dataKey="uv" fill="#8884d8" />
-        <RechartsHookInspector />
-      </BarChart>
-    );
-  },
-  args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
-    width: 150,
-    height: 40,
-    data: pageData,
-  },
-};
-
 export const Simple = {
   render: (args: Args) => {
     return (

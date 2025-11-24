@@ -59,24 +59,6 @@ export const Simple = {
   },
 };
 
-export const Tiny = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart {...args}>
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
-          <RechartsHookInspector />
-        </LineChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    width: 300,
-    height: 100,
-    data: pageData,
-  },
-};
-
 export const Dashed = {
   render: () => {
     return (
@@ -352,7 +334,7 @@ export const WithCustomizedDot = {
     const CustomizedDot = (props: any) => {
       const { cx, cy, value } = props;
 
-      if (value > 2500) {
+      if (value >= 800) {
         return (
           <svg x={cx - 10} y={cy - 10} width={20} height={20} fill="red" viewBox="0 0 1024 1024">
             <path

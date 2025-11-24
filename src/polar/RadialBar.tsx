@@ -326,6 +326,9 @@ interface InternalRadialBarProps extends ZIndexable {
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
+  /**
+   * @defaultValue false
+   */
   label?: ImplicitLabelListType;
   /**
    * @defaultValue rect

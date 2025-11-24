@@ -86,31 +86,6 @@ export const StackedAreaChart = {
   },
 };
 
-export const TinyAreaChart = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart {...args}>
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <RechartsHookInspector />
-        </AreaChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
-    width: 200,
-    height: 60,
-    data: pageData,
-    margin: {
-      top: 5,
-      right: 0,
-      left: 0,
-      bottom: 5,
-    },
-  },
-};
-
 export const PercentAreaChart = {
   render: (args: Args) => {
     const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
