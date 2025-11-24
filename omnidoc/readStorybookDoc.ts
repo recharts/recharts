@@ -130,4 +130,35 @@ export class StorybookDocReader implements DocReader {
 
     return { type: 'known', value: defaultValue };
   }
+
+  getCommentOf(component: string, prop: string): string | undefined {
+    this.ensureCache();
+
+    const storyModule = Object.entries(allStories).find(([exportName]) => {
+      const componentName = exportName.replace(/Story$/, '');
+      return componentName === component;
+    });
+
+    if (!storyModule) {
+      return undefined;
+    }
+
+    const [, storyDefault] = storyModule;
+    if (typeof storyDefault !== 'object' || storyDefault === null || !('argTypes' in storyDefault)) {
+      return undefined;
+    }
+
+    const { argTypes } = storyDefault;
+    if (!argTypes || typeof argTypes !== 'object') {
+      return undefined;
+    }
+
+    // @ts-expect-error our storybook types are not great
+    const argType: StorybookArg = argTypes[prop];
+    if (!argType) {
+      return undefined;
+    }
+
+    return argType.description;
+  }
 }

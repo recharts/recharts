@@ -196,4 +196,17 @@ describe('readStorybookDoc', () => {
   it('should get integer default value', () => {
     expect(reader.getDefaultValueOf('Area', 'animationBegin')).toEqual({ type: 'known', value: 0 });
   });
+
+  it('should get comment of a prop', () => {
+    const comment = reader.getCommentOf('ReferenceLine', 'strokeWidth');
+    expect(comment).toMatchInlineSnapshot(`"The width of the stroke."`);
+  });
+
+  it('should return undefined for comment of unknown component', () => {
+    expect(reader.getCommentOf('UnknownComponent', 'someProp')).toBe(undefined);
+  });
+
+  it('should return undefined for comment of unknown prop', () => {
+    expect(reader.getCommentOf('ReferenceLine', 'unknownProp')).toBe(undefined);
+  });
 });

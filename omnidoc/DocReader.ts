@@ -32,4 +32,11 @@ export interface DocReader {
    * Returns the default value of a given prop of a given component.
    */
   getDefaultValueOf(component: string, prop: string): DefaultValue;
+
+  /**
+   * Returns the comment/documentation associated with a given prop of a given component.
+   * @param component
+   * @param prop
+   */
+  getCommentOf(component: string, prop: string): string | undefined;
 }

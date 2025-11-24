@@ -64,4 +64,24 @@ export class ApiDocReader implements DocReader {
 
     return { type: 'known', value: defaultVal };
   }
+
+  getCommentOf(component: string, prop: string): string | undefined {
+    const apiDoc = allExamples[component];
+    if (!apiDoc) {
+      return undefined;
+    }
+
+    const propDoc = apiDoc.props.find(p => p.name === prop);
+    if (!propDoc || !propDoc.desc) {
+      return undefined;
+    }
+
+    // desc can be a string or a locale-specific object
+    if (typeof propDoc.desc === 'string') {
+      return propDoc.desc;
+    }
+
+    // If it's an object, return the english version
+    return propDoc.desc['en-US'];
+  }
 }
