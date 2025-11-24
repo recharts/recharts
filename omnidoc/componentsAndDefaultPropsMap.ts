@@ -29,6 +29,7 @@ import { defaultPolarRadiusAxisProps } from '../src/polar/defaultPolarRadiusAxis
 import { defaultPieChartProps } from '../src/chart/PieChart';
 import { defaultRadarChartProps } from '../src/chart/RadarChart';
 import { defaultRadialBarChartProps } from '../src/chart/RadialBarChart';
+import { sankeyDefaultProps } from '../src/chart/Sankey';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -61,6 +62,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
+  Sankey: { defaultProps: sankeyDefaultProps },
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
   Sector: { defaultProps: defaultSectorProps },

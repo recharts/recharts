@@ -25,7 +25,6 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Percentage | Number',
-      defaultVal: "'100%'",
       isOptional: false,
       desc: {
         'en-US': "The percentage value of the chart's width or a fixed width.",
@@ -34,7 +33,6 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Percentage | Number',
-      defaultVal: "'100%'",
       isOptional: false,
       desc: {
         'en-US': "The percentage value of the chart's width or a fixed height.",
@@ -43,7 +41,6 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'data',
       type: 'Object',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, including the array of nodes, and the relationships, represented by links.',
@@ -67,7 +64,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'sort',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: true,
       desc: {
         'en-US': 'Whether to sort the nodes on th y axis, or to display them as user-defined.',
@@ -76,7 +73,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'nodePadding',
       type: 'Number',
-      defaultVal: '10',
+      defaultVal: 10,
       isOptional: true,
       desc: {
         'en-US': 'The padding between the nodes',
@@ -85,7 +82,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'nodeWidth',
       type: 'Number',
-      defaultVal: '10',
+      defaultVal: 10,
       isOptional: false,
       desc: {
         'en-US': 'The width of node',
@@ -94,7 +91,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'linkCurvature',
       type: 'Number',
-      defaultVal: '0.5',
+      defaultVal: 0.5,
       isOptional: false,
       desc: {
         'en-US': 'The curvature of width',
@@ -103,7 +100,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'iterations',
       type: 'Number',
-      defaultVal: '32',
+      defaultVal: 32,
       isOptional: false,
       desc: {
         'en-US': 'The number of the iterations between the links',
@@ -112,7 +109,6 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'node',
       type: 'Object | ReactElement',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -123,7 +119,6 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'link',
       type: 'Object | ReactElement',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US':
@@ -134,7 +129,7 @@ export const SankeyAPI: ApiDoc = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',

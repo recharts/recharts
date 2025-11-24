@@ -4,23 +4,63 @@ import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';
 import { data, margin } from '../props/ChartProps';
-import { dataKey } from '../props/CartesianComponentShared';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
+
+const SankeyArgTypes: StorybookArgs = {
+  iterations: {
+    table: {
+      defaultValue: { summary: '32' },
+    },
+  },
+  link: { description: 'TODO' },
+  linkCurvature: {
+    table: {
+      defaultValue: { summary: '0.5' },
+    },
+  },
+  nameKey: {
+    table: {
+      defaultValue: { summary: 'name' },
+    },
+  },
+  node: { description: 'TODO' },
+  nodePadding: {
+    table: {
+      defaultValue: { summary: '10' },
+    },
+  },
+  nodeWidth: {
+    table: {
+      defaultValue: { summary: '10' },
+    },
+  },
+  dataKey: {
+    description: `The key or getter of a group of data.
+      It could be an accessor function such as (row)=>value`,
+    table: {
+      type: { summary: 'string | number | function' },
+      defaultValue: { summary: 'value' },
+      category: 'General',
+    },
+  },
+  margin,
+  data,
+  sort: {
+    description: 'Whether to sort the data or not',
+    table: {
+      defaultValue: { summary: 'true' },
+    },
+  },
+  align: {
+    table: {
+      defaultValue: { summary: 'justify' },
+    },
+  },
+};
 
 export default {
-  argTypes: {
-    iterations: { description: 'TODO' },
-    link: { description: 'TODO' },
-    linkCurvature: { description: 'TODO' },
-    nameKey: { description: 'TODO' },
-    node: { description: 'TODO' },
-    nodePadding: { description: 'TODO' },
-    nodeWidth: { description: 'TODO' },
-    dataKey,
-    margin,
-    data,
-    sort: { description: 'Whether to sort the data or not' },
-  },
+  argTypes: SankeyArgTypes,
   component: Sankey,
 };
 

@@ -837,17 +837,17 @@ function AllNodeElements({
   );
 }
 
-const sankeyDefaultProps = {
-  nameKey: 'name',
+export const sankeyDefaultProps = {
+  align: 'justify',
   dataKey: 'value',
+  iterations: 32,
+  linkCurvature: 0.5,
+  margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  nameKey: 'name',
   nodePadding: 10,
   nodeWidth: 10,
-  linkCurvature: 0.5,
-  iterations: 32,
-  margin: { top: 5, right: 5, bottom: 5, left: 5 },
   sort: true,
   verticalAlign: 'justify',
-  align: 'justify',
 } as const satisfies Partial<Props>;
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
