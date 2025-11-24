@@ -1,7 +1,7 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from '../../../../src';
+import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadarChartProps } from '../props/RadarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
@@ -18,6 +18,7 @@ export const Simple = {
         <PolarAngleAxis dataKey="name" />
         <PolarRadiusAxis />
         <PolarGrid />
+        <Legend />
         <Tooltip defaultIndex={1} />
         <Radar dataKey="uv" stroke="green" strokeOpacity={0.7} fill="green" fillOpacity={0.5} strokeWidth={3} />
         <RechartsHookInspector />
