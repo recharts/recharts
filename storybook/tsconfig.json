@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "jsx": "react",
-    "module": "commonjs",
+    "module": "NodeNext",
     "noEmit": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
