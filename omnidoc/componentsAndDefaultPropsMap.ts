@@ -26,6 +26,9 @@ import { defaultRadarProps } from '../src/polar/Radar';
 import { defaultPolarAngleAxisProps } from '../src/polar/defaultPolarAngleAxisProps';
 import { defaultRadialBarProps } from '../src/polar/RadialBar';
 import { defaultPolarRadiusAxisProps } from '../src/polar/defaultPolarRadiusAxisProps';
+import { defaultPieChartProps } from '../src/chart/PieChart';
+import { defaultRadarChartProps } from '../src/chart/RadarChart';
+import { defaultRadialBarChartProps } from '../src/chart/RadialBarChart';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -47,10 +50,13 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
   Pie: { defaultProps: defaultPieProps },
+  PieChart: { defaultProps: defaultPieChartProps },
   PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
   PolarRadiusAxis: { defaultProps: defaultPolarRadiusAxisProps },
   Radar: { defaultProps: defaultRadarProps },
+  RadarChart: { defaultProps: defaultRadarChartProps },
   RadialBar: { defaultProps: defaultRadialBarProps },
+  RadialBarChart: { defaultProps: defaultRadialBarChartProps },
   Rectangle: { defaultProps: defaultRectangleProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },

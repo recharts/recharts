@@ -4,7 +4,6 @@ export const PieChartAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -14,7 +13,6 @@ export const PieChartAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -24,7 +22,7 @@ export const PieChartAPI = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 0, right: 0, bottom: 0, left: 0 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -35,7 +33,6 @@ export const PieChartAPI = {
     {
       name: 'onClick',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when click sectors of a pie chart.',
@@ -46,7 +43,6 @@ export const PieChartAPI = {
     {
       name: 'onMouseEnter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when mouse enter sectors of a pie chart.',
@@ -57,7 +53,6 @@ export const PieChartAPI = {
     {
       name: 'onMouseLeave',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The function will be called when mouse leave sectors of a pie chart.',
