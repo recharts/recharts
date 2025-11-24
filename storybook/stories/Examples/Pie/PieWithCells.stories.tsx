@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 const data = [
@@ -18,10 +18,28 @@ export default {
 
 export const PieWithCells = {
   render: (args: Args) => {
+    const [activeIndices, setActiveIndices] = React.useState<number[]>([]);
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
-          <Pie dataKey="percent" {...args}>
+          <Pie
+            dataKey="percent"
+            {...args}
+            onClick={(_, index) => {
+              if (index != null) {
+                setActiveIndices(prev => {
+                  if (prev.includes(index)) {
+                    return prev.filter(i => i !== index);
+                  }
+                  return [...prev, index];
+                });
+              }
+            }}
+            shape={(props, index) => {
+              const isActive = activeIndices.includes(index);
+              return <Sector {...props} fill={isActive ? 'yellow' : props.fill} stroke="#111" />;
+            }}
+          >
             {data.map(d => (
               <Cell key={`d-${d.value}`} fill={d.color} stroke="none" />
             ))}

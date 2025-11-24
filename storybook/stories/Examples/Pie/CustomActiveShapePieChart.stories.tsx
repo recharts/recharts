@@ -19,7 +19,7 @@ const NoContent = (): null => null;
 
 export const CustomActiveShapePieChart = {
   render: (args: Args) => {
-    const renderActiveShape = (props: PieSectorDataItem) => {
+    const renderActiveShape = (props: PieSectorDataItem & { isActive: boolean }) => {
       const RADIAN = Math.PI / 180;
       const {
         cx = 0,
@@ -44,7 +44,7 @@ export const CustomActiveShapePieChart = {
       const ey = my;
       const textAnchor = cos >= 0 ? 'start' : 'end';
 
-      return (
+      return props.isActive ? (
         <g>
           <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
             {payload.name}
@@ -74,13 +74,15 @@ export const CustomActiveShapePieChart = {
             {`(Rate ${(percent * 100).toFixed(2)}%)`}
           </text>
         </g>
+      ) : (
+        <Sector {...props} />
       );
     };
 
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
-          <Pie dataKey="value" {...args} activeShape={renderActiveShape} />
+          <Pie dataKey="value" {...args} shape={renderActiveShape} />
           <Tooltip defaultIndex={0} content={NoContent} />
           <RechartsHookInspector />
         </PieChart>
