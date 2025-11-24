@@ -20,7 +20,7 @@ export const TooltipAPI: ApiDoc = {
     {
       name: 'offset',
       type: 'Number | Object',
-      defaultVal: '10',
+      defaultVal: 10,
       isOptional: false,
       desc: {
         'en-US': 'The offset size between the position of tooltip and the active position.',
