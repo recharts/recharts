@@ -272,7 +272,6 @@ describe('omnidoc - documentation consistency', () => {
     }
 
     const componentsWithInconsistentCommentsInApiDoc = [
-      'Area',
       'AreaChart',
       'Bar',
       'BarChart',

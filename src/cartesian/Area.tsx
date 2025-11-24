@@ -124,40 +124,148 @@ interface InternalAreaProps extends ZIndexable {
  */
 interface AreaProps extends ZIndexable {
   /**
+   * The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If object set, active dot will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom active dot element.If set a function, the function will be called to render customized active dot.
    * @default true
    */
   activeDot?: ActiveDotType;
+  /**
+   * Specifies when the animation should begin, the unit of this option is ms.
+   * @default 0
+   */
   animationBegin?: number;
+  /**
+   * Specifies the duration of animation, the unit of this option is ms.
+   * @default 1500
+   */
   animationDuration?: AnimationDuration;
+  /**
+   * The type of easing function.
+   * @default 'ease'
+   */
   animationEasing?: AnimationTiming;
+  /**
+   * The value which can describe the line, usually calculated internally.
+   */
+  baseLine?: number | ReadonlyArray<NullableCoordinate>;
   baseValue?: BaseValue;
   className?: string;
 
+  /**
+   * Whether to connect a graph area across null points.
+   * @default false
+   */
   connectNulls?: boolean;
   data?: ChartData;
   /**
-   * dataKey is indeed required - some other graphical elements will use the combination of axes to
-   * imply the dataKey, but Area always needs an explicit dataKey.
+   * The key of a group of data which should be unique in an area chart.
    */
   dataKey: DataKey<any>;
+  /**
+   * If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element. If set a function, the function will be called to render customized dot.
+   * @default false
+   */
   dot?: DotType;
   hide?: boolean;
+  /**
+   * The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.
+   */
   id?: string;
 
+  /**
+   * If set false, animation of area will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * @default 'auto'
+   */
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
+  /**
+   * If false set, labels will not be drawn. If true set, labels will be drawn which have the props calculated internally. If object set, labels will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom label element. If set a function, the function will be called to render customized label.
+   * @default false
+   */
   label?: ImplicitLabelListType;
+  /**
+   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
+   * @default 'line'
+   */
   legendType?: LegendType;
 
+  /**
+   * The name of data. This option will be used in tooltip and legend to represent a area. If no value was set to this option, the value of dataKey will be used alternatively.
+   */
   name?: string | number;
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
 
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
+  /**
+   * The customized event handler of click on the area in this group
+   */
+  onClick?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mousedown on the area in this group
+   */
+  onMouseDown?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseenter on the area in this group
+   */
+  onMouseEnter?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseleave on the area in this group
+   */
+  onMouseLeave?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mousemove on the area in this group
+   */
+  onMouseMove?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseout on the area in this group
+   */
+  onMouseOut?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseover on the area in this group
+   */
+  onMouseOver?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseup on the area in this group
+   */
+  onMouseUp?: (event: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The stack id of area, when two areas have the same value axis and same stackId, then the two areas area stacked in order.
+   */
   stackId?: string | number;
+  /**
+   * The stroke color. If "none", no line will be drawn.
+   * @default '#3182bd'
+   */
+  stroke?: string;
+  /**
+   * The width of the stroke
+   * @default 1
+   */
+  strokeWidth?: string | number;
   tooltipType?: TooltipType;
+  /**
+   * The interpolation type of area. And customized interpolation function can be set to type.
+   * @default 'linear'
+   */
   type?: CurveType;
+  /**
+   * The unit of data. This option will be used in tooltip.
+   */
   unit?: string | number;
+  /**
+   * The id of x-axis which is corresponding to the data.
+   * @default 0
+   */
   xAxisId?: string | number;
+  /**
+   * The id of y-axis which is corresponding to the data.
+   * @default 0
+   */
   yAxisId?: string | number;
   /**
    * @since 3.4
@@ -715,6 +823,7 @@ export const defaultAreaProps = {
   isAnimationActive: 'auto',
   legendType: 'line',
   stroke: '#3182bd',
+  strokeWidth: 1,
   type: 'linear',
   label: false,
   xAxisId: 0,
