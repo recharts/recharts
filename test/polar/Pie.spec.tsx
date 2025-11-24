@@ -11,7 +11,6 @@ import {
   PieProps,
   PieSectorDataItem,
   Sector,
-  SectorProps,
   Tooltip,
 } from '../../src';
 import { generateMockData } from '../helper/generateMockData';
@@ -140,9 +139,7 @@ describe('<Pie />', () => {
       <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          shape={({ isActive, ...props }) => (
-            <Sector {...props} fill="#ff7300" className={isActive ? 'customized-active-shape' : undefined} />
-          )}
+          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -159,12 +156,14 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
-  test('Render customized active sector when activeShape is set to be a function', () => {
+  test('Render customized active sector when shape is set to be a function and isActive is used', () => {
     const { container, debug } = render(
       <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          shape={({ isActive, ...props }) => (
+            <Sector {...props} fill="#ff7300" className={isActive ? 'customized-active-shape' : undefined} />
+          )}
           cx={250}
           cy={250}
           innerRadius={0}

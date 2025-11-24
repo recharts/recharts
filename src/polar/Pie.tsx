@@ -534,7 +534,6 @@ function PieSectors(props: PieSectorsProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
-  // console.log(onClickFromContext);
 
   if (sectors == null || sectors.length === 0) {
     return null;
