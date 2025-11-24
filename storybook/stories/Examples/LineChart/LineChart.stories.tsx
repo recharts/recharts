@@ -59,24 +59,6 @@ export const Simple = {
   },
 };
 
-export const Tiny = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart {...args}>
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
-          <RechartsHookInspector />
-        </LineChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    width: 300,
-    height: 100,
-    data: pageData,
-  },
-};
-
 export const Dashed = {
   render: () => {
     return (
