@@ -6,7 +6,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'layout',
       type: "'horizontal' | 'vertical'",
-      defaultVal: "'horizontal'",
+      defaultVal: 'horizontal',
       isOptional: false,
       desc: {
         'en-US': 'The layout of bars in the chart.',
@@ -33,7 +33,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'syncMethod',
       type: "'index' | 'value' | function",
-      defaultVal: "'index'",
+      defaultVal: 'index',
       isOptional: true,
       desc: {
         'en-US':
@@ -43,7 +43,6 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -53,7 +52,6 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -63,7 +61,6 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -74,7 +71,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -85,7 +82,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'barCategoryGap',
       type: 'Percentage | Number',
-      defaultVal: "'10%'",
+      defaultVal: '10%',
       isOptional: false,
       desc: {
         'en-US': 'The gap between two bar categories, which can be a percent value or a fixed value.',
@@ -105,7 +102,6 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'barSize',
       type: 'Number | Percentage',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': `The width or height of each bar. If the barSize is not specified, the size of the
@@ -127,7 +123,6 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'maxBarSize',
       type: 'Number',
-      defaultVal: '',
       desc: {
         'en-US':
           'The maximum width of all the bars in a horizontal BarChart, or maximum height in a vertical BarChart.',
@@ -138,7 +133,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'stackOffset',
       type: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign'",
-      defaultVal: "'none'",
+      defaultVal: 'none',
       isOptional: false,
       desc: {
         'en-US': `The type of offset function used to generate the lower and upper
@@ -160,7 +155,7 @@ export const BarChartAPI: ApiDoc = {
     {
       name: 'reverseStackOrder',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: true,
       desc: {
         'en-US': `If false set, stacked items will be rendered left to right. If true set, stacked items

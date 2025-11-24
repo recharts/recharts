@@ -4,7 +4,7 @@ export const RadialBarAPI = {
     {
       name: 'cx',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       deprecated: true,
       desc: {
@@ -15,7 +15,7 @@ export const RadialBarAPI = {
     {
       name: 'cy',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       deprecated: true,
       desc: {
@@ -24,31 +24,9 @@ export const RadialBarAPI = {
       },
     },
     {
-      name: 'startAngle',
-      type: 'Number',
-      defaultVal: 180,
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US': 'The start angle of all the bars.',
-        'zh-CN': '柱条的起始角度。',
-      },
-    },
-    {
-      name: 'endAngle',
-      type: 'Number',
-      defaultVal: 0,
-      isOptional: false,
-      deprecated: true,
-      desc: {
-        'en-US': 'The end angle of all the bars.',
-        'zh-CN': '柱条的结束角度。',
-      },
-    },
-    {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'rect'",
+      defaultVal: 'rect',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -58,7 +36,7 @@ export const RadialBarAPI = {
     {
       name: 'label',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -70,7 +48,7 @@ export const RadialBarAPI = {
     {
       name: 'background',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':
@@ -82,7 +60,7 @@ export const RadialBarAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'null',
+      defaultVal: '[]',
       isOptional: false,
       desc: {
         'en-US': 'The source data which each element is an object.',
@@ -91,8 +69,8 @@ export const RadialBarAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of radial bars will be disabled.',
@@ -122,7 +100,7 @@ export const RadialBarAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',

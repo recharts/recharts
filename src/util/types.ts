@@ -32,6 +32,7 @@ import { isEventKey } from './excludeEventProps';
 import { DotPoint } from '../component/Dots';
 import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 import { BaseValue } from '../cartesian/Area';
+import { ImplicitLabelType } from '../component/Label';
 
 /**
  * Determines how values are stacked:
@@ -751,7 +752,7 @@ export interface BaseAxisProps {
   /** axis react component */
   AxisComp?: any;
   /** Needed to allow usage of the label prop on the X and Y axis */
-  label?: string | number | ReactElement | object;
+  label?: ImplicitLabelType;
   /** The HTML element's class name */
   className?: string;
 }
@@ -1081,8 +1082,17 @@ export interface ChartPointer {
 }
 
 export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
+  /**
+   * @defaultValue true
+   */
   accessibilityLayer?: boolean;
+  /**
+   * @defaultValue 10%
+   */
   barCategoryGap?: number | string;
+  /**
+   * @defaultValue 4
+   */
   barGap?: number | string;
   barSize?: number | string;
   baseValue?: BaseValue;
@@ -1094,19 +1104,19 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   desc?: string;
   height?: number | Percent;
   id?: string;
+  /**
+   * @defaultValue horizontal
+   */
   layout?: CartesianLayout;
+  /**
+   * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
+   */
   margin?: Partial<Margin>;
   maxBarSize?: number;
+  /**
+   * @defaultValue false
+   */
   reverseStackOrder?: boolean;
-  role?: string;
-  stackOffset?: StackOffsetType;
-  style?: CSSProperties;
-  syncId?: number | string;
-  syncMethod?: SyncMethod;
-  tabIndex?: number;
-  throttleDelay?: number;
-  title?: string;
-  width?: number | Percent;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
    * If false, then it renders the chart at the specified width and height and will stay that way
@@ -1117,6 +1127,21 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * @default false
    */
   responsive?: boolean;
+  role?: string;
+  /**
+   * @defaultValue none
+   */
+  stackOffset?: StackOffsetType;
+  style?: CSSProperties;
+  syncId?: number | string;
+  /**
+   * @defaultValue index
+   */
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  throttleDelay?: number;
+  title?: string;
+  width?: number | Percent;
 }
 
 export interface PolarChartProps extends Partial<ExternalMouseEvents> {

@@ -98,10 +98,16 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
 
 interface CurveProps {
   className?: string;
+  /**
+   * @defaultValue linear
+   */
   type?: CurveType;
   layout?: LayoutType;
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
   points?: ReadonlyArray<NullableCoordinate>;
+  /**
+   * @defaultValue false
+   */
   connectNulls?: boolean;
   path?: string;
   pathRef?: Ref<SVGPathElement>;

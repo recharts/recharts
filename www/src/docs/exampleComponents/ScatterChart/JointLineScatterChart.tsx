@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 // #region Sample data
 const data01 = [
@@ -18,7 +19,7 @@ const data02 = [
 ];
 
 // #endregion
-const JointLineScatterChart = () => {
+const JointLineScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   return (
     <ScatterChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
@@ -34,7 +35,7 @@ const JointLineScatterChart = () => {
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <ZAxis type="number" range={[100, 100]} />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
       <Legend />
       <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
       <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />

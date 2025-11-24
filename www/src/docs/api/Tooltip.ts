@@ -1,4 +1,6 @@
-export const TooltipAPI = {
+import { ApiDoc } from './types.ts';
+
+export const TooltipAPI: ApiDoc = {
   name: 'Tooltip',
   desc: {
     'en-US': 'Tooltip is rendered by html nodes.',
@@ -29,7 +31,7 @@ export const TooltipAPI = {
     {
       name: 'filterNull',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': "When an item of the payload has value null or undefined, this item won't be displayed.",
@@ -39,7 +41,7 @@ export const TooltipAPI = {
     {
       name: 'itemStyle',
       type: 'Object',
-      defaultVal: '{}',
+      defaultVal: {},
       isOptional: false,
       desc: {
         'en-US': 'The style of default tooltip content item which is a li element.',
@@ -56,7 +58,7 @@ export const TooltipAPI = {
     {
       name: 'wrapperStyle',
       type: 'Object',
-      defaultVal: '{}',
+      defaultVal: {},
       isOptional: false,
       desc: {
         'en-US': 'The style of tooltip wrapper which is a dom element.',
@@ -73,7 +75,7 @@ export const TooltipAPI = {
     {
       name: 'contentStyle',
       type: 'Object',
-      defaultVal: '{}',
+      defaultVal: {},
       isOptional: false,
       desc: {
         'en-US': 'The style of tooltip content which is a dom element.',
@@ -90,7 +92,7 @@ export const TooltipAPI = {
     {
       name: 'labelStyle',
       type: 'Object',
-      defaultVal: '{}',
+      defaultVal: {},
       isOptional: false,
       desc: {
         'en-US': 'The style of default tooltip label which is a p element.',
@@ -107,7 +109,7 @@ export const TooltipAPI = {
     {
       name: 'cursor',
       type: 'Boolean | Object | ReactElement',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -124,7 +126,7 @@ export const TooltipAPI = {
     {
       name: 'allowEscapeViewBox',
       type: 'Object',
-      defaultVal: '{ x: false, y: false }',
+      defaultVal: { x: false, y: false },
       isOptional: true,
       desc: {
         'en-US': 'This option allows the tooltip to extend beyond the viewBox of the chart itself.',
@@ -135,7 +137,6 @@ export const TooltipAPI = {
     {
       name: 'active',
       type: 'Boolean',
-      defaultVal: 'false',
       isOptional: false,
       desc: {
         'en-US':
@@ -147,7 +148,6 @@ export const TooltipAPI = {
     {
       name: 'position',
       type: 'Object',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'If this field is set, the tooltip position will be fixed and will not move anymore.',
@@ -158,7 +158,6 @@ export const TooltipAPI = {
     {
       name: 'content',
       type: 'ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -180,7 +179,6 @@ export const TooltipAPI = {
     {
       name: 'formatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -196,7 +194,6 @@ export const TooltipAPI = {
     {
       name: 'labelFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The formatter function of label in tooltip.',
@@ -206,7 +203,7 @@ export const TooltipAPI = {
     {
       name: 'itemSorter',
       type: 'Function',
-      defaultVal: '() => -1',
+      defaultVal: 'name',
       isOptional: false,
       desc: {
         'en-US': 'Sort function of payload',
@@ -216,7 +213,6 @@ export const TooltipAPI = {
     {
       name: 'shared',
       type: 'Boolean',
-      defaultVal: 'true',
       isOptional: true,
       desc: {
         'en-US': `If true, tooltip will appear on top of all bars on an axis tick. If false, tooltip will appear on individual bars. Currently only supported in BarChart and RadialBarChart.`,
@@ -224,8 +220,8 @@ export const TooltipAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of tooltip will be disabled.',
@@ -235,7 +231,7 @@ export const TooltipAPI = {
     {
       name: 'animationDuration',
       type: 'Number',
-      defaultVal: 1500,
+      defaultVal: 400,
       isOptional: false,
       desc: {
         'en-US': 'Specifies the duration of animation, the unit of this option is ms.',
@@ -245,7 +241,7 @@ export const TooltipAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',

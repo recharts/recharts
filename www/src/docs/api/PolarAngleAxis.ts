@@ -4,7 +4,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The key of a group of data which should be unique to show the meaning of angle axis.',
@@ -14,7 +13,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'cx',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of center.',
@@ -24,7 +22,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'cy',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of center.',
@@ -34,7 +31,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'radius',
       type: 'Percentage | Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US':
@@ -46,7 +42,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'axisLine',
       type: 'Bool | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -57,7 +53,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'axisLineType',
       type: 'String',
-      defaultVal: '"circle" | "polygon"',
+      defaultVal: 'polygon',
       isOptional: false,
       desc: {
         'en-US': 'The type of axis line.',
@@ -67,7 +63,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'tickLine',
       type: 'Bool | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -78,7 +74,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'tick',
       type: 'Bool | Object | ReactElement | Function',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -90,7 +86,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'ticks',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': "The array of every tick's value and angle.",
@@ -110,7 +105,6 @@ export const PolarAngleAxisAPI = {
     {
       name: 'tickFormatter',
       type: 'Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The function to formatting tick.',
@@ -120,7 +114,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'type',
       type: "'number' | 'category'",
-      defaultVal: "'category'",
+      defaultVal: 'category',
       isOptional: false,
       desc: {
         'en-US': 'The type of axis.',
@@ -130,7 +124,7 @@ export const PolarAngleAxisAPI = {
     {
       name: 'allowDuplicatedCategory',
       type: 'Boolean',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US': 'Allow the axis has duplicated categorys or not when the type of axis is "category".',

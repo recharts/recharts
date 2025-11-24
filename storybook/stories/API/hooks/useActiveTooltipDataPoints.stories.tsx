@@ -4,11 +4,11 @@ import { Area, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis,
 import { pageData } from '../../data';
 import { PageData } from '../../../../test/_data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { TooltipProps } from '../props/TooltipProps';
+import { TooltipArgTypes } from '../props/TooltipArgTypes';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: TooltipProps,
+  argTypes: TooltipArgTypes,
   title: 'API/hooks/useActiveTooltipDataPoints',
   component: Tooltip,
 };
@@ -34,5 +34,5 @@ export const UseActiveTooltipDataPoints = {
       </ResponsiveContainer>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(TooltipProps),
+  args: getStoryArgsFromArgsTypesObject(TooltipArgTypes),
 };

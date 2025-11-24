@@ -863,6 +863,6 @@ describe('readProject', () => {
   });
 
   it('should return none for default value of a prop without default', () => {
-    expect(reader.getDefaultValueOf('AreaChart', 'layout')).toEqual({ type: 'unreadable' });
+    expect(reader.getDefaultValueOf('AreaChart', 'id')).toEqual({ type: 'none' });
   });
 });

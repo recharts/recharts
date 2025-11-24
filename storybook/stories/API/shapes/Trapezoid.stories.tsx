@@ -2,7 +2,7 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Trapezoid } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
-import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { animationBegin, animationDuration, animationEasing } from '../props/AnimationProps';
 import {
   onAbort,
   onAbortCapture,
@@ -169,20 +169,43 @@ export default {
   argTypes: {
     upperWidth: {
       description: `Width of the upper horizontal side.`,
+      table: {
+        type: { summary: 'number' },
+        defaultValue: 0,
+      },
     },
     lowerWidth: {
       description: `Width of the lower horizontal side.`,
+      table: {
+        type: { summary: 'number' },
+        defaultValue: 0,
+      },
     },
     x: {
       description: `X-axis offset of the upper horizontal side relative to the lower horizontal side.`,
+      table: {
+        type: { summary: 'number' },
+        defaultValue: 0,
+      },
     },
     y: {
       description: `Y-axis offset of the upper horizontal side relative to the height.`,
+      table: {
+        type: { summary: 'number' },
+        defaultValue: 0,
+      },
     },
     animationBegin,
     animationDuration,
     animationEasing,
-    isUpdateAnimationActive: isAnimationActive,
+    isUpdateAnimationActive: {
+      description: 'If set false, animation of component will be disabled.',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean | "auto"' },
+        category: 'Animation',
+      },
+    },
     stroke: GeneralStyle.stroke,
     fill: GeneralStyle.fill,
     // Deprecated

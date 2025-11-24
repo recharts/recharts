@@ -27,27 +27,27 @@ test('MultipleYAxesScatterChart', async ({ mount }) => {
 });
 
 test('ScatterChartWithLabels', async ({ mount }) => {
-  const component = await mount(<ScatterChartWithLabels />);
+  const component = await mount(<ScatterChartWithLabels defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
 test('BubbleChart', async ({ mount }) => {
-  const component = await mount(<BubbleChart />);
+  const component = await mount(<BubbleChart defaultIndex="7" />);
   await expect(component).toHaveScreenshot();
 });
 
 test('JointLineScatterChart', async ({ mount }) => {
-  const component = await mount(<JointLineScatterChart />);
+  const component = await mount(<JointLineScatterChart defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
 test('ThreeDimScatterChart', async ({ mount }) => {
-  const component = await mount(<ThreeDimScatterChart />);
+  const component = await mount(<ThreeDimScatterChart defaultIndex="3" />);
   await expect(component).toHaveScreenshot();
 });
 
 test('SimpleScatterChart', async ({ mount }) => {
-  const component = await mount(<SimpleScatterChart />);
+  const component = await mount(<SimpleScatterChart defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
 

@@ -10,7 +10,7 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'layout',
       type: "'horizontal' | 'vertical'",
-      defaultVal: "'horizontal'",
+      defaultVal: 'horizontal',
       isOptional: false,
       desc: {
         'en-US': 'The layout of area in the chart.',
@@ -37,7 +37,7 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'syncMethod',
       type: "'index' | 'value' | function",
-      defaultVal: "'index'",
+      defaultVal: 'index',
       isOptional: true,
       desc: {
         'en-US':
@@ -47,7 +47,6 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -57,7 +56,6 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The height of chart container.',
@@ -67,7 +65,6 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -78,7 +75,7 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'margin',
       type: 'Object',
-      defaultVal: '{ top: 5, right: 5, bottom: 5, left: 5 }',
+      defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
         'en-US': 'The sizes of whitespace around the container.',
@@ -89,7 +86,7 @@ export const AreaChartAPI: ApiDoc = {
     {
       name: 'stackOffset',
       type: "'expand' | 'none' | 'wiggle' | 'silhouette'",
-      defaultVal: "'none'",
+      defaultVal: 'none',
       isOptional: false,
       desc: {
         'en-US':
@@ -110,8 +107,7 @@ export const AreaChartAPI: ApiDoc = {
     },
     {
       name: 'baseValue',
-      type: "Number | 'dataMin' | 'dataMax' | 'auto'",
-      defaultVal: 'auto',
+      type: "Number | 'dataMin' | 'dataMax'",
       isOptional: false,
       desc: {
         'en-US': 'The base value of area.',

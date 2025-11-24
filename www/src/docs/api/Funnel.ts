@@ -4,7 +4,6 @@ export const FunnelAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: 'undefined',
       isOptional: false,
       desc: {
         'en-US': 'The source data, in which each element is an object.',
@@ -15,7 +14,6 @@ export const FunnelAPI = {
     {
       name: 'dataKey',
       type: 'String | Number | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The key or getter of a group of data which should be unique in a LineChart.',
@@ -25,7 +23,7 @@ export const FunnelAPI = {
     {
       name: 'nameKey',
       type: 'String',
-      defaultVal: "'name'",
+      defaultVal: 'name',
       isOptional: false,
       desc: {
         'en-US': "The key of each sector's name.",
@@ -35,7 +33,7 @@ export const FunnelAPI = {
     {
       name: 'legendType',
       type: "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-      defaultVal: "'line'",
+      defaultVal: 'rect',
       isOptional: true,
       desc: {
         'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
@@ -45,7 +43,6 @@ export const FunnelAPI = {
     {
       name: 'activeShape',
       type: 'Object | ReactElement | Function | boolean',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': 'The customized shape to be rendered if shape is active via Tooltip, or active index prop is set.',
@@ -55,7 +52,6 @@ export const FunnelAPI = {
     {
       name: 'shape',
       type: 'Object | ReactElement | Function | boolean',
-      defaultVal: 'undefined',
       isOptional: true,
       desc: {
         'en-US': 'The customized shape to be rendered.',
@@ -64,8 +60,8 @@ export const FunnelAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
-      defaultVal: 'true in CSR, and false in SSR',
+      type: 'Boolean | "auto"',
+      defaultVal: 'auto',
       isOptional: false,
       desc: {
         'en-US': 'If set false, animation of line will be disabled.',
@@ -75,7 +71,7 @@ export const FunnelAPI = {
     {
       name: 'animationBegin',
       type: 'Number',
-      defaultVal: 0,
+      defaultVal: 400,
       isOptional: false,
       desc: {
         'en-US': 'Specifies when the animation should begin, the unit of this option is ms.',
@@ -95,7 +91,7 @@ export const FunnelAPI = {
     {
       name: 'animationEasing',
       type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-      defaultVal: "'ease'",
+      defaultVal: 'ease',
       isOptional: false,
       desc: {
         'en-US': 'The type of easing function.',
@@ -105,7 +101,6 @@ export const FunnelAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

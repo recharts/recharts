@@ -6,6 +6,7 @@ export const defaultPolarAngleAxisProps = {
   allowDuplicatedCategory: true, // if I set this to false then Tooltip synchronisation stops working in Radar, wtf
   angleAxisId: 0,
   axisLine: true,
+  axisLineType: 'polygon',
   cx: 0,
   cy: 0,
   orientation: 'outer',
