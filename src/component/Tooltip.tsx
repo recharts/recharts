@@ -151,7 +151,11 @@ export const defaultTooltipProps = {
   contentStyle: {},
   cursor: true,
   filterNull: true,
+<<<<<<< HEAD
   isAnimationActive: 'auto',
+=======
+  isAnimationActive: true,
+>>>>>>> c5eaccdd (fix: exclude generated es6 files from eslint)
   itemSorter: 'name',
   itemStyle: {},
   labelStyle: {},
