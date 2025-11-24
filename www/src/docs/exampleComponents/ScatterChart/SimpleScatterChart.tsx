@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 // #region Sample data
 const data = [
@@ -11,7 +12,7 @@ const data = [
 ];
 
 // #endregion
-const SimpleScatterChart = () => {
+const SimpleScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   return (
     <ScatterChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
@@ -26,8 +27,8 @@ const SimpleScatterChart = () => {
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-      <Scatter name="A school" data={data} fill="#8884d8" />
+      <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
+      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} fill="#8884d8" />
     </ScatterChart>
   );
 };

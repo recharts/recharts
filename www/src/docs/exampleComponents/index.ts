@@ -10,6 +10,7 @@ import { treeMapExamples, TreeMapNavExample } from './TreeMap';
 import { tooltipExamples } from './Tooltip';
 import { legendExamples as LegendExamples } from './Legend';
 import { responsiveContainerExamples as ResponsiveContainerExamples } from './ResponsiveContainer';
+import { xAxisExamples } from './XAxis';
 import { AllExamples } from './types';
 
 export const allExamples: AllExamples = {
@@ -25,4 +26,5 @@ export const allExamples: AllExamples = {
   Tooltip: { examples: tooltipExamples, order: 10, NavPreview: null },
   Legend: { examples: LegendExamples, order: 11, NavPreview: null },
   ResponsiveContainer: { examples: ResponsiveContainerExamples, order: 12, NavPreview: null },
+  XAxis: { examples: xAxisExamples, order: 13, NavPreview: null },
 };

@@ -1,5 +1,6 @@
 import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps } from 'recharts';
 import { ReactNode } from 'react';
+import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 // #region Sample data
 const data01 = [
@@ -127,8 +128,13 @@ const BubbleAxes = ({ day, showXTicks = false }: { day: string; showXTicks?: boo
   </>
 );
 
-const MyTooltip = () => (
-  <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+const MyTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => (
+  <Tooltip
+    cursor={{ strokeDasharray: '3 3' }}
+    wrapperStyle={{ zIndex: 100 }}
+    content={renderTooltip}
+    defaultIndex={defaultIndex}
+  />
 );
 
 const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} fill="#8884d8" />;
@@ -143,13 +149,13 @@ const DayChart = ({ children }: { children: ReactNode }) => (
   </ScatterChart>
 );
 
-const BubbleChart = () => {
+const BubbleChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   return (
     <div style={{ width: '100%', maxWidth: '900px' }}>
       <DayChart>
         <BubbleAxes day="Sunday" />
         <Bubbles data={data01} />
-        <MyTooltip />
+        <MyTooltip defaultIndex={defaultIndex} />
       </DayChart>
 
       <DayChart>
