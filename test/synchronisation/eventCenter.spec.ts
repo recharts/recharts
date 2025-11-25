@@ -24,6 +24,7 @@ describe('eventCenter', () => {
           x: 0,
           y: 0,
         },
+        graphicalItemId: undefined,
       }),
       symbol,
     );
@@ -43,6 +44,7 @@ describe('eventCenter', () => {
           x: 0,
           y: 0,
         },
+        graphicalItemId: undefined,
       }),
       symbol,
     );

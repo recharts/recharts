@@ -1540,12 +1540,14 @@ describe('Tooltip integration', () => {
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         itemInteraction: {
@@ -1554,12 +1556,14 @@ describe('Tooltip integration', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         keyboardInteraction: {
@@ -1567,6 +1571,7 @@ describe('Tooltip integration', () => {
           dataKey: undefined,
           index: null,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         settings: {
           active: undefined,
@@ -1582,6 +1587,7 @@ describe('Tooltip integration', () => {
           coordinate: undefined,
           label: undefined,
           sourceViewBox: undefined,
+          graphicalItemId: undefined,
         },
         tooltipItemPayloads: [
           {

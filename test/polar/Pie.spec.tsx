@@ -793,12 +793,14 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         });
         expectTooltipNotVisible(container);
@@ -818,6 +820,7 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
@@ -827,6 +830,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: undefined,
           },
         });
 
@@ -1038,12 +1042,14 @@ describe('<Pie />', () => {
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
         });
 
@@ -1059,12 +1065,14 @@ describe('<Pie />', () => {
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
             coordinate: { x: 122, y: 200 },
             dataKey: 'cy',
             index: '2',
+            graphicalItemId: undefined,
           },
         });
       });
@@ -1430,12 +1438,14 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         });
         expectTooltipPayload(container, '', ['A : 250']);
@@ -1456,6 +1466,7 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
@@ -1465,6 +1476,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: undefined,
           },
         });
 

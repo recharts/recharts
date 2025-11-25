@@ -491,6 +491,7 @@ describe('Tooltip synchronization', () => {
           index: '1',
           label: 'Page B',
           sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
+          graphicalItemId: undefined,
         }),
       );
       const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
@@ -534,6 +535,7 @@ describe('Tooltip synchronization', () => {
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
           sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
+          graphicalItemId: undefined,
         }),
       );
       const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
@@ -574,6 +576,7 @@ describe('Tooltip synchronization', () => {
           label: 'Page B',
           coordinate: { x: 0, y: 0 },
           sourceViewBox: { x: 0, y: 0, width: 100, height: 100 },
+          graphicalItemId: undefined,
         }),
       );
       const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
@@ -799,6 +802,7 @@ describe('Tooltip synchronization', () => {
         index: null,
         label: undefined,
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyA).toHaveBeenCalledTimes(3);
       expect(spyB).toHaveBeenLastCalledWith({
@@ -808,6 +812,7 @@ describe('Tooltip synchronization', () => {
         index: null,
         label: undefined,
         sourceViewBox: undefined,
+        graphicalItemId: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(1);
 
@@ -820,6 +825,7 @@ describe('Tooltip synchronization', () => {
         index: null,
         label: undefined,
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyA).toHaveBeenCalledTimes(3);
       // chart B is now receiving synchronisation
@@ -833,6 +839,7 @@ describe('Tooltip synchronization', () => {
         index: '2',
         label: 'Page C',
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -844,6 +851,7 @@ describe('Tooltip synchronization', () => {
         index: null,
         label: undefined,
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyA).toHaveBeenCalledTimes(3);
       // thanks to the active=true prop, the synchronised state remains on the chart B even though the active is on chart A
@@ -857,6 +865,7 @@ describe('Tooltip synchronization', () => {
         index: '2',
         label: 'Page C',
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(2);
 
@@ -872,6 +881,7 @@ describe('Tooltip synchronization', () => {
         index: '1',
         label: 'Page B',
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyA).toHaveBeenCalledTimes(4);
       expect(spyB).toHaveBeenLastCalledWith({
@@ -885,6 +895,7 @@ describe('Tooltip synchronization', () => {
         index: '2',
         label: 'Page C',
         sourceViewBox: viewBox,
+        graphicalItemId: undefined,
       });
       expect(spyB).toHaveBeenCalledTimes(3);
     });
