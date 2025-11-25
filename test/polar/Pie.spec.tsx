@@ -11,7 +11,6 @@ import {
   PieProps,
   PieSectorDataItem,
   Sector,
-  SectorProps,
   Tooltip,
 } from '../../src';
 import { generateMockData } from '../helper/generateMockData';
@@ -157,12 +156,14 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
-  test('Render customized active sector when activeShape is set to be a function', () => {
+  test('Render customized active sector when shape is set to be a function and isActive is used', () => {
     const { container, debug } = render(
       <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          shape={({ isActive, ...props }) => (
+            <Sector {...props} fill="#ff7300" className={isActive ? 'customized-active-shape' : undefined} />
+          )}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -353,56 +354,60 @@ describe('<Pie />', () => {
     showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(activeShape).toHaveBeenCalledTimes(1);
-    expect(activeShape).toHaveBeenCalledWith({
-      cornerRadius: undefined,
-      cx: 255,
-      cy: 255,
-      endAngle: 77.15833835039133,
-      [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
-      [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
-      fill: '#808080',
-      innerRadius: 0,
-      isActive: true,
-      label: 'Iter: 0',
-      maxRadius: 275.77164466275354,
-      midAngle: 38.579169175195666,
-      middleRadius: 100,
-      name: 0,
-      outerRadius: 200,
-      paddingAngle: 0,
-      payload: {
+    expect(activeShape).toHaveBeenCalledWith(
+      {
+        cornerRadius: undefined,
+        cx: 255,
+        cy: 255,
+        endAngle: 77.15833835039133,
+        [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
+        [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
+        fill: '#808080',
+        index: 0,
+        innerRadius: 0,
+        isActive: true,
         label: 'Iter: 0',
+        maxRadius: 275.77164466275354,
+        midAngle: 38.579169175195666,
+        middleRadius: 100,
+        name: 0,
+        outerRadius: 200,
+        paddingAngle: 0,
+        payload: {
+          label: 'Iter: 0',
+          x: 199,
+          y: 712,
+          z: 1643,
+        },
+        percent: 0.2143287176399759,
+        startAngle: 0,
+        stroke: '#fff',
+        tabIndex: -1,
+        tooltipPayload: [
+          {
+            dataKey: 'y',
+            name: 0,
+            payload: {
+              label: 'Iter: 0',
+              x: 199,
+              y: 712,
+              z: 1643,
+            },
+            type: undefined,
+            value: 712,
+          },
+        ],
+        tooltipPosition: {
+          x: 333.17472424710405,
+          y: 192.64045791629607,
+        },
+        value: 712,
         x: 199,
         y: 712,
         z: 1643,
       },
-      percent: 0.2143287176399759,
-      startAngle: 0,
-      stroke: '#fff',
-      tabIndex: -1,
-      tooltipPayload: [
-        {
-          dataKey: 'y',
-          name: 0,
-          payload: {
-            label: 'Iter: 0',
-            x: 199,
-            y: 712,
-            z: 1643,
-          },
-          type: undefined,
-          value: 712,
-        },
-      ],
-      tooltipPosition: {
-        x: 333.17472424710405,
-        y: 192.64045791629607,
-      },
-      value: 712,
-      x: 199,
-      y: 712,
-      z: 1643,
-    });
+      0,
+    );
   });
 
   test('when data is defined but dataKey does not match anything then activeShape is never called', () => {

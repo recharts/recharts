@@ -156,8 +156,8 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean };
-type PieShape = ReactNode | ((props: PieSectorShapeProps) => React.ReactElement);
+type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
+type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -568,7 +568,7 @@ function PieSectors(props: PieSectorsProps) {
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape option={shape ?? sectorOptions} shapeType="sector" isActive={isActive} {...sectorProps} />
+            <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
           </Layer>
         );
       })}
