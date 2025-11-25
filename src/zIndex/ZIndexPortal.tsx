@@ -15,7 +15,8 @@ function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: b
       dispatch(unregisterZIndexPortalId({ zIndex, isPanorama }));
     };
   }, [dispatch, zIndex, portalId, isPanorama]);
-  return <g id={portalId} />;
+  // these g elements should not be tabbable
+  return <g tabIndex={-1} id={portalId} />;
 }
 
 export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {
