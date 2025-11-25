@@ -65,6 +65,7 @@ export const combineTooltipInteractionState = (
       coordinate: undefined,
       dataKey: undefined,
       index: defaultIndex,
+      graphicalItemId: undefined,
     };
   }
 

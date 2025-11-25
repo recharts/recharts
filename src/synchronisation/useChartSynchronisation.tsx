@@ -103,6 +103,7 @@ function useTooltipSyncEventsListener() {
             index: null,
             label: undefined,
             sourceViewBox: undefined,
+            graphicalItemId: undefined,
           }),
         );
         return;
@@ -123,6 +124,7 @@ function useTooltipSyncEventsListener() {
         index: String(activeTick.index),
         label: action.payload.label,
         sourceViewBox: action.payload.sourceViewBox,
+        graphicalItemId: action.payload.graphicalItemId,
       });
       dispatch(syncAction);
     };
@@ -238,6 +240,7 @@ export function useTooltipChartSynchronisation(
       index: activeIndex,
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
       sourceViewBox: viewBox,
+      graphicalItemId: undefined,
     });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [

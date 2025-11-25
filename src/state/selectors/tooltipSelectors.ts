@@ -413,6 +413,17 @@ export const selectActiveTooltipDataKey: (state: RechartsRootState) => DataKey<a
   },
 );
 
+export const selectActiveTooltipGraphicalItemId: (state: RechartsRootState) => string | undefined = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteraction: TooltipInteractionState): string | undefined => {
+    if (!tooltipInteraction) {
+      return undefined;
+    }
+
+    return tooltipInteraction.graphicalItemId;
+  },
+);
+
 const selectTooltipPayloadConfigurations = createSelector(
   [selectTooltipState, selectTooltipEventType, selectTooltipTrigger, selectDefaultIndex],
   combineTooltipPayloadConfigurations,

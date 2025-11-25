@@ -144,6 +144,14 @@ export type TooltipInteractionState = {
    */
   dataKey: DataKey<any> | undefined;
   /**
+   * GraphicalItemId filter.
+   *
+   * In case of multiple graphical items with the same dataKey (e.g., multiple Pie charts),
+   * this identifies which specific graphical item is being interacted with.
+   * This is more reliable than coordinate matching for distinguishing between items.
+   */
+  graphicalItemId: string | undefined;
+  /**
    * The Coordinate where user last interacted with the chart. This needs saved so we can continue to render the tooltip at that point.
    * This is undefined on several occasions:
    * - before the user started interacting with the chart,
@@ -173,6 +181,7 @@ export const noInteraction: TooltipInteractionState = {
   active: false,
   index: null,
   dataKey: undefined,
+  graphicalItemId: undefined,
   coordinate: undefined,
 };
 
@@ -244,6 +253,7 @@ export const initialState: TooltipState = {
     label: undefined,
     coordinate: undefined,
     sourceViewBox: undefined,
+    graphicalItemId: undefined,
   },
   tooltipItemPayloads: [],
   settings: {
@@ -259,6 +269,7 @@ export type TooltipActionPayload = {
   activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate?: Coordinate | undefined;
+  activeGraphicalItemId?: string | undefined;
 };
 
 const tooltipSlice = createSlice({
@@ -299,6 +310,7 @@ const tooltipSlice = createSlice({
       state.itemInteraction.hover.active = true;
       state.itemInteraction.hover.index = action.payload.activeIndex;
       state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.hover.graphicalItemId = action.payload.activeGraphicalItemId;
       state.itemInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     mouseLeaveChart(state) {
@@ -321,6 +333,7 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.active = false;
       state.itemInteraction.click.index = action.payload.activeIndex;
       state.itemInteraction.click.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.click.graphicalItemId = action.payload.activeGraphicalItemId;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
