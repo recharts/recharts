@@ -202,7 +202,7 @@ describe('XAxis with different data types', () => {
         // by checking if it contains the year, month, and day in some form
         expect(textContent).toMatch(/2019/);
         expect(textContent).toMatch(/0[4-9]|10/); // day 04-10
-        expect(textContent).toMatch(/jul|07|7/i); // month (name or number)
+        expect(textContent).toMatch(/jul|07|\b7\b/i); // month (name or number)
       });
 
       // Verify positions
