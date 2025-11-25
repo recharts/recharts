@@ -3,7 +3,10 @@ import { MouseHandlerDataParam } from '../synchronisation/types';
 
 export type TooltipTrigger = 'hover' | 'click';
 
-export type CategoricalChartFunc = (nextState: MouseHandlerDataParam, event: SyntheticEvent) => void;
+export type CategoricalChartFunc = (
+  nextState: MouseHandlerDataParam,
+  event: SyntheticEvent
+) => void;
 
 export interface ExternalMouseEvents {
   onClick: CategoricalChartFunc;
@@ -17,4 +20,15 @@ export interface ExternalMouseEvents {
   onTouchStart: CategoricalChartFunc;
   onTouchMove: CategoricalChartFunc;
   onTouchEnd: CategoricalChartFunc;
+}
+
+export interface CursorProps {
+  cursor?:
+    | boolean
+    | React.ReactElement
+    | React.CSSProperties['cursor']
+    | {
+        strokeDasharray?: string | number;
+        stroke?: string;
+      };
 }
