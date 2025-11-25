@@ -354,25 +354,27 @@ describe('<Pie />', () => {
     showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(activeShape).toHaveBeenCalledTimes(1);
-    expect(activeShape).toHaveBeenCalledWith({
-      cornerRadius: undefined,
-      cx: 255,
-      cy: 255,
-      dataKey: 'y',
-      endAngle: 77.15833835039133,
-      [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
-      [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
-      fill: '#808080',
-      innerRadius: 0,
-      isActive: true,
-      label: 'Iter: 0',
-      maxRadius: 275.77164466275354,
-      midAngle: 38.579169175195666,
-      middleRadius: 100,
-      name: 0,
-      outerRadius: 200,
-      paddingAngle: 0,
-      payload: {
+    expect(activeShape).toHaveBeenCalledWith(
+      {
+        cornerRadius: undefined,
+        cx: 255,
+        cy: 255,
+        dataKey: 'y',
+        endAngle: 77.15833835039133,
+        [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
+        [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
+        fill: '#808080',
+        index: 0,
+        innerRadius: 0,
+        isActive: true,
+        label: 'Iter: 0',
+        maxRadius: 275.77164466275354,
+        midAngle: 38.579169175195666,
+        middleRadius: 100,
+        name: 0,
+        outerRadius: 200,
+        paddingAngle: 0,
+        payload: {
           label: 'Iter: 0',
           x: 199,
           y: 712,
