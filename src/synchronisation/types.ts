@@ -1,6 +1,8 @@
 import { Coordinate, DataKey, TickItem } from '../util/types';
 import { TooltipIndex } from '../state/tooltipSlice';
 
+export type ActiveLabel = string | number | undefined;
+
 export type MouseHandlerDataParam = {
   /**
    * Index of the active tick in the current chart. Only works with number-indexed one-dimensional data charts,
@@ -14,7 +16,10 @@ export type MouseHandlerDataParam = {
    * Exactly the same as activeTooltipIndex - this was also duplicated in recharts@2 so let's keep both properties for better backwards compatibility.
    */
   activeIndex: number | TooltipIndex | undefined;
-  activeLabel: string | undefined;
+  /**
+   * The category or domain value of the active tooltip entry.
+   */
+  activeLabel: ActiveLabel;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate: Coordinate | undefined;
 };

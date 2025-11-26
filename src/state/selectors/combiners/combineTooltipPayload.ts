@@ -11,6 +11,7 @@ import { DataKey, TooltipEventType } from '../../../util/types';
 import { findEntryInArray } from '../../../util/DataUtils';
 import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
 import { getSliced } from '../../../util/getSliced';
+import { ActiveLabel } from '../../../synchronisation/types';
 
 function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ChartData | undefined): unknown {
   /*
@@ -28,7 +29,7 @@ export const combineTooltipPayload = (
   activeIndex: TooltipIndex,
   chartDataState: ChartDataState,
   tooltipAxisDataKey: DataKey<any> | undefined,
-  activeLabel: string | undefined,
+  activeLabel: ActiveLabel,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
   tooltipEventType: TooltipEventType | undefined,
 ): TooltipPayload | undefined => {

@@ -13,7 +13,7 @@ import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
-import { MouseHandlerDataParam } from './types';
+import { ActiveLabel, MouseHandlerDataParam } from './types';
 import { noop } from '../util/DataUtils';
 
 function useTooltipSyncEventsListener() {
@@ -196,7 +196,7 @@ export function useTooltipChartSynchronisation(
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   activeCoordinate: ChartCoordinate | undefined,
-  activeLabel: string | number | undefined,
+  activeLabel: ActiveLabel,
   activeIndex: TooltipIndex | undefined,
   isTooltipActive: boolean,
 ) {
