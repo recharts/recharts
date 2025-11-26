@@ -35,8 +35,8 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import {
-  selectActiveTooltipCoordinate,
   selectActiveTooltipDataKey,
+  selectActiveTooltipGraphicalItemId,
   selectActiveTooltipIndex,
 } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
@@ -526,11 +526,11 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
-  const activeCoordinate = useAppSelector(selectActiveTooltipCoordinate);
+  const activeGraphicalItemId = useAppSelector(selectActiveTooltipGraphicalItemId);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -538,9 +538,9 @@ function PieSectors(props: PieSectorsProps) {
     ...restOfAllOtherProps
   } = allOtherPieProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey, id);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey, id);
 
   if (sectors == null || sectors.length === 0) {
     return null;
@@ -552,18 +552,13 @@ function PieSectors(props: PieSectorsProps) {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
 
         // For Pie charts, when multiple Pies share the same dataKey, we need to ensure only the hovered Pie's sector is active.
-        // We do this by checking if the active tooltip coordinate matches this sector's tooltip position.
-        // This works because each sector has a unique tooltip position based on its midAngle and middleRadius.
-        const coordinateMatches =
-          activeCoordinate &&
-          entry.tooltipPosition &&
-          Math.abs(activeCoordinate.x - entry.tooltipPosition.x) < 0.01 &&
-          Math.abs(activeCoordinate.y - entry.tooltipPosition.y) < 0.01;
+        // We do this by checking if the active graphical item ID matches this Pie's ID.
+        const graphicalItemMatches = activeGraphicalItemId == null || activeGraphicalItemId === id;
 
         const isActive =
           String(i) === activeIndex &&
           (activeDataKey == null || allOtherPieProps.dataKey === activeDataKey) &&
-          coordinateMatches;
+          graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
         const sectorProps = {

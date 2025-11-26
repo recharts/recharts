@@ -832,7 +832,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
-            graphicalItemId: undefined,
+            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
           },
         });
 
@@ -1478,7 +1478,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
-            graphicalItemId: undefined,
+            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
           },
         });
 
