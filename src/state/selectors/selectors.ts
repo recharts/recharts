@@ -38,6 +38,7 @@ import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateF
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import {
   calculateActiveTickIndex,
@@ -112,6 +113,27 @@ export const selectTooltipDataKey = (
     return tooltipState.itemInteraction.hover.dataKey;
   }
   return tooltipState.itemInteraction.click.dataKey;
+};
+
+export const selectTooltipGraphicalItemId = (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType | undefined,
+  trigger: TooltipTrigger,
+): GraphicalItemId | undefined => {
+  if (tooltipEventType == null) {
+    return undefined;
+  }
+  const tooltipState = selectTooltipState(state);
+  if (tooltipEventType === 'axis') {
+    if (trigger === 'hover') {
+      return tooltipState.axisInteraction.hover.graphicalItemId;
+    }
+    return tooltipState.axisInteraction.click.graphicalItemId;
+  }
+  if (trigger === 'hover') {
+    return tooltipState.itemInteraction.hover.graphicalItemId;
+  }
+  return tooltipState.itemInteraction.click.graphicalItemId;
 };
 
 export const selectTooltipPayloadConfigurations: (

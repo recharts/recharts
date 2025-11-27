@@ -1451,6 +1451,7 @@ describe('Tooltip integration', () => {
         {
           color: undefined,
           dataKey: 'uv',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'uv',
@@ -1470,6 +1471,7 @@ describe('Tooltip integration', () => {
         {
           color: undefined,
           dataKey: 'pv',
+          graphicalItemId: expect.any(String),
           fill: undefined,
           hide: false,
           name: 'pv',
@@ -1540,12 +1542,14 @@ describe('Tooltip integration', () => {
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         itemInteraction: {
@@ -1554,12 +1558,14 @@ describe('Tooltip integration', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         keyboardInteraction: {
@@ -1567,6 +1573,7 @@ describe('Tooltip integration', () => {
           dataKey: undefined,
           index: null,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         settings: {
           active: undefined,
@@ -1582,6 +1589,7 @@ describe('Tooltip integration', () => {
           coordinate: undefined,
           label: undefined,
           sourceViewBox: undefined,
+          graphicalItemId: undefined,
         },
         tooltipItemPayloads: [
           {
@@ -1589,6 +1597,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1602,6 +1611,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1617,6 +1627,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1630,6 +1641,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1645,6 +1657,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1658,6 +1671,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1673,6 +1687,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1686,6 +1701,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1701,6 +1717,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1714,6 +1731,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1729,6 +1747,7 @@ describe('Tooltip integration', () => {
               [
                 {
                   dataKey: 'uv',
+                  graphicalItemId: expect.any(String),
                   name: 'uv',
                   payload: {
                     amt: 2400,
@@ -1742,6 +1761,7 @@ describe('Tooltip integration', () => {
                 },
                 {
                   dataKey: 'pv',
+                  graphicalItemId: expect.any(String),
                   name: 'pv',
                   payload: {
                     amt: 2400,
@@ -1755,6 +1775,7 @@ describe('Tooltip integration', () => {
                 },
               ],
             ],
+            graphicalItemId: expect.any(String),
             positions: [
               {
                 x: 67.5,
@@ -1808,6 +1829,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1821,6 +1843,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1836,6 +1859,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1849,6 +1873,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1864,6 +1889,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1877,6 +1903,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1892,6 +1919,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1905,6 +1933,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1920,6 +1949,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1933,6 +1963,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1948,6 +1979,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -1961,6 +1993,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -1974,6 +2007,7 @@ describe('Tooltip integration', () => {
               },
             ],
           ],
+          graphicalItemId: expect.any(String),
           positions: [
             {
               x: 67.5,
@@ -2028,6 +2062,7 @@ describe('Tooltip integration', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', '0'));
       const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         {
+          graphicalItemId: expect.any(String),
           positions: [
             {
               x: 67.5,
@@ -2058,6 +2093,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2071,6 +2107,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2086,6 +2123,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2099,6 +2137,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2114,6 +2153,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2127,6 +2167,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2142,6 +2183,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2155,6 +2197,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2170,6 +2213,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2183,6 +2227,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2198,6 +2243,7 @@ describe('Tooltip integration', () => {
             [
               {
                 dataKey: 'uv',
+                graphicalItemId: expect.any(String),
                 name: 'uv',
                 payload: {
                   amt: 2400,
@@ -2211,6 +2257,7 @@ describe('Tooltip integration', () => {
               },
               {
                 dataKey: 'pv',
+                graphicalItemId: expect.any(String),
                 name: 'pv',
                 payload: {
                   amt: 2400,
@@ -2312,6 +2359,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: 'stature',
               payload: {
                 x: 100,
@@ -2324,6 +2372,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: 'weight',
               payload: {
                 x: 100,
@@ -2338,6 +2387,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: 'stature',
               payload: {
                 x: 100,
@@ -2350,6 +2400,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: 'weight',
               payload: {
                 x: 100,
@@ -2364,6 +2415,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
           [
             {
               dataKey: 'x',
+              graphicalItemId: expect.any(String),
               name: 'stature',
               payload: {
                 x: 100,
@@ -2376,6 +2428,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
             },
             {
               dataKey: 'y',
+              graphicalItemId: expect.any(String),
               name: 'weight',
               payload: {
                 x: 100,
@@ -2388,6 +2441,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
             },
           ],
         ],
+        graphicalItemId: expect.any(String),
         positions: [
           {
             x: 280,
@@ -2440,6 +2494,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
         color: undefined,
         dataKey: 'x',
         fill: undefined,
+        graphicalItemId: expect.any(String),
         hide: false,
         name: 'stature',
         nameKey: undefined,
@@ -2458,6 +2513,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
         color: undefined,
         dataKey: 'y',
         fill: undefined,
+        graphicalItemId: expect.any(String),
         hide: false,
         name: 'weight',
         nameKey: undefined,

@@ -50,6 +50,7 @@ describe('useTooltipChartSynchronisation', () => {
           active: false,
           coordinate: undefined,
           dataKey: undefined,
+          graphicalItemId: undefined,
           index: null,
           label: undefined,
           sourceViewBox: viewBox,
@@ -72,6 +73,7 @@ describe('useTooltipChartSynchronisation', () => {
             y: 200,
           },
           dataKey: undefined, // unsure if this is used for anything at all
+          graphicalItemId: undefined,
           index: '1',
           label: '1',
           sourceViewBox: viewBox,
@@ -90,6 +92,7 @@ describe('useTooltipChartSynchronisation', () => {
             y: 200,
           },
           dataKey: undefined,
+          graphicalItemId: undefined,
           index: null,
           label: undefined,
           sourceViewBox: viewBox,
@@ -123,6 +126,7 @@ describe('useTooltipChartSynchronisation', () => {
             y: 200,
           },
           dataKey: undefined,
+          graphicalItemId: undefined,
           index: '1',
           label: 'Page B',
           sourceViewBox: {
