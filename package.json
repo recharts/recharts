@@ -180,7 +180,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=18"
   },
   "license": "MIT"
 }
