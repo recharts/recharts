@@ -53,6 +53,7 @@ describe('useTooltipChartSynchronisation', () => {
           index: null,
           label: undefined,
           sourceViewBox: viewBox,
+          graphicalItemId: undefined,
         }),
         expect.any(Symbol),
       );
@@ -75,6 +76,7 @@ describe('useTooltipChartSynchronisation', () => {
           index: '1',
           label: '1',
           sourceViewBox: viewBox,
+          graphicalItemId: undefined,
         }),
         expect.any(Symbol),
       );
@@ -93,6 +95,7 @@ describe('useTooltipChartSynchronisation', () => {
           index: null,
           label: undefined,
           sourceViewBox: viewBox,
+          graphicalItemId: undefined,
         }),
         expect.any(Symbol),
       );
@@ -131,6 +134,7 @@ describe('useTooltipChartSynchronisation', () => {
             x: 5,
             y: 5,
           },
+          graphicalItemId: undefined,
         }),
         expect.any(Symbol),
       );

@@ -1664,6 +1664,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             },
             dataKey: 'x',
             index: '0',
+            graphicalItemId: undefined,
           },
         },
         keyboardInteraction: noInteraction,
