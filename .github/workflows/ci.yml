@@ -15,7 +15,7 @@ on:
       - main
 
 env:
-  NODE_VERSION: 20.x
+  NODE_VERSION: 24.x
   PACKED_ARTIFACT_NAME: 'recharts-snapshot.tgz'
 
 jobs:

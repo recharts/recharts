@@ -19,7 +19,7 @@ Recharts is a React-based charting library built with React and D3. The main pur
 
 The environment is pre-configured via `.github/workflows/copilot-setup-steps.yml` which:
 
-- Sets up Node.js 20
+- Sets up Node.js 24 or higher
 - Installs npm dependencies for both the main project and the website
 
 **CRITICAL**: Always unset `NODE_ENV` environment variable when working in this project. See https://github.com/github/copilot-cli/issues/151
