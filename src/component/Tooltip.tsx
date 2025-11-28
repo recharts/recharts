@@ -106,25 +106,8 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    */
   cursor?: CursorDefinition;
   defaultIndex?: number | TooltipIndex;
-  /**
-   * @defaultValue true
-   */
-  filterNull?: boolean;
-  /**
-   * If true, then Tooltip will information about hidden series (defaults to false).
-   * Interacting with the hide property of Area, Bar, Line, Scatter.
-   *
-   * @defaultValue false
-   */
-  includeHidden?: boolean | undefined;
-  /**
-   * @defaultValue auto
-   */
-  isAnimationActive?: boolean | 'auto';
-  /**
-   * @defaultValue 10
-   */
-  offset?: number;
+  isAnimationActive?: boolean;
+  offset?: number | { x: number; y: number };
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
   /**
    * If portal is defined, then Tooltip will use this element as a target
@@ -168,7 +151,11 @@ export const defaultTooltipProps = {
   contentStyle: {},
   cursor: true,
   filterNull: true,
+<<<<<<< HEAD
   isAnimationActive: 'auto',
+=======
+  isAnimationActive: true,
+>>>>>>> c5eaccdd (fix: exclude generated es6 files from eslint)
   itemSorter: 'name',
   itemStyle: {},
   labelStyle: {},

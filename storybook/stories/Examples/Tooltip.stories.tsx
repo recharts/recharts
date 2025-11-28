@@ -578,3 +578,23 @@ export const TooltipWithNegativeOffset = {
     },
   },
 };
+
+export const TooltipWithObjectOffset = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+          <Tooltip {...args} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    offset: { x: 30, y: 10 },
+  },
+};

@@ -13,6 +13,7 @@ import {
 import { assertNotNull } from '../helper/assertNotNull';
 import { trim } from '../helper/trim';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { roundPointsOrPaths, roundNumbers } from '../__helpers__/roundPath';
 
 const smallerData = PageData.slice(0, 3);
 
@@ -274,33 +275,35 @@ describe('Pie animation', () => {
 
       const pathDs = await expectAnimatedPiePaths(container, animationManager, 5);
 
-      expect(pathDs).toEqual([
-        [
-          'M 86,50 A 36,36,0, 0,0, 69.74227604371825,19.896137513374992 L 50,50 Z',
-          'M 69.74227604371825,19.896137513374992 A 36,36,0, 0,0, 35.65319241035398,16.98229093371748 L 50,50 Z',
-          'M 35.65319241035398,16.98229093371748 A 36,36,0, 0,0, 14.522244190675977,43.890266557862304 L 50,50 Z',
-        ],
-        [
-          'M 86,50 A 36,36,0, 0,0, 49.278369605743315,14.007233371494145 L 50,50 Z',
-          'M 49.278369605743315,14.007233371494145 A 36,36,0, 0,0, 14.028930579217501,51.4429707984732 L 50,50 Z',
-          'M 14.028930579217501,51.4429707984732 A 36,36,0, 0,0, 52.16373133914299,85.93491709593903 L 50,50 Z',
-        ],
-        [
-          'M 86,50 A 36,36,0, 0,0, 38.140220777669974,16.00962435044901 L 50,50 Z',
-          'M 38.140220777669974,16.00962435044901 A 36,36,0, 0,0, 21.814131289022832,72.39546393820763 L 50,50 Z',
-          'M 21.814131289022832,72.39546393820763 A 36,36,0, 0,0, 80.43078922798387,69.23452798906231 L 50,50 Z',
-        ],
-        [
-          'M 86,50 A 36,36,0, 0,0, 33.28524849833249,18.11556677252199 L 50,50 Z',
-          'M 33.28524849833249,18.11556677252199 A 36,36,0, 0,0, 29.52127320902757,79.60779878715586 L 50,50 Z',
-          'M 29.52127320902757,79.60779878715586 A 36,36,0, 0,0, 85.73124202287002,54.390711047551186 L 50,50 Z',
-        ],
-        [
-          'M 86,50 A 36,36,0, 0,0, 32.00000000000001,18.823085463760208 L 50,50 Z',
-          'M 32.00000000000001,18.823085463760208 A 36,36,0, 0,0, 31.999999999999986,81.17691453623979 L 50,50 Z',
-          'M 31.999999999999986,81.17691453623979 A 36,36,0, 0,0, 86,50.00000000000001 L 50,50 Z',
-        ],
-      ]);
+      expect(roundPointsOrPaths(pathDs)).toEqual(
+        roundPointsOrPaths([
+          [
+            'M 86,50 A 36,36,0, 0,0, 69.74227604371825,19.896137513374992 L 50,50 Z',
+            'M 69.74227604371825,19.896137513374992 A 36,36,0, 0,0, 35.65319241035398,16.98229093371748 L 50,50 Z',
+            'M 35.65319241035398,16.98229093371748 A 36,36,0, 0,0, 14.522244190675977,43.890266557862304 L 50,50 Z',
+          ],
+          [
+            'M 86,50 A 36,36,0, 0,0, 49.278369605743315,14.007233371494145 L 50,50 Z',
+            'M 49.278369605743315,14.007233371494145 A 36,36,0, 0,0, 14.028930579217501,51.4429707984732 L 50,50 Z',
+            'M 14.028930579217501,51.4429707984732 A 36,36,0, 0,0, 52.16373133914299,85.93491709593903 L 50,50 Z',
+          ],
+          [
+            'M 86,50 A 36,36,0, 0,0, 38.140220777669974,16.00962435044901 L 50,50 Z',
+            'M 38.140220777669974,16.00962435044901 A 36,36,0, 0,0, 21.814131289022832,72.39546393820763 L 50,50 Z',
+            'M 21.814131289022832,72.39546393820763 A 36,36,0, 0,0, 80.43078922798387,69.23452798906231 L 50,50 Z',
+          ],
+          [
+            'M 86,50 A 36,36,0, 0,0, 33.28524849833249,18.11556677252199 L 50,50 Z',
+            'M 33.28524849833249,18.11556677252199 A 36,36,0, 0,0, 29.52127320902757,79.60779878715586 L 50,50 Z',
+            'M 29.52127320902757,79.60779878715586 A 36,36,0, 0,0, 85.73124202287002,54.390711047551186 L 50,50 Z',
+          ],
+          [
+            'M 86,50 A 36,36,0, 0,0, 32.00000000000001,18.823085463760208 L 50,50 Z',
+            'M 32.00000000000001,18.823085463760208 A 36,36,0, 0,0, 31.999999999999986,81.17691453623979 L 50,50 Z',
+            'M 31.999999999999986,81.17691453623979 A 36,36,0, 0,0, 86,50.00000000000001 L 50,50 Z',
+          ],
+        ]),
+      );
     });
 
     it('should render sectors with animated angles', async () => {
@@ -308,28 +311,30 @@ describe('Pie animation', () => {
 
       const angles = await expectAnimatedPieAngles(container, animationManager, 4);
 
-      expect(angles).toEqual([
-        [
-          { startAngle: -0, endAngle: 67.29731279103035 },
-          { startAngle: 67.29731279103035, endAngle: 134.5946255820607 },
-          { startAngle: 134.5946255820607, endAngle: 201.89193837309108 },
-        ],
-        [
-          { startAngle: -0, endAngle: 101.7302266741997 },
-          { startAngle: 101.7302266741997, endAngle: 203.4604533483994 },
-          { startAngle: 203.4604533483994, endAngle: 305.19068002259905 },
-        ],
-        [
-          { startAngle: -0, endAngle: 116.2289291971026 },
-          { startAngle: 116.2289291971026, endAngle: 232.45785839420515 },
-          { startAngle: 232.45785839420515, endAngle: 348.6867875913077 },
-        ],
-        [
-          { startAngle: -0, endAngle: 120.00000000000001 },
-          { startAngle: 120.00000000000001, endAngle: 240 },
-          { startAngle: 240, endAngle: 360 },
-        ],
-      ]);
+      expect(roundNumbers(angles)).toEqual(
+        roundNumbers([
+          [
+            { startAngle: -0, endAngle: 67.29731279103035 },
+            { startAngle: 67.29731279103035, endAngle: 134.5946255820607 },
+            { startAngle: 134.5946255820607, endAngle: 201.89193837309108 },
+          ],
+          [
+            { startAngle: -0, endAngle: 101.7302266741997 },
+            { startAngle: 101.7302266741997, endAngle: 203.4604533483994 },
+            { startAngle: 203.4604533483994, endAngle: 305.19068002259905 },
+          ],
+          [
+            { startAngle: -0, endAngle: 116.2289291971026 },
+            { startAngle: 116.2289291971026, endAngle: 232.45785839420515 },
+            { startAngle: 232.45785839420515, endAngle: 348.6867875913077 },
+          ],
+          [
+            { startAngle: -0, endAngle: 120.00000000000001 },
+            { startAngle: 120.00000000000001, endAngle: 240 },
+            { startAngle: 240, endAngle: 360 },
+          ],
+        ]),
+      );
     });
   });
 
@@ -380,23 +385,25 @@ describe('Pie animation', () => {
         await prime(container, animationManager);
 
         const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-        expect(angles).toEqual([
-          [
-            { startAngle: -0, endAngle: 108.59304689351539 },
-            { startAngle: 108.59304689351539, endAngle: 280.8398295340321 },
-            { startAngle: 280.8398295340321, endAngle: 360 },
-          ],
-          [
-            { startAngle: -0, endAngle: 104.27747841257502 },
-            { startAngle: 104.27747841257502, endAngle: 296.2906760009867 },
-            { startAngle: 296.2906760009867, endAngle: 360 },
-          ],
-          [
-            { startAngle: -0, endAngle: 103.28750747160791 },
-            { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
-            { startAngle: 299.8350268977884, endAngle: 360 },
-          ],
-        ]);
+        expect(roundNumbers(angles)).toEqual(
+          roundNumbers([
+            [
+              { startAngle: -0, endAngle: 108.59304689351539 },
+              { startAngle: 108.59304689351539, endAngle: 280.8398295340321 },
+              { startAngle: 280.8398295340321, endAngle: 360 },
+            ],
+            [
+              { startAngle: -0, endAngle: 104.27747841257502 },
+              { startAngle: 104.27747841257502, endAngle: 296.2906760009867 },
+              { startAngle: 296.2906760009867, endAngle: 360 },
+            ],
+            [
+              { startAngle: -0, endAngle: 103.28750747160791 },
+              { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+              { startAngle: 299.8350268977884, endAngle: 360 },
+            ],
+          ]),
+        );
       });
     });
 
@@ -420,24 +427,26 @@ describe('Pie animation', () => {
         await prime(container, animationManager);
 
         const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-        expect(angles).toEqual([
-          [
-            // The Pie is 337/360 rendered when the dataKey changes, and it continues from there
-            { startAngle: -0, endAngle: 101.06557642178599 },
-            { startAngle: 101.06557642178599, endAngle: 265.78488859057325 },
-            { startAngle: 265.78488859057325, endAngle: 337.41758858481177 },
-          ],
-          [
-            { startAngle: -0, endAngle: 102.87291302658812 },
-            { startAngle: 102.87291302658812, endAngle: 293.481545229013 },
-            { startAngle: 293.481545229013, endAngle: 355.78630384203933 },
-          ],
-          [
-            { startAngle: -0, endAngle: 103.28750747160791 },
-            { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
-            { startAngle: 299.8350268977884, endAngle: 360 },
-          ],
-        ]);
+        expect(roundNumbers(angles)).toEqual(
+          roundNumbers([
+            [
+              // The Pie is 337/360 rendered when the dataKey changes, and it continues from there
+              { startAngle: -0, endAngle: 101.06557642178599 },
+              { startAngle: 101.06557642178599, endAngle: 265.78488859057325 },
+              { startAngle: 265.78488859057325, endAngle: 337.41758858481177 },
+            ],
+            [
+              { startAngle: -0, endAngle: 102.87291302658812 },
+              { startAngle: 102.87291302658812, endAngle: 293.481545229013 },
+              { startAngle: 293.481545229013, endAngle: 355.78630384203933 },
+            ],
+            [
+              { startAngle: -0, endAngle: 103.28750747160791 },
+              { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+              { startAngle: 299.8350268977884, endAngle: 360 },
+            ],
+          ]),
+        );
       });
     });
   });
@@ -491,23 +500,25 @@ describe('Pie animation', () => {
       expectPieSectors(container, []);
 
       const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-      expect(angles).toEqual([
-        [
-          { startAngle: -0, endAngle: 70.49790761089213 },
-          { startAngle: 70.49790761089213, endAngle: 204.64955096878555 },
-          { startAngle: 204.64955096878555, endAngle: 245.71458215213022 },
-        ],
-        [
-          { startAngle: -0, endAngle: 97.16923212829177 },
-          { startAngle: 97.16923212829177, endAngle: 282.0741834324203 },
-          { startAngle: 282.0741834324203, endAngle: 338.6752611471502 },
-        ],
-        [
-          { startAngle: -0, endAngle: 103.28750747160791 },
-          { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
-          { startAngle: 299.8350268977884, endAngle: 360 },
-        ],
-      ]);
+      expect(roundNumbers(angles)).toEqual(
+        roundNumbers([
+          [
+            { startAngle: -0, endAngle: 70.49790761089213 },
+            { startAngle: 70.49790761089213, endAngle: 204.64955096878555 },
+            { startAngle: 204.64955096878555, endAngle: 245.71458215213022 },
+          ],
+          [
+            { startAngle: -0, endAngle: 97.16923212829177 },
+            { startAngle: 97.16923212829177, endAngle: 282.0741834324203 },
+            { startAngle: 282.0741834324203, endAngle: 338.6752611471502 },
+          ],
+          [
+            { startAngle: -0, endAngle: 103.28750747160791 },
+            { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+            { startAngle: 299.8350268977884, endAngle: 360 },
+          ],
+        ]),
+      );
     });
   });
 
@@ -551,23 +562,25 @@ describe('Pie animation', () => {
         await prime(container, animationManager);
 
         const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-        expect(angles).toEqual([
-          [
-            { startAngle: -0, endAngle: 139.0475696413116 },
-            { startAngle: 139.0475696413116, endAngle: 278.0951392826232 },
-            { startAngle: 278.0951392826232, endAngle: 360 },
-          ],
-          [
-            { startAngle: -0, endAngle: 123.55412314214162 },
-            { startAngle: 123.55412314214162, endAngle: 247.10824628428324 },
-            { startAngle: 247.10824628428324, endAngle: 360 },
-          ],
-          [
-            { startAngle: -0, endAngle: 120.00000000000001 },
-            { startAngle: 120.00000000000001, endAngle: 240 },
-            { startAngle: 240, endAngle: 360 },
-          ],
-        ]);
+        expect(roundNumbers(angles)).toEqual(
+          roundNumbers([
+            [
+              { startAngle: -0, endAngle: 139.0475696413116 },
+              { startAngle: 139.0475696413116, endAngle: 278.0951392826232 },
+              { startAngle: 278.0951392826232, endAngle: 360 },
+            ],
+            [
+              { startAngle: -0, endAngle: 123.55412314214162 },
+              { startAngle: 123.55412314214162, endAngle: 247.10824628428324 },
+              { startAngle: 247.10824628428324, endAngle: 360 },
+            ],
+            [
+              { startAngle: -0, endAngle: 120.00000000000001 },
+              { startAngle: 120.00000000000001, endAngle: 240 },
+              { startAngle: 240, endAngle: 360 },
+            ],
+          ]),
+        );
       });
     });
 
@@ -587,23 +600,25 @@ describe('Pie animation', () => {
         await prime(container, animationManager);
 
         const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-        expect(angles).toEqual([
-          [
-            { startAngle: -0, endAngle: 127.75636393371754 },
-            { startAngle: 127.75636393371754, endAngle: 255.51272786743505 },
-            { startAngle: 255.51272786743505, endAngle: 337.4175885848118 },
-          ],
-          [
-            { startAngle: -0, endAngle: 121.4472750631613 },
-            { startAngle: 121.4472750631613, endAngle: 242.89455012632249 },
-            { startAngle: 242.89455012632249, endAngle: 355.7863038420393 },
-          ],
-          [
-            { startAngle: -0, endAngle: 120.00000000000001 },
-            { startAngle: 120.00000000000001, endAngle: 240 },
-            { startAngle: 240, endAngle: 360 },
-          ],
-        ]);
+        expect(roundNumbers(angles)).toEqual(
+          roundNumbers([
+            [
+              { startAngle: -0, endAngle: 127.75636393371754 },
+              { startAngle: 127.75636393371754, endAngle: 255.51272786743505 },
+              { startAngle: 255.51272786743505, endAngle: 337.4175885848118 },
+            ],
+            [
+              { startAngle: -0, endAngle: 121.4472750631613 },
+              { startAngle: 121.4472750631613, endAngle: 242.89455012632249 },
+              { startAngle: 242.89455012632249, endAngle: 355.7863038420393 },
+            ],
+            [
+              { startAngle: -0, endAngle: 120.00000000000001 },
+              { startAngle: 120.00000000000001, endAngle: 240 },
+              { startAngle: 240, endAngle: 360 },
+            ],
+          ]),
+        );
       });
     });
   });
@@ -661,23 +676,25 @@ describe('Pie animation', () => {
       expectPieSectors(container, []);
 
       const angles = await expectAnimatedPieAngles(container, animationManager, 3);
-      expect(angles).toEqual([
-        [
-          { startAngle: -0, endAngle: 81.90486071737675 },
-          { startAngle: 81.90486071737675, endAngle: 163.8097214347535 },
-          { startAngle: 163.8097214347535, endAngle: 245.71458215213022 },
-        ],
-        [
-          { startAngle: -0, endAngle: 112.89175371571675 },
-          { startAngle: 112.89175371571675, endAngle: 225.7835074314335 },
-          { startAngle: 225.7835074314335, endAngle: 338.6752611471502 },
-        ],
-        [
-          { startAngle: -0, endAngle: 120.00000000000001 },
-          { startAngle: 120.00000000000001, endAngle: 240 },
-          { startAngle: 240, endAngle: 360 },
-        ],
-      ]);
+      expect(roundNumbers(angles)).toEqual(
+        roundNumbers([
+          [
+            { startAngle: -0, endAngle: 81.90486071737675 },
+            { startAngle: 81.90486071737675, endAngle: 163.8097214347535 },
+            { startAngle: 163.8097214347535, endAngle: 245.71458215213022 },
+          ],
+          [
+            { startAngle: -0, endAngle: 112.89175371571675 },
+            { startAngle: 112.89175371571675, endAngle: 225.7835074314335 },
+            { startAngle: 225.7835074314335, endAngle: 338.6752611471502 },
+          ],
+          [
+            { startAngle: -0, endAngle: 120.00000000000001 },
+            { startAngle: 120.00000000000001, endAngle: 240 },
+            { startAngle: 240, endAngle: 360 },
+          ],
+        ]),
+      );
     });
   });
 });

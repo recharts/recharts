@@ -19,13 +19,14 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'offset',
-      type: 'Number',
+      type: 'Number | Object',
       defaultVal: 10,
       isOptional: false,
       desc: {
         'en-US': 'The offset size between the position of tooltip and the active position.',
-        'zh-CN': 'Tooltip 与当前“游标”的偏移量。',
+        'zh-CN': 'Tooltip 与当前"游标"的偏移量。',
       },
+      format: ['10', '{ x: 20, y: 0 }'],
     },
     {
       name: 'filterNull',

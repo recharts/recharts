@@ -115,7 +115,7 @@ export function getTooltipTranslate({
 }: {
   allowEscapeViewBox: AllowInDimension;
   coordinate: Coordinate | undefined;
-  offsetTopLeft: number;
+  offsetTopLeft: number | { x: number; y: number };
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   tooltipBox: { width: number; height: number };
@@ -124,11 +124,14 @@ export function getTooltipTranslate({
 }): { cssProperties: CSSProperties; cssClasses: string } {
   let cssProperties: CSSProperties, translateX: number | undefined, translateY: number | undefined;
   if (tooltipBox.height > 0 && tooltipBox.width > 0 && coordinate) {
+    const offsetX = typeof offsetTopLeft === 'object' ? (offsetTopLeft.x ?? 0) : offsetTopLeft;
+    const offsetY = typeof offsetTopLeft === 'object' ? (offsetTopLeft.y ?? 0) : offsetTopLeft;
+
     translateX = getTooltipTranslateXY({
       allowEscapeViewBox,
       coordinate,
       key: 'x',
-      offsetTopLeft,
+      offsetTopLeft: offsetX,
       position,
       reverseDirection,
       tooltipDimension: tooltipBox.width,
@@ -140,7 +143,7 @@ export function getTooltipTranslate({
       allowEscapeViewBox,
       coordinate,
       key: 'y',
-      offsetTopLeft,
+      offsetTopLeft: offsetY,
       position,
       reverseDirection,
       tooltipDimension: tooltipBox.height,
