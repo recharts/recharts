@@ -1875,6 +1875,7 @@ describe('<Legend />', () => {
               label: false,
               legendType: 'line',
               stroke: '#3182bd',
+              strokeWidth: 1,
               type: 'linear',
               xAxisId: 0,
               yAxisId: 0,

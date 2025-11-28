@@ -236,5 +236,273 @@ describe('omnidoc - documentation consistency', () => {
     );
   });
 
+  describe('comment/documentation consistency', () => {
+    /**
+     * Normalize text for fuzzy comparison by:
+     * - Converting to lowercase
+     * - Removing extra whitespace (including newlines)
+     * - Trimming leading/trailing whitespace
+     */
+    function normalizeText(text: string | undefined): string {
+      if (!text) {
+        return '';
+      }
+      return text.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    /**
+     * Check if two comments are similar enough.
+     * Returns true if both are empty/null, or if normalized texts match.
+     */
+    function areCommentsSimilar(comment1: string | undefined, comment2: string | undefined): boolean {
+      const norm1 = normalizeText(comment1);
+      const norm2 = normalizeText(comment2);
+
+      // Both empty is considered similar
+      if (norm1 === '' && norm2 === '') {
+        return true;
+      }
+
+      // If one is empty and the other is not, they're different
+      if (norm1 === '' || norm2 === '') {
+        return false;
+      }
+
+      return norm1 === norm2;
+    }
+
+    const componentsWithInconsistentCommentsInApiDoc = [
+      'AreaChart',
+      'Bar',
+      'BarChart',
+      'Brush',
+      'CartesianAxis',
+      'CartesianGrid',
+      'Cell',
+      'ComposedChart',
+      'Cross',
+      'Curve',
+      'Customized',
+      'Dot',
+      'ErrorBar',
+      'Funnel',
+      'FunnelChart',
+      'Label',
+      'LabelList',
+      'Legend',
+      'Line',
+      'LineChart',
+      'Pie',
+      'PieChart',
+      'PolarAngleAxis',
+      'PolarGrid',
+      'PolarRadiusAxis',
+      'Polygon',
+      'Radar',
+      'RadarChart',
+      'RadialBar',
+      'RadialBarChart',
+      'Rectangle',
+      'ReferenceArea',
+      'ReferenceDot',
+      'ReferenceLine',
+      'ResponsiveContainer',
+      'Sankey',
+      'Scatter',
+      'ScatterChart',
+      'Sector',
+      'Text',
+      'Tooltip',
+      'Trapezoid',
+      'Treemap',
+      'XAxis',
+      'YAxis',
+      'ZAxis',
+    ];
+
+    test.each(
+      apiDocReader.getPublicComponentNames().filter(name => !componentsWithInconsistentCommentsInApiDoc.includes(name)),
+    )('if %s has comments in API docs, they should match the project comments', component => {
+      const allProps = apiDocReader.getRechartsPropsOf(component);
+      const inconsistentComments: string[] = [];
+
+      for (const prop of allProps) {
+        const apiComment = apiDocReader.getCommentOf(component, prop);
+        const projectComment = projectReader.getCommentOf(component, prop);
+
+        // Skip if both are null/empty - that's consistent
+        if (!apiComment && !projectComment) {
+          continue;
+        }
+
+        if (!areCommentsSimilar(apiComment, projectComment)) {
+          inconsistentComments.push(
+            `Component "${component}", prop "${prop}":\n` +
+              `  API doc: ${apiComment || '(none)'}\n` +
+              `  Project: ${projectComment || '(none)'}`,
+          );
+        }
+      }
+
+      expect(inconsistentComments).toEqual([]);
+    });
+
+    const componentsWithInconsistentCommentsInStorybook = [
+      'Area',
+      'AreaChart',
+      'Bar',
+      'BarChart',
+      'Brush',
+      'CartesianAxis',
+      'CartesianGrid',
+      'Cell',
+      'ComposedChart',
+      'Cross',
+      'Curve',
+      'Dot',
+      'ErrorBar',
+      'Funnel',
+      'FunnelChart',
+      'Label',
+      'LabelList',
+      'Legend',
+      'Line',
+      'LineChart',
+      'Pie',
+      'PieChart',
+      'PolarAngleAxis',
+      'PolarGrid',
+      'PolarRadiusAxis',
+      'Polygon',
+      'Radar',
+      'RadarChart',
+      'RadialBar',
+      'RadialBarChart',
+      'Rectangle',
+      'ReferenceArea',
+      'ReferenceDot',
+      'ReferenceLine',
+      'Sankey',
+      'Scatter',
+      'ScatterChart',
+      'Sector',
+      'SunburstChart',
+      'Text',
+      'Tooltip',
+      'Trapezoid',
+      'Treemap',
+      'XAxis',
+      'YAxis',
+      'ZAxis',
+    ];
+
+    test.each(
+      storybookReader
+        .getPublicComponentNames()
+        .filter(name => !componentsWithInconsistentCommentsInStorybook.includes(name)),
+    )('if %s has comments in Storybook, they should match the project comments', component => {
+      const allProps = storybookReader.getRechartsPropsOf(component);
+      const inconsistentComments: string[] = [];
+
+      for (const prop of allProps) {
+        const storybookComment = storybookReader.getCommentOf(component, prop);
+        const projectComment = projectReader.getCommentOf(component, prop);
+
+        // Skip if both are null/empty - that's consistent
+        if (!storybookComment && !projectComment) {
+          continue;
+        }
+
+        if (!areCommentsSimilar(storybookComment, projectComment)) {
+          inconsistentComments.push(
+            `Component "${component}", prop "${prop}":\n` +
+              `  Storybook: ${storybookComment || '(none)'}\n` +
+              `  Project:   ${projectComment || '(none)'}`,
+          );
+        }
+      }
+
+      expect(inconsistentComments).toEqual([]);
+    });
+
+    const componentsWithInconsistentCommentsInApiDocAndStorybook = [
+      'Area',
+      'AreaChart',
+      'Bar',
+      'BarChart',
+      'Brush',
+      'CartesianGrid',
+      'Cell',
+      'ComposedChart',
+      'Curve',
+      'Dot',
+      'Funnel',
+      'FunnelChart',
+      'Label',
+      'LabelList',
+      'Legend',
+      'Line',
+      'LineChart',
+      'Pie',
+      'PieChart',
+      'PolarAngleAxis',
+      'PolarGrid',
+      'PolarRadiusAxis',
+      'Polygon',
+      'Radar',
+      'RadarChart',
+      'RadialBar',
+      'RadialBarChart',
+      'Rectangle',
+      'ReferenceArea',
+      'ReferenceDot',
+      'ReferenceLine',
+      'Sankey',
+      'Scatter',
+      'ScatterChart',
+      'Sector',
+      'Text',
+      'Tooltip',
+      'Trapezoid',
+      'Treemap',
+      'XAxis',
+      'YAxis',
+      'ZAxis',
+    ];
+
+    test.each(
+      apiDocReader
+        .getPublicComponentNames()
+        .filter(name => !componentsWithInconsistentCommentsInApiDocAndStorybook.includes(name)),
+    )('if %s has comments in both API docs and Storybook, they should match', component => {
+      const apiProps = new Set(apiDocReader.getRechartsPropsOf(component));
+      const storybookProps = new Set(storybookReader.getRechartsPropsOf(component));
+
+      // Find common props
+      const commonProps = Array.from(apiProps).filter(prop => storybookProps.has(prop));
+      const inconsistentComments: string[] = [];
+
+      for (const prop of commonProps) {
+        const apiComment = apiDocReader.getCommentOf(component, prop);
+        const storybookComment = storybookReader.getCommentOf(component, prop);
+
+        // Skip if both are null/empty - that's consistent
+        if (!apiComment && !storybookComment) {
+          continue;
+        }
+
+        if (!areCommentsSimilar(apiComment, storybookComment)) {
+          inconsistentComments.push(
+            `Component "${component}", prop "${prop}":\n` +
+              `  API doc:   ${apiComment || '(none)'}\n` +
+              `  Storybook: ${storybookComment || '(none)'}`,
+          );
+        }
+      }
+
+      expect(inconsistentComments).toEqual([]);
+    });
+  });
+
   describe.todo('the type definition of each prop should be consistent between API docs, Storybook, and the project');
 });

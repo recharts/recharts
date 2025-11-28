@@ -83,4 +83,25 @@ describe('readApiDoc', () => {
   it('should get default value of a prop', () => {
     expect(reader.getDefaultValueOf('ReferenceLine', 'strokeWidth')).toEqual({ type: 'known', value: 1 });
   });
+
+  it('should get comment of known prop', () => {
+    const comment = reader.getCommentOf('ReferenceLine', 'ifOverflow');
+    expect(comment).toBeTruthy();
+    expect(typeof comment).toBe('string');
+    expect(comment).toMatchInlineSnapshot(`
+      "Defines how to draw the reference line if it falls partly outside the canvas.
+                If set to 'discard', the reference line will not be drawn at all.
+                If set to 'hidden', the reference line will be clipped to the canvas.
+                If set to 'visible', the reference line will be drawn completely.
+                If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference line fits into the canvas."
+    `);
+  });
+
+  it('should return undefined for comment of unknown component', () => {
+    expect(reader.getCommentOf('UnknownComponent', 'someProp')).toBe(undefined);
+  });
+
+  it('should return undefined for comment of unknown prop', () => {
+    expect(reader.getCommentOf('ReferenceLine', 'unknownProp')).toBe(undefined);
+  });
 });

@@ -865,4 +865,28 @@ describe('readProject', () => {
   it('should return none for default value of a prop without default', () => {
     expect(reader.getDefaultValueOf('AreaChart', 'id')).toEqual({ type: 'none' });
   });
+
+  it('should get comment of a Recharts prop', () => {
+    const comment = reader.getCommentOf('ReferenceLine', 'position');
+    expect(comment).toMatchInlineSnapshot(`
+      "The position of the reference line when the axis has bandwidth
+      (e.g., a band scale). This determines where within the band
+      the line is drawn."
+    `);
+  });
+
+  it('should return undefined for comment of unknown component', () => {
+    expect(reader.getCommentOf('UnknownComponent', 'someProp')).toBe(undefined);
+  });
+
+  it('should return undefined for comment of unknown prop', () => {
+    expect(reader.getCommentOf('ReferenceLine', 'unknownPropThatDoesNotExist')).toBe(undefined);
+  });
+
+  it('should return the Recharts description if the prop shadows a DOM prop', () => {
+    // stroke has no JSDoc in React props, but it does in Recharts props
+    const comment = reader.getCommentOf('Area', 'stroke');
+    // In that case, we want to see the Recharts variant here
+    expect(comment).toMatchInlineSnapshot(`"The stroke color. If "none", no line will be drawn."`);
+  });
 });
