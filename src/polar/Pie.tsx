@@ -160,7 +160,7 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
+export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
 type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
 /**
