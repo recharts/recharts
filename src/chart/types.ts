@@ -26,9 +26,9 @@ export interface CursorProps {
   cursor?:
     | boolean
     | React.ReactElement
-    | React.CSSProperties['cursor']
     | {
         strokeDasharray?: string | number;
         stroke?: string;
       };
 }
+
