@@ -1,5 +1,6 @@
 import get from 'es-toolkit/compat/get';
 import { NonEmptyArray, Percent } from './types';
+import { round } from './round';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -104,7 +105,7 @@ export function interpolate(start: unknown, end: null, t: number): null;
 export function interpolate(start: unknown, end: number | null, t: number): number | null;
 export function interpolate(start: unknown, end: number | null, t: number): number | null {
   if (isNumber(start) && isNumber(end)) {
-    return start + t * (end - start);
+    return round(start + t * (end - start));
   }
   return end;
 }

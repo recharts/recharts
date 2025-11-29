@@ -1,5 +1,6 @@
 import { trim } from './trim';
 import { assertNotNull } from './assertNotNull';
+import { round } from '../../src/util/round';
 
 export function selectPieSectors(container: Element) {
   return Array.from(container.querySelectorAll('.recharts-pie-sector path.recharts-sector'));
@@ -41,7 +42,7 @@ function calculateAngle(cx: number, cy: number, x: number, y: number): number {
     degrees += 360;
   }
 
-  return degrees;
+  return round(degrees);
 }
 
 /**

@@ -313,9 +313,9 @@ describe('Scatter Animation', () => {
       await prime(container, animationManager);
       expect(await dotsAnimate(container, animationManager)).toEqual([
         { cx: '12.5', cy: '5' },
-        { cx: '12.5', cy: '11.840000000000002' },
+        { cx: '12.5', cy: '11.84' },
         { cx: '12.5', cy: '39.2' },
-        { cx: '12.5', cy: '66.55999999999997' },
+        { cx: '12.5', cy: '66.56' },
         { cx: '12.5', cy: '73.4' },
       ]);
     });

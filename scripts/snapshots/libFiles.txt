@@ -229,6 +229,7 @@
   "lib/util/payload/getUniqPayload.js",
   "lib/util/propsAreEqual.js",
   "lib/util/resolveDefaultProps.js",
+  "lib/util/round.js",
   "lib/util/scale",
   "lib/util/scale/getNiceTickValues.js",
   "lib/util/scale/index.js",

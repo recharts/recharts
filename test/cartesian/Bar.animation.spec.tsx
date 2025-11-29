@@ -208,36 +208,24 @@ describe('Bar animation', () => {
       const { heights, yCoordinates, pathDs } = await expectBarHeightAnimation(container, animationManager, 5);
 
       expect(heights).toEqual([
-        ['17.02287616172437', '32.39311476274799'],
-        ['27.344576211522934', '52.03444981584385'],
-        ['32.77040605655337', '62.35935185844968'],
-        ['35.299452451475574', '67.1719163941204'],
+        ['17.0229', '32.3931'],
+        ['27.3446', '52.0344'],
+        ['32.7704', '62.3594'],
+        ['35.2995', '67.1719'],
         ['36', '68.505'],
       ]);
       expect(yCoordinates).toEqual([
-        ['77.97712383827563', '62.60688523725201'],
-        ['67.65542378847707', '42.96555018415615'],
-        ['62.22959394344663', '32.64064814155032'],
-        ['59.700547548524426', '27.8280836058796'],
+        ['77.9771', '62.6069'],
+        ['67.6554', '42.9656'],
+        ['62.2296', '32.6406'],
+        ['59.7005', '27.8281'],
         ['59', '26.495'],
       ]);
       expect(pathDs).toEqual([
-        [
-          'M 9.5,77.97712383827563 h 36 v 17.02287616172437 h -36 Z',
-          'M 54.5,62.60688523725201 h 36 v 32.39311476274799 h -36 Z',
-        ],
-        [
-          'M 9.5,67.65542378847707 h 36 v 27.344576211522934 h -36 Z',
-          'M 54.5,42.96555018415615 h 36 v 52.03444981584385 h -36 Z',
-        ],
-        [
-          'M 9.5,62.22959394344663 h 36 v 32.77040605655337 h -36 Z',
-          'M 54.5,32.64064814155032 h 36 v 62.35935185844968 h -36 Z',
-        ],
-        [
-          'M 9.5,59.700547548524426 h 36 v 35.299452451475574 h -36 Z',
-          'M 54.5,27.8280836058796 h 36 v 67.1719163941204 h -36 Z',
-        ],
+        ['M 9.5,77.9771 h 36 v 17.0229 h -36 Z', 'M 54.5,62.6069 h 36 v 32.3931 h -36 Z'],
+        ['M 9.5,67.6554 h 36 v 27.3446 h -36 Z', 'M 54.5,42.9656 h 36 v 52.0344 h -36 Z'],
+        ['M 9.5,62.2296 h 36 v 32.7704 h -36 Z', 'M 54.5,32.6406 h 36 v 62.3594 h -36 Z'],
+        ['M 9.5,59.7005 h 36 v 35.2995 h -36 Z', 'M 54.5,27.8281 h 36 v 67.1719 h -36 Z'],
         ['M 9.5,59 h 36 v 36 h -36 Z', 'M 54.5,26.495 h 36 v 68.505 h -36 Z'],
       ]);
     });
@@ -284,15 +272,15 @@ describe('Bar animation', () => {
         // now the chart is ready for assertions
       }
 
-      it('should animate the bar heights', async () => {
+      it('should animate bar heights', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
 
         const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
         expect(heights).toEqual([
           // the second bar is the same because the amt value in the data is the same
-          ['72.85718732281953', '67.81904679149197'],
-          ['86.80128917207253', '67.55953156263087'],
+          ['72.8572', '67.819'],
+          ['86.8013', '67.5595'],
           ['90', '67.5'],
         ]);
       });
@@ -319,8 +307,8 @@ describe('Bar animation', () => {
 
         const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
         expect(heights).toEqual([
-          ['70.5989461813007', '63.52180208594345'],
-          ['86.37991955627646', '66.7577002979056'],
+          ['70.5989', '63.5218'],
+          ['86.3799', '66.7577'],
           ['90', '67.5'],
         ]);
       });
@@ -376,8 +364,8 @@ describe('Bar animation', () => {
 
       const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
       expect(heights).toEqual([
-        ['61.428645538032555', '46.071484153524416'],
-        ['84.66881528678756', '63.50161146509067'],
+        ['61.4286', '46.0715'],
+        ['84.6688', '63.5016'],
         ['90', '67.5'],
       ]);
     });
@@ -424,9 +412,9 @@ describe('Bar animation', () => {
 
         const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
         expect(heights).toEqual([
-          ['20.016266431003935', '81.94763526523946'],
-          ['13.969174262377884', '87.03335907859201'],
-          ['12.582000000000008', '88.2'],
+          ['20.0163', '81.9476'],
+          ['13.9692', '87.0334'],
+          ['12.582', '88.2'],
         ]);
       });
     });
@@ -448,9 +436,9 @@ describe('Bar animation', () => {
 
         const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
         expect(heights).toEqual([
-          ['17.75802528948511', '77.65039055969093'],
-          ['13.547804646581813', '86.23152781386675'],
-          ['12.582000000000008', '88.2'],
+          ['17.758', '77.6504'],
+          ['13.5478', '86.2315'],
+          ['12.582', '88.2'],
         ]);
       });
     });
@@ -510,8 +498,8 @@ describe('Bar animation', () => {
 
       const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
       expect(heights).toEqual([
-        ['24.571458215213024', '46.75743736203245'],
-        ['33.86752611471503', '64.44707990245979'],
+        ['24.5715', '46.7574'],
+        ['33.8675', '64.4471'],
         ['36', '68.505'],
       ]);
     });
