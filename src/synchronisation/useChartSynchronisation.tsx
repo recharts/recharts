@@ -13,7 +13,7 @@ import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
-import { MouseHandlerDataParam } from './types';
+import { ActiveLabel, MouseHandlerDataParam } from './types';
 import { noop } from '../util/DataUtils';
 
 function useTooltipSyncEventsListener() {
@@ -103,6 +103,7 @@ function useTooltipSyncEventsListener() {
             index: null,
             label: undefined,
             sourceViewBox: undefined,
+            graphicalItemId: undefined,
           }),
         );
         return;
@@ -123,6 +124,7 @@ function useTooltipSyncEventsListener() {
         index: String(activeTick.index),
         label: action.payload.label,
         sourceViewBox: action.payload.sourceViewBox,
+        graphicalItemId: action.payload.graphicalItemId,
       });
       dispatch(syncAction);
     };
@@ -196,7 +198,7 @@ export function useTooltipChartSynchronisation(
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   activeCoordinate: ChartCoordinate | undefined,
-  activeLabel: string | number | undefined,
+  activeLabel: ActiveLabel,
   activeIndex: TooltipIndex | undefined,
   isTooltipActive: boolean,
 ) {
@@ -238,6 +240,7 @@ export function useTooltipChartSynchronisation(
       index: activeIndex,
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
       sourceViewBox: viewBox,
+      graphicalItemId: undefined,
     });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [

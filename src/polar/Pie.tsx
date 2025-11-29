@@ -34,7 +34,11 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import {
+  selectActiveTooltipDataKey,
+  selectActiveTooltipGraphicalItemId,
+  selectActiveTooltipIndex,
+} from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
@@ -128,7 +132,7 @@ export type PieLabel =
   | ReactElement<SVGElement>;
 
 export type PieSectorData = GeometrySector & {
-  dataKey?: string;
+  dataKey?: DataKey<any>;
   midAngle?: number;
   middleRadius?: number;
   name?: string | number;
@@ -315,6 +319,7 @@ type PieSectorsProps = {
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined;
   shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
+  id: GraphicalItemId;
 };
 
 const SetPieTooltipEntrySettings = React.memo(
@@ -521,9 +526,11 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
+  const activeGraphicalItemId = useAppSelector(selectActiveTooltipGraphicalItemId);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -531,9 +538,9 @@ function PieSectors(props: PieSectorsProps) {
     ...restOfAllOtherProps
   } = allOtherPieProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey, id);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey, id);
 
   if (sectors == null || sectors.length === 0) {
     return null;
@@ -544,7 +551,14 @@ function PieSectors(props: PieSectorsProps) {
       {sectors.map((entry, i) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
 
-        const isActive = String(i) === activeIndex;
+        // For Pie charts, when multiple Pies share the same dataKey, we need to ensure only the hovered Pie's sector is active.
+        // We do this by checking if the active graphical item ID matches this Pie's ID.
+        const graphicalItemMatches = activeGraphicalItemId == null || activeGraphicalItemId === id;
+
+        const isActive =
+          String(i) === activeIndex &&
+          (activeDataKey == null || allOtherPieProps.dataKey === activeDataKey) &&
+          graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
         const sectorProps = {
@@ -650,6 +664,7 @@ export function computePieSectors({
         ...entryWithCellInfo,
         ...coordinate,
         value: val,
+        dataKey,
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
@@ -705,9 +720,11 @@ type WithoutId<T> = Omit<T, 'id'>;
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
+  id,
 }: {
   props: WithoutId<InternalProps>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
+  id: GraphicalItemId;
 }) {
   const {
     sectors,
@@ -794,6 +811,7 @@ function SectorsWithAnimation({
                 inactiveShape={inactiveShape}
                 allOtherPieProps={props}
                 shape={props.shape}
+                id={id}
               />
             </Layer>
           );
@@ -861,7 +879,7 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
         tooltipType={props.tooltipType}
       />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
-        <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} />
+        <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} id={id} />
       </Layer>
     </ZIndexLayer>
   );

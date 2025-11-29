@@ -367,4 +367,67 @@ export class ProjectDocReader implements DocReader {
     const paramType = this.getPropsType(component);
     return this.extractSVGElementFromType(paramType);
   }
+
+  getCommentOf(component: string, prop: string): string | undefined {
+    try {
+      const propMeta = this.getPropMeta(component, prop);
+      if (propMeta.length === 0) {
+        return undefined;
+      }
+
+      // Try to find a Recharts prop first (prefer our own documentation)
+      const rechartsProp = propMeta.find(p => p.origin === 'recharts');
+      const targetProp = rechartsProp || propMeta[0];
+
+      const paramType = this.getPropsType(component);
+      const properties = paramType.getProperties();
+      const property = properties.find(p => p.getName() === targetProp.name);
+
+      if (!property) {
+        return undefined;
+      }
+
+      // Get JSDoc comments
+      const jsDocComments = property.getJsDocTags();
+
+      // Look for a description tag, or use the general comment
+      const descTag = jsDocComments.find(tag => tag.getName() === 'description');
+      if (descTag) {
+        const text = descTag.getText();
+        if (text && text.length > 0) {
+          return text
+            .map(t => t.text)
+            .join(' ')
+            .trim();
+        }
+      }
+
+      // If no description tag, get the main comment text
+      const declarations = property.getDeclarations();
+      // in case of multiple declarations, use the first one that has JSDoc available
+      return declarations.map(decl => this.getJSDocFromDeclaration(decl)).find(comment => comment !== undefined);
+    } catch {
+      // Component or prop doesn't exist
+      return undefined;
+    }
+  }
+
+  private getJSDocFromDeclaration(declaration: Node): string | undefined {
+    if (!Node.isJSDocable(declaration)) {
+      return undefined;
+    }
+    const jsDocNodes = declaration.getJsDocs();
+    if (jsDocNodes.length > 0) {
+      const comment = jsDocNodes[0].getComment();
+      if (comment) {
+        return typeof comment === 'string'
+          ? comment
+          : comment
+              .map(c => c?.getText())
+              .join(' ')
+              .trim();
+      }
+    }
+    return undefined;
+  }
 }

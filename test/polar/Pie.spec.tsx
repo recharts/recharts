@@ -359,6 +359,7 @@ describe('<Pie />', () => {
         cornerRadius: undefined,
         cx: 255,
         cy: 255,
+        dataKey: 'y',
         endAngle: 77.15833835039133,
         [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
         [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
@@ -505,6 +506,7 @@ describe('<Pie />', () => {
         cornerRadius: undefined,
         cx: 255,
         cy: 255,
+        dataKey: 'value',
         endAngle: 360,
         fill: '#808080',
         index: 0,
@@ -793,12 +795,14 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         });
         expectTooltipNotVisible(container);
@@ -818,6 +822,7 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
@@ -827,6 +832,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
           },
         });
 
@@ -1038,12 +1044,14 @@ describe('<Pie />', () => {
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
         });
 
@@ -1059,12 +1067,14 @@ describe('<Pie />', () => {
             coordinate: undefined,
             dataKey: undefined,
             index: null,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
             coordinate: { x: 122, y: 200 },
             dataKey: 'cy',
             index: '2',
+            graphicalItemId: undefined,
           },
         });
       });
@@ -1430,12 +1440,14 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         });
         expectTooltipPayload(container, '', ['A : 250']);
@@ -1456,6 +1468,7 @@ describe('<Pie />', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
@@ -1465,6 +1478,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
+            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
           },
         });
 
@@ -1861,6 +1875,7 @@ describe('<Pie />', () => {
           cornerRadius: undefined,
           cx: 255,
           cy: 255,
+          dataKey: 'uv',
           endAngle: 86.38272345530893,
           fill: '#808080',
           innerRadius: 0,
@@ -1937,6 +1952,7 @@ describe('<Pie />', () => {
           cornerRadius: undefined,
           cx: 255,
           cy: 255,
+          dataKey: 'uv',
           endAngle: 86.38272345530893,
           fill: '#808080',
           innerRadius: 0,
@@ -1990,6 +2006,7 @@ describe('<Pie />', () => {
           cornerRadius: undefined,
           cx: 255,
           cy: 255,
+          dataKey: 'uv',
           endAngle: 86.38272345530893,
           fill: '#808080',
           innerRadius: 0,
@@ -2065,6 +2082,7 @@ describe('<Pie />', () => {
           cornerRadius: undefined,
           cx: 255,
           cy: 255,
+          dataKey: 'uv',
           endAngle: 86.38272345530893,
           fill: '#808080',
           innerRadius: 0,

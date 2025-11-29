@@ -84,6 +84,7 @@ import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraph
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
+import { ActiveLabel } from '../../synchronisation/types';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -397,7 +398,7 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
   combineActiveTooltipIndex,
 );
 
-export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(
+export const selectActiveLabel: (state: RechartsRootState) => ActiveLabel = createSelector(
   [selectTooltipAxisTicks, selectActiveTooltipIndex],
   combineActiveLabel,
 );
@@ -410,6 +411,17 @@ export const selectActiveTooltipDataKey: (state: RechartsRootState) => DataKey<a
     }
 
     return tooltipInteraction.dataKey;
+  },
+);
+
+export const selectActiveTooltipGraphicalItemId: (state: RechartsRootState) => string | undefined = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteraction: TooltipInteractionState): string | undefined => {
+    if (!tooltipInteraction) {
+      return undefined;
+    }
+
+    return tooltipInteraction.graphicalItemId;
   },
 );
 

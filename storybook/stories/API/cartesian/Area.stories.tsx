@@ -9,6 +9,7 @@ import { General as GeneralProps, data } from '../props/CartesianComponentShared
 import { ResponsiveProps } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
 
 const AreaSpecificProps = {
   // These two props are not documented on the website. Further investigation is required to document them.
@@ -27,32 +28,41 @@ const AreaSpecificProps = {
   },
 };
 
+const AreaArgTypes: StorybookArgs = {
+  ...AreaSpecificProps,
+  ...LineStyle,
+  stroke: {
+    control: { type: 'color' },
+    table: {
+      category: 'Style',
+      defaultValue: { summary: '#3182bd' },
+    },
+  },
+  dot: {
+    description: `If false set, dots will not be drawn. If true set, dots will be drawn which have the props
+    calculated internally. If object set, dots will be drawn which have the props merged by the internal
+    calculated props and the option. If ReactElement set, the option can be the custom dot element.If set
+    a function, the function will be called to render customized dot.`,
+    defaultValue: false,
+    table: {
+      type: {
+        summary: 'Boolean | Object | ReactElement | Function',
+      },
+      category: 'Style',
+    },
+  },
+  ...AnimationProps,
+  legendType,
+  ...GeneralProps,
+  data,
+  ...ResponsiveProps,
+  // Other
+  baseLine: { table: { category: 'Other' } },
+};
+
 export default {
   component: Area,
-  argTypes: {
-    ...AreaSpecificProps,
-    ...LineStyle,
-    dot: {
-      description: `If false set, dots will not be drawn. If true set, dots will be drawn which have the props
-      calculated internally. If object set, dots will be drawn which have the props merged by the internal
-      calculated props and the option. If ReactElement set, the option can be the custom dot element.If set
-      a function, the function will be called to render customized dot.`,
-      defaultValue: false,
-      table: {
-        type: {
-          summary: 'Boolean | Object | ReactElement | Function',
-          category: 'Style',
-        },
-      },
-    },
-    ...AnimationProps,
-    legendType,
-    ...GeneralProps,
-    data,
-    ...ResponsiveProps,
-    // Other
-    baseLine: { table: { category: 'Other' } },
-  },
+  argTypes: AreaArgTypes,
 };
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
@@ -86,11 +96,7 @@ export const API = {
     );
   },
   args: {
-    // This API story should have explicit values for all props
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    ...getStoryArgsFromArgsTypesObject(LineStyle),
-    ...getStoryArgsFromArgsTypesObject(ResponsiveProps),
-    ...getStoryArgsFromArgsTypesObject(AnimationProps),
+    ...getStoryArgsFromArgsTypesObject(AreaArgTypes),
     isAnimationActive: true,
     type: 'linear',
     connectNulls: true,

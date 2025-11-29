@@ -9,6 +9,7 @@ const createInteraction = (index: TooltipInteractionState['index']): TooltipInte
   index,
   dataKey: undefined,
   coordinate: undefined,
+  graphicalItemId: undefined,
 });
 
 describe('combineActiveTooltipIndex', () => {

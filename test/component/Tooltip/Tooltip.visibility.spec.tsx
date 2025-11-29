@@ -1066,12 +1066,14 @@ describe('Tooltip visibility', () => {
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         itemInteraction: {
@@ -1080,12 +1082,14 @@ describe('Tooltip visibility', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         keyboardInteraction: {
@@ -1093,6 +1097,7 @@ describe('Tooltip visibility', () => {
           dataKey: undefined,
           index: null,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         syncInteraction: {
           active: false,
@@ -1101,6 +1106,7 @@ describe('Tooltip visibility', () => {
           coordinate: undefined,
           label: undefined,
           sourceViewBox: undefined,
+          graphicalItemId: undefined,
         },
         settings: {
           axisId: 0,
@@ -1139,6 +1145,7 @@ describe('Tooltip visibility', () => {
             dataKey: undefined,
             index: null,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: true,
@@ -1157,6 +1164,7 @@ describe('Tooltip visibility', () => {
               x: 177.5255128608411,
               y: 229.28932188134524,
             },
+            graphicalItemId: undefined,
           },
         },
         itemInteraction: {
@@ -1165,12 +1173,14 @@ describe('Tooltip visibility', () => {
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
           hover: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+            graphicalItemId: undefined,
           },
         },
         keyboardInteraction: {
@@ -1178,6 +1188,7 @@ describe('Tooltip visibility', () => {
           dataKey: undefined,
           index: null,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         syncInteraction: {
           active: false,
@@ -1186,6 +1197,7 @@ describe('Tooltip visibility', () => {
           coordinate: undefined,
           label: undefined,
           sourceViewBox: undefined,
+          graphicalItemId: undefined,
         },
         settings: {
           axisId: 0,

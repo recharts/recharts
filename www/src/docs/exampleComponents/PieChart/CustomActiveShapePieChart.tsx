@@ -1,24 +1,6 @@
-import { Pie, PieChart, Sector, SectorProps, Tooltip } from 'recharts';
+import { Pie, PieChart, Sector, Tooltip } from 'recharts';
+import { PieSectorDataItem } from 'recharts/types/polar/Pie';
 import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
-
-type Coordinate = {
-  x: number;
-  y: number;
-};
-
-type PieSectorData = {
-  percent?: number;
-  name?: string | number;
-  midAngle?: number;
-  middleRadius?: number;
-  tooltipPosition?: Coordinate;
-  value?: number;
-  paddingAngle?: number;
-  dataKey?: string;
-  payload?: any;
-};
-
-type PieSectorDataItem = React.SVGProps<SVGPathElement> & Partial<SectorProps> & PieSectorData;
 
 // #region Sample data
 const data = [

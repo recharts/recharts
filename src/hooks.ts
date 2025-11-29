@@ -7,6 +7,7 @@ import { ChartOffset, PlotArea } from './types';
 import { selectChartOffset } from './state/selectors/selectChartOffset';
 import { selectPlotArea } from './state/selectors/selectPlotArea';
 import { CategoricalDomain, NumberDomain } from './util/types';
+import { ActiveLabel } from './synchronisation/types';
 
 export const useXAxis = (xAxisId: AxisId): BaseAxisWithScale | undefined => {
   const isPanorama = useIsPanorama();
@@ -24,9 +25,9 @@ export const useYAxis = (yAxisId: AxisId): BaseAxisWithScale | undefined => {
  *
  * Returns undefined if there is no active user interaction or if used outside a chart context
  *
- * @returns string | undefined
+ * @returns ActiveLabel
  */
-export const useActiveTooltipLabel = (): string | undefined => {
+export const useActiveTooltipLabel = (): ActiveLabel => {
   return useAppSelector(selectActiveLabel);
 };
 

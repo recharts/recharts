@@ -9,11 +9,16 @@ export type ExpectedTick = {
   y: string;
 };
 
+function normalizeDateString(str: string | null) {
+  if (!str) return str;
+  return str.replace(/\(.*?\)/, '(Coordinated Universal Time)');
+}
+
 export function expectXAxisTicks(container: Element, expectedTicks: ReadonlyArray<ExpectedTick>) {
   const allTicks = container.querySelectorAll('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
   const ticksContexts = Array.from(allTicks).map(tick => ({
-    textContent: tick.textContent,
+    textContent: normalizeDateString(tick.textContent),
     x: tick.getAttribute('x'),
     y: tick.getAttribute('y'),
   }));
@@ -24,7 +29,7 @@ export function expectYAxisTicks(container: Element, ticks: ReadonlyArray<Expect
   const allTicks = container.querySelectorAll('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
   const ticksContexts = Array.from(allTicks).map(tick => ({
-    textContent: tick.textContent,
+    textContent: normalizeDateString(tick.textContent),
     x: tick.getAttribute('x'),
     y: tick.getAttribute('y'),
   }));
