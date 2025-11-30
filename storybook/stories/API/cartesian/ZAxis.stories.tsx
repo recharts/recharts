@@ -77,6 +77,7 @@ export const API = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(ZAxisArgTypes),
+    zAxisId: 0,
     unit: 'km',
     name: 'A name',
     dataKey: 'pv',
