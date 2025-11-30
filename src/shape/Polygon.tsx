@@ -6,6 +6,7 @@ import { SVGProps } from 'react';
 import { clsx } from 'clsx';
 import { Coordinate } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { roundTemplateLiteral } from '../util/round';
 
 const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;
@@ -48,7 +49,7 @@ const getSinglePolygonPath = (points: ReadonlyArray<Coordinate>, connectNulls?: 
   const polygonPath = segmentPoints
     .map(segPoints => {
       return segPoints.reduce((path: string, point: Coordinate, index: number) => {
-        return `${path}${index === 0 ? 'M' : 'L'}${point.x},${point.y}`;
+        return roundTemplateLiteral`${path}${index === 0 ? 'M' : 'L'}${point.x},${point.y}`;
       }, '');
     })
     .join('');

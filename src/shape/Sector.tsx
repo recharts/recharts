@@ -6,6 +6,7 @@ import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { roundTemplateLiteral } from '../util/round';
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
@@ -55,7 +56,7 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
   const outerStartPoint = polarToCartesian(cx, cy, outerRadius, startAngle);
   const outerEndPoint = polarToCartesian(cx, cy, outerRadius, tempEndAngle);
 
-  let path = `M ${outerStartPoint.x},${outerStartPoint.y}
+  let path = roundTemplateLiteral`M ${outerStartPoint.x},${outerStartPoint.y}
     A ${outerRadius},${outerRadius},0,
     ${+(Math.abs(angle) > 180)},${+(startAngle > tempEndAngle)},
     ${outerEndPoint.x},${outerEndPoint.y}
@@ -64,12 +65,12 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
   if (innerRadius > 0) {
     const innerStartPoint = polarToCartesian(cx, cy, innerRadius, startAngle);
     const innerEndPoint = polarToCartesian(cx, cy, innerRadius, tempEndAngle);
-    path += `L ${innerEndPoint.x},${innerEndPoint.y}
+    path += roundTemplateLiteral`L ${innerEndPoint.x},${innerEndPoint.y}
             A ${innerRadius},${innerRadius},0,
             ${+(Math.abs(angle) > 180)},${+(startAngle <= tempEndAngle)},
             ${innerStartPoint.x},${innerStartPoint.y} Z`;
   } else {
-    path += `L ${cx},${cy} Z`;
+    path += roundTemplateLiteral`L ${cx},${cy} Z`;
   }
 
   return path;
@@ -119,7 +120,7 @@ const getSectorWithCorner = ({
 
   if (outerArcAngle < 0) {
     if (forceCornerRadius) {
-      return `M ${solt.x},${solt.y}
+      return roundTemplateLiteral`M ${solt.x},${solt.y}
         a${cornerRadius},${cornerRadius},0,0,1,${cornerRadius * 2},0
         a${cornerRadius},${cornerRadius},0,0,1,${-cornerRadius * 2},0
       `;
@@ -134,7 +135,7 @@ const getSectorWithCorner = ({
     });
   }
 
-  let path = `M ${solt.x},${solt.y}
+  let path = roundTemplateLiteral`M ${solt.x},${solt.y}
     A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${soct.x},${soct.y}
     A${outerRadius},${outerRadius},0,${+(outerArcAngle > 180)},${+(sign < 0)},${eoct.x},${eoct.y}
     A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${eolt.x},${eolt.y}
@@ -177,12 +178,12 @@ const getSectorWithCorner = ({
       return `${path}L${cx},${cy}Z`;
     }
 
-    path += `L${eilt.x},${eilt.y}
+    path += roundTemplateLiteral`L${eilt.x},${eilt.y}
       A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${eict.x},${eict.y}
       A${innerRadius},${innerRadius},0,${+(innerArcAngle > 180)},${+(sign > 0)},${sict.x},${sict.y}
       A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${silt.x},${silt.y}Z`;
   } else {
-    path += `L${cx},${cy}Z`;
+    path += roundTemplateLiteral`L${cx},${cy}Z`;
   }
 
   return path;

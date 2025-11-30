@@ -229,6 +229,7 @@
   "types/util/payload/getUniqPayload.d.ts",
   "types/util/propsAreEqual.d.ts",
   "types/util/resolveDefaultProps.d.ts",
+  "types/util/round.d.ts",
   "types/util/scale",
   "types/util/scale/getNiceTickValues.d.ts",
   "types/util/scale/index.d.ts",

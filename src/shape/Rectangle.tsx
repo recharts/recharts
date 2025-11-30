@@ -12,14 +12,17 @@ import { interpolate } from '../util/DataUtils';
 import { useAnimationId } from '../util/useAnimationId';
 import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { round, roundTemplateLiteral } from '../util/round';
 
 export type RectRadius = [number, number, number, number];
 
 const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius): string => {
-  const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
-  const ySign = height >= 0 ? 1 : -1;
-  const xSign = width >= 0 ? 1 : -1;
-  const clockWise = (height >= 0 && width >= 0) || (height < 0 && width < 0) ? 1 : 0;
+  const roundedWidth = round(width);
+  const roundedHeight = round(height);
+  const maxRadius = Math.min(Math.abs(roundedWidth) / 2, Math.abs(roundedHeight) / 2);
+  const ySign = roundedHeight >= 0 ? 1 : -1;
+  const xSign = roundedWidth >= 0 ? 1 : -1;
+  const clockWise = (roundedHeight >= 0 && roundedWidth >= 0) || (roundedHeight < 0 && roundedWidth < 0) ? 1 : 0;
   let path;
 
   if (maxRadius > 0 && radius instanceof Array) {
@@ -28,35 +31,35 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
       newRadius[i] = radius[i] > maxRadius ? maxRadius : radius[i];
     }
 
-    path = `M${x},${y + ySign * newRadius[0]}`;
+    path = roundTemplateLiteral`M${x},${y + ySign * newRadius[0]}`;
 
     if (newRadius[0] > 0) {
-      path += `A ${newRadius[0]},${newRadius[0]},0,0,${clockWise},${x + xSign * newRadius[0]},${y}`;
+      path += roundTemplateLiteral`A ${newRadius[0]},${newRadius[0]},0,0,${clockWise},${x + xSign * newRadius[0]},${y}`;
     }
 
-    path += `L ${x + width - xSign * newRadius[1]},${y}`;
+    path += roundTemplateLiteral`L ${x + width - xSign * newRadius[1]},${y}`;
 
     if (newRadius[1] > 0) {
-      path += `A ${newRadius[1]},${newRadius[1]},0,0,${clockWise},
+      path += roundTemplateLiteral`A ${newRadius[1]},${newRadius[1]},0,0,${clockWise},
         ${x + width},${y + ySign * newRadius[1]}`;
     }
-    path += `L ${x + width},${y + height - ySign * newRadius[2]}`;
+    path += roundTemplateLiteral`L ${x + width},${y + height - ySign * newRadius[2]}`;
 
     if (newRadius[2] > 0) {
-      path += `A ${newRadius[2]},${newRadius[2]},0,0,${clockWise},
+      path += roundTemplateLiteral`A ${newRadius[2]},${newRadius[2]},0,0,${clockWise},
         ${x + width - xSign * newRadius[2]},${y + height}`;
     }
-    path += `L ${x + xSign * newRadius[3]},${y + height}`;
+    path += roundTemplateLiteral`L ${x + xSign * newRadius[3]},${y + height}`;
 
     if (newRadius[3] > 0) {
-      path += `A ${newRadius[3]},${newRadius[3]},0,0,${clockWise},
+      path += roundTemplateLiteral`A ${newRadius[3]},${newRadius[3]},0,0,${clockWise},
         ${x},${y + height - ySign * newRadius[3]}`;
     }
     path += 'Z';
   } else if (maxRadius > 0 && radius === +radius && radius > 0) {
     const newRadius = Math.min(maxRadius, radius);
 
-    path = `M ${x},${y + ySign * newRadius}
+    path = roundTemplateLiteral`M ${x},${y + ySign * newRadius}
             A ${newRadius},${newRadius},0,0,${clockWise},${x + xSign * newRadius},${y}
             L ${x + width - xSign * newRadius},${y}
             A ${newRadius},${newRadius},0,0,${clockWise},${x + width},${y + ySign * newRadius}
@@ -65,7 +68,7 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
             L ${x + xSign * newRadius},${y + height}
             A ${newRadius},${newRadius},0,0,${clockWise},${x},${y + height - ySign * newRadius} Z`;
   } else {
-    path = `M ${x},${y} h ${width} v ${height} h ${-width} Z`;
+    path = roundTemplateLiteral`M ${x},${y} h ${width} v ${height} h ${-width} Z`;
   }
 
   return path;
@@ -171,6 +174,10 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
     return (
       <path
         {...otherPathProps}
+        x={round(x)}
+        y={round(y)}
+        width={round(width)}
+        height={round(height)}
         radius={typeof radius === 'number' ? radius : undefined}
         className={layerClass}
         d={getRectanglePath(x, y, width, height, radius)}

@@ -215,8 +215,7 @@ describe('Line animation', () => {
 
       const line = getLine(container);
       // after travelling 10% of the path, the stroke-dasharray should be 10px visible and 90px hidden
-      // ... Animate does not round the {t} value, so we get 10.000000000000002px visible and 90px hidden
-      expect(line).toHaveAttribute('stroke-dasharray', '10.000000000000002px 90px');
+      expect(line).toHaveAttribute('stroke-dasharray', '10px 90px');
 
       await animationManager.setAnimationProgress(0.2);
 
@@ -369,7 +368,7 @@ describe('Line animation', () => {
         const line = getLine(container);
         // after travelling 10% of the path, the stroke-dasharray should be 10px visible and 90px hidden
         // but as the line grows, it leaves behind the 7,3 dashed stroke as instructed by the prop
-        expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 1.7763568394002505e-15px, 90px');
+        expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 0px, 90px');
 
         await animationManager.setAnimationProgress(0.2);
 
@@ -598,87 +597,33 @@ describe('Line animation', () => {
 
         // dots should be at the UV position initially
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '5',
-          },
-          {
-            cx: '23',
-            cy: '27.5',
-          },
-          {
-            cx: '41',
-            cy: '27.5',
-          },
-          {
-            cx: '59',
-            cy: '50',
-          },
-          {
-            cx: '77',
-            cy: '32.45',
-          },
-          {
-            cx: '95',
-            cy: '52.475',
-          },
+          { cx: '5', cy: '5' },
+          { cx: '23', cy: '27.5' },
+          { cx: '41', cy: '27.5' },
+          { cx: '59', cy: '50' },
+          { cx: '77', cy: '32.45' },
+          { cx: '95', cy: '52.475' },
         ]);
 
         // dots should animate to the new position
         await animationManager.setAnimationProgress(0.2);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '18.68',
-          },
-          {
-            cx: '23',
-            cy: '32.7794',
-          },
-          {
-            cx: '41',
-            cy: '38.483599999999996',
-          },
-          {
-            cx: '59',
-            cy: '41.36',
-          },
-          {
-            cx: '77',
-            cy: '37.9256',
-          },
-          {
-            cx: '95',
-            cy: '52.34',
-          },
+          { cx: '5', cy: '18.68' },
+          { cx: '23', cy: '32.7794' },
+          { cx: '41', cy: '38.4836' },
+          { cx: '59', cy: '41.36' },
+          { cx: '77', cy: '37.9256' },
+          { cx: '95', cy: '52.34' },
         ]);
 
         await animationManager.setAnimationProgress(0.5);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '39.2',
-          },
-          {
-            cx: '23',
-            cy: '40.6985',
-          },
-          {
-            cx: '41',
-            cy: '54.958999999999996',
-          },
-          {
-            cx: '59',
-            cy: '28.400000000000002',
-          },
-          {
-            cx: '77',
-            cy: '46.138999999999996',
-          },
-          {
-            cx: '95',
-            cy: '52.1375',
-          },
+          { cx: '5', cy: '39.2' },
+          { cx: '23', cy: '40.6985' },
+          { cx: '41', cy: '54.959' },
+          { cx: '59', cy: '28.4' },
+          { cx: '77', cy: '46.139' },
+          { cx: '95', cy: '52.1375' },
         ]);
 
         await animationManager.setAnimationProgress(1);
@@ -819,87 +764,33 @@ describe('Line animation', () => {
 
         // dots should be at the UV position initially
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '5',
-          },
-          {
-            cx: '23',
-            cy: '27.5',
-          },
-          {
-            cx: '41',
-            cy: '27.5',
-          },
-          {
-            cx: '59',
-            cy: '50',
-          },
-          {
-            cx: '77',
-            cy: '32.45',
-          },
-          {
-            cx: '95',
-            cy: '52.475',
-          },
+          { cx: '5', cy: '5' },
+          { cx: '23', cy: '27.5' },
+          { cx: '41', cy: '27.5' },
+          { cx: '59', cy: '50' },
+          { cx: '77', cy: '32.45' },
+          { cx: '95', cy: '52.475' },
         ]);
 
         // dots should animate to the new position
         await animationManager.setAnimationProgress(0.2);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '18.68',
-          },
-          {
-            cx: '23',
-            cy: '32.7794',
-          },
-          {
-            cx: '41',
-            cy: '38.483599999999996',
-          },
-          {
-            cx: '59',
-            cy: '41.36',
-          },
-          {
-            cx: '77',
-            cy: '37.9256',
-          },
-          {
-            cx: '95',
-            cy: '52.34',
-          },
+          { cx: '5', cy: '18.68' },
+          { cx: '23', cy: '32.7794' },
+          { cx: '41', cy: '38.4836' },
+          { cx: '59', cy: '41.36' },
+          { cx: '77', cy: '37.9256' },
+          { cx: '95', cy: '52.34' },
         ]);
 
         await animationManager.setAnimationProgress(0.5);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '39.2',
-          },
-          {
-            cx: '23',
-            cy: '40.6985',
-          },
-          {
-            cx: '41',
-            cy: '54.958999999999996',
-          },
-          {
-            cx: '59',
-            cy: '28.400000000000002',
-          },
-          {
-            cx: '77',
-            cy: '46.138999999999996',
-          },
-          {
-            cx: '95',
-            cy: '52.1375',
-          },
+          { cx: '5', cy: '39.2' },
+          { cx: '23', cy: '40.6985' },
+          { cx: '41', cy: '54.959' },
+          { cx: '59', cy: '28.4' },
+          { cx: '77', cy: '46.139' },
+          { cx: '95', cy: '52.1375' },
         ]);
 
         await animationManager.setAnimationProgress(1);
@@ -1231,115 +1122,43 @@ describe('Line animation', () => {
 
         // dots should be at the UV position initially
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '5',
-          },
-          {
-            cx: '23',
-            cy: '27.5',
-          },
-          {
-            cx: '41',
-            cy: '27.5',
-          },
-          {
-            cx: '59',
-            cy: '50',
-          },
-          {
-            cx: '77',
-            cy: '32.45',
-          },
-          {
-            cx: '95',
-            cy: '52.475',
-          },
+          { cx: '5', cy: '5' },
+          { cx: '23', cy: '27.5' },
+          { cx: '41', cy: '27.5' },
+          { cx: '59', cy: '50' },
+          { cx: '77', cy: '32.45' },
+          { cx: '95', cy: '52.475' },
         ]);
 
         // dots should animate to the new position
         await animationManager.setAnimationProgress(0.2);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '18.68',
-          },
-          {
-            cx: '23',
-            cy: '32.7794',
-          },
-          {
-            cx: '41',
-            cy: '38.483599999999996',
-          },
-          {
-            cx: '59',
-            cy: '41.36',
-          },
-          {
-            cx: '77',
-            cy: '37.9256',
-          },
-          {
-            cx: '95',
-            cy: '52.34',
-          },
+          { cx: '5', cy: '18.68' },
+          { cx: '23', cy: '32.7794' },
+          { cx: '41', cy: '38.4836' },
+          { cx: '59', cy: '41.36' },
+          { cx: '77', cy: '37.9256' },
+          { cx: '95', cy: '52.34' },
         ]);
 
         await animationManager.setAnimationProgress(0.5);
         expectDots(container, [
-          {
-            cx: '5',
-            cy: '39.2',
-          },
-          {
-            cx: '23',
-            cy: '40.6985',
-          },
-          {
-            cx: '41',
-            cy: '54.958999999999996',
-          },
-          {
-            cx: '59',
-            cy: '28.400000000000002',
-          },
-          {
-            cx: '77',
-            cy: '46.138999999999996',
-          },
-          {
-            cx: '95',
-            cy: '52.1375',
-          },
+          { cx: '5', cy: '39.2' },
+          { cx: '23', cy: '40.6985' },
+          { cx: '41', cy: '54.959' },
+          { cx: '59', cy: '28.4' },
+          { cx: '77', cy: '46.139' },
+          { cx: '95', cy: '52.1375' },
         ]);
 
         await animationManager.setAnimationProgress(1);
         const finalDotPositions = [
-          {
-            cx: '5',
-            cy: '73.4',
-          },
-          {
-            cx: '23',
-            cy: '53.897000000000006',
-          },
-          {
-            cx: '41',
-            cy: '82.41799999999999',
-          },
-          {
-            cx: '59',
-            cy: '6.8000000000000025',
-          },
-          {
-            cx: '77',
-            cy: '59.827999999999996',
-          },
-          {
-            cx: '95',
-            cy: '51.8',
-          },
+          { cx: '5', cy: '73.4' },
+          { cx: '23', cy: '53.897000000000006' },
+          { cx: '41', cy: '82.41799999999999' },
+          { cx: '59', cy: '6.8000000000000025' },
+          { cx: '77', cy: '59.827999999999996' },
+          { cx: '95', cy: '51.8' },
         ];
         expectDots(container, finalDotPositions);
 

@@ -11,15 +11,16 @@ import { useAnimationId } from '../util/useAnimationId';
 import { interpolate } from '../util/DataUtils';
 import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { roundTemplateLiteral } from '../util/round';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
   let path;
-  path = `M ${x},${y}`;
-  path += `L ${x + upperWidth},${y}`;
-  path += `L ${x + upperWidth - widthGap / 2},${y + height}`;
-  path += `L ${x + upperWidth - widthGap / 2 - lowerWidth},${y + height}`;
-  path += `L ${x},${y} Z`;
+  path = roundTemplateLiteral`M ${x},${y}`;
+  path += roundTemplateLiteral`L ${x + upperWidth},${y}`;
+  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2},${y + height}`;
+  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2 - lowerWidth},${y + height}`;
+  path += roundTemplateLiteral`L ${x},${y} Z`;
   return path;
 };
 
