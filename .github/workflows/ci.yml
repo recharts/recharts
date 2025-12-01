@@ -26,6 +26,11 @@ jobs:
       # Output the list of directories as a JSON array string
       directories: ${{ steps.set_matrix.outputs.directories }}
     steps:
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Checkout Integration Tests Repository
         uses: actions/checkout@v4
         with:
