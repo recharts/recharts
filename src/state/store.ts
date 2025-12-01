@@ -1,4 +1,4 @@
-import { Action, autoBatchEnhancer, combineReducers, configureStore, Dispatch, Store } from '@reduxjs/toolkit';
+import { Action, autoBatchEnhancer, combineReducers, configureStore, Dispatch, Reducer, Store } from '@reduxjs/toolkit';
 import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
@@ -20,7 +20,24 @@ import { errorBarReducer } from './errorBarSlice';
 import { Global } from '../util/Global';
 import { zIndexReducer } from './zIndexSlice';
 
-const rootReducer = combineReducers({
+export type RechartsRootState = {
+  brush: ReturnType<typeof brushReducer>;
+  cartesianAxis: ReturnType<typeof cartesianAxisReducer>;
+  chartData: ReturnType<typeof chartDataReducer>;
+  errorBars: ReturnType<typeof errorBarReducer>;
+  graphicalItems: ReturnType<typeof graphicalItemsReducer>;
+  layout: ReturnType<typeof chartLayoutReducer>;
+  legend: ReturnType<typeof legendReducer>;
+  options: ReturnType<typeof optionsReducer>;
+  polarAxis: ReturnType<typeof polarAxisReducer>;
+  polarOptions: ReturnType<typeof polarOptionsReducer>;
+  referenceElements: ReturnType<typeof referenceElementsReducer>;
+  rootProps: ReturnType<typeof rootPropsReducer>;
+  tooltip: ReturnType<typeof tooltipReducer>;
+  zIndex: ReturnType<typeof zIndexReducer>;
+};
+
+const rootReducer: Reducer<RechartsRootState> = combineReducers({
   brush: brushReducer,
   cartesianAxis: cartesianAxisReducer,
   chartData: chartDataReducer,
@@ -92,5 +109,4 @@ export const createRechartsStore = (
   });
 };
 
-export type RechartsRootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = Dispatch<Action>;

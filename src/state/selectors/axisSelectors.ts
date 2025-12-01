@@ -733,7 +733,12 @@ export const selectDomainFromUserPreference: (
   numericalDomainSpecifiedWithoutRequiringData,
 );
 
-export const selectDomainOfStackGroups = createSelector(
+export const selectDomainOfStackGroups: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => NumberDomain | undefined = createSelector(
   [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
   combineDomainOfStackGroups,
   {
@@ -892,7 +897,11 @@ export const filterReferenceElements = <T extends ReferenceElementSettings>(
     });
 };
 
-export const selectReferenceDotsByAxis = createSelector(
+export const selectReferenceDotsByAxis: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<ReferenceDotSettings> = createSelector(
   [selectReferenceDots, pickAxisType, pickAxisId],
   filterReferenceElements,
 );
@@ -1494,7 +1503,11 @@ export const selectAxisScale: (
   combineScaleFunction,
 );
 
-export const selectErrorBarsSettings = createSelector(
+export const selectErrorBarsSettings: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<ErrorBarsSettings> = createSelector(
   [selectCartesianItemsSettings, selectAllErrorBarSettings, pickAxisType],
   combineRelevantErrorBarSettings,
 );
@@ -1777,7 +1790,12 @@ export const selectCategoricalDomain: (
   combineCategoricalDomain,
 );
 
-export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(
+export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => AxisPropsForCartesianGridTicksGeneration | undefined = createSelector(
   [
     selectChartLayout,
     selectCartesianAxisSettings,
@@ -2032,7 +2050,12 @@ const selectZAxisScale: (
 
 export type ZAxisWithScale = ZAxisSettings & { scale: RechartsScale };
 
-export const selectZAxisWithScale = createSelector(
+export const selectZAxisWithScale: (
+  state: RechartsRootState,
+  _axisType: 'zAxis',
+  axisId: AxisId,
+  isPanorama: false,
+) => ZAxisWithScale | undefined = createSelector(
   (state: RechartsRootState, _axisType: 'zAxis', axisId: AxisId) => selectZAxisSettings(state, axisId),
   selectZAxisScale,
   (axis: ZAxisSettings, scale: RechartsScale | undefined): ZAxisWithScale | undefined => {
