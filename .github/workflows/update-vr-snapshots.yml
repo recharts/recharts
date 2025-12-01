@@ -16,7 +16,7 @@ on:
     types: [created]
 
 env:
-  NODE_VERSION: 20.x
+  NODE_VERSION: 24.x
 
 jobs:
   update_snapshots:
