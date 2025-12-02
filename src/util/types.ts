@@ -1102,20 +1102,33 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    */
   barGap?: number | string;
   barSize?: number | string;
+  /**
+   * The base value of area.
+   */
   baseValue?: BaseValue;
   children?: ReactNode;
   className?: string;
   compact?: boolean;
+  /**
+   * The source data. Each element should be an object.
+   */
   data?: any[];
   dataKey?: DataKey<any>;
   desc?: string;
+  /**
+   * The height of chart container.
+   */
   height?: number | Percent;
   id?: string;
   /**
+   * The layout of chart defines the orientation of axes, graphical items, and tooltip.
+   *
    * @defaultValue horizontal
    */
   layout?: CartesianLayout;
   /**
+   * Empty space around the container.
+   *
    * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
    */
   margin?: Partial<Margin>;
@@ -1136,18 +1149,32 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   responsive?: boolean;
   role?: string;
   /**
+   * The type of offset function used to generate the lower and upper values in the series array. The four types are built-in offsets in d3-shape.
+   * Only applicable for stacked Area or Bar charts. Has no effect when the stackId prop is not set on Area or Bar components.
+   *
    * @defaultValue none
    */
   stackOffset?: StackOffsetType;
   style?: CSSProperties;
+  /**
+   * Charts with the same syncId will synchronise Tooltip and Brush events.
+   */
   syncId?: number | string;
   /**
+   * Customize how the charts will synchronize tooltips and brushes.
+   * `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
+   * `value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout).
+   * function: a custom sync method which receives tick and data as argument and returns an index.
+   *
    * @defaultValue index
    */
   syncMethod?: SyncMethod;
   tabIndex?: number;
   throttleDelay?: number;
   title?: string;
+  /**
+   * The width of chart container.
+   */
   width?: number | Percent;
 }
 

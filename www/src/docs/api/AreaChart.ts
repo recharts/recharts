@@ -13,8 +13,8 @@ export const AreaChartAPI: ApiDoc = {
       defaultVal: 'horizontal',
       isOptional: false,
       desc: {
-        'en-US': 'The layout of area in the chart.',
-        'zh-CN': '区域图的布局类型，是横向的还是纵向的。',
+        'en-US': 'The layout of chart defines the orientation of axes, graphical items, and tooltip.',
+        'zh-CN': '图表的布局决定了坐标轴、图形元素以及提示信息的方向。',
       },
     },
     {
@@ -22,10 +22,8 @@ export const AreaChartAPI: ApiDoc = {
       type: 'String',
       isOptional: true,
       desc: {
-        'en-US':
-          'If any two categorical charts(LineChart, AreaChart, BarChart, ComposedChart) have the same syncId, these two charts can sync the position tooltip, and the startIndex, endIndex of Brush.',
-        'zh-CN':
-          '如果任何两个或者多个类目型图表（LineChart, AreaChart, BarChart, ComposedChart）具有相同的 syncId，这两个图表可以联动，包括 Tooltip 以及 Brush 的联动。',
+        'en-US': 'Charts with the same syncId will synchronise Tooltip and Brush events.',
+        'zh-CN': '具有相同 syncId 的图表会同步显示提示信息和刷选区域。',
       },
       examples: [
         {
@@ -41,12 +39,20 @@ export const AreaChartAPI: ApiDoc = {
       isOptional: true,
       desc: {
         'en-US':
-          "When syncId is provided, allows customisation of how the charts will synchronize tooltips and brushes. Using 'index' (default setting), other charts will reuse current datum's index within the data array. In cases where data does not have the same length, this might yield unexpected results. In that case use 'value' which will try to match other charts values, or a fully custom function which will receive tick, data as argument and should return an index.",
+          'Customize how the charts will synchronize tooltips and brushes. ' +
+          '`index`: synchronize using the data index in the data array. Index expects that all data has the same length. ' +
+          '`value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout). ' +
+          'function: a custom sync method which receives tick and data as argument and returns an index.',
+        'zh-CN':
+          '自定义图表同步提示信息和刷选区域的方式。' +
+          '`index`：通过数据在数据数组中的索引进行同步。使用索引时，要求所有图表的数据长度相同。' +
+          '`value`：通过类目轴上的数据值进行同步（类目轴指的是水平布局下的 X 轴，或垂直布局下的 Y 轴）。' +
+          'function：自定义同步方法，该方法会接收刻度值和数据作为参数，并返回一个索引值。',
       },
     },
     {
       name: 'width',
-      type: 'Number',
+      type: 'Percent | Number',
       isOptional: false,
       desc: {
         'en-US': 'The width of chart container.',
@@ -67,7 +73,7 @@ export const AreaChartAPI: ApiDoc = {
       type: 'Array',
       isOptional: false,
       desc: {
-        'en-US': 'The source data, in which each element is an object.',
+        'en-US': 'The source data. Each element should be an object.',
         'zh-CN': '输入数据，现在支持的类型是对象数组。',
       },
       format: ["[{ name: 'a', value: 12 }]", "[{ name: 'a', value: [5, 12] }]"],
@@ -78,7 +84,7 @@ export const AreaChartAPI: ApiDoc = {
       defaultVal: '{"top":5,"right":5,"bottom":5,"left":5}',
       isOptional: false,
       desc: {
-        'en-US': 'The sizes of whitespace around the container.',
+        'en-US': 'Empty space around the container.',
         'zh-CN': '图表四周的留白大小，支持传入部分值（如： { top: 5 }）',
       },
       format: ['{ top: 5, right: 5, bottom: 5, left: 5 }'],
@@ -90,8 +96,9 @@ export const AreaChartAPI: ApiDoc = {
       isOptional: false,
       desc: {
         'en-US':
-          'The type of offset function used to generate the lower and upper values in the series array. The four types are built-in offsets in d3-shape.',
-        'zh-CN': '堆积区域图的偏移类型，这里提供的配置是 d3 支持的四种类型。',
+          'The type of offset function used to generate the lower and upper values in the series array. The four types are built-in offsets in d3-shape. Only applicable for stacked Area or Bar charts. Has no effect when the stackId prop is not set on Area or Bar components.',
+        'zh-CN':
+          '用于生成系列数组中上下值的偏移函数类型。四种类型均为 d3-shape 内置的偏移方式。仅适用于堆叠区域图或堆叠柱状图。当 Area 或 Bar 组件上未设置 stackId 属性时，该属性不生效。',
       },
       examples: [
         {
