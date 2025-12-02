@@ -12,7 +12,7 @@ export const StackBlitzButton = () => {
   const { storyId, index } = storybookState;
   const rootEntry: HashEntry | undefined = index?.[storyId];
 
-  if (!storyId || index == null || rootEntry == null || rootEntry.type !== 'story' || rootEntry.subtype !== 'story') {
+  if (!storyId || index == null || rootEntry == null || rootEntry.type !== 'story') {
     return null;
   }
 

@@ -18,7 +18,9 @@ const preview: Preview = {
       type: 'dynamic',
     },
 
-    backgrounds: {},
+    backgrounds: {
+      default: 'light',
+    },
 
     // Sets a delay of 1550ms before each story to give them time to animate (recharts animation default is 1500ms)
     chromatic: { delay: 1550 },
@@ -28,12 +30,6 @@ const preview: Preview = {
       // 'error' - fail CI on a11y violations
       // 'off' - skip a11y checks entirely
       test: 'todo',
-    },
-  },
-
-  initialGlobals: {
-    backgrounds: {
-      value: 'light',
     },
   },
 };
