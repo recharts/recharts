@@ -225,7 +225,7 @@ export const BarAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
+      type: 'Boolean | "auto"',
       defaultVal: 'auto',
       isOptional: true,
       desc: {

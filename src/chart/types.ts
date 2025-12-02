@@ -23,7 +23,7 @@ export interface ExternalMouseEvents {
    */
   onMouseMove: CategoricalChartFunc;
   /**
-   * The customized event handler of mouseleave in this chart.
+   * The customized event handler of mousedown in this chart.
    */
   onMouseDown: CategoricalChartFunc;
   /**

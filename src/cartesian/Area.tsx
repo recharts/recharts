@@ -184,7 +184,7 @@ interface AreaProps extends ZIndexable {
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
   /**
-   * Renders one label for each bar. Options:
+   * Renders one label for each data point. Options:
    * - `true`: renders default labels;
    * - `false`: no labels are rendered;
    * - `object`: the props of LabelList component;

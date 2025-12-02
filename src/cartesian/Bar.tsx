@@ -226,7 +226,7 @@ export interface BarProps extends ZIndexable {
   isAnimationActive?: boolean | 'auto';
   /**
    * Specifies when the animation should begin, the unit of this option is ms.
-   * @default 0
+   * @defaultValue 0
    */
   animationBegin?: number;
   /**
@@ -238,7 +238,7 @@ export interface BarProps extends ZIndexable {
   /**
    * The type of easing function.
    *
-   * @default 'ease'
+   * @defaultValue 'ease'
    */
   animationEasing?: EasingInput;
   /**
