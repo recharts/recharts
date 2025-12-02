@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, ArgTypes } from '@storybook/react-vite';
+import { Args } from '@storybook/react-vite';
 import {
   ScatterChart,
   Scatter,
@@ -14,8 +14,9 @@ import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { SCALE_TYPES } from '../../../../src/util/ReactUtils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { StorybookArgs } from '../../../StorybookArgs';
 
-const ZAxisArgTypes: ArgTypes = {
+const ZAxisArgTypes: StorybookArgs = {
   zAxisId: {
     description: 'The id of z-axis which is corresponding to the data.',
     table: {
@@ -77,7 +78,6 @@ export const API = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(ZAxisArgTypes),
-    zAxisId: 0,
     unit: 'km',
     name: 'A name',
     dataKey: 'pv',
