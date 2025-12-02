@@ -30,8 +30,13 @@ export const AreaAPI: ApiDoc = {
       type: 'String | Number | Function',
       isOptional: false,
       desc: {
-        'en-US': 'The key of a group of data which should be unique in an area chart.',
-        'zh-CN': '每个区域图对应一个唯一的 key，需要在 AreaChart 中保证唯一。',
+        'en-US':
+          'Decides how to extract the value of this Area from the data: ' +
+          '- `string`: the name of the field in the data object; ' +
+          '- `number`: the index of the field in the data; ' +
+          '- `function`: a function that receives the data object and returns the value of this Area.',
+        'zh-CN':
+          '区域图对应的字段，可以是字符串、数字或者函数。字符串和数字分别表示对应数据对象中的属性名和属性索引；函数会接收数据对象作为参数，返回区域图对应的值。',
       },
     },
     {
@@ -40,7 +45,7 @@ export const AreaAPI: ApiDoc = {
       defaultVal: 0,
       isOptional: false,
       desc: {
-        'en-US': 'The id of x-axis which is corresponding to the data.',
+        'en-US': 'The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.',
         'zh-CN': '区域图对应的 x 轴的 id 。',
       },
     },
@@ -50,7 +55,7 @@ export const AreaAPI: ApiDoc = {
       defaultVal: 0,
       isOptional: false,
       desc: {
-        'en-US': 'The id of y-axis which is corresponding to the data.',
+        'en-US': 'The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.',
         'zh-CN': '区域图对应的 y 轴的 id 。',
       },
     },
@@ -60,7 +65,7 @@ export const AreaAPI: ApiDoc = {
       defaultVal: 'line',
       isOptional: true,
       desc: {
-        'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
+        'en-US': "The type of icon in legend. If set to 'none', no legend item will be rendered.",
         'zh-CN': '对应的图例 icon 的类型。',
       },
     },
@@ -107,7 +112,12 @@ export const AreaAPI: ApiDoc = {
       isOptional: false,
       desc: {
         'en-US':
-          'If false set, labels will not be drawn. If true set, labels will be drawn which have the props calculated internally. If object set, labels will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom label element. If set a function, the function will be called to render customized label.',
+          'Renders one label for each bar. Options: ' +
+          '- `true`: renders default labels; ' +
+          '- `false`: no labels are rendered; ' +
+          '- `object`: the props of LabelList component; ' +
+          '- `ReactElement`: a custom label element; ' +
+          '- `function`: a render function of custom label.',
         'zh-CN':
           '图形上的文本标签。当值为 false ，不展示文本标签。当值为 true，会根据 Area 的属性配置来展示文本标签。当值为对象的时候，会把这个对象解析为文本标签的属性，来覆盖默认属性。当值是一个 React Element ，会克隆这个 React Element 来渲染“文本标签”。当值是一个 函数 时，会调用这个函数去渲染自定义的“文本标签”。',
       },
@@ -258,7 +268,9 @@ export const AreaAPI: ApiDoc = {
       isOptional: true,
       desc: {
         'en-US':
-          'The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.',
+          'Unique identifier of this component. ' +
+          'Used as a HTML attribute `id`, and also to identify this element internally. ' +
+          'If undefined, Recharts will generate a unique ID automatically.',
         'zh-CN': '唯一的id，会用于生成内部的clip path id 等，建议使用SSR的时候设置这个属性。',
       },
     },

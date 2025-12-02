@@ -13,6 +13,10 @@ type PropMeta = {
    */
   name: string;
   origin: PropOrigin;
+  /**
+   * The normalized path of the source file where this prop is declared.
+   */
+  normalizedPath: string;
   defaultValueFromObject: DefaultValue;
   defaultValueFromJSDoc: DefaultValue;
 };
@@ -185,6 +189,7 @@ export class ProjectDocReader implements DocReader {
         properties.push({
           name: propName,
           origin: 'other',
+          normalizedPath: 'unknown',
           defaultValueFromObject: { type: 'unreadable' },
           defaultValueFromJSDoc: { type: 'unreadable' },
         });
@@ -193,9 +198,13 @@ export class ProjectDocReader implements DocReader {
 
       declarations.forEach(declaration => {
         const origin = this.getDeclarationOrigin(declaration);
+        const sourceFile = declaration.getSourceFile();
+        const filePath = sourceFile.getFilePath();
+        const normalizedPath = filePath.replace(/\\/g, '/');
         const propMeta: PropMeta = {
           name: propName,
           origin,
+          normalizedPath,
           defaultValueFromObject:
             origin === 'recharts' ? this.getDefaultValueFromObject(componentName, propName) : { type: 'unreadable' },
           defaultValueFromJSDoc: this.getDefaultValueFromJSDoc(prop),

@@ -113,59 +113,148 @@ export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
   /**
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
+   *
    * @defaultValue 0
    */
   xAxisId?: string | number;
   /**
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
+   *
    * @defaultValue 0
    */
   yAxisId?: string | number;
+  /**
+   * When two bars have the same axisId and same stackId, then the two bars are stacked in the chart.
+   */
   stackId?: StackId;
+  /**
+   * The width or height of each bar. If the barSize is not specified, the size of bar will be calculated by the barCategoryGap, barGap and the quantity of bar groups.
+   */
   barSize?: string | number;
+  /**
+   * The unit of data. This option will be used in tooltip.
+   */
   unit?: string | number;
+  /**
+   * The name of data.
+   * This option will be used in tooltip and legend to represent a bar.
+   * If no value was set to this option, the value of dataKey will be used alternatively.
+   */
   name?: string | number;
+  /**
+   * Decides how to extract the value of this Bar from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Bar.
+   */
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   /**
+   * The type of icon in legend. If set to 'none', no legend item will be rendered.
+   *
    * @defaultValue rect
    */
   legendType?: LegendType;
   /**
+   * The minimal height of a bar in a horizontal chart, or the minimal width of a bar in a vertical chart.
+   *
+   * By default, 0 values are not shown.
+   * To visualize a 0 (or close to zero) point, set the minimal point size to a pixel value like 3.
+   *
+   * In stacked bar charts, minPointSize might not be respected for tightly packed values.
+   * So we strongly recommend not using this props in stacked BarChart.
+   *
+   * You may provide a function to conditionally change this prop based on Bar value.
+   *
    * @defaultValue 0
    */
   minPointSize?: MinPointSize;
+  /**
+   * The maximum width of bar in a horizontal chart, or maximum height in a vertical chart.
+   */
   maxBarSize?: number;
   /**
    * @defaultValue false
    */
   hide?: boolean;
+  /**
+   * If set a ReactElement, the shape of bar can be customized.
+   * If set a function, the function will be called to render customized shape.
+   * By default, renders a rectangle.
+   */
   shape?: ActiveShape<BarProps, SVGPathElement>;
 
   /**
+   * The active bar is shown when a user enters a bar chart and this chart has tooltip. Options:
+   * - `false`: all bars are passive, nothing happens on mouse events;
+   * - `true`: active bar is rendered separately but the default props are the same as others: so mouse events do not change its appearance. className and zIndex are different though;
+   * - `object`: the props of active bar;
+   * - `function`: the render function of active bar;
+   * - `ReactElement`: the active bar element.
+   *
    * @defaultValue false
    */
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
   /**
+   * Renders a background for each bar. Options:
+   *  - `false`: no background;
+   *  - `true`: renders default background;
+   *  - `object`: the props of background rectangle;
+   *  - `ReactElement`: a custom background element;
+   *  - `function`: a render function of custom background.
+   *
    * @defaultValue false
    */
   background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
   radius?: number | [number, number, number, number];
-
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
 
   /**
+   * If set false, animation of bar will be disabled.
+   *
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
+  /**
+   * Specifies when the animation should begin, the unit of this option is ms.
+   * @default 0
+   */
   animationBegin?: number;
   /**
+   * Specifies the duration of animation, the unit of this option is ms.
+   *
    * @defaultValue 400
    */
   animationDuration?: AnimationDuration;
+  /**
+   * The type of easing function.
+   *
+   * @default 'ease'
+   */
   animationEasing?: EasingInput;
+  /**
+   * The unique identifier of this component.
+   * Used as a HTML attribute `id`, and also to identify this element internally.
+   *
+   * If undefined, Recharts will generate a unique ID automatically.
+   */
   id?: string;
   /**
+   * Renders one label for each bar. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
    * @defaultValue false
    */
   label?: ImplicitLabelListType;
@@ -182,10 +271,38 @@ type BarMouseEvent = (
 ) => void;
 
 interface BarEvents {
+  /**
+   * The customized event handler of click on the bars in this group
+   */
   onClick: BarMouseEvent;
+  /**
+   * The customized event handler of mouseenter on the bars in this group
+   */
   onMouseEnter: BarMouseEvent;
+  /**
+   * The customized event handler of mouseleave on the bars in this group
+   */
   onMouseLeave: BarMouseEvent;
+  /**
+   * The customized event handler of mousemove on the bars in this group
+   */
   onMouseMove: BarMouseEvent;
+  /**
+   * The customized event handler of mousedown on the bars in this group
+   */
+  onMouseDown: BarMouseEvent;
+  /**
+   * The customized event handler of mouseup on the bars in this group
+   */
+  onMouseUp: BarMouseEvent;
+  /**
+   * The customized event handler of mouseover on the bars in this group
+   */
+  onMouseOver: BarMouseEvent;
+  /**
+   * The customized event handler of mouseout on the bars in this group
+   */
+  onMouseOut: BarMouseEvent;
 }
 
 type InternalBarProps = {

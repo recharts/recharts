@@ -1,10 +1,62 @@
 import { describe, it, expect, test } from 'vitest';
 import { shallowEqual } from 'react-redux';
+import { diffChars } from 'diff';
 import { ProjectDocReader } from './readProject';
 import { ApiDocReader } from './readApiDoc';
 import { StorybookDocReader } from './readStorybookDoc';
 import { DefaultValue } from './DocReader';
 import { isNotNil } from '../src/util/DataUtils';
+
+/**
+ * Normalize text for fuzzy comparison by:
+ * - Converting to lowercase
+ * - Removing extra whitespace (including newlines)
+ * - Trimming leading/trailing whitespace
+ */
+function normalizeText(text: string | undefined): string {
+  if (!text) {
+    return '';
+  }
+  return text.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Uses the 'diff' library to produce a colored diff between two strings.
+ * The diff highlights additions in green and deletions in red.
+ *
+ * Returns undefined if there are no differences.
+ * @param expected
+ * @param actual
+ */
+function coloredDiff(expected: string | undefined, actual: string | undefined): string | undefined {
+  if (expected === undefined && actual === undefined) {
+    return undefined;
+  }
+  if (expected === undefined) {
+    return `${actual}`;
+  }
+  if (actual === undefined) {
+    return `${expected}`;
+  }
+  const normalizedExpected = normalizeText(expected);
+  const normalizedActual = normalizeText(actual);
+  if (normalizedExpected === normalizedActual) {
+    return undefined;
+  }
+  const diff = diffChars(normalizedExpected, normalizedActual);
+  const hasDifferences = diff.some(part => part.added || part.removed);
+  if (!hasDifferences) {
+    return undefined;
+  }
+  let result = '';
+  for (const part of diff) {
+    // eslint-disable-next-line no-nested-ternary
+    const colorStart = part.added ? '+++' : part.removed ? '---' : '';
+    const colorEnd = part.added || part.removed ? '<<<' : '';
+    result += colorStart + part.value + colorEnd;
+  }
+  return result;
+}
 
 describe('omnidoc - documentation consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -238,19 +290,6 @@ describe('omnidoc - documentation consistency', () => {
 
   describe('comment/documentation consistency', () => {
     /**
-     * Normalize text for fuzzy comparison by:
-     * - Converting to lowercase
-     * - Removing extra whitespace (including newlines)
-     * - Trimming leading/trailing whitespace
-     */
-    function normalizeText(text: string | undefined): string {
-      if (!text) {
-        return '';
-      }
-      return text.toLowerCase().replace(/\s+/g, ' ').trim();
-    }
-
-    /**
      * Check if two comments are similar enough.
      * Returns true if both are empty/null, or if normalized texts match.
      */
@@ -272,7 +311,6 @@ describe('omnidoc - documentation consistency', () => {
     }
 
     const componentsWithInconsistentCommentsInApiDoc = [
-      'Bar',
       'BarChart',
       'Brush',
       'CartesianAxis',
@@ -322,7 +360,8 @@ describe('omnidoc - documentation consistency', () => {
     test.each(
       apiDocReader.getPublicComponentNames().filter(name => !componentsWithInconsistentCommentsInApiDoc.includes(name)),
     )('if %s has comments in API docs, they should match the project comments', component => {
-      const allProps = apiDocReader.getRechartsPropsOf(component);
+      const allProps = apiDocReader.getAllPropsOf(component);
+
       const inconsistentComments: string[] = [];
 
       for (const prop of allProps) {
@@ -334,12 +373,10 @@ describe('omnidoc - documentation consistency', () => {
           continue;
         }
 
-        if (!areCommentsSimilar(apiComment, projectComment)) {
-          inconsistentComments.push(
-            `Component "${component}", prop "${prop}":\n` +
-              `  API doc: ${apiComment || '(none)'}\n` +
-              `  Project: ${projectComment || '(none)'}`,
-          );
+        const difference = coloredDiff(apiComment, projectComment);
+
+        if (difference) {
+          inconsistentComments.push(`Component "${component}", prop "${prop}" diff:\n${difference}`);
         }
       }
 
