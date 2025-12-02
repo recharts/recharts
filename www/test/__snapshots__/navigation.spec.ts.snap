@@ -543,6 +543,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "BarChartWithMultiXAxis",
             "url": "/en-US/examples/BarChartWithMultiXAxis/",
           },
+          {
+            "displayName": "Ranged Stacked Bar Chart",
+            "key": "RangedStackedBarChart",
+            "url": "/en-US/examples/RangedStackedBarChart/",
+          },
         ],
         "key": "BarChart",
       },

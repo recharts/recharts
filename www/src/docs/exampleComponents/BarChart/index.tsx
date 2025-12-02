@@ -26,6 +26,8 @@ import barChartHasBackgroundSource from './BarChartHasBackground?raw';
 import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
 import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
+import RangedStackedBarChart from './RangedStackedBarChart';
+import rangedStackedBarChartSource from './RangedStackedBarChart?raw';
 
 export { BarChartNavExample };
 
@@ -94,5 +96,20 @@ export const barChartExamples: Record<string, ChartExample> = {
     Component: BarChartWithMultiXAxis,
     sourceCode: barChartWithMultiXAxisSource,
     name: 'Bar Chart With Multi X Axis',
+  },
+  RangedStackedBarChart: {
+    Component: RangedStackedBarChart,
+    sourceCode: rangedStackedBarChartSource,
+    name: 'Ranged Stacked Bar Chart',
+    description: (
+      <>
+        <p>If you define stacked bar data as ranges, Recharts will use those ranges as-is without any calculations.</p>
+        <p>
+          The ranges can be connected, disconnected, or overlapping depending on your use case (e.g., timeline of
+          events).
+        </p>
+        <p>This feature is available since Recharts 3.6.</p>
+      </>
+    ),
   },
 };

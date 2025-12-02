@@ -16,6 +16,7 @@ import BiaxialBarChart from '../../../www/src/docs/exampleComponents/BarChart/Bi
 import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarChart/BarChartHasBackground';
 import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
 import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
+import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
 
 test('BarChartNavExample', async ({ mount }) => {
   const component = await mount(<BarChartNavExample />);
@@ -94,5 +95,10 @@ test('BarChartExample', async ({ mount }) => {
 
 test('BarChartRangeExample', async ({ mount }) => {
   const component = await mount(<BarChartRangeExample isAnimationActive={false} />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('RangedStackedBarChart', async ({ mount }) => {
+  const component = await mount(<RangedStackedBarChart isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
