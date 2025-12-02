@@ -181,7 +181,7 @@ export const BarAPI = {
       type: 'String | Number',
       isOptional: true,
       desc: {
-        'en-US': 'When two bars have the same axisId and same stackId, then the two bars are stacked in the chart.',
+        'en-US': 'When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.',
         'zh-CN': '堆积id，当两组及以上的柱图有相同的数值轴以及相同的 stackId 时，这些柱图会按照顺序堆积展示。',
       },
       format: [
@@ -229,7 +229,8 @@ export const BarAPI = {
       defaultVal: 'auto',
       isOptional: true,
       desc: {
-        'en-US': 'If set false, animation of bar will be disabled.',
+        'en-US':
+          'If set false, animation of bar will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.',
         'zh-CN': '当值为 false，不开启动画。',
       },
     },

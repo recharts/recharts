@@ -164,8 +164,7 @@ export const AreaAPI: ApiDoc = {
       type: 'String | Number',
       isOptional: true,
       desc: {
-        'en-US':
-          'The stack id of area, when two areas have the same value axis and same stackId, then the two areas area stacked in order.',
+        'en-US': 'When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.',
         'zh-CN': '堆积id，当两组及以上的区域图有相同的数值轴以及相同的 stackId 时，这些区域图会按照顺序堆积展示。',
       },
       format: [

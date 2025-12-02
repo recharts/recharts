@@ -125,7 +125,7 @@ export interface BarProps extends ZIndexable {
    */
   yAxisId?: string | number;
   /**
-   * When two bars have the same axisId and same stackId, then the two bars are stacked in the chart.
+   * When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.
    */
   stackId?: StackId;
   /**
@@ -219,6 +219,7 @@ export interface BarProps extends ZIndexable {
 
   /**
    * If set false, animation of bar will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    *
    * @defaultValue auto
    */

@@ -246,7 +246,7 @@ interface AreaProps extends ZIndexable {
    */
   onMouseUp?: (event: React.MouseEvent<SVGPathElement>) => void;
   /**
-   * The stack id of area, when two areas have the same value axis and same stackId, then the two areas area stacked in order.
+   * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
   stackId?: string | number;
   /**
