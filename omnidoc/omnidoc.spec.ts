@@ -425,7 +425,6 @@ describe('omnidoc - documentation consistency', () => {
    */
   const componentsWithInconsistentCommentsInApiDoc = [
     'CartesianAxis',
-    'CartesianGrid',
     'Cell',
     'ComposedChart',
     'Cross',
@@ -736,6 +735,16 @@ describe('omnidoc - documentation consistency', () => {
         component: 'Brush',
         prop: 'width',
         reason: 'Brush width defaults to chart width if not specified, also it is in pixels',
+      },
+      {
+        component: 'CartesianGrid',
+        prop: 'height',
+        reason: 'CartesianGrid height defaults to chart height if not specified, also it is in pixels',
+      },
+      {
+        component: 'CartesianGrid',
+        prop: 'width',
+        reason: 'CartesianGrid width defaults to chart width if not specified, also it is in pixels',
       },
     ];
 

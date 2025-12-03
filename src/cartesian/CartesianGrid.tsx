@@ -63,19 +63,21 @@ export type VerticalCoordinatesGenerator = (
 
 interface CartesianGridProps extends ZIndexable {
   /**
-   * The width of grid.
+   * The width of grid. If undefined, covers the full width of the chart plot area.
    */
   width?: number;
   /**
-   * The height of grid.
+   * The height of grid. If undefined, covers the full height of the chart plot area.
    */
   height?: number;
   /**
-   * A function that generates the y-coordinates of all horizontal lines. The generator gets passed an object of the shape { yAxis, width, height, offset }.
+   * A function that generates the y-coordinates of all horizontal lines.
+   * The generator gets passed an object of the shape { yAxis, width, height, offset }.
    */
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   /**
-   * A function that generates the x-coordinates of all vertical lines. The generator gets passed an object of the shape { xAxis, width, height, offset }.
+   * A function that generates the x-coordinates of all vertical lines.
+   * The generator gets passed an object of the shape { xAxis, width, height, offset }.
    */
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
   /**
@@ -89,10 +91,14 @@ interface CartesianGridProps extends ZIndexable {
    */
   y?: number;
   /**
+   * If set false, no horizontal grid lines will be drawn.
+   *
    * @defaultValue true
    */
   horizontal?: GridLineType;
   /**
+   * If set false, no vertical grid lines will be drawn.
+   *
    * @defaultValue true
    */
   vertical?: GridLineType;
@@ -110,6 +116,16 @@ interface CartesianGridProps extends ZIndexable {
    * @defaultValue []
    */
   verticalPoints?: number[];
+  /**
+   * The background color used to fill the space between grid lines
+   *
+   * @defaultValue none
+   */
+  fill?: string;
+  /**
+   * The opacity of the background used to fill the space between grid lines
+   */
+  fillOpacity?: number;
   /**
    * Defines background color of stripes.
    *
@@ -159,11 +175,17 @@ interface CartesianGridProps extends ZIndexable {
    */
   verticalValues?: number[] | string[];
   /**
-   * @defaultValue 0
+   * The pattern of dashes and gaps used to paint the lines of the grid
+   */
+  strokeDasharray?: string | number[];
+  /**
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
+   * @default 0
    */
   xAxisId?: AxisId;
   /**
-   * @defaultValue 0
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
+   * @default 0
    */
   yAxisId?: AxisId;
   /**

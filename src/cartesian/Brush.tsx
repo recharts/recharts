@@ -38,12 +38,12 @@ type BrushTickFormatter = (value: any, index: number) => number | string;
 interface BrushProps {
   /**
    * The x-coordinate of brush.
-   * If undefined, the x-coordinate is calculated using chart offset.
+   * If left undefined, it will be computed from the chart's offset and margins.
    */
   x?: number;
   /**
    * The y-coordinate of brush.
-   * If undefined, the y-coordinate is calculated using chart offset.
+   * If left undefined, it will be computed from the chart's offset and margins.
    */
   y?: number;
   dy?: number;

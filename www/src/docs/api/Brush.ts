@@ -19,7 +19,8 @@ export const BrushAPI = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The x-coordinate of brush. If undefined, the x-coordinate is calculated using chart offset.',
+        'en-US':
+          "The x-coordinate of brush. If left undefined, it will be computed from the chart's offset and margins.",
         'zh-CN': 'x 坐标。',
       },
     },
@@ -28,7 +29,8 @@ export const BrushAPI = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The y-coordinate of brush. If undefined, the y-coordinate is calculated using chart offset.',
+        'en-US':
+          "The y-coordinate of brush. If left undefined, it will be computed from the chart's offset and margins.",
         'zh-CN': 'y 坐标。',
       },
     },
