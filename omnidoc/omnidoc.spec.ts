@@ -424,7 +424,6 @@ describe('omnidoc - documentation consistency', () => {
    * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
    */
   const componentsWithInconsistentCommentsInApiDoc = [
-    'Brush',
     'CartesianAxis',
     'CartesianGrid',
     'Cell',
@@ -728,6 +727,16 @@ describe('omnidoc - documentation consistency', () => {
         prop: 'children',
         reason: 'Text has special rules for children',
       },
+      {
+        component: 'Brush',
+        prop: 'height',
+        reason: 'Brush height is always in pixels',
+      },
+      {
+        component: 'Brush',
+        prop: 'width',
+        reason: 'Brush width defaults to chart width if not specified, also it is in pixels',
+      },
     ];
 
     // Build the prop-to-components map once for all tests
@@ -760,10 +769,10 @@ describe('omnidoc - documentation consistency', () => {
       })
       .map(([propName]) => propName);
 
-    test.each(sharedPropsWithComments)(
-      'shared prop "%s" should have similar JSDoc comments across components',
-      propName => {
-        const components = propToComponents.get(propName)!;
+    describe.each(sharedPropsWithComments)('shared prop "%s" should have similar JSDoc comments', propName => {
+      const components = propToComponents.get(propName)!;
+      const componentNames = components.map(c => c.component).join(', ');
+      test(`across components ${componentNames}`, () => {
         const componentsWithComments = components.filter(({ comment }) => comment && comment.trim() !== '');
 
         const inconsistencies: string[] = [];
@@ -797,8 +806,8 @@ describe('omnidoc - documentation consistency', () => {
         }
 
         expect(inconsistencies).toEqual([]);
-      },
-    );
+      });
+    });
   });
 
   describe.todo('the type definition of each prop should be consistent between API docs, Storybook, and the project');

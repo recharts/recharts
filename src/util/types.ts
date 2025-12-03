@@ -1125,6 +1125,7 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   desc?: string;
   /**
    * The height of chart container.
+   * Can be a number or a percent string like "100%".
    */
   height?: number | Percent;
   id?: string;
@@ -1188,6 +1189,7 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   title?: string;
   /**
    * The width of chart container.
+   * Can be a number or a percent string like "100%".
    */
   width?: number | Percent;
 }

@@ -51,7 +51,7 @@ export const BarChartAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The width of chart container.',
+        'en-US': 'The width of chart container. Can be a number or a percent string like "100%".',
         'zh-CN': '图表的宽度。',
       },
     },
@@ -60,7 +60,7 @@ export const BarChartAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The height of chart container.',
+        'en-US': 'The height of chart container. Can be a number or a percent string like "100%".',
         'zh-CN': '图表的高度。',
       },
     },
