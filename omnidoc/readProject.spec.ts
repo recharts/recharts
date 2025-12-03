@@ -30,6 +30,7 @@ describe('readProject', () => {
         "AreaChart",
         "Bar",
         "BarChart",
+        "BarStack",
         "CartesianAxis",
         "Cell",
         "ComposedChart",

@@ -18,13 +18,7 @@ import {
   isCategoricalAxis,
   RechartsScale,
 } from '../../util/ChartUtils';
-import {
-  BarWithPosition,
-  combineAllBarPositions,
-  combineBarSizeList,
-  combineStackedData,
-  SizeList,
-} from './barSelectors';
+import { BarWithPosition, SizeList } from './barSelectors';
 import {
   selectBarCategoryGap,
   selectBarGap,
@@ -43,6 +37,9 @@ import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } fr
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { RadialBarSettings } from '../types/RadialBarSettings';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
+import { combineBarSizeList } from './combiners/combineBarSizeList';
+import { combineAllBarPositions } from './combiners/combineAllBarPositions';
+import { combineStackedData } from './combiners/combineStackedData';
 
 const selectRadiusAxisForRadialBar = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings =>
   selectRadiusAxis(state, radiusAxisId);
