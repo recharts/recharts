@@ -104,9 +104,15 @@ function coloredDiff(expected: string | undefined, actual: string | undefined): 
   }
   let result = '';
   for (const part of diff) {
-    // eslint-disable-next-line no-nested-ternary
-    const colorStart = part.added ? '+++' : part.removed ? '---' : '';
-    const colorEnd = part.added || part.removed ? '<<<' : '';
+    let colorStart = '';
+    let colorEnd = '';
+    if (part.added) {
+      colorStart = '+++';
+      colorEnd = '<<<';
+    } else if (part.removed) {
+      colorStart = '---';
+      colorEnd = '<<<';
+    }
     result += colorStart + part.value + colorEnd;
   }
   return result;
