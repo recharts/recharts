@@ -1157,7 +1157,7 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   stackOffset?: StackOffsetType;
   style?: CSSProperties;
   /**
-   * Charts with the same syncId will synchronise Tooltip and Brush events.
+   * Charts with the same syncId will synchronize Tooltip and Brush events.
    */
   syncId?: number | string;
   /**
