@@ -22,7 +22,7 @@ export const AreaChartAPI: ApiDoc = {
       type: 'String',
       isOptional: true,
       desc: {
-        'en-US': 'Charts with the same syncId will synchronise Tooltip and Brush events.',
+        'en-US': 'Charts with the same syncId will synchronize Tooltip and Brush events.',
         'zh-CN': '具有相同 syncId 的图表会同步显示提示信息和刷选区域。',
       },
       examples: [

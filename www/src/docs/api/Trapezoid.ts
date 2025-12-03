@@ -4,7 +4,7 @@ export const TrapezoidAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of top left point of the trapezoid.',
@@ -14,7 +14,7 @@ export const TrapezoidAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of top left point of the trapezoid.',
@@ -24,7 +24,7 @@ export const TrapezoidAPI = {
     {
       name: 'upperWidth',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of the upper horizontal side of the trapezoid.',
@@ -33,7 +33,7 @@ export const TrapezoidAPI = {
     {
       name: 'lowerWidth',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of the lower horizontal side of the trapezoid.',
@@ -42,7 +42,7 @@ export const TrapezoidAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The height of trapezoid.',
@@ -52,7 +52,7 @@ export const TrapezoidAPI = {
     {
       name: 'isUpdateAnimationActive',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       desc: {
         'en-US':
           'If set to true, trapezoid will update and render with a gradual fade-in animation from left to right.',

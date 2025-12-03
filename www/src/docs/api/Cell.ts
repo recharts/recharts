@@ -12,7 +12,6 @@ export const CellAPI = {
     {
       name: 'fill',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The presentation attribute of a rectangle in bar or a sector in pie.',
@@ -22,7 +21,6 @@ export const CellAPI = {
     {
       name: 'stroke',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US': 'The presentation attribute of a rectangle in bar or a sector in pie.',

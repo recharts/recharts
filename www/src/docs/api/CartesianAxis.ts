@@ -4,7 +4,7 @@ export const CartesianAxisAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of axis.',
@@ -14,7 +14,7 @@ export const CartesianAxisAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of axis.',
@@ -24,7 +24,7 @@ export const CartesianAxisAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of axis.',
@@ -34,7 +34,7 @@ export const CartesianAxisAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The height of axis.',
@@ -64,7 +64,7 @@ export const CartesianAxisAPI = {
     {
       name: 'axisLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -75,7 +75,7 @@ export const CartesianAxisAPI = {
     {
       name: 'tickLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -118,7 +118,6 @@ export const CartesianAxisAPI = {
     {
       name: 'tick',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -136,7 +135,6 @@ export const CartesianAxisAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -148,7 +146,7 @@ export const CartesianAxisAPI = {
     {
       name: 'mirror',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':

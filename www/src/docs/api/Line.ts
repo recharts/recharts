@@ -367,7 +367,6 @@ export const LineAPI: ApiDoc = {
     {
       name: 'strokeDasharray',
       type: 'String',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US': 'The pattern of dashes and gaps used to paint the line',

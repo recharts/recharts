@@ -55,7 +55,7 @@ const GeneralProps: StorybookArgs = {
     control: 'text',
     table: {
       type: { summary: 'String | Number | ReactElement | Function' },
-      defaultValue: { summary: 'false' },
+      defaultValue: { summary: false },
       category: 'General',
     },
   },

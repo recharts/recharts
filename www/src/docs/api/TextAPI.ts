@@ -26,7 +26,6 @@ export const TextAPI: ApiDoc = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

@@ -334,7 +334,7 @@ export class ProjectDocReader implements DocReader {
     return this.getTypeArgumentOfFunctionCallSignature(declaration);
   }
 
-  getDefaultValueOf(component: string, prop: string): DefaultValue {
+  getDefaultValueOf(component: string, prop: string, includeJSDoc: boolean = true): DefaultValue {
     return this.getPropMeta(component, prop).reduce(
       (acc: DefaultValue, meta: PropMeta): DefaultValue => {
         /*
@@ -349,8 +349,10 @@ export class ProjectDocReader implements DocReader {
         if (acc.type === 'known' || acc.type === 'none') {
           return acc;
         }
-        if (meta.defaultValueFromJSDoc.type !== 'unreadable') {
-          return meta.defaultValueFromJSDoc;
+        if (includeJSDoc) {
+          if (meta.defaultValueFromJSDoc.type !== 'unreadable') {
+            return meta.defaultValueFromJSDoc;
+          }
         }
         return acc;
       },

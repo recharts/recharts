@@ -64,7 +64,7 @@ export const SectorProps: StorybookArgs = {
     description: 'Whether or not force to render round corner when the angle of sector is very small',
     table: {
       type: { summary: 'boolean' },
-      defaultValue: { summary: 'false' },
+      defaultValue: { summary: false },
     },
   },
 };

@@ -6,7 +6,7 @@ export const General: StorybookArgs = {
     description: 'The id of angle axis which is corresponding to the data.',
     table: {
       type: { summary: 'string | number' },
-      defaultValue: { summary: '0' },
+      defaultValue: { summary: 0 },
       category: 'General',
     },
   },
@@ -22,7 +22,7 @@ export const General: StorybookArgs = {
     table: {
       type: { summary: 'string | number' },
       category: 'General',
-      defaultValue: { summary: '0' },
+      defaultValue: { summary: 0 },
     },
   },
   dataKey,
