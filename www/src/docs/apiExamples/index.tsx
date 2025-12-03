@@ -42,5 +42,5 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   LabelList: labelListApiExamples,
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,
-  SankeyChart: sankeyApiExamples,
+  Sankey: sankeyApiExamples,
 };
