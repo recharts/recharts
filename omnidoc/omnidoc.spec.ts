@@ -424,7 +424,6 @@ describe('omnidoc - documentation consistency', () => {
    * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
    */
   const componentsWithInconsistentCommentsInApiDoc = [
-    'BarChart',
     'Brush',
     'CartesianAxis',
     'CartesianGrid',

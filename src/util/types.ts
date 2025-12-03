@@ -1094,13 +1094,21 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    */
   accessibilityLayer?: boolean;
   /**
+   * The gap between two bar categories, which can be a percent value or a fixed value.
+   *
    * @defaultValue 10%
    */
   barCategoryGap?: number | string;
   /**
+   * The gap between two bars in the same category.
+   *
    * @defaultValue 4
    */
   barGap?: number | string;
+  /**
+   * The width or height of each bar. If the barSize is not specified, the size of the
+   * bar will be calculated by the barCategoryGap, barGap and the quantity of bar groups.
+   */
   barSize?: number | string;
   /**
    * The base value of area.
@@ -1132,8 +1140,14 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
    */
   margin?: Partial<Margin>;
+  /**
+   * The maximum width of all the bars in a horizontal BarChart, or maximum height in a vertical BarChart.
+   */
   maxBarSize?: number;
   /**
+   * If false set, stacked items will be rendered left to right. If true set, stacked items
+   * will be rendered right to left. Render direction affects SVG layering, not x position.
+   *
    * @defaultValue false
    */
   reverseStackOrder?: boolean;
