@@ -23,7 +23,7 @@ const GeneralProps: StorybookArgs = {
     If set a function, the function will be called to render customized dot.`,
     table: {
       type: { summary: 'Bool | Object | Element | Function' },
-      defaultValue: { summary: 'false' },
+      defaultValue: { summary: false },
       category: 'General',
     },
   },
@@ -36,7 +36,7 @@ const LabelProps: StorybookArgs = {
     the function will be called to render customized label.`,
     table: {
       type: { summary: 'string | number | ReactElement | Function' },
-      defaultValue: { summary: 'false' },
+      defaultValue: { summary: false },
       category: 'Label',
     },
   },

@@ -60,7 +60,7 @@ export const RadialBarAPI = {
     {
       name: 'data',
       type: 'Array',
-      defaultVal: '[]',
+      defaultVal: [],
       isOptional: false,
       desc: {
         'en-US': 'The source data which each element is an object.',

@@ -64,7 +64,7 @@ export const CartesianAxisAPI = {
     {
       name: 'axisLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -75,7 +75,7 @@ export const CartesianAxisAPI = {
     {
       name: 'tickLine',
       type: 'Boolean | Object',
-      defaultVal: 'true',
+      defaultVal: true,
       isOptional: false,
       desc: {
         'en-US':
@@ -118,7 +118,6 @@ export const CartesianAxisAPI = {
     {
       name: 'tick',
       type: 'Boolean | Object | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -136,7 +135,6 @@ export const CartesianAxisAPI = {
     {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':
@@ -148,7 +146,7 @@ export const CartesianAxisAPI = {
     {
       name: 'mirror',
       type: 'Boolean',
-      defaultVal: 'false',
+      defaultVal: false,
       isOptional: false,
       desc: {
         'en-US':

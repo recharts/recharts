@@ -80,7 +80,6 @@ export const LabelAPI = {
     {
       name: 'id',
       type: 'String',
-      defaultVal: 'null',
       isOptional: true,
       desc: {
         'en-US':

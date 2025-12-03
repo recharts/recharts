@@ -10,7 +10,6 @@ export const CustomizedAPI = {
     {
       name: 'component',
       type: 'ReactElement | Function',
-      defaultVal: 'null',
       isOptional: false,
       desc: {
         'en-US':

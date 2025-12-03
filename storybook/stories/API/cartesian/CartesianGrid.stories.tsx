@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args, ArgTypes } from '@storybook/react-vite';
+import { Args } from '@storybook/react-vite';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const CartesianGridArgTypes: ArgTypes = {
+const CartesianGridArgTypes: StorybookArgs = {
   x: {
     description: 'The x-coordinate of grid.',
     table: {
@@ -75,7 +76,7 @@ const CartesianGridArgTypes: ArgTypes = {
         summary: 'boolean',
       },
       defaultValue: {
-        summary: 'true',
+        summary: true,
       },
       category: 'General',
     },
@@ -90,7 +91,7 @@ const CartesianGridArgTypes: ArgTypes = {
         summary: 'Boolean',
       },
       defaultValue: {
-        summary: 'true',
+        summary: true,
       },
       category: 'General',
     },
@@ -102,7 +103,7 @@ const CartesianGridArgTypes: ArgTypes = {
         summary: 'Array',
       },
       defaultValue: {
-        summary: '[]',
+        summary: [],
       },
       category: 'General',
     },
@@ -114,7 +115,7 @@ const CartesianGridArgTypes: ArgTypes = {
         summary: 'Array',
       },
       defaultValue: {
-        summary: '[]',
+        summary: [],
       },
       category: 'General',
     },
@@ -135,7 +136,7 @@ const CartesianGridArgTypes: ArgTypes = {
         summary: 'Boolean',
       },
       defaultValue: {
-        summary: 'false',
+        summary: false,
       },
       category: 'General',
     },

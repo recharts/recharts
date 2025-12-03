@@ -49,7 +49,7 @@ const SankeyArgTypes: StorybookArgs = {
   sort: {
     description: 'Whether to sort the data or not',
     table: {
-      defaultValue: { summary: 'true' },
+      defaultValue: { summary: true },
     },
   },
   align: {

@@ -117,6 +117,72 @@ describe('omnidoc - documentation consistency', () => {
   const apiDocReader = new ApiDocReader();
   const storybookReader = new StorybookDocReader();
 
+  describe('confusing defaults', () => {
+    /*
+     * These are string values that look like primitives,
+     * but are actually strings.
+     * They behave differently than the actual primitives!
+     * For example, a default value of 'false' (string) will render the literal string "false",
+     * but the primitive false will render nothing.
+     * Never use these as default values!
+     */
+    const bannedValues: ReadonlyArray<unknown> = ['null', 'undefined', 'NaN', '[]', '{}', 'true', 'false'];
+
+    describe('never use primitives as strings, always use booleans', () => {
+      describe('in project', () => {
+        test.each(projectReader.getPublicComponentNames())('%s', component => {
+          const problematicProps: Array<{ component: string; prop: string; defaultValue: unknown }> = [];
+          const allProps = projectReader.getRechartsPropsOf(component);
+          for (const prop of allProps) {
+            /*
+             * Because everything coming out of JSDoc is inevitably a string,
+             * we ignore JSDoc here as the type definition is not reliable.
+             */
+            const defaultValue = projectReader.getDefaultValueOf(component, prop, false);
+            if (defaultValue.type === 'known') {
+              if (bannedValues.includes(defaultValue.value)) {
+                problematicProps.push({ component, prop, defaultValue: defaultValue.value });
+              }
+            }
+          }
+          expect(problematicProps).toEqual([]);
+        });
+      });
+
+      describe('API docs', () => {
+        test.each(apiDocReader.getPublicComponentNames())('%s', component => {
+          const problematicProps: Array<{ component: string; prop: string; defaultValue: unknown }> = [];
+          const allProps = apiDocReader.getRechartsPropsOf(component);
+          for (const prop of allProps) {
+            const defaultValue = apiDocReader.getDefaultValueOf(component, prop);
+            if (defaultValue.type === 'known') {
+              if (bannedValues.includes(defaultValue.value)) {
+                problematicProps.push({ component, prop, defaultValue: defaultValue.value });
+              }
+            }
+          }
+          expect(problematicProps).toEqual([]);
+        });
+      });
+
+      describe('Storybook', () => {
+        test.each(storybookReader.getPublicComponentNames())('%s', component => {
+          const problematicProps: Array<{ component: string; prop: string; defaultValue: unknown }> = [];
+          const allProps = storybookReader.getRechartsPropsOf(component);
+          for (const prop of allProps) {
+            const defaultValue = storybookReader.getDefaultValueOf(component, prop);
+            if (defaultValue.type === 'known') {
+              if (bannedValues.includes(defaultValue.value)) {
+                problematicProps.push({ component, prop, defaultValue: defaultValue.value });
+              }
+            }
+          }
+          expect(problematicProps).toEqual([]);
+        });
+      });
+    });
+  });
+
   it('all API doc symbols must exist in the project', () => {
     const projectSymbols = new Set(projectReader.getPublicSymbolNames());
     const apiDocSymbols = apiDocReader.getPublicSymbolNames();
@@ -295,12 +361,14 @@ describe('omnidoc - documentation consistency', () => {
           const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
           const problem = compareDefaultValues(
             /*
-             * Storybook types demand that all default values are strings
-             * so let's convert everything to string for comparison.
+             * Storybook types demand that all default values are strings.
              * https://storybook.js.org/docs/api/arg-types#tabledefaultvalue
+             * This however causes problems because `'false'` (string) is indeed very different from `false` (boolean).
+             * So here let's make sure to compare the actual values,
+             * even though it goes against Storybook's type definition.
              */
-            stringifyDefaultValue(storybookDefaultProp),
-            stringifyDefaultValue(projectDefaultProp),
+            storybookDefaultProp,
+            projectDefaultProp,
           );
           if (problem) {
             missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
