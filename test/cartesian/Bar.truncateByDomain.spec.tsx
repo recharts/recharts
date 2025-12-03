@@ -86,7 +86,7 @@ describe('Bar stacked with truncateByDomain', () => {
 
   describe('wins', () => {
     test('selectBarRectangles', () => {
-      const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, 'bar-wins', undefined));
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'bar-wins', false, undefined));
       expect(spy).toHaveBeenLastCalledWith([
         {
           background: {

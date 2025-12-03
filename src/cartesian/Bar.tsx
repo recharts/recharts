@@ -739,7 +739,7 @@ function BarImpl(props: BarImplProps) {
 
   const cells = findAllByType(props.children, Cell);
 
-  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, props.id, cells));
+  const rects = useAppSelector(state => selectBarRectangles(state, props.id, isPanorama, cells));
 
   if (layout !== 'vertical' && layout !== 'horizontal') {
     return null;

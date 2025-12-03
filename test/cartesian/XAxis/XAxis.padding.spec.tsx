@@ -31,7 +31,7 @@ describe('XAxis padding', () => {
     const Comp = (): null => {
       yAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
       barTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'xAxis', 0, false)));
-      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id')));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 'my-bar-id', false)));
       offsetSpy(useAppSelector(selectChartOffsetInternal));
       return null;
     };
