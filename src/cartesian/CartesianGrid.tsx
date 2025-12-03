@@ -125,7 +125,7 @@ interface CartesianGridProps extends ZIndexable {
   /**
    * The opacity of the background used to fill the space between grid lines
    */
-  fillOpacity?: number;
+  fillOpacity?: number | string;
   /**
    * Defines background color of stripes.
    *
