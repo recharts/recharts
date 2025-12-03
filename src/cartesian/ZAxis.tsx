@@ -52,7 +52,7 @@ export interface Props {
   /**
    * The range of axis
    *
-   * @defaultValue [64, 64]
+   * @defaultValue [64,64]
    */
   range?: AxisRange;
   /**

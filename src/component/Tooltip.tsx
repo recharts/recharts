@@ -71,9 +71,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
    * If false, then Tooltip is never displayed.
-   * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
-   *
-   * @defaultValue undefined
+   * If undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
   active?: boolean;
   /**
@@ -168,6 +166,7 @@ export const defaultTooltipProps = {
   contentStyle: {},
   cursor: true,
   filterNull: true,
+  includeHidden: false,
   isAnimationActive: 'auto',
   itemSorter: 'name',
   itemStyle: {},

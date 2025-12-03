@@ -16,7 +16,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { RectanglePosition } from '../util/types';
-import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
@@ -46,9 +46,14 @@ interface ReferenceAreaProps extends ZIndexable {
    * @defaultValue 100
    */
   zIndex?: number;
+  children?: React.ReactNode;
 }
 
-export type Props = RectangleProps & ReferenceAreaProps;
+/*
+ * Omit width, height, x, y from SVGPropsAndEvents because ReferenceArea receives x1, x2, y1, y2 instead.
+ * The position is calculated internally instead.
+ */
+export type Props = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y'> & ReferenceAreaProps;
 
 const getRect = (
   hasX1: boolean,
@@ -84,7 +89,7 @@ const getRect = (
   return rectWithPoints(p1, p2);
 };
 
-const renderRect = (option: ReferenceAreaProps['shape'], props: RectangleProps) => {
+const renderRect = (option: ReferenceAreaProps['shape'], props: SVGPropsAndEvents<RectangleProps>) => {
   let rect;
 
   if (React.isValidElement(option)) {

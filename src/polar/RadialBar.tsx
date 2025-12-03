@@ -348,6 +348,10 @@ interface InternalRadialBarProps extends ZIndexable {
   shape?: ActiveShape<SectorProps, SVGPathElement>;
   stackId?: string | number;
   tooltipType?: TooltipType;
+  /**
+   * @defaultValue 300
+   */
+  zIndex?: number;
 }
 
 export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
