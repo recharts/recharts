@@ -131,8 +131,11 @@ describe('omnidoc - documentation consistency', () => {
      * For example, a default value of 'false' (string) will render the literal string "false",
      * but the primitive false will render nothing.
      * Never use these as default values!
+     *
+     * '0' is here as well because the default Axis id is `0` (number), not `'0'` (string).
+     * Passing a string '0' may match to non-existent axis, causing confusion.
      */
-    const bannedValues: ReadonlyArray<unknown> = ['null', 'undefined', 'NaN', '[]', '{}', 'true', 'false'];
+    const bannedValues: ReadonlyArray<unknown> = ['null', 'undefined', 'NaN', '[]', '{}', 'true', 'false', '0'];
 
     describe('never use primitives as strings, always use booleans', () => {
       describe('in project', () => {

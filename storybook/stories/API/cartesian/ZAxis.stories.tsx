@@ -21,7 +21,7 @@ const ZAxisArgTypes: StorybookArgs = {
     description: 'The id of z-axis which is corresponding to the data.',
     table: {
       type: { summary: 'string | number' },
-      defaultValue: { summary: '0' },
+      defaultValue: { summary: 0 },
       category: 'General',
     },
   },

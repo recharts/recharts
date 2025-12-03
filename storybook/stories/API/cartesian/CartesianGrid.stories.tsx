@@ -31,7 +31,7 @@ const CartesianGridArgTypes: StorybookArgs = {
         summary: 'String | Number',
       },
       defaultValue: {
-        summary: '0',
+        summary: 0,
       },
       category: 'Axis',
     },
@@ -43,7 +43,7 @@ const CartesianGridArgTypes: StorybookArgs = {
         summary: 'String | Number',
       },
       defaultValue: {
-        summary: '0',
+        summary: 0,
       },
       category: 'Axis',
     },

@@ -4,7 +4,7 @@ export const CartesianAxisAPI = {
     {
       name: 'x',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The x-coordinate of axis.',
@@ -14,7 +14,7 @@ export const CartesianAxisAPI = {
     {
       name: 'y',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The y-coordinate of axis.',
@@ -24,7 +24,7 @@ export const CartesianAxisAPI = {
     {
       name: 'width',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The width of axis.',
@@ -34,7 +34,7 @@ export const CartesianAxisAPI = {
     {
       name: 'height',
       type: 'Number',
-      defaultVal: '0',
+      defaultVal: 0,
       isOptional: false,
       desc: {
         'en-US': 'The height of axis.',
