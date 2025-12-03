@@ -14,7 +14,7 @@ describe('readProject', () => {
   });
 
   it('should identify all components', () => {
-    const expectedComponents = ['Area', 'Bar', 'LineChart', 'ResponsiveContainer'];
+    const expectedComponents = ['Area', 'Bar', 'Brush', 'LineChart', 'ResponsiveContainer'];
     const unexpectedSymbols = ['useChartWidth', 'getNiceTickValues', 'Symbol', 'AreaProps', 'BarProps'];
     expect(reader.getPublicComponentNames()).toEqual(expect.arrayContaining(expectedComponents));
     unexpectedSymbols.forEach(unexpectedSymbol => {
