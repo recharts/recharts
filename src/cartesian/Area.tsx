@@ -157,7 +157,10 @@ interface AreaProps extends ZIndexable {
   connectNulls?: boolean;
   data?: ChartData;
   /**
-   * The key of a group of data which should be unique in an area chart.
+   * Decides how to extract the value of this Area from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Area.
    */
   dataKey: DataKey<any>;
   /**
@@ -167,7 +170,10 @@ interface AreaProps extends ZIndexable {
   dot?: DotType;
   hide?: boolean;
   /**
-   * The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.
+   * Unique identifier of this component.
+   * Used as a HTML attribute `id`, and also to identify this element internally.
+   *
+   * If undefined, Recharts will generate a unique ID automatically.
    */
   id?: string;
 
@@ -178,12 +184,18 @@ interface AreaProps extends ZIndexable {
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
   /**
-   * If false set, labels will not be drawn. If true set, labels will be drawn which have the props calculated internally. If object set, labels will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom label element. If set a function, the function will be called to render customized label.
+   * Renders one label for each data point. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
    * @default false
    */
   label?: ImplicitLabelListType;
   /**
-   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
+   * The type of icon in legend. If set to 'none', no legend item will be rendered.
    * @default 'line'
    */
   legendType?: LegendType;
@@ -234,7 +246,7 @@ interface AreaProps extends ZIndexable {
    */
   onMouseUp?: (event: React.MouseEvent<SVGPathElement>) => void;
   /**
-   * The stack id of area, when two areas have the same value axis and same stackId, then the two areas area stacked in order.
+   * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
   stackId?: string | number;
   /**
@@ -258,12 +270,12 @@ interface AreaProps extends ZIndexable {
    */
   unit?: string | number;
   /**
-   * The id of x-axis which is corresponding to the data.
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @default 0
    */
   xAxisId?: string | number;
   /**
-   * The id of y-axis which is corresponding to the data.
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    * @default 0
    */
   yAxisId?: string | number;

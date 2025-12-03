@@ -1,10 +1,116 @@
 import { describe, it, expect, test } from 'vitest';
 import { shallowEqual } from 'react-redux';
+import { diffChars } from 'diff';
 import { ProjectDocReader } from './readProject';
 import { ApiDocReader } from './readApiDoc';
 import { StorybookDocReader } from './readStorybookDoc';
 import { DefaultValue } from './DocReader';
 import { isNotNil } from '../src/util/DataUtils';
+
+/**
+ * Normalize text for fuzzy comparison by:
+ * - Converting to lowercase
+ * - Removing extra whitespace (including newlines)
+ * - Trimming leading/trailing whitespace
+ */
+function normalizeText(text: string | undefined): string {
+  if (!text) {
+    return '';
+  }
+  return text.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Calculate similarity score between two strings using Levenshtein distance.
+ * Returns a score between 0 (completely different) and 1 (identical).
+ * @param str1
+ * @param str2
+ */
+function calculateSimilarityScore(str1: string | undefined, str2: string | undefined): number {
+  if (str1 === undefined && str2 === undefined) {
+    return 1;
+  }
+  if (str1 === undefined || str2 === undefined) {
+    return 0;
+  }
+
+  const normalized1 = normalizeText(str1);
+  const normalized2 = normalizeText(str2);
+
+  if (normalized1 === normalized2) {
+    return 1;
+  }
+
+  // Levenshtein distance calculation
+  const matrix: number[][] = [];
+  const len1 = normalized1.length;
+  const len2 = normalized2.length;
+
+  if (len1 === 0) return len2 === 0 ? 1 : 0;
+  if (len2 === 0) return 0;
+
+  // Initialize matrix
+  for (let i = 0; i <= len1; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= len2; j++) {
+    matrix[0][j] = j;
+  }
+
+  // Fill matrix
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      const cost = normalized1[i - 1] === normalized2[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1, // deletion
+        matrix[i][j - 1] + 1, // insertion
+        matrix[i - 1][j - 1] + cost, // substitution
+      );
+    }
+  }
+
+  const distance = matrix[len1][len2];
+  const maxLength = Math.max(len1, len2);
+  return 1 - distance / maxLength;
+}
+
+/**
+ * Uses the 'diff' library to produce a colored diff between two strings.
+ * The diff highlights additions in green and deletions in red.
+ *
+ * Returns undefined if there are no differences.
+ * @param expected
+ * @param actual
+ */
+function coloredDiff(expected: string | undefined, actual: string | undefined): string | undefined {
+  if (expected === undefined && actual === undefined) {
+    return undefined;
+  }
+  if (expected === undefined) {
+    return `${actual}`;
+  }
+  if (actual === undefined) {
+    return `${expected}`;
+  }
+  const normalizedExpected = normalizeText(expected);
+  const normalizedActual = normalizeText(actual);
+  if (normalizedExpected === normalizedActual) {
+    return undefined;
+  }
+  const diff = diffChars(normalizedExpected, normalizedActual);
+  const hasDifferences = diff.some(part => part.added || part.removed);
+  if (!hasDifferences) {
+    return undefined;
+  }
+  let result = '';
+  for (const part of diff) {
+    // eslint-disable-next-line no-nested-ternary
+    const colorStart = part.added ? '+++' : part.removed ? '---' : '';
+    const colorEnd = part.added || part.removed ? '<<<' : '';
+    result += colorStart + part.value + colorEnd;
+  }
+  return result;
+}
 
 describe('omnidoc - documentation consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -236,20 +342,58 @@ describe('omnidoc - documentation consistency', () => {
     );
   });
 
-  describe('comment/documentation consistency', () => {
-    /**
-     * Normalize text for fuzzy comparison by:
-     * - Converting to lowercase
-     * - Removing extra whitespace (including newlines)
-     * - Trimming leading/trailing whitespace
-     */
-    function normalizeText(text: string | undefined): string {
-      if (!text) {
-        return '';
-      }
-      return text.toLowerCase().replace(/\s+/g, ' ').trim();
-    }
+  /**
+   * This list is temporary - these components have known inconsistencies,
+   * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
+   */
+  const componentsWithInconsistentCommentsInApiDoc = [
+    'BarChart',
+    'Brush',
+    'CartesianAxis',
+    'CartesianGrid',
+    'Cell',
+    'ComposedChart',
+    'Cross',
+    'Curve',
+    'Customized',
+    'Dot',
+    'ErrorBar',
+    'Funnel',
+    'FunnelChart',
+    'Label',
+    'LabelList',
+    'Legend',
+    'Line',
+    'LineChart',
+    'Pie',
+    'PieChart',
+    'PolarAngleAxis',
+    'PolarGrid',
+    'PolarRadiusAxis',
+    'Polygon',
+    'Radar',
+    'RadarChart',
+    'RadialBar',
+    'RadialBarChart',
+    'Rectangle',
+    'ReferenceArea',
+    'ReferenceDot',
+    'ReferenceLine',
+    'ResponsiveContainer',
+    'Sankey',
+    'Scatter',
+    'ScatterChart',
+    'Sector',
+    'Text',
+    'Tooltip',
+    'Trapezoid',
+    'Treemap',
+    'XAxis',
+    'YAxis',
+    'ZAxis',
+  ];
 
+  describe('comment/documentation consistency', () => {
     /**
      * Check if two comments are similar enough.
      * Returns true if both are empty/null, or if normalized texts match.
@@ -271,59 +415,11 @@ describe('omnidoc - documentation consistency', () => {
       return norm1 === norm2;
     }
 
-    const componentsWithInconsistentCommentsInApiDoc = [
-      'AreaChart',
-      'Bar',
-      'BarChart',
-      'Brush',
-      'CartesianAxis',
-      'CartesianGrid',
-      'Cell',
-      'ComposedChart',
-      'Cross',
-      'Curve',
-      'Customized',
-      'Dot',
-      'ErrorBar',
-      'Funnel',
-      'FunnelChart',
-      'Label',
-      'LabelList',
-      'Legend',
-      'Line',
-      'LineChart',
-      'Pie',
-      'PieChart',
-      'PolarAngleAxis',
-      'PolarGrid',
-      'PolarRadiusAxis',
-      'Polygon',
-      'Radar',
-      'RadarChart',
-      'RadialBar',
-      'RadialBarChart',
-      'Rectangle',
-      'ReferenceArea',
-      'ReferenceDot',
-      'ReferenceLine',
-      'ResponsiveContainer',
-      'Sankey',
-      'Scatter',
-      'ScatterChart',
-      'Sector',
-      'Text',
-      'Tooltip',
-      'Trapezoid',
-      'Treemap',
-      'XAxis',
-      'YAxis',
-      'ZAxis',
-    ];
-
     test.each(
       apiDocReader.getPublicComponentNames().filter(name => !componentsWithInconsistentCommentsInApiDoc.includes(name)),
     )('if %s has comments in API docs, they should match the project comments', component => {
-      const allProps = apiDocReader.getRechartsPropsOf(component);
+      const allProps = apiDocReader.getAllPropsOf(component);
+
       const inconsistentComments: string[] = [];
 
       for (const prop of allProps) {
@@ -335,18 +431,20 @@ describe('omnidoc - documentation consistency', () => {
           continue;
         }
 
-        if (!areCommentsSimilar(apiComment, projectComment)) {
-          inconsistentComments.push(
-            `Component "${component}", prop "${prop}":\n` +
-              `  API doc: ${apiComment || '(none)'}\n` +
-              `  Project: ${projectComment || '(none)'}`,
-          );
+        const difference = coloredDiff(apiComment, projectComment);
+
+        if (difference) {
+          inconsistentComments.push(`Component "${component}", prop "${prop}" diff:\n${difference}`);
         }
       }
 
       expect(inconsistentComments).toEqual([]);
     });
 
+    /**
+     * This list is temporary - these components have known inconsistencies,
+     * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
+     */
     const componentsWithInconsistentCommentsInStorybook = [
       'Area',
       'AreaChart',
@@ -425,6 +523,10 @@ describe('omnidoc - documentation consistency', () => {
       expect(inconsistentComments).toEqual([]);
     });
 
+    /**
+     * This list is temporary - these components have known inconsistencies,
+     * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
+     */
     const componentsWithInconsistentCommentsInApiDocAndStorybook = [
       'Area',
       'AreaChart',
@@ -502,6 +604,125 @@ describe('omnidoc - documentation consistency', () => {
 
       expect(inconsistentComments).toEqual([]);
     });
+  });
+
+  describe('cross-component prop consistency', () => {
+    /**
+     * Adjustable similarity threshold (0-1 scale)
+     * - 0.0 = completely different
+     * - 1.0 = identical
+     * - 0.7 = recommended default (allows for some variation while catching major inconsistencies)
+     *
+     * This test compares JSDoc comments for props that are shared across multiple components.
+     * For example, both Area and Bar have a `dataKey` prop - their comments should be similar.
+     *
+     * The similarity score is calculated using Levenshtein distance algorithm, which measures
+     * the minimum number of single-character edits needed to transform one string into another.
+     *
+     * To adjust the strictness:
+     * - Increase the threshold (e.g., 0.8) to catch only very different comments
+     * - Decrease the threshold (e.g., 0.5) to catch more variations
+     */
+    const SIMILARITY_THRESHOLD = 0.7;
+
+    /**
+     * Some props are legit different across components due to their unique context/use case.
+     * We can list those exceptions here to skip them in the test.
+     */
+    type CommentSimilarityException = {
+      component: string;
+      prop: string;
+      reason: string;
+    };
+
+    /**
+     * List of known exceptions where prop comments are intentionally different.
+     * This list is permanent.
+     * Only add new items here if there is a semantically valid reason to have different comments.
+     * Do not use this as a workaround for inconsistent documentation!
+     */
+    const exceptions: ReadonlyArray<CommentSimilarityException> = [
+      {
+        component: 'ResponsiveContainer',
+        prop: 'children',
+        reason: 'discusses rendering multiple charts inside the container',
+      },
+      {
+        component: 'Text',
+        prop: 'children',
+        reason: 'Text has special rules for children',
+      },
+    ];
+
+    // Build the prop-to-components map once for all tests
+    const projectComponents = projectReader.getPublicComponentNames();
+    const propToComponents = new Map<string, Array<{ component: string; comment: string | undefined }>>();
+
+    for (const component of projectComponents) {
+      if (componentsWithInconsistentCommentsInApiDoc.includes(component)) {
+        // temporarily skip components with known inconsistencies
+        continue;
+      }
+      const props = projectReader.getRechartsPropsOf(component);
+      for (const prop of props) {
+        if (exceptions.some(ex => ex.component === component && ex.prop === prop)) {
+          continue;
+        }
+        const comment = projectReader.getCommentOf(component, prop);
+        if (!propToComponents.has(prop)) {
+          propToComponents.set(prop, []);
+        }
+        propToComponents.get(prop)!.push({ component, comment });
+      }
+    }
+
+    // Filter to only props shared by multiple components with at least 2 comments
+    const sharedPropsWithComments = Array.from(propToComponents.entries())
+      .filter(([, components]) => {
+        const componentsWithComments = components.filter(({ comment }) => comment && comment.trim() !== '');
+        return componentsWithComments.length >= 2;
+      })
+      .map(([propName]) => propName);
+
+    test.each(sharedPropsWithComments)(
+      'shared prop "%s" should have similar JSDoc comments across components',
+      propName => {
+        const components = propToComponents.get(propName)!;
+        const componentsWithComments = components.filter(({ comment }) => comment && comment.trim() !== '');
+
+        const inconsistencies: string[] = [];
+
+        // Compare all pairs of components with this prop
+        for (let i = 0; i < componentsWithComments.length; i++) {
+          for (let j = i + 1; j < componentsWithComments.length; j++) {
+            const component1 = componentsWithComments[i];
+            const component2 = componentsWithComments[j];
+
+            const similarity = calculateSimilarityScore(component1.comment, component2.comment);
+
+            if (similarity < SIMILARITY_THRESHOLD) {
+              const diff = coloredDiff(component1.comment, component2.comment);
+              inconsistencies.push(
+                `Components "${component1.component}" and "${component2.component}":\n` +
+                  `  ${component1.component}: ${component1.comment}\n` +
+                  `  ${component2.component}: ${component2.comment}\n` +
+                  `  Similarity: ${(similarity * 100).toFixed(1)}% (threshold: ${(SIMILARITY_THRESHOLD * 100).toFixed(1)}%)\n${
+                    diff ? `  Diff: ${diff}\n` : ''
+                  }`,
+              );
+            }
+          }
+        }
+
+        if (inconsistencies.length > 0) {
+          console.error(
+            `Found ${inconsistencies.length} inconsistency(ies) for prop "${propName}":\n${inconsistencies.join('\n')}`,
+          );
+        }
+
+        expect(inconsistencies).toEqual([]);
+      },
+    );
   });
 
   describe.todo('the type definition of each prop should be consistent between API docs, Storybook, and the project');

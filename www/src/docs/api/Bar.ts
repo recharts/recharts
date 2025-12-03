@@ -6,8 +6,13 @@ export const BarAPI = {
       type: 'String | Number | Function',
       isOptional: false,
       desc: {
-        'en-US': 'The key of a group of data which should be unique in an area chart.',
-        'zh-CN': '每组柱图对应一个唯一的 key，需要在 BarChart 中保证唯一。',
+        'en-US':
+          'Decides how to extract the value of this Bar from the data: ' +
+          '- `string`: the name of the field in the data object; ' +
+          '- `number`: the index of the field in the data; ' +
+          '- `function`: a function that receives the data object and returns the value of this Bar.',
+        'zh-CN':
+          '决定如何从数据中提取柱图的数值：字符串：数据中字段的名称；数字：数据中字段的索引；函数：一个接收数据对象并返回柱图数值的函数。',
       },
     },
     {
@@ -16,8 +21,8 @@ export const BarAPI = {
       defaultVal: 0,
       isOptional: false,
       desc: {
-        'en-US': 'The id of x-axis which is corresponding to the data.',
-        'zh-CN': '柱图对应的 x 轴的 id 。',
+        'en-US': 'The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.',
+        'zh-CN': '柱图对应的 x 轴的 id 。当存在多个 x 轴时需要指定。',
       },
     },
     {
@@ -26,8 +31,8 @@ export const BarAPI = {
       defaultVal: 0,
       isOptional: false,
       desc: {
-        'en-US': 'The id of y-axis which is corresponding to the data.',
-        'zh-CN': '柱图对应的 y 轴的 id 。',
+        'en-US': 'The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.',
+        'zh-CN': '柱图对应的 y 轴的 id 。当存在多个 y 轴时需要指定。',
       },
     },
     {
@@ -36,7 +41,7 @@ export const BarAPI = {
       defaultVal: 'rect',
       isOptional: true,
       desc: {
-        'en-US': "The type of icon in legend.  If set to 'none', no legend item will be rendered.",
+        'en-US': "The type of icon in legend. If set to 'none', no legend item will be rendered.",
         'zh-CN': '对应的图例 icon 的类型。',
       },
     },
@@ -47,9 +52,14 @@ export const BarAPI = {
       isOptional: false,
       desc: {
         'en-US':
-          'If false set, labels will not be drawn. If true set, labels will be drawn which have the props calculated internally. If object set, labels will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom label element. If set a function, the function will be called to render customized label.',
+          'Renders one label for each bar. Options: ' +
+          '- `true`: renders default labels; ' +
+          '- `false`: no labels are rendered; ' +
+          '- `object`: the props of LabelList component; ' +
+          '- `ReactElement`: a custom label element; ' +
+          '- `function`: a render function of custom label.',
         'zh-CN':
-          '图形上的文本标签。当值为 false ，不展示文本标签。当值为 true，会根据 Bar 的属性配置来展示文本标签。当值为一个对象的时候，会把这个对象解析为 文本标签 的属性，来覆盖默认属性。当值是一个 React Element ，会克隆这个 React Element 来渲染“文本标签”。当值是一个 函数 时，会调用这个函数去渲染自定义的“文本标签”。',
+          '为每个柱条渲染一个标签。配置项包括：true：渲染默认标签；false：不渲染标签；对象：LabelList 组件的属性；ReactElement：自定义标签元素；函数：自定义标签的渲染函数。',
       },
       format: [
         '<Bar dataKey="value" label />',
@@ -72,7 +82,7 @@ export const BarAPI = {
       name: 'maxBarSize',
       type: 'Number',
       desc: {
-        'en-US': 'The maximum width of bar in a horizontal BarChart, or maximum height in a vertical BarChart.',
+        'en-US': 'The maximum width of bar in a horizontal chart, or maximum height in a vertical chart.',
         'zh-CN':
           '当柱图的 layout 是 "horizontal" 时，表示柱子的最大宽度。当柱图的 layout 是 "vertical" 时，表示柱子的最大高度。',
       },
@@ -83,7 +93,7 @@ export const BarAPI = {
       defaultVal: 0,
       isOptional: false,
       desc: {
-        'en-US': `The minimal height of a bar in a horizontal BarChart, or the minimal width of a bar in a vertical BarChart.
+        'en-US': `The minimal height of a bar in a horizontal chart, or the minimal width of a bar in a vertical chart.
         By default, 0 values are not shown. To visualize a 0 (or close to zero) point, set the minimal point size to a pixel
         value like 3. In stacked bar charts, minPointSize might not be respected for tightly packed values. So we strongly recommend not using this props in stacked BarChart. You may provide a function to conditionally change this prop based on Bar value.`,
         'zh-CN':
@@ -103,7 +113,12 @@ export const BarAPI = {
       isOptional: false,
       desc: {
         'en-US':
-          'If false set, background of bars will not be drawn. If true set, background of bars will be drawn which have the props calculated internally. If object set, background of bars will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom background element. If set a function, the function will be called to render customized background.',
+          'Renders a background for each bar. Options:' +
+          ' - `false`: no background; ' +
+          ' - `true`: renders default background; ' +
+          ' - `object`: the props of background rectangle; ' +
+          ' - `ReactElement`: a custom background element; ' +
+          ' - `function`: a render function of custom background. ',
         'zh-CN':
           '是否显示背景柱条。当值为 false ，不展示背景柱条。当值为 true，会根据 RadialBar 的属性配置来展示背景柱条。当值为一个对象的时候，会把这个对象解析为 背景柱条 的属性，来覆盖默认属性。当值是一个 React Element ，会克隆这个 React Element 来渲染“背景柱条”。当值是一个 函数 时，会调用这个函数去渲染自定义的“背景柱条”。',
       },
@@ -120,7 +135,7 @@ export const BarAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'If set a ReactElement, the shape of bar can be customized. If set a function, the function will be called to render customized shape.',
+          'If set a ReactElement, the shape of bar can be customized. If set a function, the function will be called to render customized shape. By default, renders a rectangle.',
         'zh-CN':
           '柱条的图形配置，接收多种配置。当值是一个 React Element ，会克隆这个 React Element 来渲染“柱条”。当值是函数时，会调用这个函数去渲染自定义的“柱条”。',
       },
@@ -139,7 +154,12 @@ export const BarAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'The active bar is shown when a user enters a bar chart and this chart has tooltip. If set to false, no active bar will be drawn. If set to true, active bar will be drawn with the props calculated internally. If passed an object, active bar will be drawn, and the internally calculated props will be merged with the key value pairs of the passed object. If passed a ReactElement, the option can be the custom active bar element. If passed a function, the function will be called to render a customized active bar.',
+          'The active bar is shown when a user enters a bar chart and this chart has tooltip. Options: ' +
+          '- `false`: all bars are passive, nothing happens on mouse events; ' +
+          '- `true`: active bar is rendered separately but the default props are the same as others: so mouse events do not change its appearance. className and zIndex are different though; ' +
+          '- `object`: the props of active bar; ' +
+          '- `function`: the render function of active bar; ' +
+          '- `ReactElement`: the active bar element.',
         'zh-CN':
           '当用户输入柱形图且该图表有工具提示时，将显示活动柱形图。如果设置为 false，则不会绘制活动条形图。如果设置为 true，将使用内部计算的道具绘制活动条形图。如果传递的是一个对象，则将绘制活动条形图，并将内部计算的道具与传递对象的键值对合并。如果传递的是 ReactElement，该选项可以是自定义的活动条元素。如果传递的是函数，则将调用该函数来渲染自定义的活动条。',
       },
@@ -161,8 +181,7 @@ export const BarAPI = {
       type: 'String | Number',
       isOptional: true,
       desc: {
-        'en-US':
-          'The stack id of bar, when two bars have the same value axis and same stackId, then the two bars are stacked in order.',
+        'en-US': 'When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.',
         'zh-CN': '堆积id，当两组及以上的柱图有相同的数值轴以及相同的 stackId 时，这些柱图会按照顺序堆积展示。',
       },
       format: [
@@ -206,11 +225,12 @@ export const BarAPI = {
     },
     {
       name: 'isAnimationActive',
-      type: 'Boolean',
+      type: 'Boolean | "auto"',
       defaultVal: 'auto',
       isOptional: true,
       desc: {
-        'en-US': 'If set false, animation of bar will be disabled.',
+        'en-US':
+          'If set false, animation of bar will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.',
         'zh-CN': '当值为 false，不开启动画。',
       },
     },
@@ -250,7 +270,9 @@ export const BarAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.',
+          'The unique identifier of this component. ' +
+          'Used as a HTML attribute `id`, and also to identify this element internally. ' +
+          'If undefined, Recharts will generate a unique ID automatically.',
         'zh-CN': '唯一的id，会用于生成内部的clip path id 等，建议使用SSR的时候设置这个属性。',
       },
     },

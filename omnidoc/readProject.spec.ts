@@ -826,12 +826,14 @@ describe('readProject', () => {
       {
         defaultValueFromJSDoc: { type: 'unreadable' },
         defaultValueFromObject: { type: 'unreadable' },
+        normalizedPath: expect.stringContaining('node_modules/@types/react/index.d.ts'),
         name: 'x',
         origin: 'dom',
       },
       {
         defaultValueFromJSDoc: { type: 'unreadable' },
         defaultValueFromObject: { type: 'none' },
+        normalizedPath: expect.stringContaining('src/cartesian/ReferenceLine.tsx'),
         name: 'x',
         origin: 'recharts',
       },
@@ -844,6 +846,7 @@ describe('readProject', () => {
       {
         defaultValueFromJSDoc: { type: 'known', value: "'middle'" },
         defaultValueFromObject: { type: 'known', value: 'middle' },
+        normalizedPath: expect.stringContaining('src/cartesian/ReferenceLine.tsx'),
         name: 'position',
         origin: 'recharts',
       },
