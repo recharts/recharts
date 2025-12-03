@@ -23,9 +23,16 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
+      /*
+       * Recharts package path mapping points to the types folder in the main Recharts package.
+       * This means that to see any changes, you need to run `npm run build-types` from the main Recharts package.
+       * We _could_ point this to the `src` folder instead, but that would make typescript also validate
+       * the source code using this config above, which leads to extra errors because this config is stricter
+       * than the one in the main package.
+       */
       "recharts": ["../types/index.d.ts"],
       // TODO we should export all public types from the main entry point, and then remove all deep imports
-      "recharts/types/*": ["../types/*"],
+      "recharts/types/*": ["../types/*"]
     }
   },
   "include": ["./src"],
