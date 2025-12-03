@@ -117,10 +117,10 @@ describe('XAxis barSize', () => {
     const Comp = (): null => {
       chartDataSpy(useAppSelector(selectChartDataWithIndexes));
       yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
-      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id')));
-      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
-      barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
-      totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 'my-bar-id', false)));
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 'my-bar-id', false)));
+      barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 'my-bar-id', false)));
+      totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 'my-bar-id')));
       return null;
     };
 

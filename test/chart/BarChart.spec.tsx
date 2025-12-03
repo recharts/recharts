@@ -296,8 +296,8 @@ describe('<BarChart />', () => {
       const barSpy = vi.fn();
       const sizeListSpy = vi.fn();
       const Comp = (): null => {
-        barSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 0, false)));
-        sizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
+        barSpy(useAppSelector(state => selectAllVisibleBars(state, 'my-bar-id', false)));
+        sizeListSpy(useAppSelector(state => selectBarSizeList(state, 'my-bar-id', false)));
         return null;
       };
       const { container } = render(
@@ -777,7 +777,7 @@ describe('<BarChart />', () => {
       ));
 
       it('should select bars', () => {
-        const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, 'my-bar-id', cells));
+        const { spy } = renderTestCase(state => selectBarRectangles(state, 'my-bar-id', false, cells));
         expectLastCalledWith(spy, [
           {
             background: {
@@ -915,7 +915,7 @@ describe('<BarChart />', () => {
       });
 
       it('should select bar size list', () => {
-        const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id'));
+        const { spy } = renderTestCase(state => selectBarSizeList(state, 'my-bar-id', false));
         expectLastCalledWith(spy, [
           {
             barSize: undefined,
@@ -941,22 +941,22 @@ describe('<BarChart />', () => {
       });
 
       test('selectBarBandSize', () => {
-        const { spy } = renderTestCase(state => selectBarBandSize(state, 0, 0, false, 'my-bar-id'));
+        const { spy } = renderTestCase(state => selectBarBandSize(state, 'my-bar-id', false));
         expectLastCalledWith(spy, 7.5);
       });
 
       test('selectAxisBandSize', () => {
-        const { spy } = renderTestCase(state => selectAxisBandSize(state, 0, 0, false));
+        const { spy } = renderTestCase(state => selectAxisBandSize(state, 'my-bar-id', false));
         expectLastCalledWith(spy, 7.5);
       });
 
       test('selectMaxBarSize', () => {
-        const { spy } = renderTestCase(state => selectMaxBarSize(state, 0, 0, false, 'my-bar-id'));
+        const { spy } = renderTestCase(state => selectMaxBarSize(state, 'my-bar-id'));
         expectLastCalledWith(spy, undefined);
       });
 
       it('should select all bar positions', () => {
-        const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id'));
+        const { spy } = renderTestCase(state => selectAllBarPositions(state, 'my-bar-id', false));
         expectLastCalledWith(spy, [
           {
             dataKeys: ['uv', 'pv'],
@@ -970,7 +970,7 @@ describe('<BarChart />', () => {
       });
 
       it('should select bar position', () => {
-        const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, 'my-bar-id'));
+        const { spy } = renderTestCase(state => selectBarPosition(state, 'my-bar-id', false));
         expectLastCalledWith(spy, {
           offset: 0.75,
           size: 6,
@@ -1073,8 +1073,8 @@ describe('<BarChart />', () => {
     test('Stacked bars are actually stacked', () => {
       let seriesOneBarOneEntry: BarRectangleItem, seriesTwoBarOneEntry: BarRectangleItem;
       const Spy = () => {
-        const seriesOneResult = useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'bar-uv', []));
-        const seriesTwoResult = useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'bar-pv', []));
+        const seriesOneResult = useAppSelector(state => selectBarRectangles(state, 'bar-uv', false, []));
+        const seriesTwoResult = useAppSelector(state => selectBarRectangles(state, 'bar-pv', false, []));
         if (seriesOneResult != null) {
           [seriesOneBarOneEntry] = seriesOneResult;
         }
@@ -1279,9 +1279,9 @@ describe('<BarChart />', () => {
       const totalAxisSizeSpy = vi.fn();
 
       const Comp = (): null => {
-        barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, 'my-bar-id')));
-        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
-        totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
+        barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 'my-bar-id', false)));
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 'my-bar-id', false)));
+        totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 'my-bar-id')));
         return null;
       };
 
@@ -1394,10 +1394,10 @@ describe('<BarChart />', () => {
       describe('renders overlapping bars when there are separate XAxis', () => {
         const renderTestCase = createSelectorTestCase(({ children }) => (
           <BarChart width={800} height={400} data={data}>
-            <Bar dataKey="uv" fill="green" xAxisId="one" barSize={50} isAnimationActive={false} />
+            <Bar dataKey="uv" fill="green" xAxisId="one" barSize={50} isAnimationActive={false} id="bar-axis-one" />
             <XAxis xAxisId="one" />
             {/* The smaller bar must be rendered in front of the larger one to be visible. */}
-            <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} isAnimationActive={false} />
+            <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} isAnimationActive={false} id="bar-axis-two" />
             <XAxis xAxisId="two" hide />
 
             {children}
@@ -1408,7 +1408,7 @@ describe('<BarChart />', () => {
           const { spy } = renderTestCase(selectUnfilteredCartesianItems);
           const expected: ReadonlyArray<BarSettings> = [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-axis-one',
               isPanorama: false,
               barSize: 50,
               data: undefined,
@@ -1423,7 +1423,7 @@ describe('<BarChart />', () => {
               minPointSize: 0,
             },
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-axis-two',
               isPanorama: false,
               barSize: 30,
               data: undefined,
@@ -1443,10 +1443,10 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for first axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'one', 0, false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-axis-one', false));
           expectLastCalledWith(spy, [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-axis-one',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1465,10 +1465,10 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for second axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'two', 0, false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-axis-two', false));
           expectLastCalledWith(spy, [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-axis-two',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1608,7 +1608,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'left', false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'my-bar-id-1', false));
           expectLastCalledWith(spy, [
             {
               id: 'my-bar-id-1',
@@ -1646,7 +1646,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'right', false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'my-bar-id-2', false));
           expectLastCalledWith(spy, [
             {
               id: 'my-bar-id-1',
@@ -1684,7 +1684,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for left axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'my-bar-id-1'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 'my-bar-id-1', false));
           expectLastCalledWith(spy, [
             {
               barSize: undefined,
@@ -1701,7 +1701,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for right axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'my-bar-id-2'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 'my-bar-id-2', false));
           expectLastCalledWith(spy, [
             {
               barSize: undefined,
@@ -1718,7 +1718,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'my-bar-id-1'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 'my-bar-id-1', false));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -1741,7 +1741,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'my-bar-id-2'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 'my-bar-id-2', false));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -1843,8 +1843,8 @@ describe('<BarChart />', () => {
       describe('renders bars as neighbours when there are multiple XAxes', () => {
         const renderTestCase = createSelectorTestCase(({ children }) => (
           <BarChart width={300} height={300} data={data} layout="vertical">
-            <Bar dataKey="uv" xAxisId={2} fill="blue" barSize={40} isAnimationActive={false} />
-            <Bar dataKey="pv" xAxisId={1} fill="green" barSize={30} isAnimationActive={false} />
+            <Bar dataKey="uv" xAxisId={2} fill="blue" barSize={40} isAnimationActive={false} id="bar-xaxis-2" />
+            <Bar dataKey="pv" xAxisId={1} fill="green" barSize={30} isAnimationActive={false} id="bar-xaxis-1" />
             <XAxis xAxisId={1} type="number" />
             <XAxis xAxisId={2} type="number" orientation="top" />
             <YAxis type="category" />
@@ -1856,7 +1856,7 @@ describe('<BarChart />', () => {
           const { spy } = renderTestCase(selectUnfilteredCartesianItems);
           const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-2',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1871,7 +1871,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-1',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1891,10 +1891,10 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for first axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 2, 0, false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-xaxis-2', false));
           expectLastCalledWith(spy, [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-2',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1909,7 +1909,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-1',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1929,10 +1929,10 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for second axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 1, 0, false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-xaxis-1', false));
           expectLastCalledWith(spy, [
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-2',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -1948,7 +1948,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
             {
-              id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+              id: 'bar-xaxis-1',
               isPanorama: false,
               maxBarSize: undefined,
               minPointSize: 0,
@@ -2089,7 +2089,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'left', false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-left', false));
           expectLastCalledWith(spy, [
             {
               id: 'bar-left',
@@ -2111,7 +2111,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bars for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 0, 'right', false));
+          const { spy } = renderTestCase(state => selectAllVisibleBars(state, 'bar-right', false));
           expectLastCalledWith(spy, [
             {
               id: 'bar-right',
@@ -2133,7 +2133,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for left axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'left', false, 'bar-left'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 'bar-left', false));
           expectLastCalledWith(spy, [
             {
               barSize: 30,
@@ -2145,7 +2145,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select bar size list for right axis', () => {
-          const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 'right', false, 'bar-right'));
+          const { spy } = renderTestCase(state => selectBarSizeList(state, 'bar-right', false));
           expectLastCalledWith(spy, [
             {
               barSize: 20,
@@ -2157,7 +2157,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for left axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'left', false, 'bar-left'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 'bar-left', false));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['uv'],
@@ -2172,7 +2172,7 @@ describe('<BarChart />', () => {
         });
 
         it('should select all bar positions for right axis', () => {
-          const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 'right', false, 'bar-right'));
+          const { spy } = renderTestCase(state => selectAllBarPositions(state, 'bar-right', false));
           expectLastCalledWith(spy, [
             {
               dataKeys: ['pv'],
@@ -2263,7 +2263,7 @@ describe('<BarChart />', () => {
       const barPositionsSpy = vi.fn();
 
       const Comp = (): null => {
-        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 'my-bar-id', false)));
         return null;
       };
 
@@ -2414,8 +2414,8 @@ describe('<BarChart />', () => {
     const barRectanglesSpy = vi.fn();
 
     const Comp = (): null => {
-      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, 'my-bar-id')));
-      barRectanglesSpy(useAppSelector(state => selectBarRectangles(state, 0, 0, false, 'my-bar-id', undefined)));
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 'my-bar-id', false)));
+      barRectanglesSpy(useAppSelector(state => selectBarRectangles(state, 'my-bar-id', false, undefined)));
       return null;
     };
 
