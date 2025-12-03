@@ -610,8 +610,9 @@ export function Label(outerProps: Props) {
   }
 
   if (typeof content === 'function') {
+    const { content: _, ...propsForContent } = propsWithViewBox;
     // @ts-expect-error we're not checking if the content component returns something that Text is able to render
-    label = createElement(content, propsWithViewBox);
+    label = createElement(content, propsForContent);
 
     if (isValidElement(label)) {
       return label;

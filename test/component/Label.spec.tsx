@@ -300,7 +300,6 @@ describe('<Label />', () => {
           expect(fn).toHaveBeenLastCalledWith(
             {
               angle: 0,
-              content: fn,
               offset: 5,
               position: 'center',
               textBreakAll: false,
@@ -463,7 +462,6 @@ describe('<Label />', () => {
           {
             angle: 0,
             children: 'label from children',
-            content: contentFn,
             offset: 5,
             textBreakAll: false,
             position: 'center',
@@ -499,7 +497,6 @@ describe('<Label />', () => {
           {
             angle: 0,
             value: 'label from value',
-            content: contentFn,
             offset: 5,
             textBreakAll: false,
             position: 'center',
@@ -538,7 +535,6 @@ describe('<Label />', () => {
             angle: 0,
             children: 'label from children',
             value: 'label from value',
-            content: contentFn,
             textBreakAll: false,
             offset: 5,
             position: 'center',
@@ -612,7 +608,6 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            content: contentFn,
             textBreakAll: false,
             position: 'center',
             offset: 5,
@@ -643,7 +638,6 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            content: contentFn,
             textBreakAll: false,
             position: 'insideEnd',
             offset: 5,
@@ -677,7 +671,6 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            content: contentFn,
             textBreakAll: false,
             position: 'center',
             offset: 5,

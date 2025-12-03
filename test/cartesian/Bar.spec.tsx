@@ -1021,7 +1021,6 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         expect(spy).toBeCalledWith(
           {
             angle: 0,
-            content: spy,
             height: expect.any(Number),
             index: expect.any(Number),
             offset: 5,
