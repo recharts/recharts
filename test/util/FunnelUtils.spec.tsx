@@ -1,15 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { typeGuardTrapezoidProps, FunnelTrapezoid, FunnelTrapezoidProps } from '../../src/util/FunnelUtils';
+import { FunnelTrapezoid, FunnelTrapezoidProps } from '../../src/util/FunnelUtils';
 import { Coordinate, TrapezoidViewBox } from '../../src/util/types';
 
 describe('funnelUtils', () => {
   const mockTooltipPosition: Coordinate = { x: 10, y: 10 };
-  const mockOptions = {
-    x: 10,
-    y: 10,
-    height: 100,
-  };
+
   const viewBox: TrapezoidViewBox = {
     x: 0,
     y: 0,
@@ -34,27 +30,7 @@ describe('funnelUtils', () => {
     val: 1,
     tooltipPayload: [],
   };
-  it('typeGuardTrapezoidProps returns object from options + props', () => {
-    const mockRes: FunnelTrapezoidProps = {
-      x: mockProps.x,
-      y: mockProps.y,
-      isActive: mockProps.isActive,
-      height: mockOptions.height,
-      lowerWidth: 60,
-      tooltipPosition: mockTooltipPosition,
-      upperWidth: 80,
-      width: 100,
-      labelViewBox: viewBox,
-      parentViewBox: viewBox,
-      val: 1,
-      option: undefined,
-      name: '',
-      tooltipPayload: [],
-    };
-    const res = typeGuardTrapezoidProps(mockOptions, mockProps);
 
-    expect(res).toEqual(mockRes);
-  });
   it('<FunnelTrapezoid /> returns a trapezoid shape with no options', () => {
     const { container } = render(
       <svg width={100} height={100}>

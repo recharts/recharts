@@ -24,16 +24,18 @@ import { Curve } from '../shape/Curve';
  */
 type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols' | 'curve';
 
-export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
+export type ShapeProps<OptionType, ExtraProps> = {
   shapeType: ShapeType;
   option: OptionType;
   isActive?: boolean;
   index?: string | number;
   activeClassName?: string;
-  propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
 
-function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
+function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
+  option: OptionType,
+  props: ExtraProps,
+): ShapePropsType {
   return {
     ...props,
     ...option,
@@ -81,10 +83,9 @@ export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
 export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.IntrinsicAttributes>({
   option,
   shapeType,
-  propTransformer = defaultPropTransformer,
   activeClassName = 'recharts-active-shape',
   ...props
-}: ShapeProps<OptionType, ExtraProps, ShapePropsType>) {
+}: ShapeProps<OptionType, ExtraProps>) {
   let shape: React.JSX.Element;
 
   if (isValidElement(option)) {
@@ -93,7 +94,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
   } else if (typeof option === 'function') {
     shape = option(props, props.index);
   } else if (isPlainObject(option) && typeof option !== 'boolean') {
-    const nextProps = propTransformer(option, props);
+    const nextProps: ShapePropsType = defaultPropTransformer(option, props);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
     const elementProps = props as unknown as ShapePropsType;
