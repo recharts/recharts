@@ -23,4 +23,23 @@ describe('LogUtils', () => {
     warn(false, 'format width variable %s', 0);
     expect(logSpy).toHaveBeenCalledWith('format width variable 0');
   });
+
+  test('warns when format is undefined', () => {
+    const logSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
+
+    // condition is true, format is undefined
+    // @ts-expect-error - testing undefined format
+    warn(true, undefined);
+    expect(logSpy).toHaveBeenCalledWith('LogUtils requires an error message argument');
+
+    logSpy.mockClear();
+
+    // condition is false, format is undefined
+    // @ts-expect-error - testing undefined format
+    warn(false, undefined);
+    expect(logSpy).toHaveBeenCalledWith('LogUtils requires an error message argument');
+    expect(logSpy).toHaveBeenCalledWith(
+      'Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.',
+    );
+  });
 });
