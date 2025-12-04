@@ -15,7 +15,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'LabelList',
   'Legend',
   'Line',
-  'LineChart',
   'Pie',
   'PieChart',
   'PolarAngleAxis',
