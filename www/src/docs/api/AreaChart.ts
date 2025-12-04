@@ -96,7 +96,7 @@ export const AreaChartAPI: ApiDoc = {
       isOptional: false,
       desc: {
         'en-US':
-          'The type of offset function used to generate the lower and upper values in the series array. The four types are built-in offsets in d3-shape. Only applicable for stacked Area or Bar charts. Has no effect when the stackId prop is not set on Area or Bar components.',
+          'The type of offset function used to generate the lower and upper values in the series array. The types are built-in offsets in d3-shape. Only applicable for stacked Area or Bar charts. Has no effect when the stackId prop is not set on Area or Bar components.',
         'zh-CN':
           '用于生成系列数组中上下值的偏移函数类型。四种类型均为 d3-shape 内置的偏移方式。仅适用于堆叠区域图或堆叠柱状图。当 Area 或 Bar 组件上未设置 stackId 属性时，该属性不生效。',
       },

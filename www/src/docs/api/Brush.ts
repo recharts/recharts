@@ -69,8 +69,7 @@ export const BrushAPI = {
       defaultVal: 1,
       isOptional: true,
       desc: {
-        'en-US':
-          'The data with gap of refreshing chart. If the option is not set, the chart will be refreshed every time.',
+        'en-US': 'Number of data points to skip between chart refreshes.',
         'zh-CN': '数据刷新间隔，如果没有指定，则取 1 ，每次刷新',
       },
     },

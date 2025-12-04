@@ -138,12 +138,12 @@ export const BarChartAPI: ApiDoc = {
     },
     {
       name: 'stackOffset',
-      type: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign'",
+      type: "'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive'",
       defaultVal: 'none',
       isOptional: false,
       desc: {
         'en-US': `The type of offset function used to generate the lower and upper values in the series array.
-        The four types are built-in offsets in d3-shape.
+        The types are built-in offsets in d3-shape.
         Only applicable for stacked Area or Bar charts.
         Has no effect when the stackId prop is not set on Area or Bar components.`,
         'zh-CN': '堆积柱图的偏移类型，这里提供的配置是 d3 支持的四种类型。',

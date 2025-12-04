@@ -99,7 +99,7 @@ export const CartesianGridAPI: ApiDoc = {
       isOptional: false,
       desc: {
         'en-US':
-          'Array of coordinates in pixels where to draw vertical grid lines. Has priority over syncWithTicks and horizontalValues.',
+          'Array of coordinates in pixels where to draw vertical grid lines. Has priority over syncWithTicks and verticalValues.',
         'zh-CN': '所有竖直网格线的 x 坐标。',
       },
     },

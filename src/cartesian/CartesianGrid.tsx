@@ -111,7 +111,7 @@ interface CartesianGridProps extends ZIndexable {
   horizontalPoints?: number[];
   /**
    * Array of coordinates in pixels where to draw vertical grid lines.
-   * Has priority over syncWithTicks and horizontalValues.
+   * Has priority over syncWithTicks and verticalValues.
    *
    * @defaultValue []
    */
@@ -166,12 +166,12 @@ interface CartesianGridProps extends ZIndexable {
   syncWithTicks?: boolean;
   /**
    * Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type.
-   * Has priority over syncWithTicks but not over horizontalValues.
+   * Has priority over syncWithTicks but not over horizontalPoints.
    */
   horizontalValues?: number[] | string[];
   /**
    * Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type.
-   * Has priority over syncWithTicks but not over verticalValues.
+   * Has priority over syncWithTicks but not over verticalPoints.
    */
   verticalValues?: number[] | string[];
   /**
@@ -180,12 +180,12 @@ interface CartesianGridProps extends ZIndexable {
   strokeDasharray?: string | number[];
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
-   * @default 0
+   * @defaultValue 0
    */
   xAxisId?: AxisId;
   /**
    * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
-   * @default 0
+   * @defaultValue 0
    */
   yAxisId?: AxisId;
   /**
