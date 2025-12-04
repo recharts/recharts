@@ -30,7 +30,7 @@ describe('cross-component prop consistency', () => {
    * We can list those exceptions here to skip them in the test.
    */
   type CommentSimilarityException = {
-    component: string;
+    components: ReadonlyArray<string>;
     prop: string;
     reason: string;
   };
@@ -43,34 +43,29 @@ describe('cross-component prop consistency', () => {
    */
   const exceptions: ReadonlyArray<CommentSimilarityException> = [
     {
-      component: 'ResponsiveContainer',
+      components: ['ResponsiveContainer', 'Text'],
       prop: 'children',
-      reason: 'discusses rendering multiple charts inside the container',
+      reason: 'These components have special rules for children',
     },
     {
-      component: 'Text',
-      prop: 'children',
-      reason: 'Text has special rules for children',
-    },
-    {
-      component: 'Brush',
+      components: ['Brush', 'CartesianGrid', 'Cross'],
       prop: 'height',
-      reason: 'Brush height is always in pixels',
+      reason: 'Many components assign different meanings to height',
     },
     {
-      component: 'Brush',
+      components: ['Brush', 'CartesianGrid', 'Cross'],
       prop: 'width',
-      reason: 'Brush width defaults to chart width if not specified, also it is in pixels',
+      reason: 'Many components assign different meanings to width',
     },
     {
-      component: 'CartesianGrid',
-      prop: 'height',
-      reason: 'CartesianGrid height defaults to chart height if not specified, also it is in pixels',
+      components: ['Cross'],
+      prop: 'x',
+      reason: 'Cross positions are defined differently than typical x-coordinates',
     },
     {
-      component: 'CartesianGrid',
-      prop: 'width',
-      reason: 'CartesianGrid width defaults to chart width if not specified, also it is in pixels',
+      components: ['Cross'],
+      prop: 'y',
+      reason: 'Cross positions are defined differently than typical y-coordinates',
     },
   ];
 
@@ -85,7 +80,7 @@ describe('cross-component prop consistency', () => {
     }
     const props = projectReader.getRechartsPropsOf(component);
     for (const prop of props) {
-      if (exceptions.some(ex => ex.component === component && ex.prop === prop)) {
+      if (exceptions.some(ex => ex.components.includes(component) && ex.prop === prop)) {
         continue;
       }
       const comment = projectReader.getCommentOf(component, prop);
