@@ -32,7 +32,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'ResponsiveContainer',
   'Sankey',
   'Scatter',
-  'ScatterChart',
   'Sector',
   'Text',
   'Tooltip',
