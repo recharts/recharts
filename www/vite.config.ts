@@ -5,7 +5,7 @@ import sitemap from 'vite-plugin-sitemap';
 import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   base: process.env.BASE_URL || '/',
   plugins: [
     react(),
@@ -41,16 +41,16 @@ export default defineConfig(({ mode }) => ({
     outDir: resolve(__dirname, 'docs'),
   },
   resolve: {
-    alias:
-      mode === 'development'
-        ? {
-            /*
-             * This is needed to make sure that when we run the website locally,
-             * we are using the local version of recharts from ../src with latest changes.
-             * This also gives us hot module reload for free!
-             */
-            recharts: resolve(__dirname, '../src'),
-          }
-        : undefined,
+    alias: {
+      /*
+       * We are using the local version of recharts from ../src with latest changes
+       * instead of the published version from npm's node_modules.
+       * This means we can use recharts directly as we develop the website,
+       * and use unreleased features / fixes directly to verify them.
+       *
+       * This also gives us hot module reload for free!
+       */
+      recharts: resolve(__dirname, '../src'),
+    },
   },
 }));
