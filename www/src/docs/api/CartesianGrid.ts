@@ -8,8 +8,7 @@ export const CartesianGridAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US':
-          "The x-coordinate of grid. If left undefined, it will be computed from the chart's offset and margins.",
+        'en-US': 'The x-coordinate of grid.',
         'zh-CN': 'x 坐标。',
       },
     },
@@ -18,8 +17,7 @@ export const CartesianGridAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US':
-          "The y-coordinate of grid. If left undefined, it will be computed from the chart's offset and margins.",
+        'en-US': 'The y-coordinate of grid.',
         'zh-CN': 'y 坐标。',
       },
     },
@@ -28,7 +26,7 @@ export const CartesianGridAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The width of grid. If undefined, covers the full width of the chart plot area.',
+        'en-US': 'The width of grid.',
         'zh-CN': '宽度。',
       },
     },
@@ -37,7 +35,7 @@ export const CartesianGridAPI: ApiDoc = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The height of grid. If undefined, covers the full height of the chart plot area.',
+        'en-US': 'The height of grid.',
         'zh-CN': '高度。',
       },
     },
@@ -67,8 +65,7 @@ export const CartesianGridAPI: ApiDoc = {
       defaultVal: [],
       isOptional: false,
       desc: {
-        'en-US':
-          'Array of coordinates in pixels where to draw horizontal grid lines. Has priority over syncWithTicks and horizontalValues.',
+        'en-US': 'The y-coordinates of all horizontal lines.',
         'zh-CN': '所有水平网格线的 y 坐标。',
       },
     },
@@ -98,8 +95,7 @@ export const CartesianGridAPI: ApiDoc = {
       defaultVal: [],
       isOptional: false,
       desc: {
-        'en-US':
-          'Array of coordinates in pixels where to draw vertical grid lines. Has priority over syncWithTicks and horizontalValues.',
+        'en-US': 'The x-coordinates of all vertical lines.',
         'zh-CN': '所有竖直网格线的 x 坐标。',
       },
     },
@@ -165,21 +161,23 @@ export const CartesianGridAPI: ApiDoc = {
       name: 'xAxisId',
       type: 'String | Number',
       defaultVal: 0,
-      isOptional: false,
+      isOptional: true,
       desc: {
-        'en-US': 'The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.',
-        'zh-CN': '区域图对应的 x 轴的 id 。',
+        'en-US': `The id of x-axis which you would like to add grid lines for. Must match if xAxisId is set on
+          XAxis or a graphical component .`,
       },
+      format: ['<CartesianGrid xAxisId="top" />', '<XAxis xAxisId="top" />', '<Bar dataKey="temp" xAxisId="top" />'],
     },
     {
       name: 'yAxisId',
       type: 'String | Number',
       defaultVal: 0,
-      isOptional: false,
+      isOptional: true,
       desc: {
-        'en-US': 'The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.',
-        'zh-CN': '区域图对应的 y 轴的 id 。',
+        'en-US': `The id of y-axis which you would like to add grid lines for. Must match if yAxisId is set on
+        YAxis or a graphical component.`,
       },
+      format: ['<CartesianGrid yAxisId="left" />', '<YAxis yAxisId="left" />', '<Bar dataKey="temp" yAxisId="left" />'],
     },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'LineChart', 'ComposedChart', 'ScatterChart'],

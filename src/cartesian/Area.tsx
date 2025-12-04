@@ -70,7 +70,6 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
-import { AxisId } from '../state/cartesianAxisSlice';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -274,12 +273,12 @@ interface AreaProps extends ZIndexable {
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @default 0
    */
-  xAxisId?: AxisId;
+  xAxisId?: string | number;
   /**
    * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    * @default 0
    */
-  yAxisId?: AxisId;
+  yAxisId?: string | number;
   /**
    * @since 3.4
    * @defaultValue 100
