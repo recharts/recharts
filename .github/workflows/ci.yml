@@ -80,5 +80,8 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Omnidoc
+        run: npm run test-omnidoc
+
       - name: Unit Tests
         run: npm run test-coverage
