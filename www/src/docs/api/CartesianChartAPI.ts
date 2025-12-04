@@ -55,7 +55,7 @@ export const baseCartesianChartAPIProps: ApiDoc['props'] = [
   },
   {
     name: 'height',
-    type: 'Number',
+    type: 'Percent | Number',
     isOptional: false,
     desc: {
       'en-US': 'The height of chart container. Can be a number or a percent string like "100%".',

@@ -146,7 +146,9 @@ interface AreaProps extends ZIndexable {
    */
   animationEasing?: AnimationTiming;
   /**
-   * The value which can describe the line
+   * Baseline of the area:
+   * - number: uses the corresponding axis value as a flat baseline;
+   * - an array of coordinates: describes a custom baseline path.
    */
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
   baseValue?: BaseValue;
@@ -231,7 +233,7 @@ interface AreaProps extends ZIndexable {
   strokeWidth?: string | number;
   tooltipType?: TooltipType;
   /**
-   * The interpolation type of area curve. Allows custom interpolation function.
+   * The interpolation type of curve. Allows custom interpolation function.
    *
    * @defaultValue 'linear'
    */

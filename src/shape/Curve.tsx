@@ -106,12 +106,14 @@ interface CurveProps {
    */
   type?: CurveType;
   /**
-   * The option can effect the interpolation algorithm when the props type is
-   * set to be 'monotone'. Meanwhile, this option will specified the type of baseline when the curve is closed.
+   * This option affects the interpolation algorithm when the `type` prop is set to 'monotone'.
+   * It also specifies the type of baseline when the curve is closed.
    */
   layout?: LayoutType;
   /**
-   * The value which can describe the line.
+   * Baseline of the area:
+   * - number: uses the corresponding axis value as a flat baseline;
+   * - an array of coordinates: describes a custom baseline path.
    */
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
   /**
