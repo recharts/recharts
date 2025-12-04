@@ -31,6 +31,7 @@ import {
   adaptEventHandlers,
   NullableCoordinate,
   Coordinate,
+  RechartsMouseEventHandler,
 } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
@@ -99,13 +100,29 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
 interface CurveProps {
   className?: string;
   /**
+   * The interpolation type of curve. Allows custom interpolation function.
+   *
    * @defaultValue linear
    */
   type?: CurveType;
+  /**
+   * This option affects the interpolation algorithm when the `type` prop is set to 'monotone'.
+   * It also specifies the type of baseline when the curve is closed.
+   */
   layout?: LayoutType;
+  /**
+   * Baseline of the area:
+   * - number: uses the corresponding axis value as a flat baseline;
+   * - an array of coordinates: describes a custom baseline path.
+   */
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
+  /**
+   * The coordinates of all the points in the curve.
+   */
   points?: ReadonlyArray<NullableCoordinate>;
   /**
+   * Whether to connect the curve across null points.
+   *
    * @defaultValue false
    */
   connectNulls?: boolean;
@@ -113,7 +130,59 @@ interface CurveProps {
   pathRef?: Ref<SVGPathElement>;
 }
 
-export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
+export type CurveMouseEventHandler = RechartsMouseEventHandler<Props, SVGPathElement>;
+
+type CurveMouseEvents = {
+  /**
+   * The customized event handler of click on the curve
+   */
+  onClick?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mouseenter on the curve
+   */
+  onMouseEnter?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mouseleave on the curve
+   */
+  onMouseLeave?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mousedown on the curve
+   */
+  onMouseDown?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mouseup on the curve
+   */
+  onMouseUp?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mousemove on the curve
+   */
+  onMouseMove?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mouseover on the curve
+   */
+  onMouseOver?: CurveMouseEventHandler;
+  /**
+   * The customized event handler of mouseout on the curve
+   */
+  onMouseOut?: CurveMouseEventHandler;
+};
+
+// Mouse event handlers receive the full Props, including the event handlers themselves.
+export type Props = Omit<
+  PresentationAttributesWithProps<CurveProps, SVGPathElement>,
+  | 'type'
+  | 'points'
+  | 'onClick'
+  | 'onMouseEnter'
+  | 'onMouseLeave'
+  | 'onMouseDown'
+  | 'onMouseUp'
+  | 'onMouseMove'
+  | 'onMouseOver'
+  | 'onMouseOut'
+> &
+  CurveMouseEvents &
+  CurveProps;
 
 type GetPathProps = Pick<Props, 'type' | 'points' | 'baseLine' | 'layout' | 'connectNulls'>;
 
@@ -159,7 +228,7 @@ export const getPath = ({
      * So on the input it accepts NullableCoordinate, but it never calls getX/getY on null points because of the defined() filter.
      *
      * The d3 type definition has only one generic so it doesn't allow to describe this properly.
-     * However. d3 types are mutable, but we can pretend that they are not and we can pretend
+     * However. d3 types are mutable, but we can pretend that they are not, and we can pretend
      * that calling defined() returns a new function with a different generic type.
      */
     const nullableLineFunction: Area<NullableCoordinate> | Line<NullableCoordinate> = lineFunction

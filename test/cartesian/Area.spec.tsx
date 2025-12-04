@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Area, Brush, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, Brush, CurveProps, Tooltip, XAxis, YAxis } from '../../src';
 import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import {
   allCartesianChartsExcept,
@@ -224,7 +224,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     it('should fire onClick event when clicking on the area', async () => {
       const user = userEventSetup();
 
-      const handleClick = vi.fn();
+      const spy: Mock<(curveProps: CurveProps, e: React.MouseEvent<SVGPathElement>) => void> = vi.fn();
+      const handleClick = (curveProps: CurveProps, e: React.MouseEvent<SVGPathElement>) => {
+        spy(curveProps, e);
+      };
       const { container } = render(
         <ChartElement data={data}>
           <Area dataKey="value" onClick={handleClick} />
@@ -234,9 +237,9 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const areaPath = container.querySelector('.recharts-area-area');
       assertNotNull(areaPath);
       await user.click(areaPath);
-      expect(handleClick).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(1);
       expectLastCalledWith(
-        handleClick,
+        spy,
         {
           baseLine: 495,
           className: 'recharts-area-area',
@@ -252,7 +255,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           strokeWidth: 1,
           type: 'linear',
           width: 490,
-        },
+        } satisfies CurveProps,
         expect.any(Object),
       );
     });
@@ -260,8 +263,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     it('should fire onMouseOver and onMouseOut events when hovering over the area', async () => {
       const user = userEventSetup();
 
-      const handleMouseOver = vi.fn();
-      const handleMouseOut = vi.fn();
+      const handleMouseOver: Mock<(curveProps: CurveProps, e: React.MouseEvent<SVGPathElement>) => void> = vi.fn();
+      const handleMouseOut: Mock<(curveProps: CurveProps, e: React.MouseEvent<SVGPathElement>) => void> = vi.fn();
 
       const { container } = render(
         <ChartElement data={data}>
@@ -321,8 +324,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     });
 
     it('should fire onTouchMove and onTouchEnd events when touching the area', async () => {
-      const handleTouchMove = vi.fn();
-      const handleTouchEnd = vi.fn();
+      const handleTouchMove: Mock<(curveProps: CurveProps, e: React.TouchEvent<SVGPathElement>) => void> = vi.fn();
+      const handleTouchEnd: Mock<(curveProps: CurveProps, e: React.TouchEvent<SVGPathElement>) => void> = vi.fn();
 
       const { container } = render(
         <ChartElement data={data}>

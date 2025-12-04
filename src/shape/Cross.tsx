@@ -8,11 +8,29 @@ import { isNumber } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface CrossProps {
+  /**
+   * The x-coordinate of the vertical line of the cross.
+   */
   x?: number;
+  /**
+   * The y-coordinate of the horizontal line of the cross.
+   */
   y?: number;
+  /**
+   * The width of the horizontal line of the cross.
+   */
   width?: number;
+  /**
+   * The height of the vertical line of the cross.
+   */
   height?: number;
+  /**
+   * The y-coordinate of the top left point in the boundary box of the cross.
+   */
   top?: number;
+  /**
+   * The x-coordinate of the top left point in the boundary box of the cross.
+   */
   left?: number;
   className?: number;
 }

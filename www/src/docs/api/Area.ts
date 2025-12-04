@@ -1,30 +1,10 @@
 import { ApiDoc } from './types.ts';
+import { sharedCurveAPIProps } from './Curve.ts';
 
 export const AreaAPI: ApiDoc = {
   name: 'Area',
   props: [
-    {
-      name: 'type',
-      type: `'basis' | 'basisClosed' | 'basisOpen' | 'bumpX' | 'bumpY' | 'bump' | 'linear' | 'linearClosed' | 'natural' |
-      'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | Function`,
-      defaultVal: 'linear',
-      isOptional: false,
-      desc: {
-        'en-US': 'The interpolation type of area. And customized interpolation function can be set to type.',
-        'zh-CN': '曲线的插值类型，可以接收自定义的函数。折线对应的 type 为 "linear"。',
-      },
-      examples: [
-        {
-          name: 'd3-shape interpolation',
-          url: 'https://github.com/d3/d3-shape#curves',
-          isExternal: true,
-        },
-        {
-          name: 'An AreaChart which has two area with different interpolation.',
-          url: '/examples/CardinalAreaChart',
-        },
-      ],
-    },
+    ...sharedCurveAPIProps,
     {
       name: 'dataKey',
       type: 'String | Number | Function',
@@ -149,17 +129,6 @@ export const AreaAPI: ApiDoc = {
       },
     },
     {
-      name: 'baseLine',
-      type: 'Number | Array',
-      isOptional: true,
-      desc: {
-        'en-US': 'The value which can describe the line, usually calculated internally.',
-        'zh-CN': `基准线，可以是一个数值，这种情况会根据 layout 解析成 x = \${baseLine} 或者 y = \${baseLine}。当使用 AreaChart
-           或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。`,
-      },
-      format: ['<Area dataKey="value" baseLine={8} />', '<Area dataKey="value" baseLine={[{ x: 12, y: 15 }]} />'],
-    },
-    {
       name: 'stackId',
       type: 'String | Number',
       isOptional: true,
@@ -181,22 +150,6 @@ export const AreaAPI: ApiDoc = {
         {
           name: 'A stacked area chart',
           url: '/examples/StackedAreaChart',
-        },
-      ],
-    },
-    {
-      name: 'connectNulls',
-      type: 'Boolean',
-      defaultVal: false,
-      isOptional: false,
-      desc: {
-        'en-US': 'Whether to connect a graph area across null points.',
-        'zh-CN': '当遇到 null、undefined 等非法输入的时候，是否跳过这个值，让前后连接起来。',
-      },
-      examples: [
-        {
-          name: 'An areaChart connect nulls and an areaChart disconnect nulls',
-          url: '/examples/AreaChartConnectNulls',
         },
       ],
     },
@@ -289,84 +242,6 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': 'The customized event handler of animation end',
         'zh-CN': '区域图动画 end 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onClick',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of click on the area in this group',
-        'zh-CN': '区域图 click 事件的回调函数。',
-      },
-      examples: [
-        {
-          name: 'A BarChart with customized click event handler',
-          url: '/examples/BarChartWithCustomizedEvent',
-        },
-      ],
-    },
-    {
-      name: 'onMouseDown',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mousedown on the area in this group',
-        'zh-CN': '区域图 mousedown 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseUp',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mouseup on the area in this group',
-        'zh-CN': '区域图 mouseup 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseMove',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mousemove on the area in this group',
-        'zh-CN': '区域图 mousemove 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseOver',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mouseover on the area in this group',
-        'zh-CN': '区域图 mouseover 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseOut',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mouseout on the area in this group',
-        'zh-CN': '区域图 mouseout 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseEnter',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mouseenter on the area in this group',
-        'zh-CN': '区域图 mouseenter 事件的回调函数。',
-      },
-    },
-    {
-      name: 'onMouseLeave',
-      type: 'Function',
-      isOptional: true,
-      desc: {
-        'en-US': 'The customized event handler of mouseleave on the area in this group',
-        'zh-CN': '区域图 mouseleave 事件的回调函数。',
       },
     },
   ],
