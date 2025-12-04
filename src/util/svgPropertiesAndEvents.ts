@@ -9,7 +9,7 @@ import {
 
 type SVGElementPropsAndEventsType = SVGElementPropKeysType | EventKeysType | DataAttributeKeyType;
 
-type SVGPropsAndEvents<T> = Pick<T, Extract<keyof T, SVGElementPropsAndEventsType>>;
+export type SVGPropsAndEvents<T> = Pick<T, Extract<keyof T, SVGElementPropsAndEventsType>>;
 
 /**
  * Filters an object to only include SVG properties, data attributes, and event handlers.

@@ -83,6 +83,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { AxisId } from '../state/cartesianAxisSlice';
 
 type Rectangle = {
   x: number | null;
@@ -117,13 +118,13 @@ export interface BarProps extends ZIndexable {
    *
    * @defaultValue 0
    */
-  xAxisId?: string | number;
+  xAxisId?: AxisId;
   /**
    * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    *
    * @defaultValue 0
    */
-  yAxisId?: string | number;
+  yAxisId?: AxisId;
   /**
    * When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.
    */

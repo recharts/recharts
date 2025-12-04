@@ -91,16 +91,6 @@ export const ReferenceAreaAPI = {
       ],
     },
     {
-      name: 'viewBox',
-      type: 'Object',
-      isOptional: false,
-      desc: {
-        'en-US':
-          'The box of viewing area, which has the shape of {x: someVal, y: someVal, width: someVal, height: someVal}, usually calculated internally.',
-        'zh-CN': '图表的可视区域。',
-      },
-    },
-    {
       name: 'label',
       type: 'String | Number | ReactElement | Function',
       isOptional: true,

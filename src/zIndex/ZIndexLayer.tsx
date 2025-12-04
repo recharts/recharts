@@ -16,6 +16,8 @@ export interface ZIndexable {
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
    * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
    * @since 3.4
    * @defaultValue 0
    */
@@ -24,8 +26,10 @@ export interface ZIndexable {
 
 type ZIndexLayerProps = {
   /**
-   * Numeric zIndex value, higher values are rendered on top of lower values.
-   * If undefined or 0, the content is rendered in the default layer without portals.
+   Z-Index of this component and its children. The higher the value,
+   the more on top it will be rendered.
+   Components with higher zIndex will appear in front of components with lower zIndex.
+   If undefined or 0, the content is rendered in the default layer without portals.
    */
   zIndex: number | undefined;
   /**

@@ -63,7 +63,7 @@ export class ProjectDocReader implements DocReader {
   }
 
   getPublicComponentNames(): ReadonlyArray<string> {
-    return this.getPublicSymbolNames(SymbolFlags.Variable).filter(name => {
+    return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function).filter(name => {
       // Exclude hooks (start with 'use')
       if (name.startsWith('use')) {
         return false;

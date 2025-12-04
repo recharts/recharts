@@ -23,7 +23,7 @@ interface ReferenceDotProps extends ZIndexable {
   /**
    * The radius of the dot.
    *
-   * @default 10
+   * @defaultValue 10
    */
   r?: number;
 
@@ -43,17 +43,21 @@ interface ReferenceDotProps extends ZIndexable {
   /**
    * The id of y-axis which the dot should be attached to.
    *
-   * @default 0
+   * @defaultValue 0
    */
   yAxisId?: number | string;
   /**
    * The id of x-axis which the dot should be attached to.
    *
-   * @default 0
+   * @defaultValue 0
    */
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   label?: ImplicitLabelType;
+  /**
+   * @defaultValue 600
+   */
+  zIndex?: number;
 }
 
 export type Props = DotProps & ReferenceDotProps;

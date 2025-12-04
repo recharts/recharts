@@ -63,19 +63,21 @@ export type VerticalCoordinatesGenerator = (
 
 interface CartesianGridProps extends ZIndexable {
   /**
-   * The width of grid.
+   * The width of grid. If undefined, covers the full width of the chart plot area.
    */
   width?: number;
   /**
-   * The height of grid.
+   * The height of grid. If undefined, covers the full height of the chart plot area.
    */
   height?: number;
   /**
-   * A function that generates the y-coordinates of all horizontal lines. The generator gets passed an object of the shape { yAxis, width, height, offset }.
+   * A function that generates the y-coordinates of all horizontal lines.
+   * The generator gets passed an object of the shape { yAxis, width, height, offset }.
    */
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   /**
-   * A function that generates the x-coordinates of all vertical lines. The generator gets passed an object of the shape { xAxis, width, height, offset }.
+   * A function that generates the x-coordinates of all vertical lines.
+   * The generator gets passed an object of the shape { xAxis, width, height, offset }.
    */
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
   /**
@@ -89,10 +91,14 @@ interface CartesianGridProps extends ZIndexable {
    */
   y?: number;
   /**
+   * If set false, no horizontal grid lines will be drawn.
+   *
    * @defaultValue true
    */
   horizontal?: GridLineType;
   /**
+   * If set false, no vertical grid lines will be drawn.
+   *
    * @defaultValue true
    */
   vertical?: GridLineType;
@@ -105,11 +111,21 @@ interface CartesianGridProps extends ZIndexable {
   horizontalPoints?: number[];
   /**
    * Array of coordinates in pixels where to draw vertical grid lines.
-   * Has priority over syncWithTicks and horizontalValues.
+   * Has priority over syncWithTicks and verticalValues.
    *
    * @defaultValue []
    */
   verticalPoints?: number[];
+  /**
+   * The background color used to fill the space between grid lines
+   *
+   * @defaultValue none
+   */
+  fill?: string;
+  /**
+   * The opacity of the background used to fill the space between grid lines
+   */
+  fillOpacity?: number | string;
   /**
    * Defines background color of stripes.
    *
@@ -150,19 +166,25 @@ interface CartesianGridProps extends ZIndexable {
   syncWithTicks?: boolean;
   /**
    * Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type.
-   * Has priority over syncWithTicks but not over horizontalValues.
+   * Has priority over syncWithTicks but not over horizontalPoints.
    */
   horizontalValues?: number[] | string[];
   /**
    * Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type.
-   * Has priority over syncWithTicks but not over verticalValues.
+   * Has priority over syncWithTicks but not over verticalPoints.
    */
   verticalValues?: number[] | string[];
   /**
+   * The pattern of dashes and gaps used to paint the lines of the grid
+   */
+  strokeDasharray?: string | number[];
+  /**
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
    */
   xAxisId?: AxisId;
   /**
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    * @defaultValue 0
    */
   yAxisId?: AxisId;

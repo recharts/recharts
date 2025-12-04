@@ -36,36 +36,73 @@ type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) =>
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
 interface BrushProps {
+  /**
+   * The x-coordinate of brush.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
   x?: number;
+  /**
+   * The y-coordinate of brush.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
   y?: number;
   dy?: number;
+  /**
+   * The width of brush.
+   * If undefined, defaults to the chart width.
+   */
   width?: number;
   className?: string;
 
   ariaLabel?: string;
 
   /**
+   * The height of brush in pixels.
+   *
    * @defaultValue 40
    */
   height?: number;
   /**
+   * The width of each traveller.
+   *
    * @defaultValue 5
    */
   travellerWidth?: number;
   traveller?: BrushTravellerType;
   /**
+   * Number of data points to skip between chart refreshes.
+   *
    * @defaultValue 1
    */
   gap?: number;
   padding?: Padding;
 
+  /**
+   * Decides how to extract the value of this Brush from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Brush.
+   */
   dataKey?: DataKey<any>;
+  /**
+   * The default start index of brush.
+   * If the option is not set, the start index will be 0.
+   */
   startIndex?: number;
+  /**
+   * The default end index of brush.
+   * If the option is not set, the end index will be calculated by the length of data.
+   */
   endIndex?: number;
+  /**
+   * The formatter function of ticks.
+   */
   tickFormatter?: BrushTickFormatter;
 
   children?: ReactElement;
-
+  /**
+   * The handler of changing the active scope of brush.
+   */
   onChange?: OnBrushUpdate;
   onDragEnd?: OnBrushUpdate;
   /**

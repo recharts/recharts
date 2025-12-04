@@ -30,6 +30,12 @@ type TickOrientation = 'left' | 'right' | 'middle';
 
 export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'>, ZIndexable {
   /**
+   * Allow the ticks of axis to be decimals or not.
+   *
+   * @defaultValue false
+   */
+  allowDecimals?: boolean;
+  /**
    * @defaultValue 0
    */
   radiusAxisId?: string | number;
@@ -46,6 +52,10 @@ export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'>, ZInde
    * @defaultValue false
    */
   reversed?: boolean;
+  /**
+   * @defaultValue 500
+   */
+  zIndex?: number;
 }
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;

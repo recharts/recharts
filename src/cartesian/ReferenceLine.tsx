@@ -104,6 +104,10 @@ interface ReferenceLineProps extends ZIndexable {
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   label?: ImplicitLabelType;
+  /**
+   * @defaultValue 400
+   */
+  zIndex?: number;
 }
 
 /**

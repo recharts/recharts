@@ -6,7 +6,11 @@ export const BrushAPI = {
       type: 'String | Number | Function',
       isOptional: false,
       desc: {
-        'en-US': 'The key of data displayed in Brush.',
+        'en-US':
+          'Decides how to extract the value of this Brush from the data: ' +
+          '- `string`: the name of the field in the data object; ' +
+          '- `number`: the index of the field in the data; ' +
+          '- `function`: a function that receives the data object and returns the value of this Brush.',
         'zh-CN': '指定展示的数据维度。',
       },
     },
@@ -15,7 +19,8 @@ export const BrushAPI = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The x-coordinate of brush.',
+        'en-US':
+          "The x-coordinate of brush. If left undefined, it will be computed from the chart's offset and margins.",
         'zh-CN': 'x 坐标。',
       },
     },
@@ -24,7 +29,8 @@ export const BrushAPI = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The y-coordinate of brush.',
+        'en-US':
+          "The y-coordinate of brush. If left undefined, it will be computed from the chart's offset and margins.",
         'zh-CN': 'y 坐标。',
       },
     },
@@ -33,7 +39,7 @@ export const BrushAPI = {
       type: 'Number',
       isOptional: false,
       desc: {
-        'en-US': 'The width of brush.',
+        'en-US': 'The width of brush. If undefined, defaults to the chart width.',
         'zh-CN': '指定宽度。',
       },
     },
@@ -43,7 +49,7 @@ export const BrushAPI = {
       defaultVal: 40,
       isOptional: false,
       desc: {
-        'en-US': 'The height of brush.',
+        'en-US': 'The height of brush in pixels.',
         'zh-CN': '指定高度。',
       },
     },
@@ -63,8 +69,7 @@ export const BrushAPI = {
       defaultVal: 1,
       isOptional: true,
       desc: {
-        'en-US':
-          'The data with gap of refreshing chart. If the option is not set, the chart will be refreshed every time ',
+        'en-US': 'Number of data points to skip between chart refreshes.',
         'zh-CN': '数据刷新间隔，如果没有指定，则取 1 ，每次刷新',
       },
     },
