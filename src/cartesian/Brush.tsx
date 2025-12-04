@@ -84,7 +84,7 @@ interface BrushProps {
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Brush.
    */
-  dataKey?: DataKey<any>;
+  dataKey: DataKey<any>;
   /**
    * The default start index of brush.
    * If the option is not set, the start index will be 0.
