@@ -11,7 +11,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Dot',
   'ErrorBar',
   'Funnel',
-  'FunnelChart',
   'Label',
   'LabelList',
   'Legend',
