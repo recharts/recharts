@@ -126,22 +126,22 @@ interface InternalAreaProps extends ZIndexable {
 interface AreaProps extends ZIndexable {
   /**
    * The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If object set, active dot will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom active dot element.If set a function, the function will be called to render customized active dot.
-   * @defaultValue true
+   * @default true
    */
   activeDot?: ActiveDotType;
   /**
    * Specifies when the animation should begin, the unit of this option is ms.
-   * @defaultValue 0
+   * @default 0
    */
   animationBegin?: number;
   /**
    * Specifies the duration of animation, the unit of this option is ms.
-   * @defaultValue 1500
+   * @default 1500
    */
   animationDuration?: AnimationDuration;
   /**
    * The type of easing function.
-   * @defaultValue 'ease'
+   * @default 'ease'
    */
   animationEasing?: AnimationTiming;
   /**
@@ -153,7 +153,7 @@ interface AreaProps extends ZIndexable {
 
   /**
    * Whether to connect a graph area across null points.
-   * @defaultValue false
+   * @default false
    */
   connectNulls?: boolean;
   data?: ChartData;
@@ -166,7 +166,7 @@ interface AreaProps extends ZIndexable {
   dataKey: DataKey<any>;
   /**
    * If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element. If set a function, the function will be called to render customized dot.
-   * @defaultValue false
+   * @default false
    */
   dot?: DotType;
   hide?: boolean;
@@ -180,7 +180,7 @@ interface AreaProps extends ZIndexable {
 
   /**
    * If set false, animation of area will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.
-   * @defaultValue 'auto'
+   * @default 'auto'
    */
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
@@ -192,12 +192,12 @@ interface AreaProps extends ZIndexable {
    * - `ReactElement`: a custom label element;
    * - `function`: a render function of custom label.
    *
-   * @defaultValue false
+   * @default false
    */
   label?: ImplicitLabelListType;
   /**
    * The type of icon in legend. If set to 'none', no legend item will be rendered.
-   * @defaultValue 'line'
+   * @default 'line'
    */
   legendType?: LegendType;
 
@@ -252,18 +252,18 @@ interface AreaProps extends ZIndexable {
   stackId?: string | number;
   /**
    * The stroke color. If "none", no line will be drawn.
-   * @defaultValue '#3182bd'
+   * @default '#3182bd'
    */
   stroke?: string;
   /**
    * The width of the stroke
-   * @defaultValue 1
+   * @default 1
    */
   strokeWidth?: string | number;
   tooltipType?: TooltipType;
   /**
    * The interpolation type of area. And customized interpolation function can be set to type.
-   * @defaultValue 'linear'
+   * @default 'linear'
    */
   type?: CurveType;
   /**
@@ -272,12 +272,12 @@ interface AreaProps extends ZIndexable {
   unit?: string | number;
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
-   * @defaultValue 0
+   * @default 0
    */
   xAxisId?: AxisId;
   /**
    * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
-   * @defaultValue 0
+   * @default 0
    */
   yAxisId?: AxisId;
   /**

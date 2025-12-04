@@ -70,7 +70,8 @@ interface BrushProps {
   travellerWidth?: number;
   traveller?: BrushTravellerType;
   /**
-   * Number of data points to skip between chart refreshes.
+   * The data with gap of refreshing chart.
+   * If the option is not set, the chart will be refreshed every time.
    *
    * @defaultValue 1
    */

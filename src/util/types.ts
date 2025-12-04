@@ -1164,10 +1164,8 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   responsive?: boolean;
   role?: string;
   /**
-   * The type of offset function used to generate the lower and upper values in the series array.
-   * The types are built-in offsets in d3-shape.
-   * Only applicable for stacked Area or Bar charts.
-   * Has no effect when the stackId prop is not set on Area or Bar components.
+   * The type of offset function used to generate the lower and upper values in the series array. The four types are built-in offsets in d3-shape.
+   * Only applicable for stacked Area or Bar charts. Has no effect when the stackId prop is not set on Area or Bar components.
    *
    * @defaultValue none
    */
