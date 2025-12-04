@@ -178,7 +178,7 @@ type DragEventHandler<P, T = Element> = EventHandler<P, DragEvent<T>>;
 type FocusEventHandler<P, T = Element> = EventHandler<P, FocusEvent<T>>;
 type FormEventHandler<P, T = Element> = EventHandler<P, FormEvent<T>>;
 type KeyboardEventHandler<P, T = Element> = EventHandler<P, KeyboardEvent<T>>;
-type MouseEventHandler<P, T = Element> = EventHandler<P, MouseEvent<T>>;
+export type RechartsMouseEventHandler<P, T = Element> = EventHandler<P, MouseEvent<T>>;
 type TouchEventHandler<P, T = Element> = EventHandler<P, TouchEvent<T>>;
 type PointerEventHandler<P, T = Element> = EventHandler<P, PointerEvent<T>>;
 type UIEventHandler<P, T = Element> = EventHandler<P, UIEvent<T>>;
@@ -289,14 +289,14 @@ export interface DOMAttributesWithProps<P, T> {
   onWaitingCapture?: ReactEventHandler<P, T>;
 
   // MouseEvents
-  onAuxClick?: MouseEventHandler<P, T>;
-  onAuxClickCapture?: MouseEventHandler<P, T>;
-  onClick?: MouseEventHandler<P, T>;
-  onClickCapture?: MouseEventHandler<P, T>;
-  onContextMenu?: MouseEventHandler<P, T>;
-  onContextMenuCapture?: MouseEventHandler<P, T>;
-  onDoubleClick?: MouseEventHandler<P, T>;
-  onDoubleClickCapture?: MouseEventHandler<P, T>;
+  onAuxClick?: RechartsMouseEventHandler<P, T>;
+  onAuxClickCapture?: RechartsMouseEventHandler<P, T>;
+  onClick?: RechartsMouseEventHandler<P, T>;
+  onClickCapture?: RechartsMouseEventHandler<P, T>;
+  onContextMenu?: RechartsMouseEventHandler<P, T>;
+  onContextMenuCapture?: RechartsMouseEventHandler<P, T>;
+  onDoubleClick?: RechartsMouseEventHandler<P, T>;
+  onDoubleClickCapture?: RechartsMouseEventHandler<P, T>;
   onDrag?: DragEventHandler<P, T>;
   onDragCapture?: DragEventHandler<P, T>;
   onDragEnd?: DragEventHandler<P, T>;
@@ -313,18 +313,18 @@ export interface DOMAttributesWithProps<P, T> {
   onDragStartCapture?: DragEventHandler<P, T>;
   onDrop?: DragEventHandler<P, T>;
   onDropCapture?: DragEventHandler<P, T>;
-  onMouseDown?: MouseEventHandler<P, T>;
-  onMouseDownCapture?: MouseEventHandler<P, T>;
-  onMouseEnter?: MouseEventHandler<P, T>;
-  onMouseLeave?: MouseEventHandler<P, T>;
-  onMouseMove?: MouseEventHandler<P, T>;
-  onMouseMoveCapture?: MouseEventHandler<P, T>;
-  onMouseOut?: MouseEventHandler<P, T>;
-  onMouseOutCapture?: MouseEventHandler<P, T>;
-  onMouseOver?: MouseEventHandler<P, T>;
-  onMouseOverCapture?: MouseEventHandler<P, T>;
-  onMouseUp?: MouseEventHandler<P, T>;
-  onMouseUpCapture?: MouseEventHandler<P, T>;
+  onMouseDown?: RechartsMouseEventHandler<P, T>;
+  onMouseDownCapture?: RechartsMouseEventHandler<P, T>;
+  onMouseEnter?: RechartsMouseEventHandler<P, T>;
+  onMouseLeave?: RechartsMouseEventHandler<P, T>;
+  onMouseMove?: RechartsMouseEventHandler<P, T>;
+  onMouseMoveCapture?: RechartsMouseEventHandler<P, T>;
+  onMouseOut?: RechartsMouseEventHandler<P, T>;
+  onMouseOutCapture?: RechartsMouseEventHandler<P, T>;
+  onMouseOver?: RechartsMouseEventHandler<P, T>;
+  onMouseOverCapture?: RechartsMouseEventHandler<P, T>;
+  onMouseUp?: RechartsMouseEventHandler<P, T>;
+  onMouseUpCapture?: RechartsMouseEventHandler<P, T>;
 
   // Selection Events
   onSelect?: ReactEventHandler<P, T>;

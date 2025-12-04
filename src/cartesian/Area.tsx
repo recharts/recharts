@@ -100,6 +100,7 @@ interface InternalAreaProps extends ZIndexable {
   isAnimationActive: boolean;
   isRange?: boolean;
   label?: ImplicitLabelListType;
+  layout: CartesianLayout;
   left: number;
 
   legendType: LegendType;
@@ -145,14 +146,14 @@ interface AreaProps extends ZIndexable {
    */
   animationEasing?: AnimationTiming;
   /**
-   * The value which can describe the line, usually calculated internally.
+   * The value which can describe the line
    */
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
   baseValue?: BaseValue;
   className?: string;
 
   /**
-   * Whether to connect a graph area across null points.
+   * Whether to connect the area across null points.
    * @defaultValue false
    */
   connectNulls?: boolean;
@@ -215,38 +216,6 @@ interface AreaProps extends ZIndexable {
    */
   onAnimationStart?: () => void;
   /**
-   * The customized event handler of click on the area in this group
-   */
-  onClick?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mousedown on the area in this group
-   */
-  onMouseDown?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mouseenter on the area in this group
-   */
-  onMouseEnter?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mouseleave on the area in this group
-   */
-  onMouseLeave?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mousemove on the area in this group
-   */
-  onMouseMove?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mouseout on the area in this group
-   */
-  onMouseOut?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mouseover on the area in this group
-   */
-  onMouseOver?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
-   * The customized event handler of mouseup on the area in this group
-   */
-  onMouseUp?: (event: React.MouseEvent<SVGPathElement>) => void;
-  /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
   stackId?: string | number;
@@ -262,7 +231,8 @@ interface AreaProps extends ZIndexable {
   strokeWidth?: string | number;
   tooltipType?: TooltipType;
   /**
-   * The interpolation type of area. And customized interpolation function can be set to type.
+   * The interpolation type of area curve. Allows custom interpolation function.
+   *
    * @defaultValue 'linear'
    */
   type?: CurveType;
@@ -290,7 +260,7 @@ interface AreaProps extends ZIndexable {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type AreaSvgProps = Omit<CurveProps, 'type' | 'points' | 'ref'>;
+type AreaSvgProps = Omit<CurveProps, 'type' | 'points' | 'ref' | 'layout'>;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 

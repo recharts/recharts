@@ -67,11 +67,19 @@ describe('cross-component prop consistency', () => {
       prop: 'y',
       reason: 'Cross positions are defined differently than typical y-coordinates',
     },
+    {
+      components: ['Curve'],
+      prop: 'layout',
+      reason: 'Curve layout means something else than the chart layout.',
+    },
   ];
 
   // Build the prop-to-components map once for all tests
   const projectComponents = projectReader.getPublicComponentNames();
-  const propToComponents = new Map<string, Array<{ component: string; comment: string | undefined }>>();
+  const propToComponents = new Map<
+    string,
+    Array<{ component: string; propName: string; comment: string | undefined }>
+  >();
 
   for (const component of projectComponents) {
     if (componentsWithInconsistentCommentsInApiDoc.includes(component)) {
@@ -87,7 +95,7 @@ describe('cross-component prop consistency', () => {
       if (!propToComponents.has(prop)) {
         propToComponents.set(prop, []);
       }
-      propToComponents.get(prop)!.push({ component, comment });
+      propToComponents.get(prop)!.push({ component, comment, propName: prop });
     }
   }
 
@@ -100,7 +108,10 @@ describe('cross-component prop consistency', () => {
     .map(([propName]) => propName);
 
   describe.each(sharedPropsWithComments)('shared prop "%s" should have similar JSDoc comments', propName => {
-    const components = propToComponents.get(propName)!;
+    const components = propToComponents.get(propName)?.filter(({ propName: p }) => p === propName);
+    if (components == null) {
+      throw new Error(`No components found for prop "${propName}"`);
+    }
     const componentNames = components.map(c => c.component).join(', ');
     test(`across components ${componentNames}`, () => {
       const componentsWithComments = components.filter(({ comment }) => comment && comment.trim() !== '');

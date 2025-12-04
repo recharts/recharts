@@ -10,7 +10,7 @@ export const AreaAPI: ApiDoc = {
       defaultVal: 'linear',
       isOptional: false,
       desc: {
-        'en-US': 'The interpolation type of area. And customized interpolation function can be set to type.',
+        'en-US': 'The interpolation type of area curve. Allows custom interpolation function.',
         'zh-CN': '曲线的插值类型，可以接收自定义的函数。折线对应的 type 为 "linear"。',
       },
       examples: [
@@ -153,7 +153,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Number | Array',
       isOptional: true,
       desc: {
-        'en-US': 'The value which can describe the line, usually calculated internally.',
+        'en-US': 'The value which can describe the line.',
         'zh-CN': `基准线，可以是一个数值，这种情况会根据 layout 解析成 x = \${baseLine} 或者 y = \${baseLine}。当使用 AreaChart
            或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。`,
       },
@@ -190,7 +190,7 @@ export const AreaAPI: ApiDoc = {
       defaultVal: false,
       isOptional: false,
       desc: {
-        'en-US': 'Whether to connect a graph area across null points.',
+        'en-US': 'Whether to connect the curve across null points.',
         'zh-CN': '当遇到 null、undefined 等非法输入的时候，是否跳过这个值，让前后连接起来。',
       },
       examples: [
@@ -296,7 +296,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of click on the area in this group',
+        'en-US': 'The customized event handler of click  on the curve',
         'zh-CN': '区域图 click 事件的回调函数。',
       },
       examples: [
@@ -311,7 +311,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mousedown on the area in this group',
+        'en-US': 'The customized event handler of mousedown  on the curve',
         'zh-CN': '区域图 mousedown 事件的回调函数。',
       },
     },
@@ -320,7 +320,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mouseup on the area in this group',
+        'en-US': 'The customized event handler of mouseup  on the curve',
         'zh-CN': '区域图 mouseup 事件的回调函数。',
       },
     },
@@ -329,7 +329,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mousemove on the area in this group',
+        'en-US': 'The customized event handler of mousemove  on the curve',
         'zh-CN': '区域图 mousemove 事件的回调函数。',
       },
     },
@@ -338,7 +338,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mouseover on the area in this group',
+        'en-US': 'The customized event handler of mouseover  on the curve',
         'zh-CN': '区域图 mouseover 事件的回调函数。',
       },
     },
@@ -347,7 +347,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mouseout on the area in this group',
+        'en-US': 'The customized event handler of mouseout  on the curve',
         'zh-CN': '区域图 mouseout 事件的回调函数。',
       },
     },
@@ -356,7 +356,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mouseenter on the area in this group',
+        'en-US': 'The customized event handler of mouseenter  on the curve',
         'zh-CN': '区域图 mouseenter 事件的回调函数。',
       },
     },
@@ -365,7 +365,7 @@ export const AreaAPI: ApiDoc = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The customized event handler of mouseleave on the area in this group',
+        'en-US': 'The customized event handler of mouseleave  on the curve',
         'zh-CN': '区域图 mouseleave 事件的回调函数。',
       },
     },

@@ -8,7 +8,7 @@ export const CurveAPI = {
       defaultVal: 'linear',
       isOptional: false,
       desc: {
-        'en-US': 'The interpolation type of curve. Line and Area use this component to draw line and area.',
+        'en-US': 'The interpolation type of curve. Allows custom interpolation function.',
         'zh-CN': '曲线的插值类型，可以接收自定义的函数。折线对应的 type 为 “linear” 。',
       },
       examples: [
@@ -38,7 +38,7 @@ export const CurveAPI = {
       isOptional: true,
       desc: {
         'en-US': `The option can effect the interpolation algorithm when the props type is
-           set to be 'monotone'. Meanwhile, this option will specified the type of baseline when the curve is colsed.`,
+           set to be 'monotone'. Meanwhile, this option will specified the type of baseline when the curve is closed.`,
         'zh-CN': '布局类型。当值为 "horizontal" 时，如果插值类型为 "monotone"，我们会使用 "monotoneX" 的插值算法。',
       },
     },
@@ -47,7 +47,7 @@ export const CurveAPI = {
       type: 'Number | Array',
       isOptional: true,
       desc: {
-        'en-US': 'The value which can describle the line.',
+        'en-US': 'The value which can describe the line.',
         'zh-CN': `基准线，可以是一个数值，这种情况会根据 layout 解析成 x = \${baseLine} 或者 y = \${baseLine}。当使用
            AreaChart 或者 ComposedChart 作为父组件的时候，不需要自己计算，父组件会计算好。`,
       },
@@ -58,7 +58,7 @@ export const CurveAPI = {
       defaultVal: false,
       isOptional: false,
       desc: {
-        'en-US': 'Whether to connect a curve across null points.',
+        'en-US': 'Whether to connect the curve across null points.',
         'zh-CN': '当遇到 null、undefined 等非法输入的时候，是否跳过这个值，让前后连接起来。',
       },
       examples: [

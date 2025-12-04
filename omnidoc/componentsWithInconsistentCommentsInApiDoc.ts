@@ -5,7 +5,6 @@
 export const componentsWithInconsistentCommentsInApiDoc = [
   'CartesianAxis',
   'Cell',
-  'Curve',
   'Customized',
   'Dot',
   'ErrorBar',
