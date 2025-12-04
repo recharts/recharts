@@ -147,12 +147,12 @@ describe('getStackedData', () => {
   it('should stack numerical data with offset: none', () => {
     const result = getStackedData(mockData, ['uv', 'pv'], 'none');
     const firstSeries = createSeries('uv', 0, [
-      createSeriesPoint(0, 590, mockData[0]),
-      createSeriesPoint(0, 868, mockData[1]),
+      createSeriesPoint(0, 590, mockData[0]), // first bar is always from 0 to its value, 'uv' data point
+      createSeriesPoint(0, 868, mockData[1]), // first bar is always from 0 to its value, 'uv' data point from second object
     ]);
     const secondSeries = createSeries('pv', 1, [
-      createSeriesPoint(590, 1390, mockData[0]),
-      createSeriesPoint(868, 1835, mockData[1]),
+      createSeriesPoint(590, 1390, mockData[0]), // second bar adds the 'pv' value on top of the 'uv' value 590 + 800 = 1390
+      createSeriesPoint(868, 1835, mockData[1]), // second bar adds the 'pv' value on top of the 'uv' value 868 + 967 = 1835
     ]);
     const expected = [firstSeries, secondSeries];
     expect(result).toEqual(expected);
@@ -321,6 +321,58 @@ describe('getStackedData', () => {
       createSeries('uv', 0, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
       createSeries('pv', 1, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
     ];
+    expect(result).toEqual(expected);
+  });
+
+  it('should stack ranged data', () => {
+    const displayedData = [
+      {
+        key1: [100, 200],
+        key2: [150, 250],
+        key3: [200, 300],
+      },
+      {
+        key1: [120, 180],
+        key2: [130, 230],
+        key3: [170, 270],
+      },
+      {
+        key1: [90, 160],
+        key2: [110, 210],
+        key3: [140, 240],
+      },
+      {
+        key1: [80, 140],
+        key2: [100, 200],
+        key3: [130, 220],
+      },
+    ];
+    const result = getStackedData(displayedData, ['key1', 'key2', 'key3'], 'none');
+    const firstSeries = createSeries('key1', 0, [
+      createSeriesPoint(100, 200, displayedData[0]), // with ranged data, first point is the range start, second point is the range end
+      createSeriesPoint(120, 180, displayedData[1]), // and so on for each data point in the `key1` series
+      createSeriesPoint(90, 160, displayedData[2]),
+      createSeriesPoint(80, 140, displayedData[3]),
+    ]);
+    const secondSeries = createSeries('key2', 1, [
+      /*
+       * Second series starts where the data defined it: key2: [150, 250]
+       * This means from 150 to 250! it will overlap the first bar - but this is a choice of the user.
+       */
+      createSeriesPoint(150, 250, displayedData[0]),
+      // likewise for all other data points
+      createSeriesPoint(130, 230, displayedData[1]),
+      createSeriesPoint(110, 210, displayedData[2]),
+      createSeriesPoint(100, 200, displayedData[3]),
+    ]);
+    const thirdSeries = createSeries('key3', 2, [
+      // the for the third series - it just follows the ranged data as is, does not attempt to stack on top of previous series
+      createSeriesPoint(200, 300, displayedData[0]),
+      createSeriesPoint(170, 270, displayedData[1]),
+      createSeriesPoint(140, 240, displayedData[2]),
+      createSeriesPoint(130, 220, displayedData[3]),
+    ]);
+    const expected = [firstSeries, secondSeries, thirdSeries];
     expect(result).toEqual(expected);
   });
 });

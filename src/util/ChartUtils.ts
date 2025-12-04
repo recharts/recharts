@@ -437,7 +437,22 @@ export const getStackedData = (
     // @ts-expect-error definitelytyped types are incorrect
     .offset(offsetAccessor);
 
-  return stack(data);
+  const result = stack(data);
+
+  // Post-process ranged data: if value is an array of two numbers, use them directly without stacking
+  result.forEach((series, seriesIndex) => {
+    series.forEach((point, pointIndex) => {
+      const value = getValueByDataKey(data[pointIndex], dataKeys[seriesIndex], 0);
+      if (Array.isArray(value) && value.length === 2 && isNumber(value[0]) && isNumber(value[1])) {
+        // eslint-disable-next-line prefer-destructuring,no-param-reassign
+        point[0] = value[0];
+        // eslint-disable-next-line prefer-destructuring,no-param-reassign
+        point[1] = value[1];
+      }
+    });
+  });
+
+  return result;
 };
 
 export type StackId = string | number;
