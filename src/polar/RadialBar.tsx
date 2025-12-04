@@ -136,7 +136,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
 
   return (
     <RadialBarLabelListProvider showLabels={showLabels} sectors={sectors}>
-      {sectors.map((entry, i) => {
+      {sectors.map((entry: RadialBarDataItem, i: number) => {
         const isActive = activeShape && activeIndex === String(i);
         // @ts-expect-error the types need a bit of attention
         const onMouseEnter = onMouseEnterFromContext(entry, i);
