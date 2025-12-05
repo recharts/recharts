@@ -14,6 +14,9 @@ import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { round, roundTemplateLiteral } from '../util/round';
 
+/**
+ * @inline
+ */
 export type RectRadius = number | [number, number, number, number];
 
 const getRectanglePath = (x: number, y: number, width: number, height: number, radius: RectRadius): string => {

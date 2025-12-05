@@ -41,6 +41,7 @@
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
     "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit:*",
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
+    "omnidoc": "npx tsx omnidoc/generateApiDoc.ts && prettier www/src/docs/api --write",
     "test-mutation": "stryker run",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",
     "lint": "eslint .",

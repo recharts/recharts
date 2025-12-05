@@ -1,11 +1,24 @@
 /**
  * @fileOverview reads props from the source code using ts-morph
  */
-import { ExportedDeclarations, Node, Project, Symbol as TsMorphSymbol, SymbolFlags, Type } from 'ts-morph';
+import {
+  ExportedDeclarations,
+  JSDocTagInfo,
+  Node,
+  Project,
+  Symbol as TsMorphSymbol,
+  SymbolFlags,
+  Type,
+} from 'ts-morph';
 import { DefaultValue, DocReader } from './DocReader';
 import { componentMetaMap } from './componentsAndDefaultPropsMap';
 
 type PropOrigin = 'recharts' | 'dom' | 'other';
+
+type JSDocMeta = {
+  text?: string;
+  tags: Map<string, string | undefined>;
+};
 
 type PropMeta = {
   /**
@@ -19,6 +32,8 @@ type PropMeta = {
   normalizedPath: string;
   defaultValueFromObject: DefaultValue;
   defaultValueFromJSDoc: DefaultValue;
+  jsDoc: JSDocMeta | undefined;
+  isRequired: boolean;
 };
 
 export class ProjectDocReader implements DocReader {
@@ -184,7 +199,7 @@ export class ProjectDocReader implements DocReader {
       }
 
       // Check where this property is declared
-      const declarations = prop.getDeclarations();
+      const declarations: Node[] = prop.getDeclarations();
       if (declarations.length === 0) {
         properties.push({
           name: propName,
@@ -192,6 +207,8 @@ export class ProjectDocReader implements DocReader {
           normalizedPath: 'unknown',
           defaultValueFromObject: { type: 'unreadable' },
           defaultValueFromJSDoc: { type: 'unreadable' },
+          jsDoc: undefined,
+          isRequired: false,
         });
         continue;
       }
@@ -208,6 +225,8 @@ export class ProjectDocReader implements DocReader {
           defaultValueFromObject:
             origin === 'recharts' ? this.getDefaultValueFromObject(componentName, propName) : { type: 'unreadable' },
           defaultValueFromJSDoc: this.getDefaultValueFromJSDoc(prop),
+          jsDoc: this.getJsDocMeta(declaration),
+          isRequired: Node.isPropertySignature(declaration) && !declaration.hasQuestionToken(),
         };
 
         properties.push(propMeta);
@@ -381,45 +400,91 @@ export class ProjectDocReader implements DocReader {
 
   getCommentOf(component: string, prop: string): string | undefined {
     try {
-      const propMeta = this.getPropMeta(component, prop);
+      const propMeta: ReadonlyArray<PropMeta> = this.getPropMeta(component, prop);
       if (propMeta.length === 0) {
         return undefined;
       }
 
       // Try to find a Recharts prop first (prefer our own documentation)
-      const rechartsProp = propMeta.find(p => p.origin === 'recharts');
-      const targetProp = rechartsProp || propMeta[0];
+      const rechartsProp = propMeta.filter(p => p.origin === 'recharts');
+      // iterate through recharts declarations first, if one of them has comment then return that
+      for (const rp of rechartsProp) {
+        const comment = this.getCommentOfPropMeta(rp);
+        if (comment) {
+          return comment;
+        }
+      }
 
+      // Fallback to the first available prop (could be DOM or other)
+      for (const p of propMeta) {
+        const comment = this.getCommentOfPropMeta(p);
+        if (comment) {
+          return comment;
+        }
+      }
+
+      // no luck.
+      return undefined;
+    } catch {
+      // Component or prop doesn't exist
+      return undefined;
+    }
+  }
+
+  private getCommentOfPropMeta(prop: PropMeta | undefined): string | undefined {
+    if (prop == null || prop.jsDoc == null) {
+      return undefined;
+    }
+    // Look for a description tag in jsdoc, or use the general comment
+    return prop.jsDoc.tags.get('description') || prop.jsDoc.tags.get('desc') || prop.jsDoc.text;
+  }
+
+  getTextOfTag(tag: JSDocTagInfo | undefined): string | undefined {
+    if (!tag) {
+      return undefined;
+    }
+    const text = tag.getText();
+    if (text && text.length > 0) {
+      return text
+        .map(t => t.text)
+        .join(' ')
+        .trim();
+    }
+    return undefined;
+  }
+
+  getTypeOf(component: string, prop: string): string | undefined {
+    try {
       const paramType = this.getPropsType(component);
       const properties = paramType.getProperties();
-      const property = properties.find(p => p.getName() === targetProp.name);
+      const property = properties.find(p => p.getName() === prop);
 
       if (!property) {
         return undefined;
       }
 
-      // Get JSDoc comments
-      const jsDocComments = property.getJsDocTags();
-
-      // Look for a description tag, or use the general comment
-      const descTag = jsDocComments.find(tag => tag.getName() === 'description');
-      if (descTag) {
-        const text = descTag.getText();
-        if (text && text.length > 0) {
-          return text
-            .map(t => t.text)
-            .join(' ')
-            .trim();
-        }
+      const declarations = property.getDeclarations();
+      if (declarations.length === 0) {
+        return undefined;
       }
 
-      // If no description tag, get the main comment text
-      const declarations = property.getDeclarations();
-      // in case of multiple declarations, use the first one that has JSDoc available
-      return declarations.map(decl => this.getJSDocFromDeclaration(decl)).find(comment => comment !== undefined);
+      const declaration = declarations[0];
+
+      const type = declaration.getType();
+      return type.getText();
     } catch {
-      // Component or prop doesn't exist
       return undefined;
+    }
+  }
+
+  isOptionalProp(component: string, prop: string): boolean {
+    try {
+      const paramType = this.getPropMeta(component, prop);
+      const isRequired = paramType.some(p => p.isRequired);
+      // if at least one declaration says required, treat as required
+      return !isRequired;
+    } catch {
+      return false;
     }
   }
 
@@ -440,5 +505,22 @@ export class ProjectDocReader implements DocReader {
       }
     }
     return undefined;
+  }
+
+  private getJsDocMeta(declaration: Node): JSDocMeta {
+    const text = this.getJSDocFromDeclaration(declaration);
+    const map: Map<string, string | undefined> = new Map();
+    declaration
+      .getSymbol()
+      ?.getJsDocTags()
+      .forEach(tag => {
+        const tagName = tag.getName();
+        const tagText = this.getTextOfTag(tag);
+        map.set(tagName, tagText);
+      });
+    return {
+      text,
+      tags: map,
+    };
   }
 }
