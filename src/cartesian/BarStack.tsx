@@ -39,7 +39,7 @@ export type BarStackProps = {
    * @defaultValue 0
    */
   radius?: RectRadius;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export type BarStackSettings = {

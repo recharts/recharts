@@ -20,10 +20,12 @@ import { sankeyApiExamples } from './SankeyChart';
 import { scatterChartApiExamples } from './ScatterChart';
 import { treemapApiExamples } from './Treemap';
 import { ChartExample } from '../exampleComponents/types.ts';
+import { barStackApiExamples } from './BarStack';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
   BarChart: barChartApiExamples,
+  BarStack: barStackApiExamples,
   LineChart: lineChartApiExamples,
   ComposedChart: composedChartApiExamples,
   PieChart: pieChartApiExamples,
