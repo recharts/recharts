@@ -1,5 +1,4 @@
-import { Bar, BarChart, Legend, LegendPayload, Tooltip, XAxis, YAxis } from 'recharts';
-import { RenderableText } from 'recharts/types/component/Text';
+import { Bar, BarChart, Legend, LegendPayload, Tooltip, XAxis, YAxis, RenderableText } from 'recharts';
 
 // #region Data and helper functions
 /**

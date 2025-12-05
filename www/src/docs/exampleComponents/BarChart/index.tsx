@@ -28,9 +28,9 @@ import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
 import RangedStackedBarChart from './RangedStackedBarChart';
 import rangedStackedBarChartSource from './RangedStackedBarChart?raw';
-import PopulationPyramidExample from './PopulationPyramidExample.tsx';
+import PopulationPyramidExample from './PopulationPyramidExample';
 import populationPyramidExampleSource from './PopulationPyramidExample?raw';
-import TimelineExample from './TimelineExample.tsx';
+import TimelineExample from './TimelineExample';
 import timelineExampleSource from './TimelineExample?raw';
 
 export { BarChartNavExample };
@@ -132,7 +132,7 @@ export const barChartExamples: Record<string, ChartExample> = {
           <code>{'radius={number}'}</code> prop on a <code>Bar</code> component will round all edges of the Rectangle.
         </p>
         <p>
-          Stacked ranged charts are available since Recharts 3.6. So you can provide the ranges directly as an arrays of
+          Stacked ranged charts are available since Recharts 3.6. So you can provide the ranges directly as arrays of
           two numbers.
         </p>
         <p>

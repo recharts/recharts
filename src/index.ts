@@ -21,7 +21,7 @@ export type { Props as ResponsiveContainerProps } from './component/ResponsiveCo
 export { Cell } from './component/Cell';
 export type { Props as CellProps } from './component/Cell';
 export { Text } from './component/Text';
-export type { Props as TextProps } from './component/Text';
+export type { Props as TextProps, RenderableText } from './component/Text';
 export { Label } from './component/Label';
 export type { Props as LabelProps } from './component/Label';
 export { LabelList } from './component/LabelList';

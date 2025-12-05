@@ -68,7 +68,7 @@ const data: Array<TimelineDataType> = [
   },
 ];
 
-const getBarColor = (outcome: 'success' | 'error') => {
+const getBarColor = (outcome: TimelineDataType['outcome']) => {
   switch (outcome) {
     case 'success':
       return 'blue';
