@@ -17,6 +17,12 @@ import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarCh
 import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
 import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
 import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
+import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
+
+test('PopulationPyramidExample', async ({ mount }) => {
+  const component = await mount(<PopulationPyramidExample defaultIndex={4} />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('BarChartNavExample', async ({ mount }) => {
   const component = await mount(<BarChartNavExample />);

@@ -28,6 +28,8 @@ import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
 import RangedStackedBarChart from './RangedStackedBarChart';
 import rangedStackedBarChartSource from './RangedStackedBarChart?raw';
+import PopulationPyramidExample from './PopulationPyramidExample.tsx';
+import populationPyramidExampleSource from './PopulationPyramidExample?raw';
 
 export { BarChartNavExample };
 
@@ -111,5 +113,10 @@ export const barChartExamples: Record<string, ChartExample> = {
         <p>This feature is available since Recharts 3.6.</p>
       </>
     ),
+  },
+  PopulationPyramid: {
+    Component: PopulationPyramidExample,
+    sourceCode: populationPyramidExampleSource,
+    name: 'Population Pyramid',
   },
 };
