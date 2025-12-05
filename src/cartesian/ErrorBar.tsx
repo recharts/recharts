@@ -45,6 +45,11 @@ export type ErrorBarDataPointFormatter = (
  * External ErrorBar props, visible for users of the library
  */
 interface ErrorBarProps extends ZIndexable {
+  /**
+   * The key of a group of error values in data.
+   * The error values can be a single value for symmetric error bars;
+   * or an array of a lower and upper error value for asymmetric error bars.
+   */
   dataKey: DataKey<any>;
   /**
    * Width of the error bar ends
@@ -73,6 +78,16 @@ interface ErrorBarProps extends ZIndexable {
    * @defaultValue ease-in-out
    */
   animationEasing?: AnimationTiming;
+  /**
+   * Width of the lines used to make the error bars
+   */
+  strokeWidth?: number | string;
+  /**
+   * Color of the error bar lines
+   *
+   * @defaultValue black
+   */
+  stroke?: string;
   /**
    * @defaultValue 400
    */

@@ -7,7 +7,7 @@ export const ErrorBarAPI = {
       isOptional: false,
       desc: {
         'en-US': `The key of a group of error values in data. The error values can be a single value for
-          symmetric error bars or an array of a lower and upper error value for asymmetric error
+          symmetric error bars; or an array of a lower and upper error value for asymmetric error
           bars.`,
         'zh-CN':
           '展示误差线对应的数据的 key。当对应的元素是一个数值时，会用来展示对称的误差线。当对应的元素是一个二元数组时，可以用来设置非对称的误差线。',
@@ -19,7 +19,7 @@ export const ErrorBarAPI = {
       defaultVal: 5,
       isOptional: true,
       desc: {
-        'en-US': 'The width of the error bar ends.',
+        'en-US': 'Width of the error bar ends',
         'zh-CN': '误差线的宽度。',
       },
     },
@@ -29,7 +29,7 @@ export const ErrorBarAPI = {
       defaultVal: 1.5,
       isOptional: true,
       desc: {
-        'en-US': 'The width of the lines used to make the error bars.',
+        'en-US': 'Width of the lines used to make the error bars',
         'zh-CN': '误差线的宽度。',
       },
     },
@@ -39,7 +39,7 @@ export const ErrorBarAPI = {
       defaultVal: 'black',
       isOptional: true,
       desc: {
-        'en-US': 'The color of the error bars.',
+        'en-US': 'Color of the error bar lines',
         'zh-CN': '误差线的颜色。',
       },
     },
