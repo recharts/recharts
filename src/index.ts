@@ -14,6 +14,7 @@ export { DefaultLegendContent } from './component/DefaultLegendContent';
 export type { Props as DefaultLegendContentProps, LegendPayload } from './component/DefaultLegendContent';
 export { Tooltip } from './component/Tooltip';
 export type { TooltipProps, TooltipContentProps } from './component/Tooltip';
+export type { TooltipIndex } from './state/tooltipSlice';
 export { DefaultTooltipContent } from './component/DefaultTooltipContent';
 export type { Props as DefaultTooltipContentProps } from './component/DefaultTooltipContent';
 export { ResponsiveContainer } from './component/ResponsiveContainer';
@@ -137,5 +138,3 @@ export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutC
 export type { ChartOffset, PlotArea } from './types';
 
 export type { MouseHandlerDataParam } from './synchronisation/types';
-
-export type { TooltipIndex } from './state/tooltipSlice';

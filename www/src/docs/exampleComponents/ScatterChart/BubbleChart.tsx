@@ -1,6 +1,5 @@
-import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps } from 'recharts';
+import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps, TooltipIndex } from 'recharts';
 import { ReactNode } from 'react';
-import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
 
 // #region Sample data
 const data01 = [

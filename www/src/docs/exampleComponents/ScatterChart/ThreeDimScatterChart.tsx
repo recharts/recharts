@@ -1,5 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
+import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, TooltipIndex } from 'recharts';
 
 // #region Sample data
 const data01 = [
