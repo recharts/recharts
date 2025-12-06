@@ -39,6 +39,12 @@ type PropMeta = {
 export class ProjectDocReader implements DocReader {
   private project: Project;
 
+  private propCache: Map<string, ReadonlyArray<PropMeta>> = new Map();
+
+  private symbolNamesCache: ReadonlyArray<string> | null = null;
+
+  private componentNamesCache: ReadonlyArray<string> | null = null;
+
   constructor() {
     this.project = new Project({
       tsConfigFilePath: 'tsconfig.json',
@@ -46,6 +52,10 @@ export class ProjectDocReader implements DocReader {
   }
 
   getPublicSymbolNames(kind?: SymbolFlags): ReadonlyArray<string> {
+    if (kind === undefined && this.symbolNamesCache) {
+      return this.symbolNamesCache;
+    }
+
     const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
     const exportedDeclarations = sourceFile.getExportedDeclarations();
 
@@ -57,7 +67,7 @@ export class ProjectDocReader implements DocReader {
 
       for (const declaration of declarations) {
         const symbol = declaration.getSymbol();
-        if (!symbol) continue;
+        if (!symbol) continue; // Should not happen
 
         // If no kind filter specified, include all
         if (kind === undefined) {
@@ -74,11 +84,18 @@ export class ProjectDocReader implements DocReader {
       }
     }
 
-    return names.sort((a, b) => a.localeCompare(b));
+    const result = names.sort((a, b) => a.localeCompare(b));
+    if (kind === undefined) {
+      this.symbolNamesCache = result;
+    }
+    return result;
   }
 
   getPublicComponentNames(): ReadonlyArray<string> {
-    return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function).filter(name => {
+    if (this.componentNamesCache) {
+      return this.componentNamesCache;
+    }
+    const result = this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function).filter(name => {
       // Exclude hooks (start with 'use')
       if (name.startsWith('use')) {
         return false;
@@ -89,6 +106,8 @@ export class ProjectDocReader implements DocReader {
       }
       return true;
     });
+    this.componentNamesCache = result;
+    return result;
   }
 
   private getComponentDeclaration(component: string): ExportedDeclarations {
@@ -236,9 +255,18 @@ export class ProjectDocReader implements DocReader {
     return properties;
   }
 
-  getPropMeta(component: string, prop: string): ReadonlyArray<PropMeta> {
+  private getCachedProps(component: string): ReadonlyArray<PropMeta> {
+    if (this.propCache.has(component)) {
+      return this.propCache.get(component)!;
+    }
     const paramType = this.getPropsType(component);
-    const properties = this.collectPropertiesFromType(component, paramType);
+    const props = this.collectPropertiesFromType(component, paramType);
+    this.propCache.set(component, props);
+    return props;
+  }
+
+  getPropMeta(component: string, prop: string): ReadonlyArray<PropMeta> {
+    const properties = this.getCachedProps(component);
     return properties.filter(p => p.name === prop);
   }
 
@@ -384,13 +412,12 @@ export class ProjectDocReader implements DocReader {
   }
 
   getRechartsPropsOf(component: string): ReadonlyArray<string> {
-    const paramType = this.getPropsType(component);
-    return this.metaToNames(this.collectPropertiesFromType(component, paramType).filter(p => p.origin === 'recharts'));
+    const props = this.getCachedProps(component);
+    return this.metaToNames(props.filter(p => p.origin === 'recharts'));
   }
 
   getAllPropsOf(component: string): ReadonlyArray<string> {
-    const paramType = this.getPropsType(component);
-    return this.metaToNames(this.collectPropertiesFromType(component, paramType));
+    return this.metaToNames(this.getCachedProps(component));
   }
 
   getSVGParentOf(component: string): string | null {
