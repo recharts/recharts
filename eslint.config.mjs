@@ -108,6 +108,13 @@ const reactConfig = [
               message: 'Import [module] from lodash/[module] instead',
             },
           ],
+          patterns: [
+            {
+              group: ['recharts/types/*', 'recharts/src/*'],
+              message:
+                'Examples should only show usage of public API. Import from the public API (recharts) instead of internal paths. If a symbol is not exported, but it would be useful in an example, then it should be exported.',
+            },
+          ],
         },
       ],
     },

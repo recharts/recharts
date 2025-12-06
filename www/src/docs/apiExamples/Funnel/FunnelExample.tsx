@@ -1,5 +1,4 @@
-import { FunnelChart, Funnel, LabelList, Trapezoid, Label } from 'recharts';
-import { FunnelTrapezoidItem } from 'recharts/types/cartesian/Funnel';
+import { FunnelChart, Funnel, LabelList, Trapezoid, Label, FunnelTrapezoidItem } from 'recharts';
 
 // #region Sample data
 const data = [

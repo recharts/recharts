@@ -1,6 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload } from 'recharts';
-import { DataKey } from 'recharts/types/util/types';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload, DataKey } from 'recharts';
 
 // #region Sample data
 const data = [

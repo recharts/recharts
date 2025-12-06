@@ -1,5 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { AxisInterval } from 'recharts/types/util/types';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, AxisInterval } from 'recharts';
 
 // #region Sample data
 const data = [

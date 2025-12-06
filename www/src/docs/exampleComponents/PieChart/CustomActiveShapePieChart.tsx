@@ -1,6 +1,4 @@
-import { Pie, PieChart, Sector, Tooltip } from 'recharts';
-import { PieSectorDataItem } from 'recharts/types/polar/Pie';
-import { TooltipIndex } from 'recharts/types/state/tooltipSlice';
+import { Pie, PieChart, Sector, PieSectorDataItem, Tooltip, TooltipIndex } from 'recharts';
 
 // #region Sample data
 const data = [
