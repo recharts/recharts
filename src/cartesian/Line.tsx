@@ -627,7 +627,7 @@ function RenderCurve({ clipPathId, props }: { clipPathId: string; props: Interna
   );
 }
 
-const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
+const errorBarDataPointFormatter: ErrorBarDataPointFormatter<LinePointItem> = (
   dataPoint: LinePointItem,
   dataKey,
 ): ErrorBarDataItem => {

@@ -9,7 +9,7 @@
  * @param n A number specifying which elements to take.
  * @returns The result array of the same type as the input array.
  */
-export function getEveryNthWithCondition<Type>(array: ReadonlyArray<Type>, n: number): ReadonlyArray<Type> {
+export function getEveryNth<Type>(array: ReadonlyArray<Type>, n: number): ReadonlyArray<Type> {
   if (n < 1) {
     return [];
   }
@@ -18,7 +18,10 @@ export function getEveryNthWithCondition<Type>(array: ReadonlyArray<Type>, n: nu
   }
   const result: Type[] = [];
   for (let i = 0; i < array.length; i += n) {
-    result.push(array[i]);
+    const item = array[i];
+    if (item !== undefined) {
+      result.push(item);
+    }
   }
   return result;
 }

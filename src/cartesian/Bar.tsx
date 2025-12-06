@@ -775,7 +775,7 @@ function RenderRectangles(props: InternalProps) {
 
 const defaultMinPointSize: number = 0;
 
-const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
+const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> = (
   dataPoint: BarRectangleItem,
   dataKey,
 ): ErrorBarDataItem => {
@@ -943,7 +943,11 @@ export function computeBarRectangles({
 
       if (stackedData) {
         // Use dataStartIndex to access the correct element in the full stackedData array
-        value = truncateByDomain(stackedData[index + dataStartIndex], stackedDomain);
+        const untruncatedValue = stackedData[index + dataStartIndex];
+        if (untruncatedValue == null) {
+          return null;
+        }
+        value = truncateByDomain(untruncatedValue, stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
 

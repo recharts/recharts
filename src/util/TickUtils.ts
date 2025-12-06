@@ -1,5 +1,5 @@
 import { getAngledRectangleWidth } from './CartesianUtils';
-import { getEveryNthWithCondition } from './getEveryNthWithCondition';
+import { getEveryNth } from './getEveryNth';
 import { Size, CartesianTickItem, CartesianViewBoxRequired } from './types';
 
 export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number | undefined) {
@@ -45,5 +45,5 @@ export function getNumberIntervalTicks(
   ticks: ReadonlyArray<CartesianTickItem>,
   interval: number,
 ): ReadonlyArray<CartesianTickItem> | undefined {
-  return getEveryNthWithCondition(ticks, interval + 1);
+  return getEveryNth(ticks, interval + 1);
 }

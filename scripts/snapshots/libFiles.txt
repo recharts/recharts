@@ -220,7 +220,7 @@
   "lib/util/excludeEventProps.js",
   "lib/util/getActiveCoordinate.js",
   "lib/util/getChartPointer.js",
-  "lib/util/getEveryNthWithCondition.js",
+  "lib/util/getEveryNth.js",
   "lib/util/getRadiusAndStrokeWidthFromDot.js",
   "lib/util/getSliced.js",
   "lib/util/isDomainSpecifiedByUser.js",

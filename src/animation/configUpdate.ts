@@ -31,7 +31,7 @@ const calStepperVals = (easing: SpringEasingFunction, preVals: Record<string, Va
 
   if (steps < 1) {
     return mapObject((key, val: Val): Val => {
-      if (needContinue(val)) {
+      if (needContinue(val) && nextStepVals[key] != null) {
         return {
           ...val,
           velocity: alpha(val.velocity, nextStepVals[key].velocity, steps),
@@ -67,7 +67,7 @@ function createStepperUpdate<T extends Record<string, unknown>>(
   timeoutController: TimeoutController,
 ) {
   let preTime: number;
-  let stepperStyle = interKeys.reduce(
+  let stepperStyle: Record<string, Val> = interKeys.reduce(
     (res, key) => ({
       ...res,
       [key]: {
@@ -129,13 +129,17 @@ function createTimingUpdate<T extends Record<string, number>>(
 ) {
   let stopAnimation: CancelAnimationFunction | null = null;
 
-  const timingStyle: TimingStyle = interKeys.reduce(
-    (res: TimingStyle, key: string): TimingStyle => ({
+  const timingStyle: TimingStyle = interKeys.reduce((res: TimingStyle, key: string): TimingStyle => {
+    const fromElement = from[key];
+    const toElement = to[key];
+    if (fromElement == null || toElement == null) {
+      return res;
+    }
+    return {
       ...res,
-      [key]: [from[key], to[key]],
-    }),
-    {},
-  );
+      [key]: [fromElement, toElement] as const,
+    };
+  }, {});
 
   let beginTime: number;
 

@@ -35,8 +35,8 @@ export interface ErrorBarDataItem {
  */
 export type ErrorBarDirection = 'x' | 'y';
 
-export type ErrorBarDataPointFormatter = (
-  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
+export type ErrorBarDataPointFormatter<T extends BarRectangleItem | LinePointItem | ScatterPointItem> = (
+  entry: T,
   dataKey: DataKey<any>,
   direction: ErrorBarDirection,
 ) => ErrorBarDataItem;
@@ -134,10 +134,15 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     }
 
     const lineCoordinates: Array<RectangleCoordinate> = [];
-    let lowBound, highBound;
+    let lowBound: number, highBound: number;
 
     if (Array.isArray(errorVal)) {
-      [lowBound, highBound] = errorVal;
+      const [low, high] = errorVal;
+      if (low == null || high == null) {
+        return null;
+      }
+      lowBound = low;
+      highBound = high;
     } else {
       lowBound = highBound = errorVal;
     }
