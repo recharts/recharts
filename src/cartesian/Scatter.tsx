@@ -20,7 +20,7 @@ import {
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
-import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
+import { ErrorBarDataItem, ErrorBarDataPointFormatter, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { getLinearRegression, interpolate, isNullish } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -654,7 +654,7 @@ export function computeScatterPoints({
   });
 }
 
-const errorBarDataPointFormatter = (
+const errorBarDataPointFormatter: ErrorBarDataPointFormatter<ScatterPointItem> = (
   dataPoint: ScatterPointItem,
   dataKey: Props['dataKey'],
   direction: ErrorBarDirection,
