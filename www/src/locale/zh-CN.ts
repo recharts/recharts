@@ -43,6 +43,7 @@ export const map = {
     zIndex: 'Z-Index 和图层',
     domainAndTicks: '定义域与刻度',
     performance: '性能优化',
+    roundedBars: '圆角柱状图',
   },
   installation: {
     installation: '安装',

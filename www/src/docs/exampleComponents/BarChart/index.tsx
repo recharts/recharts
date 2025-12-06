@@ -112,7 +112,8 @@ export const barChartExamples: Record<string, ChartExample> = {
           The ranges can be connected, disconnected, or overlapping depending on your use case (e.g., timeline of
           events).
         </p>
-        <p>This feature is available since Recharts 3.6.</p>
+        <p>BarStack component allows you to set radius for rounded corners on the entire stack.</p>
+        <p>These features are available since Recharts 3.6.</p>
       </article>
     ),
   },

@@ -19,6 +19,7 @@ describe('readApiDoc', () => {
         "Treemap",
         "Area",
         "Bar",
+        "BarStack",
         "Line",
         "Scatter",
         "XAxis",
@@ -95,6 +96,11 @@ describe('readApiDoc', () => {
                 If set to 'visible', the reference line will be drawn completely.
                 If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference line fits into the canvas."
     `);
+  });
+
+  it('should read Area onAnimationStart comment', () => {
+    const onAnimationStartMeta = reader.getCommentOf('Area', 'onAnimationStart');
+    expect(onAnimationStartMeta).toBe('The customized event handler of animation start');
   });
 
   it('should return undefined for comment of unknown component', () => {

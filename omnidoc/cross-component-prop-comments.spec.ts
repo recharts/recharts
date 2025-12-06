@@ -72,6 +72,11 @@ describe('cross-component prop consistency', () => {
       prop: 'layout',
       reason: 'Curve layout means something else than the chart layout.',
     },
+    {
+      components: ['BarStack'],
+      prop: 'stackId',
+      reason: 'This sets stackId for all Bars inside the BarStack and so it has different description',
+    },
   ];
 
   // Build the prop-to-components map once for all tests

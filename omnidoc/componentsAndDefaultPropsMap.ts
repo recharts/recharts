@@ -30,6 +30,7 @@ import { defaultPieChartProps } from '../src/chart/PieChart';
 import { defaultRadarChartProps } from '../src/chart/RadarChart';
 import { defaultRadialBarChartProps } from '../src/chart/RadialBarChart';
 import { sankeyDefaultProps } from '../src/chart/Sankey';
+import { defaultBarStackProps } from '../src/cartesian/BarStack';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -40,6 +41,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   AreaChart: { defaultProps: defaultCartesianChartProps },
   Bar: { defaultProps: defaultBarProps },
   BarChart: { defaultProps: defaultCartesianChartProps },
+  BarStack: { defaultProps: defaultBarStackProps },
   Brush: { defaultProps: defaultBrushProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },

@@ -4,7 +4,7 @@ import { Surface, Rectangle } from '../../src';
 import { RectRadius } from '../../src/shape/Rectangle';
 
 describe('<Rectangle />', () => {
-  const rectangleRadiusCases: { radius: RectRadius | number }[] = [{ radius: [5, 10, 8, 15] }, { radius: 5 }];
+  const rectangleRadiusCases: { radius: RectRadius }[] = [{ radius: [5, 10, 8, 15] }, { radius: 5 }];
   test.each(rectangleRadiusCases)(
     'Should render 1 rectangle in simple Rectangle when radius is $radius',
     ({ radius }) => {

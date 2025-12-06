@@ -24,6 +24,7 @@ export const apiCates = [
     items: [
       'Area',
       'Bar',
+      'BarStack',
       'Line',
       'Scatter',
       'XAxis',

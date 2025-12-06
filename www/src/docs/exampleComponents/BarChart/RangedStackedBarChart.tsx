@@ -1,4 +1,4 @@
-import { BarChart, XAxis, YAxis, Tooltip, Bar } from 'recharts';
+import { BarChart, XAxis, YAxis, Tooltip, Bar, BarStack } from 'recharts';
 
 // #region Sample data
 const rangedStackedBarData = [
@@ -25,9 +25,11 @@ const RangedStackedBarChart = ({ isAnimationActive = true }: { isAnimationActive
     <XAxis dataKey="name" />
     <YAxis width="auto" />
     <Tooltip />
-    <Bar dataKey="value1" stackId="a" fill="#8884d8" isAnimationActive={isAnimationActive} />
-    <Bar dataKey="value2" stackId="a" fill="#82ca9d" isAnimationActive={isAnimationActive} />
-    <Bar dataKey="value3" stackId="a" fill="#ffc658" isAnimationActive={isAnimationActive} />
+    <BarStack radius={25}>
+      <Bar dataKey="value1" maxBarSize={50} fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <Bar dataKey="value2" maxBarSize={50} fill="#82ca9d" isAnimationActive={isAnimationActive} />
+      <Bar dataKey="value3" maxBarSize={50} fill="#ffc658" isAnimationActive={isAnimationActive} />
+    </BarStack>
   </BarChart>
 );
 
