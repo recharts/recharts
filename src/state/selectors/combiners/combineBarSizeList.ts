@@ -21,7 +21,7 @@ export const combineBarSizeList = (
   allBars: ReadonlyArray<MaybeStackedGraphicalItem>,
   globalSize: number | undefined,
   totalSize: number | undefined,
-): SizeList | undefined => {
+): SizeList => {
   const initialValue: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
 
   const stackedBars: ReadonlyArray<DefinitelyStackedGraphicalItem> = allBars.filter(isStacked);
