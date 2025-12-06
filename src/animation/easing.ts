@@ -29,6 +29,19 @@ export type BezierEasingFunction = {
   (t: number): number;
 };
 
+const parseCubicBezier = (easing: string): [number, number, number, number] | null => {
+  const easingParts = easing.split('(');
+  if (easingParts.length !== 2 || easingParts[0] !== 'cubic-bezier') {
+    return null;
+  }
+  const numbers = easingParts[1]?.split(')')[0]?.split(',');
+  if (numbers == null || numbers.length !== 4) {
+    return null;
+  }
+  const coords = numbers.map((x: string) => parseFloat(x));
+  return [coords[0]!, coords[1]!, coords[2]!, coords[3]!];
+};
+
 const getBezierCoordinates = (...args: BezierInput): [number, number, number, number] => {
   if (args.length === 1) {
     switch (args[0]) {
@@ -43,13 +56,9 @@ const getBezierCoordinates = (...args: BezierInput): [number, number, number, nu
       case 'ease-in-out':
         return [0.0, 0.0, 0.58, 1.0];
       default: {
-        const easing = args[0].split('(');
-        if (easing[0] === 'cubic-bezier' && easing[1]?.split(')')[0].split(',').length === 4) {
-          const coords = easing[1]
-            .split(')')[0]
-            .split(',')
-            .map((x: string) => parseFloat(x));
-          return [coords[0], coords[1], coords[2], coords[3]];
+        const easing = parseCubicBezier(args[0]);
+        if (easing) {
+          return easing;
         }
       }
     }

@@ -456,8 +456,8 @@ function VerticalRect({
   baseLine: Props['baseLine'];
   strokeWidth: Props['strokeWidth'];
 }) {
-  const startY = points[0].y;
-  const endY = points[points.length - 1].y;
+  const startY = points[0]?.y;
+  const endY = points[points.length - 1]?.y;
   if (!isWellBehavedNumber(startY) || !isWellBehavedNumber(endY)) {
     return null;
   }
@@ -495,8 +495,8 @@ function HorizontalRect({
   baseLine: Props['baseLine'];
   strokeWidth: Props['strokeWidth'];
 }) {
-  const startX = points[0].x;
-  const endX = points[points.length - 1].x;
+  const startX = points[0]?.x;
+  const endX = points[points.length - 1]?.x;
   if (!isWellBehavedNumber(startX) || !isWellBehavedNumber(endX)) {
     return null;
   }
@@ -977,19 +977,21 @@ export function computeArea({
       }
     }
 
-    const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+    const value1 = value?.[1] ?? null;
+
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
 
     if (isHorizontalLayout) {
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isBreakPoint ? null : yAxis.scale(value[1]),
+        y: isBreakPoint ? null : yAxis.scale(value1),
         value,
         payload: entry,
       };
     }
 
     return {
-      x: isBreakPoint ? null : xAxis.scale(value[1]),
+      x: isBreakPoint ? null : xAxis.scale(value1),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value,
       payload: entry,
