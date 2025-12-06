@@ -15,7 +15,7 @@ import { NumberDomain } from '../types';
  * @param  {Number} max       The maximum value
  * @return {Array} An interval
  */
-export const getValidInterval = ([min, max]: [number, number]) => {
+export const getValidInterval = ([min, max]: [number, number]): [number, number] => {
   let [validMin, validMax] = [min, max];
 
   // exchange

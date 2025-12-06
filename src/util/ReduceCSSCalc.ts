@@ -5,7 +5,9 @@ const ADD_OR_SUBTRACT_REGEX = /(-?\d+(?:\.\d+)?[a-zA-Z%]*)([+-])(-?\d+(?:\.\d+)?
 const CSS_LENGTH_UNIT_REGEX = /^px|cm|vh|vw|em|rem|%|mm|in|pt|pc|ex|ch|vmin|vmax|Q$/;
 const NUM_SPLIT_REGEX = /(-?\d+(?:\.\d+)?)([a-zA-Z%]+)?/;
 
-const CONVERSION_RATES: Record<string, number> = {
+type SupportedUnits = 'cm' | 'mm' | 'pt' | 'pc' | 'in' | 'Q' | 'px';
+
+const CONVERSION_RATES: Record<SupportedUnits, number> = {
   cm: 96 / 2.54,
   mm: 96 / 25.4,
   pt: 96 / 72,
@@ -15,10 +17,15 @@ const CONVERSION_RATES: Record<string, number> = {
   px: 1,
 };
 
-const FIXED_CSS_LENGTH_UNITS: Array<keyof typeof CONVERSION_RATES> = Object.keys(CONVERSION_RATES);
+const FIXED_CSS_LENGTH_UNITS: ReadonlyArray<SupportedUnits> = ['cm', 'mm', 'pt', 'pc', 'in', 'Q', 'px'];
+
+function isSupportedUnit(unit: string): unit is SupportedUnits {
+  return FIXED_CSS_LENGTH_UNITS.includes(unit as SupportedUnits);
+}
+
 const STR_NAN = 'NaN';
 
-function convertToPx(value: number, unit: string): number {
+function convertToPx(value: number, unit: SupportedUnits): number {
   return value * CONVERSION_RATES[unit];
 }
 
@@ -26,8 +33,14 @@ class DecimalCSS {
   static parse(str: string) {
     const [, numStr, unit] = NUM_SPLIT_REGEX.exec(str) ?? [];
 
+    if (numStr == null) {
+      return DecimalCSS.NaN;
+    }
+
     return new DecimalCSS(parseFloat(numStr), unit ?? '');
   }
+
+  static NaN = new DecimalCSS(NaN, '');
 
   constructor(
     public num: number,
@@ -45,7 +58,7 @@ class DecimalCSS {
       this.unit = '';
     }
 
-    if (FIXED_CSS_LENGTH_UNITS.includes(unit)) {
+    if (isSupportedUnit(unit)) {
       this.num = convertToPx(num, unit);
       this.unit = 'px';
     }
@@ -92,8 +105,8 @@ class DecimalCSS {
   }
 }
 
-function calculateArithmetic(expr: string): string {
-  if (expr.includes(STR_NAN)) {
+function calculateArithmetic(expr: string | undefined): string {
+  if (expr == null || expr.includes(STR_NAN)) {
     return STR_NAN;
   }
 
