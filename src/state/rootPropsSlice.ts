@@ -11,6 +11,7 @@ export type UpdatableChartOptions = {
   accessibilityLayer: boolean;
   barCategoryGap: number | string;
   barGap: number | string;
+  barAlign: 'left' | 'center' | 'right';
   barSize: string | number | undefined;
   /**
    * Useful for debugging which chart is which when synchronising.
@@ -36,6 +37,7 @@ export const initialState: UpdatableChartOptions = {
   accessibilityLayer: true,
   barCategoryGap: '10%',
   barGap: 4,
+  barAlign: 'center',
   barSize: undefined,
   className: undefined,
   maxBarSize: undefined,
@@ -54,6 +56,7 @@ const rootPropsSlice = createSlice({
       state.accessibilityLayer = action.payload.accessibilityLayer;
       state.barCategoryGap = action.payload.barCategoryGap;
       state.barGap = action.payload.barGap ?? initialState.barGap;
+      state.barAlign = action.payload.barAlign ?? initialState.barAlign;
       state.barSize = action.payload.barSize;
       state.maxBarSize = action.payload.maxBarSize;
       state.stackOffset = action.payload.stackOffset;

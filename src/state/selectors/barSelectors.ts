@@ -19,7 +19,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { selectAxisViewBox, selectChartOffsetInternal } from './selectChartOffsetInternal';
-import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
+import { selectBarCategoryGap, selectBarGap, selectBarAlign, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import {
@@ -243,6 +243,7 @@ function getBarPositions(
   bandSize: number,
   sizeList: SizeList,
   maxBarSize: number | undefined,
+  barAlign: 'left' | 'center' | 'right',
 ): ReadonlyArray<BarWithPosition> | undefined {
   const len = sizeList.length;
   if (len < 1) {
@@ -272,7 +273,7 @@ function getBarPositions(
       sum = len * fullBarSize;
     }
 
-    const offset = ((bandSize - sum) / 2) >> 0;
+    const offset = barAlign === 'left' ? 0 : barAlign === 'right' ? bandSize - sum : ((bandSize - sum) / 2) >> 0;
     let prev: BarPositionPosition = { offset: offset - realBarGap, size: 0 };
 
     result = sizeList.reduce(
@@ -312,7 +313,7 @@ function getBarPositions(
           stackId: entry.stackId,
           dataKeys: entry.dataKeys,
           position: {
-            offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
+            offset: offset + (originalSize + realBarGap) * i + (barAlign === 'center' ? (originalSize - size) / 2 : 0),
             size,
           },
         },
@@ -349,6 +350,7 @@ export const combineAllBarPositions = (
   barBandSize: number,
   bandSize: number,
   childMaxBarSize: number | undefined,
+  barAlign: 'left' | 'center' | 'right',
 ): ReadonlyArray<BarWithPosition> | undefined => {
   const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
 
@@ -358,6 +360,7 @@ export const combineAllBarPositions = (
     barBandSize !== bandSize ? barBandSize : bandSize,
     sizeList,
     maxBarSize,
+    barAlign,
   );
 
   if (barBandSize !== bandSize && allBarPositions != null) {
@@ -383,6 +386,7 @@ export const selectAllBarPositions: (
     selectBarBandSize,
     selectAxisBandSize,
     selectMaxBarSize,
+    selectBarAlign,
   ],
   combineAllBarPositions,
 );

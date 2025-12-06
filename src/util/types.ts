@@ -1106,6 +1106,15 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    */
   barGap?: number | string;
   /**
+   * The alignment of bars within their category space when barSize is specified.
+   * - 'left': bars are aligned to the left edge of their category
+   * - 'center': bars are centered within their category (default)
+   * - 'right': bars are aligned to the right edge of their category
+   *
+   * @defaultValue center
+   */
+  barAlign?: 'left' | 'center' | 'right';
+  /**
    * The width or height of each bar. If the barSize is not specified, the size of the
    * bar will be calculated by the barCategoryGap, barGap and the quantity of bar groups.
    */
