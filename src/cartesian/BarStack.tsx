@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { ComponentType, createContext, ReactNode, useContext, useMemo } from 'react';
 import { getNormalizedStackId, NormalizedStackId, StackId } from '../util/ChartUtils';
 import { useUniqueId } from '../util/useUniqueId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -147,4 +147,4 @@ const BarStackImpl = (props: BarStackProps) => {
 /**
  * @since 3.6
  */
-export const BarStack = React.memo(BarStackImpl, propsAreEqual);
+export const BarStack: ComponentType<BarStackProps> = React.memo(BarStackImpl, propsAreEqual);
