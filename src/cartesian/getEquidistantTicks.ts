@@ -1,6 +1,6 @@
 import { isVisible } from '../util/TickUtils';
 import { CartesianTickItem } from '../util/types';
-import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
+import { getEveryNth } from '../util/getEveryNth';
 import { Sign } from './getTicks';
 
 export function getEquidistantTicks(
@@ -28,7 +28,7 @@ export function getEquidistantTicks(
 
     // Break condition - If we have evaluated all the ticks, then we are done.
     if (entry === undefined) {
-      return getEveryNthWithCondition(ticks, stepsize);
+      return getEveryNth(ticks, stepsize);
     }
 
     // Check if the element collides with the next element
