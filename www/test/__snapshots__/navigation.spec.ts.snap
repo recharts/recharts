@@ -548,6 +548,16 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "RangedStackedBarChart",
             "url": "/en-US/examples/RangedStackedBarChart/",
           },
+          {
+            "displayName": "Population Pyramid",
+            "key": "PopulationPyramid",
+            "url": "/en-US/examples/PopulationPyramid/",
+          },
+          {
+            "displayName": "Timeline",
+            "key": "TimelineExample",
+            "url": "/en-US/examples/TimelineExample/",
+          },
         ],
         "key": "BarChart",
       },

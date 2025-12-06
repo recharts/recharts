@@ -28,6 +28,10 @@ import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
 import RangedStackedBarChart from './RangedStackedBarChart';
 import rangedStackedBarChartSource from './RangedStackedBarChart?raw';
+import PopulationPyramidExample from './PopulationPyramidExample';
+import populationPyramidExampleSource from './PopulationPyramidExample?raw';
+import TimelineExample from './TimelineExample';
+import timelineExampleSource from './TimelineExample?raw';
 
 export { BarChartNavExample };
 
@@ -102,14 +106,39 @@ export const barChartExamples: Record<string, ChartExample> = {
     sourceCode: rangedStackedBarChartSource,
     name: 'Ranged Stacked Bar Chart',
     description: (
-      <>
+      <article>
         <p>If you define stacked bar data as ranges, Recharts will use those ranges as-is without any calculations.</p>
         <p>
           The ranges can be connected, disconnected, or overlapping depending on your use case (e.g., timeline of
           events).
         </p>
         <p>This feature is available since Recharts 3.6.</p>
-      </>
+      </article>
+    ),
+  },
+  PopulationPyramid: {
+    Component: PopulationPyramidExample,
+    sourceCode: populationPyramidExampleSource,
+    name: 'Population Pyramid',
+  },
+  TimelineExample: {
+    // https://github.com/recharts/recharts/issues/6034
+    Component: TimelineExample,
+    sourceCode: timelineExampleSource,
+    name: 'Timeline',
+    description: (
+      <article>
+        <p>
+          <code>{'radius={number}'}</code> prop on a <code>Bar</code> component will round all edges of the Rectangle.
+        </p>
+        <p>
+          Stacked ranged charts are available since Recharts 3.6. So you can provide the ranges directly as arrays of
+          two numbers.
+        </p>
+        <p>
+          This example also demonstrates the use of <code>shape</code> prop instead of <code>Cell</code>.
+        </p>
+      </article>
     ),
   },
 };

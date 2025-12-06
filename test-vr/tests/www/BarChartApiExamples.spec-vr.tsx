@@ -17,6 +17,22 @@ import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarCh
 import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
 import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
 import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
+import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
+import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/TimelineExample';
+
+test('TimelineExample', async ({ mount }) => {
+  /*
+   * This shows a bug where defaultIndex highlights all items in the row
+   * but mouse hover only highlights one item in the stack.
+   */
+  const component = await mount(<TimelineExample defaultIndex={3} />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('PopulationPyramidExample', async ({ mount }) => {
+  const component = await mount(<PopulationPyramidExample defaultIndex={4} />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('BarChartNavExample', async ({ mount }) => {
   const component = await mount(<BarChartNavExample />);
