@@ -107,7 +107,9 @@ interface LabelProps extends ZIndexable {
    */
   textBreakAll?: boolean;
   /**
-   * The rotation angle of label in degrees.
+   * Text rotation angle in degrees.
+   * The text will be rotated around the (x, y) coordinates as the pivot point.
+   * Positive values rotate clockwise, negative values rotate counterclockwise.
    *
    * @defaultValue 0
    */

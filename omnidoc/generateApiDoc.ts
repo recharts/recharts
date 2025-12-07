@@ -27,6 +27,7 @@ import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
 const ALLOWLISTED_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'BarStack',
+  'Text',
 ];
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
@@ -180,7 +181,7 @@ function main() {
   for (const componentName of componentsToGenerate) {
     try {
       const apiDoc = generateApiDoc(componentName, projectReader);
-      const outputPath = path.join(OUTPUT_DIR, `${componentName}.ts`);
+      const outputPath = path.join(OUTPUT_DIR, `${componentName}API.ts`);
       writeApiDocFile(apiDoc, outputPath);
     } catch (error) {
       console.error(`✗ Failed to generate documentation for ${componentName}:`, error);

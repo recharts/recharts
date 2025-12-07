@@ -93,9 +93,11 @@ interface LabelListProps extends ZIndexable {
    */
   offset?: LabelProps['offset'];
   /**
-   * The rotation angle of label in degrees.
+   * Text rotation angle in degrees.
+   * The text will be rotated around the (x, y) coordinates as the pivot point.
+   * Positive values rotate clockwise, negative values rotate counterclockwise.
    *
-   * @default 0
+   * @defaultValue 0
    */
   angle?: number;
   /**

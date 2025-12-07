@@ -11,7 +11,7 @@ export const BarStackAPI: ApiDoc = {
     },
     {
       name: 'radius',
-      type: 'number | [number, number, number, number]',
+      type: 'RectRadius',
       isOptional: true,
       desc: {
         'en-US':
@@ -21,7 +21,7 @@ export const BarStackAPI: ApiDoc = {
     },
     {
       name: 'stackId',
-      type: 'string | number',
+      type: 'StackId',
       isOptional: true,
       desc: {
         'en-US':

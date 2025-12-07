@@ -76,12 +76,12 @@ interface TextProps {
    * - Uses the first line's width to calculate the scale factor.
    * - The scaling transform is applied as `scale(width / lineWidth)`.
    *
-   * @default false
+   * @defaultValue false
    */
   scaleToFit?: boolean;
 
   /**
-   * Rotation angle in degrees for the text element.
+   * Text rotation angle in degrees.
    * The text will be rotated around the (x, y) coordinates as the pivot point.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
    * The rotation transform is applied as `rotate(angle, x, y)`.
@@ -98,7 +98,7 @@ interface TextProps {
    * - 'inherit': Inherits the text-anchor from parent element
    *
    * **Note:** This controls horizontal alignment only and does not affect RTL text behavior.
-   * @default 'start'
+   * @defaultValue 'start'
    */
   textAnchor?: TextAnchor;
 
@@ -110,7 +110,8 @@ interface TextProps {
    *
    * **Note:** This controls vertical positioning only and does not affect RTL (right-to-left) text behavior.
    * The alignment calculation uses capHeight and lineHeight to determine the starting dy offset.
-   * @default 'end'
+   *
+   * @defaultValue 'end'
    */
   verticalAnchor?: TextVerticalAnchor;
 
@@ -126,7 +127,7 @@ interface TextProps {
    * Can be a number (height in pixels) or a string with CSS units.
    * Used to calculate spacing between lines when text wraps to multiple lines.
    * Also used in verticalAnchor calculations for positioning the text block.
-   * @default '1em'
+   * @defaultValue '1em'
    */
   lineHeight?: number | string;
 
@@ -136,7 +137,7 @@ interface TextProps {
    * - true: Text can break between any characters, useful for languages without spaces
    *
    * **Note:** Only effective when `width` is defined to enable line breaking.
-   * @default false
+   * @defaultValue false
    */
   breakAll?: boolean;
 
@@ -166,6 +167,10 @@ interface TextProps {
    * - Requires `width` to be set for line breaking to occur
    */
   maxLines?: number;
+  /**
+   * When width is specified, the text will automatically wrap by calculating the width of text.
+   */
+  width?: number | string;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;

@@ -27,7 +27,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Sankey',
   'Scatter',
   'Sector',
-  'Text',
   'Tooltip',
   'Trapezoid',
   'Treemap',

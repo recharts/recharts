@@ -66,6 +66,17 @@ export const LabelListAPI = {
       },
     },
     {
+      name: 'angle',
+      type: 'Number',
+      defaultVal: 0,
+      isOptional: true,
+      desc: {
+        'en-US':
+          'Text rotation angle in degrees. The text will be rotated around the (x, y) coordinates as the pivot point. Positive values rotate clockwise, negative values rotate counterclockwise.',
+        'zh-CN': 'label的旋转角度',
+      },
+    },
+    {
       name: 'formatter',
       type: 'Function',
       isOptional: true,

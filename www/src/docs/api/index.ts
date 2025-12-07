@@ -50,7 +50,7 @@ import { RectangleAPI as Rectangle } from './Rectangle';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import { ApiDoc } from './types.ts';
-import { BarStackAPI } from './BarStack.ts';
+import { BarStackAPI } from './BarStackAPI.ts';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
