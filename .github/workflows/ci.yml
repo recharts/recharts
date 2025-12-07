@@ -351,4 +351,4 @@ jobs:
           EOF
           )
 
-          gh pr comment $PR_NUMBER --body "$COMMENT_BODY"
+          gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
