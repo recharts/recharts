@@ -89,7 +89,7 @@ jobs:
       - name: Calculate BASE_URL
         id: base_url
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "BASE_URL=/recharts/pr-${{ github.event.pull_request.number }}/www/" >> $GITHUB_ENV
           else
             echo "BASE_URL=/recharts/canary/www/" >> $GITHUB_ENV
@@ -309,7 +309,7 @@ jobs:
       - name: Deploy
         working-directory: gh-pages
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             TARGET_DIR="pr-${{ github.event.pull_request.number }}"
           else
             TARGET_DIR="canary"
