@@ -4,7 +4,7 @@ import { PageTracker } from '../components/analytics.ts';
 
 export function Root() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <PageTracker />
       <Routes />
     </BrowserRouter>
