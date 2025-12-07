@@ -30,7 +30,7 @@ import { ResponsiveContainerAPI as ResponsiveContainer } from './ResponsiveConta
 import { LegendAPI as Legend } from './Legend';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
-import { TextAPI } from './TextAPI.ts';
+import { TextAPI } from './TextAPI';
 import { LabelAPI as Label } from './Label';
 import { LabelListAPI as LabelList } from './LabelList';
 import { CustomizedAPI as Customized } from './Customized';
@@ -49,8 +49,8 @@ import { PolygonAPI as Polygon } from './Polygon';
 import { RectangleAPI as Rectangle } from './Rectangle';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
-import { ApiDoc } from './types.ts';
-import { BarStackAPI } from './BarStackAPI.ts';
+import { ApiDoc } from './types';
+import { BarStackAPI } from './BarStackAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,

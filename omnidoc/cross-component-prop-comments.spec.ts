@@ -87,6 +87,11 @@ describe('cross-component prop consistency', () => {
       prop: 'dataKey',
       reason: 'LabelList dataKey has special complications compared to other components',
     },
+    {
+      components: ['Text'],
+      prop: 'width',
+      reason: 'has extra details on automated wrapping',
+    },
   ];
 
   // Build the prop-to-components map once for all tests
