@@ -137,14 +137,29 @@ async function generateApiDoc(componentName: string, projectReader: ProjectDocRe
     props.push(prop);
   }
 
-  return {
+  const apiDoc: ApiDoc = {
     name: componentName,
     props,
   };
+
+  // Get component-level JSDoc metadata
+  const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
+  if (componentJsDoc) {
+    // Check for @since tag
+    const sinceTag = componentJsDoc.tags.get('since');
+    if (sinceTag) {
+      apiDoc.desc = `Available since Recharts ${sinceTag}`;
+    }
+  }
+
+  return apiDoc;
 }
 
 /**
- * Custom stringify that converts HTML strings to JSX
+ * Custom stringify that converts HTML strings to JSX.
+ *
+ * This function is intentionally not adding new lines or indentation
+ * because we assume that prettier runs immediately after this generation step.
  */
 function stringifyApiDoc(apiDoc: ApiDoc): string {
   let result = `{"name": "${apiDoc.name}","props": [`;
@@ -170,8 +185,12 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 
     result += `},`;
   });
-
-  result += `],}`;
+  result += `],`;
+  // Add component-level description if available                                                                                                                                  │
+  if (apiDoc.desc) {
+    result += `"desc": "${apiDoc.desc}",`;
+  }
+  result += `}`;
   return result;
 }
 

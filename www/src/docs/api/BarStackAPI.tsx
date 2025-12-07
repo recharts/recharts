@@ -2,7 +2,6 @@ import { ApiDoc } from './types.ts';
 
 export const BarStackAPI: ApiDoc = {
   name: 'BarStack',
-  desc: 'Available since Recharts 3.6',
   props: [
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -57,4 +56,5 @@ export const BarStackAPI: ApiDoc = {
       },
     },
   ],
+  desc: 'Available since Recharts 3.6',
 };
