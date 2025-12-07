@@ -30,6 +30,7 @@ describe('readProject', () => {
         "AreaChart",
         "Bar",
         "BarChart",
+        "BarStack",
         "CartesianAxis",
         "Cell",
         "ComposedChart",
@@ -829,6 +830,11 @@ describe('readProject', () => {
         normalizedPath: expect.stringContaining('node_modules/@types/react/index.d.ts'),
         name: 'x',
         origin: 'dom',
+        jsDoc: {
+          tags: new Map(),
+          text: undefined,
+        },
+        isRequired: false,
       },
       {
         defaultValueFromJSDoc: { type: 'unreadable' },
@@ -836,6 +842,11 @@ describe('readProject', () => {
         normalizedPath: expect.stringContaining('src/cartesian/ReferenceLine.tsx'),
         name: 'x',
         origin: 'recharts',
+        jsDoc: {
+          tags: new Map(),
+          text: expect.stringContaining('The x-coordinate of the reference line in data space.'),
+        },
+        isRequired: false,
       },
     ]);
   });
@@ -849,8 +860,75 @@ describe('readProject', () => {
         normalizedPath: expect.stringContaining('src/cartesian/ReferenceLine.tsx'),
         name: 'position',
         origin: 'recharts',
+        jsDoc: {
+          text: expect.stringContaining('The position of the reference line when the axis has bandwidth'),
+          tags: new Map([['defaultValue', "'middle'"]]),
+        },
+        isRequired: false,
       },
     ]);
+  });
+
+  it('should read Area props', () => {
+    const onAnimationStartMeta = reader.getPropMeta('Area', 'onAnimationStart');
+    expect(onAnimationStartMeta).toEqual([
+      {
+        defaultValueFromJSDoc: { type: 'unreadable' },
+        defaultValueFromObject: { type: 'none' },
+        normalizedPath: expect.stringContaining('src/util/types.ts'),
+        name: 'onAnimationStart',
+        origin: 'recharts',
+        jsDoc: {
+          text: undefined,
+          tags: new Map(),
+        },
+        isRequired: false,
+      },
+      {
+        defaultValueFromJSDoc: { type: 'unreadable' },
+        defaultValueFromObject: { type: 'none' },
+        normalizedPath: expect.stringContaining('src/cartesian/Area.tsx'),
+        name: 'onAnimationStart',
+        origin: 'recharts',
+        jsDoc: {
+          text: expect.stringContaining('The customized event handler of animation start'),
+          tags: new Map(),
+        },
+        isRequired: false,
+      },
+    ]);
+  });
+
+  it('should read Area onAnimationStart comment', () => {
+    const onAnimationStartMeta = reader.getCommentOf('Area', 'onAnimationStart');
+    expect(onAnimationStartMeta).toBe('The customized event handler of animation start');
+  });
+
+  it('should read BarStack.radius prop', () => {
+    const radiusMeta = reader.getPropMeta('BarStack', 'radius');
+    expect(radiusMeta).toEqual([
+      {
+        defaultValueFromJSDoc: { type: 'known', value: '0' },
+        defaultValueFromObject: { type: 'known', value: 0 },
+        normalizedPath: expect.stringContaining('src/cartesian/BarStack.tsx'),
+        name: 'radius',
+        origin: 'recharts',
+        jsDoc: {
+          text: expect.stringContaining('If you provide a single number, it applies to all four corners.'),
+          tags: new Map([['defaultValue', '0']]),
+        },
+        isRequired: false,
+      },
+    ]);
+  });
+
+  it.fails('should read BarStack.radius prop type', () => {
+    const radiusMeta = reader.getTypeOf('BarStack', 'radius');
+    /*
+     * Currently returns the import path instead of the type text which is not what I want,
+     * ideally it should return the type text like 'number | [number, number, number, number]'.
+     */
+    expect(radiusMeta).toBe('number | [number, number, number, number]');
   });
 
   it('should return SVG component that this component extends', () => {

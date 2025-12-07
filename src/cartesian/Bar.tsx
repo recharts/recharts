@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
-import { Props as RectangleProps } from '../shape/Rectangle';
+import { Props as RectangleProps, RectRadius } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -28,7 +28,6 @@ import {
   BarPositionPosition,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
-  getNormalizedStackId,
   getTooltipNameProp,
   getValueByDataKey,
   StackId,
@@ -84,6 +83,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { BarStackClipLayer, useStackId } from './BarStack';
 
 type Rectangle = {
   x: number | null;
@@ -208,7 +208,7 @@ export interface BarProps extends ZIndexable {
    * @defaultValue false
    */
   background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
-  radius?: number | [number, number, number, number];
+  radius?: RectRadius;
   /**
    * The customized event handler of animation start
    */
@@ -624,7 +624,8 @@ function BarRectangles({
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
         return (
-          <Layer
+          <BarStackClipLayer
+            index={i}
             // https://github.com/recharts/recharts/issues/5415
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
@@ -657,7 +658,7 @@ function BarRectangles({
                */
               <BarRectangleNeverActive shape={shape} baseProps={baseProps} entry={entry} index={i} dataKey={dataKey} />
             )}
-          </Layer>
+          </BarStackClipLayer>
         );
       })}
     </>
@@ -1027,6 +1028,8 @@ export function computeBarRectangles({
 
 function BarFn(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  // stackId may arrive from props or from BarStack context
+  const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
@@ -1053,7 +1056,7 @@ function BarFn(outsideProps: Props) {
             yAxisId={props.yAxisId}
             zAxisId={0}
             dataKey={props.dataKey}
-            stackId={getNormalizedStackId(props.stackId)}
+            stackId={stackId}
             hide={props.hide}
             barSize={props.barSize}
             minPointSize={props.minPointSize}

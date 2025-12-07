@@ -48,6 +48,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "performance",
             "url": "/en-US/guide/performance/",
           },
+          {
+            "displayName": "Rounded Bar corners",
+            "key": "roundedBars",
+            "url": "/en-US/guide/roundedBars/",
+          },
         ],
         "key": "guide",
       },
@@ -180,6 +185,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "displayName": "Bar",
             "key": "Bar",
             "url": "/en-US/api/Bar/",
+          },
+          {
+            "displayName": "BarStack",
+            "key": "BarStack",
+            "url": "/en-US/api/BarStack/",
           },
           {
             "displayName": "Line",

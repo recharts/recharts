@@ -20,6 +20,8 @@ const propsToShallowCompare = new Set<string>([
   'style',
   'tick',
   'wrapperStyle',
+  // radius can be an array of 4 numbers, easy to compare shallowly
+  'radius',
 ]);
 
 /**

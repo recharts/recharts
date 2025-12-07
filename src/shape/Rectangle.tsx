@@ -14,9 +14,12 @@ import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { round, roundTemplateLiteral } from '../util/round';
 
-export type RectRadius = [number, number, number, number];
+/**
+ * @inline
+ */
+export type RectRadius = number | [number, number, number, number];
 
-const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius): string => {
+const getRectanglePath = (x: number, y: number, width: number, height: number, radius: RectRadius): string => {
   const roundedWidth = round(width);
   const roundedHeight = round(height);
   const maxRadius = Math.min(Math.abs(roundedWidth) / 2, Math.abs(roundedHeight) / 2);
@@ -94,7 +97,7 @@ interface RectangleProps {
   /**
    * @defaultValue 0
    */
-  radius?: number | RectRadius;
+  radius?: RectRadius;
   /**
    * @defaultValue false
    */

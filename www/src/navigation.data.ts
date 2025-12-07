@@ -17,6 +17,7 @@ const guidePages = [
   'domainAndTicks',
   'zIndex',
   'performance',
+  'roundedBars',
 ];
 
 export function getSiteRoutes(): string[] {

@@ -43,6 +43,7 @@ export const map = {
     zIndex: 'Z-Index and layers',
     domainAndTicks: 'Domain and Ticks',
     performance: 'Performance',
+    roundedBars: 'Rounded Bar corners',
   },
   installation: {
     installation: 'Installation',
