@@ -22,6 +22,16 @@ export const LabelAPI = {
       },
     },
     {
+      name: 'angle',
+      type: 'Number',
+      defaultVal: 0,
+      isOptional: true,
+      desc: {
+        'en-US': 'The rotation angle of label in degrees.',
+        'zh-CN': 'label的旋转角度',
+      },
+    },
+    {
       name: 'value',
       type: 'String | Number',
       isOptional: true,

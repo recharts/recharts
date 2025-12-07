@@ -107,6 +107,8 @@ interface LabelProps extends ZIndexable {
    */
   textBreakAll?: boolean;
   /**
+   * The rotation angle of label in degrees.
+   *
    * @defaultValue 0
    */
   angle?: number;

@@ -50,15 +50,57 @@ export interface PolarLabelListEntry extends BaseLabelListEntry {
 }
 
 interface LabelListProps extends ZIndexable {
+  /**
+   * The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.
+   */
   id?: string;
+  /**
+   * The accessor function to get the value of each label. Is ignored if dataKey is specified.
+   * @param entry
+   * @param index
+   */
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number | undefined;
+  /**
+   * The parameter to calculate the view box of label in radial charts.
+   */
   clockWise?: boolean;
+  /**
+   *
+   * Decides how to extract the value of each label from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of each label.
+   *
+   * If set, then valueAccessor will be ignored.
+   *
+   * Scatter requires this prop to be set.
+   * Other graphical components will show the same value as the dataKey of the component by default.
+   */
   dataKey?: DataKey<Record<string, any>>;
+  /**
+   * If set a React element, the option is the customized React element of rendering each label.
+   * If set a function, the function will be called to render each label content.
+   */
   content?: LabelContentType;
   textBreakAll?: boolean;
+  /**
+   * The position of label relative to the view box.
+   */
   position?: LabelPosition;
+  /**
+   * The offset to the specified "position".
+   * Direction of the offset depends on the position.
+   */
   offset?: LabelProps['offset'];
+  /**
+   * The rotation angle of label in degrees.
+   *
+   * @default 0
+   */
   angle?: number;
+  /**
+   * The formatter function of label value which has only one parameter - the value of label.
+   */
   formatter?: LabelFormatter;
 }
 

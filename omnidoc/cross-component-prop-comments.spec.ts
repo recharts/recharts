@@ -78,9 +78,14 @@ describe('cross-component prop consistency', () => {
       reason: 'This sets stackId for all Bars inside the BarStack and so it has different description',
     },
     {
-      components: ['Label'],
+      components: ['Label', 'LabelList'],
       prop: 'id',
-      reason: 'Label id is not generated automatically, unlike most other components',
+      reason: 'These ids are not generated automatically, unlike most other components',
+    },
+    {
+      components: ['LabelList'],
+      prop: 'dataKey',
+      reason: 'LabelList dataKey has special complications compared to other components',
     },
   ];
 
