@@ -149,7 +149,7 @@ export function parseNumericalUserDomain(
       }
     } else if (typeof providedMin === 'string' && MIN_VALUE_REG.test(providedMin)) {
       const match = MIN_VALUE_REG.exec(providedMin);
-      if (match == null || dataDomain == null) {
+      if (match == null || match[1] == null || dataDomain == null) {
         finalMin = undefined;
       } else {
         const value = +match[1];
@@ -175,7 +175,7 @@ export function parseNumericalUserDomain(
       }
     } else if (typeof providedMax === 'string' && MAX_VALUE_REG.test(providedMax)) {
       const match = MAX_VALUE_REG.exec(providedMax);
-      if (match == null || dataDomain == null) {
+      if (match == null || match[1] == null || dataDomain == null) {
         finalMax = undefined;
       } else {
         const value = +match[1];

@@ -5,12 +5,15 @@ import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
 import { addErrorBar, ErrorBarsSettings, removeErrorBar, replaceErrorBar } from '../state/errorBarSlice';
 import { useAppDispatch } from '../state/hooks';
 import { useGraphicalItemId } from './RegisterGraphicalItemId';
+import { BarRectangleItem } from '../cartesian/Bar';
+import { LinePointItem } from '../cartesian/Line';
+import { ScatterPointItem } from '../cartesian/Scatter';
 
-type ErrorBarContextType<T> = {
-  data: ReadonlyArray<T> | undefined;
+type ErrorBarContextType<T extends BarRectangleItem | LinePointItem | ScatterPointItem> = {
+  data: ReadonlyArray<any> | undefined;
   xAxisId: AxisId;
   yAxisId: AxisId;
-  dataPointFormatter: ErrorBarDataPointFormatter;
+  dataPointFormatter: ErrorBarDataPointFormatter<T>;
   errorBarOffset: number;
 };
 
@@ -24,7 +27,9 @@ const initialContextState: ErrorBarContextType<any> = {
 
 const ErrorBarContext = createContext(initialContextState);
 
-export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children: React.ReactNode }) {
+export function SetErrorBarContext<T extends BarRectangleItem | LinePointItem | ScatterPointItem>(
+  props: ErrorBarContextType<T> & { children: React.ReactNode },
+) {
   const { children, ...rest } = props;
   return <ErrorBarContext.Provider value={rest}>{children}</ErrorBarContext.Provider>;
 }

@@ -31,7 +31,7 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
   let shouldStop = false;
   let cancelTimeout: CancelableTimeout | null = null;
 
-  const setStyle = (_style: ReactSmoothQueueItem | ReactSmoothQueue) => {
+  const setStyle = (_style: ReactSmoothQueueItem | ReactSmoothQueue | undefined) => {
     if (shouldStop) {
       return;
     }

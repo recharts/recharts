@@ -220,7 +220,7 @@
   "types/util/excludeEventProps.d.ts",
   "types/util/getActiveCoordinate.d.ts",
   "types/util/getChartPointer.d.ts",
-  "types/util/getEveryNthWithCondition.d.ts",
+  "types/util/getEveryNth.d.ts",
   "types/util/getRadiusAndStrokeWidthFromDot.d.ts",
   "types/util/getSliced.d.ts",
   "types/util/isDomainSpecifiedByUser.d.ts",
