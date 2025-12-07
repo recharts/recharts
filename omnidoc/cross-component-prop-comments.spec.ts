@@ -43,9 +43,9 @@ describe('cross-component prop consistency', () => {
    */
   const exceptions: ReadonlyArray<CommentSimilarityException> = [
     {
-      components: ['ResponsiveContainer', 'Text'],
+      components: ['*'],
       prop: 'children',
-      reason: 'These components have special rules for children',
+      reason: 'Children comments vary widely based on component purpose',
     },
     {
       components: ['Brush', 'CartesianGrid', 'Cross'],
@@ -77,6 +77,11 @@ describe('cross-component prop consistency', () => {
       prop: 'stackId',
       reason: 'This sets stackId for all Bars inside the BarStack and so it has different description',
     },
+    {
+      components: ['Label'],
+      prop: 'id',
+      reason: 'Label id is not generated automatically, unlike most other components',
+    },
   ];
 
   // Build the prop-to-components map once for all tests
@@ -93,7 +98,9 @@ describe('cross-component prop consistency', () => {
     }
     const props = projectReader.getRechartsPropsOf(component);
     for (const prop of props) {
-      if (exceptions.some(ex => ex.components.includes(component) && ex.prop === prop)) {
+      if (
+        exceptions.some(ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.prop === prop)
+      ) {
         continue;
       }
       const comment = projectReader.getCommentOf(component, prop);

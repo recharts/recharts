@@ -7,7 +7,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Cell',
   'Customized',
   'Funnel',
-  'Label',
   'LabelList',
   'Legend',
   'Line',
