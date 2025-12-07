@@ -68,9 +68,9 @@ export interface SunburstChartProps {
   innerRadius?: number;
   /* Outermost edge of the chart. Defaults to the max possible radius for a circle inscribed in the chart container */
   outerRadius?: number;
-  /** The abscissa of pole in polar coordinate  */
+  /** The x-coordinate of center  */
   cx?: number;
-  /** The ordinate of pole in polar coordinate  */
+  /** The y-coordinate of center  */
   cy?: number;
   /** Angle in degrees from which the chart should start.  */
   startAngle?: number;

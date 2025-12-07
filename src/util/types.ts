@@ -313,16 +313,37 @@ export interface DOMAttributesWithProps<P, T> {
   onDragStartCapture?: DragEventHandler<P, T>;
   onDrop?: DragEventHandler<P, T>;
   onDropCapture?: DragEventHandler<P, T>;
+  /**
+   * The customized event handler of mousedown in this chart.
+   */
   onMouseDown?: RechartsMouseEventHandler<P, T>;
   onMouseDownCapture?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mouseenter in this chart.
+   */
   onMouseEnter?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mouseleave in this chart.
+   */
   onMouseLeave?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mousemove in this chart.
+   */
   onMouseMove?: RechartsMouseEventHandler<P, T>;
   onMouseMoveCapture?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mouseout in this chart.
+   */
   onMouseOut?: RechartsMouseEventHandler<P, T>;
   onMouseOutCapture?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mouseover in this chart.
+   */
   onMouseOver?: RechartsMouseEventHandler<P, T>;
   onMouseOverCapture?: RechartsMouseEventHandler<P, T>;
+  /**
+   * The customized event handler of mouseup in this chart.
+   */
   onMouseUp?: RechartsMouseEventHandler<P, T>;
   onMouseUpCapture?: RechartsMouseEventHandler<P, T>;
 

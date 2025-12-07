@@ -8,14 +8,15 @@ import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 const GeneralProps: Args = {
   dataKey: {
     description: `The key of a group of error values in data. The error values can be a single value for
-    symmetric error bars or an array of a lower and upper error value for asymmetric error bars.`,
+          symmetric error bars; or an array of a lower and upper error value for asymmetric error
+          bars.`,
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
   },
 };
 
 const StyleProps: Args = {
   stroke: {
-    description: 'The color of the error bars.',
+    description: 'Color of the error bar lines',
     control: { type: 'color' },
     table: {
       type: {
@@ -23,10 +24,10 @@ const StyleProps: Args = {
       },
       category: 'Style',
     },
-    defaultValue: '#ccc',
+    defaultValue: 'black',
   },
   width: {
-    description: 'The width of the error bar ends.',
+    description: 'Width of the error bar ends',
     table: {
       type: {
         summary: 'string | number',
@@ -39,7 +40,7 @@ const StyleProps: Args = {
     defaultValue: 5,
   },
   strokeWidth: {
-    description: 'The width of the lines used to make the error bars.',
+    description: 'Width of the lines used to make the error bars',
     table: {
       type: {
         summary: 'string | number',
