@@ -268,7 +268,11 @@ jobs:
   deploy_staging:
     name: Deploy to Staging
     needs: [build_test_pack, vr_tests]
-    if: needs.build_test_pack.result == 'success'
+    # In GitHub Actions, when a job in the needs array fails, dependent jobs are skipped by default,
+    # even if the if condition doesn't explicitly check that job's result.
+    # Since the vr_tests job will fail when tests fail (due to the "Fail workflow if tests failed" step on line 263),
+    # the deploy_staging job will be skipped. To achieve your intended behavior, you need to explicitly allow deploy_staging to run when vr_tests fails.
+    if: always() && needs.build_test_pack.result == 'success' && (needs.vr_tests.result == 'success' || needs.vr_tests.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -297,7 +301,7 @@ jobs:
         run: |
           # Find directories starting with "pr-" that haven't been modified in 30 days
           find . -maxdepth 1 -type d -name "pr-*" -mtime +30 -exec rm -rf {} +
-          
+
           # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -310,19 +314,21 @@ jobs:
           else
             TARGET_DIR="canary"
           fi
-          
+
           # Remove existing directory if it exists
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          
+
           # Move artifacts to target directory
           mv ../website-build $TARGET_DIR/www
           mv ../vr-report $TARGET_DIR/vr-tests
-          
+
           # Add and commit
           git add .
-          git commit -m "Deploy to $TARGET_DIR"
-          git push
+          git commit  --allow-empty --no-verify -m "Deploy to $TARGET_DIR"
+          # Just in case there were other PRs running at the same time, pull first
+          git pull --rebase
+          git push --no-verify
 
       - name: Comment on PR
         if: github.event_name == 'pull_request'
@@ -332,17 +338,17 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           WEBSITE_URL="https://recharts.github.io/recharts/pr-$PR_NUMBER/www/"
           REPORT_URL="https://recharts.github.io/recharts/pr-$PR_NUMBER/vr-tests/"
-          
+
           COMMENT_BODY=$(cat <<EOF
           **Staging Deployment Details**
-          
+
           - **Website:** $WEBSITE_URL
           - **Test Report:** $REPORT_URL
-          
+
           *These deployments will remain available for 30 days.*
 
           **To update snapshots:** Comment \`/update-snapshots\` on this PR to automatically update the baseline screenshots.
           EOF
           )
-          
+
           gh pr comment $PR_NUMBER --body "$COMMENT_BODY"
