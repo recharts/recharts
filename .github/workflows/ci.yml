@@ -340,6 +340,8 @@ jobs:
           - **Test Report:** $REPORT_URL
           
           *These deployments will remain available for 30 days.*
+
+          **To update snapshots:** Comment \`/update-snapshots\` on this PR to automatically update the baseline screenshots.
           EOF
           )
           
