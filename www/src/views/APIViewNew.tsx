@@ -90,14 +90,16 @@ function PropsList({ props, locale }: PropsListProps) {
 }
 
 type ParentComponentsProps = {
+  componentName: string;
   components: ReadonlyArray<string>;
   locale: SupportedLocale;
 };
 
-function ParentComponents({ components, locale }: ParentComponentsProps) {
+function ParentComponents({ componentName, components, locale }: ParentComponentsProps) {
   return (
     <div>
       <h4 className="sub-title">{localeGet(locale, 'api', 'parent')}</h4>
+      <p>{componentName} consumes context provided by these components:</p>
       <ul className="props-list">
         {components.map(entry => (
           <li key={entry} className="api-component-item">
@@ -116,14 +118,16 @@ function ParentComponents({ components, locale }: ParentComponentsProps) {
 }
 
 type ChildrenComponentsProps = {
+  componentName: string;
   components: ReadonlyArray<string>;
   locale: SupportedLocale;
 };
 
-function ChildrenComponents({ components, locale }: ChildrenComponentsProps) {
+function ChildrenComponents({ componentName, components, locale }: ChildrenComponentsProps) {
   return (
     <div>
       <h4 className="sub-title">{localeGet(locale, 'api', 'children')}</h4>
+      <p>{componentName} provides context for the these components:</p>
       <ul className="props-list">
         {components.map((entry: string) => (
           <li key={entry} className="api-component-item">
@@ -201,10 +205,10 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
         <ApiExamples examples={examples} componentName={page} />
 
         {api.parentComponents && api.parentComponents.length ? (
-          <ParentComponents components={api.parentComponents} locale={locale} />
+          <ParentComponents componentName={api.name} components={api.parentComponents} locale={locale} />
         ) : null}
         {api.childrenComponents && api.childrenComponents.length ? (
-          <ChildrenComponents components={api.childrenComponents} locale={locale} />
+          <ChildrenComponents componentName={api.name} components={api.childrenComponents} locale={locale} />
         ) : null}
 
         <h4 className="sub-title">Properties</h4>
