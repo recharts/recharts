@@ -5,7 +5,7 @@ import { PageData } from '../../_data';
 import { Line, LineChart, XAxis, YAxis } from '../../../src';
 import { expectYAxisTicks } from '../../helper/expectAxisTicks';
 import {
-  AxisWithTicksSettings,
+  RenderableAxisSettings,
   selectAxisScale,
   selectAxisSettings,
   selectNiceTicks,
@@ -18,7 +18,7 @@ const dataWithDecimals = PageData.map(item => ({
   pv: item.pv / 100,
 }));
 
-const defaultExpectedYAxisSettings: AxisWithTicksSettings = {
+const defaultExpectedYAxisSettings: RenderableAxisSettings = {
   allowDataOverflow: false,
   allowDecimals: true,
   allowDuplicatedCategory: true,

@@ -1032,7 +1032,6 @@ describe('ScatterChart of two dimension data', () => {
         id: 0,
         includeHidden: false,
         name: undefined,
-        // @ts-expect-error according to the type, range should not be here - but the selector returns it too
         range: [0, 250],
         reversed: false,
         scale: 'auto',

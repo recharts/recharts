@@ -4,7 +4,7 @@ import { TooltipTrigger } from '../../../chart/types';
 
 export const combineTooltipPayloadConfigurations = (
   tooltipState: TooltipState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ): ReadonlyArray<TooltipPayloadConfiguration> => {
@@ -32,7 +32,11 @@ export const combineTooltipPayloadConfigurations = (
      * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
      * so we should display only one item at a time instead of all.
      */
-    return [tooltipState.tooltipItemPayloads[0]];
+    const firstItemPayload = tooltipState.tooltipItemPayloads[0];
+    if (firstItemPayload != null) {
+      return [firstItemPayload];
+    }
+    return [];
   }
   return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
 };

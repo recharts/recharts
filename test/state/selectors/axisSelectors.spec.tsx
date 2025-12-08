@@ -1126,7 +1126,7 @@ describe('selectHasBar', () => {
 });
 
 describe('selectCalculatedPadding', () => {
-  const selector = (state: RechartsRootState) => selectCalculatedXAxisPadding(state, 0);
+  const selector = (state: RechartsRootState) => selectCalculatedXAxisPadding(state, 0, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, 0);
@@ -1134,7 +1134,7 @@ describe('selectCalculatedPadding', () => {
   it('should return 0 when padding is explicitly provided on XAxis', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0));
+      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0, false));
       spy(result);
       return null;
     };
@@ -1150,7 +1150,7 @@ describe('selectCalculatedPadding', () => {
   it('should return a number when padding is "gap"', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0));
+      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0, false));
       spy(result);
       return null;
     };
@@ -1166,7 +1166,7 @@ describe('selectCalculatedPadding', () => {
   it('should return a number when padding is "no-gap"', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0));
+      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0, false));
       spy(result);
       return null;
     };
@@ -1182,7 +1182,7 @@ describe('selectCalculatedPadding', () => {
   it('should return 0 when padding=no-gap and there is only one data point on the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0));
+      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0, false));
       spy(result);
       return null;
     };
@@ -1198,7 +1198,7 @@ describe('selectCalculatedPadding', () => {
   it('should return 0 when padding is an object', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0));
+      const result = useAppSelectorWithStableTest(state => selectCalculatedXAxisPadding(state, 0, false));
       spy(result);
       return null;
     };

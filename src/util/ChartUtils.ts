@@ -34,9 +34,10 @@ import {
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { LegendSettings } from '../state/legendSlice';
-import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { StackGroup } from './stacks/stackTypes';
 import { getSliced } from './getSliced';
+import { isWellBehavedNumber } from './isWellBehavedNumber';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -172,7 +173,7 @@ export type AxisPropsNeededForTicksGenerator = {
   /**
    * The range appears to be only used in Angle Axis - needs further investigation
    */
-  range?: ReadonlyArray<number>;
+  range?: AxisRange;
   realScaleType?: 'scaleBand' | string;
   scale: RechartsScale | undefined;
   tickCount?: number;
@@ -338,25 +339,34 @@ export const offsetSign: OffsetAccessor = series => {
   if (n <= 0) {
     return;
   }
+  const m = series[0]?.length;
+  if (m == null || m <= 0) {
+    return;
+  }
 
-  for (let j = 0, m = series[0].length; j < m; ++j) {
+  for (let j = 0; j < m; ++j) {
     let positive = 0;
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
-
-      /* eslint-disable prefer-destructuring, no-param-reassign */
-      if (value >= 0) {
-        series[i][j][0] = positive;
-        series[i][j][1] = positive + value;
-        positive = series[i][j][1];
-      } else {
-        series[i][j][0] = negative;
-        series[i][j][1] = negative + value;
-        negative = series[i][j][1];
+      const row = series[i];
+      const col = row?.[j];
+      if (col == null) {
+        continue;
       }
-      /* eslint-enable prefer-destructuring, no-param-reassign */
+      const series1 = col[1];
+      const series0 = col[0];
+      const value = isNan(series1) ? series0 : series1;
+
+      if (value >= 0) {
+        col[0] = positive;
+        col[1] = positive + value;
+        positive = series1;
+      } else {
+        col[0] = negative;
+        col[1] = negative + value;
+        negative = series1;
+      }
     }
   }
 };
@@ -374,23 +384,31 @@ export const offsetPositive: OffsetAccessor = series => {
   if (n <= 0) {
     return;
   }
+  const m = series[0]?.length;
+  if (m == null || m <= 0) {
+    return;
+  }
 
-  for (let j = 0, m = series[0].length; j < m; ++j) {
+  for (let j = 0; j < m; ++j) {
     let positive = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
-
-      /* eslint-disable prefer-destructuring, no-param-reassign */
-      if (value >= 0) {
-        series[i][j][0] = positive;
-        series[i][j][1] = positive + value;
-        positive = series[i][j][1];
-      } else {
-        series[i][j][0] = 0;
-        series[i][j][1] = 0;
+      const row = series[i];
+      const col = row?.[j];
+      if (col == null) {
+        continue;
       }
-      /* eslint-enable prefer-destructuring, no-param-reassign */
+      const value = isNan(col[1]) ? col[0] : col[1];
+
+      if (value >= 0) {
+        col[0] = positive;
+        col[1] = positive + value;
+        // eslint-disable-next-line prefer-destructuring
+        positive = col[1];
+      } else {
+        col[0] = 0;
+        col[1] = 0;
+      }
     }
   }
 };
@@ -411,7 +429,7 @@ export const offsetPositive: OffsetAccessor = series => {
  */
 type OffsetAccessor = (series: Array<Series<Record<string, unknown>, string>>, order: number[]) => void;
 
-const STACK_OFFSET_MAP: Record<string, OffsetAccessor> = {
+const STACK_OFFSET_MAP: Record<StackOffsetType, OffsetAccessor> = {
   sign: offsetSign,
   // @ts-expect-error definitelytyped types are incorrect
   expand: stackOffsetExpand,
@@ -429,7 +447,7 @@ export const getStackedData = (
   dataKeys: ReadonlyArray<DataKey<any>>,
   offsetType: StackOffsetType,
 ): ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> => {
-  const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType];
+  const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType] ?? stackOffsetNone;
   const stack = shapeStack<Record<string, unknown>, DataKey<any>>()
     .keys(dataKeys)
     .value((d, key) => Number(getValueByDataKey(d, key, 0)))
@@ -574,12 +592,17 @@ export const getDomainOfStackGroups = (
     Object.keys(stackGroups).reduce(
       (result, stackId): NumberDomain => {
         const group = stackGroups[stackId];
+        if (!group) {
+          return result;
+        }
         const { stackedData } = group;
-        const domain = stackedData.reduce(
-          (res: [number, number], entry) => {
+        const domain: NumberDomain = stackedData.reduce(
+          (res: NumberDomain, entry): NumberDomain => {
             const sliced = getSliced(entry, startIndex, endIndex);
             const s = getDomainOfSingle(sliced);
-
+            if (!isWellBehavedNumber(s[0]) || !isWellBehavedNumber(s[1])) {
+              return res;
+            }
             return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
           },
           [Infinity, -Infinity],
@@ -623,7 +646,7 @@ export const getBandSizeOfAxis = (
       const cur = orderedTicks[i];
       const prev = orderedTicks[i - 1];
 
-      bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+      bandSize = Math.min((cur?.coordinate || 0) - (prev?.coordinate || 0), bandSize);
     }
 
     return bandSize === Infinity ? 0 : bandSize;

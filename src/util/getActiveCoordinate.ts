@@ -16,7 +16,7 @@ import { mathSign } from './DataUtils';
 export const getActiveCartesianCoordinate = (
   layout: CartesianLayout,
   tooltipTicks: readonly TickItem[],
-  activeIndex: number,
+  activeIndex: number | undefined,
   pointer: ChartPointer,
 ): Coordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
@@ -48,7 +48,7 @@ export const getActiveCartesianCoordinate = (
 export const getActivePolarCoordinate = (
   layout: PolarLayout,
   tooltipTicks: readonly TickItem[],
-  activeIndex: number,
+  activeIndex: number | undefined,
   rangeObj: RangeObj,
 ): PolarCoordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
@@ -110,8 +110,7 @@ export const calculateActiveTickIndex = (
   unsortedTicks: ReadonlyArray<TickItem>,
   axisType: AxisType | undefined,
   range: AxisRange | undefined,
-): number => {
-  let index = -1;
+): number | undefined => {
   const len = ticks?.length ?? 0;
 
   // if there are 1 or fewer ticks or if there is no coordinate then the active tick is at index 0
@@ -122,10 +121,14 @@ export const calculateActiveTickIndex = (
   if (axisType === 'angleAxis' && range != null && Math.abs(Math.abs(range[1] - range[0]) - 360) <= 1e-6) {
     // ticks are distributed in a circle
     for (let i = 0; i < len; i++) {
-      const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
-      const cur = unsortedTicks[i].coordinate;
-      const after = i >= len - 1 ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
+      const before = i > 0 ? unsortedTicks[i - 1]?.coordinate : unsortedTicks[len - 1]?.coordinate;
+      const cur = unsortedTicks[i]?.coordinate;
+      const after = i >= len - 1 ? unsortedTicks[0]?.coordinate : unsortedTicks[i + 1]?.coordinate;
       let sameDirectionCoord;
+
+      if (before == null || cur == null || after == null) {
+        continue;
+      }
 
       if (mathSign(cur - before) !== mathSign(after - cur)) {
         const diffInterval = [];
@@ -142,7 +145,7 @@ export const calculateActiveTickIndex = (
           diffInterval[0] = Math.min(cur, (afterInRange + cur) / 2);
           diffInterval[1] = Math.max(cur, (afterInRange + cur) / 2);
         }
-        const sameInterval = [
+        const sameInterval: [number, number] = [
           Math.min(cur, (sameDirectionCoord + cur) / 2),
           Math.max(cur, (sameDirectionCoord + cur) / 2),
         ];
@@ -151,35 +154,47 @@ export const calculateActiveTickIndex = (
           (coordinate > sameInterval[0] && coordinate <= sameInterval[1]) ||
           (coordinate >= diffInterval[0] && coordinate <= diffInterval[1])
         ) {
-          ({ index } = unsortedTicks[i]);
-          break;
+          return unsortedTicks[i]?.index;
         }
       } else {
         const minValue = Math.min(before, after);
         const maxValue = Math.max(before, after);
 
         if (coordinate > (minValue + cur) / 2 && coordinate <= (maxValue + cur) / 2) {
-          ({ index } = unsortedTicks[i]);
-          break;
+          return unsortedTicks[i]?.index;
         }
       }
     }
   } else if (ticks) {
     // ticks are distributed in a single direction
     for (let i = 0; i < len; i++) {
+      const curr = ticks[i];
+      if (curr == null) {
+        continue;
+      }
+      const next = ticks[i + 1];
+      const prev = ticks[i - 1];
+
+      if (i === 0 && next != null && coordinate <= (curr.coordinate + next.coordinate) / 2) {
+        return curr.index;
+      }
+
+      if (i === len - 1 && prev != null && coordinate > (curr.coordinate + prev.coordinate) / 2) {
+        return curr.index;
+      }
+
       if (
-        (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-        (i > 0 &&
-          i < len - 1 &&
-          coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
-          coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-        (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)
+        i > 0 &&
+        i < len - 1 &&
+        prev != null &&
+        next != null &&
+        coordinate > (curr.coordinate + prev.coordinate) / 2 &&
+        coordinate <= (curr.coordinate + next.coordinate) / 2
       ) {
-        ({ index } = ticks[i]);
-        break;
+        return curr.index;
       }
     }
   }
 
-  return index;
+  return -1;
 };
