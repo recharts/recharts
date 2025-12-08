@@ -12,7 +12,7 @@ export type ApiProps = {
   type: string;
   defaultVal?: string | number | boolean | Array<unknown> | Record<string, unknown> | null;
   isOptional?: boolean;
-  desc?: ReactNode | Partial<Record<SupportedLocale, ReactNode>>;
+  desc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   format?: ReadonlyArray<string>;
   examples?: ReadonlyArray<PropExample>;
   deprecated?: boolean;
@@ -20,7 +20,7 @@ export type ApiProps = {
 
 export type ApiDoc = {
   name: string;
-  desc?: ReactNode | Partial<Record<SupportedLocale, ReactNode>>;
+  desc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   props: ReadonlyArray<ApiProps>;
   parentComponents?: ReadonlyArray<string>;
   childrenComponents?: ReadonlyArray<string>;
