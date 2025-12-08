@@ -196,5 +196,5 @@ export const calculateActiveTickIndex = (
     }
   }
 
-  return -1;
+  return undefined;
 };

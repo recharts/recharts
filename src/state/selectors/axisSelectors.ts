@@ -315,6 +315,7 @@ export function itemAxisPredicate(axisType: AllAxisTypes, axisId: AxisId) {
   };
 }
 
+// TODO appears there is a bug where this selector is called from polar context, find and fix it.
 export const selectUnfilteredCartesianItems = (
   state: RechartsRootState,
 ): ReadonlyArray<CartesianGraphicalItemSettings> => state.graphicalItems.cartesianItems;
