@@ -78,6 +78,8 @@ interface LabelProps extends ZIndexable {
   formatter?: LabelFormatter;
   /**
    * The value of label can be set as children or as the `value` prop
+   *
+   * @example <Label value="foo" />
    */
   value?: RenderableText;
   /**
@@ -94,12 +96,17 @@ interface LabelProps extends ZIndexable {
   position?: LabelPosition;
   /**
    * The value of label can be set as children or as the `value` prop
+   *
+   * @example <Label>foo</Label>
    */
   children?: RenderableText;
   className?: string;
   /**
    * If set a React element, the option is the custom react element of rendering label.
    * If set a function, the function will be called to render label content.
+   *
+   * @example <Label content={CustomizedLabel} />
+   * @example <Label content={renderCustomLabel} />
    */
   content?: LabelContentType;
   /**
