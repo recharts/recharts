@@ -127,7 +127,7 @@ function ChildrenComponents({ componentName, components, locale }: ChildrenCompo
   return (
     <div>
       <h4 className="sub-title">{localeGet(locale, 'api', 'children')}</h4>
-      <p>{componentName} provides context for the these components:</p>
+      <p>{componentName} provides context for these components:</p>
       <ul className="props-list">
         {components.map((entry: string) => (
           <li key={entry} className="api-component-item">
