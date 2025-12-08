@@ -13,7 +13,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
-import { ProjectDocReader } from './readProject';
+import { getTagText, ProjectDocReader } from './readProject';
 import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
 
 /**
@@ -25,6 +25,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'BarStack',
   'Text',
+  'Label',
 ];
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
@@ -134,6 +135,12 @@ async function generateApiDoc(componentName: string, projectReader: ProjectDocRe
         | null;
     }
 
+    // Add examples if available
+    const examples = projectReader.getExamplesOf(componentName, propName);
+    if (examples.length > 0) {
+      prop.format = examples;
+    }
+
     props.push(prop);
   }
 
@@ -146,7 +153,7 @@ async function generateApiDoc(componentName: string, projectReader: ProjectDocRe
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
     // Check for @since tag
-    const sinceTag = componentJsDoc.tags.get('since');
+    const sinceTag = getTagText(componentJsDoc, 'since');
     if (sinceTag) {
       apiDoc.desc = `Available since Recharts ${sinceTag}`;
     }
@@ -181,6 +188,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 
     if (prop.defaultVal !== undefined) {
       result += `"defaultVal": ${JSON.stringify(prop.defaultVal)},`;
+    }
+
+    if (prop.format !== undefined) {
+      result += `"format": ${JSON.stringify(prop.format)},`;
     }
 
     result += `},`;

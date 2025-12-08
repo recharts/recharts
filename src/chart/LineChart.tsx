@@ -6,6 +6,9 @@ import { CartesianChartProps, TooltipEventType } from '../util/types';
 
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis'];
 
+/**
+ * @provides CartesianLabelContext
+ */
 export const LineChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
   return (
     <CartesianChart

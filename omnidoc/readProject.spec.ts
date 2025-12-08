@@ -970,4 +970,15 @@ describe('readProject', () => {
     // In that case, we want to see the Recharts variant here
     expect(comment).toMatchInlineSnapshot(`"The stroke color. If "none", no line will be drawn."`);
   });
+
+  it('should read @example tags', () => {
+    const examples = reader.getExamplesOf('Label', 'content');
+    expect(examples).toMatchInlineSnapshot(`
+      [
+        "<Label content={CustomizedLabel} />",
+        "const renderCustomLabel = (props) => <text {...props}>Custom Label</text>;
+      <Label content={renderCustomLabel} />",
+      ]
+    `);
+  });
 });

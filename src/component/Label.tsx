@@ -106,7 +106,9 @@ interface LabelProps extends ZIndexable {
    * If set a function, the function will be called to render label content.
    *
    * @example <Label content={CustomizedLabel} />
-   * @example <Label content={renderCustomLabel} />
+   * @example
+   * const renderCustomLabel = (props) => <text {...props}>Custom Label</text>;
+   * <Label content={renderCustomLabel} />
    */
   content?: LabelContentType;
   /**
@@ -595,6 +597,9 @@ export const defaultLabelProps = {
   textBreakAll: false,
 } as const satisfies Partial<Props>;
 
+/**
+ * @consumes CartesianLabelContext
+ */
 export function Label(outerProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {
