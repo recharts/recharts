@@ -110,7 +110,7 @@ export const calculateActiveTickIndex = (
   unsortedTicks: ReadonlyArray<TickItem>,
   axisType: AxisType | undefined,
   range: AxisRange | undefined,
-): number | undefined => {
+): number => {
   const len = ticks?.length ?? 0;
 
   // if there are 1 or fewer ticks or if there is no coordinate then the active tick is at index 0
@@ -196,5 +196,5 @@ export const calculateActiveTickIndex = (
     }
   }
 
-  return undefined;
+  return -1;
 };
