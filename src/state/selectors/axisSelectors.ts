@@ -91,12 +91,14 @@ import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraph
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
-import { selectTooltipAxisType, XorYorZType, XorYType } from './selectTooltipAxisType';
+import { selectTooltipAxisType, AllAxisTypes, RenderableAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
-export type AxisWithTicksSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
+export type RenderableAxisSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
+
+export type AllAxisSettings = XAxisSettings | YAxisSettings | ZAxisSettings | AngleAxisSettings | RadiusAxisSettings;
 
 /**
  * If an axis is not explicitly defined as an element,
@@ -209,7 +211,7 @@ export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): Z
   return axis;
 };
 
-export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId): BaseCartesianAxis => {
+export const selectBaseAxis = (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId): AllAxisSettings => {
   switch (axisType) {
     case 'xAxis': {
       return selectXAxisSettings(state, axisId);
@@ -257,9 +259,9 @@ const selectCartesianAxisSettings = (
  */
 export const selectAxisSettings = (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
-): AxisWithTicksSettings => {
+): RenderableAxisSettings => {
   switch (axisType) {
     case 'xAxis': {
       return selectXAxisSettings(state, axisId);
@@ -293,7 +295,7 @@ export const selectHasBar = (state: RechartsRootState): boolean =>
  *
  * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
  */
-export function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
+export function itemAxisPredicate(axisType: AllAxisTypes, axisId: AxisId) {
   return (item: CartesianGraphicalItemSettings | PolarGraphicalItemSettings) => {
     switch (axisType) {
       case 'xAxis':
@@ -319,7 +321,7 @@ export const selectUnfilteredCartesianItems = (
 
 const selectAxisPredicate: (
   _state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => (item: CartesianGraphicalItemSettings) => boolean = createSelector([pickAxisType, pickAxisId], itemAxisPredicate);
 
@@ -337,7 +339,7 @@ export const combineGraphicalItemsSettings = <T extends GraphicalItemSettings>(
 
 export const selectCartesianItemsSettings: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
   [selectUnfilteredCartesianItems, selectBaseAxis, selectAxisPredicate],
@@ -351,7 +353,7 @@ export const selectCartesianItemsSettings: (
 
 export const selectStackedCartesianItemsSettings: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
   [selectCartesianItemsSettings],
@@ -367,7 +369,7 @@ export const filterGraphicalNotStackedItems = (
 
 const selectCartesianItemsSettingsExceptStacked: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<GraphicalItemSettings> = createSelector(
   [selectCartesianItemsSettings],
@@ -388,7 +390,7 @@ export const combineGraphicalItemsData = (cartesianItems: ReadonlyArray<Graphica
  */
 export const selectCartesianGraphicalItemsData: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ChartData = createSelector([selectCartesianItemsSettings], combineGraphicalItemsData, {
   memoizeOptions: {
@@ -430,7 +432,7 @@ export const combineDisplayedData = (
  */
 export const selectDisplayedData: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ChartData = createSelector(
@@ -462,7 +464,7 @@ export const combineAppliedValues = (
  */
 export const selectAllAppliedValues: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => AppliedChartData = createSelector(
@@ -470,7 +472,7 @@ export const selectAllAppliedValues: (
   combineAppliedValues,
 );
 
-export function isErrorBarRelevantForAxisType(axisType: XorYorZType, errorBar: ErrorBarsSettings): boolean {
+export function isErrorBarRelevantForAxisType(axisType: AllAxisTypes, errorBar: ErrorBarsSettings): boolean {
   switch (axisType) {
     case 'xAxis':
       return errorBar.direction === 'x';
@@ -588,7 +590,7 @@ export function getErrorDomainByDataKey(
   );
 }
 
-export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
+export const selectTooltipAxis = (state: RechartsRootState): RenderableAxisSettings => {
   const axisType = selectTooltipAxisType(state);
   const axisId = selectTooltipAxisId(state);
   return selectAxisSettings(state, axisType, axisId);
@@ -596,12 +598,12 @@ export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettin
 
 export const selectTooltipAxisDataKey: (state: RechartsRootState) => DataKey<any> | undefined = createSelector(
   [selectTooltipAxis],
-  (axis: AxisWithTicksSettings | undefined): DataKey<any> | undefined => axis?.dataKey,
+  (axis: RenderableAxisSettings | undefined): DataKey<any> | undefined => axis?.dataKey,
 );
 
 export const selectDisplayedStackedData: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => DisplayedStackedData = createSelector(
@@ -621,10 +623,12 @@ export const combineStackGroups = (
       if (item.stackId == null) {
         return acc;
       }
-      if (acc[item.stackId] == null) {
-        acc[item.stackId] = [];
+      let stack = acc[item.stackId];
+      if (stack == null) {
+        stack = [];
       }
-      acc[item.stackId].push(item);
+      stack.push(item);
+      acc[item.stackId] = stack;
       return acc;
     },
     initialItemsGroups,
@@ -653,7 +657,7 @@ export const combineStackGroups = (
  */
 export const selectStackGroups: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => AllStackGroups | undefined = createSelector(
@@ -664,7 +668,7 @@ export const selectStackGroups: (
 export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
   { dataStartIndex, dataEndIndex }: ChartDataState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   domainFromUserPreference: NumberDomain | undefined,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
@@ -682,10 +686,10 @@ export const combineDomainOfStackGroups = (
   return domainOfStackGroups;
 };
 
-const selectAllowsDataOverflow: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => boolean =
+const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =
   createSelector([selectBaseAxis], axisSettings => axisSettings.allowDataOverflow);
 
-export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDomain => {
+export const getDomainDefinition = (axisSettings: AllAxisSettings): AxisDomain => {
   if (axisSettings == null || !('domain' in axisSettings)) {
     return defaultNumericDomain;
   }
@@ -693,7 +697,7 @@ export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDo
   if (axisSettings.domain != null) {
     return axisSettings.domain;
   }
-  if (axisSettings.ticks != null) {
+  if ('ticks' in axisSettings && axisSettings.ticks != null) {
     if (axisSettings.type === 'number') {
       const allValues = onlyAllowNumbers(axisSettings.ticks);
       return [Math.min(...allValues), Math.max(...allValues)];
@@ -705,11 +709,8 @@ export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDo
   return axisSettings?.domain ?? defaultNumericDomain;
 };
 
-export const selectDomainDefinition: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
+export const selectDomainDefinition: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => AxisDomain =
+  createSelector([selectBaseAxis], getDomainDefinition);
 
 /**
  * Under certain circumstances, we can determine the domain without looking at the data at all.
@@ -726,7 +727,7 @@ export const selectDomainDefinition: (
  */
 export const selectDomainFromUserPreference: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => NumberDomain | undefined = createSelector(
   [selectDomainDefinition, selectAllowsDataOverflow],
@@ -735,7 +736,7 @@ export const selectDomainFromUserPreference: (
 
 export const selectDomainOfStackGroups: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
@@ -753,7 +754,7 @@ export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsSt
 const combineRelevantErrorBarSettings = (
   cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
   allErrorBarSettings: ErrorBarsState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): ReadonlyArray<ErrorBarsSettings> => {
   return cartesianItemsSettings
     .flatMap(item => {
@@ -783,7 +784,7 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<GraphicalItemSettings>,
   errorBars: ErrorBarsState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
 ): NumberDomain | undefined => {
   let lowerEnd: number | undefined, upperEnd: number | undefined;
   if (items.length > 0) {
@@ -830,7 +831,7 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
 
 const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
@@ -884,7 +885,7 @@ export const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<Ref
 
 export const filterReferenceElements = <T extends ReferenceElementSettings>(
   elements: ReadonlyArray<T>,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ): ReadonlyArray<T> => {
   return elements
@@ -899,7 +900,7 @@ export const filterReferenceElements = <T extends ReferenceElementSettings>(
 
 export const selectReferenceDotsByAxis: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<ReferenceDotSettings> = createSelector(
   [selectReferenceDots, pickAxisType, pickAxisId],
@@ -911,7 +912,7 @@ export const selectReferenceAreas = (state: RechartsRootState): ReadonlyArray<Re
 
 export const selectReferenceAreasByAxis: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<ReferenceAreaSettings> = createSelector(
   [selectReferenceAreas, pickAxisType, pickAxisId],
@@ -923,7 +924,7 @@ export const selectReferenceLines = (state: RechartsRootState): ReadonlyArray<Re
 
 export const selectReferenceLinesByAxis: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<ReferenceLineSettings> = createSelector(
   [selectReferenceLines, pickAxisType, pickAxisId],
@@ -932,7 +933,7 @@ export const selectReferenceLinesByAxis: (
 
 export const combineDotsDomain = (
   dots: ReadonlyArray<ReferenceDotSettings>,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
   const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
   if (allCoords.length === 0) {
@@ -945,7 +946,7 @@ const selectReferenceDotsDomain = createSelector(selectReferenceDotsByAxis, pick
 
 export const combineAreasDomain = (
   areas: ReadonlyArray<ReferenceAreaSettings>,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
   const allCoords = onlyAllowNumbers(
     areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
@@ -982,7 +983,7 @@ function extractYCoordinates(line: ReferenceLineSettings): ReadonlyArray<number>
 
 export const combineLinesDomain = (
   lines: ReadonlyArray<ReferenceLineSettings>,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
   const allCoords: ReadonlyArray<number> = lines.flatMap(line =>
     axisType === 'xAxis' ? extractXCoordinates(line) : extractYCoordinates(line),
@@ -1012,7 +1013,7 @@ export const combineNumericalDomain = (
   dataAndErrorBarsDomain: NumberDomain | undefined,
   referenceElementsDomain: NumberDomain | undefined,
   layout: LayoutType,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
     // We're done! No need to compute anything else.
@@ -1031,7 +1032,7 @@ export const combineNumericalDomain = (
 
 export const selectNumericalDomain: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
@@ -1066,7 +1067,7 @@ export const combineAxisDomain = (
   displayedData: ChartData | undefined,
   allAppliedValues: AppliedChartData,
   stackOffsetType: StackOffsetType,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   numericalDomain: NumberDomain | undefined,
 ): NumberDomain | CategoricalDomain | undefined => {
   if ((axisSettings == null || displayedData == null || displayedData.length === 0) && numericalDomain === undefined) {
@@ -1092,7 +1093,7 @@ export const combineAxisDomain = (
 
 export const selectAxisDomain: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | CategoricalDomain | undefined = createSelector(
@@ -1113,7 +1114,7 @@ export const combineRealScaleType = (
   layout: LayoutType,
   hasBar: boolean,
   chartType: string,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
 ): string | undefined => {
   if (axisConfig == null) {
     return undefined;
@@ -1152,7 +1153,7 @@ export const combineRealScaleType = (
 
 export const selectRealScaleType: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => string | undefined = createSelector(
   [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
@@ -1178,8 +1179,8 @@ function getD3ScaleFromType(realScaleType: string | undefined) {
 export function combineScaleFunction(
   axis: BaseCartesianAxis,
   realScaleType: string | undefined,
-  axisDomain: NumberDomain | CategoricalDomain,
-  axisRange: [number, number],
+  axisDomain: NumberDomain | CategoricalDomain | undefined,
+  axisRange: AxisRange | undefined,
 ): RechartsScale | undefined {
   if (axisDomain == null || axisRange == null) {
     return undefined;
@@ -1200,8 +1201,8 @@ export function combineScaleFunction(
 
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
-  axisSettings: CartesianAxisSettings,
-  realScaleType: string,
+  axisSettings: RenderableAxisSettings,
+  realScaleType: string | undefined,
 ): ReadonlyArray<number> | undefined => {
   const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
 
@@ -1232,7 +1233,7 @@ export const combineNiceTicks = (
 };
 export const selectNiceTicks: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<number> | undefined = createSelector(
@@ -1244,7 +1245,7 @@ export const combineAxisDomainWithNiceTicks = (
   axisSettings: BaseCartesianAxis,
   domain: NumberDomain | CategoricalDomain | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): NumberDomain | CategoricalDomain | undefined => {
   if (
     /*
@@ -1270,7 +1271,7 @@ export const combineAxisDomainWithNiceTicks = (
 
 export const selectAxisDomainIncludingNiceTicks: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | CategoricalDomain | undefined = createSelector(
@@ -1286,7 +1287,7 @@ export const selectAxisDomainIncludingNiceTicks: (
  */
 export const selectSmallestDistanceBetweenValues: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => number | undefined = createSelector(
@@ -1298,16 +1299,23 @@ export const selectSmallestDistanceBetweenValues: (
     }
     let smallestDistanceBetweenValues = Infinity;
     const sortedValues = Array.from(onlyAllowNumbers(allDataSquished.map(d => d.value))).sort((a, b) => a - b);
-    if (sortedValues.length < 2) {
+    const first = sortedValues[0];
+    const last = sortedValues[sortedValues.length - 1];
+    if (first == null || last == null) {
       return Infinity;
     }
-    const diff = sortedValues[sortedValues.length - 1] - sortedValues[0];
+    const diff = last - first;
     if (diff === 0) {
       return Infinity;
     }
     // Only do n - 1 distance calculations because there's only n - 1 distances between n values.
     for (let i = 0; i < sortedValues.length - 1; i++) {
-      const distance = sortedValues[i + 1] - sortedValues[i];
+      const curr = sortedValues[i];
+      const next = sortedValues[i + 1];
+      if (curr == null || next == null) {
+        continue;
+      }
+      const distance = next - curr;
       smallestDistanceBetweenValues = Math.min(smallestDistanceBetweenValues, distance);
     }
     return smallestDistanceBetweenValues / diff;
@@ -1316,22 +1324,23 @@ export const selectSmallestDistanceBetweenValues: (
 
 const selectCalculatedPadding: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
+  isPanorama: boolean,
   padding: string,
 ) => number = createSelector(
   selectSmallestDistanceBetweenValues,
   selectChartLayout,
   selectBarCategoryGap,
   selectChartOffsetInternal,
-  (_1, _2, _3, padding) => padding,
+  (_1: unknown, _2: unknown, _3: unknown, _4: unknown, padding: string): string => padding,
   (
     smallestDistanceInPercent: number | undefined,
     layout: LayoutType,
     barCategoryGap: number | string,
     offset: ChartOffsetInternal,
     padding: string,
-  ) => {
+  ): number => {
     if (!isWellBehavedNumber(smallestDistanceInPercent)) {
       return 0;
     }
@@ -1351,59 +1360,73 @@ const selectCalculatedPadding: (
   },
 );
 
-export const selectCalculatedXAxisPadding: (state: RechartsRootState, axisId: AxisId) => number = (state, axisId) => {
+export const selectCalculatedXAxisPadding: (state: RechartsRootState, axisId: AxisId, isPanorama: boolean) => number = (
+  state,
+  axisId,
+  isPanorama,
+) => {
   const xAxisSettings = selectXAxisSettings(state, axisId);
   if (xAxisSettings == null || typeof xAxisSettings.padding !== 'string') {
     return 0;
   }
-  return selectCalculatedPadding(state, 'xAxis', axisId, xAxisSettings.padding);
+  return selectCalculatedPadding(state, 'xAxis', axisId, isPanorama, xAxisSettings.padding);
 };
 
-export const selectCalculatedYAxisPadding: (state: RechartsRootState, axisId: AxisId) => number = (state, axisId) => {
+export const selectCalculatedYAxisPadding: (state: RechartsRootState, axisId: AxisId, isPanorama: boolean) => number = (
+  state,
+  axisId,
+  isPanorama,
+) => {
   const yAxisSettings = selectYAxisSettings(state, axisId);
   if (yAxisSettings == null || typeof yAxisSettings.padding !== 'string') {
     return 0;
   }
-  return selectCalculatedPadding(state, 'yAxis', axisId, yAxisSettings.padding);
+  return selectCalculatedPadding(state, 'yAxis', axisId, isPanorama, yAxisSettings.padding);
 };
 
-const selectXAxisPadding: (state: RechartsRootState, axisId: AxisId) => { left: number; right: number } =
-  createSelector(
-    selectXAxisSettings,
-    selectCalculatedXAxisPadding,
-    (xAxisSettings: XAxisSettings, calculated: number) => {
-      if (xAxisSettings == null) {
-        return { left: 0, right: 0 };
-      }
-      const { padding } = xAxisSettings;
-      if (typeof padding === 'string') {
-        return { left: calculated, right: calculated };
-      }
-      return {
-        left: (padding.left ?? 0) + calculated,
-        right: (padding.right ?? 0) + calculated,
-      };
-    },
-  );
+const selectXAxisPadding: (
+  state: RechartsRootState,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => { left: number; right: number } = createSelector(
+  selectXAxisSettings,
+  selectCalculatedXAxisPadding,
+  (xAxisSettings: XAxisSettings, calculated: number) => {
+    if (xAxisSettings == null) {
+      return { left: 0, right: 0 };
+    }
+    const { padding } = xAxisSettings;
+    if (typeof padding === 'string') {
+      return { left: calculated, right: calculated };
+    }
+    return {
+      left: (padding.left ?? 0) + calculated,
+      right: (padding.right ?? 0) + calculated,
+    };
+  },
+);
 
-const selectYAxisPadding: (state: RechartsRootState, axisId: AxisId) => { top: number; bottom: number } =
-  createSelector(
-    selectYAxisSettings,
-    selectCalculatedYAxisPadding,
-    (yAxisSettings: YAxisSettings, calculated: number) => {
-      if (yAxisSettings == null) {
-        return { top: 0, bottom: 0 };
-      }
-      const { padding } = yAxisSettings;
-      if (typeof padding === 'string') {
-        return { top: calculated, bottom: calculated };
-      }
-      return {
-        top: (padding.top ?? 0) + calculated,
-        bottom: (padding.bottom ?? 0) + calculated,
-      };
-    },
-  );
+const selectYAxisPadding: (
+  state: RechartsRootState,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => { top: number; bottom: number } = createSelector(
+  selectYAxisSettings,
+  selectCalculatedYAxisPadding,
+  (yAxisSettings: YAxisSettings, calculated: number) => {
+    if (yAxisSettings == null) {
+      return { top: 0, bottom: 0 };
+    }
+    const { padding } = yAxisSettings;
+    if (typeof padding === 'string') {
+      return { top: calculated, bottom: calculated };
+    }
+    return {
+      top: (padding.top ?? 0) + calculated,
+      bottom: (padding.bottom ?? 0) + calculated,
+    };
+  },
+);
 
 export const combineXAxisRange: (
   state: RechartsRootState,
@@ -1466,7 +1489,7 @@ export const combineYAxisRange: (
 
 export const selectAxisRange = (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ): AxisRange | undefined => {
@@ -1488,14 +1511,14 @@ export const selectAxisRange = (
 
 export const selectAxisRangeWithReverse: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector([selectBaseAxis, selectAxisRange], combineAxisRangeWithReverse);
 
 export const selectAxisScale: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => RechartsScale | undefined = createSelector(
@@ -1505,7 +1528,7 @@ export const selectAxisScale: (
 
 export const selectErrorBarsSettings: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
 ) => ReadonlyArray<ErrorBarsSettings> = createSelector(
   [selectCartesianItemsSettings, selectAllErrorBarSettings, pickAxisType],
@@ -1719,7 +1742,7 @@ export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Siz
 
 export const selectCartesianAxisSize = (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
 ): number | undefined => {
   switch (axisType) {
@@ -1739,7 +1762,7 @@ export const combineDuplicateDomain = (
   chartLayout: LayoutType,
   appliedValues: AppliedChartData,
   axis: BaseCartesianAxis,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
 ): ReadonlyArray<unknown> | undefined => {
   if (axis == null) {
     return undefined;
@@ -1755,7 +1778,7 @@ export const combineDuplicateDomain = (
 
 export const selectDuplicateDomain: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: AllAxisTypes,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
@@ -1766,8 +1789,8 @@ export const selectDuplicateDomain: (
 export const combineCategoricalDomain = (
   layout: LayoutType,
   appliedValues: AppliedChartData,
-  axis: AxisWithTicksSettings,
-  axisType: XorYType,
+  axis: RenderableAxisSettings,
+  axisType: RenderableAxisType,
 ): ReadonlyArray<unknown> | undefined => {
   if (axis == null || axis.dataKey == null) {
     return undefined;
@@ -1782,7 +1805,7 @@ export const combineCategoricalDomain = (
 
 export const selectCategoricalDomain: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
@@ -1792,7 +1815,7 @@ export const selectCategoricalDomain: (
 
 export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: 'xAxis' | 'yAxis',
   axisId: AxisId,
   isPanorama: boolean,
 ) => AxisPropsForCartesianGridTicksGeneration | undefined = createSelector(
@@ -1810,7 +1833,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
   (
     layout: LayoutType,
     axis: XAxisSettings | YAxisSettings,
-    realScaleType: string,
+    realScaleType: string | undefined,
     scale: RechartsScale | undefined,
     duplicateDomain,
     categoricalDomain,
@@ -1847,14 +1870,14 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
 
 export const combineAxisTicks = (
   layout: LayoutType,
-  axis: AxisWithTicksSettings,
-  realScaleType: string,
+  axis: RenderableAxisSettings,
+  realScaleType: string | undefined,
   scale: RechartsScale | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): ReadonlyArray<TickItem> | undefined => {
   if (axis == null || scale == null) {
     return undefined;
@@ -1928,7 +1951,7 @@ export const combineAxisTicks = (
 };
 export const selectTicksOfAxis: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
@@ -1948,12 +1971,12 @@ export const selectTicksOfAxis: (
 
 export const combineGraphicalItemTicks = (
   layout: LayoutType,
-  axis: AxisWithTicksSettings,
+  axis: RenderableAxisSettings,
   scale: RechartsScale | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): TickItem[] | undefined => {
   if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
     return undefined;
@@ -2001,7 +2024,7 @@ export const combineGraphicalItemTicks = (
 
 export const selectTicksOfGraphicalItem: (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => TickItem[] | undefined = createSelector(
@@ -2021,7 +2044,7 @@ export type BaseAxisWithScale = BaseCartesianAxis & { scale: RechartsScale };
 
 export const selectAxisWithScale: (
   state: RechartsRootState,
-  axisType: XorYorZType,
+  axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => BaseAxisWithScale | undefined = createSelector(

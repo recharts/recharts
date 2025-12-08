@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import {
   AxisRange,
-  AxisWithTicksSettings,
+  RenderableAxisSettings,
   combineAppliedValues,
   combineAreasDomain,
   combineAxisDomain,
@@ -78,7 +78,7 @@ import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { selectTooltipAxisType, XorYType } from './selectTooltipAxisType';
+import { selectTooltipAxisType, RenderableAxisType } from './selectTooltipAxisType';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
@@ -313,13 +313,13 @@ export const selectTooltipCategoricalDomain: (state: RechartsRootState) => Reado
 
 const combineTicksOfTooltipAxis = (
   layout: LayoutType,
-  axis: AxisWithTicksSettings,
+  axis: RenderableAxisSettings,
   realScaleType: string,
   scale: RechartsScale | undefined,
   range: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
-  axisType: XorYType,
+  axisType: RenderableAxisType,
 ): ReadonlyArray<TickItem> | undefined => {
   if (!axis) {
     return undefined;
