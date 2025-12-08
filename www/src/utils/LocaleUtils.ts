@@ -32,14 +32,20 @@ export const useLocale = () => {
 
 export const parseLocalObj = (
   locale: SupportedLocale,
-  value: undefined | string | Partial<Record<string, ReactNode>>,
+  value: undefined | string | Partial<Record<SupportedLocale, ReactNode>>,
 ): ReactNode => {
   if (!value) {
     return '';
   }
 
   if (typeof value === 'object') {
-    return value[locale] ?? value['en-US'] ?? '';
+    if (locale in value) {
+      return value[locale];
+    }
+    if ('en-US' in value) {
+      return value['en-US'];
+    }
+    return '';
   }
 
   return value || '';

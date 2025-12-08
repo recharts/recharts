@@ -6,7 +6,13 @@ export const LabelListAPI = {
       type: 'String | Number | Function',
       isOptional: false,
       desc: {
-        'en-US': 'The key of a group of label values in data.',
+        'en-US':
+          'Decides how to extract the value of each label from the data: ' +
+          '- `string`: the name of the field in the data object; ' +
+          '- `number`: the index of the field in the data; ' +
+          '- `function`: a function that receives the data object and returns the value of each label. ' +
+          'If set, then valueAccessor will be ignored. ' +
+          'Scatter requires this prop to be set. Other graphical components will show the same value as the dataKey of the component by default.',
         'zh-CN': '展示 label 值对应的数据的 key。',
       },
     },
@@ -15,7 +21,7 @@ export const LabelListAPI = {
       type: 'Function',
       isOptional: true,
       desc: {
-        'en-US': 'The accessor function to get the value of each label.',
+        'en-US': 'The accessor function to get the value of each label. Is ignored if dataKey is specified.',
         'zh-CN': '获取label值的方法',
       },
     },
@@ -25,7 +31,7 @@ export const LabelListAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'If set a React element, the option is the customized react element of rendering each label.  If set a function, the function will be called to render each label content.',
+          'If set a React element, the option is the customized React element of rendering each label.  If set a function, the function will be called to render each label content.',
         'zh-CN':
           '定制每个 label 展示的内容。如果值为 React element，会克隆这个元素来渲染每个 label 的内容。如果值为函数，会调用这个函数来生成每个 label 的内容。',
       },
@@ -45,7 +51,7 @@ export const LabelListAPI = {
       type: '"top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "end" | "center"',
       isOptional: true,
       desc: {
-        'en-US': 'The position of each label relative to it view box。',
+        'en-US': 'The position of label relative to the view box.',
         'zh-CN': '每个label相对于它的可视区域的位置',
       },
     },
@@ -55,8 +61,19 @@ export const LabelListAPI = {
       defaultVal: 5,
       isOptional: false,
       desc: {
-        'en-US': 'The offset to the specified "position"',
+        'en-US': 'The offset to the specified "position". Direction of the offset depends on the position.',
         'zh-CN': '相对于"设置位置"的偏移量',
+      },
+    },
+    {
+      name: 'angle',
+      type: 'Number',
+      defaultVal: 0,
+      isOptional: true,
+      desc: {
+        'en-US':
+          'Text rotation angle in degrees. The text will be rotated around the (x, y) coordinates as the pivot point. Positive values rotate clockwise, negative values rotate counterclockwise.',
+        'zh-CN': 'label的旋转角度',
       },
     },
     {

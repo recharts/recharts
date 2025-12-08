@@ -8,6 +8,7 @@ import { isNotNil } from '../src/util/DataUtils';
 import { normalizeText } from './util/normalizeText';
 import { coloredDiff } from './util/coloredDiff';
 import { componentsWithInconsistentCommentsInApiDoc } from './componentsWithInconsistentCommentsInApiDoc';
+import { OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS } from './generateApiDoc';
 
 describe('omnidoc - documentation consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -264,7 +265,16 @@ describe('omnidoc - documentation consistency', () => {
     }
 
     test.each(
-      apiDocReader.getPublicComponentNames().filter(name => !componentsWithInconsistentCommentsInApiDoc.includes(name)),
+      apiDocReader
+        .getPublicComponentNames()
+        /*
+         * Filter out components that are auto-generated because those are guaranteed to match
+         */
+        .filter(name => !OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS.includes(name))
+        /*
+         * Filter out components with known inconsistencies, these are WIP
+         */
+        .filter(name => !componentsWithInconsistentCommentsInApiDoc.includes(name)),
     )('if %s has comments in API docs, they should match the project comments', component => {
       const allProps = apiDocReader.getAllPropsOf(component);
 

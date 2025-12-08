@@ -550,4 +550,16 @@ export class ProjectDocReader implements DocReader {
       tags: map,
     };
   }
+
+  /**
+   * Get the JSDoc metadata for a component itself (not its props)
+   */
+  getComponentJsDocMeta(component: string): JSDocMeta | undefined {
+    try {
+      const declaration = this.getComponentDeclaration(component);
+      return this.getJsDocMeta(declaration);
+    } catch {
+      return undefined;
+    }
+  }
 }

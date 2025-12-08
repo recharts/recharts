@@ -160,6 +160,7 @@
     "husky": "^9.1.1",
     "jsdom": "^24.1.1",
     "lint-staged": "^15.2.7",
+    "marked": "^17.0.1",
     "playwright": "1.57.0",
     "prettier": "^3.6.2",
     "react": "^18.3.1",
