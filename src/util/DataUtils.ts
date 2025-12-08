@@ -13,7 +13,7 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isNan = (value: unknown): boolean => {
+export const isNan = (value: unknown): value is number => {
   // eslint-disable-next-line eqeqeq
   return typeof value == 'number' && value != +value;
 };

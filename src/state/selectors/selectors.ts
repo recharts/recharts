@@ -79,7 +79,7 @@ export const selectTooltipInteractionState: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => TooltipInteractionState | undefined = createSelector(
+) => TooltipInteractionState = createSelector(
   [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
   combineTooltipInteractionState,
 );
@@ -120,7 +120,7 @@ export const selectTooltipPayloadConfigurations: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => ReadonlyArray<TooltipPayloadConfiguration> | undefined = createSelector(
+) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
   [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
   combineTooltipPayloadConfigurations,
 );
@@ -154,7 +154,7 @@ export const selectActiveCoordinate: (
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (
     tooltipInteractionState: TooltipInteractionState,
-    defaultIndexCoordinate: Coordinate,
+    defaultIndexCoordinate: Coordinate | undefined,
   ): Coordinate | PolarCoordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
