@@ -36,6 +36,22 @@ export function getTagText(jsDoc: JSDocMeta | undefined, tagName: string): { tex
   return undefined;
 }
 
+/**
+ * Get all tags with a specific name (useful for tags that can appear multiple times like @example, @consumes, @provides)
+ */
+export function getAllTagTexts(jsDoc: JSDocMeta | undefined, tagName: string): ReadonlyArray<string> {
+  if (jsDoc == null) {
+    return [];
+  }
+  const results: string[] = [];
+  for (const [name, text] of jsDoc.tags) {
+    if (name === tagName && text !== undefined && text.trim() !== '') {
+      results.push(text.trim());
+    }
+  }
+  return results;
+}
+
 type PropMeta = {
   /**
    * The name is not unique! Both Recharts and DOM props can and do have the same name.

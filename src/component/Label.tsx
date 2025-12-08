@@ -599,6 +599,7 @@ export const defaultLabelProps = {
 
 /**
  * @consumes CartesianLabelContext
+ * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);

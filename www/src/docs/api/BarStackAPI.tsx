@@ -56,5 +56,5 @@ export const BarStackAPI: ApiDoc = {
       },
     },
   ],
-  desc: 'Available since Recharts 3.6',
+  desc: 'Available since Recharts [object Object]',
 };

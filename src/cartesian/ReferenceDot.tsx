@@ -173,6 +173,9 @@ export const referenceDotDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
+/**
+ * @provides CartesianLabelContext
+ */
 export function ReferenceDot(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;

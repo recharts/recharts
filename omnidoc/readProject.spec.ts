@@ -831,7 +831,7 @@ describe('readProject', () => {
         name: 'x',
         origin: 'dom',
         jsDoc: {
-          tags: new Map(),
+          tags: [],
           text: undefined,
         },
         isRequired: false,
@@ -843,7 +843,7 @@ describe('readProject', () => {
         name: 'x',
         origin: 'recharts',
         jsDoc: {
-          tags: new Map(),
+          tags: [],
           text: expect.stringContaining('The x-coordinate of the reference line in data space.'),
         },
         isRequired: false,
@@ -862,7 +862,7 @@ describe('readProject', () => {
         origin: 'recharts',
         jsDoc: {
           text: expect.stringContaining('The position of the reference line when the axis has bandwidth'),
-          tags: new Map([['defaultValue', "'middle'"]]),
+          tags: [['defaultValue', "'middle'"]],
         },
         isRequired: false,
       },
@@ -880,7 +880,7 @@ describe('readProject', () => {
         origin: 'recharts',
         jsDoc: {
           text: undefined,
-          tags: new Map(),
+          tags: [],
         },
         isRequired: false,
       },
@@ -892,7 +892,7 @@ describe('readProject', () => {
         origin: 'recharts',
         jsDoc: {
           text: expect.stringContaining('The customized event handler of animation start'),
-          tags: new Map(),
+          tags: [],
         },
         isRequired: false,
       },
@@ -915,7 +915,7 @@ describe('readProject', () => {
         origin: 'recharts',
         jsDoc: {
           text: expect.stringContaining('If you provide a single number, it applies to all four corners.'),
-          tags: new Map([['defaultValue', '0']]),
+          tags: [['defaultValue', '0']],
         },
         isRequired: false,
       },
