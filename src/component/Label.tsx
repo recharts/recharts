@@ -598,6 +598,8 @@ export const defaultLabelProps = {
 } as const satisfies Partial<Props>;
 
 /**
+ * @consumes CartesianViewBoxContext
+ * @consumes PolarViewBoxContext
  * @consumes CartesianLabelContext
  * @consumes PolarLabelContext
  */

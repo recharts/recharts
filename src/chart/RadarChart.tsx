@@ -14,6 +14,9 @@ export const defaultRadarChartProps = {
   endAngle: -270,
 } as const satisfies Partial<PolarChartProps>;
 
+/**
+ * @provides PolarViewBoxContext
+ */
 export const RadarChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultRadarChartProps);
   return (
