@@ -69,8 +69,9 @@ const pickDefaultIndex = (
   defaultIndex?: TooltipIndex | undefined,
 ): TooltipIndex | undefined => defaultIndex;
 
-export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
-  sortBy(ticks, o => o.coordinate),
+export const selectOrderedTooltipTicks = createSelector(
+  selectTooltipAxisTicks,
+  (ticks: ReadonlyArray<TickItem> | undefined) => sortBy(ticks, o => o.coordinate),
 );
 
 export const selectTooltipInteractionState: (
