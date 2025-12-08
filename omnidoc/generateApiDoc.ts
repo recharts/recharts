@@ -194,7 +194,7 @@ async function generateApiDoc(
     // Check for @since tag
     const sinceTag = getTagText(componentJsDoc, 'since');
     if (sinceTag) {
-      apiDoc.desc = `Available since Recharts ${sinceTag}`;
+      apiDoc.desc = `Available since Recharts ${sinceTag.text}`;
     }
 
     // Check for @provides tags - this component provides context to children

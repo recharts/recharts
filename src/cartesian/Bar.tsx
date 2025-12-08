@@ -1072,5 +1072,8 @@ function BarFn(outsideProps: Props) {
   );
 }
 
+/**
+ * @consumes BarStackContext
+ */
 export const Bar: ComponentType<Props> = React.memo(BarFn, propsAreEqual);
 Bar.displayName = 'Bar';
