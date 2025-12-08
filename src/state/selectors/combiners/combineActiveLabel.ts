@@ -3,7 +3,10 @@ import { TooltipIndex } from '../../tooltipSlice';
 import { isNan } from '../../../util/DataUtils';
 import { ActiveLabel } from '../../../synchronisation/types';
 
-export const combineActiveLabel = (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): ActiveLabel => {
+export const combineActiveLabel = (
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  activeIndex: TooltipIndex,
+): ActiveLabel => {
   const n = Number(activeIndex);
   if (isNan(n) || activeIndex == null) {
     return undefined;

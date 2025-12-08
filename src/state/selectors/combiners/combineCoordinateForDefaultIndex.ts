@@ -6,7 +6,7 @@ export const combineCoordinateForDefaultIndex = (
   height: number,
   layout: LayoutType,
   offset: ChartOffsetInternal,
-  tooltipTicks: ReadonlyArray<TickItem>,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
   defaultIndex: TooltipIndex | undefined,
   tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
