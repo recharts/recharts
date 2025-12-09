@@ -24,8 +24,8 @@ export interface DefinitelyStackedGraphicalItem extends MaybeStackedGraphicalIte
   dataKey: DataKey<any>;
 }
 
-export function isStacked<T extends MaybeStackedGraphicalItem>(
+export function isStacked<T extends GraphicalItemSettings>(
   graphicalItem: T,
 ): graphicalItem is T & DefinitelyStackedGraphicalItem {
-  return graphicalItem.stackId != null && graphicalItem.dataKey != null;
+  return 'stackId' in graphicalItem && graphicalItem.stackId != null && graphicalItem.dataKey != null;
 }
