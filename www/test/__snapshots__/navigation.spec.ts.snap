@@ -169,6 +169,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "Customized",
             "url": "/en-US/api/Customized/",
           },
+          {
+            "displayName": "ZIndexLayer",
+            "key": "ZIndexLayer",
+            "url": "/en-US/api/ZIndexLayer/",
+          },
         ],
         "key": "general-components",
       },

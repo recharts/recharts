@@ -21,6 +21,7 @@ import { scatterChartApiExamples } from './ScatterChart';
 import { treemapApiExamples } from './Treemap';
 import { ChartExample } from '../exampleComponents/types.ts';
 import { barStackApiExamples } from './BarStack';
+import { zIndexLayerApiExamples } from './ZIndexLayer';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -45,4 +46,5 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,
   Sankey: sankeyApiExamples,
+  ZIndexLayer: zIndexLayerApiExamples,
 };

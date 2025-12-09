@@ -26,6 +26,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'BarStack',
   'Text',
   'Label',
+  'ZIndexLayer',
 ];
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
@@ -127,6 +128,26 @@ function buildContextMap(
   return contextMap;
 }
 
+async function generateComponentDescription(
+  componentName: string,
+  projectReader: ProjectDocReader,
+): Promise<{ [locale: string]: string } | undefined> {
+  const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
+  if (componentJsDoc) {
+    const desc: { [locale: string]: string } = {};
+    if (componentJsDoc.text) {
+      desc['en-US'] = await marked.parse(componentJsDoc.text);
+    }
+    // Check for @since tag
+    const sinceTag = getTagText(componentJsDoc, 'since');
+    if (sinceTag?.text) {
+      desc['en-US'] = `${desc['en-US'] ?? ''}<p>Available since Recharts ${sinceTag.text}</p>`;
+    }
+    return desc;
+  }
+  return undefined;
+}
+
 /**
  * Generates API documentation for a single component
  */
@@ -191,11 +212,7 @@ async function generateApiDoc(
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
-    // Check for @since tag
-    const sinceTag = getTagText(componentJsDoc, 'since');
-    if (sinceTag) {
-      apiDoc.desc = `Available since Recharts ${sinceTag.text}`;
-    }
+    apiDoc.desc = await generateComponentDescription(componentName, projectReader);
 
     // Check for @provides tags - this component provides context to children
     const providesTags = getAllTagTexts(componentJsDoc, 'provides');
@@ -266,9 +283,15 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
     result += `},`;
   });
   result += `],`;
-  // Add component-level description if available                                                                                                                                  │
-  if (apiDoc.desc) {
-    result += `"desc": "${apiDoc.desc}",`;
+  // Add component-level description if at least one language is available                                                                                                                                  │
+  if (apiDoc.desc && Object.values(apiDoc.desc).some(Boolean)) {
+    result += `"desc": {`;
+    for (const [locale, html] of Object.entries(apiDoc.desc)) {
+      if (!html) continue;
+      // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
+      result += `"${locale}": (<section>${html}</section>),`;
+    }
+    result += `},`;
   }
   // Add parent components if available
   if (apiDoc.parentComponents && apiDoc.parentComponents.length > 0) {

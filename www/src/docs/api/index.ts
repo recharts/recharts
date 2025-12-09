@@ -50,7 +50,8 @@ import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
-import { LabelAPI } from './LabelAPI.tsx';
+import { LabelAPI } from './LabelAPI';
+import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -105,4 +106,6 @@ export const allExamples: Record<string, ApiDoc> = {
   Rectangle,
   Sector,
   Trapezoid,
+
+  ZIndexLayer: ZIndexLayerAPI,
 };

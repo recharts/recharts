@@ -54,6 +54,7 @@ describe('readApiDoc', () => {
         "Rectangle",
         "Sector",
         "Trapezoid",
+        "ZIndexLayer",
       ]
     `);
   });

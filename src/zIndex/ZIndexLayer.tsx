@@ -26,10 +26,12 @@ export interface ZIndexable {
 
 type ZIndexLayerProps = {
   /**
-   Z-Index of this component and its children. The higher the value,
-   the more on top it will be rendered.
-   Components with higher zIndex will appear in front of components with lower zIndex.
-   If undefined or 0, the content is rendered in the default layer without portals.
+   * Z-Index of this component and its children.
+   *
+   * The higher the value, the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   *
+   * If `undefined` or `0`, the content is rendered in the default layer without portals.
    */
   zIndex: number | undefined;
   /**
@@ -41,7 +43,7 @@ type ZIndexLayerProps = {
 
 /**
  * A layer that renders its children into a portal corresponding to the given zIndex.
- * We can't use regular CSS z-index because SVG does not support it.
+ * We can't use regular CSS `z-index` because SVG does not support it.
  * So instead, we create separate DOM nodes for each zIndex layer
  * and render the children into the corresponding DOM node using React portals.
  *
@@ -49,6 +51,8 @@ type ZIndexLayerProps = {
  *
  * @param zIndex numeric zIndex value, higher values are rendered on top of lower values
  * @param children the content to render inside this zIndex layer
+ *
+ * @since 3.4
  */
 export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   /*
