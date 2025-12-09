@@ -14,6 +14,9 @@ export const defaultRadialBarChartProps = {
   endAngle: 360,
 } as const satisfies Partial<PolarChartProps>;
 
+/**
+ * @provides PolarViewBoxContext
+ */
 export const RadialBarChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultRadialBarChartProps);
   return (

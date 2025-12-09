@@ -210,6 +210,9 @@ const XAxisSettingsDispatcher = (outsideProps: Props) => {
   );
 };
 
+/**
+ * @provides CartesianLabelContext
+ */
 export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual);
 
 XAxis.displayName = 'XAxis';

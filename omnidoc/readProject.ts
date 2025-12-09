@@ -17,8 +17,40 @@ type PropOrigin = 'recharts' | 'dom' | 'other';
 
 type JSDocMeta = {
   text?: string;
-  tags: Map<string, string | undefined>;
+  /**
+   * Can't store these in a map because there can be multiple tags with the same name (e.g., @example)
+   * These tuples are (tag name, tag text). Some tags may have undefined text, like for example `@private` or `@inline`.
+   */
+  tags: ReadonlyArray<[string, string | undefined]>;
 };
+
+export function getTagText(jsDoc: JSDocMeta | undefined, tagName: string): { text: string | undefined } | undefined {
+  if (jsDoc == null) {
+    return undefined;
+  }
+  for (const [name, text] of jsDoc.tags) {
+    if (name === tagName) {
+      return { text };
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Get all tags with a specific name (useful for tags that can appear multiple times like @example, @consumes, @provides)
+ */
+export function getAllTagTexts(jsDoc: JSDocMeta | undefined, tagName: string): ReadonlyArray<string> {
+  if (jsDoc == null) {
+    return [];
+  }
+  const results: string[] = [];
+  for (const [name, text] of jsDoc.tags) {
+    if (name === tagName && text !== undefined && text.trim() !== '') {
+      results.push(text.trim());
+    }
+  }
+  return results;
+}
 
 type PropMeta = {
   /**
@@ -463,7 +495,7 @@ export class ProjectDocReader implements DocReader {
       return undefined;
     }
     // Look for a description tag in jsdoc, or use the general comment
-    return prop.jsDoc.tags.get('description') || prop.jsDoc.tags.get('desc') || prop.jsDoc.text;
+    return getTagText(prop.jsDoc, 'description')?.text || getTagText(prop.jsDoc, 'desc')?.text || prop.jsDoc.text;
   }
 
   getTextOfTag(tag: JSDocTagInfo | undefined): string | undefined {
@@ -536,18 +568,18 @@ export class ProjectDocReader implements DocReader {
 
   private getJsDocMeta(declaration: Node): JSDocMeta {
     const text = this.getJSDocFromDeclaration(declaration);
-    const map: Map<string, string | undefined> = new Map();
+    const tags: Array<[string, string | undefined]> = [];
     declaration
       .getSymbol()
       ?.getJsDocTags()
       .forEach(tag => {
         const tagName = tag.getName();
         const tagText = this.getTextOfTag(tag);
-        map.set(tagName, tagText);
+        tags.push([tagName, tagText]);
       });
     return {
       text,
-      tags: map,
+      tags,
     };
   }
 
@@ -560,6 +592,49 @@ export class ProjectDocReader implements DocReader {
       return this.getJsDocMeta(declaration);
     } catch {
       return undefined;
+    }
+  }
+
+  /**
+   * Get all @example tags for a prop
+   */
+  getExamplesOf(component: string, prop: string): ReadonlyArray<string> {
+    try {
+      const propMeta: ReadonlyArray<PropMeta> = this.getPropMeta(component, prop);
+      if (propMeta.length === 0) {
+        return [];
+      }
+
+      const examples: string[] = [];
+
+      // Try to find examples from Recharts props first (prefer our own documentation)
+      const rechartsProp = propMeta.filter(p => p.origin === 'recharts');
+      for (const rp of rechartsProp) {
+        if (rp.jsDoc) {
+          const exampleTags = rp.jsDoc.tags
+            .filter(([key]) => key === 'example')
+            .map(([, value]) => value)
+            .filter((value): value is string => value !== undefined && value.trim() !== '');
+          examples.push(...exampleTags);
+        }
+      }
+
+      // Fallback to other prop declarations if no Recharts examples found
+      if (examples.length === 0) {
+        for (const p of propMeta) {
+          if (p.jsDoc) {
+            const exampleTags = p.jsDoc.tags
+              .filter(([key]) => key === 'example')
+              .map(([, value]) => value)
+              .filter((value): value is string => value !== undefined && value.trim() !== '');
+            examples.push(...exampleTags);
+          }
+        }
+      }
+
+      return examples;
+    } catch {
+      return [];
     }
   }
 }

@@ -173,6 +173,9 @@ export const referenceAreaDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
 
+/**
+ * @provides CartesianLabelContext
+ */
 export function ReferenceArea(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);
   return (

@@ -145,6 +145,7 @@ const BarStackImpl = (props: BarStackProps) => {
 };
 
 /**
+ * @provides BarStackContext
  * @since 3.6
  */
 export const BarStack: ComponentType<BarStackProps> = React.memo(BarStackImpl, propsAreEqual);

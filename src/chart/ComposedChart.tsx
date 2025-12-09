@@ -6,6 +6,9 @@ import { CartesianChartProps, TooltipEventType } from '../util/types';
 
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis'];
 
+/**
+ * @provides CartesianViewBoxContext
+ */
 export const ComposedChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
   return (
     <CartesianChart

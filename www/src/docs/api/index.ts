@@ -31,7 +31,6 @@ import { LegendAPI as Legend } from './Legend';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
-import { LabelAPI as Label } from './Label';
 import { LabelListAPI as LabelList } from './LabelList';
 import { CustomizedAPI as Customized } from './Customized';
 
@@ -51,6 +50,8 @@ import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
+import { LabelAPI } from './LabelAPI';
+import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -83,7 +84,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Tooltip,
   Cell,
   Text: TextAPI,
-  Label,
+  Label: LabelAPI,
   LabelList,
   Customized,
 
@@ -105,4 +106,6 @@ export const allExamples: Record<string, ApiDoc> = {
   Rectangle,
   Sector,
   Trapezoid,
+
+  ZIndexLayer: ZIndexLayerAPI,
 };

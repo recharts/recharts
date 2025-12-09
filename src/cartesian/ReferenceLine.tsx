@@ -307,6 +307,9 @@ export const referenceLineDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
 
+/**
+ * @provides CartesianLabelContext
+ */
 export function ReferenceLine(outsideProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);
   return (

@@ -17,7 +17,17 @@ export const apiCates = [
   },
   {
     name: 'general-components',
-    items: ['ResponsiveContainer', 'Legend', 'Tooltip', 'Cell', 'Text', 'Label', 'LabelList', 'Customized'],
+    items: [
+      'ResponsiveContainer',
+      'Legend',
+      'Tooltip',
+      'Cell',
+      'Text',
+      'Label',
+      'LabelList',
+      'Customized',
+      'ZIndexLayer',
+    ],
   },
   {
     name: 'cartesian-components',

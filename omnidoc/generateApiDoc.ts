@@ -13,7 +13,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
-import { ProjectDocReader } from './readProject';
+import { getAllTagTexts, getTagText, ProjectDocReader } from './readProject';
 import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
 
 /**
@@ -25,6 +25,8 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'BarStack',
   'Text',
+  'Label',
+  'ZIndexLayer',
 ];
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
@@ -92,9 +94,68 @@ function simplifyType(originalText: string): string {
 }
 
 /**
+ * Builds a map of contexts to their providers and consumers
+ */
+function buildContextMap(
+  componentNames: ReadonlyArray<string>,
+  projectReader: ProjectDocReader,
+): Map<string, { providers: string[]; consumers: string[] }> {
+  const contextMap = new Map<string, { providers: string[]; consumers: string[] }>();
+
+  for (const componentName of componentNames) {
+    const jsDoc = projectReader.getComponentJsDocMeta(componentName);
+    if (!jsDoc) continue;
+
+    // Check for @provides tags (can be multiple)
+    const providesTags = getAllTagTexts(jsDoc, 'provides');
+    for (const contextName of providesTags) {
+      if (!contextMap.has(contextName)) {
+        contextMap.set(contextName, { providers: [], consumers: [] });
+      }
+      contextMap.get(contextName)!.providers.push(componentName);
+    }
+
+    // Check for @consumes tags (can be multiple)
+    const consumesTags = getAllTagTexts(jsDoc, 'consumes');
+    for (const contextName of consumesTags) {
+      if (!contextMap.has(contextName)) {
+        contextMap.set(contextName, { providers: [], consumers: [] });
+      }
+      contextMap.get(contextName)!.consumers.push(componentName);
+    }
+  }
+
+  return contextMap;
+}
+
+async function generateComponentDescription(
+  componentName: string,
+  projectReader: ProjectDocReader,
+): Promise<{ [locale: string]: string } | undefined> {
+  const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
+  if (componentJsDoc) {
+    const desc: { [locale: string]: string } = {};
+    if (componentJsDoc.text) {
+      desc['en-US'] = await marked.parse(componentJsDoc.text);
+    }
+    // Check for @since tag
+    const sinceTag = getTagText(componentJsDoc, 'since');
+    if (sinceTag?.text) {
+      desc['en-US'] = `${desc['en-US'] ?? ''}<p>Available since Recharts ${sinceTag.text}</p>`;
+    }
+    return desc;
+  }
+  return undefined;
+}
+
+/**
  * Generates API documentation for a single component
  */
-async function generateApiDoc(componentName: string, projectReader: ProjectDocReader): Promise<ApiDoc> {
+async function generateApiDoc(
+  componentName: string,
+  projectReader: ProjectDocReader,
+  contextMap: Map<string, { providers: string[]; consumers: string[] }>,
+): Promise<ApiDoc> {
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
 
@@ -134,6 +195,12 @@ async function generateApiDoc(componentName: string, projectReader: ProjectDocRe
         | null;
     }
 
+    // Add examples if available
+    const examples = projectReader.getExamplesOf(componentName, propName);
+    if (examples.length > 0) {
+      prop.format = examples;
+    }
+
     props.push(prop);
   }
 
@@ -145,10 +212,36 @@ async function generateApiDoc(componentName: string, projectReader: ProjectDocRe
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
-    // Check for @since tag
-    const sinceTag = componentJsDoc.tags.get('since');
-    if (sinceTag) {
-      apiDoc.desc = `Available since Recharts ${sinceTag}`;
+    apiDoc.desc = await generateComponentDescription(componentName, projectReader);
+
+    // Check for @provides tags - this component provides context to children
+    const providesTags = getAllTagTexts(componentJsDoc, 'provides');
+    if (providesTags.length > 0) {
+      const allChildren = new Set<string>();
+      for (const contextName of providesTags) {
+        const contextInfo = contextMap.get(contextName);
+        if (contextInfo) {
+          contextInfo.consumers.forEach(consumer => allChildren.add(consumer));
+        }
+      }
+      if (allChildren.size > 0) {
+        apiDoc.childrenComponents = Array.from(allChildren).sort();
+      }
+    }
+
+    // Check for @consumes tags - this component consumes context from parents
+    const consumesTags = getAllTagTexts(componentJsDoc, 'consumes');
+    if (consumesTags.length > 0) {
+      const allParents = new Set<string>();
+      for (const contextName of consumesTags) {
+        const contextInfo = contextMap.get(contextName);
+        if (contextInfo) {
+          contextInfo.providers.forEach(provider => allParents.add(provider));
+        }
+      }
+      if (allParents.size > 0) {
+        apiDoc.parentComponents = Array.from(allParents).sort();
+      }
     }
   }
 
@@ -183,12 +276,30 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
       result += `"defaultVal": ${JSON.stringify(prop.defaultVal)},`;
     }
 
+    if (prop.format !== undefined) {
+      result += `"format": ${JSON.stringify(prop.format)},`;
+    }
+
     result += `},`;
   });
   result += `],`;
-  // Add component-level description if available                                                                                                                                  │
-  if (apiDoc.desc) {
-    result += `"desc": "${apiDoc.desc}",`;
+  // Add component-level description if at least one language is available                                                                                                                                  │
+  if (apiDoc.desc && Object.values(apiDoc.desc).some(Boolean)) {
+    result += `"desc": {`;
+    for (const [locale, html] of Object.entries(apiDoc.desc)) {
+      if (!html) continue;
+      // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
+      result += `"${locale}": (<section>${html}</section>),`;
+    }
+    result += `},`;
+  }
+  // Add parent components if available
+  if (apiDoc.parentComponents && apiDoc.parentComponents.length > 0) {
+    result += `"parentComponents": ${JSON.stringify(apiDoc.parentComponents)},`;
+  }
+  // Add children components if available
+  if (apiDoc.childrenComponents && apiDoc.childrenComponents.length > 0) {
+    result += `"childrenComponents": ${JSON.stringify(apiDoc.childrenComponents)},`;
   }
   result += `}`;
   return result;
@@ -217,12 +328,17 @@ async function main() {
 
   const projectReader = new ProjectDocReader();
 
+  // Build context map from all public components, not just the ones we're generating
+  // This ensures we can find all providers and consumers even if they're not being generated
+  const allComponentNames = projectReader.getPublicComponentNames();
+  const contextMap = buildContextMap(allComponentNames, projectReader);
+
   console.log('Generating API documentation for:', componentsToGenerate);
 
   for (const componentName of componentsToGenerate) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const apiDoc = await generateApiDoc(componentName, projectReader);
+      const apiDoc = await generateApiDoc(componentName, projectReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);
       writeApiDocFile(apiDoc, outputPath);
     } catch (error) {

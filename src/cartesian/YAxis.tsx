@@ -253,6 +253,9 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
   );
 };
 
+/**
+ * @provides CartesianLabelContext
+ */
 export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual);
 
 YAxis.displayName = 'YAxis';

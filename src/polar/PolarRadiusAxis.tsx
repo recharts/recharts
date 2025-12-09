@@ -235,6 +235,9 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
   );
 };
 
+/**
+ * @provides PolarLabelContext
+ */
 export function PolarRadiusAxis(outsideProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultPolarRadiusAxisProps);
   return (
