@@ -27,6 +27,7 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { isNotNil } from '../util/DataUtils';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -36,7 +37,7 @@ const interpolationGenerator = (a: number, b: number) => {
 
 const centerY = (node: SankeyNode) => node.y + node.dy / 2;
 
-const getValue = (entry: LinkDataItem | SankeyNode): number => (entry && entry.value) || 0;
+const getValue = (entry: LinkDataItem | SankeyNode | undefined): number => (entry && entry.value) || 0;
 
 const getSumOfIds = (links: ReadonlyArray<LinkDataItem>, ids: number[]): number =>
   ids.reduce((result, id) => result + getValue(links[id]), 0);
@@ -48,7 +49,13 @@ const getSumWithWeightedSource = (
 ) =>
   ids.reduce((result, id) => {
     const link = links[id];
+    if (link == null) {
+      return result;
+    }
     const sourceNode = tree[link.source];
+    if (sourceNode == null) {
+      return result;
+    }
 
     return result + centerY(sourceNode) * getValue(links[id]);
   }, 0);
@@ -60,7 +67,13 @@ const getSumWithWeightedTarget = (
 ): number =>
   ids.reduce((result: number, id: number) => {
     const link = links[id];
+    if (link == null) {
+      return result;
+    }
     const targetNode = tree[link.target];
+    if (targetNode == null) {
+      return result;
+    }
 
     return result + centerY(targetNode) * getValue(links[id]);
   }, 0);
@@ -76,12 +89,12 @@ const searchTargetsAndSources = (links: LinkDataItem[], id: number) => {
   for (let i = 0, len = links.length; i < len; i++) {
     const link = links[i];
 
-    if (link.source === id) {
+    if (link?.source === id) {
       targetNodes.push(link.target);
       targetLinks.push(i);
     }
 
-    if (link.target === id) {
+    if (link?.target === id) {
       sourceNodes.push(link.source);
       sourceLinks.push(i);
     }
@@ -94,7 +107,11 @@ const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode) => {
   const { targetNodes } = curNode;
 
   for (let i = 0, len = targetNodes.length; i < len; i++) {
-    const target = tree[targetNodes[i]];
+    const targetNode = targetNodes[i];
+    if (targetNode == null) {
+      continue;
+    }
+    const target = tree[targetNode];
 
     if (target) {
       target.depth = Math.max(curNode.depth + 1, target.depth);
@@ -124,7 +141,7 @@ const getNodesTree = (
   for (let i = 0, len = tree.length; i < len; i++) {
     const node = tree[i];
 
-    if (!node.sourceNodes.length) {
+    if (node != null && !node.sourceNodes.length) {
       updateDepthOfTargets(tree, node);
     }
   }
@@ -134,6 +151,9 @@ const getNodesTree = (
     const childWidth = (width - nodeWidth) / maxDepth;
     for (let i = 0, len = tree.length; i < len; i++) {
       const node = tree[i];
+      if (node == null) {
+        continue;
+      }
 
       if (!node.targetNodes.length) {
         if (align === 'justify') {
@@ -153,12 +173,15 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
 
   for (let i = 0, len = tree.length; i < len; i++) {
     const node = tree[i];
+    if (node == null) {
+      continue;
+    }
 
     if (!result[node.depth]) {
       result[node.depth] = [];
     }
 
-    result[node.depth].push(node);
+    result[node.depth]?.push(node);
   }
 
   return result;
@@ -181,11 +204,17 @@ const updateYOfTree = (
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
     const nodes = depthTree[d];
+    if (nodes == null) {
+      continue;
+    }
 
     if (verticalAlign === 'top') {
       let currentY = 0;
       for (let i = 0, len = nodes.length; i < len; i++) {
         const node = nodes[i];
+        if (node == null) {
+          continue;
+        }
 
         node.dy = node.value * yRatio;
         node.y = currentY;
@@ -194,6 +223,9 @@ const updateYOfTree = (
     } else {
       for (let i = 0, len = nodes.length; i < len; i++) {
         const node = nodes[i];
+        if (node == null) {
+          continue;
+        }
 
         node.y = i;
         node.dy = node.value * yRatio;
@@ -207,6 +239,9 @@ const updateYOfTree = (
 const resolveCollisions = (depthTree: SankeyNode[][], height: number, nodePadding: number, sort = true) => {
   for (let i = 0, len = depthTree.length; i < len; i++) {
     const nodes = depthTree[i];
+    if (nodes == null) {
+      continue;
+    }
     const n = nodes.length;
 
     // Sort by the value of y
@@ -217,6 +252,9 @@ const resolveCollisions = (depthTree: SankeyNode[][], height: number, nodePaddin
     let y0 = 0;
     for (let j = 0; j < n; j++) {
       const node = nodes[j];
+      if (node == null) {
+        continue;
+      }
       const dy = y0 - node.y;
 
       if (dy > 0) {
@@ -229,6 +267,9 @@ const resolveCollisions = (depthTree: SankeyNode[][], height: number, nodePaddin
     y0 = height + nodePadding;
     for (let j = n - 1; j >= 0; j--) {
       const node = nodes[j];
+      if (node == null) {
+        continue;
+      }
       const dy = node.y + node.dy + nodePadding - y0;
 
       if (dy > 0) {
@@ -249,9 +290,15 @@ const relaxLeftToRight = (
 ) => {
   for (let i = 0, maxDepth = depthTree.length; i < maxDepth; i++) {
     const nodes = depthTree[i];
+    if (nodes == null) {
+      continue;
+    }
 
     for (let j = 0, len = nodes.length; j < len; j++) {
       const node = nodes[j];
+      if (node == null) {
+        continue;
+      }
 
       if (node.sourceLinks.length) {
         const sourceSum = getSumOfIds(links, node.sourceLinks);
@@ -275,9 +322,15 @@ const relaxRightToLeft = (
 ) => {
   for (let i = depthTree.length - 1; i >= 0; i--) {
     const nodes = depthTree[i];
+    if (nodes == null) {
+      continue;
+    }
 
     for (let j = 0, len = nodes.length; j < len; j++) {
       const node = nodes[j];
+      if (node == null) {
+        continue;
+      }
 
       if (node.targetLinks.length) {
         const targetSum = getSumOfIds(links, node.targetLinks);
@@ -293,14 +346,45 @@ const relaxRightToLeft = (
 const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
   for (let i = 0, len = tree.length; i < len; i++) {
     const node = tree[i];
+    if (node == null) {
+      continue;
+    }
     let sy = 0;
     let ty = 0;
 
-    node.targetLinks.sort((a, b) => tree[links[a].target].y - tree[links[b].target].y);
-    node.sourceLinks.sort((a, b) => tree[links[a].source].y - tree[links[b].source].y);
+    node.targetLinks.sort((a, b) => {
+      const targetA = links[a]?.target;
+      const targetB = links[b]?.target;
+      if (targetA == null || targetB == null) {
+        return 0;
+      }
+      const yA = tree[targetA]?.y;
+      const yB = tree[targetB]?.y;
+      if (yA == null || yB == null) {
+        return 0;
+      }
+      return yA - yB;
+    });
+    node.sourceLinks.sort((a, b) => {
+      const sourceA = links[a]?.source;
+      const sourceB = links[b]?.source;
+      if (sourceA == null || sourceB == null) {
+        return 0;
+      }
+      const yA = tree[sourceA]?.y;
+      const yB = tree[sourceB]?.y;
+      if (yA == null || yB == null) {
+        return 0;
+      }
+      return yA - yB;
+    });
 
     for (let j = 0, tLen = node.targetLinks.length; j < tLen; j++) {
-      const link = links[node.targetLinks[j]];
+      const targetLink = node.targetLinks[j];
+      if (targetLink == null) {
+        continue;
+      }
+      const link = links[targetLink];
 
       if (link) {
         // @ts-expect-error we should refactor this to immutable
@@ -310,7 +394,11 @@ const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
     }
 
     for (let j = 0, sLen = node.sourceLinks.length; j < sLen; j++) {
-      const link = links[node.sourceLinks[j]];
+      const sourceLink = node.sourceLinks[j];
+      if (sourceLink == null) {
+        continue;
+      }
+      const link = links[sourceLink];
 
       if (link) {
         // @ts-expect-error we should refactor this to immutable
@@ -587,10 +675,13 @@ const buildLinkProps = ({
   linkContent: SankeyLinkOptions | undefined;
   i: number;
   linkCurvature: number;
-}): LinkProps => {
+}): LinkProps | undefined => {
   const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
   const sourceNode = nodes[link.source];
   const targetNode = nodes[link.target];
+  if (sourceNode == null || targetNode == null) {
+    return undefined;
+  }
   const sourceX = sourceNode.x + sourceNode.dx + left;
   const targetX = targetNode.x + left;
   const interpolationFunc = interpolationGenerator(sourceX, targetX);
@@ -692,6 +783,9 @@ function AllSankeyLinkElements({
     <Layer className="recharts-sankey-links" key="recharts-sankey-links">
       {links.map((link: SankeyLink, i: number) => {
         const linkProps = modifiedLinks[i];
+        if (linkProps == null) {
+          return null;
+        }
         return (
           <SankeyLinkElement
             key={`link-${link.source}-${link.target}-${link.value}`}
@@ -897,9 +991,11 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
 
     const top = margin.top || 0;
     const left = margin.left || 0;
-    const newModifiedLinks = computed.links.map((l, i) => {
-      return buildLinkProps({ link: l, nodes: computed.nodes, i, top, left, linkContent: link, linkCurvature });
-    });
+    const newModifiedLinks = computed.links
+      .map((l, i) => {
+        return buildLinkProps({ link: l, nodes: computed.nodes, i, top, left, linkContent: link, linkCurvature });
+      })
+      .filter(isNotNil);
 
     const newModifiedNodes = computed.nodes.map((n, i) => {
       return buildNodeProps({

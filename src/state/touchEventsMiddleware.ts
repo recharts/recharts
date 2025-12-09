@@ -26,11 +26,15 @@ touchEventMiddleware.startListening({
     const state = listenerApi.getState();
     const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
     if (tooltipEventType === 'axis') {
+      const touch = touchEvent.touches[0];
+      if (touch == null) {
+        return;
+      }
       const activeProps = selectActivePropsFromChartPointer(
         state,
         getChartPointer({
-          clientX: touchEvent.touches[0].clientX,
-          clientY: touchEvent.touches[0].clientY,
+          clientX: touch.clientX,
+          clientY: touch.clientY,
           currentTarget: touchEvent.currentTarget,
         }),
       );
@@ -45,7 +49,7 @@ touchEventMiddleware.startListening({
       }
     } else if (tooltipEventType === 'item') {
       const touch = touchEvent.touches[0];
-      if (document.elementFromPoint == null) {
+      if (document.elementFromPoint == null || touch == null) {
         return;
       }
       const target = document.elementFromPoint(touch.clientX, touch.clientY);

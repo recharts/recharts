@@ -55,9 +55,10 @@ import {
   isNotNil,
 } from '../../util/DataUtils';
 import {
+  BaseCartesianGraphicalItemSettings,
+  BasePolarGraphicalItemSettings,
   CartesianGraphicalItemSettings,
   GraphicalItemSettings,
-  PolarGraphicalItemSettings,
 } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -296,7 +297,7 @@ export const selectHasBar = (state: RechartsRootState): boolean =>
  * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
  */
 export function itemAxisPredicate(axisType: AllAxisTypes, axisId: AxisId) {
-  return (item: CartesianGraphicalItemSettings | PolarGraphicalItemSettings) => {
+  return (item: BaseCartesianGraphicalItemSettings | BasePolarGraphicalItemSettings) => {
     switch (axisType) {
       case 'xAxis':
         // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
@@ -933,9 +934,12 @@ export const selectReferenceLinesByAxis: (
 );
 
 export const combineDotsDomain = (
-  dots: ReadonlyArray<ReferenceDotSettings>,
+  dots: ReadonlyArray<ReferenceDotSettings> | undefined,
   axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
+  if (dots == null) {
+    return undefined;
+  }
   const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
   if (allCoords.length === 0) {
     return undefined;
@@ -946,9 +950,12 @@ export const combineDotsDomain = (
 const selectReferenceDotsDomain = createSelector(selectReferenceDotsByAxis, pickAxisType, combineDotsDomain);
 
 export const combineAreasDomain = (
-  areas: ReadonlyArray<ReferenceAreaSettings>,
+  areas: ReadonlyArray<ReferenceAreaSettings> | undefined,
   axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
+  if (areas == null) {
+    return undefined;
+  }
   const allCoords = onlyAllowNumbers(
     areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
   );
@@ -983,9 +990,12 @@ function extractYCoordinates(line: ReferenceLineSettings): ReadonlyArray<number>
 }
 
 export const combineLinesDomain = (
-  lines: ReadonlyArray<ReferenceLineSettings>,
+  lines: ReadonlyArray<ReferenceLineSettings> | undefined,
   axisType: RenderableAxisType,
 ): NumberDomain | undefined => {
+  if (lines == null) {
+    return undefined;
+  }
   const allCoords: ReadonlyArray<number> = lines.flatMap(line =>
     axisType === 'xAxis' ? extractXCoordinates(line) : extractYCoordinates(line),
   );
