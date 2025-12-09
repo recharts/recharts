@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
 
-import { selectZIndexPortalId, selectAllRegisteredZIndexes } from '../../src/zIndex/zIndexSelectors';
+import { selectZIndexPortalElement, selectAllRegisteredZIndexes } from '../../src/zIndex/zIndexSelectors';
 import {
   registerZIndexPortal,
-  registerZIndexPortalId,
+  registerZIndexPortalElement,
   unregisterZIndexPortal,
-  unregisterZIndexPortalId,
+  unregisterZIndexPortalElement,
 } from '../../src/state/zIndexSlice';
 
 describe('zIndexSelectors', () => {
@@ -15,38 +15,42 @@ describe('zIndexSelectors', () => {
     selectAllRegisteredZIndexes.memoizedResultFunc.clearCache();
   });
 
-  describe('selectZIndexPortalId', () => {
-    it('should select zIndex portal IDs correctly', () => {
+  describe('selectZIndexPortalElement', () => {
+    it('should select zIndex portal elements correctly', () => {
       const store = createRechartsStore();
 
-      expect(selectZIndexPortalId(store.getState(), 1, false)).toBeUndefined();
-      expect(selectZIndexPortalId(store.getState(), -1, false)).toBeUndefined();
+      expect(selectZIndexPortalElement(store.getState(), 1, false)).toBeUndefined();
+      expect(selectZIndexPortalElement(store.getState(), -1, false)).toBeUndefined();
 
-      store.dispatch(registerZIndexPortalId({ zIndex: 1, elementId: 'portal-1', isPanorama: false }));
-      store.dispatch(registerZIndexPortalId({ zIndex: -1, elementId: 'portal--1', isPanorama: false }));
+      const element1 = document.createElement('div');
+      const element2 = document.createElement('div');
+      store.dispatch(registerZIndexPortalElement({ zIndex: 1, element: element1, isPanorama: false }));
+      store.dispatch(registerZIndexPortalElement({ zIndex: -1, element: element2, isPanorama: false }));
 
-      expect(selectZIndexPortalId(store.getState(), 1, false)).toBe('portal-1');
-      expect(selectZIndexPortalId(store.getState(), -1, false)).toBe('portal--1');
+      expect(selectZIndexPortalElement(store.getState(), 1, false)).toBe(element1);
+      expect(selectZIndexPortalElement(store.getState(), -1, false)).toBe(element2);
 
-      store.dispatch(unregisterZIndexPortalId({ zIndex: 1, isPanorama: false }));
-      expect(selectZIndexPortalId(store.getState(), 1, false)).toBeUndefined();
-      expect(selectZIndexPortalId(store.getState(), -1, false)).toBe('portal--1');
+      store.dispatch(unregisterZIndexPortalElement({ zIndex: 1, isPanorama: false }));
+      expect(selectZIndexPortalElement(store.getState(), 1, false)).toBeUndefined();
+      expect(selectZIndexPortalElement(store.getState(), -1, false)).toBe(element2);
     });
 
     it('should return undefined for undefined zIndex', () => {
       const store = createRechartsStore();
-      expect(selectZIndexPortalId(store.getState(), undefined, true)).toBeUndefined();
-      expect(selectZIndexPortalId(store.getState(), undefined, false)).toBeUndefined();
+      expect(selectZIndexPortalElement(store.getState(), undefined, true)).toBeUndefined();
+      expect(selectZIndexPortalElement(store.getState(), undefined, false)).toBeUndefined();
     });
 
     it('should differentiate between panorama and main chart', () => {
       const store = createRechartsStore();
 
-      store.dispatch(registerZIndexPortalId({ zIndex: 10, elementId: 'portal-main', isPanorama: false }));
-      store.dispatch(registerZIndexPortalId({ zIndex: 10, elementId: 'portal-panorama', isPanorama: true }));
+      const mainElement = document.createElement('div');
+      const panoramaElement = document.createElement('div');
+      store.dispatch(registerZIndexPortalElement({ zIndex: 10, element: mainElement, isPanorama: false }));
+      store.dispatch(registerZIndexPortalElement({ zIndex: 10, element: panoramaElement, isPanorama: true }));
 
-      expect(selectZIndexPortalId(store.getState(), 10, false)).toBe('portal-main');
-      expect(selectZIndexPortalId(store.getState(), 10, true)).toBe('portal-panorama');
+      expect(selectZIndexPortalElement(store.getState(), 10, false)).toBe(mainElement);
+      expect(selectZIndexPortalElement(store.getState(), 10, true)).toBe(panoramaElement);
     });
   });
 
@@ -97,9 +101,11 @@ describe('zIndexSelectors', () => {
       expect(thirdSelection).not.toBe(firstSelection); // Different reference after state change
       expect(thirdSelection).toEqual([-100, -50, 5, 10, 15, 100, 200, 300, 400, 500, 600, 1000, 1100, 1200, 2000]);
 
-      // now, the portal element ID has been registered, but the zIndex list should remain the same
-      store.dispatch(registerZIndexPortalId({ zIndex: 5, elementId: 'portal-1', isPanorama: false }));
-      store.dispatch(registerZIndexPortalId({ zIndex: 5, elementId: 'portal-1-panorama', isPanorama: true }));
+      // now, the portal element has been registered, but the zIndex list should remain the same
+      const element1 = document.createElement('div');
+      const element2 = document.createElement('div');
+      store.dispatch(registerZIndexPortalElement({ zIndex: 5, element: element1, isPanorama: false }));
+      store.dispatch(registerZIndexPortalElement({ zIndex: 5, element: element2, isPanorama: true }));
       const fourthSelection = selectAllRegisteredZIndexes(store.getState());
       expect(fourthSelection).toBe(thirdSelection); // Same reference due to memoization
     });
@@ -118,22 +124,23 @@ describe('zIndexSelectors', () => {
       expect(secondSelection).toBe(firstSelection); // Should be memoized, no change
     });
 
-    it('should not affect zIndex list when only registering/unregistering portalId', () => {
+    it('should not affect zIndex list when only registering/unregistering portal element', () => {
       const store = createRechartsStore();
 
       const initialSelection = selectAllRegisteredZIndexes(store.getState());
       expect(initialSelection).toEqual([-100, -50, 100, 200, 300, 400, 500, 600, 1000, 1100, 1200, 2000]);
 
-      // Register a portalId for a default zIndex without registering the zIndex itself
-      store.dispatch(registerZIndexPortalId({ zIndex: 100, elementId: 'portal-100', isPanorama: false }));
+      // Register a portal element for a default zIndex without registering the zIndex itself
+      const element = document.createElement('div');
+      store.dispatch(registerZIndexPortalElement({ zIndex: 100, element, isPanorama: false }));
       const afterRegister = selectAllRegisteredZIndexes(store.getState());
       // The zIndex list should remain unchanged
       expect(afterRegister).toEqual([-100, -50, 100, 200, 300, 400, 500, 600, 1000, 1100, 1200, 2000]);
       // With resultEqualityCheck, the reference should be preserved when contents match
       expect(afterRegister).toBe(initialSelection);
 
-      // Unregister the portalId
-      store.dispatch(unregisterZIndexPortalId({ zIndex: 100, isPanorama: false }));
+      // Unregister the portal element
+      store.dispatch(unregisterZIndexPortalElement({ zIndex: 100, isPanorama: false }));
       const afterUnregister = selectAllRegisteredZIndexes(store.getState());
       // The zIndex list should still remain unchanged
       expect(afterUnregister).toEqual([-100, -50, 100, 200, 300, 400, 500, 600, 1000, 1100, 1200, 2000]);

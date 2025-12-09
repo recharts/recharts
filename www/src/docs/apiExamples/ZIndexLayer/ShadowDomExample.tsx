@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Legend, Pie, PieChart, Tooltip } from 'recharts';
 
+// #region shadow DOM wrapper component, and data
 interface ShadowDomWrapperProps {
   children: React.ReactNode;
 }
@@ -47,8 +48,9 @@ const pieData = [
   { name: 'Tablet', value: 200, fill: '#FFBB28' },
   { name: 'Other', value: 100, fill: '#FF8042' },
 ];
+// #endregion
 
-export default function ShadowDomExample() {
+export default function ShadowDomExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
     <ShadowDomWrapper>
       <PieChart width={380} height={300}>
@@ -61,6 +63,7 @@ export default function ShadowDomExample() {
           outerRadius={100}
           fill="#8884d8"
           dataKey="value"
+          isAnimationActive={isAnimationActive}
         />
         <Tooltip />
         <Legend />

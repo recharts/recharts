@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { registerZIndexPortalId, unregisterZIndexPortalId } from '../state/zIndexSlice';
-import { useUniqueId } from '../util/useUniqueId';
+import { registerZIndexPortalElement, unregisterZIndexPortalElement } from '../state/zIndexSlice';
 import { selectAllRegisteredZIndexes } from './zIndexSelectors';
 
 function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: boolean }) {
-  const prefix = isPanorama ? `recharts-zindex-panorama-` : `recharts-zindex-`;
-  const portalId = useUniqueId(`${prefix}${zIndex}`);
+  const ref = useRef<SVGGElement>(null);
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(registerZIndexPortalId({ zIndex, elementId: portalId, isPanorama }));
+    if (ref.current) {
+      dispatch(registerZIndexPortalElement({ zIndex, element: ref.current, isPanorama }));
+    }
     return () => {
-      dispatch(unregisterZIndexPortalId({ zIndex, isPanorama }));
+      dispatch(unregisterZIndexPortalElement({ zIndex, isPanorama }));
     };
-  }, [dispatch, zIndex, portalId, isPanorama]);
+  }, [dispatch, zIndex, isPanorama]);
   // these g elements should not be tabbable
-  return <g tabIndex={-1} id={portalId} />;
+  return <g tabIndex={-1} ref={ref} />;
 }
 
 export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {

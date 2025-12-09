@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { noop } from '../util/DataUtils';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectZIndexPortalId } from './zIndexSelectors';
+import { selectZIndexPortalElement } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
 import { useIsInChartContext } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -87,30 +87,23 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
     };
   }, [dispatch, zIndex, shouldRenderInPortal]);
 
-  const portalId: string | undefined = useAppSelector(state => selectZIndexPortalId(state, zIndex, isPanorama));
+  const portalElement: Element | undefined = useAppSelector(state =>
+    selectZIndexPortalElement(state, zIndex, isPanorama),
+  );
 
   if (!shouldRenderInPortal) {
     // If no zIndex is provided or zIndex is 0, render normally without portals
     return children;
   }
 
-  if (!portalId) {
+  if (!portalElement) {
     /*
-     * If we don't have a portalId yet, this means that the registration
+     * If we don't have a portal element yet, this means that the registration
      * has not been processed yet by the ZIndexPortals component.
      * So here we render null and wait for the next render cycle.
      */
     return null;
   }
 
-  const zIndexPortal = document.getElementById(portalId);
-
-  if (zIndexPortal) {
-    return createPortal(children, zIndexPortal);
-  }
-  /*
-   * If the portal is not found, this means it has not been rendered yet.
-   * So here we render null and wait for the next render cycle.
-   */
-  return null;
+  return createPortal(children, portalElement);
 }
