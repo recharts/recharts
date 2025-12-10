@@ -1,5 +1,4 @@
-import { describe, it, expect } from 'vitest';
-
+import { describe, it, expect, expectTypeOf } from 'vitest';
 describe('isArray type', () => {
   it('should refine unknown to array', () => {
     const input: unknown = [1, 2, 3];
