@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { computeLinePoints, LinePointItem } from '../../cartesian/Line';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
-import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanoramaPosition4 } from './dataSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectAxisWithScale, selectTicksOfGraphicalItem, selectUnfilteredCartesianItems } from './axisSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis } from '../../util/ChartUtils';
@@ -79,7 +79,7 @@ export const selectLinePoints: (
     selectYAxisTicks,
     selectSynchronisedLineSettings,
     selectBandSize,
-    selectChartDataWithIndexesIfNotInPanorama,
+    selectChartDataWithIndexesIfNotInPanoramaPosition4,
   ],
   (
     layout,

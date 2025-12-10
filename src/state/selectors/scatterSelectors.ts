@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { computeScatterPoints, ScatterPointItem } from '../../cartesian/Scatter';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
-import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanoramaPosition4 } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import {
   selectAxisWithScale,
@@ -77,13 +77,13 @@ const pickCells = (
 
 const scatterChartDataSelector = (
   state: RechartsRootState,
-  xAxisId: AxisId,
-  yAxisId: AxisId,
+  _xAxisId: AxisId,
+  _yAxisId: AxisId,
   _zAxisId: AxisId,
   _id: GraphicalItemId,
   _cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
-): ChartDataState => selectChartDataWithIndexesIfNotInPanorama(state, xAxisId, yAxisId, isPanorama);
+): ChartDataState => selectChartDataWithIndexesIfNotInPanoramaPosition4(state, undefined, undefined, isPanorama);
 
 const selectSynchronisedScatterSettings: (
   state: RechartsRootState,

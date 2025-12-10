@@ -88,7 +88,7 @@ export const LegendPortal = {
               <Area type="monotone" dataKey="downloads" stroke="green" fill="green" fillOpacity={0.2} />
               <Tooltip
                 formatter={value => {
-                  return value.toLocaleString();
+                  return value?.toLocaleString();
                 }}
                 labelFormatter={value => new Date(value).toLocaleDateString()}
               />

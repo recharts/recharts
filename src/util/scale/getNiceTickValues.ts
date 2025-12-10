@@ -4,7 +4,7 @@
  * @date 2015-09-17
  */
 import Decimal from 'decimal.js-light';
-import { compose, range, map, reverse } from './util/utils';
+import { compose, range, map } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 import { NumberDomain } from '../types';
 
@@ -183,7 +183,7 @@ export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allow
         ? [cormin, ...range(0, tickCount - 1).map(() => Infinity)]
         : [...range(0, tickCount - 1).map(() => -Infinity), cormax];
 
-    return min > max ? reverse(values) : values;
+    return min > max ? values.reverse() : values;
   }
 
   if (cormin === cormax) {
@@ -195,7 +195,7 @@ export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allow
 
   const values = rangeStep(tickMin, tickMax.add(new Decimal(0.1).mul(step)), step);
 
-  return min > max ? reverse(values) : values;
+  return min > max ? values.reverse() : values;
 };
 
 /**
@@ -233,5 +233,5 @@ export const getTickValuesFixedDomain = ([min, max]: NumberDomain, tickCount: nu
     values = values.map(value => Math.round(value));
   }
 
-  return min > max ? reverse(values) : values;
+  return min > max ? values.reverse() : values;
 };

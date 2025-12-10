@@ -34,10 +34,21 @@ export const selectChartDataAndAlwaysIgnoreIndexes: (state: RechartsRootState) =
   },
 );
 
-export const selectChartDataWithIndexesIfNotInPanorama = (
+export const selectChartDataWithIndexesIfNotInPanoramaPosition4 = (
   state: RechartsRootState,
   _unused1: unknown,
   _unused2: unknown,
+  isPanorama: boolean,
+): ChartDataState => {
+  if (isPanorama) {
+    return selectChartDataAndAlwaysIgnoreIndexes(state);
+  }
+  return selectChartDataWithIndexes(state);
+};
+
+export const selectChartDataWithIndexesIfNotInPanoramaPosition3 = (
+  state: RechartsRootState,
+  _unused1: unknown,
   isPanorama: boolean,
 ): ChartDataState => {
   if (isPanorama) {

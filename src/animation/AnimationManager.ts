@@ -1,7 +1,7 @@
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 import { StartAnimationFunction } from './configUpdate';
 
-export type ReactSmoothStyle = string | object;
+export type ReactSmoothStyle = string | Record<string, unknown>;
 
 /**
  * Represents a single item in the ReactSmoothQueue.

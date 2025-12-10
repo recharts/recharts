@@ -72,12 +72,3 @@ export const compose = (...args: any[]) => {
 
   return (...composeArgs: any[]) => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
 };
-
-export const reverse = <T extends any[] | string>(arr: T): T => {
-  if (Array.isArray(arr)) {
-    return arr.reverse() as T;
-  }
-
-  // can be string
-  return arr.split('').reverse().join('') as T;
-};

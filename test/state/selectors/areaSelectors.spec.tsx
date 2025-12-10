@@ -9,8 +9,8 @@ import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('selectArea', () => {
-  shouldReturnUndefinedOutOfContext(state => selectArea(state, 0, 0, false, 'area-0'));
-  shouldReturnFromInitialState(state => selectArea(state, 0, 0, false, 'area-0'), undefined);
+  shouldReturnUndefinedOutOfContext(state => selectArea(state, 'area-0', false));
+  shouldReturnFromInitialState(state => selectArea(state, 'area-0', false), undefined);
 
   describe('when in Area chart', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -22,7 +22,7 @@ describe('selectArea', () => {
     ));
 
     it('should return points and baseline and inRange, and stay stable after re-render', () => {
-      const { spy, rerenderSameComponent } = renderTestCase(state => selectArea(state, 0, 0, false, 'area-0'));
+      const { spy, rerenderSameComponent } = renderTestCase(state => selectArea(state, 'area-0', false));
       const expectedResult: ComputedArea = {
         baseLine: 365,
         isRange: false,
@@ -133,7 +133,7 @@ describe('selectArea', () => {
 
     const renderTestCase = createSelectorTestCase(({ children }) => <TestCase>{children}</TestCase>);
     it('should select one more time', () => {
-      const { container, spy } = renderTestCase(state => selectArea(state, 0, 0, false, 'area-0'));
+      const { container, spy } = renderTestCase(state => selectArea(state, 'area-0', false));
       const expectedResultBefore: ComputedArea = {
         baseLine: 365,
         isRange: false,

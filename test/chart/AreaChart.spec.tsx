@@ -14,7 +14,6 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
 import { rangeData } from '../../storybook/stories/data/Page';
-import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('AreaChart', () => {
@@ -174,22 +173,7 @@ describe('AreaChart', () => {
     const areaSpy = vi.fn();
     const xAxisTicksSpy = vi.fn();
     const Comp = (): null => {
-      const areaSettings: AreaSettings = {
-        hide: false,
-        isPanorama: false,
-        type: 'area',
-        xAxisId: 0,
-        yAxisId: 0,
-        zAxisId: 0,
-        id: 'area-0',
-        barSize: undefined,
-        baseValue: undefined,
-        stackId: '1',
-        dataKey: 'uv',
-        connectNulls: false,
-        data: undefined,
-      };
-      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings.id)));
+      areaSpy(useAppSelector(state => selectArea(state, 'area-1', false)));
       xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
       return null;
     };
@@ -209,7 +193,7 @@ describe('AreaChart', () => {
       >
         <XAxis dataKey="name" />
         <YAxis tickFormatter={toPercent} />
-        <Area dataKey="uv" stackId="1" />
+        <Area dataKey="uv" stackId="1" id="area-1" />
         <Area dataKey="pv" stackId="1" />
         <Area dataKey="amt" stackId="1" />
         <Customized component={<Comp />} />
@@ -262,119 +246,90 @@ describe('AreaChart', () => {
     ]);
     expect(xAxisTicksSpy).toHaveBeenCalledTimes(2);
 
-    // For some reason this assertion always fails but never shows what's the difference.
-    // expect(areaSpy).toHaveBeenLastCalledWith({
-    //   baseLine: [
-    //     {
-    //       x: 80,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 145,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 210,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 275,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 340,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 405,
-    //       y: 350,
-    //     },
-    //     {
-    //       x: 470,
-    //       y: 350,
-    //     },
-    //   ],
-    //   isRange: false,
-    //   points: [
-    //     {
-    //       payload: {
-    //         amt: 1400,
-    //         name: 'Page A',
-    //         pv: 800,
-    //         uv: 590,
-    //       },
-    //       value: [0, 0.2114695340501792],
-    //       x: 80,
-    //       y: 278.10035842293905,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 1400,
-    //         name: 'Page B',
-    //         pv: 800,
-    //         uv: 590,
-    //       },
-    //       value: [0, 0.2114695340501792],
-    //       x: 145,
-    //       y: 278.10035842293905,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 1506,
-    //         name: 'Page C',
-    //         pv: 967,
-    //         uv: 868,
-    //       },
-    //       value: [0, 0.25980245435498356],
-    //       x: 210,
-    //       y: 261.6671655193056,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 989,
-    //         name: 'Page D',
-    //         pv: 1098,
-    //         uv: 1397,
-    //       },
-    //       value: [0, 0.40097588978185994],
-    //       x: 275,
-    //       y: 213.66819747416764,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 1228,
-    //         name: 'Page E',
-    //         pv: 1200,
-    //         uv: 1480,
-    //       },
-    //       value: [0, 0.37871033776867963],
-    //       x: 340,
-    //       y: 221.23848515864896,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 1100,
-    //         name: 'Page F',
-    //         pv: 1108,
-    //         uv: 1520,
-    //       },
-    //       value: [0, 0.40772532188841204],
-    //       x: 405,
-    //       y: 211.3733905579399,
-    //     },
-    //     {
-    //       payload: {
-    //         amt: 1700,
-    //         name: 'Page G',
-    //         pv: 680,
-    //         uv: 1400,
-    //       },
-    //       value: [0, 0.37037037037037035],
-    //       x: 470,
-    //       y: 224.07407407407408,
-    //     },
-    //   ],
-    // });
+    expect(areaSpy).toHaveBeenLastCalledWith({
+      baseLine: [
+        {
+          payload: { amt: 1400, name: 'Page A', pv: 800, uv: 590 },
+          x: 80,
+          y: 350,
+        },
+        {
+          payload: { amt: 1400, name: 'Page B', pv: 800, uv: 590 },
+          x: 145,
+          y: 350,
+        },
+        {
+          payload: { amt: 1506, name: 'Page C', pv: 967, uv: 868 },
+          x: 210,
+          y: 350,
+        },
+        {
+          payload: { amt: 989, name: 'Page D', pv: 1098, uv: 1397 },
+          x: 275,
+          y: 350,
+        },
+        {
+          payload: { amt: 1228, name: 'Page E', pv: 1200, uv: 1480 },
+          x: 340,
+          y: 350,
+        },
+        {
+          payload: { amt: 1100, name: 'Page F', pv: 1108, uv: 1520 },
+          x: 405,
+          y: 350,
+        },
+        {
+          payload: { amt: 1700, name: 'Page G', pv: 680, uv: 1400 },
+          x: 470,
+          y: 350,
+        },
+      ],
+      isRange: false,
+      points: [
+        {
+          payload: { amt: 1400, name: 'Page A', pv: 800, uv: 590 },
+          value: [0, 0.2114695340501792],
+          x: 80,
+          y: 278.10035842293905,
+        },
+        {
+          payload: { amt: 1400, name: 'Page B', pv: 800, uv: 590 },
+          value: [0, 0.2114695340501792],
+          x: 145,
+          y: 278.10035842293905,
+        },
+        {
+          payload: { amt: 1506, name: 'Page C', pv: 967, uv: 868 },
+          value: [0, 0.25980245435498356],
+          x: 210,
+          y: 261.6671655193056,
+        },
+        {
+          payload: { amt: 989, name: 'Page D', pv: 1098, uv: 1397 },
+          value: [0, 0.40097588978185994],
+          x: 275,
+          y: 213.66819747416764,
+        },
+        {
+          payload: { amt: 1228, name: 'Page E', pv: 1200, uv: 1480 },
+          value: [0, 0.37871033776867963],
+          x: 340,
+          y: 221.23848515864896,
+        },
+        {
+          payload: { amt: 1100, name: 'Page F', pv: 1108, uv: 1520 },
+          value: [0, 0.40772532188841204],
+          x: 405,
+          y: 211.3733905579399,
+        },
+        {
+          payload: { amt: 1700, name: 'Page G', pv: 680, uv: 1400 },
+          value: [0, 0.37037037037037035],
+          x: 470,
+          y: 224.07407407407408,
+        },
+      ],
+    });
 
     expectAreaCurve(container, [
       {
@@ -402,23 +357,7 @@ describe('AreaChart', () => {
     const areaSpy = vi.fn();
     const xAxisTicksSpy = vi.fn();
     const Comp = (): null => {
-      const areaSettings: AreaSettings = {
-        barSize: undefined,
-        baseValue: undefined,
-        connectNulls: false,
-        data: undefined,
-        dataKey: 'uv',
-        hide: false,
-        id: 'area-0',
-        isPanorama: false,
-        stackId: '1',
-        type: 'area',
-        xAxisId: 0,
-        yAxisId: 0,
-        zAxisId: 0,
-      };
-
-      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings.id)));
+      areaSpy(useAppSelector(state => selectArea(state, 'area-1', false)));
       xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
       return null;
     };
@@ -426,7 +365,7 @@ describe('AreaChart', () => {
     const { container } = render(
       <AreaChart width={500} height={400} data={dataWithNumberAsKey}>
         <XAxis type="number" dataKey="xKey" domain={['dataMin', 'dataMax']} />
-        <Area dataKey="uv" stackId="1" />
+        <Area dataKey="uv" stackId="1" id="area-1" />
         <Area dataKey="pv" stackId="1" />
         <Customized component={<Comp />} />
       </AreaChart>,
@@ -474,34 +413,92 @@ describe('AreaChart', () => {
         d: 'M5,264.2L103,189.788L201,303.872L299,5L397,214.304L495,185.396',
       },
     ]);
+
+    expectLastCalledWith(areaSpy, {
+      baseLine: [
+        {
+          payload: { pv: 2400, uv: 400, xKey: 4000 },
+          x: 5,
+          y: 365,
+        },
+        {
+          payload: { pv: 4567, uv: 300, xKey: 6000 },
+          x: 103,
+          y: 365,
+        },
+        {
+          payload: { pv: 1398, uv: 300, xKey: 8000 },
+          x: 201,
+          y: 365,
+        },
+        {
+          payload: { pv: 9800, uv: 200, xKey: 10000 },
+          x: 299,
+          y: 365,
+        },
+        {
+          payload: { pv: 3908, uv: 278, xKey: 12000 },
+          x: 397,
+          y: 365,
+        },
+        {
+          payload: { pv: 4800, uv: 189, xKey: 14000 },
+          x: 495,
+          y: 365,
+        },
+      ],
+      isRange: false,
+      points: [
+        {
+          payload: { pv: 2400, uv: 400, xKey: 4000 },
+          value: [0, 400],
+          x: 5,
+          y: 350.59999999999997,
+        },
+        {
+          payload: { pv: 4567, uv: 300, xKey: 6000 },
+          value: [0, 300],
+          x: 103,
+          y: 354.2,
+        },
+        {
+          payload: { pv: 1398, uv: 300, xKey: 8000 },
+          value: [0, 300],
+          x: 201,
+          y: 354.2,
+        },
+        {
+          payload: { pv: 9800, uv: 200, xKey: 10000 },
+          value: [0, 200],
+          x: 299,
+          y: 357.8,
+        },
+        {
+          payload: { pv: 3908, uv: 278, xKey: 12000 },
+          value: [0, 278],
+          x: 397,
+          y: 354.992,
+        },
+        {
+          payload: { pv: 4800, uv: 189, xKey: 14000 },
+          value: [0, 189],
+          x: 495,
+          y: 358.19599999999997,
+        },
+      ],
+    });
   });
 
   test('renders a stacked chart when stackId is a number', () => {
-    const areaSettings: AreaSettings = {
-      hide: false,
-      isPanorama: false,
-      type: 'area',
-      xAxisId: 0,
-      yAxisId: 0,
-      zAxisId: 0,
-      id: 'area-0',
-      barSize: undefined,
-      baseValue: undefined,
-      stackId: '1',
-      dataKey: 'uv',
-      connectNulls: false,
-      data: undefined,
-    };
-
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <AreaChart width={500} height={400} data={pageData}>
-        <Area dataKey="uv" stackId={areaSettings.stackId} />
-        <Area dataKey="pv" stackId={areaSettings.stackId} />
+        <Area dataKey="uv" stackId="1" id="area-0" />
+        <Area dataKey="pv" stackId="1" />
         {children}
       </AreaChart>
     ));
 
-    const { container } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings.id));
+    const { container, spy } = renderTestCase(state => selectArea(state, 'area-0', false));
 
     // if number stackId breaks this will return an empty array
     expectAreaCurve(container, [
@@ -512,6 +509,91 @@ describe('AreaChart', () => {
         d: 'M5,201.393L86.667,201.393L168.333,139.411L250,47.482L331.667,21.714L413.333,28.957L495,105.286',
       },
     ]);
+
+    expectLastCalledWith(spy, {
+      baseLine: [
+        {
+          payload: { amt: 1400, name: 'Page A', pv: 800, uv: 590 },
+          x: 5,
+          y: 395,
+        },
+        {
+          payload: { amt: 1400, name: 'Page B', pv: 800, uv: 590 },
+          x: 86.66666666666667,
+          y: 395,
+        },
+        {
+          payload: { amt: 1506, name: 'Page C', pv: 967, uv: 868 },
+          x: 168.33333333333334,
+          y: 395,
+        },
+        {
+          payload: { amt: 989, name: 'Page D', pv: 1098, uv: 1397 },
+          x: 250,
+          y: 395,
+        },
+        {
+          payload: { amt: 1228, name: 'Page E', pv: 1200, uv: 1480 },
+          x: 331.6666666666667,
+          y: 395,
+        },
+        {
+          payload: { amt: 1100, name: 'Page F', pv: 1108, uv: 1520 },
+          x: 413.33333333333337,
+          y: 395,
+        },
+        {
+          payload: { amt: 1700, name: 'Page G', pv: 680, uv: 1400 },
+          x: 495,
+          y: 395,
+        },
+      ],
+      isRange: false,
+      points: [
+        {
+          payload: { amt: 1400, name: 'Page A', pv: 800, uv: 590 },
+          value: [0, 590],
+          x: 5,
+          y: 312.82142857142856,
+        },
+        {
+          payload: { amt: 1400, name: 'Page B', pv: 800, uv: 590 },
+          value: [0, 590],
+          x: 86.66666666666667,
+          y: 312.82142857142856,
+        },
+        {
+          payload: { amt: 1506, name: 'Page C', pv: 967, uv: 868 },
+          value: [0, 868],
+          x: 168.33333333333334,
+          y: 274.09999999999997,
+        },
+        {
+          payload: { amt: 989, name: 'Page D', pv: 1098, uv: 1397 },
+          value: [0, 1397],
+          x: 250,
+          y: 200.41785714285714,
+        },
+        {
+          payload: { amt: 1228, name: 'Page E', pv: 1200, uv: 1480 },
+          value: [0, 1480],
+          x: 331.6666666666667,
+          y: 188.85714285714286,
+        },
+        {
+          payload: { amt: 1100, name: 'Page F', pv: 1108, uv: 1520 },
+          value: [0, 1520],
+          x: 413.33333333333337,
+          y: 183.2857142857143,
+        },
+        {
+          payload: { amt: 1700, name: 'Page G', pv: 680, uv: 1400 },
+          value: [0, 1400],
+          x: 495,
+          y: 200,
+        },
+      ],
+    });
   });
 
   test('Renders dots and labels when dot is set to true', () => {

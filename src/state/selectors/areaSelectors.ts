@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Series } from 'victory-vendor/d3-shape';
+import { SeriesPoint } from 'victory-vendor/d3-shape';
 import { NullableCoordinate } from '../../util/types';
 import { computeArea } from '../../cartesian/Area';
 import {
@@ -11,39 +11,40 @@ import {
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanoramaPosition3 } from './dataSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
-import { StackDataPoint, StackGroup, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
+import { StackDataPoint, StackGroup, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { AreaSettings } from '../types/AreaSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectChartBaseValue } from './rootPropsSelectors';
+import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
   y: number | null;
-  value?: number | number[];
+  value?: [number, number];
   payload?: any;
 }
 
 export type ComputedArea = {
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: number | NullableCoordinate[];
+  baseLine: number | ReadonlyArray<AreaPointItem>;
   isRange: boolean;
 };
 
-const selectXAxisWithScale = (state: RechartsRootState, xAxisId: AxisId, _yAxisId: AxisId, isPanorama: boolean) =>
-  selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
+const selectXAxisWithScale = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
+  selectAxisWithScale(state, 'xAxis', selectXAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
-const selectXAxisTicks = (state: RechartsRootState, xAxisId: AxisId, _yAxisId: AxisId, isPanorama: boolean) =>
-  selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
+const selectXAxisTicks = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
+  selectTicksOfGraphicalItem(state, 'xAxis', selectYAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
-const selectYAxisWithScale = (state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId, isPanorama: boolean) =>
-  selectAxisWithScale(state, 'yAxis', yAxisId, isPanorama);
+const selectYAxisWithScale = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
+  selectAxisWithScale(state, 'yAxis', selectYAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
-const selectYAxisTicks = (state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId, isPanorama: boolean) =>
-  selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
+const selectYAxisTicks = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
+  selectTicksOfGraphicalItem(state, 'yAxis', selectYAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
 const selectBandSize = createSelector(
   [selectChartLayout, selectXAxisWithScale, selectYAxisWithScale, selectXAxisTicks, selectYAxisTicks],
@@ -55,13 +56,7 @@ const selectBandSize = createSelector(
   },
 );
 
-const pickAreaId = (
-  _state: RechartsRootState,
-  _xAxisId: AxisId,
-  _yAxisId: AxisId,
-  _isPanorama: boolean,
-  id: GraphicalItemId,
-): GraphicalItemId => id;
+const pickAreaId = (_state: RechartsRootState, id: GraphicalItemId): GraphicalItemId => id;
 
 /*
  * There is a race condition problem because we read some data from props and some from the state.
@@ -74,53 +69,71 @@ const pickAreaId = (
  */
 const selectSynchronisedAreaSettings: (
   state: RechartsRootState,
-  xAxisId: AxisId,
-  yAxisId: AxisId,
-  isPanorama: boolean,
   id: GraphicalItemId,
+  isPanorama: boolean,
 ) => AreaSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickAreaId],
   (graphicalItems, id: GraphicalItemId) =>
     graphicalItems.filter(item => item.type === 'area').find(item => item.id === id),
 );
 
-export const selectGraphicalItemStackedData = (
-  state: RechartsRootState,
-  xAxisId: AxisId,
-  yAxisId: AxisId,
-  isPanorama: boolean,
-  id: GraphicalItemId,
-) => {
-  const areaSettings = selectSynchronisedAreaSettings(state, xAxisId, yAxisId, isPanorama, id);
-  if (areaSettings == null) {
-    return undefined;
-  }
+const selectNumericalAxisType = (state: RechartsRootState): 'xAxis' | 'yAxis' => {
   const layout = selectChartLayout(state);
   const isXAxisCategorical = isCategoricalAxis(layout, 'xAxis');
-  let stackGroups: Record<StackId, StackGroup> | undefined;
-  if (isXAxisCategorical) {
-    stackGroups = selectStackGroups(state, 'yAxis', yAxisId, isPanorama);
-  } else {
-    stackGroups = selectStackGroups(state, 'xAxis', xAxisId, isPanorama);
-  }
-  if (stackGroups == null) {
-    return undefined;
-  }
-  const { stackId } = areaSettings;
-  const stackSeriesIdentifier: StackSeriesIdentifier | undefined = getStackSeriesIdentifier(areaSettings);
-  if (stackId == null || stackSeriesIdentifier == null) {
-    return undefined;
-  }
-  const groups: ReadonlyArray<Series<StackDataPoint, StackSeriesIdentifier>> = stackGroups[stackId]?.stackedData;
-  return groups?.find(v => v.key === stackSeriesIdentifier);
+  return isXAxisCategorical ? 'yAxis' : 'xAxis';
 };
+
+const selectNumericalAxisIdFromGraphicalItemId = (
+  state: RechartsRootState,
+  graphicalItemId: GraphicalItemId,
+): AxisId => {
+  const axisType = selectNumericalAxisType(state);
+  if (axisType === 'yAxis') {
+    return selectYAxisIdFromGraphicalItemId(state, graphicalItemId);
+  }
+  return selectXAxisIdFromGraphicalItemId(state, graphicalItemId);
+};
+
+const selectNumericalAxisStackGroups = (
+  state: RechartsRootState,
+  graphicalItemId: GraphicalItemId,
+  isPanorama: boolean,
+): Record<StackId, StackGroup> | undefined =>
+  selectStackGroups(
+    state,
+    selectNumericalAxisType(state),
+    selectNumericalAxisIdFromGraphicalItemId(state, graphicalItemId),
+    isPanorama,
+  );
+
+export const selectGraphicalItemStackedData: (
+  state: RechartsRootState,
+  id: GraphicalItemId,
+  isPanorama: boolean,
+) => ReadonlyArray<StackDataPoint> | undefined = createSelector(
+  [selectSynchronisedAreaSettings, selectNumericalAxisStackGroups],
+  (areaSettings: AreaSettings | undefined, stackGroups: Record<StackId, StackGroup> | undefined) => {
+    if (areaSettings == null || stackGroups == null) {
+      return undefined;
+    }
+    const { stackId } = areaSettings;
+    const stackSeriesIdentifier: StackSeriesIdentifier | undefined = getStackSeriesIdentifier(areaSettings);
+    if (stackId == null || stackSeriesIdentifier == null) {
+      return undefined;
+    }
+    const groups: ReadonlyArray<StackSeries> = stackGroups[stackId]?.stackedData;
+    const found: StackSeries | undefined = groups?.find(v => v.key === stackSeriesIdentifier);
+    if (found == null) {
+      return undefined;
+    }
+    return found.map((item: SeriesPoint<StackDataPoint>): StackDataPoint => [item[0], item[1]]);
+  },
+);
 
 export const selectArea: (
   state: RechartsRootState,
-  xAxisId: AxisId,
-  yAxisId: AxisId,
-  isPanorama: boolean,
   id: GraphicalItemId,
+  isPanorama: boolean,
 ) => ComputedArea | undefined = createSelector(
   [
     selectChartLayout,
@@ -129,7 +142,7 @@ export const selectArea: (
     selectXAxisTicks,
     selectYAxisTicks,
     selectGraphicalItemStackedData,
-    selectChartDataWithIndexesIfNotInPanorama,
+    selectChartDataWithIndexesIfNotInPanoramaPosition3,
     selectBandSize,
     selectSynchronisedAreaSettings,
     selectChartBaseValue,
@@ -140,7 +153,7 @@ export const selectArea: (
     yAxis,
     xAxisTicks,
     yAxisTicks,
-    stackedData,
+    stackedData: ReadonlyArray<StackDataPoint> | undefined,
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,
     areaSettings,

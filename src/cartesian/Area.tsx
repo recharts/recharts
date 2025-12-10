@@ -71,6 +71,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { StackDataPoint } from '../util/stacks/stackTypes';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -839,8 +840,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
-  const { points, isRange, baseLine } =
-    useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, props.id)) ?? {};
+  const { points, isRange, baseLine } = useAppSelector(state => selectArea(state, props.id, isPanorama)) ?? {};
   const plotArea = usePlotArea();
 
   if ((layout !== 'horizontal' && layout !== 'vertical') || plotArea == null) {
@@ -946,7 +946,7 @@ export function computeArea({
   bandSize,
 }: {
   areaSettings: AreaSettings;
-  stackedData: number[][] | undefined;
+  stackedData: ReadonlyArray<StackDataPoint> | undefined;
   layout: 'horizontal' | 'vertical';
   chartBaseValue: BaseValue | undefined;
   xAxis: BaseAxisWithScale;
@@ -963,21 +963,24 @@ export function computeArea({
   let isRange = false;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
-    let value;
+    let valueAsArray: [number, number] | undefined;
 
     if (hasStack) {
-      value = stackedData[dataStartIndex + index];
+      valueAsArray = stackedData[dataStartIndex + index];
     } else {
-      value = getValueByDataKey(entry, dataKey);
+      const rawValue = getValueByDataKey(entry, dataKey);
 
-      if (!Array.isArray(value)) {
-        value = [baseValue, value];
+      if (!Array.isArray(rawValue)) {
+        // @ts-expect-error getValueByDataKey is not checking its return value
+        valueAsArray = [baseValue, rawValue];
       } else {
+        // @ts-expect-error getValueByDataKey is not checking its return value
+        valueAsArray = rawValue;
         isRange = true;
       }
     }
 
-    const value1 = value?.[1] ?? null;
+    const value1 = valueAsArray?.[1] ?? null;
 
     const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
 
@@ -985,7 +988,7 @@ export function computeArea({
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
         y: isBreakPoint ? null : yAxis.scale(value1),
-        value,
+        value: valueAsArray,
         payload: entry,
       };
     }
@@ -993,7 +996,7 @@ export function computeArea({
     return {
       x: isBreakPoint ? null : xAxis.scale(value1),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-      value,
+      value: valueAsArray,
       payload: entry,
     };
   });

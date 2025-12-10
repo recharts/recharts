@@ -90,8 +90,8 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   const cache: Record<string, boolean> = {};
 
   for (let i = 0; i < len; i++) {
-    if (!cache[ary[i]]) {
-      cache[ary[i]] = true;
+    if (!cache[String(ary[i])]) {
+      cache[String(ary[i])] = true;
     } else {
       return true;
     }
