@@ -38,7 +38,7 @@ const selectXAxisWithScale = (state: RechartsRootState, graphicalItemId: Graphic
   selectAxisWithScale(state, 'xAxis', selectXAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
 const selectXAxisTicks = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
-  selectTicksOfGraphicalItem(state, 'xAxis', selectYAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
+  selectTicksOfGraphicalItem(state, 'xAxis', selectXAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
 
 const selectYAxisWithScale = (state: RechartsRootState, graphicalItemId: GraphicalItemId, isPanorama: boolean) =>
   selectAxisWithScale(state, 'yAxis', selectYAxisIdFromGraphicalItemId(state, graphicalItemId), isPanorama);
