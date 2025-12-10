@@ -5,16 +5,16 @@ import { arrayContentsAreEqualCheck } from '../state/selectors/arrayEqualityChec
 import { DefaultZIndexes } from './DefaultZIndexes';
 
 /**
- * Given a zIndex, returns the corresponding portal element ID.
+ * Given a zIndex, returns the corresponding portal element reference.
  * If no zIndex is provided or if the zIndex is not registered, returns undefined.
  *
  * It also returns undefined in case the z-index portal has not been rendered yet.
  */
-export const selectZIndexPortalId: (
+export const selectZIndexPortalElement: (
   state: RechartsRootState,
   zIndex: number | undefined,
   isPanorama: boolean,
-) => string | undefined = createSelector(
+) => Element | undefined = createSelector(
   (state: RechartsRootState) => state.zIndex.zIndexMap,
   (_: RechartsRootState, zIndex: number | undefined) => zIndex,
   (_: RechartsRootState, _zIndex: number | undefined, isPanorama: boolean) => isPanorama,
@@ -27,9 +27,9 @@ export const selectZIndexPortalId: (
       return undefined;
     }
     if (isPanorama) {
-      return entry.panoramaElementId;
+      return entry.panoramaElement;
     }
-    return entry.elementId;
+    return entry.element;
   },
 );
 

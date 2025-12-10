@@ -1,26 +1,27 @@
 /**
  * This slice contains a registry of z-index values for various components.
- * The state is a map from z-index numbers to a string ID.
+ * The state is a map from z-index numbers to element references.
  */
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 type ZIndexEntry = {
   /**
-   * The ID of the HTML element that corresponds to this z-index.
-   * This ID is used to create a React portal for rendering components at this z-index.
+   * Reference to the DOM element that corresponds to this z-index.
+   * This element is used to create a React portal for rendering components at this z-index.
    *
    * If undefined, it means no element is currently registered for this z-index,
    * and registration is in progress. If that happens, wait for the next render cycle.
    */
-  elementId: string | undefined;
+  element: Element | undefined;
   /**
    * Panorama items can't mix with normal items in the same z-index layer,
    * because they are rendered in a different SVG element.
-   * So we need to have a separate element ID for panorama z-index portals.
+   * So we need to have a separate element reference for panorama z-index portals.
    */
-  panoramaElementId: string | undefined;
+  panoramaElement: Element | undefined;
   consumers: number;
 };
 
@@ -35,8 +36,8 @@ const initialState: ZIndexState = {
     (acc: ZIndexState['zIndexMap'], current: number): ZIndexState['zIndexMap'] => ({
       ...acc,
       [current]: {
-        elementId: undefined,
-        panoramaElementId: undefined,
+        element: undefined,
+        panoramaElement: undefined,
         consumers: 0,
       },
     }),
@@ -61,8 +62,8 @@ const zIndexSlice = createSlice({
         } else {
           state.zIndexMap[zIndex] = {
             consumers: 1,
-            elementId: undefined,
-            panoramaElementId: undefined,
+            element: undefined,
+            panoramaElement: undefined,
           };
         }
       },
@@ -87,33 +88,33 @@ const zIndexSlice = createSlice({
       },
       prepare: prepareAutoBatched<{ zIndex: number }>(),
     },
-    registerZIndexPortalId: {
-      reducer: (state, action: PayloadAction<{ zIndex: number; elementId: string; isPanorama: boolean }>) => {
-        const { zIndex, elementId, isPanorama } = action.payload;
+    registerZIndexPortalElement: {
+      reducer: (state, action: PayloadAction<{ zIndex: number; element: Element; isPanorama: boolean }>) => {
+        const { zIndex, element, isPanorama } = action.payload;
         if (state.zIndexMap[zIndex]) {
           if (isPanorama) {
-            state.zIndexMap[zIndex].panoramaElementId = elementId;
+            state.zIndexMap[zIndex].panoramaElement = castDraft(element);
           } else {
-            state.zIndexMap[zIndex].elementId = elementId;
+            state.zIndexMap[zIndex].element = castDraft(element);
           }
         } else {
           state.zIndexMap[zIndex] = {
             consumers: 0,
-            elementId: isPanorama ? undefined : elementId,
-            panoramaElementId: isPanorama ? elementId : undefined,
+            element: isPanorama ? undefined : castDraft(element),
+            panoramaElement: isPanorama ? castDraft(element) : undefined,
           };
         }
       },
-      prepare: prepareAutoBatched<{ zIndex: number; elementId: string; isPanorama: boolean }>(),
+      prepare: prepareAutoBatched<{ zIndex: number; element: Element; isPanorama: boolean }>(),
     },
-    unregisterZIndexPortalId: {
+    unregisterZIndexPortalElement: {
       reducer: (state, action: PayloadAction<{ zIndex: number; isPanorama: boolean }>) => {
         const { zIndex } = action.payload;
         if (state.zIndexMap[zIndex]) {
           if (action.payload.isPanorama) {
-            state.zIndexMap[zIndex].panoramaElementId = undefined;
+            state.zIndexMap[zIndex].panoramaElement = undefined;
           } else {
-            state.zIndexMap[zIndex].elementId = undefined;
+            state.zIndexMap[zIndex].element = undefined;
           }
         }
       },
@@ -122,7 +123,11 @@ const zIndexSlice = createSlice({
   },
 });
 
-export const { registerZIndexPortal, unregisterZIndexPortal, registerZIndexPortalId, unregisterZIndexPortalId } =
-  zIndexSlice.actions;
+export const {
+  registerZIndexPortal,
+  unregisterZIndexPortal,
+  registerZIndexPortalElement,
+  unregisterZIndexPortalElement,
+} = zIndexSlice.actions;
 
 export const zIndexReducer = zIndexSlice.reducer;

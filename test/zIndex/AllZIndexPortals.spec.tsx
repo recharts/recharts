@@ -10,6 +10,7 @@ import { registerZIndexPortal } from '../../src/state/zIndexSlice';
 import { selectAllRegisteredZIndexes } from '../../src/zIndex/zIndexSelectors';
 
 import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { isNotNil } from '../../src/util/DataUtils';
 
 // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
 const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;
@@ -35,8 +36,8 @@ describe('AllZIndexPortals', () => {
     const newZIndexDefinitelyNotOneOfTheDefaults =
       Object.values(DefaultZIndexes).reduce((acc, val) => Math.max(acc, val), Number.NEGATIVE_INFINITY) + 1;
 
-    // all z-index portals should be rendered
-    expect(container.querySelectorAll('[id^="recharts-zindex"]')).toHaveLength(allZIndexes.length);
+    // all z-index portals should be rendered (they are <g> elements with tabIndex={-1})
+    expect(container.querySelectorAll('g[tabindex="-1"]')).toHaveLength(allZIndexes.length);
 
     act(() => {
       store.dispatch(registerZIndexPortal({ zIndex: newZIndexDefinitelyNotOneOfTheDefaults }));
@@ -44,11 +45,11 @@ describe('AllZIndexPortals', () => {
     });
 
     // After registering, should have one more z-index portal
-    const zIndexPortals = container.querySelectorAll('[id^="recharts-zindex"]');
+    const zIndexPortals = container.querySelectorAll('g[tabindex="-1"]');
     expect(zIndexPortals).toHaveLength(allZIndexes.length + 1);
   });
 
-  it('should render one child for each of the registered element IDs', () => {
+  it('should render one child for each of the registered elements', () => {
     const { container } = render(
       <svg>
         <Provider store={store} context={nonNullContext}>
@@ -61,15 +62,23 @@ describe('AllZIndexPortals', () => {
 
     const state = store.getState();
 
-    const elementIds = Array.from(container.querySelectorAll('[id^="recharts-zindex"]')).map(el => el.id);
-    const portalIds = Object.values(state.zIndex.zIndexMap).map(entry => entry.elementId);
+    const renderedElements = Array.from(container.querySelectorAll('g[tabindex="-1"]'));
+    const storedElementIds = Object.values(state.zIndex.zIndexMap)
+      .map(entry => entry.element?.id)
+      .filter(isNotNil);
 
-    const elementIdsSet = new Set(elementIds);
-    expect(elementIds).toHaveLength(elementIdsSet.size); // ensure uniqueness
-    const portalIdsSet = new Set(portalIds);
-    expect(portalIds).toHaveLength(portalIdsSet.size); // ensure uniqueness
+    expect(renderedElements).toHaveLength(storedElementIds.length);
 
-    // the ID of this portal should be the same ID as in the store, but the order may differ
-    expect(elementIdsSet).toEqual(portalIdsSet);
+    // each rendered element should be in the store
+    renderedElements.forEach(el => {
+      /*
+       * If we compare the elements directly, we force React into logging warnings
+       * because then jest/vitest tries to access various internal properties of the elements
+       * and React doesn't like that. So we just compare IDs.
+       *
+       * https://react.dev/warnings/special-props
+       */
+      expect(storedElementIds).toContain(el.id);
+    });
   });
 });
