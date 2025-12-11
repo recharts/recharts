@@ -28,7 +28,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'activeDot',
-      type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode | React.JSXElementConstructor<any>>',
+      type: 'false | true | Function | React.JSXElementConstructor<any>>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -119,7 +119,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'data', type: 'Array<unknown>', isOptional: true },
     {
       name: 'dot',
-      type: 'false | true | Function | Partial<Props> | ReactNode | React.JSXElementConstructor<any>>',
+      type: 'false | true | Function | React.JSXElementConstructor<any>>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -171,7 +171,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
       name: 'label',
-      type: 'false | true | ReactNode | React.JSXElementConstructor<any>> | Function | Props',
+      type: 'false | true | ReactNode | Function | React.JSXElementConstructor<any>> | Props',
       isOptional: true,
       desc: {
         'en-US': (
