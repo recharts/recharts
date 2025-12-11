@@ -4,6 +4,29 @@ export const AreaAPI: ApiDoc = {
   name: 'Area',
   props: [
     {
+      name: 'dataKey',
+      type: 'DataKey<any>',
+      isOptional: false,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Decides how to extract the value of this Area from the data:</p>
+            <ul>
+              <li>
+                <code>string</code>: the name of the field in the data object;
+              </li>
+              <li>
+                <code>number</code>: the index of the field in the data;
+              </li>
+              <li>
+                <code>function</code>: a function that receives the data object and returns the value of this Area.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+    },
+    {
       name: 'activeDot',
       type: 'ActiveDotType',
       isOptional: true,
@@ -93,31 +116,7 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'dangerouslySetInnerHTML', type: 'Object | TrustedHTML; }', isOptional: true },
-    { name: 'data', type: 'ChartData', isOptional: true },
-    {
-      name: 'dataKey',
-      type: 'DataKey<any>',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-    },
+    { name: 'data', type: '', isOptional: true },
     {
       name: 'dot',
       type: 'DotType',
@@ -228,6 +227,105 @@ export const AreaAPI: ApiDoc = {
         ),
       },
     },
+    {
+      name: 'stackId',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'stroke',
+      type: 'string',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The stroke color. If &quot;none&quot;, no line will be drawn.</p>
+          </section>
+        ),
+      },
+      defaultVal: '#3182bd',
+    },
+    {
+      name: 'strokeWidth',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The width of the stroke</p>
+          </section>
+        ),
+      },
+      defaultVal: 1,
+    },
+    { name: 'tooltipType', type: '"none"', isOptional: true },
+    {
+      name: 'type',
+      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The interpolation type of curve. Allows custom interpolation function.</p>
+          </section>
+        ),
+      },
+      defaultVal: 'linear',
+      examples: [
+        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
+        {
+          name: 'https://github.com/d3/d3-shape#curves',
+          url: 'https://github.com/d3/d3-shape#curves',
+          isExternal: true,
+        },
+      ],
+    },
+    {
+      name: 'unit',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The unit of data. This option will be used in tooltip.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'xAxisId',
+      type: 'AxisId',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+    },
+    {
+      name: 'yAxisId',
+      type: 'AxisId',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+    },
+    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     {
@@ -498,105 +596,6 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
-    {
-      name: 'stackId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'stroke',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The stroke color. If &quot;none&quot;, no line will be drawn.</p>
-          </section>
-        ),
-      },
-      defaultVal: '#3182bd',
-    },
-    {
-      name: 'strokeWidth',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The width of the stroke</p>
-          </section>
-        ),
-      },
-      defaultVal: 1,
-    },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
-    {
-      name: 'type',
-      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The interpolation type of curve. Allows custom interpolation function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'linear',
-      examples: [
-        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
-        {
-          name: 'https://github.com/d3/d3-shape#curves',
-          url: 'https://github.com/d3/d3-shape#curves',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'unit',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The unit of data. This option will be used in tooltip.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'xAxisId',
-      type: 'AxisId',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'yAxisId',
-      type: 'AxisId',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['LabelList'],

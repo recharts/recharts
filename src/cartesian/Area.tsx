@@ -264,7 +264,10 @@ interface AreaProps extends ZIndexable {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type AreaSvgProps = Omit<CurveProps, 'points' | 'ref' | 'layout' | 'path' | 'pathRef'>;
+type AreaSvgProps = Omit<
+  CurveProps,
+  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML'
+>;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 

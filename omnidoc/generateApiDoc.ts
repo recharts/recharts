@@ -265,6 +265,43 @@ async function generateApiDoc(
     props.push(prop);
   }
 
+  // Sort props based on user criteria
+  props.sort((a, b) => {
+    // 1. Required props first
+    if (a.isOptional !== b.isOptional) {
+      return a.isOptional ? 1 : -1;
+    }
+
+    const getOrigin = (pName: string) => {
+      const meta = projectReader.getPropMeta(componentName, pName);
+      // If any definition is from 'recharts', treat as 'recharts'
+      return meta.some(m => m.origin === 'recharts') ? 'recharts' : 'dom';
+    };
+
+    const originA = getOrigin(a.name);
+    const originB = getOrigin(b.name);
+
+    const isEventA = a.name.startsWith('on');
+    const isEventB = b.name.startsWith('on');
+
+    const getCategory = (origin: string, isEvent: boolean) => {
+      if (origin === 'recharts') {
+        return isEvent ? 3 : 2; // Recharts props (2), Recharts events (3)
+      }
+      return isEvent ? 5 : 4; // Other props (4), Other events (5)
+    };
+
+    const categoryA = getCategory(originA, isEventA);
+    const categoryB = getCategory(originB, isEventB);
+
+    if (categoryA !== categoryB) {
+      return categoryA - categoryB;
+    }
+
+    // 6. Alphabetical sort within category
+    return a.name.localeCompare(b.name);
+  });
+
   const apiDoc: ApiDoc = {
     name: componentName,
     props,

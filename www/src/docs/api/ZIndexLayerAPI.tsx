@@ -4,21 +4,6 @@ export const ZIndexLayerAPI: ApiDoc = {
   name: 'ZIndexLayer',
   props: [
     {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The content to render inside this zIndex layer. Undefined children are allowed and will render nothing and
-              will still report the zIndex to the portal system.
-            </p>
-          </section>
-        ),
-      },
-    },
-    {
       name: 'zIndex',
       type: 'number',
       isOptional: false,
@@ -32,6 +17,21 @@ export const ZIndexLayerAPI: ApiDoc = {
             </p>
             <p>
               If <code>undefined</code> or <code>0</code>, the content is rendered in the default layer without portals.
+            </p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The content to render inside this zIndex layer. Undefined children are allowed and will render nothing and
+              will still report the zIndex to the portal system.
             </p>
           </section>
         ),
