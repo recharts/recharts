@@ -498,8 +498,6 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
-    { name: 'path', type: 'string', isOptional: true },
-    { name: 'pathRef', type: 'React.Ref<SVGPathElement>', isOptional: true },
     {
       name: 'stackId',
       type: 'string | number',
@@ -541,7 +539,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'tooltipType', type: '"none"', isOptional: true },
     {
       name: 'type',
-      type: '"step" | "linear" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
+      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
       isOptional: true,
       desc: {
         'en-US': (
@@ -551,6 +549,14 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 'linear',
+      examples: [
+        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
+        {
+          name: 'https://github.com/d3/d3-shape#curves',
+          url: 'https://github.com/d3/d3-shape#curves',
+          isExternal: true,
+        },
+      ],
     },
     {
       name: 'unit',

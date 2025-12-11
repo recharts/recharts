@@ -235,7 +235,9 @@ interface AreaProps extends ZIndexable {
   /**
    * The interpolation type of curve. Allows custom interpolation function.
    *
-   * @defaultValue 'linear'
+   * @defaultValue linear
+   * @link https://github.com/d3/d3-shape#curves
+   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/|An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
   /**
@@ -262,7 +264,7 @@ interface AreaProps extends ZIndexable {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type AreaSvgProps = Omit<CurveProps, 'type' | 'points' | 'ref' | 'layout'>;
+type AreaSvgProps = Omit<CurveProps, 'points' | 'ref' | 'layout' | 'path' | 'pathRef'>;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 

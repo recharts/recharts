@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
 import { getAllTagTexts, getTagText, ProjectDocReader } from './readProject';
-import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
+import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 
 /**
  * List of components that are ready to be auto-generated.
@@ -146,6 +146,63 @@ async function generateComponentDescription(
   return undefined;
 }
 
+function getLinksFromProp(componentName: string, propName: string, projectReader: ProjectDocReader): PropExample[] {
+  const meta = projectReader.getPropMeta(componentName, propName);
+  // getPropMeta returns an array, but standard props usually map to one definition.
+  // In case of multiple (overloading), we merge tags.
+  const examples: PropExample[] = [];
+
+  for (const propMeta of meta) {
+    if (!propMeta.jsDoc) continue;
+
+    const seeTags = getAllTagTexts(propMeta.jsDoc, 'see');
+    const linkTags = getAllTagTexts(propMeta.jsDoc, 'link');
+
+    // Process both tags similarly
+    [...seeTags, ...linkTags].forEach(tag => {
+      let url = '';
+      let name = '';
+
+      let cleanTag = tag.trim();
+
+      // Check for {@link ...} wrapper and strip it
+      const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
+      if (linkWrapperMatch) {
+        cleanTag = linkWrapperMatch[1].trim();
+      }
+
+      // Parse "url|text" or "url text"
+      // Match first sequence of non-whitespace/non-pipe characters as URL
+      const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
+      if (parts) {
+        url = parts[1].trim();
+        name = parts[2]?.trim() ?? url;
+      } else {
+        // Fallback for weird cases
+        url = cleanTag;
+        name = cleanTag;
+      }
+
+      // Strip specific prefix
+      const prefix = 'https://recharts.github.io/en-US';
+      if (url.startsWith(prefix)) {
+        url = url.slice(prefix.length);
+      }
+
+      const isExternal = url.startsWith('http') || url.startsWith('https');
+
+      examples.push({
+        name,
+        url,
+        isExternal: isExternal ? true : undefined,
+      });
+    });
+  }
+
+  // Deduplicate by URL
+  return examples.filter((ex, index, self) => index === self.findIndex(t => t.url === ex.url));
+}
+
 /**
  * Generates API documentation for a single component
  */
@@ -194,9 +251,15 @@ async function generateApiDoc(
     }
 
     // Add examples if available
-    const examples = projectReader.getExamplesOf(componentName, propName);
-    if (examples.length > 0) {
-      prop.format = examples;
+    const formatExamples = projectReader.getExamplesOf(componentName, propName);
+    if (formatExamples.length > 0) {
+      prop.format = formatExamples;
+    }
+
+    // Add links/see tags as examples
+    const links = getLinksFromProp(componentName, propName, projectReader);
+    if (links.length > 0) {
+      prop.examples = links;
     }
 
     props.push(prop);
@@ -276,6 +339,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 
     if (prop.format !== undefined) {
       result += `"format": ${JSON.stringify(prop.format)},`;
+    }
+
+    if (prop.examples !== undefined) {
+      result += `"examples": ${JSON.stringify(prop.examples)},`;
     }
 
     result += `},`;
