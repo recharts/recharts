@@ -125,6 +125,8 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  *    is used as <Label content={function} />, so this will be called once for each individual label (so typically once for each data point)
  * object:
  *    the props to be passed to a LabelList component
+ *
+ * @inline
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 

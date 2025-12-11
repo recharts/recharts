@@ -37,7 +37,7 @@ export const BarStackAPI: ApiDoc = {
     },
     {
       name: 'stackId',
-      type: 'StackId',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (

@@ -473,6 +473,10 @@ export const getStackedData = (
   return result;
 };
 
+/**
+ * Externally, we accept both strings and numbers as stack IDs
+ * @inline
+ */
 export type StackId = string | number;
 /**
  * Stack IDs in the external props allow numbers; but internally we use it as an object key

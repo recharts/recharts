@@ -5,7 +5,7 @@ export const AreaAPI: ApiDoc = {
   props: [
     {
       name: 'dataKey',
-      type: 'DataKey<any>',
+      type: 'string | number | Function',
       isOptional: false,
       desc: {
         'en-US': (
@@ -28,7 +28,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'activeDot',
-      type: 'ActiveDotType',
+      type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode | React.JSXElementConstructor<any>>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -73,7 +73,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: 'AnimationTiming',
+      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -100,7 +100,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'baseValue', type: 'BaseValue', isOptional: true },
+    { name: 'baseValue', type: 'number | "dataMin" | "dataMax"', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -116,10 +116,10 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'data', type: '', isOptional: true },
+    { name: 'data', type: 'Array<unknown>', isOptional: true },
     {
       name: 'dot',
-      type: 'DotType',
+      type: 'false | true | Function | Partial<Props> | ReactNode | React.JSXElementConstructor<any>>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -171,7 +171,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
       name: 'label',
-      type: 'ImplicitLabelListType',
+      type: 'false | true | ReactNode | React.JSXElementConstructor<any>> | Function | Props',
       isOptional: true,
       desc: {
         'en-US': (
@@ -201,7 +201,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'legendType',
-      type: 'LegendType',
+      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -301,7 +301,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'AxisId',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -314,7 +314,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'AxisId',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (

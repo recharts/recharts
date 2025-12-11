@@ -8,6 +8,8 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
  * that dictates how to pull data from that object.
  *
  * TL;DR: before dataKey
+ *
+ * @inline
  */
 export type ChartData = unknown[];
 

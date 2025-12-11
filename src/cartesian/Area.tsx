@@ -72,6 +72,9 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 
+/**
+ * @inline
+ */
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
 /**
@@ -220,7 +223,7 @@ interface AreaProps extends ZIndexable {
   /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
-  stackId?: string | number;
+  stackId?: StackId;
   /**
    * The stroke color. If "none", no line will be drawn.
    * @defaultValue '#3182bd'

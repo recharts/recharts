@@ -37,7 +37,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'content',
-      type: 'LabelContentType',
+      type: 'ReactNode | React.JSXElementConstructor<any>> | Function',
       isOptional: true,
       desc: {
         'en-US': (
@@ -56,7 +56,7 @@ export const LabelAPI: ApiDoc = {
     },
     {
       name: 'formatter',
-      type: 'LabelFormatter',
+      type: 'Function',
       isOptional: true,
       desc: {
         'en-US': (
@@ -96,10 +96,10 @@ export const LabelAPI: ApiDoc = {
       },
       defaultVal: 5,
     },
-    { name: 'parentViewBox', type: 'ViewBox', isOptional: true },
+    { name: 'parentViewBox', type: 'Required<CartesianViewBox> | Required<PolarViewBox>', isOptional: true },
     {
       name: 'position',
-      type: 'LabelPosition',
+      type: '"end" | "middle" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | Object | `${number}%` | undefined; y?: number | undefined; }',
       isOptional: true,
       desc: {
         'en-US': (
@@ -113,7 +113,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'value',
-      type: 'RenderableText',
+      type: 'null | string | number | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -128,7 +128,7 @@ export const LabelAPI: ApiDoc = {
     },
     {
       name: 'viewBox',
-      type: 'ViewBox',
+      type: 'Required<CartesianViewBox> | Required<PolarViewBox>',
       isOptional: true,
       desc: {
         'en-US': (

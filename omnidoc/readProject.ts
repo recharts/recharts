@@ -559,10 +559,17 @@ export class ProjectDocReader implements DocReader {
             const parts = type.getUnionTypes();
             const expandedParts = parts.map(part => {
               if (part.getAliasSymbol() === aliasSymbol) {
-                return part
-                  .getUnionTypes()
-                  .map(t => t.getText())
-                  .join(' | ');
+                if (part.isUnion()) {
+                  return part
+                    .getUnionTypes()
+                    .map(t => t.getText())
+                    .join(' | ');
+                }
+                const declarations2 = aliasSymbol.getDeclarations();
+                const declaration0 = declarations2[0];
+                if (declarations2.length > 0 && Node.isTypeAliasDeclaration(declaration0)) {
+                  return declaration0.getTypeNode()?.getText() ?? part.getText();
+                }
               }
               return part.getText();
             });

@@ -57,6 +57,11 @@ export type PolarLayout = 'centric' | 'radial';
 export type LayoutType = CartesianLayout | PolarLayout;
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type AxisDomainType = 'number' | 'category';
+/**
+ * Extracts values from data objects.
+ *
+ * @inline
+ */
 export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
@@ -65,7 +70,14 @@ export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes &
   DOMAttributesAdaptChildEvent<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesAdaptChildEvent<P, T>>;
 
+/**
+ * @inline
+ */
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
+
+/**
+ * @inline
+ */
 export type LegendType =
   | 'circle'
   | 'cross'
@@ -620,7 +632,11 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 };
 
-/** The type of easing function to use for animations */
+/**
+ * The type of easing function to use for animations
+ *
+ * @inline
+ */
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
 /** Specifies the duration of animation, the unit of this option is ms. */
 export type AnimationDuration = number;
@@ -871,6 +887,9 @@ export type TrapezoidViewBox = {
   height: number;
 };
 
+/**
+ * @inline
+ */
 export type ViewBox = CartesianViewBoxRequired | PolarViewBoxRequired;
 
 type RecordString<T> = Record<string, T>;
@@ -1002,6 +1021,8 @@ export type ActiveDotProps = DotProps & {
  * - Area
  * - Line
  * - Radar
+ *
+ * @inline
  */
 export type ActiveDotType =
   /**
@@ -1046,6 +1067,8 @@ export type DotItemDotProps = SVGPropsNoEvents<Omit<DotProps, 'points' | 'ref'>>
  * - Area
  * - Line
  * - Radar
+ *
+ * @inline
  */
 export type DotType =
   /**
