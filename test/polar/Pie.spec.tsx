@@ -38,7 +38,7 @@ import {
 } from '../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { mockTouchingElement, mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
 import {
   selectActiveCoordinate,
   selectActiveIndex,
@@ -295,7 +295,7 @@ describe('<Pie />', () => {
       'name',
       'tabindex',
       DATA_ITEM_INDEX_ATTRIBUTE_NAME,
-      DATA_ITEM_DATAKEY_ATTRIBUTE_NAME,
+      DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME,
       'class',
       'd',
     ]);
@@ -345,6 +345,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           dataKey="y"
           data={generateMockData(5, 0.603)}
+          id="pie-y"
         />
       </PieChart>,
     );
@@ -362,7 +363,7 @@ describe('<Pie />', () => {
         dataKey: 'y',
         endAngle: 77.1583,
         [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
-        [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
+        [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: 'pie-y',
         fill: '#808080',
         index: 0,
         innerRadius: 0,
@@ -780,7 +781,7 @@ describe('<Pie />', () => {
     describe('with default tooltip', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <PieChart width={400} height={400}>
-          <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" />
+          <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" id="cy-pie" />
           <Tooltip isAnimationActive={false} />
           {children}
         </PieChart>
@@ -832,7 +833,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
-            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
+            graphicalItemId: 'cy-pie',
           },
         });
 
@@ -860,7 +861,7 @@ describe('<Pie />', () => {
         expect(allSectors).toHaveLength(sectorsData.length);
         allSectors.forEach((sector, index) => {
           expect(sector).toHaveAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, `${index}`);
-          expect(sector).toHaveAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, 'cy');
+          expect(sector).toHaveAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, 'cy-pie');
         });
       });
 
@@ -869,7 +870,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state =>
           selectTooltipPayloadConfigurations(state, 'item', 'hover', undefined),
@@ -1015,7 +1016,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container } = renderTestCase();
 
@@ -1033,7 +1034,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
 
@@ -1084,7 +1085,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', undefined));
 
@@ -1105,7 +1106,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', undefined));
 
@@ -1177,7 +1178,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', undefined));
 

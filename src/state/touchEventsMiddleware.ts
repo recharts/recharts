@@ -6,8 +6,9 @@ import { selectActivePropsFromChartPointer } from './selectors/selectActiveProps
 
 import { getChartPointer } from '../util/getChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { selectTooltipCoordinate } from './selectors/touchSelectors';
+import { selectAllGraphicalItemsSettings } from './selectors/tooltipSelectors';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
@@ -57,8 +58,13 @@ touchEventMiddleware.startListening({
         return;
       }
       const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-      const dataKey = target.getAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME) ?? undefined;
-      const coordinate = selectTooltipCoordinate(listenerApi.getState(), itemIndex, dataKey);
+      const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+      const settings = selectAllGraphicalItemsSettings(state).find(item => item.id === graphicalItemId);
+      if (itemIndex == null || settings == null) {
+        return;
+      }
+      const { dataKey } = settings;
+      const coordinate = selectTooltipCoordinate(state, itemIndex, dataKey);
 
       listenerApi.dispatch(
         setActiveMouseOverItemIndex({

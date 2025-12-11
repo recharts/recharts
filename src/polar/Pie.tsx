@@ -40,7 +40,7 @@ import {
   selectActiveTooltipIndex,
 } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -566,7 +566,7 @@ function PieSectors(props: PieSectorsProps) {
           stroke: entry.stroke,
           tabIndex: -1,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
-          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
 
         return (

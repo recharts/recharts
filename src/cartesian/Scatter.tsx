@@ -60,7 +60,7 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -420,9 +420,9 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     ...restOfAllOtherProps
   } = allOtherScatterProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
   if (!isNonEmptyArray(points)) {
     return null;
   }
@@ -441,7 +441,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...baseProps,
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
-          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
         return (
