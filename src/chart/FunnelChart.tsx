@@ -8,6 +8,7 @@ const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];
 
 /**
  * @provides CartesianViewBoxContext
+ * @provides CartesianChartContext
  */
 export const FunnelChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
   return (

@@ -146,6 +146,9 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
   return useContext(PolarLabelListContext);
 }
 
+/**
+ * @consumes LabelListContext
+ */
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();

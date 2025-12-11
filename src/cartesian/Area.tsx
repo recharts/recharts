@@ -1068,5 +1068,9 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
+/**
+ * @provides LabelListContext
+ * @consumes CartesianChartContext
+ */
 export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
 Area.displayName = 'Area';

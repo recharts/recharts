@@ -1073,6 +1073,9 @@ function BarFn(outsideProps: Props) {
 }
 
 /**
+ * @provides ErrorBarContext
+ * @provides LabelListContext
+ * @consumes CartesianChartContext
  * @consumes BarStackContext
  */
 export const Bar: ComponentType<Props> = React.memo(BarFn, propsAreEqual);

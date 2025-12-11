@@ -811,6 +811,10 @@ function ScatterFn(outsideProps: Props) {
   );
 }
 
+/**
+ * @provides LabelListContext
+ * @consumes CartesianChartContext
+ */
 export const Scatter: ComponentType<Props> = React.memo(ScatterFn, propsAreEqual);
 
 Scatter.displayName = 'Scatter';
