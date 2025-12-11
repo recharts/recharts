@@ -57,6 +57,9 @@ const CURVE_FACTORIES: CurveFactories = {
   curveStepBefore,
 };
 
+/**
+ * @inline
+ */
 export type CurveType =
   | 'basis'
   | 'basisClosed'

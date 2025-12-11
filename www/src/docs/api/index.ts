@@ -10,7 +10,6 @@ import { RadialBarChartAPI } from './RadialBarChart';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
 
-import { AreaAPI as Area } from './Area';
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './Line';
 import { ScatterAPI as Scatter } from './Scatter';
@@ -52,6 +51,7 @@ import { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
+import { AreaAPI } from './AreaAPI.tsx';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -66,7 +66,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Sankey: SankeyAPI,
   Treemap: TreemapAPI,
 
-  Area,
+  Area: AreaAPI,
   Bar,
   BarStack: BarStackAPI,
   Line: LineAPI,

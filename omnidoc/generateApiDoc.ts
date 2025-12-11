@@ -23,6 +23,7 @@ import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
  */
 export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
+  'Area',
   'BarStack',
   'Text',
   'Label',
@@ -34,27 +35,24 @@ const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
 /**
  * Converts a TypeScript type to a simplified string representation for API docs
  */
-function simplifyType(originalText: string): string {
+function simplifyType(originalText: string, isInline: boolean = false): string {
   let simplifiedText: string = originalText;
   // Remove import paths - extract just the type name
-  const importMatch = simplifiedText.match(/import\([^)]+\)\.(\w+)/);
-  if (importMatch) {
-    const [, second] = importMatch;
-    simplifiedText = second;
-  }
-
-  // Handle union types with undefined (optional types)
-  if (simplifiedText.includes(' | undefined')) {
-    simplifiedText = simplifiedText.replace(' | undefined', '');
-  }
+  simplifiedText = simplifiedText.replace(/import\([^)]+\)\.(\w+)/g, '$1');
 
   // Handle union types
   if (simplifiedText.includes(' | ')) {
-    const parts = simplifiedText.split(' | ').map(p => simplifyType(p.trim()));
+    const parts = simplifiedText
+      .split(' | ')
+      .map(p => p.trim())
+      .filter(p => p !== 'undefined')
+      .map(p => simplifyType(p));
+
     const uniqueParts = Array.from(new Set(parts));
 
     // If it's a simple union, join with |
-    if (uniqueParts.length <= 4) {
+    if (isInline || uniqueParts.length <= 4) {
+      if (uniqueParts.length === 0) return 'undefined';
       return uniqueParts.join(' | ');
     }
     // For complex unions, just return a generic type
@@ -164,8 +162,8 @@ async function generateApiDoc(
     const defaultValue = projectReader.getDefaultValueOf(componentName, propName);
 
     // Extract type information
-    const typeText = projectReader.getTypeOf(componentName, propName);
-    const typeString = typeText ? simplifyType(typeText) : 'Any';
+    const typeInfo = projectReader.getTypeOf(componentName, propName);
+    const typeString = typeInfo ? simplifyType(typeInfo.name, typeInfo.isInline) : 'Any';
 
     // Determine if optional
     const isOptional = projectReader.isOptionalProp(componentName, propName);
@@ -260,7 +258,7 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   apiDoc.props.forEach(prop => {
     result += `{`;
     result += `"name": "${prop.name}",`;
-    result += `"type": "${prop.type}",`;
+    result += `"type": ${JSON.stringify(prop.type)},`;
     result += `"isOptional": ${prop.isOptional},`;
 
     if (prop.desc) {

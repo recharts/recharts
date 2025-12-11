@@ -922,13 +922,27 @@ describe('readProject', () => {
     ]);
   });
 
-  it.fails('should read BarStack.radius prop type', () => {
+  it('should read BarStack.radius prop type', () => {
     const radiusMeta = reader.getTypeOf('BarStack', 'radius');
     /*
      * Currently returns the import path instead of the type text which is not what I want,
      * ideally it should return the type text like 'number | [number, number, number, number]'.
      */
-    expect(radiusMeta).toBe('number | [number, number, number, number]');
+    expect(radiusMeta).toEqual({
+      name: 'undefined | number | [number, number, number, number]',
+      isInline: true,
+    });
+  });
+
+  it('should read Curve type prop as inline and expanded', () => {
+    const typeMeta = reader.getTypeOf('Curve', 'type');
+    expect(typeMeta).toEqual({
+      name: expect.stringContaining('"basis" | "basisClosed"'),
+      isInline: true,
+    });
+    expect(typeMeta?.name).toContain('"natural"');
+    expect(typeMeta?.name).toContain('"step"');
+    // Should contain the CurveFactory part too, but that might be complex to assert exact string
   });
 
   it('should return SVG component that this component extends', () => {
