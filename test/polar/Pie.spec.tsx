@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
+import { generateMockData } from '@recharts/devtools';
 import {
   Label,
   LabelProps,
@@ -13,7 +14,6 @@ import {
   Sector,
   Tooltip,
 } from '../../src';
-import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
 import {
   expectTooltipCoordinate,

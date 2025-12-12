@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { generateMockData } from '@recharts/devtools';
 import {
   Brush,
   CartesianGrid,
@@ -18,7 +19,6 @@ import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
-import { generateMockData } from '../helper/generateMockData';
 import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
 import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../src/state/selectors/axisSelectors';
