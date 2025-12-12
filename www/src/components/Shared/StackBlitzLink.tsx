@@ -75,7 +75,7 @@ const dependencies: ProjectDependencies = {
   react: reactVersion,
   'react-is': reactVersion,
   'react-dom': reactVersion,
-  recharts: '^3.2.1',
+  recharts: 'latest',
 };
 
 const devDependencies: ProjectDependencies = {
@@ -83,6 +83,7 @@ const devDependencies: ProjectDependencies = {
   '@types/react-dom': reactVersion,
   typescript: '^5.0.0',
   vite: '^7.0.0',
+  '@recharts/devtools': 'latest',
   '@vitejs/plugin-react': '^5.0.2',
 };
 

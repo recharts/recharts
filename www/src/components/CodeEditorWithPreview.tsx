@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ComponentType } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
+import * as RechartsDevtoolsScope from '@recharts/devtools';
 import { CodeMirrorEditor } from '../utils/CodeMirrorEditor.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink.tsx';
 import { sendEvent } from './analytics.ts';
@@ -39,6 +40,7 @@ const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner }: 
         react: React,
         recharts: RechartsScope,
         'd3-shape': D3ShapeScope,
+        '@recharts/devtools': RechartsDevtoolsScope,
       },
     };
 
