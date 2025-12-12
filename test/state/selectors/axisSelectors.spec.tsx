@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
+import { generateMockData } from '@recharts/devtools';
 import {
   BaseAxisWithScale,
   mergeDomains,
@@ -44,7 +45,6 @@ import {
 import { misbehavedData, PageData } from '../../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { addCartesianGraphicalItem } from '../../../src/state/graphicalItemsSlice';
-import { generateMockData } from '../../helper/generateMockData';
 import { defaultAxisId, XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { AxisDomain } from '../../../src/util/types';
 import { ChartData } from '../../../src/state/chartDataSlice';

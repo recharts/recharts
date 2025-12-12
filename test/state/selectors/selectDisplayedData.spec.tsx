@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
+import { generateMockData } from '@recharts/devtools';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import {
   selectAllAppliedValues,
@@ -17,7 +18,6 @@ import {
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { BarChart, Brush, Line, LineChart, XAxis } from '../../../src';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { generateMockData } from '../../helper/generateMockData';
 import { setLegendSize } from '../../../src/state/legendSlice';
 import { expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
