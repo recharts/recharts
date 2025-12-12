@@ -1,6 +1,6 @@
 import { TooltipIndex } from '../../src/state/tooltipSlice';
-import { DataKey } from '../../src/util/types';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+import { GraphicalItemId } from '../../src/state/graphicalItemsSlice';
 
 /**
  * This method will pretend that the user is touching an element at the given index.
@@ -12,13 +12,13 @@ import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from
  * so we're left with mocking it out.
  * See https://github.com/jsdom/jsdom/issues/1435
  * @param touchItemIndex the index of the item that user is touching
- * @param dataKey the dataKey of the item that user is touching
+ * @param graphicalItemId the graphical item id of the item that user is touching
  * @returns void
  */
-export function mockTouchingElement(touchItemIndex: NonNullable<TooltipIndex>, dataKey: DataKey<any>): void {
+export function mockTouchingElement(touchItemIndex: NonNullable<TooltipIndex>, graphicalItemId: GraphicalItemId): void {
   const fakeElement = document.createElement('g');
   fakeElement.setAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, touchItemIndex);
-  fakeElement.setAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, String(dataKey));
+  fakeElement.setAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, graphicalItemId);
   document.elementFromPoint = () => fakeElement;
 }
 

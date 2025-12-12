@@ -40,7 +40,7 @@ import {
   selectActiveTooltipIndex,
 } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -333,9 +333,10 @@ const SetPieTooltipEntrySettings = React.memo(
     name,
     hide,
     tooltipType,
+    id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'nameKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType'
+    'dataKey' | 'nameKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
@@ -351,6 +352,7 @@ const SetPieTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Pie support unit?
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -548,7 +550,7 @@ function PieSectors(props: PieSectorsProps) {
 
   return (
     <>
-      {sectors.map((entry, i) => {
+      {sectors.map((entry: PieSectorDataItem, i: number) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
 
         // For Pie charts, when multiple Pies share the same dataKey, we need to ensure only the hovered Pie's sector is active.
@@ -566,7 +568,7 @@ function PieSectors(props: PieSectorsProps) {
           stroke: entry.stroke,
           tabIndex: -1,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
-          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
 
         return (
@@ -648,6 +650,7 @@ export function computePieSectors({
           payload: entryWithCellInfo,
           dataKey,
           type: tooltipType,
+          graphicalItemId: pieSettings.id,
         },
       ];
       const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
@@ -877,6 +880,7 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
         name={props.name}
         hide={props.hide}
         tooltipType={props.tooltipType}
+        id={id}
       />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} id={id} />

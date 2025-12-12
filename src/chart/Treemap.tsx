@@ -39,6 +39,8 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -396,6 +398,8 @@ export interface Props {
   animationDuration?: AnimationDuration;
 
   animationEasing?: AnimationTiming;
+
+  id?: string;
 }
 
 interface State {
@@ -547,7 +551,10 @@ const SetTreemapTooltipEntrySettings = React.memo(
     stroke,
     fill,
     currentRoot,
-  }: Pick<Props, 'dataKey' | 'nameKey' | 'stroke' | 'fill'> & { currentRoot: TreemapNode | null }) => {
+    id,
+  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
+    currentRoot: TreemapNode | null;
+  }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
       positions: undefined, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
@@ -562,6 +569,7 @@ const SetTreemapTooltipEntrySettings = React.memo(
         type: undefined,
         color: fill,
         unit: '',
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -686,6 +694,7 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   width: number;
   height: number;
   dispatch: AppDispatch;
+  id: GraphicalItemId;
 };
 
 class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
@@ -913,6 +922,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           stroke={this.props.stroke}
           fill={this.props.fill}
           currentRoot={this.state.currentRoot}
+          id={this.props.id}
         />
         <Surface
           {...attrs}
@@ -936,7 +946,12 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
   if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
-  return <TreemapWithState {...props} width={width} height={height} dispatch={dispatch} />;
+  const { id: externalId } = props;
+  return (
+    <RegisterGraphicalItemId id={externalId} type="treemap">
+      {id => <TreemapWithState {...props} id={id} width={width} height={height} dispatch={dispatch} />}
+    </RegisterGraphicalItemId>
+  );
 }
 
 export function Treemap(outsideProps: Props) {

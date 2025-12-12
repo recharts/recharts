@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Area, Brush, CurveProps, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, Brush, CurveProps, DefaultZIndexes, DotItemDotProps, Tooltip, XAxis, YAxis } from '../../src';
 import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import {
   allCartesianChartsExcept,
@@ -21,8 +21,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
-import { DotItemDotProps } from '../../src/util/types';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { TooltipPayloadConfiguration } from '../../src/state/tooltipSlice';
 
 type TestCase = CartesianChartTestCase;
 
@@ -820,7 +819,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
     it('should add a record to Legend and Tooltip payloads', () => {
       const legendSpy = vi.fn();
-      const tooltipSpy = vi.fn();
+      const tooltipSpy: Mock<(result: ReadonlyArray<TooltipPayloadConfiguration> | undefined) => void> = vi.fn();
 
       const Comp = (): null => {
         legendSpy(useLegendPayload());
@@ -866,7 +865,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           value: 'value',
         },
       ]);
-      expect(tooltipSpy).toHaveBeenLastCalledWith([
+      expectLastCalledWith(tooltipSpy, [
         {
           dataDefinedOnItem: undefined,
           positions: undefined,
@@ -874,6 +873,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             color: '#3182bd',
             dataKey: 'value',
             fill: '#3182bd',
+            graphicalItemId: expect.stringMatching(/^recharts-area-.+/),
             hide: false,
             name: 'value',
             nameKey: undefined,

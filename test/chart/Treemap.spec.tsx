@@ -371,6 +371,7 @@ describe('<Treemap /> mouse events', () => {
     // when I use `toHaveBeenLastCalledWith` then vitest fails with OOME when trying to match the synthetic event object
     // expect(onMouseEnter).toHaveBeenLastCalledWith({
     expect(arg1).toEqual({
+      id: expect.stringMatching(/^recharts-treemap-+/),
       width: 363,
       height: 250,
       name: 'A',
@@ -514,6 +515,7 @@ describe('<Treemap /> mouse events', () => {
     expect(onMouseLeave.mock.calls[0]).toHaveLength(2);
     const arg1 = onMouseLeave.mock.calls[0][0];
     expect(arg1).toEqual({
+      id: expect.stringMatching(/^recharts-treemap-+/),
       area: 90719.61872159594,
       children: null,
       depth: 1,
@@ -640,6 +642,7 @@ describe('<Treemap /> mouse events', () => {
     expect(onClick.mock.calls[0]).toHaveLength(1); // this doesn't pass the event? why?
     const arg1 = onClick.mock.calls[0][0];
     expect(arg1).toEqual({
+      id: expect.stringMatching(/^recharts-treemap-+/),
       area: 90719.61872159594,
       children: null,
       depth: 1,

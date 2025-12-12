@@ -1,8 +1,8 @@
-import React from 'react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import React, { ReactNode } from 'react';
+import { beforeEach, describe, expect, it, Mock } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { PageData } from '../../_data';
-import { Area, AreaChart, Tooltip } from '../../../src';
+import { Area, AreaChart, Tooltip, TooltipContentProps } from '../../../src';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { showTooltip } from './tooltipTestHelpers';
 import { areaChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
@@ -14,7 +14,7 @@ const commonChartProps = {
 };
 
 describe('Tooltip.content', () => {
-  const spy = vi.fn();
+  const spy: Mock<(props: TooltipContentProps<number, string>) => ReactNode> = vi.fn();
 
   beforeEach(() => {
     mockGetBoundingClientRect({ width: 100, height: 100 });
@@ -23,9 +23,9 @@ describe('Tooltip.content', () => {
 
   const renderTestCase = createSelectorTestCase(({ children }) => (
     <AreaChart {...commonChartProps} data={PageData}>
-      <Area dataKey="uv" unit="kg" />
-      <Area dataKey="pv" unit="$$$" name="My custom name" />
-      <Area dataKey="amt" />
+      <Area dataKey="uv" unit="kg" id="area-uv" />
+      <Area dataKey="pv" unit="$$$" name="My custom name" id="area-pv" />
+      <Area dataKey="amt" id="area-amt" />
       <Tooltip content={spy} />
       {children}
     </AreaChart>
@@ -111,6 +111,7 @@ describe('Tooltip.content', () => {
             color: '#3182bd',
             dataKey: 'uv',
             fill: '#3182bd',
+            graphicalItemId: 'area-uv',
             hide: false,
             name: 'uv',
             nameKey: undefined,
@@ -130,6 +131,7 @@ describe('Tooltip.content', () => {
             color: '#3182bd',
             dataKey: 'pv',
             fill: '#3182bd',
+            graphicalItemId: 'area-pv',
             hide: false,
             name: 'My custom name',
             nameKey: undefined,
@@ -149,6 +151,7 @@ describe('Tooltip.content', () => {
             color: '#3182bd',
             dataKey: 'amt',
             fill: '#3182bd',
+            graphicalItemId: 'area-amt',
             hide: false,
             name: 'amt',
             nameKey: undefined,

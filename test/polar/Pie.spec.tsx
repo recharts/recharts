@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { expect, it, vi } from 'vitest';
+import { expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import {
   Label,
@@ -38,7 +38,7 @@ import {
 } from '../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { mockTouchingElement, mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
 import {
   selectActiveCoordinate,
   selectActiveIndex,
@@ -295,7 +295,7 @@ describe('<Pie />', () => {
       'name',
       'tabindex',
       DATA_ITEM_INDEX_ATTRIBUTE_NAME,
-      DATA_ITEM_DATAKEY_ATTRIBUTE_NAME,
+      DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME,
       'class',
       'd',
     ]);
@@ -332,11 +332,12 @@ describe('<Pie />', () => {
   );
 
   test('when data is defined and matching dataKey then activeShape receives payload prop', () => {
-    const activeShape = vi.fn();
+    const activeShape: Mock<(props: PieSectorDataItem) => ReactNode> = vi.fn();
     const { container, debug } = render(
       <PieChart width={400} height={400}>
         <Pie
           isAnimationActive={false}
+          // @ts-expect-error our element typing needs attention
           activeShape={activeShape}
           inactiveShape={{ fill: '#ff7322' }}
           cx={250}
@@ -345,6 +346,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           dataKey="y"
           data={generateMockData(5, 0.603)}
+          id="pie-y"
         />
       </PieChart>,
     );
@@ -354,7 +356,8 @@ describe('<Pie />', () => {
     showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(activeShape).toHaveBeenCalledTimes(1);
-    expect(activeShape).toHaveBeenCalledWith(
+    expectLastCalledWith(
+      activeShape,
       {
         cornerRadius: undefined,
         cx: 255,
@@ -362,7 +365,7 @@ describe('<Pie />', () => {
         dataKey: 'y',
         endAngle: 77.1583,
         [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
-        [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
+        [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: 'pie-y',
         fill: '#808080',
         index: 0,
         innerRadius: 0,
@@ -371,6 +374,7 @@ describe('<Pie />', () => {
         maxRadius: 275.77164466275354,
         midAngle: 38.579169175195666,
         middleRadius: 100,
+        // @ts-expect-error somehow name is a number even though type says string
         name: 0,
         outerRadius: 200,
         paddingAngle: 0,
@@ -396,6 +400,7 @@ describe('<Pie />', () => {
             },
             type: undefined,
             value: 712,
+            graphicalItemId: 'pie-y',
           },
         ],
         tooltipPosition: {
@@ -499,6 +504,7 @@ describe('<Pie />', () => {
             outerRadius={200}
             data={sectorsData}
             dataKey="value"
+            id="pie-value"
           />
         </PieChart>,
       );
@@ -547,6 +553,7 @@ describe('<Pie />', () => {
             },
             type: undefined,
             value: 40,
+            graphicalItemId: 'pie-value',
           },
         ],
         tooltipPosition: {
@@ -780,7 +787,7 @@ describe('<Pie />', () => {
     describe('with default tooltip', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <PieChart width={400} height={400}>
-          <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" />
+          <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" id="cy-pie" />
           <Tooltip isAnimationActive={false} />
           {children}
         </PieChart>
@@ -832,7 +839,7 @@ describe('<Pie />', () => {
               x: 263.1033255612459,
               y: 154.15275032118709,
             },
-            graphicalItemId: expect.stringMatching(/^recharts-pie-[:a-z0-9]+$/),
+            graphicalItemId: 'cy-pie',
           },
         });
 
@@ -860,7 +867,7 @@ describe('<Pie />', () => {
         expect(allSectors).toHaveLength(sectorsData.length);
         allSectors.forEach((sector, index) => {
           expect(sector).toHaveAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, `${index}`);
-          expect(sector).toHaveAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, 'cy');
+          expect(sector).toHaveAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, 'cy-pie');
         });
       });
 
@@ -869,7 +876,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state =>
           selectTooltipPayloadConfigurations(state, 'item', 'hover', undefined),
@@ -890,6 +897,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'A',
                   payload: {
                     cx: 250,
@@ -908,6 +916,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'B',
                   payload: {
                     cx: 250,
@@ -925,6 +934,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'C',
                   payload: {
                     cx: 250,
@@ -942,6 +952,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 3,
                   payload: {
                     cx: 250,
@@ -958,6 +969,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 4,
                   payload: {
                     cx: 250,
@@ -1005,6 +1017,7 @@ describe('<Pie />', () => {
               strokeWidth: undefined,
               type: undefined,
               unit: '',
+              graphicalItemId: 'cy-pie',
             },
           },
         ]);
@@ -1015,7 +1028,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container } = renderTestCase();
 
@@ -1033,7 +1046,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
 
@@ -1084,7 +1097,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', undefined));
 
@@ -1105,7 +1118,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', undefined));
 
@@ -1177,7 +1190,7 @@ describe('<Pie />', () => {
           width: 10,
           height: 10,
         });
-        mockTouchingElement('2', 'cy');
+        mockTouchingElement('2', 'cy-pie');
 
         const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', undefined));
 
@@ -1191,6 +1204,7 @@ describe('<Pie />', () => {
             color: undefined,
             dataKey: 'cy',
             fill: undefined,
+            graphicalItemId: 'cy-pie',
             hide: false,
             name: 'C',
             nameKey: 'name',
@@ -1861,6 +1875,7 @@ describe('<Pie />', () => {
             data={PageData}
             dataKey="uv"
             onClick={handleClick}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -1907,6 +1922,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -1938,6 +1954,7 @@ describe('<Pie />', () => {
             dataKey="uv"
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -1984,6 +2001,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -2038,6 +2056,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -2068,6 +2087,7 @@ describe('<Pie />', () => {
             dataKey="uv"
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -2114,6 +2134,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {

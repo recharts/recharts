@@ -80,25 +80,7 @@ describe('readProject', () => {
     // this is not entirely helpful for what we need to do
     expect(reader.getPropertiesOf('Funnel')).toMatchInlineSnapshot(`
       [
-        "render",
-        "context",
-        "setState",
-        "forceUpdate",
-        "props",
-        "state",
-        "refs",
-        "componentDidMount",
-        "shouldComponentUpdate",
-        "componentWillUnmount",
-        "componentDidCatch",
-        "getSnapshotBeforeUpdate",
-        "componentDidUpdate",
-        "componentWillMount",
-        "UNSAFE_componentWillMount",
-        "componentWillReceiveProps",
-        "UNSAFE_componentWillReceiveProps",
-        "componentWillUpdate",
-        "UNSAFE_componentWillUpdate",
+        "displayName",
       ]
     `);
   });

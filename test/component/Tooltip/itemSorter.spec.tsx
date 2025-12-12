@@ -49,11 +49,11 @@ describe('itemSorter in ComposedChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <ComposedChart width={300} height={300} data={PageData}>
-          <Area dataKey="uv" name="area" />
-          <Bar dataKey="pv" name="bar" />
-          <Line dataKey="amt" name="line" />
+          <Area dataKey="uv" name="area" id="area-uv" />
+          <Bar dataKey="pv" name="bar" id="bar-pv" />
+          <Line dataKey="amt" name="line" id="line-amt" />
           {/* name prop on Scatter doesn't do anything, not sure why */}
-          <Scatter dataKey="uv" name="scatter" />
+          <Scatter dataKey="uv" name="scatter" id="scatter-uv" />
           <YAxis dataKey="pv" />
           <XAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
@@ -94,6 +94,7 @@ describe('itemSorter in ComposedChart', () => {
               strokeWidth: 1,
               type: undefined,
               unit: undefined,
+              graphicalItemId: 'area-uv',
             },
           },
           {
@@ -110,6 +111,7 @@ describe('itemSorter in ComposedChart', () => {
               strokeWidth: undefined,
               type: undefined,
               unit: undefined,
+              graphicalItemId: 'bar-pv',
             },
           },
           {
@@ -126,6 +128,7 @@ describe('itemSorter in ComposedChart', () => {
               strokeWidth: 1,
               type: undefined,
               unit: undefined,
+              graphicalItemId: 'line-amt',
             },
           },
           {
@@ -318,6 +321,7 @@ describe('itemSorter in ComposedChart', () => {
               strokeWidth: undefined,
               type: undefined,
               unit: '',
+              graphicalItemId: 'scatter-uv',
             },
           },
         ]);
@@ -344,6 +348,7 @@ describe('itemSorter in ComposedChart', () => {
             type: undefined,
             unit: undefined,
             value: 400,
+            graphicalItemId: 'area-uv',
           },
           {
             color: undefined,
@@ -363,6 +368,7 @@ describe('itemSorter in ComposedChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'bar-pv',
           },
           {
             color: '#3182bd',
@@ -382,6 +388,7 @@ describe('itemSorter in ComposedChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'line-amt',
           },
           {
             color: undefined,
@@ -401,6 +408,7 @@ describe('itemSorter in ComposedChart', () => {
             type: undefined,
             unit: '',
             value: 'Page A',
+            graphicalItemId: 'scatter-uv',
           },
           {
             color: undefined,
@@ -420,6 +428,7 @@ describe('itemSorter in ComposedChart', () => {
             type: undefined,
             unit: '',
             value: 2400,
+            graphicalItemId: 'scatter-uv',
           },
         ]);
         expect(spy).toHaveBeenCalledTimes(3);
@@ -491,6 +500,7 @@ describe('itemSorter in ComposedChart', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#3182bd',
+          graphicalItemId: 'area-uv',
           hide: false,
           name: 'area',
           nameKey: undefined,
@@ -510,6 +520,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'bar-pv',
           hide: false,
           name: 'bar',
           nameKey: undefined,
@@ -529,6 +540,7 @@ describe('itemSorter in ComposedChart', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#fff',
+          graphicalItemId: 'line-amt',
           hide: false,
           name: 'line',
           nameKey: undefined,
@@ -548,6 +560,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'name',
           fill: undefined,
+          graphicalItemId: 'scatter-uv',
           hide: false,
           name: 'name',
           nameKey: undefined,
@@ -567,6 +580,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'scatter-uv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -593,10 +607,10 @@ describe('itemSorter in ComposedChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <ComposedChart width={300} height={300} data={PageData}>
-          <Line dataKey="amt" name="Line" />
-          <Area dataKey="uv" name="Area" />
-          <Bar dataKey="pv" name="Bar" />
-          <Scatter dataKey="uv" name="Scatter" />
+          <Line dataKey="amt" name="Line" id="line-amt" />
+          <Area dataKey="uv" name="Area" id="area-uv" />
+          <Bar dataKey="pv" name="Bar" id="bar-pv" />
+          <Scatter dataKey="uv" name="Scatter" id="scatter-uv" />
           <YAxis dataKey="pv" name="YAxis" />
           <XAxis dataKey="name" name="XAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -625,6 +639,7 @@ describe('itemSorter in ComposedChart', () => {
             color: '#3182bd',
             dataKey: 'amt',
             fill: '#fff',
+            graphicalItemId: 'line-amt',
             hide: false,
             name: 'Line',
             nameKey: undefined,
@@ -644,6 +659,7 @@ describe('itemSorter in ComposedChart', () => {
             color: '#3182bd',
             dataKey: 'uv',
             fill: '#3182bd',
+            graphicalItemId: 'area-uv',
             hide: false,
             name: 'Area',
             nameKey: undefined,
@@ -663,6 +679,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'bar-pv',
             hide: false,
             name: 'Bar',
             nameKey: undefined,
@@ -682,6 +699,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'name',
             fill: undefined,
+            graphicalItemId: 'scatter-uv',
             hide: false,
             name: 'XAxis',
             nameKey: undefined,
@@ -701,6 +719,7 @@ describe('itemSorter in ComposedChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'scatter-uv',
             hide: false,
             name: 'YAxis',
             nameKey: undefined,
@@ -786,6 +805,7 @@ describe('itemSorter in ComposedChart', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#fff',
+          graphicalItemId: 'line-amt',
           hide: false,
           name: 'Line',
           nameKey: undefined,
@@ -805,6 +825,7 @@ describe('itemSorter in ComposedChart', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#3182bd',
+          graphicalItemId: 'area-uv',
           hide: false,
           name: 'Area',
           nameKey: undefined,
@@ -824,6 +845,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'bar-pv',
           hide: false,
           name: 'Bar',
           nameKey: undefined,
@@ -843,6 +865,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'name',
           fill: undefined,
+          graphicalItemId: 'scatter-uv',
           hide: false,
           name: 'XAxis',
           nameKey: undefined,
@@ -862,6 +885,7 @@ describe('itemSorter in ComposedChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'scatter-uv',
           hide: false,
           name: 'YAxis',
           nameKey: undefined,
@@ -893,7 +917,7 @@ describe('itemSorter in PieChart', () => {
   ) {
     return createSelectorTestCase(({ children }) => (
       <PieChart width={300} height={300}>
-        <Pie data={PageData} dataKey="uv" isAnimationActive={false} />
+        <Pie data={PageData} dataKey="uv" isAnimationActive={false} id="pie-uv" />
         <Tooltip itemSorter={itemSorter} />
         {children}
       </PieChart>
@@ -914,6 +938,7 @@ describe('itemSorter in PieChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'pie-uv',
           hide: false,
           name: 'Page A',
           nameKey: 'name',
@@ -946,9 +971,9 @@ describe('itemSorter in RadarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <RadarChart width={600} height={600} data={PageData}>
-          <Radar dataKey="uv" isAnimationActive={false} />
-          <Radar dataKey="pv" isAnimationActive={false} />
-          <Radar dataKey="amt" isAnimationActive={false} />
+          <Radar dataKey="uv" isAnimationActive={false} id="radar-uv" />
+          <Radar dataKey="pv" isAnimationActive={false} id="radar-pv" />
+          <Radar dataKey="amt" isAnimationActive={false} id="radar-amt" />
           <PolarAngleAxis dataKey="name" />
           <PolarRadiusAxis dataKey="uv" />
           <Tooltip itemSorter={itemSorter} />
@@ -971,6 +996,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'radar-uv',
             hide: false,
             name: 'uv',
             nameKey: undefined,
@@ -990,6 +1016,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'radar-pv',
             hide: false,
             name: 'pv',
             nameKey: undefined,
@@ -1009,6 +1036,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'radar-amt',
             hide: false,
             name: 'amt',
             nameKey: undefined,
@@ -1069,6 +1097,7 @@ describe('itemSorter in RadarChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'radar-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -1088,6 +1117,7 @@ describe('itemSorter in RadarChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'radar-pv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -1107,6 +1137,7 @@ describe('itemSorter in RadarChart', () => {
           color: undefined,
           dataKey: 'amt',
           fill: undefined,
+          graphicalItemId: 'radar-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,
@@ -1133,9 +1164,9 @@ describe('itemSorter in RadarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <RadarChart width={600} height={600} data={PageData}>
-          <Radar dataKey="uv" isAnimationActive={false} name="Radar-uv" />
-          <Radar dataKey="pv" isAnimationActive={false} name="Radar-pv" />
-          <Radar dataKey="amt" isAnimationActive={false} name="Radar-amt" />
+          <Radar dataKey="uv" isAnimationActive={false} name="Radar-uv" id="radar-uv" />
+          <Radar dataKey="pv" isAnimationActive={false} name="Radar-pv" id="radar-pv" />
+          <Radar dataKey="amt" isAnimationActive={false} name="Radar-amt" id="radar-amt" />
           <PolarAngleAxis dataKey="name" name="PolarAngleAxis" />
           <PolarRadiusAxis dataKey="uv" name="PolarRadiusAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -1158,6 +1189,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'radar-uv',
             hide: false,
             name: 'Radar-uv',
             nameKey: undefined,
@@ -1177,6 +1209,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'radar-pv',
             hide: false,
             name: 'Radar-pv',
             nameKey: undefined,
@@ -1196,6 +1229,7 @@ describe('itemSorter in RadarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'radar-amt',
             hide: false,
             name: 'Radar-amt',
             nameKey: undefined,
@@ -1253,9 +1287,9 @@ describe('itemSorter in RadialBarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <RadialBarChart width={600} height={600} data={PageData}>
-          <RadialBar dataKey="uv" isAnimationActive={false} />
-          <RadialBar dataKey="pv" isAnimationActive={false} />
-          <RadialBar dataKey="amt" isAnimationActive={false} />
+          <RadialBar dataKey="uv" isAnimationActive={false} id="radialbar-uv" />
+          <RadialBar dataKey="pv" isAnimationActive={false} id="radialbar-pv" />
+          <RadialBar dataKey="amt" isAnimationActive={false} id="radialbar-amt" />
           <PolarAngleAxis dataKey="name" />
           <PolarRadiusAxis dataKey="uv" />
           <Tooltip itemSorter={itemSorter} />
@@ -1278,6 +1312,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'radialbar-uv',
             hide: false,
             name: 'uv',
             nameKey: undefined,
@@ -1318,6 +1353,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'radialbar-pv',
             hide: false,
             name: 'pv',
             nameKey: undefined,
@@ -1358,6 +1394,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'radialbar-amt',
             hide: false,
             name: 'amt',
             nameKey: undefined,
@@ -1439,6 +1476,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'radialbar-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -1479,6 +1517,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'radialbar-pv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -1519,6 +1558,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'amt',
           fill: undefined,
+          graphicalItemId: 'radialbar-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,
@@ -1566,9 +1606,9 @@ describe('itemSorter in RadialBarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <RadialBarChart width={600} height={600} data={PageData}>
-          <RadialBar dataKey="uv" isAnimationActive={false} name="RadialBar-uv" />
-          <RadialBar dataKey="pv" isAnimationActive={false} name="RadialBar-pv" />
-          <RadialBar dataKey="amt" isAnimationActive={false} name="RadialBar-amt" />
+          <RadialBar dataKey="uv" isAnimationActive={false} name="RadialBar-uv" id="radialbar-uv" />
+          <RadialBar dataKey="pv" isAnimationActive={false} name="RadialBar-pv" id="radialbar-pv" />
+          <RadialBar dataKey="amt" isAnimationActive={false} name="RadialBar-amt" id="radialbar-amt" />
           <PolarAngleAxis dataKey="name" name="PolarAngleAxis" />
           <PolarRadiusAxis dataKey="uv" name="PolarRadiusAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -1591,6 +1631,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'radialbar-uv',
             hide: false,
             name: 'RadialBar-uv',
             nameKey: undefined,
@@ -1631,6 +1672,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'radialbar-pv',
             hide: false,
             name: 'RadialBar-pv',
             nameKey: undefined,
@@ -1671,6 +1713,7 @@ describe('itemSorter in RadialBarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'radialbar-amt',
             hide: false,
             name: 'RadialBar-amt',
             nameKey: undefined,
@@ -1752,6 +1795,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'radialbar-uv',
           hide: false,
           name: 'RadialBar-uv',
           nameKey: undefined,
@@ -1792,6 +1836,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'radialbar-pv',
           hide: false,
           name: 'RadialBar-pv',
           nameKey: undefined,
@@ -1832,6 +1877,7 @@ describe('itemSorter in RadialBarChart', () => {
           color: undefined,
           dataKey: 'amt',
           fill: undefined,
+          graphicalItemId: 'radialbar-amt',
           hide: false,
           name: 'RadialBar-amt',
           nameKey: undefined,
@@ -1887,9 +1933,9 @@ describe('itemSorter in stacked BarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <BarChart width={300} height={300} data={PageData}>
-          <Bar dataKey="pv" stackId="stack-1" />
-          <Bar dataKey="uv" stackId="stack-1" />
-          <Bar dataKey="amt" stackId="stack-1" />
+          <Bar dataKey="pv" stackId="stack-1" id="bar-pv" />
+          <Bar dataKey="uv" stackId="stack-1" id="bar-uv" />
+          <Bar dataKey="amt" stackId="stack-1" id="bar-amt" />
           <YAxis />
           <XAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
@@ -1912,6 +1958,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'bar-pv',
             hide: false,
             name: 'pv',
             nameKey: undefined,
@@ -1931,6 +1978,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'bar-uv',
             hide: false,
             name: 'uv',
             nameKey: undefined,
@@ -1950,6 +1998,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'bar-amt',
             hide: false,
             name: 'amt',
             nameKey: undefined,
@@ -2010,6 +2059,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'bar-pv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -2029,6 +2079,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'bar-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -2048,6 +2099,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'amt',
           fill: undefined,
+          graphicalItemId: 'bar-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,
@@ -2074,9 +2126,9 @@ describe('itemSorter in stacked BarChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <BarChart width={300} height={300} data={PageData}>
-          <Bar dataKey="pv" stackId="stack-1" name="Bar-pv" />
-          <Bar dataKey="uv" stackId="stack-1" name="Bar-uv" />
-          <Bar dataKey="amt" stackId="stack-1" name="Bar-amt" />
+          <Bar dataKey="pv" stackId="stack-1" name="Bar-pv" id="bar-pv" />
+          <Bar dataKey="uv" stackId="stack-1" name="Bar-uv" id="bar-uv" />
+          <Bar dataKey="amt" stackId="stack-1" name="Bar-amt" id="bar-amt" />
           <YAxis name="YAxis" />
           <XAxis dataKey="name" name="XAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -2099,6 +2151,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'pv',
             fill: undefined,
+            graphicalItemId: 'bar-pv',
             hide: false,
             name: 'Bar-pv',
             nameKey: undefined,
@@ -2118,6 +2171,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'uv',
             fill: undefined,
+            graphicalItemId: 'bar-uv',
             hide: false,
             name: 'Bar-uv',
             nameKey: undefined,
@@ -2137,6 +2191,7 @@ describe('itemSorter in stacked BarChart', () => {
             color: undefined,
             dataKey: 'amt',
             fill: undefined,
+            graphicalItemId: 'bar-amt',
             hide: false,
             name: 'Bar-amt',
             nameKey: undefined,
@@ -2197,6 +2252,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'bar-pv',
           hide: false,
           name: 'Bar-pv',
           nameKey: undefined,
@@ -2216,6 +2272,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'bar-uv',
           hide: false,
           name: 'Bar-uv',
           nameKey: undefined,
@@ -2235,6 +2292,7 @@ describe('itemSorter in stacked BarChart', () => {
           color: undefined,
           dataKey: 'amt',
           fill: undefined,
+          graphicalItemId: 'bar-amt',
           hide: false,
           name: 'Bar-amt',
           nameKey: undefined,
@@ -2267,9 +2325,9 @@ describe('itemSorter in stacked AreaChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <AreaChart width={300} height={300} data={PageData}>
-          <Area dataKey="pv" stackId="stack-1" />
-          <Area dataKey="uv" stackId="stack-1" />
-          <Area dataKey="amt" stackId="stack-1" />
+          <Area dataKey="pv" stackId="stack-1" id="area-pv" />
+          <Area dataKey="uv" stackId="stack-1" id="area-uv" />
+          <Area dataKey="amt" stackId="stack-1" id="area-amt" />
           <YAxis />
           <XAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
@@ -2306,6 +2364,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'area-pv',
           },
           {
             color: '#3182bd',
@@ -2325,6 +2384,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 400,
+            graphicalItemId: 'area-uv',
           },
           {
             color: '#3182bd',
@@ -2344,6 +2404,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'area-amt',
           },
         ]);
       });
@@ -2390,6 +2451,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'pv',
           fill: '#3182bd',
+          graphicalItemId: 'area-pv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -2409,6 +2471,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#3182bd',
+          graphicalItemId: 'area-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -2428,6 +2491,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#3182bd',
+          graphicalItemId: 'area-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,
@@ -2454,9 +2518,9 @@ describe('itemSorter in stacked AreaChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <AreaChart width={300} height={300} data={PageData}>
-          <Area dataKey="pv" stackId="stack-1" name="Area-pv" />
-          <Area dataKey="uv" stackId="stack-1" name="Area-uv" />
-          <Area dataKey="amt" stackId="stack-1" name="Area-amt" />
+          <Area dataKey="pv" stackId="stack-1" name="Area-pv" id="area-pv" />
+          <Area dataKey="uv" stackId="stack-1" name="Area-uv" id="area-uv" />
+          <Area dataKey="amt" stackId="stack-1" name="Area-amt" id="area-amt" />
           <YAxis name="YAxis" />
           <XAxis dataKey="name" name="XAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -2493,6 +2557,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'area-pv',
           },
           {
             color: '#3182bd',
@@ -2512,6 +2577,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 400,
+            graphicalItemId: 'area-uv',
           },
           {
             color: '#3182bd',
@@ -2531,6 +2597,7 @@ describe('itemSorter in stacked AreaChart', () => {
             type: undefined,
             unit: undefined,
             value: 2400,
+            graphicalItemId: 'area-amt',
           },
         ]);
       });
@@ -2577,6 +2644,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'pv',
           fill: '#3182bd',
+          graphicalItemId: 'area-pv',
           hide: false,
           name: 'Area-pv',
           nameKey: undefined,
@@ -2596,6 +2664,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#3182bd',
+          graphicalItemId: 'area-uv',
           hide: false,
           name: 'Area-uv',
           nameKey: undefined,
@@ -2615,6 +2684,7 @@ describe('itemSorter in stacked AreaChart', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#3182bd',
+          graphicalItemId: 'area-amt',
           hide: false,
           name: 'Area-amt',
           nameKey: undefined,

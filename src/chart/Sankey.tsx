@@ -28,6 +28,8 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil } from '../util/DataUtils';
+import { WithIdRequired } from '../util/useUniqueId';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -537,7 +539,8 @@ const SetSankeyTooltipEntrySettings = React.memo(
     fill,
     name,
     data,
-  }: Pick<Props, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data'>) => {
+    id,
+  }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'>) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
       positions: undefined,
@@ -552,6 +555,7 @@ const SetSankeyTooltipEntrySettings = React.memo(
         type: undefined,
         color: fill,
         unit: '',
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -946,7 +950,9 @@ export const sankeyDefaultProps = {
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
 
-function SankeyImpl(props: PropsWithResolvedDefaults) {
+type InternalSankeyProps = WithIdRequired<PropsWithResolvedDefaults>;
+
+function SankeyImpl(props: InternalSankeyProps) {
   const { className, style, children, ...others } = props;
   const {
     link,
@@ -1089,22 +1095,14 @@ function SankeyImpl(props: PropsWithResolvedDefaults) {
 
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
-  const { width, height, style, className } = props;
+  const { width, height, style, className, id: externalId } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-      <SetSankeyTooltipEntrySettings
-        dataKey={props.dataKey}
-        nameKey={props.nameKey}
-        stroke={props.stroke}
-        strokeWidth={props.strokeWidth}
-        fill={props.fill}
-        name={props.name}
-        data={props.data}
-      />
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={props.margin} />
+
       <RechartsWrapper
         className={className}
         style={style}
@@ -1133,7 +1131,23 @@ export function Sankey(outsideProps: Props) {
         onTouchEnd={undefined}
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
-          <SankeyImpl {...props} />
+          <RegisterGraphicalItemId id={externalId} type="sankey">
+            {id => (
+              <>
+                <SetSankeyTooltipEntrySettings
+                  dataKey={props.dataKey}
+                  nameKey={props.nameKey}
+                  stroke={props.stroke}
+                  strokeWidth={props.strokeWidth}
+                  fill={props.fill}
+                  name={props.name}
+                  data={props.data}
+                  id={id}
+                />
+                <SankeyImpl {...props} id={id} />
+              </>
+            )}
+          </RegisterGraphicalItemId>
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

@@ -7,6 +7,7 @@ import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
@@ -18,6 +19,7 @@ export type ResolvedFunnelSettings = {
   customWidth?: string | number;
   cells: ReadonlyArray<ReactElement>;
   presentationProps: Record<string, any> | null;
+  id: GraphicalItemId;
 };
 
 const pickFunnelSettings = (
@@ -27,21 +29,23 @@ const pickFunnelSettings = (
 
 export const selectFunnelTrapezoids: (
   state: RechartsRootState,
-  {
-    dataKey,
-    nameKey,
-    tooltipType,
-    lastShapeType,
-    reversed,
-    customWidth,
-    cells,
-    presentationProps,
-  }: ResolvedFunnelSettings,
+  funnelSettings: ResolvedFunnelSettings,
 ) => ReadonlyArray<FunnelTrapezoidItem> = createSelector(
   [selectChartOffsetInternal, pickFunnelSettings, selectChartDataAndAlwaysIgnoreIndexes],
   (
     offset: ChartOffsetInternal,
-    { data, dataKey, nameKey, tooltipType, lastShapeType, reversed, customWidth, cells, presentationProps },
+    {
+      data,
+      dataKey,
+      nameKey,
+      tooltipType,
+      lastShapeType,
+      reversed,
+      customWidth,
+      cells,
+      presentationProps,
+      id: graphicalItemId,
+    },
     { chartData },
   ): ReadonlyArray<FunnelTrapezoidItem> => {
     let displayedData: ChartData | undefined;
@@ -73,6 +77,7 @@ export const selectFunnelTrapezoids: (
       reversed,
       offset,
       customWidth,
+      graphicalItemId,
     });
   },
 );

@@ -298,9 +298,10 @@ const SetAreaTooltipEntrySettings = React.memo(
     hide,
     unit,
     tooltipType,
+    id,
   }: Pick<
-    Props,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'
+    WithIdRequired<Props>,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
@@ -316,6 +317,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: getLegendItemColor(stroke, fill),
         unit,
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -1048,6 +1050,7 @@ function AreaFn(outsideProps: Props) {
             hide={props.hide}
             unit={props.unit}
             tooltipType={props.tooltipType}
+            id={id}
           />
           <SetCartesianGraphicalItem
             type="area"

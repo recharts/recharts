@@ -60,7 +60,7 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -270,6 +270,7 @@ type InputRequiredToComputeTooltipEntrySettings = {
   name?: string;
   hide?: boolean;
   tooltipType?: TooltipType;
+  id: GraphicalItemId;
 };
 
 const SetScatterTooltipEntrySettings = React.memo(
@@ -282,6 +283,7 @@ const SetScatterTooltipEntrySettings = React.memo(
     name,
     hide,
     tooltipType,
+    id,
   }: InputRequiredToComputeTooltipEntrySettings) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
@@ -297,6 +299,7 @@ const SetScatterTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Scatter support unit?
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -420,9 +423,9 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     ...restOfAllOtherProps
   } = allOtherScatterProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
   if (!isNonEmptyArray(points)) {
     return null;
   }
@@ -441,7 +444,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...baseProps,
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
-          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
         return (
@@ -761,6 +764,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
         name={props.name}
         hide={props.hide}
         tooltipType={props.tooltipType}
+        id={props.id}
       />
       <ScatterWithId
         {...everythingElse}

@@ -461,6 +461,7 @@ describe('<Line />', () => {
           color: '#3182bd',
           dataKey: 'y',
           fill: '#fff',
+          graphicalItemId: expect.stringMatching(/^recharts-line-.+/),
           hide: false,
           name: 'y',
           nameKey: undefined,

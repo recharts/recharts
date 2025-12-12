@@ -166,9 +166,9 @@ const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
   name: 'LineChart with data on graphical item',
   Wrapper: ({ children }) => (
     <LineChart {...commonChartProps}>
-      <Line dataKey="uv" unit="kg" data={PageData} />
-      <Line dataKey="pv" unit="$$$" name="My custom name" data={PageData} />
-      <Line dataKey="amt" unit={null} data={PageData} />
+      <Line dataKey="uv" unit="kg" data={PageData} id="line-uv" />
+      <Line dataKey="pv" unit="$$$" name="My custom name" data={PageData} id="line-pv" />
+      <Line dataKey="amt" unit={null} data={PageData} id="line-amt" />
       {children}
     </LineChart>
   ),
@@ -466,7 +466,7 @@ describe('Tooltip payload', () => {
 
   describe('LineChartDataOnGraphicalItemTestCase', () => {
     const expectedLine1: LineSettings = {
-      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      id: 'line-uv',
       data: PageData,
       dataKey: 'uv',
       hide: false,
@@ -477,7 +477,7 @@ describe('Tooltip payload', () => {
       zAxisId: 0,
     };
     const expectedLine2: LineSettings = {
-      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      id: 'line-pv',
       data: PageData,
       dataKey: 'pv',
       hide: false,
@@ -488,7 +488,7 @@ describe('Tooltip payload', () => {
       zAxisId: 0,
     };
     const expectedLine3: LineSettings = {
-      id: expect.stringMatching('^recharts-line-[:a-z0-9]+$'),
+      id: 'line-amt',
       data: PageData,
       dataKey: 'amt',
       hide: false,
@@ -897,6 +897,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#fff',
+          graphicalItemId: 'line-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -916,6 +917,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'pv',
           fill: '#fff',
+          graphicalItemId: 'line-pv',
           hide: false,
           name: 'My custom name',
           nameKey: undefined,
@@ -935,6 +937,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#fff',
+          graphicalItemId: 'line-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,
@@ -1010,6 +1013,7 @@ describe('Tooltip payload', () => {
             color: '#3182bd',
             dataKey: 'uv',
             fill: '#fff',
+            graphicalItemId: 'line-uv',
             hide: false,
             name: 'uv',
             nameKey: undefined,
@@ -1063,6 +1067,7 @@ describe('Tooltip payload', () => {
             color: '#3182bd',
             dataKey: 'pv',
             fill: '#fff',
+            graphicalItemId: 'line-pv',
             hide: false,
             name: 'My custom name',
             nameKey: undefined,
@@ -1116,6 +1121,7 @@ describe('Tooltip payload', () => {
             color: '#3182bd',
             dataKey: 'amt',
             fill: '#fff',
+            graphicalItemId: 'line-amt',
             hide: false,
             name: 'amt',
             nameKey: undefined,
@@ -1145,6 +1151,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#fff',
+          graphicalItemId: 'line-uv',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -1164,6 +1171,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'pv',
           fill: '#fff',
+          graphicalItemId: 'line-pv',
           hide: false,
           name: 'My custom name',
           nameKey: undefined,
@@ -1183,6 +1191,7 @@ describe('Tooltip payload', () => {
           color: '#3182bd',
           dataKey: 'amt',
           fill: '#fff',
+          graphicalItemId: 'line-amt',
           hide: false,
           name: 'amt',
           nameKey: undefined,

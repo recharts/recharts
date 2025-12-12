@@ -83,6 +83,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 590,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -130,6 +131,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 590,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -177,6 +179,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 868,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -224,6 +227,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1397,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -271,6 +275,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1480,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -318,6 +323,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1520,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -365,6 +371,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1400,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -425,6 +432,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 800,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -472,6 +480,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 800,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -519,6 +528,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 967,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -566,6 +576,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1098,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -613,6 +624,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1200,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -660,6 +672,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 1108,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -707,6 +720,7 @@ describe('selectPieSectors', () => {
               },
               type: undefined,
               value: 680,
+              graphicalItemId: 'pie-id',
             },
           ],
           tooltipPosition: {
@@ -791,6 +805,7 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
             },
             type: undefined,
             value: 400,
+            graphicalItemId: 'mypie',
           },
         ],
         tooltipPosition: {
@@ -837,6 +852,7 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
             },
             type: undefined,
             value: 300,
+            graphicalItemId: 'mypie',
           },
         ],
         tooltipPosition: {

@@ -827,7 +827,7 @@ describe('<LineChart />', () => {
   describe('Tooltip integration', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChart width={100} height={100} data={PageData}>
-        <Line dataKey="y" isAnimationActive={false} />
+        <Line dataKey="y" isAnimationActive={false} id="line-y" />
         {children}
       </LineChart>
     ));
@@ -839,6 +839,7 @@ describe('<LineChart />', () => {
           color: '#3182bd',
           dataKey: 'y',
           fill: '#fff',
+          graphicalItemId: 'line-y',
           hide: false,
           name: 'y',
           nameKey: undefined,

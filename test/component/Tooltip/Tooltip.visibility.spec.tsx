@@ -9,6 +9,7 @@ import {
   Brush,
   CartesianGrid,
   ComposedChart,
+  DefaultZIndexes,
   Funnel,
   FunnelChart,
   Legend,
@@ -87,7 +88,6 @@ import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
 import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
 
 type TooltipVisibilityTestCase = {
@@ -110,7 +110,7 @@ const AreaChartTestCase: TooltipVisibilityTestCase = {
   name: 'AreaChart',
   Wrapper: ({ children }) => (
     <AreaChart {...commonChartProps}>
-      <Area dataKey="uv" />
+      <Area dataKey="uv" id="my-item-id" />
       {children}
     </AreaChart>
   ),
@@ -123,7 +123,7 @@ const BarChartTestCase: TooltipVisibilityTestCase = {
   name: 'BarChart',
   Wrapper: ({ children }) => (
     <BarChart {...commonChartProps}>
-      <Bar dataKey="uv" />
+      <Bar dataKey="uv" id="my-item-id" />
       {children}
     </BarChart>
   ),
@@ -141,7 +141,7 @@ const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
       <CartesianGrid strokeDasharray="3 3" />
       {children}
       <Legend />
-      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+      <Line type="monotone" dataKey="uv" stroke="#82ca9d" id="my-item-id" />
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
@@ -167,7 +167,7 @@ const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
       <YAxis dataKey="name" type="category" />
       {children}
       <Legend />
-      <Line dataKey="uv" stroke="#82ca9d" />
+      <Line dataKey="uv" stroke="#82ca9d" id="my-item-id" />
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
@@ -182,7 +182,7 @@ const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
       <XAxis dataKey="name" type="category" />
       <YAxis dataKey="uv" />
       {children}
-      <Area dataKey="pv" />
+      <Area dataKey="pv" id="my-item-id" />
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
@@ -197,7 +197,7 @@ const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
       <XAxis dataKey="name" type="category" />
       <YAxis dataKey="uv" />
       {children}
-      <Bar dataKey="amt" />
+      <Bar dataKey="amt" id="my-item-id" />
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
@@ -212,7 +212,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
       <XAxis dataKey="name" type="category" />
       <YAxis dataKey="amt" />
       {children}
-      <Line dataKey="pv" />
+      <Line dataKey="pv" id="my-item-id" />
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
@@ -224,7 +224,7 @@ const FunnelChartTestCase: TooltipVisibilityTestCase = {
   name: 'FunnelChart',
   Wrapper: ({ children }) => (
     <FunnelChart width={700} height={500}>
-      <Funnel isAnimationActive={false} dataKey="uv" nameKey="name" data={PageData} />
+      <Funnel isAnimationActive={false} dataKey="uv" nameKey="name" data={PageData} id="my-item-id" />
       {children}
     </FunnelChart>
   ),
@@ -237,7 +237,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
   name: 'PieChart',
   Wrapper: ({ children }) => (
     <PieChart height={400} width={400}>
-      <Pie data={PageData} isAnimationActive={false} dataKey="uv" nameKey="name" cx={200} cy={200} />
+      <Pie data={PageData} isAnimationActive={false} dataKey="uv" nameKey="name" cx={200} cy={200} id="my-item-id" />
       {children}
     </PieChart>
   ),
@@ -253,7 +253,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
-      <Radar name="Mike" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <Radar name="Mike" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} id="my-item-id" />
       {children}
     </RadarChart>
   ),
@@ -269,7 +269,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
-      <RadialBar name="Mike" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <RadialBar name="Mike" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} id="my-item-id" />
       {children}
     </RadialBarChart>
   ),
@@ -296,7 +296,7 @@ const ScatterChartTestCase: TooltipVisibilityTestCase = {
     <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <XAxis dataKey="uv" name="stature" unit="cm" />
       <YAxis dataKey="pv" name="weight" unit="kg" />
-      <Scatter line name="A school" data={PageData} fill="#ff7300" />
+      <Scatter line name="A school" data={PageData} fill="#ff7300" id="my-item-id" />
       {children}
     </ScatterChart>
   ),
@@ -445,7 +445,7 @@ describe('Tooltip visibility', () => {
           context.skip();
         }
 
-        mockTouchingElement(tooltipIndex, 'uv');
+        mockTouchingElement(tooltipIndex, 'my-item-id');
 
         mockGetBoundingClientRect({
           width: 10,
@@ -783,6 +783,7 @@ describe('Tooltip visibility', () => {
             dot: true,
             fill: '#fff',
             hide: false,
+            id: 'my-item-id',
             isAnimationActive: 'auto',
             label: false,
             legendType: 'line',
@@ -1123,6 +1124,7 @@ describe('Tooltip visibility', () => {
               color: '#8884d8',
               dataKey: 'uv',
               fill: '#8884d8',
+              graphicalItemId: 'my-item-id',
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1214,6 +1216,7 @@ describe('Tooltip visibility', () => {
               color: '#8884d8',
               dataKey: 'uv',
               fill: '#8884d8',
+              graphicalItemId: 'my-item-id',
               hide: false,
               name: 'Mike',
               nameKey: undefined,

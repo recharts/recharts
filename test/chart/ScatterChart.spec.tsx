@@ -1435,7 +1435,7 @@ describe('Tooltip integration', () => {
   describe('with default Tooltip', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <ScatterChart width={100} height={100} data={PageData}>
-        <Scatter isAnimationActive={false} />
+        <Scatter isAnimationActive={false} id="my-scatter" />
         <XAxis dataKey="uv" />
         <YAxis dataKey="pv" />
         <Tooltip isAnimationActive={false} />
@@ -1451,6 +1451,7 @@ describe('Tooltip integration', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'my-scatter',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -1470,6 +1471,7 @@ describe('Tooltip integration', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'my-scatter',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -1509,7 +1511,7 @@ describe('Tooltip integration', () => {
   describe('with Tooltip and defaultIndex=number', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <ScatterChart width={100} height={100} data={PageData}>
-        <Scatter isAnimationActive={false} />
+        <Scatter isAnimationActive={false} id="my-scatter" />
         <XAxis dataKey="uv" />
         <YAxis dataKey="pv" />
         <Tooltip defaultIndex={1} />
@@ -1790,6 +1792,7 @@ describe('Tooltip integration', () => {
               color: undefined,
               dataKey: undefined,
               fill: undefined,
+              graphicalItemId: 'my-scatter',
               hide: false,
               name: undefined,
               nameKey: undefined,
@@ -2009,6 +2012,7 @@ describe('Tooltip integration', () => {
             color: undefined,
             dataKey: undefined,
             fill: undefined,
+            graphicalItemId: 'my-scatter',
             hide: false,
             name: undefined,
             nameKey: undefined,
@@ -2233,6 +2237,7 @@ describe('Tooltip integration', () => {
             color: undefined,
             dataKey: undefined,
             fill: undefined,
+            graphicalItemId: 'my-scatter',
             hide: false,
             name: undefined,
             nameKey: undefined,
@@ -2264,7 +2269,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
       <CartesianGrid />
       <XAxis type="category" allowDuplicatedCategory={false} dataKey="x" name="stature" unit="cm" />
       <YAxis type="category" allowDuplicatedCategory={false} dataKey="y" name="weight" unit="kg" />
-      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} isAnimationActive={false} />
+      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} isAnimationActive={false} id="my-scatter" />
       <Tooltip shared={false} cursor={{ strokeDasharray: '3 3' }} />
       <Legend />
       {children}
@@ -2411,6 +2416,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
           color: undefined,
           dataKey: undefined,
           fill: undefined,
+          graphicalItemId: 'my-scatter',
           hide: false,
           name: 'A school',
           nameKey: undefined,
@@ -2445,6 +2451,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
         color: undefined,
         dataKey: 'x',
         fill: undefined,
+        graphicalItemId: 'my-scatter',
         hide: false,
         name: 'stature',
         nameKey: undefined,
@@ -2463,6 +2470,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
         color: undefined,
         dataKey: 'y',
         fill: undefined,
+        graphicalItemId: 'my-scatter',
         hide: false,
         name: 'weight',
         nameKey: undefined,

@@ -24,6 +24,8 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartCoordinate, DataKey, Margin, Percent } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { WithIdRequired } from '../util/useUniqueId';
 
 export interface SunburstData {
   [key: string]: any;
@@ -88,6 +90,7 @@ export interface SunburstChartProps {
 
   onClick?: (node: SunburstData) => void;
   style?: CSSProperties;
+  id?: string;
 }
 
 interface DrawArcOptions {
@@ -131,7 +134,8 @@ const SetSunburstTooltipEntrySettings = React.memo(
     stroke,
     fill,
     positions,
-  }: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'> & {
+    id,
+  }: Pick<WithIdRequired<SunburstChartProps>, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey' | 'id'> & {
     positions: SunburstPositionMap;
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
@@ -151,6 +155,7 @@ const SetSunburstTooltipEntrySettings = React.memo(
         type: undefined,
         color: fill,
         unit: '',
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -216,6 +221,7 @@ const SunburstChartImpl = ({
   onMouseLeave,
   responsive = false,
   style,
+  id: externalId,
 }: SunburstChartProps) => {
   const dispatch = useAppDispatch();
 
@@ -356,15 +362,22 @@ const SunburstChartImpl = ({
       >
         <Surface width={width} height={height}>
           <Layer className={layerClass}>{sectors}</Layer>
-          <SetSunburstTooltipEntrySettings
-            dataKey={dataKey}
-            nameKey={nameKey}
-            data={data}
-            stroke={stroke}
-            fill={fill}
-            positions={positions}
-          />
-          {children}
+          <RegisterGraphicalItemId id={externalId} type="sunburst">
+            {id => (
+              <>
+                <SetSunburstTooltipEntrySettings
+                  dataKey={dataKey}
+                  nameKey={nameKey}
+                  data={data}
+                  stroke={stroke}
+                  fill={fill}
+                  positions={positions}
+                  id={id}
+                />
+                {children}
+              </>
+            )}
+          </RegisterGraphicalItemId>
         </Surface>
       </RechartsWrapper>
     </TooltipPortalContext.Provider>

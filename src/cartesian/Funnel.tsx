@@ -1,6 +1,5 @@
-/* eslint-disable max-classes-per-file */
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
@@ -41,11 +40,14 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { WithIdRequired } from '../util/useUniqueId';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -62,28 +64,10 @@ export type FunnelTrapezoidItem = TrapezoidProps &
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalFunnelProps {
-  activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
-  className?: string;
-  data?: any[];
-  dataKey: DataKey<any>;
-  hide?: boolean;
-  id?: string;
-  isAnimationActive?: boolean | 'auto';
-  label?: ImplicitLabelListType;
-  lastShapeType?: 'triangle' | 'rectangle';
-  legendType?: LegendType;
-  nameKey?: DataKey<any>;
-  onAnimationEnd?: () => void;
-  onAnimationStart?: () => void;
-  reversed?: boolean;
-  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  tooltipType?: TooltipType;
+type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunnelProps> & {
+  id: GraphicalItemId;
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-}
+};
 
 /**
  * External props, intended for end users to fill in
@@ -159,9 +143,10 @@ const SetFunnelTooltipEntrySettings = React.memo(
     tooltipType,
     data,
     trapezoids,
+    id,
   }: Pick<
-    Props,
-    'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data'
+    InternalProps,
+    'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data' | 'id'
   > & {
     trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   }) => {
@@ -179,6 +164,7 @@ const SetFunnelTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // Funnel does not have unit, why?
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -235,10 +221,10 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
 
   return (
     <>
-      {trapezoids.map((entry, i) => {
+      {trapezoids.map((entry: FunnelTrapezoidItem, i: number) => {
         const isActiveIndex = Boolean(activeShape) && activeItemIndex === String(i);
         const trapezoidOptions = isActiveIndex ? activeShape : shape;
-        const trapezoidProps: FunnelTrapezoidProps = {
+        const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
           ...entry,
           option: trapezoidOptions,
           isActive: isActiveIndex,
@@ -378,20 +364,6 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
   };
 };
 
-export class FunnelWithState extends PureComponent<InternalProps> {
-  render() {
-    const { className } = this.props;
-
-    const layerClass = clsx('recharts-trapezoids', className);
-
-    return (
-      <Layer className={layerClass}>
-        <RenderTrapezoids {...this.props} />
-      </Layer>
-    );
-  }
-}
-
 export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
@@ -406,7 +378,7 @@ export const defaultFunnelProps = {
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 
-function FunnelImpl(props: Props) {
+function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>>) {
   const plotArea = usePlotArea();
 
   const {
@@ -420,8 +392,9 @@ function FunnelImpl(props: Props) {
     animationEasing,
     nameKey,
     lastShapeType,
+    id,
     ...everythingElse
-  } = resolveDefaultProps(props, defaultFunnelProps);
+  } = props;
 
   const presentationProps = svgPropertiesNoEvents(props);
   const cells = findAllByType(props.children, Cell);
@@ -437,6 +410,7 @@ function FunnelImpl(props: Props) {
       customWidth: props.width,
       cells,
       presentationProps,
+      id,
     }),
     [
       props.dataKey,
@@ -448,6 +422,7 @@ function FunnelImpl(props: Props) {
       props.width,
       cells,
       presentationProps,
+      id,
     ],
   );
 
@@ -457,6 +432,8 @@ function FunnelImpl(props: Props) {
     return null;
   }
   const { height, width } = plotArea;
+
+  const layerClass = clsx('recharts-trapezoids', props.className);
 
   return (
     <>
@@ -471,23 +448,27 @@ function FunnelImpl(props: Props) {
         tooltipType={props.tooltipType}
         data={props.data}
         trapezoids={trapezoids}
+        id={id}
       />
-      <FunnelWithState
-        {...everythingElse}
-        stroke={stroke}
-        fill={fill}
-        nameKey={nameKey}
-        lastShapeType={lastShapeType}
-        animationBegin={animationBegin}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        hide={hide}
-        legendType={legendType}
-        height={height}
-        width={width}
-        trapezoids={trapezoids}
-      />
+      <Layer className={layerClass}>
+        <RenderTrapezoids
+          {...everythingElse}
+          id={id}
+          stroke={stroke}
+          fill={fill}
+          nameKey={nameKey}
+          lastShapeType={lastShapeType}
+          animationBegin={animationBegin}
+          animationDuration={animationDuration}
+          animationEasing={animationEasing}
+          isAnimationActive={isAnimationActive}
+          hide={hide}
+          legendType={legendType}
+          height={height}
+          width={width}
+          trapezoids={trapezoids}
+        />
+      </Layer>
     </>
   );
 }
@@ -501,6 +482,7 @@ export function computeFunnelTrapezoids({
   reversed,
   offset,
   customWidth,
+  graphicalItemId,
 }: {
   dataKey: Props['dataKey'];
   nameKey: Props['nameKey'];
@@ -510,6 +492,7 @@ export function computeFunnelTrapezoids({
   lastShapeType?: Props['lastShapeType'];
   reversed?: boolean;
   customWidth: number | string | undefined;
+  graphicalItemId: GraphicalItemId;
 }): ReadonlyArray<FunnelTrapezoidItem> {
   const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(customWidth, offset);
   const maxValue = Math.max.apply(
@@ -549,7 +532,9 @@ export function computeFunnelTrapezoids({
       const upperWidth = (val / maxValue) * realWidth;
       const lowerWidth = (nextVal / maxValue) * realWidth;
 
-      const tooltipPayload: TooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
+      const tooltipPayload: TooltipPayload = [
+        { name, value: val, payload: entry, dataKey, type: tooltipType, graphicalItemId },
+      ];
       const tooltipPosition: Coordinate = {
         x: x + upperWidth / 2,
         y: y + rowHeight / 2,
@@ -604,12 +589,13 @@ export function computeFunnelTrapezoids({
   return trapezoids;
 }
 
-export class Funnel extends PureComponent<Props> {
-  static displayName = 'Funnel';
-
-  static defaultProps = defaultFunnelProps;
-
-  render() {
-    return <FunnelImpl {...this.props} />;
-  }
+export function Funnel(outsideProps: Props) {
+  const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
+  return (
+    <RegisterGraphicalItemId id={externalId} type="funnel">
+      {id => <FunnelImpl {...props} id={id} />}
+    </RegisterGraphicalItemId>
+  );
 }
+
+Funnel.displayName = 'Funnel';
