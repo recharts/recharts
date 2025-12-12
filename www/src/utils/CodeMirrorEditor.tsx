@@ -45,6 +45,8 @@ type CodeMirrorEditorProps = {
   readOnly?: boolean;
   className?: string;
   extraToolbarItems?: ReactNode[];
+  devToolsMode?: boolean;
+  renderInPortal?: boolean;
 };
 
 // Custom fold service for #region/#endregion
@@ -93,6 +95,7 @@ export function CodeMirrorEditor({
   extraToolbarItems,
   readOnly = true,
   className = '',
+  devToolsMode = false,
 }: CodeMirrorEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
@@ -248,10 +251,26 @@ export function CodeMirrorEditor({
     <div className="codemirror-wrapper">
       <div id="codemirror-container">
         <div className="codemirror-toolbar">
-          <CopyButton viewRef={viewRef} />
+          <CopyButton viewRef={viewRef} devToolsMode={devToolsMode} />
           {extraToolbarItems}
         </div>
-        <div ref={editorRef} className={`codemirror-example-editor ${className}`} style={{ height: '100%' }} />
+
+        <div
+          id="recharts-devtools-portal"
+          style={{
+            height: '100%',
+            background: 'var(--color-bg)',
+            color: 'var(--color-text)',
+            overflow: 'auto',
+            padding: '10px',
+            display: devToolsMode ? 'block' : 'none',
+          }}
+        />
+        <div
+          ref={editorRef}
+          className={`codemirror-example-editor ${className}`}
+          style={{ height: '100%', display: devToolsMode ? 'none' : 'block' }}
+        />
       </div>
     </div>
   );

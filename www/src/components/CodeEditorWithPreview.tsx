@@ -109,6 +109,8 @@ export function CodeEditorWithPreview({
 
   const codeToDisplay = editedCode ?? sourceCode;
 
+  const [isDevToolsMode, setIsDevToolsMode] = useState(false);
+
   return (
     <>
       <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
@@ -118,6 +120,7 @@ export function CodeEditorWithPreview({
         onChange={isEditMode ? setEditedCode : undefined}
         readOnly={!isEditMode}
         className="tsx"
+        devToolsMode={isDevToolsMode}
         extraToolbarItems={[
           isEditMode ? (
             <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
@@ -130,6 +133,15 @@ export function CodeEditorWithPreview({
               <span>Edit</span>
             </button>
           ),
+          <button
+            key="devtools"
+            type="button"
+            className={`codemirror-toolbar-item ${isDevToolsMode ? 'active' : ''}`}
+            onClick={() => setIsDevToolsMode(!isDevToolsMode)}
+          >
+            <i className="icon-wrench" />
+            <span>DevTools</span>
+          </button>,
           <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
             <i className="icon-share" />
             <span>Open in StackBlitz</span>

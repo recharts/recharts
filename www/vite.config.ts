@@ -5,6 +5,10 @@ import sitemap from 'vite-plugin-sitemap';
 import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
 
+// Use USE_LOCAL_DEVTOOLS=true to use the local source code of @recharts/devtools
+// This is useful for developing the devtools package itself, as it shares the same Context as the app.
+const useLocalDevtools = process.env.USE_LOCAL_DEVTOOLS === 'true';
+
 export default defineConfig(() => ({
   base: process.env.BASE_URL || '/',
   plugins: [
@@ -51,6 +55,7 @@ export default defineConfig(() => ({
        * This also gives us hot module reload for free!
        */
       recharts: resolve(__dirname, '../src'),
+      ...(useLocalDevtools ? { '@recharts/devtools': resolve(__dirname, '../../devtools/src/index.ts') } : {}),
     },
   },
 }));
