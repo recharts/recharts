@@ -170,25 +170,25 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings1.id, false));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings2.id, false));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings1.id, false));
       const expected = {
         baseLine: [
           {
@@ -242,14 +242,13 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings2.id, false));
       expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
           {
             x: 65,
             y: 335,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -260,7 +259,6 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -423,25 +421,25 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings1.id, false));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings2.id, false));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings1.id, false));
       const expected = {
         baseLine: [
           {
@@ -495,14 +493,13 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings2.id, false));
       expectLastCalledWith(spy, {
         baseLine: [
           // y-value of the first area becomes the baseline for the second area
           {
             x: 65,
             y: 335,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value1: 5,
@@ -513,7 +510,6 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value1: 25,
@@ -691,25 +687,25 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings1.id, false));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings2.id, false));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings1.id, false));
       const expected = {
         baseLine: [
           { x: 65, y: 365, payload: { name: 'a', value1: 5 } },
@@ -735,13 +731,11 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings2.id, false));
       expectLastCalledWith(spy, {
         baseLine: [
           // baseline.y from second point is the same as points.y from first point
-          // @ts-expect-error extra properties not expected in the type
           { x: 65, y: 335, payload: { name: 'a', value2: 10 } },
-          // @ts-expect-error extra properties not expected in the type
           { x: 495, y: 214.99999999999997, payload: { name: 'b', value2: 10 } },
         ],
         isRange: false,
@@ -909,25 +903,25 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings1.id, false));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings2.id, false));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings1.id, false));
       const expected = {
         baseLine: [
           {
@@ -967,13 +961,12 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings2.id, false));
       expectLastCalledWith(spy, {
         baseLine: [
           {
             x: 65,
             y: 335,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -982,7 +975,6 @@ describe('AreaChart stacked', () => {
           {
             x: 495,
             y: 214.99999999999997,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,
@@ -1157,25 +1149,25 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select data stacks for the first area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings1.id, false));
       const expected: ExpectedStackedDataSeries = [
         [0, 5],
         [0, 25],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select data stacks for the second area', () => {
-      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectGraphicalItemStackedData(state, areaSettings2.id, false));
       const expected: ExpectedStackedDataSeries = [
         [5, 15],
         [25, 35],
       ];
-      expectLastCalledWith(spy, expect.toBeRechartsStackedSeries(expected));
+      expectLastCalledWith(spy, expected);
     });
 
     it('should select points for the first area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings1.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings1.id, false));
       const expected = {
         baseLine: [
           {
@@ -1215,13 +1207,12 @@ describe('AreaChart stacked', () => {
     });
 
     it('should select points for the second area', () => {
-      const { spy } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings2.id));
+      const { spy } = renderTestCase(state => selectArea(state, areaSettings2.id, false));
       expectLastCalledWith(spy, {
         baseLine: [
           {
             x: 65,
             y: 335,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'a',
               value: 10,
@@ -1230,7 +1221,6 @@ describe('AreaChart stacked', () => {
           {
             x: 151,
             y: 214.99999999999997,
-            // @ts-expect-error extra properties not expected in the type
             payload: {
               name: 'b',
               value: 10,

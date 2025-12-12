@@ -9,16 +9,16 @@ import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
 
-function defaultFormatter<TValue extends ValueType>(value: TValue) {
-  return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
+function defaultFormatter(value: ValueType | undefined): React.ReactNode {
+  return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
 }
 
 export type TooltipType = 'none';
 export type ValueType = number | string | ReadonlyArray<number | string>;
 export type NameType = number | string;
 export type Formatter<TValue extends ValueType, TName extends NameType> = (
-  value: TValue,
-  name: TName,
+  value: TValue | undefined,
+  name: TName | undefined,
   item: Payload<TValue, TName>,
   index: number,
   payload: ReadonlyArray<Payload<TValue, TName>>,
@@ -81,12 +81,12 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
       const listStyle = { padding: 0, margin: 0 };
 
       const items = (itemSorter ? sortBy(payload, itemSorter) : payload).map(
-        (entry: { type?: any; formatter?: any; color?: any; unit?: any; value?: any; name?: any }, i: any) => {
+        (entry: Payload<TValue, TName>, i: number) => {
           if (entry.type === 'none') {
             return null;
           }
 
-          const finalFormatter = entry.formatter || formatter || defaultFormatter;
+          const finalFormatter: Formatter<TValue, TName> = entry.formatter || formatter || defaultFormatter;
           const { value, name } = entry;
           let finalValue: React.ReactNode = value;
           let finalName: React.ReactNode = name;

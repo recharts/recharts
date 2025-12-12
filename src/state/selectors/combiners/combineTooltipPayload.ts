@@ -91,7 +91,9 @@ export const combineTooltipPayload = (
       tooltipPayload.forEach(item => {
         const newSettings: TooltipEntrySettings = {
           ...settings,
+          // @ts-expect-error we're assuming that item has name and unit properties
           name: item.name,
+          // @ts-expect-error we're assuming that item has name and unit properties
           unit: item.unit,
           // color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
           color: undefined,
@@ -101,10 +103,13 @@ export const combineTooltipPayload = (
         agg.push(
           getTooltipEntry({
             tooltipEntrySettings: newSettings,
+            // @ts-expect-error we're assuming that item has name and unit properties
             dataKey: item.dataKey,
+            // @ts-expect-error we're assuming that item has name and unit properties
             payload: item.payload,
             // @ts-expect-error getValueByDataKey does not validate the output type
             value: getValueByDataKey(item.payload, item.dataKey),
+            // @ts-expect-error we're assuming that item has name and unit properties
             name: item.name,
           }),
         );

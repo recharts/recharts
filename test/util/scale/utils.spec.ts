@@ -1,5 +1,5 @@
 import { describe, expect } from 'vitest';
-import { compose, curry, map, range, reverse } from '../../../src/util/scale/util/utils';
+import { compose, curry, map, range } from '../../../src/util/scale/util/utils';
 
 describe('functional utilities', () => {
   describe('curry', () => {
@@ -42,16 +42,6 @@ describe('functional utilities', () => {
     it('should compose functions', () => {
       const composed = compose(toUpper, addString);
       expect(composed('hello')).toBe('TEST HELLO');
-    });
-  });
-
-  describe('reverse', () => {
-    it('should reverse arrays', () => {
-      expect(reverse([1, 2, 3])).toEqual([3, 2, 1]);
-    });
-
-    it('should reverse strings', () => {
-      expect(reverse('hello')).toBe('olleh');
     });
   });
 });

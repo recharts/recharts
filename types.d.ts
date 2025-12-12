@@ -29,3 +29,20 @@ interface ReadonlyArray<T> {
    */
   filter(predicate: BooleanConstructor): ReadonlyArray<NonNullable<T>>;
 }
+
+interface ArrayConstructor {
+  /**
+   * The vanilla definition casts ReadonlyArray to any[] which hides type problems.
+   * Workaround for https://github.com/Microsoft/TypeScript/issues/17002
+   *
+   * This variant is stricter than necessary to keep the type readable.
+   * It will decide that all arrays are read-only arrays, which is not 100% correct,
+   * but in practice it should be good enough.
+   *
+   * If you need to mutate an array - don't.
+   * If you must - then don't run it through Array.isArray first.
+   *
+   * @param arg
+   */
+  isArray(arg: ReadonlyArray<any> | any): arg is ReadonlyArray<unknown>;
+}

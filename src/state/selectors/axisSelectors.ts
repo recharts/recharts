@@ -37,23 +37,14 @@ import {
   ZAxisSettings,
 } from '../cartesianAxisSlice';
 import { RechartsRootState } from '../store';
-import { selectChartDataWithIndexes, selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import { selectChartDataWithIndexes, selectChartDataWithIndexesIfNotInPanoramaPosition4 } from './dataSelectors';
 import {
   isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import {
-  getPercentValue,
-  hasDuplicate,
-  isNan,
-  isNumber,
-  isNumOrStr,
-  mathSign,
-  upperFirst,
-  isNotNil,
-} from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNan, isNumOrStr, mathSign, upperFirst, isNotNil } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -438,7 +429,7 @@ export const selectDisplayedData: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => ChartData = createSelector(
-  [selectCartesianGraphicalItemsData, selectChartDataWithIndexesIfNotInPanorama],
+  [selectCartesianGraphicalItemsData, selectChartDataWithIndexesIfNotInPanoramaPosition4],
   combineDisplayedData,
 );
 
@@ -509,22 +500,6 @@ export type AppliedChartDataWithErrorDomain = {
  * and the second number should be higher than or equal to the associated "main value".
  */
 export type ErrorValue = [number, number];
-
-export function fromMainValueToError(value: unknown): ErrorValue | undefined {
-  if (isNumber(value) && Number.isFinite(value)) {
-    return [value, value];
-  }
-
-  if (Array.isArray(value)) {
-    const minError = Math.min(...value);
-    const maxError = Math.max(...value);
-    if (!isNan(minError) && !isNan(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
-      return [minError, maxError];
-    }
-  }
-
-  return undefined;
-}
 
 function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
@@ -609,7 +584,7 @@ export const selectDisplayedStackedData: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => DisplayedStackedData = createSelector(
-  [selectStackedCartesianItemsSettings, selectChartDataWithIndexesIfNotInPanorama, selectTooltipAxis],
+  [selectStackedCartesianItemsSettings, selectChartDataWithIndexesIfNotInPanoramaPosition4, selectTooltipAxis],
   combineDisplayedStackedData,
 );
 

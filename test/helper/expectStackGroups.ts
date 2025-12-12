@@ -11,7 +11,7 @@ export type ExpectedStackedDataSeries = ReadonlyArray<StackDataPoint>;
  */
 export type ExpectedStackedData = ReadonlyArray<ExpectedStackedDataSeries>;
 
-function seriesPointToTuple(seriesPoint: ReadonlyArray<number>): StackDataPoint {
+function seriesPointToTuple(seriesPoint: StackDataPoint): StackDataPoint {
   return [seriesPoint[0], seriesPoint[1]];
 }
 
@@ -42,21 +42,21 @@ function seriesToArray(series: ReadonlyArray<ReadonlyArray<StackDataPoint>>): Ex
  * @throws Error if the received value does not match the expected value
  * @returns void
  */
-export function expectStackedData(received: unknown, expected: ExpectedStackedData): void {
+export function expectStackedData(received: ExpectedStackedData, expected: ExpectedStackedData): void {
   if (!Array.isArray(received)) {
     throw new Error(`stackedData error: expected ${received} to be an array`);
   }
   expect(seriesToArray(received)).toEqual(expected);
 }
 
-export function expectStackedSeries(received: unknown, expected: ExpectedStackedDataSeries): void {
+export function expectStackedSeries(received: ExpectedStackedDataSeries, expected: ExpectedStackedDataSeries): void {
   if (!Array.isArray(received)) {
     throw new Error(`stackedSeries error: expected ${received} to be an array`);
   }
   expect(actualSeriesToExpectedSeries(received)).toEqual(expected);
 }
 
-function rechartsStackedDataMatcher(received: unknown, expected: ExpectedStackedData) {
+function rechartsStackedDataMatcher(received: ExpectedStackedData, expected: ExpectedStackedData) {
   try {
     expectStackedData(received, expected);
     return {
@@ -74,7 +74,7 @@ function rechartsStackedDataMatcher(received: unknown, expected: ExpectedStacked
 }
 
 function rechartsStackedSeriesMatcher(
-  received: unknown,
+  received: ExpectedStackedDataSeries,
   expected: ExpectedStackedDataSeries,
 ): { pass: boolean; message: () => string } {
   try {
@@ -94,7 +94,7 @@ function rechartsStackedSeriesMatcher(
 }
 
 function rechartsStackedSeriesPointMatcher(
-  received: unknown,
+  received: StackDataPoint,
   expected: StackDataPoint,
 ): { pass: boolean; message: () => string } {
   try {

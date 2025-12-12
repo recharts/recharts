@@ -1,40 +1,6 @@
-import { describe, test, expect } from 'vitest';
-import { fromMainValueToError, getErrorDomainByDataKey } from '../../src/state/selectors/axisSelectors';
+import { describe, it, expect } from 'vitest';
+import { getErrorDomainByDataKey } from '../../src/state/selectors/axisSelectors';
 import { ErrorBarsSettings } from '../../src/state/errorBarSlice';
-
-describe('fromMainValueToError', () => {
-  const invalidValues: ReadonlyArray<unknown> = [
-    null,
-    undefined,
-    'a',
-    NaN,
-    Symbol('a'),
-    [],
-    {},
-    () => {},
-    new Date(),
-    new Map(),
-    new Set(),
-    Infinity,
-  ];
-
-  test.each(invalidValues)('should return undefined when the input is %s', value => {
-    expect(fromMainValueToError(value)).toBeUndefined();
-  });
-
-  const validValues = [
-    { value: [1, 2], expected: [1, 2] },
-    { value: [2, 1], expected: [1, 2] },
-    { value: [1, 2, 3], expected: [1, 3] },
-    { value: [3, 2, 1], expected: [1, 3] },
-    { value: 3, expected: [3, 3] },
-    { value: -3, expected: [-3, -3] },
-  ];
-
-  test.each(validValues)('should return %s when the input is %s', ({ value, expected }) => {
-    expect(fromMainValueToError(value)).toEqual(expected);
-  });
-});
 
 describe('getErrorDomainByDataKey', () => {
   describe.each([null, undefined])('when entry = %s', entry => {

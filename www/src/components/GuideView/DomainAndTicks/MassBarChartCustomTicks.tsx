@@ -81,7 +81,10 @@ const solarSystem = [
 ];
 // #endregion
 
-function kgToYottagram(value: number): string {
+function kgToYottagram(value: number | undefined): string {
+  if (value == null) {
+    return '';
+  }
   // the data is defined in kg
   const yottagram = value / 1e24;
   return `${yottagram.toFixed(2)}`;

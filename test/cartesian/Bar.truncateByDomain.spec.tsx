@@ -7,7 +7,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Bar, Area, CartesianGrid, ComposedChart, XAxis, YAxis, Legend } from '../../src';
 import { expectBars } from '../helper/expectBars';
 import { selectBarRectangles } from '../../src/state/selectors/barSelectors';
-import { selectChartDataWithIndexesIfNotInPanorama } from '../../src/state/selectors/dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanoramaPosition4 } from '../../src/state/selectors/dataSelectors';
 import { selectDisplayedStackedData, selectStackGroups } from '../../src/state/selectors/axisSelectors';
 
 /*
@@ -162,7 +162,7 @@ describe('Bar stacked with truncateByDomain', () => {
     });
 
     test('selectChartDataWithIndexesIfNotInPanorama', () => {
-      const { spy } = renderTestCase(state => selectChartDataWithIndexesIfNotInPanorama(state, 0, 0, false));
+      const { spy } = renderTestCase(state => selectChartDataWithIndexesIfNotInPanoramaPosition4(state, 0, 0, false));
       expect(spy).toHaveBeenLastCalledWith({
         chartData: data,
         computedData: undefined,

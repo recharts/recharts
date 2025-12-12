@@ -10,14 +10,13 @@ import {
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
 } from './axisSelectors';
-import { AxisId } from '../cartesianAxisSlice';
 import { isNullish } from '../../util/DataUtils';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
 import { CartesianViewBoxRequired, ChartOffsetInternal, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
-import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanoramaPosition3 } from './dataSelectors';
 import { selectAxisViewBox, selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { AllStackGroups, StackDataPoint, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
@@ -26,6 +25,7 @@ import { GraphicalItemId } from '../graphicalItemsSlice';
 import { BarCategory, combineBarSizeList } from './combiners/combineBarSizeList';
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
+import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 
 const pickIsPanorama = (_state: RechartsRootState, _id: GraphicalItemId, isPanorama: boolean): boolean => isPanorama;
 
@@ -35,16 +35,6 @@ const selectSynchronisedBarSettings: (state: RechartsRootState, id: GraphicalIte
   createSelector([selectUnfilteredCartesianItems, pickBarId], (graphicalItems, id: GraphicalItemId) =>
     graphicalItems.filter(item => item.type === 'bar').find(item => item.id === id),
   );
-
-const selectXAxisIdFromBar = createSelector(
-  [selectSynchronisedBarSettings],
-  (barSettings): AxisId | undefined => barSettings?.xAxisId,
-);
-
-const selectYAxisIdFromBar = createSelector(
-  [selectSynchronisedBarSettings],
-  (barSettings): AxisId | undefined => barSettings?.yAxisId,
-);
 
 export const selectMaxBarSize: (_state: RechartsRootState, id: GraphicalItemId) => number | undefined = createSelector(
   [selectSynchronisedBarSettings],
@@ -63,7 +53,13 @@ export const selectAllVisibleBars: (
   id: GraphicalItemId,
   isPanorama: boolean,
 ) => ReadonlyArray<BarSettings> = createSelector(
-  [selectChartLayout, selectUnfilteredCartesianItems, selectXAxisIdFromBar, selectYAxisIdFromBar, pickIsPanorama],
+  [
+    selectChartLayout,
+    selectUnfilteredCartesianItems,
+    selectXAxisIdFromGraphicalItemId,
+    selectYAxisIdFromGraphicalItemId,
+    pickIsPanorama,
+  ],
   (layout: LayoutType, allItems, xAxisId, yAxisId, isPanorama) =>
     allItems
       .filter(i => {
@@ -85,8 +81,8 @@ const selectBarStackGroups = (
   isPanorama: boolean,
 ): AllStackGroups | undefined => {
   const layout = selectChartLayout(state);
-  const xAxisId = selectXAxisIdFromBar(state, id);
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null || yAxisId == null) {
     return undefined;
   }
@@ -98,8 +94,8 @@ const selectBarStackGroups = (
 
 export const selectBarCartesianAxisSize = (state: RechartsRootState, id: GraphicalItemId) => {
   const layout = selectChartLayout(state);
-  const xAxisId = selectXAxisIdFromBar(state, id);
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null || yAxisId == null) {
     return undefined;
   }
@@ -127,8 +123,8 @@ export const selectBarBandSize: (
   if (barSettings == null) {
     return undefined;
   }
-  const xAxisId = selectXAxisIdFromBar(state, id);
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null || yAxisId == null) {
     return undefined;
   }
@@ -153,8 +149,8 @@ export const selectAxisBandSize = (
   isPanorama: boolean,
 ): number | undefined => {
   const layout = selectChartLayout(state);
-  const xAxisId = selectXAxisIdFromBar(state, id);
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null || yAxisId == null) {
     return undefined;
   }
@@ -204,7 +200,7 @@ export const selectAllBarPositions: (
 );
 
 const selectXAxisWithScale = (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => {
-  const xAxisId = selectXAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null) {
     return undefined;
   }
@@ -212,7 +208,7 @@ const selectXAxisWithScale = (state: RechartsRootState, id: GraphicalItemId, isP
 };
 
 const selectYAxisWithScale = (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => {
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (yAxisId == null) {
     return undefined;
   }
@@ -220,7 +216,7 @@ const selectYAxisWithScale = (state: RechartsRootState, id: GraphicalItemId, isP
 };
 
 const selectXAxisTicks = (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => {
-  const xAxisId = selectXAxisIdFromBar(state, id);
+  const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null) {
     return undefined;
   }
@@ -228,7 +224,7 @@ const selectXAxisTicks = (state: RechartsRootState, id: GraphicalItemId, isPanor
 };
 
 const selectYAxisTicks = (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => {
-  const yAxisId = selectYAxisIdFromBar(state, id);
+  const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (yAxisId == null) {
     return undefined;
   }
@@ -280,7 +276,7 @@ export const selectBarRectangles: (
     selectYAxisTicks,
     selectBarPosition,
     selectChartLayout,
-    selectChartDataWithIndexesIfNotInPanorama,
+    selectChartDataWithIndexesIfNotInPanoramaPosition3,
     selectAxisBandSize,
     selectStackedDataOfItem,
     selectSynchronisedBarSettings,
