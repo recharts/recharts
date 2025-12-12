@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { expect, it, vi } from 'vitest';
+import { expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import {
   Label,
@@ -332,11 +332,12 @@ describe('<Pie />', () => {
   );
 
   test('when data is defined and matching dataKey then activeShape receives payload prop', () => {
-    const activeShape = vi.fn();
+    const activeShape: Mock<(props: PieSectorDataItem) => ReactNode> = vi.fn();
     const { container, debug } = render(
       <PieChart width={400} height={400}>
         <Pie
           isAnimationActive={false}
+          // @ts-expect-error our element typing needs attention
           activeShape={activeShape}
           inactiveShape={{ fill: '#ff7322' }}
           cx={250}
@@ -355,7 +356,8 @@ describe('<Pie />', () => {
     showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(activeShape).toHaveBeenCalledTimes(1);
-    expect(activeShape).toHaveBeenCalledWith(
+    expectLastCalledWith(
+      activeShape,
       {
         cornerRadius: undefined,
         cx: 255,
@@ -372,6 +374,7 @@ describe('<Pie />', () => {
         maxRadius: 275.77164466275354,
         midAngle: 38.579169175195666,
         middleRadius: 100,
+        // @ts-expect-error somehow name is a number even though type says string
         name: 0,
         outerRadius: 200,
         paddingAngle: 0,
@@ -397,6 +400,7 @@ describe('<Pie />', () => {
             },
             type: undefined,
             value: 712,
+            graphicalItemId: 'pie-y',
           },
         ],
         tooltipPosition: {
@@ -500,6 +504,7 @@ describe('<Pie />', () => {
             outerRadius={200}
             data={sectorsData}
             dataKey="value"
+            id="pie-value"
           />
         </PieChart>,
       );
@@ -548,6 +553,7 @@ describe('<Pie />', () => {
             },
             type: undefined,
             value: 40,
+            graphicalItemId: 'pie-value',
           },
         ],
         tooltipPosition: {
@@ -891,6 +897,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'A',
                   payload: {
                     cx: 250,
@@ -909,6 +916,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'B',
                   payload: {
                     cx: 250,
@@ -926,6 +934,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 'C',
                   payload: {
                     cx: 250,
@@ -943,6 +952,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 3,
                   payload: {
                     cx: 250,
@@ -959,6 +969,7 @@ describe('<Pie />', () => {
               [
                 {
                   dataKey: 'cy',
+                  graphicalItemId: 'cy-pie',
                   name: 4,
                   payload: {
                     cx: 250,
@@ -1006,6 +1017,7 @@ describe('<Pie />', () => {
               strokeWidth: undefined,
               type: undefined,
               unit: '',
+              graphicalItemId: 'cy-pie',
             },
           },
         ]);
@@ -1192,6 +1204,7 @@ describe('<Pie />', () => {
             color: undefined,
             dataKey: 'cy',
             fill: undefined,
+            graphicalItemId: 'cy-pie',
             hide: false,
             name: 'C',
             nameKey: 'name',
@@ -1862,6 +1875,7 @@ describe('<Pie />', () => {
             data={PageData}
             dataKey="uv"
             onClick={handleClick}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -1908,6 +1922,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -1939,6 +1954,7 @@ describe('<Pie />', () => {
             dataKey="uv"
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -1985,6 +2001,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -2039,6 +2056,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {
@@ -2069,6 +2087,7 @@ describe('<Pie />', () => {
             dataKey="uv"
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            id="pie-uv"
           />
         </PieChart>,
       );
@@ -2115,6 +2134,7 @@ describe('<Pie />', () => {
               },
               type: undefined,
               value: 400,
+              graphicalItemId: 'pie-uv',
             },
           ],
           tooltipPosition: {

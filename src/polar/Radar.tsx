@@ -164,7 +164,11 @@ const SetRadarTooltipEntrySettings = React.memo(
     name,
     hide,
     tooltipType,
-  }: Pick<PropsWithDefaults, 'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType'>) => {
+    id,
+  }: Pick<
+    WithIdRequired<PropsWithDefaults>,
+    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'id'
+  >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       /*
        * I suppose this here _could_ return props.points
@@ -185,6 +189,7 @@ const SetRadarTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: getLegendItemColor(stroke, fill),
         unit: '', // why doesn't Radar support unit?
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -587,6 +592,7 @@ export function Radar(outsideProps: Props) {
             name={props.name}
             hide={props.hide}
             tooltipType={props.tooltipType}
+            id={id}
           />
           <RadarImpl {...props} id={id} />
         </>

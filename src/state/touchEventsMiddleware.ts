@@ -60,11 +60,11 @@ touchEventMiddleware.startListening({
       const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
       const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
       const settings = selectAllGraphicalItemsSettings(state).find(item => item.id === graphicalItemId);
-      if (itemIndex == null || settings == null) {
+      if (itemIndex == null || settings == null || graphicalItemId == null) {
         return;
       }
       const { dataKey } = settings;
-      const coordinate = selectTooltipCoordinate(state, itemIndex, dataKey);
+      const coordinate = selectTooltipCoordinate(state, itemIndex, graphicalItemId);
 
       listenerApi.dispatch(
         setActiveMouseOverItemIndex({

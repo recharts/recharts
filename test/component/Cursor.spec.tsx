@@ -8,6 +8,7 @@ import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { produceState } from '../helper/produceState';
 import { emptyOffset } from '../helper/offsetHelpers';
+import { TooltipPayload } from '../../src/state/tooltipSlice';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -163,7 +164,7 @@ describe('Cursor', () => {
 
     it('should render sector cursor for radial layout charts', () => {
       const coordinate = { endAngle: 2, radius: 1, startAngle: 1, x: 0, y: 0 };
-      const payload = [{ value: 'test', name: 'test' }];
+      const payload: TooltipPayload = [{ value: 'test', name: 'test', graphicalItemId: 'foo' }];
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedRadialState}>
           <svg width={100} height={100}>

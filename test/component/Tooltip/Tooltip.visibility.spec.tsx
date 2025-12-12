@@ -9,6 +9,7 @@ import {
   Brush,
   CartesianGrid,
   ComposedChart,
+  DefaultZIndexes,
   Funnel,
   FunnelChart,
   Legend,
@@ -87,7 +88,6 @@ import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
 import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
 
 type TooltipVisibilityTestCase = {
@@ -1124,6 +1124,7 @@ describe('Tooltip visibility', () => {
               color: '#8884d8',
               dataKey: 'uv',
               fill: '#8884d8',
+              graphicalItemId: 'my-item-id',
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1215,6 +1216,7 @@ describe('Tooltip visibility', () => {
               color: '#8884d8',
               dataKey: 'uv',
               fill: '#8884d8',
+              graphicalItemId: 'my-item-id',
               hide: false,
               name: 'Mike',
               nameKey: undefined,

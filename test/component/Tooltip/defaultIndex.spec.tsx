@@ -15,7 +15,7 @@ describe('defaultIndex', () => {
       <BarChart width={800} height={400} data={PageData}>
         <XAxis dataKey="name" />
         <YAxis dataKey="uv" />
-        <Bar dataKey="uv" />
+        <Bar dataKey="uv" id="my-bar-1" />
         <Tooltip defaultIndex={3} />
         {children}
       </BarChart>
@@ -28,6 +28,7 @@ describe('defaultIndex', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'my-bar-1',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -55,6 +56,7 @@ describe('defaultIndex', () => {
           color: undefined,
           dataKey: 'uv',
           fill: undefined,
+          graphicalItemId: 'my-bar-1',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -82,7 +84,7 @@ describe('defaultIndex', () => {
   describe('in LineChart with multiple XAxes', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChart width={400} height={400} data={PageData}>
-        <Line dataKey="uv" isAnimationActive={false} />
+        <Line dataKey="uv" isAnimationActive={false} id="my-line-1" />
         <XAxis dataKey="name" xAxisId="xaxis-name" />
         <XAxis dataKey="pv" orientation="top" xAxisId="xaxis-pv" />
         <YAxis dataKey="uv" />
@@ -98,6 +100,7 @@ describe('defaultIndex', () => {
           color: '#3182bd',
           dataKey: 'uv',
           fill: '#fff',
+          graphicalItemId: 'my-line-1',
           hide: false,
           name: 'uv',
           nameKey: undefined,
@@ -130,7 +133,7 @@ describe('defaultIndex', () => {
   describe('in PieChart', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <PieChart width={400} height={400}>
-        <Pie data={PageData} dataKey="pv" isAnimationActive={false} />
+        <Pie data={PageData} dataKey="pv" isAnimationActive={false} id="my-pie-1" />
         {children}
       </PieChart>
     ));
@@ -158,6 +161,7 @@ describe('defaultIndex', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'my-pie-1',
           hide: false,
           name: 'Page D',
           nameKey: 'name',
@@ -184,6 +188,7 @@ describe('defaultIndex', () => {
           color: undefined,
           dataKey: 'pv',
           fill: undefined,
+          graphicalItemId: 'my-pie-1',
           hide: false,
           name: 'Page A',
           nameKey: 'name',

@@ -41,6 +41,10 @@ export interface Payload<TValue extends ValueType, TName extends NameType> exten
   strokeWidth?: number | string;
   className?: string;
   hide?: boolean;
+  /**
+   * The id of the graphical item that the data point belongs to
+   */
+  graphicalItemId: string;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {

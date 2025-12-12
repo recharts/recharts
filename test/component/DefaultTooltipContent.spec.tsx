@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { DefaultTooltipContent } from '../../src/component/DefaultTooltipContent';
+import { DefaultTooltipContent, DefaultTooltipContentProps } from '../../src';
 
 describe('DefaultTooltipContent', () => {
-  const mockProps = {
+  const mockProps: DefaultTooltipContentProps<number, string> = {
     accessibilityLayer: true,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
@@ -44,8 +44,10 @@ describe('DefaultTooltipContent', () => {
         name: 'uv',
         color: '#3182bd',
         value: 200,
+        graphicalItemId: 'recharts-area-0',
       },
     ],
+    // @ts-expect-error itemSorter type is challenging
     itemSorter: (d: { name: string }) => d.name,
     labelFormatter: () => `mock labelFormatter`,
   };

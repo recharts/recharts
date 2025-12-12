@@ -31,8 +31,8 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip formatter={() => 'FORMATTED'} />
-        <Bar dataKey={dataKeyAsFunction} name="ultraviolet" fill="#8884d8" />
-        <Bar dataKey="pv" fill="#8ff4d8" />
+        <Bar dataKey={dataKeyAsFunction} name="ultraviolet" fill="#8884d8" id="bar-with-function" />
+        <Bar dataKey="pv" fill="#8ff4d8" id="bar-pv" />
         {children}
       </BarChart>
     ));
@@ -54,6 +54,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
           color: '#8884d8',
           dataKey: dataKeyAsFunction,
           fill: '#8884d8',
+          graphicalItemId: 'bar-with-function',
           hide: false,
           name: 'ultraviolet',
           nameKey: undefined,
@@ -73,6 +74,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
           color: '#8ff4d8',
           dataKey: 'pv',
           fill: '#8ff4d8',
+          graphicalItemId: 'bar-pv',
           hide: false,
           name: 'pv',
           nameKey: undefined,
@@ -108,8 +110,8 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip formatter={() => 'FORMATTED'} />
-        <Bar dataKey={dataKeyAsFunction} fill="#8884d8" />
-        <Bar dataKey="pv" fill="#8ff4d8" />
+        <Bar dataKey={dataKeyAsFunction} fill="#8884d8" id="bar-with-function" />
+        <Bar dataKey="pv" fill="#8ff4d8" id="bar-pv" />
         {children}
       </BarChart>
     ));
@@ -145,6 +147,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
           type: undefined,
           unit: undefined,
           value: 4567,
+          graphicalItemId: 'bar-with-function',
         },
         {
           color: '#8ff4d8',
@@ -164,6 +167,7 @@ describe('Tooltip.formatter reproducing https://github.com/recharts/recharts/iss
           type: undefined,
           unit: undefined,
           value: 4567,
+          graphicalItemId: 'bar-pv',
         },
       ]);
     });

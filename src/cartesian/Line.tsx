@@ -65,6 +65,7 @@ import { Shape } from '../util/ActiveShapeUtils';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 export interface LinePointItem {
   readonly value: number;
@@ -94,7 +95,7 @@ interface InternalLineProps extends ZIndexable {
   dot: DotType;
   height: number;
   hide: boolean;
-  id: string;
+  id: GraphicalItemId;
   isAnimationActive: boolean | 'auto';
   label: ImplicitLabelListType;
   layout: 'horizontal' | 'vertical';
@@ -228,9 +229,10 @@ const SetLineTooltipEntrySettings = React.memo(
     hide,
     unit,
     tooltipType,
+    id,
   }: Pick<
-    Props,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType'
+    InternalProps,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
@@ -246,6 +248,7 @@ const SetLineTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: stroke,
         unit,
+        graphicalItemId: id,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -847,6 +850,7 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             unit={props.unit}
             tooltipType={props.tooltipType}
+            id={id}
           />
           <SetCartesianGraphicalItem
             type="line"

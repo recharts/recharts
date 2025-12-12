@@ -58,6 +58,7 @@ const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
     color: 'color',
     dataKey: 'dataKey1',
     nameKey: 'nameKey1',
+    graphicalItemId: 'graphicalItemId1',
   },
   dataDefinedOnItem: [
     [
@@ -95,6 +96,7 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
     color: 'color 2',
     dataKey: 'dataKey2',
     nameKey: 'nameKey2',
+    graphicalItemId: 'graphicalItemId2',
   },
   dataDefinedOnItem: [
     [
@@ -260,7 +262,7 @@ describe('selectTooltipPayload', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
       positions: undefined,
-      settings: { nameKey: 'y' },
+      settings: { nameKey: 'y', graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: undefined,
     };
     const expectedEntry1: TooltipPayloadEntry = {
@@ -269,6 +271,7 @@ describe('selectTooltipPayload', () => {
       name: undefined,
       nameKey: 'y',
       value: undefined,
+      graphicalItemId: 'graphicalItemId1',
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
       positions: undefined,
@@ -279,6 +282,7 @@ describe('selectTooltipPayload', () => {
         nameKey: 'y',
         name: 'foo',
         unit: 'bar',
+        graphicalItemId: 'graphicalItemId2',
       },
       dataDefinedOnItem: [
         { x: 8, y: 9 },
@@ -294,6 +298,7 @@ describe('selectTooltipPayload', () => {
       payload: { x: 10, y: 11 },
       value: 10,
       unit: 'bar',
+      graphicalItemId: 'graphicalItemId2',
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
@@ -309,7 +314,7 @@ describe('selectTooltipPayload', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
       positions: undefined,
-      settings: { nameKey: 'y' },
+      settings: { nameKey: 'y', graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: undefined,
     };
     const expectedEntry1: TooltipPayloadEntry = {
@@ -318,6 +323,7 @@ describe('selectTooltipPayload', () => {
       name: undefined,
       nameKey: 'y',
       value: undefined,
+      graphicalItemId: 'graphicalItemId1',
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
       positions: undefined,
@@ -328,6 +334,7 @@ describe('selectTooltipPayload', () => {
         nameKey: 'y',
         name: 'foo',
         unit: 'bar',
+        graphicalItemId: 'graphicalItemId2',
       },
       dataDefinedOnItem: [
         { x: 8, y: 9 },
@@ -343,6 +350,7 @@ describe('selectTooltipPayload', () => {
       payload: { x: 10, y: 11 },
       value: 10,
       unit: 'bar',
+      graphicalItemId: 'graphicalItemId2',
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
@@ -360,6 +368,7 @@ describe('selectTooltipPayload', () => {
         nameKey: 'x',
         name: 'foo',
         unit: 'bar',
+        graphicalItemId: 'graphicalItemId1',
       },
       dataDefinedOnItem: undefined,
     };
@@ -381,6 +390,7 @@ describe('selectTooltipPayload', () => {
       payload: { x: 1, y: 2 },
       value: 2,
       unit: 'bar',
+      graphicalItemId: 'graphicalItemId1',
     };
 
     expect(selectTooltipPayload(store.getState(), 'item', 'hover', undefined)).toEqual([expectedEntry]);
@@ -396,6 +406,7 @@ describe('selectTooltipPayload', () => {
         dataKey: 'y',
         nameKey: 'x',
         name: 'foo',
+        graphicalItemId: 'graphicalItemId3',
       },
       dataDefinedOnItem: [
         { x: 1, y: 2 },
@@ -420,6 +431,7 @@ describe('selectTooltipPayload', () => {
       fill: 'green',
       payload: { x: 3, y: 4 },
       value: 4,
+      graphicalItemId: 'graphicalItemId3',
     };
     expect(selectTooltipPayload(store.getState(), 'item', 'hover', undefined)).toEqual([expectedEntry]);
   });
@@ -449,6 +461,7 @@ describe('selectTooltipPayload', () => {
       },
       dataKey: 'x',
       nameKey: 'nameKey1',
+      graphicalItemId: 'graphicalItemId1',
     };
     const expectedEntry2: TooltipPayloadEntry = {
       name: 'weight',
@@ -463,6 +476,7 @@ describe('selectTooltipPayload', () => {
       },
       dataKey: 'y',
       nameKey: 'nameKey1',
+      graphicalItemId: 'graphicalItemId1',
     };
     const expected: ReadonlyArray<TooltipPayloadEntry> = [expectedEntry1, expectedEntry2];
     expect(actual).toEqual(expected);
@@ -470,7 +484,7 @@ describe('selectTooltipPayload', () => {
 
   it('should use dataKey from tooltipAxis, if item dataKey is undefined', () => {
     const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
-      settings: { nameKey: undefined },
+      settings: { nameKey: undefined, graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: [],
       positions: undefined,
     };
@@ -485,7 +499,12 @@ describe('selectTooltipPayload', () => {
       arrayTooltipSearcher,
       'axis',
     );
-    const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: undefined, value: undefined };
+    const expected: TooltipPayloadEntry = {
+      dataKey: 'dataKeyOnAxis',
+      payload: undefined,
+      value: undefined,
+      graphicalItemId: 'graphicalItemId1',
+    };
     expect(actual).toEqual([expected]);
   });
 
@@ -1234,8 +1253,8 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
     rechartsTestRender(
       <PieChart width={100} height={100}>
         <Comp />
-        <Pie data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" />
-        <Pie data={[{ y: 10 }, { y: 20 }, { y: 30 }]} dataKey="y" />
+        <Pie data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" id="pie-1" />
+        <Pie data={[{ y: 10 }, { y: 20 }, { y: 30 }]} dataKey="y" id="pie-2" />
       </PieChart>,
     );
     expect(spy).toHaveBeenCalledTimes(2);
@@ -1245,33 +1264,30 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           {
             dataKey: 'x',
             name: 0,
-            payload: {
-              x: 1,
-            },
+            payload: { x: 1 },
             type: undefined,
             value: 1,
+            graphicalItemId: 'pie-1',
           },
         ],
         [
           {
             dataKey: 'x',
             name: 1,
-            payload: {
-              x: 2,
-            },
+            payload: { x: 2 },
             type: undefined,
             value: 2,
+            graphicalItemId: 'pie-1',
           },
         ],
         [
           {
             dataKey: 'x',
             name: 2,
-            payload: {
-              x: 3,
-            },
+            payload: { x: 3 },
             type: undefined,
             value: 3,
+            graphicalItemId: 'pie-1',
           },
         ],
       ],
@@ -1280,33 +1296,30 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
           {
             dataKey: 'y',
             name: 0,
-            payload: {
-              y: 10,
-            },
+            payload: { y: 10 },
             type: undefined,
             value: 10,
+            graphicalItemId: 'pie-2',
           },
         ],
         [
           {
             dataKey: 'y',
             name: 1,
-            payload: {
-              y: 20,
-            },
+            payload: { y: 20 },
             type: undefined,
             value: 20,
+            graphicalItemId: 'pie-2',
           },
         ],
         [
           {
             dataKey: 'y',
             name: 2,
-            payload: {
-              y: 30,
-            },
+            payload: { y: 30 },
             type: undefined,
             value: 30,
+            graphicalItemId: 'pie-2',
           },
         ],
       ],

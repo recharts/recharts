@@ -372,14 +372,16 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     hide,
     fill,
     tooltipType,
+    id,
   }: Pick<
-    RadialBarProps,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType'
+    WithIdRequired<PropsWithDefaults>,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
       positions: undefined,
       settings: {
+        graphicalItemId: id,
         stroke,
         strokeWidth,
         fill,
@@ -489,6 +491,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
         hide={props.hide}
         fill={props.fill}
         tooltipType={props.tooltipType}
+        id={props.id}
       />
       <RadialBarWithState {...props} data={data} />
     </>
