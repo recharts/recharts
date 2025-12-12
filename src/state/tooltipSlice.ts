@@ -4,6 +4,7 @@ import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { CartesianViewBoxRequired, Coordinate, DataKey, PolarCoordinate } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
+import { GraphicalItemId } from './graphicalItemsSlice';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -269,7 +270,7 @@ export type TooltipActionPayload = {
   activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate?: Coordinate | undefined;
-  activeGraphicalItemId?: string | undefined;
+  activeGraphicalItemId?: GraphicalItemId | undefined;
 };
 
 const tooltipSlice = createSlice({

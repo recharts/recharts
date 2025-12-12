@@ -128,7 +128,7 @@ type RealFunnelData = unknown;
 
 type FunnelTrapezoidsProps = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  allOtherFunnelProps: Props;
+  allOtherFunnelProps: InternalProps;
 };
 
 const SetFunnelTooltipEntrySettings = React.memo(
@@ -215,9 +215,17 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherFunnelProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(
+    onMouseEnterFromProps,
+    allOtherFunnelProps.dataKey,
+    allOtherFunnelProps.id,
+  );
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(
+    onItemClickFromProps,
+    allOtherFunnelProps.dataKey,
+    allOtherFunnelProps.id,
+  );
 
   return (
     <>

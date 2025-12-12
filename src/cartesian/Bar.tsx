@@ -435,11 +435,11 @@ function BarBackground(props: BarBackgroundProps) {
   } = allOtherBarProps;
 
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, allOtherBarProps.id);
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, allOtherBarProps.id);
   if (!backgroundFromProps || data == null) {
     return null;
   }
