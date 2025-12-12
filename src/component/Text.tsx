@@ -55,14 +55,23 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
   }
 };
 
+/**
+ * @inline
+ */
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
 export function isValidTextAnchor(value: string | undefined): value is TextAnchor {
   return value === 'start' || value === 'middle' || value === 'end' || value === 'inherit';
 }
 
+/**
+ * @inline
+ */
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
+/**
+ * @inline
+ */
 export type RenderableText = string | number | boolean | null | undefined;
 
 interface TextProps {

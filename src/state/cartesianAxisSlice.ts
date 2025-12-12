@@ -5,6 +5,9 @@ import { RechartsScale } from '../util/ChartUtils';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import type { AxisRange } from './selectors/axisSelectors';
 
+/**
+ * @inline
+ */
 export type AxisId = string | number;
 export const defaultAxisId: AxisId = 0;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';

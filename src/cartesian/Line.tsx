@@ -870,5 +870,9 @@ function LineFn(outsideProps: Props) {
   );
 }
 
+/**
+ * @provides LabelListContext
+ * @consumes CartesianChartContext
+ */
 export const Line: ComponentType<Props> = React.memo(LineFn, propsAreEqual);
 Line.displayName = 'Line';

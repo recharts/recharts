@@ -512,7 +512,7 @@ export class ProjectDocReader implements DocReader {
     return undefined;
   }
 
-  getTypeOf(component: string, prop: string): string | undefined {
+  getTypeOf(component: string, prop: string): { name: string; isInline: boolean } | undefined {
     try {
       const paramType = this.getPropsType(component);
       const properties = paramType.getProperties();
@@ -530,7 +530,55 @@ export class ProjectDocReader implements DocReader {
       const declaration = declarations[0];
 
       const type = declaration.getType();
-      return type.getText();
+      let typeText = type.getText();
+      let isInline = false;
+
+      let aliasSymbol = type.getAliasSymbol();
+      if (!aliasSymbol && type.isUnion()) {
+        aliasSymbol = type.getNonNullableType().getAliasSymbol();
+      }
+
+      if (!aliasSymbol && Node.isPropertySignature(declaration)) {
+        const typeNode = declaration.getTypeNode();
+        if (typeNode) {
+          const nodeType = typeNode.getType();
+          aliasSymbol = nodeType.getAliasSymbol();
+        }
+      }
+
+      if (aliasSymbol) {
+        const jsDocTags = aliasSymbol.getJsDocTags();
+        const hasInlineTag = jsDocTags.some(t => t.getName() === 'inline');
+
+        // Also check if the tag is just present in the text but not parsed as tag?
+        // ts-morph getJsDocTags() should handle it.
+
+        if (hasInlineTag) {
+          isInline = true;
+          if (type.isUnion()) {
+            const parts = type.getUnionTypes();
+            const expandedParts = parts.map(part => {
+              if (part.getAliasSymbol() === aliasSymbol) {
+                if (part.isUnion()) {
+                  return part
+                    .getUnionTypes()
+                    .map(t => t.getText())
+                    .join(' | ');
+                }
+                const declarations2 = aliasSymbol.getDeclarations();
+                const declaration0 = declarations2[0];
+                if (declarations2.length > 0 && Node.isTypeAliasDeclaration(declaration0)) {
+                  return declaration0.getTypeNode()?.getText() ?? part.getText();
+                }
+              }
+              return part.getText();
+            });
+            typeText = expandedParts.join(' | ');
+          }
+        }
+      }
+
+      return { name: typeText, isInline };
     } catch {
       return undefined;
     }

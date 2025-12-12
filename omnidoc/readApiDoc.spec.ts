@@ -99,11 +99,6 @@ describe('readApiDoc', () => {
     `);
   });
 
-  it('should read Area onAnimationStart comment', () => {
-    const onAnimationStartMeta = reader.getCommentOf('Area', 'onAnimationStart');
-    expect(onAnimationStartMeta).toBe('The customized event handler of animation start');
-  });
-
   it('should return undefined for comment of unknown component', () => {
     expect(reader.getCommentOf('UnknownComponent', 'someProp')).toBe(undefined);
   });

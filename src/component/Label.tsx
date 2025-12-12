@@ -30,6 +30,9 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
+/**
+ * @inline
+ */
 export type LabelContentType = ReactElement | ((props: Props) => RenderableText | ReactElement);
 
 type CartesianLabelPosition =
@@ -61,8 +64,14 @@ type CartesianLabelPosition =
 
 type PolarLabelPosition = 'insideStart' | 'insideEnd' | 'end';
 
+/**
+ * @inline
+ */
 export type LabelPosition = CartesianLabelPosition | PolarLabelPosition;
 
+/**
+ * @inline
+ */
 export type LabelFormatter = (label: RenderableText) => RenderableText;
 
 interface LabelProps extends ZIndexable {

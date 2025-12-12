@@ -6,7 +6,7 @@ export const BarStackAPI: ApiDoc = {
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
       name: 'radius',
-      type: 'RectRadius',
+      type: 'number | [number, number, number, number]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -37,7 +37,7 @@ export const BarStackAPI: ApiDoc = {
     },
     {
       name: 'stackId',
-      type: 'StackId',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (

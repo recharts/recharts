@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
 import { getAllTagTexts, getTagText, ProjectDocReader } from './readProject';
-import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
+import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 
 /**
  * List of components that are ready to be auto-generated.
@@ -23,6 +23,7 @@ import { ApiDoc, ApiProps } from '../www/src/docs/api/types';
  */
 export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
+  'Area',
   'BarStack',
   'Text',
   'Label',
@@ -34,39 +35,82 @@ const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
 /**
  * Converts a TypeScript type to a simplified string representation for API docs
  */
-function simplifyType(originalText: string): string {
+export /**
+ * Splits a type string by a separator, respecting nested structures like {}, [], <>, ()
+ */
+function splitTypeString(typeString: string, separator: string = '|'): string[] {
+  const parts: string[] = [];
+  let currentPart = '';
+  let nestLevel = 0;
+
+  for (let i = 0; i < typeString.length; i++) {
+    const char = typeString[i];
+
+    if (char === '{' || char === '<' || char === '(' || char === '[') {
+      nestLevel++;
+    } else if (char === '}' || char === '>' || char === ')' || char === ']') {
+      nestLevel--;
+    }
+
+    // Check for separator
+    if (char === separator && nestLevel === 0) {
+      if (currentPart.trim()) {
+        parts.push(currentPart.trim());
+      }
+      currentPart = '';
+    } else {
+      currentPart += char;
+    }
+  }
+
+  if (currentPart.trim()) {
+    parts.push(currentPart.trim());
+  }
+
+  return parts;
+}
+
+/**
+ * Converts a TypeScript type to a simplified string representation for API docs
+ */
+export function simplifyType(originalText: string, isInline: boolean = false): string {
   let simplifiedText: string = originalText;
   // Remove import paths - extract just the type name
-  const importMatch = simplifiedText.match(/import\([^)]+\)\.(\w+)/);
-  if (importMatch) {
-    const [, second] = importMatch;
-    simplifiedText = second;
-  }
-
-  // Handle union types with undefined (optional types)
-  if (simplifiedText.includes(' | undefined')) {
-    simplifiedText = simplifiedText.replace(' | undefined', '');
-  }
+  simplifiedText = simplifiedText.replace(/import\([^)]+\)\.(\w+)/g, '$1');
 
   // Handle union types
-  if (simplifiedText.includes(' | ')) {
-    const parts = simplifiedText.split(' | ').map(p => simplifyType(p.trim()));
-    const uniqueParts = Array.from(new Set(parts));
+  if (simplifiedText.includes('|')) {
+    // Only split if we actually have top-level pipes
+    const parts = splitTypeString(simplifiedText, '|');
 
-    // If it's a simple union, join with |
-    if (uniqueParts.length <= 4) {
-      return uniqueParts.join(' | ');
+    if (parts.length > 1) {
+      // If split was successful
+      const simplifiedParts = parts
+        .map(p => p.trim())
+        .filter(p => p !== 'undefined')
+        .map(p => simplifyType(p, isInline));
+
+      const uniqueParts = Array.from(new Set(simplifiedParts));
+
+      // If it's a simple union, join with |
+      if (isInline || uniqueParts.length <= 4) {
+        if (uniqueParts.length === 0) return 'undefined';
+        return uniqueParts.join(' | ');
+      }
+      // For complex unions, just return a generic type
+      return `(union of ${uniqueParts.length} variants)`;
     }
-    // For complex unions, just return a generic type
-    return `(union of ${uniqueParts.length} variants)`;
   }
 
   // Array types
   if (simplifiedText.endsWith('[]')) {
-    const elementType = simplifyType(simplifiedText.slice(0, -2));
+    const elementType = simplifyType(simplifiedText.slice(0, -2), isInline);
     return `Array<${elementType}>`;
   }
   if (simplifiedText.startsWith('Array<') || simplifiedText.startsWith('ReadonlyArray<')) {
+    if (isInline) {
+      return simplifiedText; // Or try to simplify inner type? For now preserve.
+    }
     return 'Array';
   }
 
@@ -86,6 +130,9 @@ function simplifyType(originalText: string): string {
 
   // Object types
   if (simplifiedText.startsWith('{') || simplifiedText === 'object') {
+    if (isInline && simplifiedText.startsWith('{')) {
+      return simplifiedText;
+    }
     return 'Object';
   }
 
@@ -148,6 +195,63 @@ async function generateComponentDescription(
   return undefined;
 }
 
+function getLinksFromProp(componentName: string, propName: string, projectReader: ProjectDocReader): PropExample[] {
+  const meta = projectReader.getPropMeta(componentName, propName);
+  // getPropMeta returns an array, but standard props usually map to one definition.
+  // In case of multiple (overloading), we merge tags.
+  const examples: PropExample[] = [];
+
+  for (const propMeta of meta) {
+    if (!propMeta.jsDoc) continue;
+
+    const seeTags = getAllTagTexts(propMeta.jsDoc, 'see');
+    const linkTags = getAllTagTexts(propMeta.jsDoc, 'link');
+
+    // Process both tags similarly
+    [...seeTags, ...linkTags].forEach(tag => {
+      let url = '';
+      let name = '';
+
+      let cleanTag = tag.trim();
+
+      // Check for {@link ...} wrapper and strip it
+      const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
+      if (linkWrapperMatch) {
+        cleanTag = linkWrapperMatch[1].trim();
+      }
+
+      // Parse "url|text" or "url text"
+      // Match first sequence of non-whitespace/non-pipe characters as URL
+      const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
+      if (parts) {
+        url = parts[1].trim();
+        name = parts[2]?.trim() ?? url;
+      } else {
+        // Fallback for weird cases
+        url = cleanTag;
+        name = cleanTag;
+      }
+
+      // Strip specific prefix
+      const prefix = 'https://recharts.github.io/en-US';
+      if (url.startsWith(prefix)) {
+        url = url.slice(prefix.length);
+      }
+
+      const isExternal = url.startsWith('http') || url.startsWith('https');
+
+      examples.push({
+        name,
+        url,
+        isExternal: isExternal ? true : undefined,
+      });
+    });
+  }
+
+  // Deduplicate by URL
+  return examples.filter((ex, index, self) => index === self.findIndex(t => t.url === ex.url));
+}
+
 /**
  * Generates API documentation for a single component
  */
@@ -164,8 +268,8 @@ async function generateApiDoc(
     const defaultValue = projectReader.getDefaultValueOf(componentName, propName);
 
     // Extract type information
-    const typeText = projectReader.getTypeOf(componentName, propName);
-    const typeString = typeText ? simplifyType(typeText) : 'Any';
+    const typeInfo = projectReader.getTypeOf(componentName, propName);
+    const typeString = typeInfo ? simplifyType(typeInfo.name, typeInfo.isInline) : 'Any';
 
     // Determine if optional
     const isOptional = projectReader.isOptionalProp(componentName, propName);
@@ -196,13 +300,56 @@ async function generateApiDoc(
     }
 
     // Add examples if available
-    const examples = projectReader.getExamplesOf(componentName, propName);
-    if (examples.length > 0) {
-      prop.format = examples;
+    const formatExamples = projectReader.getExamplesOf(componentName, propName);
+    if (formatExamples.length > 0) {
+      prop.format = formatExamples;
+    }
+
+    // Add links/see tags as examples
+    const links = getLinksFromProp(componentName, propName, projectReader);
+    if (links.length > 0) {
+      prop.examples = links;
     }
 
     props.push(prop);
   }
+
+  // Sort props based on user criteria
+  props.sort((a, b) => {
+    // 1. Required props first
+    if (a.isOptional !== b.isOptional) {
+      return a.isOptional ? 1 : -1;
+    }
+
+    const getOrigin = (pName: string) => {
+      const meta = projectReader.getPropMeta(componentName, pName);
+      // If any definition is from 'recharts', treat as 'recharts'
+      return meta.some(m => m.origin === 'recharts') ? 'recharts' : 'dom';
+    };
+
+    const originA = getOrigin(a.name);
+    const originB = getOrigin(b.name);
+
+    const isEventA = a.name.startsWith('on');
+    const isEventB = b.name.startsWith('on');
+
+    const getCategory = (origin: string, isEvent: boolean) => {
+      if (origin === 'recharts') {
+        return isEvent ? 3 : 2; // Recharts props (2), Recharts events (3)
+      }
+      return isEvent ? 5 : 4; // Other props (4), Other events (5)
+    };
+
+    const categoryA = getCategory(originA, isEventA);
+    const categoryB = getCategory(originB, isEventB);
+
+    if (categoryA !== categoryB) {
+      return categoryA - categoryB;
+    }
+
+    // 6. Alphabetical sort within category
+    return a.name.localeCompare(b.name);
+  });
 
   const apiDoc: ApiDoc = {
     name: componentName,
@@ -260,7 +407,7 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   apiDoc.props.forEach(prop => {
     result += `{`;
     result += `"name": "${prop.name}",`;
-    result += `"type": "${prop.type}",`;
+    result += `"type": ${JSON.stringify(prop.type)},`;
     result += `"isOptional": ${prop.isOptional},`;
 
     if (prop.desc) {
@@ -278,6 +425,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 
     if (prop.format !== undefined) {
       result += `"format": ${JSON.stringify(prop.format)},`;
+    }
+
+    if (prop.examples !== undefined) {
+      result += `"examples": ${JSON.stringify(prop.examples)},`;
     }
 
     result += `},`;

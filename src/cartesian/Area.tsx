@@ -73,6 +73,9 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 
+/**
+ * @inline
+ */
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
 /**
@@ -221,7 +224,7 @@ interface AreaProps extends ZIndexable {
   /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
-  stackId?: string | number;
+  stackId?: StackId;
   /**
    * The stroke color. If "none", no line will be drawn.
    * @defaultValue '#3182bd'
@@ -236,7 +239,9 @@ interface AreaProps extends ZIndexable {
   /**
    * The interpolation type of curve. Allows custom interpolation function.
    *
-   * @defaultValue 'linear'
+   * @defaultValue linear
+   * @link https://github.com/d3/d3-shape#curves
+   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/|An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
   /**
@@ -263,7 +268,10 @@ interface AreaProps extends ZIndexable {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type AreaSvgProps = Omit<CurveProps, 'type' | 'points' | 'ref' | 'layout'>;
+type AreaSvgProps = Omit<
+  CurveProps,
+  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML'
+>;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
@@ -1074,5 +1082,9 @@ function AreaFn(outsideProps: Props) {
   );
 }
 
+/**
+ * @provides LabelListContext
+ * @consumes CartesianChartContext
+ */
 export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
 Area.displayName = 'Area';

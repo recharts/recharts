@@ -168,7 +168,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'textAnchor',
-      type: 'TextAnchor',
+      type: '"end" | "start" | "middle" | "inherit"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -190,7 +190,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'verticalAnchor',
-      type: 'TextVerticalAnchor',
+      type: '"end" | "start" | "middle"',
       isOptional: true,
       desc: {
         'en-US': (
