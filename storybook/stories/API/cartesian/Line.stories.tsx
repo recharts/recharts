@@ -21,6 +21,11 @@ export default {
     data,
     ...ResponsiveProps,
     ...LineStyle,
+    stroke: {
+      control: { type: 'color' },
+      table: { category: 'Style' },
+      defaultValue: '#3182bd',
+    },
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
   },

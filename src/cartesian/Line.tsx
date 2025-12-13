@@ -66,6 +66,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { ChartData } from '../state/chartDataSlice';
 
 export interface LinePointItem {
   readonly value: number;
@@ -123,82 +124,192 @@ interface InternalLineProps extends ZIndexable {
  * External props, intended for end users to fill in
  */
 interface LineProps extends ZIndexable {
+  /**
+   * The dot is shown when user enter an area chart and this chart has tooltip.
+   * If false set, no active dot will not be drawn.
+   * If true set, active dot will be drawn which have the props calculated internally.
+   * If object set, active dot will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom active dot element.
+   * If set a function, the function will be called to render customized active dot.
+   *
+   * @defaultValue true
+   * @example <Line dataKey="value" activeDot={false} />
+   * @example <Line dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
+   * @example <Line dataKey="value" activeDot={CustomizedActiveDot} />
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
+   */
   activeDot?: ActiveDotType;
   /**
    * @defaultValue true
    */
   animateNewValues?: boolean;
   /**
+   * Specifies when the animation should begin, the unit of this option is ms.
    * @defaultValue 0
    */
   animationBegin?: number;
   /**
+   * Specifies the duration of animation, the unit of this option is ms.
    * @defaultValue 1500
    */
   animationDuration?: AnimationDuration;
   /**
+   * The type of easing function.
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
   className?: string;
   /**
+   * Whether to connect the line across null points.
    * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ A lineChart connect nulls and a lineChart disconnect nulls}
    */
   connectNulls?: boolean;
-  data?: any;
+  data?: ChartData;
+  /**
+   * Decides how to extract the value of this Area from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Area.
+   */
   dataKey?: DataKey<any>;
   /**
+   * If false set, dots will not be drawn.
+   * If true set, dots will be drawn which have the props calculated internally.
+   * If object set, dots will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom dot element.
+   * If set a function, the function will be called to render customized dot.
    * @defaultValue true
+   *
+   * @example <Line dataKey="value" dot={false} />
+   * @example <Line dataKey="value" dot={{ stroke: 'red', strokeWidth: 2 }} />
+   * @example <Line dataKey="value" dot={CustomizedDot} />
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/CustomizedDotLineChart/ A line chart with customized dot}
    */
   dot?: DotType;
   /**
+   * Hides the whole line when true.
+   * Useful when toggling the visibility of the line in a chart, for example through a legend.
    * @defaultValue false
    */
   hide?: boolean;
 
+  /**
+   * Unique identifier of this component.
+   * Used as a HTML attribute `id`, and also to identify this element internally.
+   *
+   * If undefined, Recharts will generate a unique ID automatically.
+   */
   id?: string;
   /**
+   * If set false, animation of line will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
 
   /**
+   * Renders one label for each data point. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
    * @defaultValue false
+   * @example <Line dataKey="value" label />
+   * @example <Line dataKey="value" label={{ fill: 'red', fontSize: 20 }} />
+   * @example <Line dataKey="value" label={CustomizedLabel} />
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/CustomizedLabelLineChart/ A line chart with customized label}
    */
   label?: ImplicitLabelListType;
   /**
+   * The type of icon in legend.
+   * If set to 'none', no legend item will be rendered.
    * @defaultValue line
    */
   legendType?: LegendType;
+  /**
+   * If set a ReactElement, the shape of line can be customized.
+   * If set a function, the function will be called to render customized shape.
+   *
+   * @example <Line dataKey="value" shape={CustomizedShapeComponent}/>
+   * @example <Line dataKey="value" shape={renderShapeFunction}/>
+   */
   shape?: ActiveShape<CurveProps, SVGPathElement>;
 
+  /**
+   * The name of data.
+   * This option will be used in tooltip and legend to represent this graphical item.
+   * If no value was set to this option, the value of dataKey will be used alternatively.
+   */
   name?: string | number;
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
   tooltipType?: TooltipType;
   /**
+   * The interpolation type of curve. Allows custom interpolation function.Q
+   *
    * @defaultValue linear
+   * @link https://github.com/d3/d3-shape#curves
+   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
+  /**
+   * The unit of data. This option will be used in tooltip.
+   */
   unit?: string | number | null;
   /**
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
    */
   xAxisId?: AxisId;
   /**
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    * @defaultValue 0
    */
   yAxisId?: AxisId;
   /**
+   * @since 3.4
    * @defaultValue 400
    */
   zIndex?: number;
+  /**
+   * The stroke color. If `"none"`, no line will be drawn.
+   *
+   * @defaultValue #3182bd
+   */
+  stroke?: string;
+  /**
+   * The width of the stroke
+   *
+   * @defaultValue 1
+   */
+  strokeWidth?: string | number;
+  /**
+   * The pattern of dashes and gaps used to paint the line
+   *
+   * @example <Line strokeDasharray="4" />
+   * @example <Line strokeDasharray="4 1" />
+   * @example <Line strokeDasharray="4 1 2" />
+   */
+  strokeDasharray?: string | number;
 }
 
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout'>;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine'>;
 
 type InternalProps = LineSvgProps & InternalLineProps;
 
@@ -872,6 +983,7 @@ function LineFn(outsideProps: Props) {
 
 /**
  * @provides LabelListContext
+ * @provides ErrorBarContext
  * @consumes CartesianChartContext
  */
 export const Line: ComponentType<Props> = React.memo(LineFn, propsAreEqual);

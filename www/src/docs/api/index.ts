@@ -11,7 +11,7 @@ import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
 
 import { BarAPI as Bar } from './Bar';
-import { LineAPI } from './Line';
+import { LineAPI } from './LineAPI';
 import { ScatterAPI as Scatter } from './Scatter';
 import { XAxisAPI as XAxis } from './XAxis';
 import { YAxisAPI as YAxis } from './YAxis';
@@ -51,7 +51,7 @@ import { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
-import { AreaAPI } from './AreaAPI.tsx';
+import { AreaAPI } from './AreaAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,

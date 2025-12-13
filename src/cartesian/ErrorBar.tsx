@@ -2,7 +2,7 @@
  * @fileOverview Render a group of error bar
  */
 import * as React from 'react';
-import { Component, SVGProps } from 'react';
+import { SVGProps } from 'react';
 import { Layer } from '../container/Layer';
 import { AnimationTiming, DataKey, RectangleCoordinate } from '../util/types';
 import { BarRectangleItem } from './Bar';
@@ -252,7 +252,10 @@ export const errorBarDefaultProps = {
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
-function ErrorBarInternal(props: Props) {
+/**
+ * @consumes ErrorBarContext
+ */
+export function ErrorBar(props: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
 
   const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = resolveDefaultProps(
@@ -278,16 +281,4 @@ function ErrorBarInternal(props: Props) {
   );
 }
 
-/**
- * @consumes ErrorBarContext
- */
-// eslint-disable-next-line react/prefer-stateless-function
-export class ErrorBar extends Component<Props> {
-  static defaultProps = errorBarDefaultProps;
-
-  static displayName = 'ErrorBar';
-
-  render() {
-    return <ErrorBarInternal {...this.props} />;
-  }
-}
+ErrorBar.displayName = 'ErrorBar';

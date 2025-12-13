@@ -8,7 +8,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Customized',
   'Funnel',
   'Legend',
-  'Line',
   'Pie',
   'PieChart',
   'PolarAngleAxis',

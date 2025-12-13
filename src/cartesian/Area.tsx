@@ -130,7 +130,13 @@ interface InternalAreaProps extends ZIndexable {
  */
 interface AreaProps extends ZIndexable {
   /**
-   * The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If object set, active dot will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom active dot element.If set a function, the function will be called to render customized active dot.
+   * The dot is shown when user enter an area chart and this chart has tooltip.
+   * If false set, no active dot will not be drawn.
+   * If true set, active dot will be drawn which have the props calculated internally.
+   * If object set, active dot will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom active dot element.
+   * If set a function, the function will be called to render customized active dot.
+   *
    * @defaultValue true
    */
   activeDot?: ActiveDotType;
@@ -172,10 +178,17 @@ interface AreaProps extends ZIndexable {
    */
   dataKey: DataKey<any>;
   /**
-   * If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props merged by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element. If set a function, the function will be called to render customized dot.
+   * If false set, dots will not be drawn.
+   * If true set, dots will be drawn which have the props calculated internally.
+   * If object set, dots will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom dot element.
+   * If set a function, the function will be called to render customized dot.
    * @defaultValue false
    */
   dot?: DotType;
+  /**
+   * @defaultValue false
+   */
   hide?: boolean;
   /**
    * Unique identifier of this component.
@@ -186,7 +199,8 @@ interface AreaProps extends ZIndexable {
   id?: string;
 
   /**
-   * If set false, animation of area will be disabled. If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * If set false, animation of area will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue 'auto'
    */
   isAnimationActive?: boolean | 'auto';
@@ -203,13 +217,16 @@ interface AreaProps extends ZIndexable {
    */
   label?: ImplicitLabelListType;
   /**
-   * The type of icon in legend. If set to 'none', no legend item will be rendered.
+   * The type of icon in legend.
+   * If set to 'none', no legend item will be rendered.
    * @defaultValue 'line'
    */
   legendType?: LegendType;
 
   /**
-   * The name of data. This option will be used in tooltip and legend to represent a area. If no value was set to this option, the value of dataKey will be used alternatively.
+   * The name of data.
+   * This option will be used in tooltip and legend to represent this graphical item.
+   * If no value was set to this option, the value of dataKey will be used alternatively.
    */
   name?: string | number;
   /**
@@ -241,7 +258,7 @@ interface AreaProps extends ZIndexable {
    *
    * @defaultValue linear
    * @link https://github.com/d3/d3-shape#curves
-   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/|An AreaChart which has two area with different interpolation.}
+   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
   /**
