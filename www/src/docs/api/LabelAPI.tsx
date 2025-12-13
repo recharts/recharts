@@ -37,7 +37,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'content',
-      type: 'ReactNode | Function | React.JSXElementConstructor<any>>',
+      type: 'ReactNode | Function',
       isOptional: true,
       desc: {
         'en-US': (
@@ -82,7 +82,7 @@ export const LabelAPI: ApiDoc = {
       },
     },
     { name: 'index', type: 'number', isOptional: true },
-    { name: 'labelRef', type: 'React.RefObject<SVGTextElement> | null', isOptional: true },
+    { name: 'labelRef', type: 'null | React.RefObject<SVGTextElement>', isOptional: true },
     {
       name: 'offset',
       type: 'string | number',

@@ -35,76 +35,14 @@ const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
 /**
  * Converts a TypeScript type to a simplified string representation for API docs
  */
-export /**
- * Splits a type string by a separator, respecting nested structures like {}, [], <>, ()
- */
-function splitTypeString(typeString: string, separator: string = '|'): string[] {
-  const parts: string[] = [];
-  let currentPart = '';
-  let nestLevel = 0;
-
-  for (let i = 0; i < typeString.length; i++) {
-    const char = typeString[i];
-
-    if (char === '{' || char === '<' || char === '(' || char === '[') {
-      nestLevel++;
-    } else if (char === '}' || char === '>' || char === ')' || char === ']') {
-      nestLevel--;
-    }
-
-    // Check for separator
-    if (char === separator && nestLevel === 0) {
-      if (currentPart.trim()) {
-        parts.push(currentPart.trim());
-      }
-      currentPart = '';
-    } else {
-      currentPart += char;
-    }
-  }
-
-  if (currentPart.trim()) {
-    parts.push(currentPart.trim());
-  }
-
-  return parts;
-}
-
-/**
- * Converts a TypeScript type to a simplified string representation for API docs
- */
-export function simplifyType(originalText: string, isInline: boolean = false): string {
+export function simplifyOneType(originalText: string, isInline: boolean = false): string {
   let simplifiedText: string = originalText;
   // Remove import paths - extract just the type name
   simplifiedText = simplifiedText.replace(/import\([^)]+\)\.(\w+)/g, '$1');
 
-  // Handle union types
-  if (simplifiedText.includes('|')) {
-    // Only split if we actually have top-level pipes
-    const parts = splitTypeString(simplifiedText, '|');
-
-    if (parts.length > 1) {
-      // If split was successful
-      const simplifiedParts = parts
-        .map(p => p.trim())
-        .filter(p => p !== 'undefined')
-        .map(p => simplifyType(p, isInline));
-
-      const uniqueParts = Array.from(new Set(simplifiedParts));
-
-      // If it's a simple union, join with |
-      if (isInline || uniqueParts.length <= 4) {
-        if (uniqueParts.length === 0) return 'undefined';
-        return uniqueParts.join(' | ');
-      }
-      // For complex unions, just return a generic type
-      return `(union of ${uniqueParts.length} variants)`;
-    }
-  }
-
   // Array types
   if (simplifiedText.endsWith('[]')) {
-    const elementType = simplifyType(simplifiedText.slice(0, -2), isInline);
+    const elementType = simplifyOneType(simplifiedText.slice(0, -2), isInline);
     return `Array<${elementType}>`;
   }
   if (simplifiedText.startsWith('Array<') || simplifiedText.startsWith('ReadonlyArray<')) {
@@ -138,6 +76,26 @@ export function simplifyType(originalText: string, isInline: boolean = false): s
 
   // Return as-is if it's a simple type name (could be a custom type)
   return simplifiedText;
+}
+
+export function processType(typeNames: string[], isInline: boolean): string {
+  const simplifiedParts = typeNames
+    .map(p => p.trim())
+    .filter(p => p !== 'undefined')
+    .map(p => simplifyOneType(p, isInline));
+
+  const uniqueParts = Array.from(new Set(simplifiedParts));
+
+  // If it's a simple union, join with |
+  if (isInline || uniqueParts.length <= 4) {
+    if (uniqueParts.length === 0) return 'undefined';
+    // If it's just 'undefined', we might have filtered it out above?
+    // If the original type was exactly 'undefined', filtering leaves empty.
+    // So if empty, we might return 'undefined' or handled elsewhere.
+    return uniqueParts.join(' | ');
+  }
+  // For complex unions, just return a generic type
+  return `(union of ${uniqueParts.length} variants)`;
 }
 
 /**
@@ -269,7 +227,7 @@ async function generateApiDoc(
 
     // Extract type information
     const typeInfo = projectReader.getTypeOf(componentName, propName);
-    const typeString = typeInfo ? simplifyType(typeInfo.name, typeInfo.isInline) : 'Any';
+    const typeString = typeInfo ? processType(typeInfo.names, typeInfo.isInline) : 'Any';
 
     // Determine if optional
     const isOptional = projectReader.isOptionalProp(componentName, propName);
