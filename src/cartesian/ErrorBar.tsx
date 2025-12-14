@@ -46,7 +46,11 @@ export type ErrorBarDataPointFormatter<T extends BarRectangleItem | LinePointIte
  */
 interface ErrorBarProps extends ZIndexable {
   /**
-   * The key of a group of error values in data.
+   * Decides how to extract the value of this ErrorBar from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this ErrorBar.
+   *
    * The error values can be a single value for symmetric error bars;
    * or an array of a lower and upper error value for asymmetric error bars.
    */
@@ -58,8 +62,8 @@ interface ErrorBarProps extends ZIndexable {
    */
   width?: number;
   /**
-   * Only used for ScatterChart with error bars in two directions.
-   * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
+   * Direction of the error bar. Usually determined by chart layout, except in Scatter chart.
+   * In Scatter chart, "x" means horizontal error bars, "y" means vertical error bars.
    */
   direction?: ErrorBarDirection;
   /**
@@ -79,11 +83,11 @@ interface ErrorBarProps extends ZIndexable {
    */
   animationEasing?: AnimationTiming;
   /**
-   * Width of the lines used to make the error bars
+   * The width of the stroke
    */
   strokeWidth?: number | string;
   /**
-   * Color of the error bar lines
+   * The stroke color. If "none", no line will be drawn.
    *
    * @defaultValue black
    */
@@ -255,13 +259,10 @@ export const errorBarDefaultProps = {
 /**
  * @consumes ErrorBarContext
  */
-export function ErrorBar(props: Props) {
-  const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
-
-  const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = resolveDefaultProps(
-    props,
-    errorBarDefaultProps,
-  );
+export function ErrorBar(outsideProps: Props) {
+  const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);
+  const props = resolveDefaultProps(outsideProps, errorBarDefaultProps);
+  const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = props;
 
   return (
     <>

@@ -433,6 +433,10 @@ describe('omnidoc - documentation consistency', () => {
     test.each(
       apiDocReader
         .getPublicComponentNames()
+        /*
+         * Filter out components that are auto-generated because those are guaranteed to match
+         */
+        .filter(name => !OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS.includes(name))
         .filter(name => !componentsWithInconsistentCommentsInApiDocAndStorybook.includes(name)),
     )('if %s has comments in both API docs and Storybook, they should match', component => {
       const apiProps = new Set(apiDocReader.getRechartsPropsOf(component));

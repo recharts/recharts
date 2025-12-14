@@ -12,14 +12,14 @@ import { TreemapAPI } from './Treemap';
 
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';
-import { ScatterAPI } from './ScatterAPI.tsx';
+import { ScatterAPI } from './ScatterAPI';
 import { XAxisAPI as XAxis } from './XAxis';
 import { YAxisAPI as YAxis } from './YAxis';
 import { ZAxisAPI as ZAxis } from './ZAxis';
 import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
 import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
 import { ReferenceAreaAPI as ReferenceArea } from './ReferenceArea';
-import { ErrorBarAPI as ErrorBar } from './ErrorBar';
+import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
@@ -97,7 +97,7 @@ export const allExamples: Record<string, ApiDoc> = {
   ReferenceLine,
   ReferenceDot,
   ReferenceArea,
-  ErrorBar,
+  ErrorBar: ErrorBarAPI,
 
   Cross,
   Curve,
