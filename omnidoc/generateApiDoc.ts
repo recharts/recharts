@@ -423,7 +423,7 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
   const varName = `${apiDoc.name}API`;
 
-  const fileContent = `import { ApiDoc } from './types.ts';
+  const fileContent = `import { ApiDoc } from './types';
 
 export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 `;

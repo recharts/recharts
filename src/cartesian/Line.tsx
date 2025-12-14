@@ -125,7 +125,7 @@ interface InternalLineProps extends ZIndexable {
  */
 interface LineProps extends ZIndexable {
   /**
-   * The dot is shown when user enter an area chart and this chart has tooltip.
+   * The dot is shown when user enter a line chart and this chart has tooltip.
    * If false set, no active dot will not be drawn.
    * If true set, active dot will be drawn which have the props calculated internally.
    * If object set, active dot will be drawn which have the props merged by the internal calculated props and the option.
@@ -169,10 +169,10 @@ interface LineProps extends ZIndexable {
   connectNulls?: boolean;
   data?: ChartData;
   /**
-   * Decides how to extract the value of this Area from the data:
+   * Decides how to extract the value of this Line from the data:
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Area.
+   * - `function`: a function that receives the data object and returns the value of this Line.
    *
    * If undefined, it will reuse the dataKey of YAxis.
    */
@@ -260,7 +260,7 @@ interface LineProps extends ZIndexable {
   onAnimationStart?: () => void;
   tooltipType?: TooltipType;
   /**
-   * The interpolation type of curve. Allows custom interpolation function.Q
+   * The interpolation type of curve. Allows custom interpolation function.
    *
    * @defaultValue linear
    * @link https://github.com/d3/d3-shape#curves

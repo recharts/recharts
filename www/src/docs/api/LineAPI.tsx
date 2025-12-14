@@ -1,4 +1,4 @@
-import { ApiDoc } from './types.ts';
+import { ApiDoc } from './types';
 
 export const LineAPI: ApiDoc = {
   name: 'Line',
@@ -11,11 +11,11 @@ export const LineAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot
-              will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If
-              object set, active dot will be drawn which have the props merged by the internal calculated props and the
-              option. If ReactElement set, the option can be the custom active dot element. If set a function, the
-              function will be called to render customized active dot.
+              The dot is shown when user enter a line chart and this chart has tooltip. If false set, no active dot will
+              not be drawn. If true set, active dot will be drawn which have the props calculated internally. If object
+              set, active dot will be drawn which have the props merged by the internal calculated props and the option.
+              If ReactElement set, the option can be the custom active dot element. If set a function, the function will
+              be called to render customized active dot.
             </p>
           </section>
         ),
@@ -95,7 +95,7 @@ export const LineAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
+            <p>Decides how to extract the value of this Line from the data:</p>
             <ul>
               <li>
                 <code>string</code>: the name of the field in the data object;
@@ -104,7 +104,7 @@ export const LineAPI: ApiDoc = {
                 <code>number</code>: the index of the field in the data;
               </li>
               <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
+                <code>function</code>: a function that receives the data object and returns the value of this Line.
               </li>
             </ul>
             <p>If undefined, it will reuse the dataKey of YAxis.</p>

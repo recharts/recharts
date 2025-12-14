@@ -1,4 +1,4 @@
-import { ApiDoc } from './types.ts';
+import { ApiDoc } from './types';
 
 export const ScatterAPI: ApiDoc = {
   name: 'Scatter',
@@ -114,8 +114,8 @@ export const ScatterAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set false, animation of area will be disabled. If set &quot;auto&quot;, the animation will be disabled
-              in SSR and enabled in browser.
+              If set false, animation of Scatter points will be disabled. If set &quot;auto&quot;, the animation will be
+              disabled in SSR and enabled in browser.
             </p>
           </section>
         ),
@@ -173,10 +173,11 @@ export const ScatterAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Renders line connecting individual points. Options&quot; = - <code>false</code>: no line is drawn.
-            </p>
+            <p>Renders line connecting individual points. Options&quot;</p>
             <ul>
+              <li>
+                <code>false</code>: no line is drawn.
+              </li>
               <li>
                 <code>true</code>: a default line is drawn.
               </li>

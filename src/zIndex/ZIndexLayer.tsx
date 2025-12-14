@@ -20,7 +20,7 @@ export interface ZIndexable {
    *
    * @since 3.4
    * @defaultValue 0
-   * @see https://recharts.github.io/en-US/guide/zIndex/
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
 }

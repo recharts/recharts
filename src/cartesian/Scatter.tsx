@@ -209,7 +209,7 @@ interface ScatterProps extends ZIndexable {
   /**
    * Renders line connecting individual points.
    * Options"
-   * = - `false`: no line is drawn.
+   * - `false`: no line is drawn.
    * - `true`: a default line is drawn.
    * - `ReactElement`: the option is the custom line element.
    * - `function`: the function will be called to render customized line.
@@ -302,7 +302,7 @@ interface ScatterProps extends ZIndexable {
   label?: ImplicitLabelListType;
 
   /**
-   * If set false, animation of area will be disabled.
+   * If set false, animation of Scatter points will be disabled.
    * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue 'auto'
    */
