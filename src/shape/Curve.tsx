@@ -36,6 +36,7 @@ import {
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { useChartLayout } from '../context/chartLayoutContext';
 
 interface CurveFactories {
   [index: string]: CurveFactory;
@@ -261,12 +262,21 @@ export const getPath = ({
 
 export const Curve: React.FC<Props> = props => {
   const { className, points, path, pathRef } = props;
+  const layout = useChartLayout();
 
   if ((!points || !points.length) && !path) {
     return null;
   }
 
-  const realPath: string | null | undefined = points && points.length ? getPath(props) : path;
+  const getPathInput: GetPathProps = {
+    type: props.type,
+    points: props.points,
+    baseLine: props.baseLine,
+    layout: props.layout || layout,
+    connectNulls: props.connectNulls,
+  };
+
+  const realPath: string | null | undefined = points && points.length ? getPath(getPathInput) : path;
 
   return (
     <path
