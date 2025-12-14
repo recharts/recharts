@@ -27,6 +27,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'BarStack',
   'Label',
   'Line',
+  'Scatter',
   'Text',
   'ZIndexLayer',
 ];

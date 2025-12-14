@@ -22,6 +22,7 @@ export const AreaAPI: ApiDoc = {
                 <code>function</code>: a function that receives the data object and returns the value of this Area.
               </li>
             </ul>
+            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
@@ -325,7 +326,24 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: 0,
     },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
+    {
+      name: 'zIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
+              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
+              content is rendered in the default layer without portals.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 100,
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+    },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     {

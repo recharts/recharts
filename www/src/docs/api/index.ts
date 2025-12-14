@@ -12,7 +12,7 @@ import { TreemapAPI } from './Treemap';
 
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';
-import { ScatterAPI as Scatter } from './Scatter';
+import { ScatterAPI } from './ScatterAPI.tsx';
 import { XAxisAPI as XAxis } from './XAxis';
 import { YAxisAPI as YAxis } from './YAxis';
 import { ZAxisAPI as ZAxis } from './ZAxis';
@@ -70,7 +70,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Bar,
   BarStack: BarStackAPI,
   Line: LineAPI,
-  Scatter,
+  Scatter: ScatterAPI,
   XAxis,
   YAxis,
   ZAxis,

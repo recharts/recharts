@@ -173,6 +173,8 @@ interface LineProps extends ZIndexable {
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Area.
+   *
+   * If undefined, it will reuse the dataKey of YAxis.
    */
   dataKey?: DataKey<any>;
   /**
@@ -237,8 +239,8 @@ interface LineProps extends ZIndexable {
    * If set a ReactElement, the shape of line can be customized.
    * If set a function, the function will be called to render customized shape.
    *
-   * @example <Line dataKey="value" shape={CustomizedShapeComponent}/>
-   * @example <Line dataKey="value" shape={renderShapeFunction}/>
+   * @example <Line dataKey="value" shape={CustomizedShapeComponent} />
+   * @example <Line dataKey="value" shape={renderShapeFunction} />
    */
   shape?: ActiveShape<CurveProps, SVGPathElement>;
 
@@ -280,8 +282,14 @@ interface LineProps extends ZIndexable {
    */
   yAxisId?: AxisId;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
    * @since 3.4
    * @defaultValue 400
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
   /**
