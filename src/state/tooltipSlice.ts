@@ -270,7 +270,14 @@ export type TooltipActionPayload = {
   activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate?: Coordinate | undefined;
-  activeGraphicalItemId?: GraphicalItemId | undefined;
+  /**
+   * If the user is interacting with a specific graphical item,
+   * this identifies which one it is.
+   *
+   * If undefined, it means the user is interacting with all graphical items on a specific domain data point
+   * (tooltipEventType==='axis').
+   */
+  activeGraphicalItemId: GraphicalItemId | undefined;
 };
 
 const tooltipSlice = createSlice({

@@ -52,6 +52,11 @@ keyboardEventsMiddleware.startListening({
           activeIndex: keyboardInteraction.index,
           activeDataKey: keyboardInteraction.dataKey,
           activeCoordinate: coordinate,
+          /*
+           * We can't offer any particular graphical item here,
+           * because we are interacting with the whole axis, not with a specific item.
+           */
+          activeGraphicalItemId: undefined,
         }),
       );
       return;
@@ -72,6 +77,11 @@ keyboardEventsMiddleware.startListening({
         activeIndex: nextIndex.toString(),
         activeDataKey: undefined,
         activeCoordinate: coordinate,
+        /*
+         * We can't offer any particular graphical item here,
+         * because we are interacting with the whole axis, not with a specific item.
+         */
+        activeGraphicalItemId: undefined,
       }),
     );
   },
@@ -98,6 +108,11 @@ keyboardEventsMiddleware.startListening({
           active: true,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,
+          /*
+           * We can't offer any particular graphical item here,
+           * because we are interacting with the whole axis, not with a specific item.
+           */
+          activeGraphicalItemId: undefined,
         }),
       );
     }

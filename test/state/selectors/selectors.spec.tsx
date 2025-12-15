@@ -379,7 +379,14 @@ describe('selectTooltipPayload', () => {
         { x: 3, y: 4 },
       ]),
     );
-    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '0', activeDataKey: 'y', activeCoordinate }));
+    store.dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: '0',
+        activeDataKey: 'y',
+        activeCoordinate,
+        activeGraphicalItemId: tooltipSettings.settings.graphicalItemId,
+      }),
+    );
 
     const expectedEntry: TooltipPayloadEntry = {
       name: 1,
@@ -421,7 +428,14 @@ describe('selectTooltipPayload', () => {
       ]),
     );
     expect(selectTooltipPayload(store.getState(), 'item', 'hover', undefined)).toEqual(undefined);
-    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '0', activeDataKey: 'y', activeCoordinate }));
+    store.dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: '0',
+        activeDataKey: 'y',
+        activeCoordinate,
+        activeGraphicalItemId: tooltipSettings.settings.graphicalItemId,
+      }),
+    );
     store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
     const expectedEntry: TooltipPayloadEntry = {
       name: 3,
@@ -730,11 +744,23 @@ describe('selectTooltipPayloadConfigurations', () => {
   });
 
   it('should filter by dataKey with tooltipEventType: item and trigger: hover', () => {
-    exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1' }));
+    exampleStore.dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: '1',
+        activeDataKey: 'dataKey1',
+        activeGraphicalItemId: exampleTooltipPayloadConfiguration1.settings.graphicalItemId,
+      }),
+    );
     expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', undefined)).toEqual([
       exampleTooltipPayloadConfiguration1,
     ]);
-    exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey2' }));
+    exampleStore.dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: '1',
+        activeDataKey: 'dataKey2',
+        activeGraphicalItemId: exampleTooltipPayloadConfiguration2.settings.graphicalItemId,
+      }),
+    );
     expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', undefined)).toEqual([
       exampleTooltipPayloadConfiguration2,
     ]);
@@ -762,15 +788,25 @@ describe('selectTooltipPayloadConfigurations', () => {
     });
 
     it('should return configuration that matches the dataKey after user has started interacting', () => {
-      exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey2' }));
+      exampleStore.dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex: '1',
+          activeDataKey: 'dataKey2',
+          activeGraphicalItemId: exampleTooltipPayloadConfiguration2.settings.graphicalItemId,
+        }),
+      );
       expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', '1')).toEqual([
         exampleTooltipPayloadConfiguration2,
       ]);
     });
 
-    it('should return empty array if user interacted with a dataKey that is not represented in the tooltip payloads', () => {
+    it('should return empty array if user interacted with a an item that is not represented in the tooltip payloads', () => {
       exampleStore.dispatch(
-        setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey-notPresentInPayloads' }),
+        setActiveMouseOverItemIndex({
+          activeIndex: '1',
+          activeGraphicalItemId: 'id-notPresentInPayloads',
+          activeDataKey: 'dataKey-notPresentInPayloads',
+        }),
       );
       expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', '1')).toEqual([]);
     });

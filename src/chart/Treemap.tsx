@@ -437,6 +437,7 @@ const defaultState: State = {
 };
 
 type ContentItemProps = {
+  id: GraphicalItemId;
   content: TreemapContentType;
   nodeProps: TreemapNode;
   type: string;
@@ -525,6 +526,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
         activeCoordinate,
+        activeGraphicalItemId: props.id,
       }),
     );
   };
@@ -538,6 +540,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
         activeCoordinate,
+        activeGraphicalItemId: props.id,
       }),
     );
   };
@@ -598,6 +601,7 @@ function TreemapItem({
   onNestClick: (node: TreemapNode) => void;
 }): ReactNode {
   const {
+    id,
     isAnimationActive,
     animationBegin,
     animationDuration,
@@ -670,6 +674,7 @@ function TreemapItem({
           style={{ ...style, transformOrigin: `${x} ${y}` }}
         >
           <ContentItemWithEvents
+            id={id}
             content={content}
             dataKey={dataKey}
             nodeProps={{
@@ -906,6 +911,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         activeIndex: itemIndex,
         activeDataKey: dataKey,
         activeCoordinate,
+        activeGraphicalItemId: this.props.id,
       }),
     );
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Customized, Sankey, Tooltip, XAxis, YAxis } from '../../src';
 import { exampleSankeyData } from '../_data';
@@ -15,6 +15,7 @@ import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
+import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -243,7 +244,9 @@ describe('<Sankey />', () => {
 
   describe('tooltip state', () => {
     it('should start with tooltip inactive, and activate it on hover and click on a link', () => {
-      const tooltipStateSpy = vi.fn();
+      const tooltipStateSpy: Mock<
+        (state: { click: TooltipInteractionState; hover: TooltipInteractionState } | undefined) => void
+      > = vi.fn();
       const Comp = (): null => {
         tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
         return null;
@@ -255,18 +258,20 @@ describe('<Sankey />', () => {
           <Customized component={<Comp />} />
         </Sankey>,
       );
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         hover: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
@@ -276,12 +281,13 @@ describe('<Sankey />', () => {
 
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         hover: {
           active: true,
@@ -291,13 +297,14 @@ describe('<Sankey />', () => {
             x: 80,
             y: 142.14339872499383,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
       fireEvent.click(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -306,6 +313,7 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'link-0',
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
         hover: {
           active: true,
@@ -315,13 +323,14 @@ describe('<Sankey />', () => {
             x: 80,
             y: 142.14339872499383,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -330,6 +339,7 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'link-0',
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
         hover: {
           active: false,
@@ -339,13 +349,16 @@ describe('<Sankey />', () => {
             x: 80,
             y: 142.14339872499383,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should start with tooltip inactive, and activate it on hover and click on a node', () => {
-      const tooltipStateSpy = vi.fn();
+      const tooltipStateSpy: Mock<
+        (state: { click: TooltipInteractionState; hover: TooltipInteractionState } | undefined) => void
+      > = vi.fn();
       const Comp = (): null => {
         tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
         return null;
@@ -357,18 +370,20 @@ describe('<Sankey />', () => {
           <Customized component={<Comp />} />
         </Sankey>,
       );
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         hover: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
@@ -378,12 +393,13 @@ describe('<Sankey />', () => {
 
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         hover: {
           active: true,
@@ -393,13 +409,14 @@ describe('<Sankey />', () => {
             x: 10,
             y: 139.51593144373072,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
       fireEvent.click(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -408,6 +425,7 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'node-0',
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
         hover: {
           active: true,
@@ -417,13 +435,14 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'node-0',
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -432,6 +451,7 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'node-0',
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
         hover: {
           active: false,
@@ -441,6 +461,7 @@ describe('<Sankey />', () => {
             x: 10,
             y: 139.51593144373072,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sankey-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);

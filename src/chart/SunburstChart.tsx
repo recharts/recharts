@@ -26,6 +26,7 @@ import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export interface SunburstData {
   [key: string]: any;
@@ -199,35 +200,50 @@ const preloadedState: Partial<RechartsRootState> = {
 
 type SunburstPositionMap = Map<string, ChartCoordinate>;
 
+const defaultSunburstChartProps = {
+  padding: 2,
+  dataKey: 'value',
+  nameKey: 'name',
+  ringPadding: 2,
+  innerRadius: 50,
+  fill: '#333',
+  stroke: '#FFF',
+  textOptions: defaultTextProps,
+  startAngle: 0,
+  endAngle: 360,
+  responsive: false,
+} as const satisfies Partial<SunburstChartProps>;
+
+type InternalSunburstChartProps = WithIdRequired<
+  RequiresDefaultProps<SunburstChartProps, typeof defaultSunburstChartProps>
+>;
+
 const SunburstChartImpl = ({
   className,
   data,
   children,
-  padding = 2,
-  dataKey = 'value',
-  nameKey = 'name',
-  ringPadding = 2,
-  innerRadius = 50,
-  fill = '#333',
-  stroke = '#FFF',
-  textOptions = defaultTextProps,
+  padding,
+  dataKey,
+  nameKey,
+  ringPadding,
+  innerRadius,
+  fill,
+  stroke,
+  textOptions,
   outerRadius: outerRadiusFromProps,
   cx: cxFromProps,
   cy: cyFromProps,
-  startAngle = 0,
-  endAngle = 360,
+  startAngle,
+  endAngle,
   onClick,
   onMouseEnter,
   onMouseLeave,
-  responsive = false,
-  style,
-  id: externalId,
-}: SunburstChartProps) => {
+  id,
+}: InternalSunburstChartProps) => {
   const dispatch = useAppDispatch();
 
   const width = useChartWidth();
   const height = useChartHeight();
-  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   if (width == null || height == null) {
     return null;
@@ -253,6 +269,7 @@ const SunburstChartImpl = ({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
         activeCoordinate: positions.get(node.name),
+        activeGraphicalItemId: id,
       }),
     );
   }
@@ -271,6 +288,7 @@ const SunburstChartImpl = ({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
         activeCoordinate: positions.get(node.name),
+        activeGraphicalItemId: id,
       }),
     );
   }
@@ -336,60 +354,61 @@ const SunburstChartImpl = ({
 
   const layerClass = clsx('recharts-sunburst', className);
   return (
-    <TooltipPortalContext.Provider value={tooltipPortal}>
-      <RechartsWrapper
-        className={className}
-        width={width}
-        height={height}
-        responsive={responsive}
-        style={style}
-        ref={(node: HTMLDivElement) => {
-          if (tooltipPortal == null && node != null) {
-            setTooltipPortal(node);
-          }
-        }}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
-        onClick={undefined}
-        onMouseMove={undefined}
-        onMouseDown={undefined}
-        onMouseUp={undefined}
-        onContextMenu={undefined}
-        onDoubleClick={undefined}
-        onTouchStart={undefined}
-        onTouchMove={undefined}
-        onTouchEnd={undefined}
-      >
-        <Surface width={width} height={height}>
-          <Layer className={layerClass}>{sectors}</Layer>
-          <RegisterGraphicalItemId id={externalId} type="sunburst">
-            {id => (
-              <>
-                <SetSunburstTooltipEntrySettings
-                  dataKey={dataKey}
-                  nameKey={nameKey}
-                  data={data}
-                  stroke={stroke}
-                  fill={fill}
-                  positions={positions}
-                  id={id}
-                />
-                {children}
-              </>
-            )}
-          </RegisterGraphicalItemId>
-        </Surface>
-      </RechartsWrapper>
-    </TooltipPortalContext.Provider>
+    <Surface width={width} height={height}>
+      <Layer className={layerClass}>{sectors}</Layer>
+      <>
+        <SetSunburstTooltipEntrySettings
+          dataKey={dataKey}
+          nameKey={nameKey}
+          data={data}
+          stroke={stroke}
+          fill={fill}
+          positions={positions}
+          id={id}
+        />
+        {children}
+      </>
+    </Surface>
   );
 };
 
-export const SunburstChart = (props: SunburstChartProps) => {
+export const SunburstChart = (outsideProps: SunburstChartProps) => {
+  const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);
+  const { className, width, height, responsive, style, id: externalId } = props;
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   return (
-    <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
-      <ReportChartSize width={props.width} height={props.height} />
+    <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={className ?? 'SunburstChart'}>
+      <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={defaultSunburstMargin} />
-      <SunburstChartImpl {...props} />
+      <TooltipPortalContext.Provider value={tooltipPortal}>
+        <RechartsWrapper
+          className={className}
+          width={width}
+          height={height}
+          responsive={responsive}
+          style={style}
+          ref={(node: HTMLDivElement) => {
+            if (tooltipPortal == null && node != null) {
+              setTooltipPortal(node);
+            }
+          }}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onClick={undefined}
+          onMouseMove={undefined}
+          onMouseDown={undefined}
+          onMouseUp={undefined}
+          onContextMenu={undefined}
+          onDoubleClick={undefined}
+          onTouchStart={undefined}
+          onTouchMove={undefined}
+          onTouchEnd={undefined}
+        >
+          <RegisterGraphicalItemId id={externalId} type="sunburst">
+            {id => <SunburstChartImpl {...props} id={id} />}
+          </RegisterGraphicalItemId>
+        </RechartsWrapper>
+      </TooltipPortalContext.Provider>
     </RechartsStoreProvider>
   );
 };

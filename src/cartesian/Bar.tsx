@@ -616,11 +616,11 @@ function BarRectangles({
   } = props;
 
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, id);
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   // @ts-expect-error bar mouse events are not compatible with recharts mouse events
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, id);
 
   if (!data) {
     return null;

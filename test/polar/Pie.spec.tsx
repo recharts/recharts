@@ -1087,7 +1087,7 @@ describe('<Pie />', () => {
             coordinate: { x: 122, y: 200 },
             dataKey: 'cy',
             index: '2',
-            graphicalItemId: undefined,
+            graphicalItemId: 'cy-pie',
           },
         });
       });
