@@ -33,8 +33,16 @@ export interface SunburstData {
   name: string;
   value?: number;
   fill?: string;
-  tooltipIndex?: TooltipIndex | undefined;
+  tooltipIndex?: TooltipIndex;
   children?: SunburstData[];
+}
+
+/**
+ * We require tooltipIndex on each node internally to track which node is active in the tooltip.
+ * This is not required from the outside user - we can calculate it as we traverse the tree.
+ */
+interface SunburstNode extends SunburstData {
+  tooltipIndex: TooltipIndex;
 }
 
 interface TextOptions {
@@ -261,7 +269,7 @@ const SunburstChartImpl = ({
   const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
 
   // event handlers
-  function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
+  function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
 
     dispatch(
@@ -274,13 +282,13 @@ const SunburstChartImpl = ({
     );
   }
 
-  function handleMouseLeave(node: SunburstData, e: React.MouseEvent) {
+  function handleMouseLeave(node: SunburstNode, e: React.MouseEvent) {
     if (onMouseLeave) onMouseLeave(node, e);
 
     dispatch(mouseLeaveItem());
   }
 
-  function handleClick(node: SunburstData) {
+  function handleClick(node: SunburstNode) {
     if (onClick) onClick(node);
 
     dispatch(
@@ -303,7 +311,7 @@ const SunburstChartImpl = ({
 
     childNodes.forEach((d, i) => {
       const currentTooltipIndex = depth === 1 ? `[${i}]` : addToSunburstNodeIndex(i, nestedActiveTooltipIndex);
-      const nodeWithIndex = { ...d, tooltipIndex: currentTooltipIndex };
+      const nodeWithIndex: SunburstNode = { ...d, tooltipIndex: currentTooltipIndex };
 
       const arcLength = rScale(d[dataKey]);
       const start = currentAngle;

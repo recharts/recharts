@@ -266,18 +266,90 @@ export const initialState: TooltipState = {
   },
 };
 
-export type TooltipActionPayload = {
-  activeIndex: TooltipIndex | undefined;
-  activeDataKey: DataKey<any> | undefined;
-  activeCoordinate?: Coordinate | undefined;
+/**
+ * This is the event we get when user is interacting with a specific graphical item.
+ */
+export type GraphicalItemTooltipActionPayload = {
   /**
-   * If the user is interacting with a specific graphical item,
-   * this identifies which one it is.
-   *
-   * If undefined, it means the user is interacting with all graphical items on a specific domain data point
-   * (tooltipEventType==='axis').
+   * Every graphical item must report its own index.
    */
-  activeGraphicalItemId: GraphicalItemId | undefined;
+  activeIndex: TooltipIndex;
+  /**
+   * A graphical item may or may not have a particular dataKey specified.
+   * This is undefined in case the user did not set a dataKey on the graphical item.
+   * In which case the dataKey is implied by the axes settings.
+   */
+  activeDataKey: DataKey<any> | undefined;
+  /**
+   * This is the coordinate where Recharts think the tooltip should appear.
+   *
+   * Graphical items have a preference where to render the actual tooltip
+   * which is defined in the TooltipPayloadConfiguration.positions.
+   *
+   * This property is resolved by combining that preference with the actual user interaction coordinate.
+   * This is not the raw mouse coordinate! We don't store that currently in this slice.
+   *
+   * This can be undefined depending on the graphical item settings, and the tooltip searcher.
+   */
+  activeCoordinate: Coordinate | undefined;
+  /**
+   * ID of the element user is interacting with.
+   * Cannot be undefined - each graphical item is responsible for generating its own ID
+   * in case user did not provide an explicit one.
+   */
+  activeGraphicalItemId: GraphicalItemId;
+};
+
+export type AxisTooltipActionPayload = {
+  /**
+   * Each axis interaction must report the index of where the user is interacting.
+   */
+  activeIndex: TooltipIndex;
+  /**
+   * DataKey filter. An axis may or may not have a particular dataKey specified.
+   * This is undefined in case the user did not set a dataKey on the axis.
+   * In which case the dataKey is implied by the graphical item settings.
+   */
+  activeDataKey: DataKey<any> | undefined;
+  /**
+   This is the coordinate where Recharts think the tooltip should appear.
+   *
+   * Graphical items have a preference where to render the actual tooltip
+   * which is defined in the TooltipPayloadConfiguration.positions.
+   *
+   * This property is resolved by combining that preference with the actual user interaction coordinate.
+   * This is not the raw mouse coordinate! We don't store that currently in this slice.
+   *
+   * This can be undefined depending on the graphical item settings, and the tooltip searcher.
+   */
+  activeCoordinate?: Coordinate;
+};
+
+/**
+ * Keyboard interaction payload has no graphical item ID,
+ * and no dataKey, because keyboard interaction is always
+ * with the whole chart, not with a specific graphical item.
+ */
+export type KeyboardTooltipActionPayload = {
+  /**
+   * If true, means user is actively interacting with the chart using keyboard.
+   * If false, means user has stopped interacting with the chart using keyboard - perhaps focus has moved away, or ESC key was pressed.
+   */
+  active: boolean;
+  /**
+   * Keyboard interaction index. The middleware is responsible for computing this index based on
+   * current index, key pressed, chart direction, etc.
+   * Each chart type may have different index types (string or number) and different idea on how to iterate them.
+   */
+  activeIndex: TooltipIndex | undefined;
+  /**
+   This is the coordinate where Recharts think the tooltip should appear.
+
+   * Keyboard coordinate follows the same rules as defaultIndex coordinate.
+   * In an absence of mouse coordinates, the chart must compute where to render the tooltip
+   * based on the activeIndex and domain and range.
+   */
+  activeCoordinate: Coordinate | undefined;
 };
 
 const tooltipSlice = createSlice({
@@ -312,7 +384,7 @@ const tooltipSlice = createSlice({
     setTooltipSettingsState(state, action: PayloadAction<TooltipSettingsState>) {
       state.settings = action.payload;
     },
-    setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
+    setActiveMouseOverItemIndex(state, action: PayloadAction<GraphicalItemTooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.keyboardInteraction.active = false;
       state.itemInteraction.hover.active = true;
@@ -335,7 +407,7 @@ const tooltipSlice = createSlice({
     mouseLeaveItem(state) {
       state.itemInteraction.hover.active = false;
     },
-    setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
+    setActiveClickItemIndex(state, action: PayloadAction<GraphicalItemTooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.itemInteraction.click.active = true;
       state.keyboardInteraction.active = false;
@@ -344,7 +416,7 @@ const tooltipSlice = createSlice({
       state.itemInteraction.click.graphicalItemId = action.payload.activeGraphicalItemId;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
-    setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
+    setMouseOverAxisIndex(state, action: PayloadAction<AxisTooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.axisInteraction.hover.active = true;
       state.keyboardInteraction.active = false;
@@ -352,7 +424,7 @@ const tooltipSlice = createSlice({
       state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
       state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
-    setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
+    setMouseClickAxisIndex(state, action: PayloadAction<AxisTooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.keyboardInteraction.active = false;
       state.axisInteraction.click.active = true;
@@ -363,11 +435,10 @@ const tooltipSlice = createSlice({
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
     },
-    setKeyboardInteraction(state, action: PayloadAction<TooltipActionPayload & { active: boolean }>) {
+    setKeyboardInteraction(state, action: PayloadAction<KeyboardTooltipActionPayload>) {
       state.keyboardInteraction.active = action.payload.active;
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
-      state.keyboardInteraction.dataKey = action.payload.activeDataKey;
     },
   },
 });

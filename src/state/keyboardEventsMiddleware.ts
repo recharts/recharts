@@ -50,13 +50,7 @@ keyboardEventsMiddleware.startListening({
         setKeyboardInteraction({
           active: !keyboardInteraction.active,
           activeIndex: keyboardInteraction.index,
-          activeDataKey: keyboardInteraction.dataKey,
           activeCoordinate: coordinate,
-          /*
-           * We can't offer any particular graphical item here,
-           * because we are interacting with the whole axis, not with a specific item.
-           */
-          activeGraphicalItemId: undefined,
         }),
       );
       return;
@@ -75,13 +69,7 @@ keyboardEventsMiddleware.startListening({
       setKeyboardInteraction({
         active: true,
         activeIndex: nextIndex.toString(),
-        activeDataKey: undefined,
         activeCoordinate: coordinate,
-        /*
-         * We can't offer any particular graphical item here,
-         * because we are interacting with the whole axis, not with a specific item.
-         */
-        activeGraphicalItemId: undefined,
       }),
     );
   },
@@ -104,15 +92,9 @@ keyboardEventsMiddleware.startListening({
       const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({
-          activeDataKey: undefined,
           active: true,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,
-          /*
-           * We can't offer any particular graphical item here,
-           * because we are interacting with the whole axis, not with a specific item.
-           */
-          activeGraphicalItemId: undefined,
         }),
       );
     }

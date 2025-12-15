@@ -23,11 +23,6 @@ mouseClickMiddleware.startListening({
           activeIndex: activeProps.activeIndex,
           activeDataKey: undefined,
           activeCoordinate: activeProps.activeCoordinate,
-          /*
-           * We can't offer any particular graphical item here,
-           * because we are interacting with the whole axis, not with a specific item.
-           */
-          activeGraphicalItemId: undefined,
         }),
       );
     }
@@ -72,11 +67,6 @@ mouseMoveMiddleware.startListening({
               activeIndex: activeProps.activeIndex,
               activeDataKey: undefined,
               activeCoordinate: activeProps.activeCoordinate,
-              /*
-               * We can't offer any particular graphical item here,
-               * because we are interacting with the whole axis, not with a specific item.
-               */
-              activeGraphicalItemId: undefined,
             }),
           );
         } else {
