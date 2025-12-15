@@ -6,9 +6,8 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAppSelector } from '../state/hooks';
 import { selectStackRects } from '../state/selectors/barStackSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { Layer } from '../container/Layer';
-import { LayerProps, Rectangle } from '../index';
-import { RectRadius } from '../shape/Rectangle';
+import { Layer, Props as LayerProps } from '../container/Layer';
+import { Rectangle, RectRadius } from '../shape/Rectangle';
 import { propsAreEqual } from '../util/propsAreEqual';
 
 export type BarStackProps = {
