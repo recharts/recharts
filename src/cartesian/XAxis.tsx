@@ -17,7 +17,6 @@ import {
 } from '../state/cartesianAxisSlice';
 import {
   implicitXAxis,
-  selectAxisScale,
   selectTicksOfAxis,
   selectXAxisPosition,
   selectXAxisSettingsNoDefaults,
@@ -113,7 +112,6 @@ const XAxisImpl = (props: PropsWithDefaults) => {
   const viewBox = useAppSelector(selectAxisViewBox);
   const isPanorama = useIsPanorama();
   const axisType = 'xAxis';
-  const scale = useAppSelector(state => selectAxisScale(state, axisType, xAxisId, isPanorama));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
@@ -129,14 +127,13 @@ const XAxisImpl = (props: PropsWithDefaults) => {
     return null;
   }
 
-  const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
-  const { id, ...restSynchronizedSettings } = synchronizedSettings;
+  const { dangerouslySetInnerHTML, ticks, scale: del, ...allOtherProps } = props;
+  const { id, scale: del2, ...restSynchronizedSettings } = synchronizedSettings;
 
   return (
     <CartesianAxis
       {...allOtherProps}
       {...restSynchronizedSettings}
-      scale={scale}
       x={position.x}
       y={position.y}
       width={axisSize.width}

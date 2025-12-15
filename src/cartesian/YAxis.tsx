@@ -16,7 +16,6 @@ import {
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   implicitYAxis,
-  selectAxisScale,
   selectTicksOfAxis,
   selectYAxisPosition,
   selectYAxisSettingsNoDefaults,
@@ -116,7 +115,6 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
   const isPanorama = useIsPanorama();
   const dispatch = useAppDispatch();
   const axisType = 'yAxis';
-  const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId, isPanorama));
   const axisSize: Size | undefined = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
@@ -169,8 +167,8 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
     return null;
   }
 
-  const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
-  const { id, ...restSynchronizedSettings } = synchronizedSettings;
+  const { dangerouslySetInnerHTML, ticks, scale: del, ...allOtherProps } = props;
+  const { id, scale: del2, ...restSynchronizedSettings } = synchronizedSettings;
 
   return (
     <CartesianAxis
@@ -178,7 +176,6 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
       {...restSynchronizedSettings}
       ref={cartesianAxisRef}
       labelRef={labelRef}
-      scale={scale}
       x={position.x}
       y={position.y}
       tickTextProps={width === 'auto' ? { width: undefined } : { width }}
