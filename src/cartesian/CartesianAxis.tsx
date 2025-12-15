@@ -21,7 +21,6 @@ import {
   TickProp,
 } from '../util/types';
 import { getTicks } from './getTicks';
-import { RechartsScale } from '../util/ChartUtils';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
@@ -73,10 +72,10 @@ export interface CartesianAxisProps extends ZIndexable {
   /** Angle in which ticks will be rendered. */
   angle?: number;
   /**
-   * This is NOT SVG scale attribute;
-   * this is Recharts scale, based on d3-scale.
+   * CartesianAxis reads scale internally and this prop is ignored since 3.0
+   * @deprecated
    */
-  scale?: RechartsScale;
+  scale?: unknown;
   labelRef?: React.RefObject<SVGTextElement> | null;
 
   ref?: React.Ref<CartesianAxisRef>;
@@ -539,6 +538,14 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   );
 });
 
+/**
+ * @deprecated
+ *
+ * This component is not meant to be used directly in app code.
+ * Use XAxis or YAxis instead.
+ *
+ * Starting from Recharts v4.0 we will make this component internal only.
+ */
 export const CartesianAxis = React.forwardRef((outsideProps: Props, ref: React.Ref<CartesianAxisRef>) => {
   const props = resolveDefaultProps(outsideProps, defaultCartesianAxisProps);
   return <CartesianAxisComponent {...props} ref={ref} />;
