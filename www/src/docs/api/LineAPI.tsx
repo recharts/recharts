@@ -1,32 +1,8 @@
 import { ApiDoc } from './types';
 
-export const AreaAPI: ApiDoc = {
-  name: 'Area',
+export const LineAPI: ApiDoc = {
+  name: 'Line',
   props: [
-    {
-      name: 'dataKey',
-      type: 'string | number | Function',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
-              </li>
-            </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
-          </section>
-        ),
-      },
-    },
     {
       name: 'activeDot',
       type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode',
@@ -35,17 +11,24 @@ export const AreaAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot
-              will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If
-              object set, active dot will be drawn which have the props merged by the internal calculated props and the
-              option. If ReactElement set, the option can be the custom active dot element. If set a function, the
-              function will be called to render customized active dot.
+              The dot is shown when user enter a line chart and this chart has tooltip. If false set, no active dot will
+              not be drawn. If true set, active dot will be drawn which have the props calculated internally. If object
+              set, active dot will be drawn which have the props merged by the internal calculated props and the option.
+              If ReactElement set, the option can be the custom active dot element. If set a function, the function will
+              be called to render customized active dot.
             </p>
           </section>
         ),
       },
       defaultVal: true,
+      format: [
+        '<Line dataKey="value" activeDot={false} />',
+        '<Line dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2, r: 10 }} />',
+        '<Line dataKey="value" activeDot={CustomizedActiveDot} />',
+      ],
+      examples: [{ name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/' }],
     },
+    { name: 'animateNewValues', type: 'boolean', isOptional: true, defaultVal: true },
     {
       name: 'animationBegin',
       type: 'number',
@@ -85,23 +68,6 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
-    {
-      name: 'baseLine',
-      type: 'number | Array<readonly NullableCoordinate>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Baseline of the area:</p>
-            <ul>
-              <li>number: uses the corresponding axis value as a flat baseline;</li>
-              <li>an array of coordinates: describes a custom baseline path.</li>
-            </ul>
-          </section>
-        ),
-      },
-    },
-    { name: 'baseValue', type: 'number | "dataMin" | "dataMax"', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -116,8 +82,36 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [
+        { name: 'A lineChart connect nulls and a lineChart disconnect nulls', url: '/examples/LineChartConnectNulls/' },
+      ],
     },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     { name: 'data', type: 'Array<unknown>', isOptional: true },
+    {
+      name: 'dataKey',
+      type: 'string | number | Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Decides how to extract the value of this Line from the data:</p>
+            <ul>
+              <li>
+                <code>string</code>: the name of the field in the data object;
+              </li>
+              <li>
+                <code>number</code>: the index of the field in the data;
+              </li>
+              <li>
+                <code>function</code>: a function that receives the data object and returns the value of this Line.
+              </li>
+            </ul>
+            <p>If undefined, it will reuse the dataKey of YAxis.</p>
+          </section>
+        ),
+      },
+    },
     {
       name: 'dot',
       type: 'false | true | Function | Partial<Props> | ReactNode',
@@ -134,9 +128,30 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
+      defaultVal: true,
+      format: [
+        '<Line dataKey="value" dot={false} />',
+        '<Line dataKey="value" dot={{ stroke: \'red\', strokeWidth: 2 }} />',
+        '<Line dataKey="value" dot={CustomizedDot} />',
+      ],
+      examples: [{ name: 'A line chart with customized dot', url: '/examples/CustomizedDotLineChart/' }],
+    },
+    {
+      name: 'hide',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Hides the whole line when true. Useful when toggling the visibility of the line in a chart, for example
+              through a legend.
+            </p>
+          </section>
+        ),
+      },
       defaultVal: false,
     },
-    { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'id',
       type: 'string',
@@ -161,7 +176,7 @@ export const AreaAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set false, animation of area will be disabled. If set &quot;auto&quot;, the animation will be disabled
+              If set false, animation of line will be disabled. If set &quot;auto&quot;, the animation will be disabled
               in SSR and enabled in browser.
             </p>
           </section>
@@ -169,7 +184,6 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: 'auto',
     },
-    { name: 'isRange', type: 'boolean', isOptional: true },
     {
       name: 'label',
       type: 'false | true | ReactNode | Function | Props',
@@ -199,6 +213,12 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      format: [
+        '<Line dataKey="value" label />',
+        '<Line dataKey="value" label={{ fill: \'red\', fontSize: 20 }} />',
+        '<Line dataKey="value" label={CustomizedLabel} />',
+      ],
+      examples: [{ name: 'A line chart with customized label', url: '/examples/CustomizedLabelLineChart/' }],
     },
     {
       name: 'legendType',
@@ -228,17 +248,25 @@ export const AreaAPI: ApiDoc = {
         ),
       },
     },
+    { name: 'path', type: 'string', isOptional: true },
     {
-      name: 'stackId',
-      type: 'string | number',
+      name: 'shape',
+      type: '(union of 5 variants)',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.</p>
+            <p>
+              If set a ReactElement, the shape of line can be customized. If set a function, the function will be called
+              to render customized shape.
+            </p>
           </section>
         ),
       },
+      format: [
+        '<Line dataKey="value" shape={CustomizedShapeComponent} />',
+        '<Line dataKey="value" shape={renderShapeFunction} />',
+      ],
     },
     {
       name: 'stroke',
@@ -247,11 +275,26 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The stroke color. If &quot;none&quot;, no line will be drawn.</p>
+            <p>
+              The stroke color. If <code>&quot;none&quot;</code>, no line will be drawn.
+            </p>
           </section>
         ),
       },
       defaultVal: '#3182bd',
+    },
+    {
+      name: 'strokeDasharray',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The pattern of dashes and gaps used to paint the line</p>
+          </section>
+        ),
+      },
+      format: ['<Line strokeDasharray="4" />', '<Line strokeDasharray="4 1" />', '<Line strokeDasharray="4 1 2" />'],
     },
     {
       name: 'strokeWidth',
@@ -290,7 +333,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'unit',
-      type: 'string | number',
+      type: 'null | string | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -341,7 +384,7 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 100,
+      defaultVal: 400,
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
@@ -616,5 +659,5 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
-  childrenComponents: ['LabelList'],
+  childrenComponents: ['ErrorBar', 'LabelList'],
 };

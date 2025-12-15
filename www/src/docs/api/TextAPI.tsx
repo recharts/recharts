@@ -1,4 +1,4 @@
-import { ApiDoc } from './types.ts';
+import { ApiDoc } from './types';
 
 export const TextAPI: ApiDoc = {
   name: 'Text',
@@ -168,7 +168,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'textAnchor',
-      type: '"end" | "start" | "middle" | "inherit"',
+      type: '"end" | "middle" | "start" | "inherit"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -190,7 +190,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'verticalAnchor',
-      type: '"end" | "start" | "middle"',
+      type: '"end" | "middle" | "start"',
       isOptional: true,
       desc: {
         'en-US': (

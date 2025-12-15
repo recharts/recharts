@@ -92,6 +92,27 @@ describe('cross-component prop consistency', () => {
       prop: 'width',
       reason: 'has extra details on automated wrapping',
     },
+    {
+      components: ['ErrorBar'],
+      prop: 'width',
+      reason: 'has different meaning than chart width',
+    },
+    {
+      components: ['ErrorBar'],
+      prop: 'height',
+      reason: 'has different meaning than chart height',
+    },
+    {
+      components: ['ErrorBar'],
+      prop: 'dataKey',
+      reason: 'has extra information about error bar data structure',
+    },
+    {
+      components: ['Scatter'],
+      prop: 'shape',
+      // https://github.com/recharts/recharts/issues/1753
+      reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
+    },
   ];
 
   // Build the prop-to-components map once for all tests

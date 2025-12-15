@@ -11,15 +11,15 @@ import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
 
 import { BarAPI as Bar } from './Bar';
-import { LineAPI } from './Line';
-import { ScatterAPI as Scatter } from './Scatter';
+import { LineAPI } from './LineAPI';
+import { ScatterAPI } from './ScatterAPI';
 import { XAxisAPI as XAxis } from './XAxis';
 import { YAxisAPI as YAxis } from './YAxis';
 import { ZAxisAPI as ZAxis } from './ZAxis';
 import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
 import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
 import { ReferenceAreaAPI as ReferenceArea } from './ReferenceArea';
-import { ErrorBarAPI as ErrorBar } from './ErrorBar';
+import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
@@ -51,7 +51,7 @@ import { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
-import { AreaAPI } from './AreaAPI.tsx';
+import { AreaAPI } from './AreaAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -70,7 +70,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Bar,
   BarStack: BarStackAPI,
   Line: LineAPI,
-  Scatter,
+  Scatter: ScatterAPI,
   XAxis,
   YAxis,
   ZAxis,
@@ -97,7 +97,7 @@ export const allExamples: Record<string, ApiDoc> = {
   ReferenceLine,
   ReferenceDot,
   ReferenceArea,
-  ErrorBar,
+  ErrorBar: ErrorBarAPI,
 
   Cross,
   Curve,

@@ -37,7 +37,7 @@ const JointLineScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }
       <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
       <Legend />
       <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
-      <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
+      <Scatter name="B school" data={data02} fill="#82ca9d" line lineJointType="monotone" shape="diamond" />
     </ScatterChart>
   );
 };

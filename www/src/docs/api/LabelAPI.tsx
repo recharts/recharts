@@ -1,4 +1,4 @@
-import { ApiDoc } from './types.ts';
+import { ApiDoc } from './types';
 
 export const LabelAPI: ApiDoc = {
   name: 'Label',
@@ -37,7 +37,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'content',
-      type: 'ReactNode | Function | React.JSXElementConstructor<any>>',
+      type: 'ReactNode | Function',
       isOptional: true,
       desc: {
         'en-US': (
@@ -82,7 +82,7 @@ export const LabelAPI: ApiDoc = {
       },
     },
     { name: 'index', type: 'number', isOptional: true },
-    { name: 'labelRef', type: 'React.RefObject<SVGTextElement> | null', isOptional: true },
+    { name: 'labelRef', type: 'null | React.RefObject<SVGTextElement>', isOptional: true },
     {
       name: 'offset',
       type: 'string | number',
@@ -99,7 +99,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'parentViewBox', type: 'Required<CartesianViewBox> | Required<PolarViewBox>', isOptional: true },
     {
       name: 'position',
-      type: '"end" | "middle" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
+      type: '"end" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | "middle" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
       isOptional: true,
       desc: {
         'en-US': (

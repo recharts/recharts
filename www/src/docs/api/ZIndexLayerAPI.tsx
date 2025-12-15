@@ -1,4 +1,4 @@
-import { ApiDoc } from './types.ts';
+import { ApiDoc } from './types';
 
 export const ZIndexLayerAPI: ApiDoc = {
   name: 'ZIndexLayer',

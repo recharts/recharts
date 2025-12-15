@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
 import { ProjectDocReader } from './readProject';
+import { processType } from './generateApiDoc';
+import { assertNotNull } from '../test/helper/assertNotNull';
 
 describe('readProject', () => {
   const reader = new ProjectDocReader();
@@ -911,7 +913,7 @@ describe('readProject', () => {
      * ideally it should return the type text like 'number | [number, number, number, number]'.
      */
     expect(radiusMeta).toEqual({
-      name: 'undefined | number | [number, number, number, number]',
+      names: ['number', '[number, number, number, number]'],
       isInline: true,
     });
   });
@@ -919,11 +921,11 @@ describe('readProject', () => {
   it('should read Curve type prop as inline and expanded', () => {
     const typeMeta = reader.getTypeOf('Curve', 'type');
     expect(typeMeta).toEqual({
-      name: expect.stringContaining('"basis" | "basisClosed"'),
+      names: expect.arrayContaining(['"basis"', '"basisClosed"']),
       isInline: true,
     });
-    expect(typeMeta?.name).toContain('"natural"');
-    expect(typeMeta?.name).toContain('"step"');
+    expect(typeMeta?.names).toContain('"natural"');
+    expect(typeMeta?.names).toContain('"step"');
     // Should contain the CurveFactory part too, but that might be complex to assert exact string
   });
 
@@ -976,5 +978,28 @@ describe('readProject', () => {
       <Label content={renderCustomLabel} />",
       ]
     `);
+  });
+
+  it('should not add double pointy brackets in simplified type', () => {
+    const originalTexts = reader.getTypeOf('Label', 'content')?.names;
+    assertNotNull(originalTexts);
+    const result = processType(originalTexts, false);
+    expect(result).toEqual('ReactNode | Function');
+  });
+
+  it('should say that children type is ReactNode, and not attempt to explain the union', () => {
+    const childrenType = reader.getTypeOf('BarChart', 'children');
+    expect(childrenType).toEqual({
+      names: ['ReactNode'],
+      isInline: false,
+    });
+  });
+
+  it('should say that boolean type is boolean, not true | false. Also it should exclude undefined', () => {
+    const boolType = reader.getTypeOf('XAxis', 'mirror');
+    expect(boolType).toEqual({
+      names: ['boolean'],
+      isInline: false,
+    });
   });
 });
