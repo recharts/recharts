@@ -92,7 +92,14 @@ describe('selectAxisScale', () => {
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
     const result1 = selectAxisScale(store.getState(), 'xAxis', '0', false);
-    store.dispatch(setActiveMouseOverItemIndex({ activeCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }));
+    store.dispatch(
+      setActiveMouseOverItemIndex({
+        activeCoordinate: undefined,
+        activeDataKey: 'x',
+        activeIndex: '7',
+        activeGraphicalItemId: 'foo',
+      }),
+    );
     const result2 = selectAxisScale(store.getState(), 'xAxis', '0', false);
     expect(result1).toBe(result2);
   });

@@ -50,7 +50,6 @@ keyboardEventsMiddleware.startListening({
         setKeyboardInteraction({
           active: !keyboardInteraction.active,
           activeIndex: keyboardInteraction.index,
-          activeDataKey: keyboardInteraction.dataKey,
           activeCoordinate: coordinate,
         }),
       );
@@ -70,7 +69,6 @@ keyboardEventsMiddleware.startListening({
       setKeyboardInteraction({
         active: true,
         activeIndex: nextIndex.toString(),
-        activeDataKey: undefined,
         activeCoordinate: coordinate,
       }),
     );
@@ -94,7 +92,6 @@ keyboardEventsMiddleware.startListening({
       const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({
-          activeDataKey: undefined,
           active: true,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,

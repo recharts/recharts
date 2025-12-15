@@ -1,6 +1,7 @@
 import { TooltipIndex, TooltipPayloadConfiguration, TooltipState } from '../../tooltipSlice';
-import { DataKey, TooltipEventType } from '../../../util/types';
+import { TooltipEventType } from '../../../util/types';
 import { TooltipTrigger } from '../../../chart/types';
+import { GraphicalItemId } from '../../graphicalItemsSlice';
 
 export const combineTooltipPayloadConfigurations = (
   tooltipState: TooltipState,
@@ -20,13 +21,13 @@ export const combineTooltipPayloadConfigurations = (
     // No point filtering if the payload is empty
     return [];
   }
-  let filterByDataKey: DataKey<any> | undefined;
+  let filterByGraphicalItemId: GraphicalItemId | undefined;
   if (trigger === 'hover') {
-    filterByDataKey = tooltipState.itemInteraction.hover.dataKey;
+    filterByGraphicalItemId = tooltipState.itemInteraction.hover.graphicalItemId;
   } else {
-    filterByDataKey = tooltipState.itemInteraction.click.dataKey;
+    filterByGraphicalItemId = tooltipState.itemInteraction.click.graphicalItemId;
   }
-  if (filterByDataKey == null && defaultIndex != null) {
+  if (filterByGraphicalItemId == null && defaultIndex != null) {
     /*
      * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
      * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
@@ -38,5 +39,5 @@ export const combineTooltipPayloadConfigurations = (
     }
     return [];
   }
-  return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
+  return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.graphicalItemId === filterByGraphicalItemId);
 };

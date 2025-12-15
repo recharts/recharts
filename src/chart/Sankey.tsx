@@ -30,6 +30,7 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -715,6 +716,7 @@ const buildLinkProps = ({
 };
 
 function SankeyLinkElement({
+  graphicalItemId,
   props,
   i,
   linkContent,
@@ -723,6 +725,7 @@ function SankeyLinkElement({
   onClick,
   dataKey,
 }: {
+  graphicalItemId: GraphicalItemId;
   props: LinkProps;
   i: number;
   linkContent: SankeyLinkOptions | undefined;
@@ -743,6 +746,7 @@ function SankeyLinkElement({
           activeIndex,
           activeDataKey: dataKey,
           activeCoordinate,
+          activeGraphicalItemId: graphicalItemId,
         }),
       );
       onMouseEnter(props, e);
@@ -757,6 +761,7 @@ function SankeyLinkElement({
           activeIndex,
           activeDataKey: dataKey,
           activeCoordinate,
+          activeGraphicalItemId: graphicalItemId,
         }),
       );
       onClick(props, e);
@@ -767,6 +772,7 @@ function SankeyLinkElement({
 }
 
 function AllSankeyLinkElements({
+  graphicalItemId,
   modifiedLinks,
   links,
   linkContent,
@@ -775,6 +781,7 @@ function AllSankeyLinkElements({
   onClick,
   dataKey,
 }: {
+  graphicalItemId: GraphicalItemId;
   modifiedLinks: ReadonlyArray<LinkProps>;
   links: ReadonlyArray<SankeyLink>;
   linkContent: SankeyLinkOptions | undefined;
@@ -792,6 +799,7 @@ function AllSankeyLinkElements({
         }
         return (
           <SankeyLinkElement
+            graphicalItemId={graphicalItemId}
             key={`link-${link.source}-${link.target}-${link.value}`}
             props={linkProps}
             linkContent={linkContent}
@@ -849,6 +857,7 @@ const buildNodeProps = ({
 };
 
 function NodeElement({
+  graphicalItemId,
   props,
   nodeContent,
   i,
@@ -857,6 +866,7 @@ function NodeElement({
   onClick,
   dataKey,
 }: {
+  graphicalItemId: GraphicalItemId;
   props: NodeProps;
   nodeContent: SankeyNodeOptions | undefined;
   i: number;
@@ -877,6 +887,7 @@ function NodeElement({
           activeIndex,
           activeDataKey: dataKey,
           activeCoordinate,
+          activeGraphicalItemId: graphicalItemId,
         }),
       );
       onMouseEnter(props, e);
@@ -891,6 +902,7 @@ function NodeElement({
           activeIndex,
           activeDataKey: dataKey,
           activeCoordinate,
+          activeGraphicalItemId: graphicalItemId,
         }),
       );
       onClick(props, e);
@@ -901,6 +913,7 @@ function NodeElement({
 }
 
 function AllNodeElements({
+  graphicalItemId,
   modifiedNodes,
   nodeContent,
   onMouseEnter,
@@ -908,6 +921,7 @@ function AllNodeElements({
   onClick,
   dataKey,
 }: {
+  graphicalItemId: GraphicalItemId;
   modifiedNodes: ReadonlyArray<NodeProps>;
   nodeContent: SankeyNodeOptions | undefined;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
@@ -920,6 +934,7 @@ function AllNodeElements({
       {modifiedNodes.map((modifiedNode, i) => {
         return (
           <NodeElement
+            graphicalItemId={graphicalItemId}
             key={`node-${modifiedNode.index}-${modifiedNode.x}-${modifiedNode.y}`}
             props={modifiedNode}
             nodeContent={nodeContent}
@@ -953,7 +968,7 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaul
 type InternalSankeyProps = WithIdRequired<PropsWithResolvedDefaults>;
 
 function SankeyImpl(props: InternalSankeyProps) {
-  const { className, style, children, ...others } = props;
+  const { className, style, children, id, ...others } = props;
   const {
     link,
     dataKey,
@@ -1072,6 +1087,7 @@ function SankeyImpl(props: InternalSankeyProps) {
       <Surface {...attrs} width={width} height={height}>
         {children}
         <AllSankeyLinkElements
+          graphicalItemId={id}
           links={links}
           modifiedLinks={modifiedLinks}
           linkContent={link}
@@ -1081,6 +1097,7 @@ function SankeyImpl(props: InternalSankeyProps) {
           onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
         />
         <AllNodeElements
+          graphicalItemId={id}
           modifiedNodes={modifiedNodes}
           nodeContent={node}
           dataKey={dataKey}

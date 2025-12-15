@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Scatter, Customized, ScatterChart, XAxis, YAxis, ScatterProps } from '../../src';
+import { Scatter, Customized, ScatterChart, XAxis, YAxis, ScatterProps, ZAxis, Tooltip } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
@@ -13,6 +13,7 @@ import { ScatterSettings } from '../../src/state/types/ScatterSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
+import { selectActiveTooltipPayload } from '../../src/state/selectors/tooltipSelectors';
 
 describe('<Scatter />', () => {
   const data = [
@@ -620,6 +621,60 @@ describe('<Scatter />', () => {
           value: 2400,
         },
       ]);
+    });
+
+    describe('Multiple Scatter components tooltip filtering', () => {
+      /**
+       * https://github.com/recharts/recharts/pull/6537
+       * https://github.com/recharts/recharts/issues/6075
+       */
+      it('should only show tooltip data from the hovered Scatter component', () => {
+        const data01 = [
+          { x: 10, y: 20, z: 30 },
+          { x: 20, y: 30, z: 40 },
+        ];
+        const data02 = [
+          { x: 15, y: 25, z: 35 },
+          { x: 25, y: 35, z: 45 },
+        ];
+
+        const renderTooltipTestCase = createSelectorTestCase(({ children }) => (
+          <ScatterChart width={400} height={400}>
+            <XAxis dataKey="x" type="number" allowDecimals={false} />
+            <YAxis dataKey="y" type="number" allowDecimals={false} />
+            <ZAxis dataKey="z" type="number" range={[64, 144]} />
+            <Tooltip cursor={false} />
+            <Scatter name="A school" data={data01} fill="#8884d8" />
+            <Scatter name="B school" data={data02} fill="#82ca9d" />
+            {children}
+          </ScatterChart>
+        ));
+
+        const { container, spy } = renderTooltipTestCase(selectActiveTooltipPayload);
+
+        const scatterPoints = container.querySelectorAll('.recharts-symbols');
+        fireEvent.mouseEnter(scatterPoints[0]);
+
+        const payloadFromFirstScatter = spy.mock.calls.at(-1)?.[0];
+        assertNotNull(payloadFromFirstScatter);
+        expect(payloadFromFirstScatter).toEqual(
+          expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(data01[0]) })]),
+        );
+        expect(payloadFromFirstScatter).not.toEqual(
+          expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(data02[0]) })]),
+        );
+
+        fireEvent.mouseEnter(scatterPoints[2]);
+
+        const payloadFromSecondScatter = spy.mock.calls.at(-1)?.[0];
+        assertNotNull(payloadFromSecondScatter);
+        expect(payloadFromSecondScatter).toEqual(
+          expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(data02[0]) })]),
+        );
+        expect(payloadFromSecondScatter).not.toEqual(
+          expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(data01[0]) })]),
+        );
+      });
     });
   });
 });

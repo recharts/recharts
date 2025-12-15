@@ -75,7 +75,7 @@ type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);
 
 type RadialBarSectorsProps = {
   sectors: ReadonlyArray<RadialBarDataItem>;
-  allOtherRadialBarProps: RadialBarProps;
+  allOtherRadialBarProps: InternalProps;
   showLabels: boolean;
 };
 
@@ -126,9 +126,9 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
     ...restOfAllOtherProps
   } = allOtherRadialBarProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherRadialBarProps.dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherRadialBarProps.dataKey, id);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherRadialBarProps.dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherRadialBarProps.dataKey, id);
 
   if (sectors == null) {
     return null;
@@ -188,7 +188,7 @@ function SectorsWithAnimation({
   props,
   previousSectorsRef,
 }: {
-  props: RadialBarProps;
+  props: InternalProps;
   previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem> | null>;
 }) {
   const {
@@ -268,7 +268,7 @@ function SectorsWithAnimation({
   );
 }
 
-function RenderSectors(props: RadialBarProps) {
+function RenderSectors(props: InternalProps) {
   const previousSectorsRef = useRef<ReadonlyArray<RadialBarDataItem> | null>(null);
 
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
@@ -357,6 +357,8 @@ interface InternalRadialBarProps extends ZIndexable {
 export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
   InternalRadialBarProps;
 
+type InternalProps = WithIdRequired<PropsWithDefaults>;
+
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
   return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
@@ -398,7 +400,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   },
 );
 
-class RadialBarWithState extends PureComponent<RadialBarProps> {
+class RadialBarWithState extends PureComponent<InternalProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
     if (sectors == null) {
       return null;

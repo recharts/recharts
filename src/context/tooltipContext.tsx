@@ -21,7 +21,7 @@ export type ActivateTooltipAction<T extends TooltipPayloadType> = (
 export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
   onMouseEnterFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any> | undefined,
-  graphicalItemId?: string,
+  graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
   return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
@@ -50,7 +50,7 @@ export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
 export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
   onMouseClickFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any> | undefined,
-  graphicalItemId?: string,
+  graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
   return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {

@@ -414,6 +414,7 @@ function ScatterLabelListProvider({
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
+  const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -423,14 +424,13 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     ...restOfAllOtherProps
   } = allOtherScatterProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, id);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, id);
   if (!isNonEmptyArray(points)) {
     return null;
   }
 
-  const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
   const baseProps = svgPropertiesNoEvents(allOtherPropsWithoutId);
 
   return (

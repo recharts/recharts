@@ -34,7 +34,14 @@ describe('selectAxisRangeWithReverse', () => {
     const store = createRechartsStore();
     const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
     const xAxisRange1 = combineXAxisRange(store.getState(), '0', false);
-    store.dispatch(setActiveMouseOverItemIndex({ activeCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }));
+    store.dispatch(
+      setActiveMouseOverItemIndex({
+        activeCoordinate: undefined,
+        activeDataKey: 'x',
+        activeIndex: '7',
+        activeGraphicalItemId: 'foo',
+      }),
+    );
     const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
     const xAxisRange2 = combineXAxisRange(store.getState(), '0', false);
     expect(xAxisRange1).toBe(xAxisRange2);

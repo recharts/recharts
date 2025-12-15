@@ -71,6 +71,7 @@ touchEventMiddleware.startListening({
           activeDataKey: dataKey,
           activeIndex: itemIndex,
           activeCoordinate: coordinate,
+          activeGraphicalItemId: graphicalItemId,
         }),
       );
     }

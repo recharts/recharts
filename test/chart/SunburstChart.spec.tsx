@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, Mock, vi } from 'vitest';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -12,6 +12,7 @@ import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { userEventSetup } from '../helper/userEventSetup';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
@@ -136,7 +137,7 @@ describe('<Sunburst />', () => {
 
       expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
       expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
-      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+      expect(viewBoxSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should set width and height in context', () => {
@@ -154,14 +155,16 @@ describe('<Sunburst />', () => {
       );
       expect(widthSpy).toHaveBeenLastCalledWith(100);
       expect(heightSpy).toHaveBeenLastCalledWith(50);
-      expect(widthSpy).toHaveBeenCalledTimes(3);
-      expect(heightSpy).toHaveBeenCalledTimes(3);
+      expect(widthSpy).toHaveBeenCalledTimes(2);
+      expect(heightSpy).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('tooltip state', () => {
     it('should start with tooltip inactive, and activate it on hover and click on a link', () => {
-      const tooltipStateSpy = vi.fn();
+      const tooltipStateSpy: Mock<
+        (state: { click: TooltipInteractionState; hover: TooltipInteractionState } | undefined) => void
+      > = vi.fn();
       const Comp = (): null => {
         tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
         return null;
@@ -192,17 +195,19 @@ describe('<Sunburst />', () => {
 
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+          graphicalItemId: undefined,
         },
         hover: {
           active: true,
           index: '[0]',
           dataKey: 'value',
+          graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
           coordinate: {
             x: 583.3333333333334,
             y: 250,
@@ -213,7 +218,7 @@ describe('<Sunburst />', () => {
 
       fireEvent.click(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -222,6 +227,7 @@ describe('<Sunburst />', () => {
           },
           dataKey: 'value',
           index: '[0]',
+          graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
         },
         hover: {
           active: true,
@@ -231,13 +237,14 @@ describe('<Sunburst />', () => {
           },
           dataKey: 'value',
           index: '[0]',
+          graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
-      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+      expectLastCalledWith(tooltipStateSpy, {
         click: {
           active: true,
           coordinate: {
@@ -246,6 +253,7 @@ describe('<Sunburst />', () => {
           },
           dataKey: 'value',
           index: '[0]',
+          graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
         },
         hover: {
           active: false,
@@ -255,6 +263,7 @@ describe('<Sunburst />', () => {
             x: 583.3333333333334,
             y: 250,
           },
+          graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
