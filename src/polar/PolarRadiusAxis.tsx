@@ -23,8 +23,8 @@ import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { RechartsScale } from '../util/ChartUtils';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { RechartsScale } from '../util/scale/RechartsScale';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 

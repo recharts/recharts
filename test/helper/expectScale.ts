@@ -1,6 +1,7 @@
 import { Mock, expect } from 'vitest';
 import { AxisDomain } from '../../src/util/types';
-import { RechartsScale } from '../../src/util/ChartUtils';
+
+import { RechartsScale } from '../../src/util/scale/RechartsScale';
 
 export type ExpectedScale = { domain: AxisDomain; range: [number, number]; bandwidth?: number };
 

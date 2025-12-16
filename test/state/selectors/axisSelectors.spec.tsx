@@ -2450,7 +2450,7 @@ describe('selectAxisWithScale', () => {
     const { container } = render(<TestCase />);
 
     expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    const expectedXAxis: XAxisSettings & BaseAxisWithScale = {
+    const expectedXAxis: Omit<XAxisSettings, 'scale'> & BaseAxisWithScale = {
       allowDataOverflow: false,
       allowDecimals: true,
       allowDuplicatedCategory: true,

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType, TickProp } from '../util/types';
-import { RechartsScale } from '../util/ChartUtils';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import type { AxisRange } from './selectors/axisSelectors';
+import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 
 /**
  * @inline
@@ -17,11 +17,12 @@ export type XAxisOrientation = 'top' | 'bottom';
 export type YAxisOrientation = 'left' | 'right';
 
 /**
- * Properties shared in X, Y, and Z axes
+ * Properties shared in X, Y, and Z axes.
+ * User defined axis settings, coming from props.
  */
 export type BaseCartesianAxis = {
   id: AxisId;
-  scale: ScaleType | RechartsScale | undefined;
+  scale: ScaleType | CustomScaleDefinition | undefined;
   type: AxisDomainType;
   /**
    * The axis functionality is severely restricted without a dataKey

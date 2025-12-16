@@ -2,9 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, CartesianAxis } from '../../src';
+import { CartesianAxis, CustomScaleDefinition, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
-import { RechartsScale } from '../../src/util/ChartUtils';
 
 const CustomizeLabel = ({ x, y }: any) => (
   <text data-testid="customized-label" x={x} y={y}>
@@ -18,8 +17,7 @@ const CustomizedTick = ({ x, y, className }: any) => (
   </text>
 );
 
-// @ts-expect-error we need to wrap the d3 scales in unified interface
-const exampleScale: RechartsScale = scaleLinear();
+const exampleScale: CustomScaleDefinition<number> = scaleLinear();
 
 describe('<CartesianAxis />', () => {
   const ticks: ReadonlyArray<TickItem> = [

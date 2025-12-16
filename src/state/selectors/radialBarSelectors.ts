@@ -11,13 +11,7 @@ import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxi
 import { BaseAxisWithScale, combineStackGroups, selectTooltipAxis } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import {
-  BarPositionPosition,
-  getBandSizeOfAxis,
-  getBaseValueOfBar,
-  isCategoricalAxis,
-  RechartsScale,
-} from '../../util/ChartUtils';
+import { BarPositionPosition, getBandSizeOfAxis, getBaseValueOfBar, isCategoricalAxis } from '../../util/ChartUtils';
 import { BarWithPosition, SizeList } from './barSelectors';
 import {
   selectBarCategoryGap,
@@ -40,6 +34,7 @@ import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraph
 import { combineBarSizeList } from './combiners/combineBarSizeList';
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
+import { RechartsScale } from '../../util/scale/RechartsScale';
 
 const selectRadiusAxisForRadialBar = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings =>
   selectRadiusAxis(state, radiusAxisId);

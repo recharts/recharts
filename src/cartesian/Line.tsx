@@ -930,7 +930,7 @@ export function computeLinePoints({
         const y = isNullish(value) ? null : yAxis.scale(value);
         return {
           x,
-          y,
+          y: y ?? null,
           value,
           payload: entry,
         };

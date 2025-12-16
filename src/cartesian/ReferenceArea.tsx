@@ -11,7 +11,6 @@ import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
-import { RechartsScale } from '../util/ChartUtils';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
@@ -20,6 +19,7 @@ import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgProperties
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { RechartsScale } from '../util/scale/RechartsScale';
 
 interface ReferenceAreaProps extends ZIndexable {
   /**

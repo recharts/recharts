@@ -5,7 +5,7 @@ import last from 'es-toolkit/compat/last';
 import { clsx } from 'clsx';
 import { interpolate, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
 import { Layer } from '../container/Layer';
 import {
@@ -43,6 +43,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { RechartsScale } from '../util/scale/RechartsScale';
 
 interface RadarPoint {
   x: number;
@@ -235,9 +236,9 @@ export function computeRadarPoints({
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
     const value = getValueByDataKey(entry, dataKey);
-    const angle: number = angleAxis.scale(name) + angleBandSize;
+    const angle: number = (angleAxis.scale(name) ?? 0) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
-    const radius = isNullish(pointValue) ? 0 : radiusAxis.scale(pointValue);
+    const radius: number = isNullish(pointValue) ? 0 : (radiusAxis.scale(pointValue) ?? 0);
 
     if (Array.isArray(value) && value.length >= 2) {
       isRange = true;
@@ -262,7 +263,7 @@ export function computeRadarPoints({
     points.forEach((point: RadarPoint) => {
       if (Array.isArray(point.value)) {
         const baseValue = point.value[0];
-        const radius = isNullish(baseValue) ? 0 : radiusAxis.scale(baseValue);
+        const radius: number = isNullish(baseValue) ? 0 : (radiusAxis.scale(baseValue) ?? 0);
 
         baseLinePoints.push({
           ...point,

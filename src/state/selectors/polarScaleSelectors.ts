@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
-import { RechartsScale } from '../../util/ChartUtils';
 import {
   combineAxisTicks,
   combineCategoricalDomain,
@@ -25,6 +24,7 @@ import {
   selectPolarNiceTicks,
 } from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
+import { RechartsScale } from '../../util/scale/RechartsScale';
 
 export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {

@@ -9,10 +9,11 @@ import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartDataState } from '../chartDataSlice';
 import { DataKey, LayoutType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { getBandSizeOfAxis, isCategoricalAxis, RechartsScale } from '../../util/ChartUtils';
+import { getBandSizeOfAxis, isCategoricalAxis } from '../../util/ChartUtils';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { selectUnfilteredPolarItems } from './polarSelectors';
 import { GraphicalItemId } from '../graphicalItemsSlice';
+import { RechartsScale } from '../../util/scale/RechartsScale';
 
 const selectRadiusAxisScale = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
   selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);

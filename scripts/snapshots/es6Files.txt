@@ -237,6 +237,8 @@
   "es6/util/resolveDefaultProps.js",
   "es6/util/round.js",
   "es6/util/scale",
+  "es6/util/scale/CustomScaleDefinition.js",
+  "es6/util/scale/RechartsScale.js",
   "es6/util/scale/getNiceTickValues.js",
   "es6/util/scale/index.js",
   "es6/util/scale/util",

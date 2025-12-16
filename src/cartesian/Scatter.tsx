@@ -738,7 +738,7 @@ export function computeScatterPoints({
       dataKey: yAxisDataKey,
     });
     const size = z !== '-' ? zAxis.scale(z) : defaultZ;
-    const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
+    const radius = size == null ? 0 : Math.sqrt(Math.max(size, 0) / Math.PI);
 
     return {
       ...entry,

@@ -973,8 +973,8 @@ describe('getBaseValue', () => {
     it('should return number from domain when baseValue is NaN', () => {
       const yAxis: BaseAxisWithScale = {
         ...implicitYAxis,
+        // @ts-expect-error incomplete mock
         scale: {
-          // @ts-expect-error incomplete mock
           domain: () => [30, 40],
         },
       };
@@ -1026,8 +1026,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const yAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
@@ -1044,8 +1044,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const xAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
@@ -1101,8 +1101,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const yAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
@@ -1118,8 +1118,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const xAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
@@ -1178,8 +1178,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const yAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
@@ -1195,8 +1195,8 @@ describe('getBaseValue', () => {
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
           const xAxis: BaseAxisWithScale = {
+            // @ts-expect-error incomplete mock
             scale: {
-              // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input

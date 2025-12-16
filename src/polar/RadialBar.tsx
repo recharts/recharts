@@ -567,7 +567,12 @@ export function computeRadialBarDataItems({
   }
 
   return (displayedData ?? []).map((entry: unknown, index: number) => {
-    let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
+    let value,
+      innerRadius: number | null | undefined,
+      outerRadius: number | undefined,
+      startAngle: number | null,
+      endAngle: number,
+      backgroundSector;
 
     if (stackedData) {
       // @ts-expect-error truncateByDomain expects only numerical domain, but it can received categorical domain too
@@ -580,6 +585,8 @@ export function computeRadialBarDataItems({
     }
 
     if (layout === 'radial') {
+      startAngle = angleAxis.scale(value[0]) ?? rootStartAngle;
+      endAngle = angleAxis.scale(value[1]) ?? rootEndAngle;
       innerRadius = getCateCoordinateOfBar({
         axis: radiusAxis,
         ticks: radiusAxisTicks,
@@ -588,26 +595,26 @@ export function computeRadialBarDataItems({
         entry,
         index,
       });
-      endAngle = angleAxis.scale(value[1]);
-      startAngle = angleAxis.scale(value[0]);
-      outerRadius = (innerRadius ?? 0) + pos.size;
-      const deltaAngle = endAngle - startAngle;
+      if (innerRadius != null && endAngle != null && startAngle != null) {
+        outerRadius = innerRadius + pos.size;
+        const deltaAngle = endAngle - startAngle;
 
-      if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
-        const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+          const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
 
-        endAngle += delta;
+          endAngle += delta;
+        }
+        backgroundSector = {
+          background: {
+            cx,
+            cy,
+            innerRadius,
+            outerRadius,
+            startAngle: rootStartAngle,
+            endAngle: rootEndAngle,
+          },
+        };
       }
-      backgroundSector = {
-        background: {
-          cx,
-          cy,
-          innerRadius,
-          outerRadius,
-          startAngle: rootStartAngle,
-          endAngle: rootEndAngle,
-        },
-      };
     } else {
       innerRadius = radiusAxis.scale(value[0]);
       outerRadius = radiusAxis.scale(value[1]);
@@ -619,12 +626,14 @@ export function computeRadialBarDataItems({
         entry,
         index,
       });
-      endAngle = (startAngle ?? 0) + pos.size;
-      const deltaRadius = outerRadius - innerRadius;
+      if (innerRadius != null && outerRadius != null && startAngle != null) {
+        endAngle = startAngle + pos.size;
+        const deltaRadius = outerRadius - innerRadius;
 
-      if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
-        const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
-        outerRadius += delta;
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
+          const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
+          outerRadius += delta;
+        }
       }
     }
 
@@ -639,6 +648,7 @@ export function computeRadialBarDataItems({
       innerRadius,
       outerRadius,
       startAngle,
+      // @ts-expect-error endAngle is used before assigned (?)
       endAngle,
       ...(cells && cells[index] && cells[index].props),
     } satisfies RadialBarDataItem;

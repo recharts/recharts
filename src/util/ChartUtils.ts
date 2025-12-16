@@ -12,7 +12,7 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
+import { findEntryInArray, isNan, isNotNil, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import {
@@ -20,6 +20,7 @@ import {
   AxisType,
   BaseAxisProps,
   CartesianLayout,
+  CategoricalDomainItem,
   ChartPointer,
   DataKey,
   LayoutType,
@@ -38,6 +39,7 @@ import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { StackGroup } from './stacks/stackTypes';
 import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
+import { RechartsScale } from './scale/RechartsScale';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -147,23 +149,6 @@ export const getCoordinatesOfGrid = (
   return values;
 };
 
-/**
- * A subset of d3-scale that Recharts is using
- */
-export interface RechartsScale {
-  domain(): ReadonlyArray<unknown>;
-  domain(newDomain: ReadonlyArray<unknown>): this;
-  range(): ReadonlyArray<unknown>;
-  range(newRange: ReadonlyArray<unknown>): this;
-  bandwidth?: () => number;
-  /**
-   * https://d3js.org/d3-scale/linear#linear_ticks
-   * @param count number of ticks
-   */
-  ticks?: (count: number | undefined) => ReadonlyArray<number>;
-  (args: any): number;
-}
-
 export type AxisPropsNeededForTicksGenerator = {
   axisType?: AxisType;
   categoricalDomain?: ReadonlyArray<unknown>;
@@ -182,11 +167,12 @@ export type AxisPropsNeededForTicksGenerator = {
 };
 
 /**
- * Get the ticks of an axis
- * @param  {Object}  axis The configuration of an axis
- * @param {Boolean} isGrid Whether or not are the ticks in grid
- * @param {Boolean} isAll Return the ticks of all the points or not
- * @return {Array}  Ticks
+ * Of on four almost identical implementations of tick generation.
+ * The four horsemen of tick generation are:
+ * - {@link selectTooltipAxisTicks}
+ * - {@link combineAxisTicks}
+ * - {@link getTicksOfAxis}.
+ * - {@link combineGraphicalItemTicks}
  */
 export const getTicksOfAxis = (
   axis: undefined | AxisPropsNeededForTicksGenerator,
@@ -221,51 +207,76 @@ export const getTicksOfAxis = (
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {
-    const result = (ticks || niceTicks || []).map((entry: AxisTick, index: number): TickItem => {
-      const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
+    const result = (ticks || niceTicks || [])
+      .map((entry: AxisTick, index: number): TickItem | null => {
+        const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
-      return {
-        // If the scaleContent is not a number, the coordinate will be NaN.
-        // That could be the case for example with a PointScale and a string as domain.
-        coordinate: scale(scaleContent) + offset,
-        value: entry,
-        offset,
-        index,
-      };
-    });
+        const scaled = scale(scaleContent);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          // If the scaleContent is not a number, the coordinate will be NaN.
+          // That could be the case for example with a PointScale and a string as domain.
+          coordinate: scaled + offset,
+          value: entry,
+          offset,
+          index,
+        };
+      })
+      .filter(isNotNil);
 
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
+    return result;
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    return categoricalDomain
+      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+        const scaled = scale(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          coordinate: scaled + offset,
+          value: entry,
+          index,
+          offset,
+        };
+      })
+      .filter(isNotNil);
   }
 
   if (scale.ticks && !isAll && tickCount != null) {
     return scale
       .ticks(tickCount)
-      .map(
-        (entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }),
-      );
+      .map((entry: number, index: number): TickItem | null => {
+        const scaled = scale(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return { coordinate: scaled + offset, value: entry, offset, index };
+      })
+      .filter(isNotNil);
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  return scale
+    .domain()
+    .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      const scaled = scale(entry);
+      if (!isWellBehavedNumber(scaled)) {
+        return null;
+      }
+      return {
+        coordinate: scaled + offset,
+        // @ts-expect-error can't use Date as an index
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      };
+    })
+    .filter(isNotNil);
 };
 
 const EPS = 1e-4;
@@ -501,7 +512,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
     dataKey?: DataKey<T>;
     allowDuplicatedCategory?: boolean;
     type?: BaseAxisProps['type'];
-    scale: (v: number) => number;
+    scale: RechartsScale;
   };
   ticks: Array<TickItem>;
   bandSize: number;
@@ -550,7 +561,14 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
-  return !isNullish(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  if (isNullish(value)) {
+    return null;
+  }
+  const scaled = axis.scale(value);
+  if (!isNumber(scaled)) {
+    return null;
+  }
+  return scaled - bandSize / 2 + offset;
 };
 
 export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithScale }): number | unknown => {

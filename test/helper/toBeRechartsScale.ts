@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import { ExpectedScale, expectScale } from './expectScale';
-import { RechartsScale } from '../../src/util/ChartUtils';
+
+import { RechartsScale } from '../../src/util/scale/RechartsScale';
 
 function rechartsScaleMatcher(received: unknown, expected: ExpectedScale) {
   try {
