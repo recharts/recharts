@@ -198,6 +198,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          cache: true
+
       - name: Download Packed Library Artifact
         uses: actions/download-artifact@v4
         with:
@@ -209,7 +215,7 @@ jobs:
 
       - name: Run Test
         # Use the output from the 'pack_library' step
-        run: ./run-test.sh ${{ matrix.test_dir }} "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
+        run: ./run-test.sh "${{ matrix.test_dir }}" "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
 
   vr_tests:
     name: Visual Regression Tests
