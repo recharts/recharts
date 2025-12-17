@@ -113,6 +113,31 @@ describe('cross-component prop consistency', () => {
       // https://github.com/recharts/recharts/issues/1753
       reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
     },
+    {
+      components: ['Pie'],
+      prop: 'label',
+      reason: 'Pie has a custom label implementation',
+    },
+    {
+      components: ['Dot', 'SunburstChart'],
+      prop: 'cx',
+      reason: 'These components do not support percentages unlike other components',
+    },
+    {
+      components: ['Dot', 'SunburstChart'],
+      prop: 'cy',
+      reason: 'These components do not support percentages unlike other components',
+    },
+    // {
+    //   components: ['Bar', 'Pie'],
+    //   prop: 'activeShape',
+    //   reason: 'we need to look into shape prop more closely to see if they can be aligned',
+    // },
+    {
+      components: ['Pie'],
+      prop: 'shape',
+      reason: 'Pie shape receives activeIndex prop but other components do not',
+    },
   ];
 
   // Build the prop-to-components map once for all tests

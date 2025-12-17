@@ -29,6 +29,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'ErrorBar',
   'Label',
   'Line',
+  'Pie',
   'Scatter',
   'Text',
   'ZIndexLayer',

@@ -65,18 +65,39 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 type ChartDataInput = Record<string, unknown>;
 
 interface PieDef {
-  /** The abscissa of pole in polar coordinate  */
+  /**
+   * The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of container width.
+   */
   cx?: number | string;
-  /** The ordinate of pole in polar coordinate  */
+  /**
+   * The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of container height.
+   */
   cy?: number | string;
-  /** The start angle of first sector */
+  /**
+   * Angle in degrees from which the chart should start.
+   */
   startAngle?: number;
-  /** The end angle of last sector */
+  /**
+   * Angle, in degrees, at which the chart should end. Can be used to generate partial pies.
+   */
   endAngle?: number;
+  /**
+   * The angle between two sectors.
+   *
+   * @example <Pie paddingAngle={5} />
+   * @example https://recharts.github.io/examples/PieChartWithPaddingAngle
+   */
   paddingAngle?: number;
-  /** The inner radius of sectors */
+  /**
+   * The inner radius of all the sectors.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   */
   innerRadius?: number | string;
-  /** The outer radius of sectors */
+  /**
+   * The outer radius of all the sectors.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * Function should return a string percentage or number.
+   */
   outerRadius?: number | string | ((dataPoint: any) => number | string);
   cornerRadius?: number | string;
 }
@@ -202,77 +223,157 @@ interface InternalPieProps extends PieDef, ZIndexable {
 
 interface PieProps extends PieDef, ZIndexable {
   /**
-   * @deprecated use the `shape` prop to create each sector
-   * `isActive` designates the "active" shape
+   * This component is rendered when this graphical item is activated
+   * (could be by mouse hover, touch, keyboard, programmatically).
+   *
+   * @deprecated Use the `shape` prop to create each sector. `isActive` designates the "active" shape.
+   * @example <Pie activeShape={<CustomActiveShape />} />
+   * @example https://recharts.github.io/examples/CustomActiveShapePieChart
    */
   activeShape?: ActiveShape<PieSectorDataItem>;
   /**
+   * Specifies when the animation should begin, the unit of this option is ms.
    * @defaultValue 400
    */
   animationBegin?: number;
   /**
+   * Specifies the duration of animation, the unit of this option is ms.
    * @defaultValue 1500
    */
   animationDuration?: AnimationDuration;
   /**
+   * The type of easing function.
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
   className?: string;
-  /** the input data */
+  /**
+   * The source data which each element is an object.
+   */
   data?: ChartDataInput[];
   /**
+   * Decides how to extract the value of this Pie from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Pie.
+   *
    * @defaultValue value
    */
   dataKey?: DataKey<any>;
   /**
-   * If set true, the pie will not be displayed.
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
    *
    * @defaultValue false
    */
   hide?: boolean;
   id?: string;
   /**
-   * @deprecated use the `shape` prop to modify each sector
+   * The shape of inactive sector.
+   * @deprecated Use the `shape` prop to modify each sector.
    */
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   /**
+   * If set false, animation will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
   /**
+   * Renders one label for each pie sector. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object` that has `position` prop: the props of LabelList component;
+   * - `object` that does not have `position` prop: the props of a custom Pie label (similar to Label with position "outside"); this variant supports `labelLine`
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
+   * Also see the `labelLine` prop that draws a line connecting each label to the corresponding sector.
+   *
    * @defaultValue false
+   * @example <Pie label={<CustomizedLabel />} />
+   * @example https://recharts.github.io/examples/PieChartWithCustomizedLabel
    */
   label?: PieLabel;
   /**
+   * If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props calculated internally.
+   * If object set, label lines will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom label line element.
+   * If set a function, the function will be called to render customized label line.
    * @defaultValue true
+   * @example <Pie labelLine={<CustomizedLabelLine />} />
+   * @example https://recharts.github.io/examples/PieChartWithCustomizedLabel
    */
   labelLine?: PieLabelLine;
   /**
+   * The type of icon in legend. If set to 'none', no legend item will be rendered.
    * @defaultValue rect
    */
   legendType?: LegendType;
   /** the max radius of pie */
   maxRadius?: number;
   /**
-   * The minimum angle for no-zero element
-   *
+   * The minimum angle of each unzero data.
    * @defaultValue 0
    */
   minAngle?: number;
   /**
+   * The key of each sector's name.
    * @defaultValue name
    */
   nameKey?: DataKey<any>;
+  /**
+   * The customized event handler of animation end.
+   */
   onAnimationEnd?: () => void;
+  /**
+   * The customized event handler of animation start.
+   */
   onAnimationStart?: () => void;
+  /**
+   * The customized event handler of click on the sectors in this group.
+   */
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousedown on the sectors in this group.
+   */
+  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseup on the sectors in this group.
+   */
+  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousemove on the sectors in this group.
+   */
+  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseover on the sectors in this group.
+   */
+  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseout on the sectors in this group.
+   */
+  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseenter on the sectors in this group.
+   */
   onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the sectors in this group.
+   */
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   /**
+   * The tabindex of wrapper surrounding the cells.
    * @defaultValue 0
    */
   rootTabIndex?: number;
+  /**
+   * The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.
+   */
   shape?: PieShape;
   tooltipType?: TooltipType;
   /**

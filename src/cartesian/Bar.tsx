@@ -177,6 +177,13 @@ export interface BarProps extends ZIndexable {
    */
   maxBarSize?: number;
   /**
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
+   *
    * @defaultValue false
    */
   hide?: boolean;

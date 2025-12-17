@@ -32,7 +32,7 @@ import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
 import { LabelListAPI as LabelList } from './LabelList';
 
-import { PieAPI as Pie } from './Pie';
+import { PieAPI } from './PieAPI';
 import { RadarAPI as Radar } from './Radar';
 import { RadialBarAPI as RadialBar } from './RadialBar';
 import { PolarAngleAxisAPI as PolarAngleAxis } from './PolarAngleAxis';
@@ -88,7 +88,7 @@ export const allExamples: Record<string, ApiDoc> = {
   LabelList,
   Customized: CustomizedAPI,
 
-  Pie,
+  Pie: PieAPI,
   RadialBar,
   Radar,
   PolarAngleAxis,
