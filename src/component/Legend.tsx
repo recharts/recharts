@@ -160,6 +160,10 @@ export const legendDefaultProps = {
   verticalAlign: 'bottom',
 } as const satisfies Partial<Props>;
 
+/**
+ * @consumes CartesianChartContext
+ * @consumes PolarChartContext
+ */
 export function Legend(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, legendDefaultProps);
   const contextPayload = useLegendPayload();

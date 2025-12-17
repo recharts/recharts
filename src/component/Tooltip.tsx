@@ -179,6 +179,10 @@ export const defaultTooltipProps = {
   wrapperStyle: {},
 } as const satisfies Partial<TooltipProps<any, any>>;
 
+/**
+ * @consumes CartesianChartContext
+ * @consumes PolarChartContext
+ */
 export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);
   const {

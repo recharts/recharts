@@ -992,6 +992,9 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPieProps>;
 
+/**
+ * @consumes PolarChartContext
+ */
 export function Pie(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
   const { id: externalId, ...propsWithoutId } = props;

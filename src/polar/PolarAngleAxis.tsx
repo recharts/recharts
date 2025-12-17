@@ -322,6 +322,9 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
   );
 };
 
+/**
+ * @consumes PolarViewBoxContext
+ */
 export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
   const props = resolveDefaultProps(outsideProps, defaultPolarAngleAxisProps);
 

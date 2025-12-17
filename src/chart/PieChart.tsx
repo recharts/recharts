@@ -16,6 +16,7 @@ export const defaultPieChartProps = {
 
 /**
  * @provides PolarViewBoxContext
+ * @provides PolarChartContext
  */
 export const PieChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultPieChartProps);

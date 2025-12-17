@@ -2,7 +2,7 @@ import { AreaChartAPI as AreaChart } from './AreaChart';
 import { BarChartAPI } from './BarChart';
 import { ComposedChartAPI } from './ComposedChart';
 import { LineChartAPI as LineChart } from './LineChart';
-import { PieChartAPI as PieChart } from './PieChart';
+import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI as RadarChart } from './RadarChart';
 import { SankeyAPI } from './Sankey';
@@ -58,7 +58,7 @@ export const allExamples: Record<string, ApiDoc> = {
   BarChart: BarChartAPI,
   LineChart,
   ComposedChart: ComposedChartAPI,
-  PieChart,
+  PieChart: PieChartAPI,
   RadarChart,
   ScatterChart,
   RadialBarChart: RadialBarChartAPI,

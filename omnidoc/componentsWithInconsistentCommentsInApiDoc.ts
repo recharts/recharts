@@ -11,7 +11,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Cell',
   'Funnel',
   'Legend',
-  'PieChart',
   'PolarAngleAxis',
   'PolarGrid',
   'PolarRadiusAxis',

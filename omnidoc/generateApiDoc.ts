@@ -30,6 +30,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Label',
   'Line',
   'Pie',
+  'PieChart',
   'Scatter',
   'Text',
   'ZIndexLayer',

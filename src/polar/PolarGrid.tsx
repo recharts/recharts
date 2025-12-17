@@ -162,6 +162,9 @@ const ConcentricGridPath = (props: PropsWithDefaults) => {
   );
 };
 
+/**
+ * @consumes PolarViewBoxContext
+ */
 export const PolarGrid = ({
   gridType = 'polygon',
   radialLines = true,
