@@ -263,5 +263,15 @@ export const PieChartAPI: ApiDoc = {
       },
     },
   ],
-  childrenComponents: ['Label', 'Legend', 'Pie', 'PolarAngleAxis', 'PolarGrid', 'PolarRadiusAxis', 'Tooltip'],
+  childrenComponents: [
+    'Label',
+    'Legend',
+    'Pie',
+    'PolarAngleAxis',
+    'PolarGrid',
+    'PolarRadiusAxis',
+    'Radar',
+    'RadialBar',
+    'Tooltip',
+  ],
 };

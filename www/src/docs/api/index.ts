@@ -30,7 +30,6 @@ import { LegendAPI } from './LegendAPI';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
-import { LabelListAPI as LabelList } from './LabelList';
 
 import { PieAPI } from './PieAPI';
 import { RadarAPI as Radar } from './Radar';
@@ -52,6 +51,7 @@ import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI.tsx';
+import { LabelListAPI } from './LabelListAPI.tsx';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -85,7 +85,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Cell,
   Text: TextAPI,
   Label: LabelAPI,
-  LabelList,
+  LabelList: LabelListAPI,
   Customized: CustomizedAPI,
 
   Pie: PieAPI,

@@ -1023,4 +1023,9 @@ describe('readProject', () => {
     // The prop deprecated tag has no text in the source code
     expect(deprecated?.[1]).toBeUndefined();
   });
+
+  it('should read known primitive default value types as primitives without the string wrapper', () => {
+    expect(reader.getDefaultValueOf('Label', 'angle')).toEqual({ type: 'known', value: 0 });
+    expect(reader.getDefaultValueOf('LabelList', 'angle')).toEqual({ type: 'known', value: 0 });
+  });
 });

@@ -669,4 +669,5 @@ export const PieAPI: ApiDoc = {
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
   parentComponents: ['PieChart'],
+  childrenComponents: ['LabelList'],
 };

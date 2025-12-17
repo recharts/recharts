@@ -994,6 +994,7 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
 
 /**
  * @consumes PolarChartContext
+ * @provides LabelListContext
  */
 export function Pie(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);

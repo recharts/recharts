@@ -80,6 +80,10 @@ interface LabelListProps extends ZIndexable {
   /**
    * If set a React element, the option is the customized React element of rendering each label.
    * If set to a function, the function is called once for each item
+   *
+   * @example <LabelList content={CustomizedLabel} />
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithMinHeight/ Customized content of LabelList in a BarChart}
    */
   content?: LabelContentType;
   textBreakAll?: boolean;
@@ -104,6 +108,17 @@ interface LabelListProps extends ZIndexable {
    * Function to customize how content is serialized before rendering.
    */
   formatter?: LabelFormatter;
+  /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
+   * @defaultValue 2000
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
+   */
+  zIndex?: number;
 }
 
 /**
