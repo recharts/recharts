@@ -1143,7 +1143,7 @@ export interface ChartPointer {
 /**
  * Props shared with all charts.
  */
-interface BaseChartProps extends Partial<ExternalMouseEvents> {
+interface BaseChartProps extends ExternalMouseEvents {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".

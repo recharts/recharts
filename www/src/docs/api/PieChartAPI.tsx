@@ -3,138 +3,6 @@ import { ApiDoc } from './types';
 export const PieChartAPI: ApiDoc = {
   name: 'PieChart',
   props: [
-    {
-      name: 'onClick',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of click in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onContextMenu',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of contextmenu in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onDoubleClick',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of dblclick in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseDown',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousedown in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseEnter',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseenter in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseLeave',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseleave in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseMove',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousemove in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseUp',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseup in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onTouchEnd',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of touchend in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onTouchMove',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of touchmove in this chart.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onTouchStart',
-      type: 'CategoricalChartFunc',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of touchstart in this chart.</p>
-          </section>
-        ),
-      },
-    },
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
     { name: 'barCategoryGap', type: 'string | number', isOptional: true, defaultVal: '10%' },
     { name: 'barGap', type: 'string | number', isOptional: true, defaultVal: 4 },
@@ -258,6 +126,138 @@ export const PieChartAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>The width of chart container. Can be a number or a percent string like &quot;100%&quot;.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onClick',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of click in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onContextMenu',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of contextmenu in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onDoubleClick',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of dblclick in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseDown',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousedown in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseEnter',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseenter in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseLeave',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseleave in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseMove',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousemove in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseUp',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseup in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onTouchEnd',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of touchend in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onTouchMove',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of touchmove in this chart.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onTouchStart',
+      type: 'CategoricalChartFunc',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of touchstart in this chart.</p>
           </section>
         ),
       },

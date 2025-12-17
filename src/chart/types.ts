@@ -9,45 +9,45 @@ export interface ExternalMouseEvents {
   /**
    * The customized event handler of click in this chart.
    */
-  onClick: CategoricalChartFunc;
+  onClick?: CategoricalChartFunc;
   /**
    * The customized event handler of mouseleave in this chart.
    */
-  onMouseLeave: CategoricalChartFunc;
+  onMouseLeave?: CategoricalChartFunc;
   /**
    * The customized event handler of mouseenter in this chart.
    */
-  onMouseEnter: CategoricalChartFunc;
+  onMouseEnter?: CategoricalChartFunc;
   /**
    * The customized event handler of mousemove in this chart.
    */
-  onMouseMove: CategoricalChartFunc;
+  onMouseMove?: CategoricalChartFunc;
   /**
    * The customized event handler of mousedown in this chart.
    */
-  onMouseDown: CategoricalChartFunc;
+  onMouseDown?: CategoricalChartFunc;
   /**
    * The customized event handler of mouseup in this chart.
    */
-  onMouseUp: CategoricalChartFunc;
+  onMouseUp?: CategoricalChartFunc;
   /**
    * The customized event handler of contextmenu in this chart.
    */
-  onContextMenu: CategoricalChartFunc;
+  onContextMenu?: CategoricalChartFunc;
   /**
    * The customized event handler of dblclick in this chart.
    */
-  onDoubleClick: CategoricalChartFunc;
+  onDoubleClick?: CategoricalChartFunc;
   /**
    * The customized event handler of touchstart in this chart.
    */
-  onTouchStart: CategoricalChartFunc;
+  onTouchStart?: CategoricalChartFunc;
   /**
    * The customized event handler of touchmove in this chart.
    */
-  onTouchMove: CategoricalChartFunc;
+  onTouchMove?: CategoricalChartFunc;
   /**
    * The customized event handler of touchend in this chart.
    */
-  onTouchEnd: CategoricalChartFunc;
+  onTouchEnd?: CategoricalChartFunc;
 }

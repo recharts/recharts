@@ -28,11 +28,7 @@ import { useResponsiveContainerContext } from '../component/ResponsiveContainer'
 import { Percent } from '../util/types';
 import { isPercent } from '../util/DataUtils';
 
-type Nullable<T> = {
-  [P in keyof T]: T[P] | undefined;
-};
-
-export type RechartsWrapperProps = Nullable<ExternalMouseEvents> & {
+export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
   width: number | Percent | undefined;
   height: number | Percent | undefined;
