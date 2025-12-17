@@ -364,18 +364,16 @@ const SunburstChartImpl = ({
   return (
     <Surface width={width} height={height}>
       <Layer className={layerClass}>{sectors}</Layer>
-      <>
-        <SetSunburstTooltipEntrySettings
-          dataKey={dataKey}
-          nameKey={nameKey}
-          data={data}
-          stroke={stroke}
-          fill={fill}
-          positions={positions}
-          id={id}
-        />
-        {children}
-      </>
+      <SetSunburstTooltipEntrySettings
+        dataKey={dataKey}
+        nameKey={nameKey}
+        data={data}
+        stroke={stroke}
+        fill={fill}
+        positions={positions}
+        id={id}
+      />
+      {children}
     </Surface>
   );
 };
