@@ -215,7 +215,7 @@ jobs:
 
       - name: Run Test
         # Use the output from the 'pack_library' step
-        run: ./run-test.sh ${{ matrix.test_dir }} "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
+        run: ./run-test.sh "${{ matrix.test_dir }}" "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
 
   vr_tests:
     name: Visual Regression Tests
