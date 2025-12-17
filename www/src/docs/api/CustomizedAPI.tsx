@@ -15,6 +15,7 @@ export const CustomizedAPI: ApiDoc = {
         ),
       },
       format: ['Before: `<Customized component={<MyCustomComponent />} />`', 'After: `<MyCustomComponent />`'],
+      deprecated: true,
     },
   ],
   desc: {
@@ -27,4 +28,5 @@ export const CustomizedAPI: ApiDoc = {
       </section>
     ),
   },
+  deprecated: 'Just render your components directly. Will be removed in 4.0',
 };

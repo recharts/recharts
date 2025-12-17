@@ -1008,4 +1008,19 @@ describe('readProject', () => {
     assertNotNull(comment);
     expect(comment).toContain('Customized component used to be necessary to render custom elements in Recharts 2.x');
   });
+
+  it('should read @deprecated tag from component', () => {
+    const jsDoc = reader.getComponentJsDocMeta('Customized');
+    const deprecated = jsDoc?.tags.find(t => t[0] === 'deprecated');
+    expect(deprecated).toBeDefined();
+    expect(deprecated?.[1]).toContain('Just render your components directly');
+  });
+
+  it('should read @deprecated tag from prop', () => {
+    const propMeta = reader.getPropMeta('Customized', 'component');
+    const deprecated = propMeta[0].jsDoc?.tags.find(t => t[0] === 'deprecated');
+    expect(deprecated).toBeDefined();
+    // The prop deprecated tag has no text in the source code
+    expect(deprecated?.[1]).toBeUndefined();
+  });
 });

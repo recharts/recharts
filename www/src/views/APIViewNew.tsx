@@ -57,6 +57,11 @@ function PropsList({ props, locale }: PropsListProps) {
             {entry.isOptional ? <em className="optional">optional</em> : null}
             {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
           </p>
+          {entry.deprecated && typeof entry.deprecated === 'string' ? (
+            <p className="deprecated-message">
+              <strong>Deprecated:</strong> {entry.deprecated}
+            </p>
+          ) : null}
           <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
           {entry.defaultVal !== null &&
           entry.defaultVal !== undefined &&
@@ -201,6 +206,11 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
       <Helmet title={page} />
       <div className="content" key={page}>
         <h3 className="page-title">{page}</h3>
+        {api.deprecated && (
+          <p className="deprecated-notice">
+            <strong>Deprecated:</strong> {api.deprecated === true ? 'This component is deprecated.' : api.deprecated}
+          </p>
+        )}
         {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
         <ApiExamples examples={examples} componentName={page} />
 
