@@ -1,6 +1,6 @@
 import React from 'react';
-import { RechartsScale } from '../../../../src/util/ChartUtils';
 import { ArrayInspector } from './ArrayInspector';
+import { RechartsScale } from '../../../../src/util/scale/RechartsScale';
 
 export function ScaleInspector({
   scale,

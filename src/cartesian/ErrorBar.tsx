@@ -177,12 +177,14 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = scale(value - lowBound);
       const xMax = scale(value + highBound);
 
-      // the right line of |--|
-      lineCoordinates.push({ x1: xMax, y1: yMin, x2: xMax, y2: yMax });
-      // the middle line of |--|
-      lineCoordinates.push({ x1: xMin, y1: yMid, x2: xMax, y2: yMid });
-      // the left line of |--|
-      lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMin, y2: yMax });
+      if (xMin != null && xMax != null) {
+        // the right line of |--|
+        lineCoordinates.push({ x1: xMax, y1: yMin, x2: xMax, y2: yMax });
+        // the middle line of |--|
+        lineCoordinates.push({ x1: xMin, y1: yMid, x2: xMax, y2: yMid });
+        // the left line of |--|
+        lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMin, y2: yMax });
+      }
     } else if (direction === 'y') {
       // error bar for horizontal charts, the x is fixed, y is a range value
       const { scale } = yAxis;
@@ -194,12 +196,14 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = scale(value - lowBound);
       const yMax = scale(value + highBound);
 
-      // the top line
-      lineCoordinates.push({ x1: xMin, y1: yMax, x2: xMax, y2: yMax });
-      // the middle line
-      lineCoordinates.push({ x1: xMid, y1: yMin, x2: xMid, y2: yMax });
-      // the bottom line
-      lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
+      if (yMin != null && yMax != null) {
+        // the top line
+        lineCoordinates.push({ x1: xMin, y1: yMax, x2: xMax, y2: yMax });
+        // the middle line
+        lineCoordinates.push({ x1: xMid, y1: yMin, x2: xMid, y2: yMax });
+        // the bottom line
+        lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
+      }
     }
 
     const scaleDirection: string = direction === 'x' ? 'scaleX' : 'scaleY';

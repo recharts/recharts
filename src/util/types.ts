@@ -24,7 +24,6 @@ import {
   WheelEvent,
 } from 'react';
 import type { Props as DotProps } from '../shape/Dot';
-import { RechartsScale } from './ChartUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
 import { SyncMethod } from '../synchronisation/types';
@@ -33,6 +32,7 @@ import { DotPoint } from '../component/Dots';
 import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 import { BaseValue } from '../cartesian/Area';
 import { ImplicitLabelType } from '../component/Label';
+import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 
 /**
  * Determines how values are stacked:
@@ -157,8 +157,7 @@ export const isPolarCoordinate = (c: Coordinate | PolarCoordinate): c is PolarCo
   return 'radius' in c && 'startAngle' in c && 'endAngle' in c;
 };
 
-export type ScaleType =
-  | 'auto'
+export type D3ScaleType =
   | 'linear'
   | 'pow'
   | 'sqrt'
@@ -174,6 +173,13 @@ export type ScaleType =
   | 'utc'
   | 'sequential'
   | 'threshold';
+
+/**
+ * String shortcuts for scale types.
+ * In case none of these does what you want you can also provide your own scale function
+ * @see {@link CustomScaleDefinition}
+ */
+export type ScaleType = 'auto' | D3ScaleType;
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
@@ -723,7 +729,9 @@ export type AxisDomain =
  */
 export type NumberDomain = readonly [min: number, max: number];
 
-export type CategoricalDomain = ReadonlyArray<number | string | Date>;
+export type CategoricalDomainItem = number | string | Date;
+
+export type CategoricalDomain = ReadonlyArray<CategoricalDomainItem>;
 
 export type TickProp = SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactNode) | boolean;
 
@@ -744,7 +752,7 @@ export interface BaseAxisProps {
    *
    * @defaultValue auto
    */
-  scale?: ScaleType | RechartsScale;
+  scale?: ScaleType | CustomScaleDefinition;
   /** The option for tick */
   tick?: TickProp;
   /** The count of ticks */

@@ -3,12 +3,10 @@ import range from 'es-toolkit/compat/range';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
-  checkDomainOfScale,
   getDomainOfStackGroups,
   getStackedData,
   getValueByDataKey,
   isCategoricalAxis,
-  RechartsScale,
   StackId,
 } from '../../util/ChartUtils';
 import {
@@ -17,11 +15,14 @@ import {
   AxisType,
   CartesianTickItem,
   CategoricalDomain,
+  CategoricalDomainItem,
   ChartOffsetInternal,
   Coordinate,
+  D3ScaleType,
   DataKey,
   LayoutType,
   NumberDomain,
+  ScaleType,
   Size,
   StackOffsetType,
   TickItem,
@@ -83,8 +84,9 @@ import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraph
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
-import { selectTooltipAxisType, AllAxisTypes, RenderableAxisType } from './selectTooltipAxisType';
+import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
+import { makeRechartsScale, RechartsScale } from '../../util/scale/RechartsScale';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -489,17 +491,6 @@ export type AppliedChartDataWithErrorDomain = {
    */
   errorDomain: ReadonlyArray<number> | undefined;
 };
-
-/**
- * This is type of "error" in chart. It is set by using ErrorBar, and it can represent confidence interval,
- * or gap in the data, or standard deviation, or quartiles in boxplot, or whiskers or whatever.
- *
- * We will internally represent it as a tuple of two numbers, where the first number is the lower bound and the second number is the upper bound.
- *
- * It is also true that the first number should be lower than or equal to the associated "main value",
- * and the second number should be higher than or equal to the associated "main value".
- */
-export type ErrorValue = [number, number];
 
 function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
@@ -1095,13 +1086,17 @@ export const selectAxisDomain: (
   combineAxisDomain,
 );
 
+function isSupportedScaleName(name: string): name is ScaleType {
+  return name in d3Scales;
+}
+
 export const combineRealScaleType = (
   axisConfig: BaseCartesianAxis | undefined,
   layout: LayoutType,
   hasBar: boolean,
   chartType: string,
   axisType: AllAxisTypes,
-): string | undefined => {
+): ScaleType | undefined => {
   if (axisConfig == null) {
     return undefined;
   }
@@ -1132,7 +1127,7 @@ export const combineRealScaleType = (
   if (typeof scale === 'string') {
     const name = `scale${upperFirst(scale)}`;
 
-    return name in d3Scales ? name : 'point';
+    return isSupportedScaleName(name) ? name : 'point';
   }
   return undefined;
 };
@@ -1146,43 +1141,20 @@ export const selectRealScaleType: (
   combineRealScaleType,
 );
 
-function getD3ScaleFromType(realScaleType: string | undefined) {
-  if (realScaleType == null) {
-    return undefined;
-  }
-  if (realScaleType in d3Scales) {
-    // @ts-expect-error we should do better type verification here
-    return d3Scales[realScaleType]();
-  }
-  const name = `scale${upperFirst(realScaleType)}`;
-  if (name in d3Scales) {
-    // @ts-expect-error we should do better type verification here
-    return d3Scales[name]();
-  }
-  return undefined;
-}
-
 export function combineScaleFunction(
   axis: BaseCartesianAxis,
-  realScaleType: string | undefined,
+  realScaleType: D3ScaleType | undefined,
   axisDomain: NumberDomain | CategoricalDomain | undefined,
   axisRange: AxisRange | undefined,
 ): RechartsScale | undefined {
   if (axisDomain == null || axisRange == null) {
     return undefined;
   }
+
   if (typeof axis.scale === 'function') {
-    // @ts-expect-error we're going to assume here that if axis.scale is a function then it is a d3Scale function
-    return axis.scale.copy().domain(axisDomain).range(axisRange);
+    return makeRechartsScale(axis.scale, axisDomain, axisRange);
   }
-  const d3ScaleFunction = getD3ScaleFromType(realScaleType);
-  if (d3ScaleFunction == null) {
-    return undefined;
-  }
-  const scale = d3ScaleFunction.domain(axisDomain).range(axisRange);
-  // I don't like this function because it mutates the scale. We should come up with a way to compute the domain up front.
-  checkDomainOfScale(scale);
-  return scale;
+  return makeRechartsScale(realScaleType, axisDomain, axisRange);
 }
 
 export const combineNiceTicks = (
@@ -1854,6 +1826,14 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
   },
 );
 
+/**
+ * Of on four almost identical implementations of tick generation.
+ * The four horsemen of tick generation are:
+ * - {@link selectTooltipAxisTicks}
+ * - {@link combineAxisTicks}
+ * - {@link getTicksOfAxis}.
+ * - {@link combineGraphicalItemTicks}
+ */
 export const combineAxisTicks = (
   layout: LayoutType,
   axis: RenderableAxisSettings,
@@ -1887,33 +1867,40 @@ export const combineAxisTicks = (
   // The ticks set by user should only affect the ticks adjacent to axis line
   const ticksOrNiceTicks = ticks || niceTicks;
   if (ticksOrNiceTicks) {
-    const result = ticksOrNiceTicks.map((entry: AxisTick, index: number): TickItem => {
-      const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
+    return ticksOrNiceTicks
+      .map((entry: AxisTick, index: number): TickItem | null => {
+        const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
-      return {
-        index,
-        // If the scaleContent is not a number, the coordinate will be NaN.
-        // That could be the case for example with a PointScale and a string as domain.
-        coordinate: scale(scaleContent) + offset,
-        value: entry,
-        offset,
-      };
-    });
-    return result.filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
+        const scaled = scale(scaleContent);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          index,
+          coordinate: scaled + offset,
+          value: entry,
+          offset,
+        };
+      })
+      .filter(isNotNil);
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map(
-        (entry: any, index: number): TickItem => ({
-          coordinate: scale(entry) + offset,
+      .map((entry: unknown, index: number): TickItem | null => {
+        const scaled = scale(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          coordinate: scaled + offset,
           value: entry,
           index,
           offset,
-        }),
-      )
-      .filter((row: TickItem) => isWellBehavedNumber(row.coordinate));
+        };
+      })
+      .filter(isNotNil);
   }
 
   if (scale.ticks) {
@@ -1926,14 +1913,22 @@ export const combineAxisTicks = (
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  return scale
+    .domain()
+    .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      const scaled = scale(entry);
+      if (!isWellBehavedNumber(scaled)) {
+        return null;
+      }
+      return {
+        coordinate: scaled + offset,
+        // @ts-expect-error can't use Date as index
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      };
+    })
+    .filter(isNotNil);
 };
 export const selectTicksOfAxis: (
   state: RechartsRootState,
@@ -1955,6 +1950,14 @@ export const selectTicksOfAxis: (
   combineAxisTicks,
 );
 
+/**
+ * Of on four almost identical implementations of tick generation.
+ * The four horsemen of tick generation are:
+ * - {@link selectTooltipAxisTicks}
+ * - {@link combineAxisTicks}
+ * - {@link getTicksOfAxis}.
+ * - {@link combineGraphicalItemTicks}
+ */
 export const combineGraphicalItemTicks = (
   layout: LayoutType,
   axis: RenderableAxisSettings,
@@ -1978,14 +1981,20 @@ export const combineGraphicalItemTicks = (
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    return categoricalDomain
+      .map((entry: unknown, index: number): TickItem | null => {
+        const scaled = scale(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          coordinate: scaled + offset,
+          value: entry,
+          index,
+          offset,
+        };
+      })
+      .filter(isNotNil);
   }
 
   if (scale.ticks) {
@@ -1998,14 +2007,22 @@ export const combineGraphicalItemTicks = (
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  return scale
+    .domain()
+    .map((entry: unknown, index: number): TickItem | null => {
+      const scaled = scale(entry);
+      if (!isWellBehavedNumber(scaled)) {
+        return null;
+      }
+      return {
+        coordinate: scaled + offset,
+        // @ts-expect-error can't use unknown as index
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      };
+    })
+    .filter(isNotNil);
 };
 
 export const selectTicksOfGraphicalItem: (
@@ -2026,7 +2043,12 @@ export const selectTicksOfGraphicalItem: (
   combineGraphicalItemTicks,
 );
 
-export type BaseAxisWithScale = BaseCartesianAxis & { scale: RechartsScale };
+/**
+ * This is the internal representation of an axis along with its scale function.
+ * Here we have already computed the scale function for the axis,
+ * and replaced the union type of scale (string | function) with just the function type.
+ */
+export type BaseAxisWithScale = Omit<BaseCartesianAxis, 'scale'> & { scale: RechartsScale };
 
 export const selectAxisWithScale: (
   state: RechartsRootState,
@@ -2057,7 +2079,7 @@ const selectZAxisScale: (
   combineScaleFunction,
 );
 
-export type ZAxisWithScale = ZAxisSettings & { scale: RechartsScale };
+export type ZAxisWithScale = Omit<ZAxisSettings, 'scale'> & { scale: RechartsScale };
 
 export const selectZAxisWithScale: (
   state: RechartsRootState,

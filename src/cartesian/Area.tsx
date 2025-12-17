@@ -79,6 +79,11 @@ import { StackDataPoint } from '../util/stacks/stackTypes';
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
 /**
+ * Our base value array has payload in it, and we expose it externally too.
+ */
+type BaseValueCoordinate = NullableCoordinate & { payload: any };
+
+/**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
@@ -1022,33 +1027,33 @@ export function computeArea({
     if (isHorizontalLayout) {
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isBreakPoint ? null : yAxis.scale(value1),
+        y: isBreakPoint ? null : (yAxis.scale(value1) ?? null),
         value: valueAsArray,
         payload: entry,
       };
     }
 
     return {
-      x: isBreakPoint ? null : xAxis.scale(value1),
+      x: isBreakPoint ? null : (xAxis.scale(value1) ?? null),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value: valueAsArray,
       payload: entry,
     };
   });
 
-  let baseLine;
+  let baseLine: number | NullableCoordinate[] | undefined;
   if (hasStack || isRange) {
-    baseLine = points.map((entry: AreaPointItem) => {
+    baseLine = points.map((entry: AreaPointItem): BaseValueCoordinate => {
       const x = Array.isArray(entry.value) ? entry.value[0] : null;
       if (isHorizontalLayout) {
         return {
           x: entry.x,
-          y: x != null && entry.y != null ? yAxis.scale(x) : null,
+          y: x != null && entry.y != null ? (yAxis.scale(x) ?? null) : null,
           payload: entry.payload,
         };
       }
       return {
-        x: x != null ? xAxis.scale(x) : null,
+        x: x != null ? (xAxis.scale(x) ?? null) : null,
         y: entry.y,
         payload: entry.payload,
       };
@@ -1059,7 +1064,7 @@ export function computeArea({
 
   return {
     points,
-    baseLine,
+    baseLine: baseLine ?? 0,
     isRange,
   };
 }

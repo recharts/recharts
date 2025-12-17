@@ -94,6 +94,7 @@ export { YAxis } from './cartesian/YAxis';
 export type { Props as YAxisProps } from './cartesian/YAxis';
 export { ZAxis } from './cartesian/ZAxis';
 export type { Props as ZAxisProps } from './cartesian/ZAxis';
+export type { CustomScaleDefinition } from './util/scale/CustomScaleDefinition';
 export { ErrorBar } from './cartesian/ErrorBar';
 export type { Props as ErrorBarProps } from './cartesian/ErrorBar';
 

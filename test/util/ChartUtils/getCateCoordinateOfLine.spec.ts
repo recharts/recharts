@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { getCateCoordinateOfLine } from '../../../src/util/ChartUtils';
+import { RechartsScale } from '../../../src/util/scale/RechartsScale';
 
-const mockScale = (v: number) => v * 2;
+// @ts-expect-error incomplete mock data
+const mockScale: RechartsScale = (v: number) => v * 2;
 
 describe('getCateCoordinateOfLine', () => {
   describe('numerical axis', () => {

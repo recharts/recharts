@@ -166,8 +166,15 @@ describe('checkDomainOfScale', () => {
   });
 
   test.each(getAllConvergingScales())('should normalize the domain of %s', (_, scale) => {
+    const domainBefore = scale.domain();
     checkDomainOfScale(scale);
     expect(scale.domain().length).toBeLessThanOrEqual(2);
+    const domainAfter = scale.domain();
+    if (domainBefore.length <= 2) {
+      expect(domainBefore).toEqual(domainAfter);
+    } else {
+      expect(domainBefore).not.toEqual(domainAfter);
+    }
   });
 
   test.each(getAllDivergingScales())(

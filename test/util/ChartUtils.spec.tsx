@@ -12,52 +12,18 @@ import {
 import { AxisType, DataKey, LayoutType, TickItem } from '../../src/util/types';
 import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
 import { calculateActiveTickIndex } from '../../src/util/getActiveCoordinate';
+import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
+import { CustomScaleDefinition } from '../../src';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
-    // @ts-expect-error we need to wrap the d3 scales in unified interface
     scale: scaleLinear(),
-    allowDuplicatedCategory: true,
-    allowDecimals: true,
-    hide: false,
-    orientation: 'left' as const,
-    width: 60,
-    height: 211.5,
-    mirror: false,
-    yAxisId: 0,
     tickCount: 5,
     type: 'number' as const,
-    padding: {
-      top: 0,
-      bottom: 0,
-    },
-    allowDataOverflow: false,
-    reversed: false,
     axisType: 'yAxis' as const,
-    domain: [0, 1520],
-    originalDomain: [0, 'auto' as const],
     isCategorical: false,
-    layout: 'horizontal' as const,
     niceTicks: [0, 400, 800, 1200, 1600] as const,
     realScaleType: 'linear' as const,
-    x: 20,
-    y: 20,
-    bandSize: 0,
-    className: 'recharts-yAxis yAxis',
-    viewBox: {
-      x: 0,
-      y: 0,
-      width: 782,
-      height: 300,
-    },
-    stroke: '#666',
-    tickLine: true,
-    axisLine: true,
-    tick: true,
-    minTickGap: 5,
-    tickSize: 6,
-    tickMargin: 2,
-    interval: 'preserveEnd' as const,
   };
 
   it('Returns null for null', () => {
@@ -66,50 +32,17 @@ describe('getTicksForAxis', () => {
 
   it(`Ticks without a valid coordinate are filtered out,
   such as with a PointScale and an active Brush, filtering the domain.`, () => {
+    const stringScalePoint: CustomScaleDefinition<string> = scalePoint()
+      .domain(['13', '14', '15', '16', '17'])
+      .range([5, 866]);
     const XAxisWithActiveBrush: AxisPropsNeededForTicksGenerator = {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      scale: scalePoint().domain(['13', '14', '15', '16', '17']).range([5, 866]),
-      dataKey: 'name',
-      interval: 0,
+      scale: stringScalePoint,
       ticks: ['12', '13', '14', '15', '16', '17', '18', '19'] as const,
-      allowDecimals: true,
-      hide: false,
-      orientation: 'bottom' as const,
-      width: 772,
-      height: 30,
-      mirror: false,
-      xAxisId: 0,
       tickCount: 5,
       type: 'category' as const,
-      padding: {
-        left: 0,
-        right: 0,
-      },
-      allowDataOverflow: false,
-      reversed: false,
-      allowDuplicatedCategory: true,
       axisType: 'xAxis' as const,
-      domain: ['13', '14', '15', '16', '17'],
       isCategorical: true,
-      layout: 'horizontal' as const,
       realScaleType: 'point' as const,
-      x: 5,
-      y: 325,
-      bandSize: 0,
-      className: 'recharts-xAxis xAxis',
-      viewBox: {
-        x: 0,
-        y: 0,
-        width: 782,
-        height: 400,
-      },
-      stroke: '#666',
-      tickLine: true,
-      axisLine: true,
-      tick: true,
-      minTickGap: 5,
-      tickSize: 6,
-      tickMargin: 2,
     };
 
     expect(getTicksOfAxis(XAxisWithActiveBrush, true, undefined)).toEqual([
@@ -159,7 +92,6 @@ describe('getTicksForAxis', () => {
   it('Tick coordinates depend on scale', () => {
     const axis: AxisPropsNeededForTicksGenerator = {
       ...Y_AXIS_EXAMPLE,
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleLinear().domain([0, 1600]).range([0, 1000]),
     };
 
@@ -180,8 +112,16 @@ describe('getBandSizeOfAxis', () => {
 
   it('should return band size of scale, if available', () => {
     const axis: BaseAxisWithScale = {
+      allowDataOverflow: false,
+      allowDuplicatedCategory: false,
+      dataKey: undefined,
+      domain: undefined,
+      id: defaultAxisId,
+      includeHidden: false,
+      name: undefined,
+      reversed: false,
+      unit: undefined,
       type: 'category',
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
     };
     expect(getBandSizeOfAxis(axis)).toBe(25);
@@ -189,8 +129,16 @@ describe('getBandSizeOfAxis', () => {
 
   it('should compute band size from data if scale does not return explicit band size', () => {
     const axis: BaseAxisWithScale = {
+      allowDataOverflow: false,
+      allowDuplicatedCategory: false,
+      dataKey: undefined,
+      domain: undefined,
+      id: defaultAxisId,
+      includeHidden: false,
+      name: undefined,
+      reversed: false,
+      unit: undefined,
       type: 'number',
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleLinear(),
     };
     const ticks: ReadonlyArray<TickItem> = [

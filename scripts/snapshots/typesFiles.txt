@@ -237,6 +237,8 @@
   "types/util/resolveDefaultProps.d.ts",
   "types/util/round.d.ts",
   "types/util/scale",
+  "types/util/scale/CustomScaleDefinition.d.ts",
+  "types/util/scale/RechartsScale.d.ts",
   "types/util/scale/getNiceTickValues.d.ts",
   "types/util/scale/index.d.ts",
   "types/util/scale/util",

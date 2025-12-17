@@ -3,9 +3,9 @@ import { useLayoutEffect, useRef } from 'react';
 import { AxisDomain, DataKey, ScaleType } from '../util/types';
 import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings, AxisId } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
-import { RechartsScale } from '../util/ChartUtils';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -58,7 +58,7 @@ export interface Props {
   /**
    * @defaultValue auto
    */
-  scale?: ScaleType | RechartsScale | undefined;
+  scale?: ScaleType | CustomScaleDefinition | undefined;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
 }

@@ -36,10 +36,11 @@ import {
   selectTooltipAxisDataKey,
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
+import { isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import {
   AxisDomain,
   CategoricalDomain,
+  CategoricalDomainItem,
   Coordinate,
   DataKey,
   LayoutType,
@@ -56,7 +57,7 @@ import {
 } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
-import { mathSign } from '../../util/DataUtils';
+import { isNotNil, mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
 
@@ -89,6 +90,8 @@ import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomai
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { ActiveLabel } from '../../synchronisation/types';
+import { RechartsScale } from '../../util/scale/RechartsScale';
+import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -349,27 +352,49 @@ const combineTicksOfTooltipAxis = (
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    return categoricalDomain
+      .map((entry: unknown, index: number): TickItem | null => {
+        const scaled = scale(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return {
+          coordinate: scaled + offset,
+          value: entry,
+          index,
+          offset,
+        };
+      })
+      .filter(isNotNil);
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  return scale
+    .domain()
+    .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      const scaled = scale(entry);
+      if (!isWellBehavedNumber(scaled)) {
+        return null;
+      }
+      return {
+        coordinate: scaled + offset,
+        // @ts-expect-error can't use Date as an index
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      };
+    })
+    .filter(isNotNil);
 };
 
+/**
+ * Of on four almost identical implementations of tick generation.
+ * The four horsemen of tick generation are:
+ * - {@link selectTooltipAxisTicks}
+ * - {@link combineAxisTicks}
+ * - {@link getTicksOfAxis}.
+ * - {@link combineGraphicalItemTicks}
+ */
 export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | undefined = createSelector(
   [
     selectChartLayout,

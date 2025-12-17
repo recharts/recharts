@@ -949,7 +949,7 @@ export function computeBarRectangles({
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
-  const stackedBarStart: number = numericAxis.scale(baseValue);
+  const stackedBarStart: number | undefined = numericAxis.scale(baseValue);
 
   return displayedData
     .map((entry, index): BarRectangleItem | null => {
@@ -973,7 +973,11 @@ export function computeBarRectangles({
       const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
 
       if (layout === 'horizontal') {
-        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
+        const baseValueScale = yAxis.scale(value[0]);
+        const currentValueScale = yAxis.scale(value[1]);
+        if (baseValueScale == null || currentValueScale == null) {
+          return null;
+        }
         x = getCateCoordinateOfBar({
           axis: xAxis,
           ticks: xAxisTicks,
@@ -995,7 +999,11 @@ export function computeBarRectangles({
           height += delta;
         }
       } else {
-        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+        const baseValueScale = xAxis.scale(value[0]);
+        const currentValueScale = xAxis.scale(value[1]);
+        if (baseValueScale == null || currentValueScale == null) {
+          return null;
+        }
         x = baseValueScale;
         y = getCateCoordinateOfBar({
           axis: yAxis,
