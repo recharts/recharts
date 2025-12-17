@@ -26,7 +26,7 @@ import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
 import { FunnelAPI as Funnel } from './Funnel';
 
 import { ResponsiveContainerAPI as ResponsiveContainer } from './ResponsiveContainer';
-import { LegendAPI as Legend } from './Legend';
+import { LegendAPI } from './LegendAPI';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
@@ -80,7 +80,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Funnel,
 
   ResponsiveContainer,
-  Legend,
+  Legend: LegendAPI,
   Tooltip,
   Cell,
   Text: TextAPI,

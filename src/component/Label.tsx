@@ -82,7 +82,7 @@ interface LabelProps extends ZIndexable {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
   /**
-   * The formatter function of label value which has only one parameter - the value of label.
+   * Function to customize how content is serialized before rendering.
    */
   formatter?: LabelFormatter;
   /**

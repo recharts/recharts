@@ -61,7 +61,7 @@ export const LabelAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The formatter function of label value which has only one parameter - the value of label.</p>
+            <p>Function to customize how content is serialized before rendering.</p>
           </section>
         ),
       },

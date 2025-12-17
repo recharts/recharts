@@ -79,7 +79,7 @@ interface LabelListProps extends ZIndexable {
   dataKey?: DataKey<Record<string, any>>;
   /**
    * If set a React element, the option is the customized React element of rendering each label.
-   * If set a function, the function will be called to render each label content.
+   * If set to a function, the function is called once for each item
    */
   content?: LabelContentType;
   textBreakAll?: boolean;
@@ -101,7 +101,7 @@ interface LabelListProps extends ZIndexable {
    */
   angle?: number;
   /**
-   * The formatter function of label value which has only one parameter - the value of label.
+   * Function to customize how content is serialized before rendering.
    */
   formatter?: LabelFormatter;
 }

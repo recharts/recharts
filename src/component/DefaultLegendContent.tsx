@@ -10,15 +10,15 @@ import { Symbols } from '../shape/Symbols';
 import {
   DataKey,
   LegendType,
-  LayoutType,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  CartesianLayout,
 } from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
-export type IconType = Exclude<LegendType, 'none'>;
+
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (value: any, entry: LegendPayload, index: number) => ReactNode;
@@ -42,20 +42,79 @@ export interface LegendPayload {
 }
 
 interface DefaultLegendContentProps {
+  /**
+   * If set to a React element, the option will be used to render the legend.
+   * If set to a function, the function is called once for each item
+   *
+   * @example <Legend content={<CustomizedLegend external={external} />} />
+   * @example <Legend content={renderLegend} />
+   */
   content?: ContentType;
+  /**
+   * The size of icon in each legend item.
+   * @defaultValue 14
+   */
   iconSize?: number;
-  iconType?: IconType;
-  layout?: LayoutType;
+  /**
+   * The type of icon in each legend item.
+   */
+  iconType?: LegendType;
+  /**
+   * The layout of legend items inside the legend container.
+   * @defaultValue horizontal
+   */
+  layout?: CartesianLayout;
+  /**
+   * Horizontal alignment of the whole Legend container:
+   *
+   * - `left`: shows the Legend to the left of the chart, and chart width reduces automatically to make space for it.
+   * - `right` shows the Legend to the right of the chart, and chart width reduces automatically.
+   * - `center` shows the Legend in the middle of chart, and chart width remains unchanged.
+   *
+   * The exact behavior changes depending on 'verticalAlign' prop.
+   *
+   * @defaultValue center
+   */
   align?: HorizontalAlignmentType;
+  /**
+   * Vertical alignment of the whole Legend container:
+   *
+   * - `bottom`: shows the Legend below chart, and chart height reduces automatically to make space for it.
+   * - `top`: shows the Legend above chart, and chart height reduces automatically.
+   * - `middle`:  shows the Legend in the middle of chart, covering other content, and chart height remains unchanged.
+   * The exact behavior changes depending on `align` prop.
+   *
+   * @defaultValue middle
+   */
   verticalAlign?: VerticalAlignmentType;
+  /**
+   * The color of the icon when the item is inactive.
+   * @defaultValue #ccc
+   */
   inactiveColor?: string;
+  /**
+   * Function to customize how content is serialized before rendering.
+   * @example (value, entry, index) => <span style={{ color: 'red' }}>{value}</span>
+   * @example https://codesandbox.io/s/legend-formatter-rmzp9
+   */
   formatter?: Formatter;
+  /**
+   * The customized event handler of mouseenter on the items in this group
+   * @example https://recharts.github.io/examples/LegendEffectOpacity
+   */
   onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the items in this group
+   * @example https://recharts.github.io/examples/LegendEffectOpacity
+   */
   onMouseLeave?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  /**
+   * The customized event handler of click on the items in this group
+   */
   onClick?: (data: LegendPayload, index: number, event: MouseEvent) => void;
   /**
    * DefaultLegendContent.payload is omitted from Legend props.
-   * A custom payload can be passed here if desired or it can be passed from the Legend "content" callback.
+   * A custom payload can be passed here if desired, or it can be passed from the Legend "content" callback.
    */
   payload?: ReadonlyArray<LegendPayload>;
 }
@@ -81,7 +140,7 @@ function Icon({
   inactiveColor,
 }: {
   data: LegendPayload;
-  iconType: IconType | undefined;
+  iconType: LegendType | undefined;
   inactiveColor: string;
 }) {
   const halfSize = SIZE / 2;

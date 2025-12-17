@@ -2,7 +2,12 @@ import * as React from 'react';
 import { CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
-import { DefaultLegendContent, LegendPayload, Props as DefaultProps } from './DefaultLegendContent';
+import {
+  DefaultLegendContent,
+  LegendPayload,
+  Props as DefaultLegendContentProps,
+  VerticalAlignmentType,
+} from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 import { LayoutType, Margin, Size } from '../util/types';
@@ -88,9 +93,24 @@ function getDefaultPosition(
 
 export type LegendItemSorter = 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
 
-export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
+export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'verticalAlign'> & {
+  /**
+   * The style of legend container which is a "position: absolute;" div element.
+   * Because the position of legend is quite flexible, so you can change the position by the value
+   * of top, left, right, bottom in this option. And the format of wrapperStyle is the same as
+   * React inline style.
+   *
+   * @example { top: 0, left: 0, backgroundColor: 'red' }
+   * @example https://reactjs.org/docs/dom-elements.html#style
+   */
   wrapperStyle?: CSSProperties;
+  /**
+   * The width of legend.
+   */
   width?: number;
+  /**
+   * The height of legend.
+   */
   height?: number;
   payloadUniqBy?: UniqueOption<LegendPayload>;
   onBBoxUpdate?: (box: ElementOffset | null) => void;
@@ -111,6 +131,17 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
    * @defaultValue value
    */
   itemSorter?: LegendItemSorter | null;
+  /**
+   * The alignment of the whole Legend container:
+   *
+   * - `bottom`: shows the Legend below chart, and chart height reduces automatically to make space for it.
+   * - `top`: shows the Legend above chart, and chart height reduces automatically.
+   * - `middle`:  shows the Legend in the middle of chart, covering other content, and chart height remains unchanged.
+   * The exact behavior changes depending on `align` prop.
+   *
+   * @defaultValue bottom
+   */
+  verticalAlign?: VerticalAlignmentType;
 };
 
 function LegendSettingsDispatcher(props: LegendSettings): null {
@@ -155,6 +186,7 @@ function getWidthOrHeight(
 export const legendDefaultProps = {
   align: 'center',
   iconSize: 14,
+  inactiveColor: '#ccc',
   itemSorter: 'value',
   layout: 'horizontal',
   verticalAlign: 'bottom',
