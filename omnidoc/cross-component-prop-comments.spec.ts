@@ -124,12 +124,12 @@ describe('cross-component prop consistency', () => {
       reason: 'Pie has a custom label implementation',
     },
     {
-      components: ['Dot', 'SunburstChart'],
+      components: ['Dot', 'SunburstChart', 'PolarAngleAxis'],
       prop: 'cx',
       reason: 'These components do not support percentages unlike other components',
     },
     {
-      components: ['Dot', 'SunburstChart'],
+      components: ['Dot', 'SunburstChart', 'PolarAngleAxis'],
       prop: 'cy',
       reason: 'These components do not support percentages unlike other components',
     },
@@ -142,6 +142,17 @@ describe('cross-component prop consistency', () => {
       components: ['Label'],
       prop: 'content',
       reason: 'In other components, content is called N times. In Label, content is called once.',
+    },
+    {
+      components: ['*'],
+      prop: 'type',
+      reason: 'We have "type" in axes, and "type" in curves, with different meanings',
+    },
+    {
+      components: ['PolarAngleAxis', 'PolarRadiusAxis'],
+      prop: 'radius',
+      reason:
+        'Radius in polar charts means radius from center, unlike cartesian context where it means radius of the corner',
     },
   ];
 

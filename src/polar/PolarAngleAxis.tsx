@@ -35,6 +35,7 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   allowDecimals?: boolean;
   /**
+   * Allow the axis has duplicated categorys or not when the type of axis is "category".
    * @defaultValue true
    */
   allowDuplicatedCategory?: boolean;
@@ -43,19 +44,44 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   angleAxisId?: string | number;
   /**
+   * If false set, axis line will not be drawn. If true set, axis line will be drawn which have the props calculated internally.
+   * If object set, axis line will be drawn which have the props merged by the internal calculated props and the option.
    * @defaultValue true
    */
   axisLine?: boolean | SVGProps<SVGLineElement>;
   /**
+   * The type of axis line.
    * @defaultValue polygon
    */
   axisLineType?: 'polygon' | 'circle';
+  /**
+   * The x-coordinate of center.
+   */
+  cx?: number;
+  /**
+   * The y-coordinate of center.
+   */
+  cy?: number;
+  /**
+   * Decides how to extract the value of this Area from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Area.
+   *
+   * If undefined, it will reuse the dataKey of Radius or Angle axis.
+   */
   dataKey?: DataKey<any>;
   domain?: AxisDomain;
   /**
+   * The orientation of axis text.
    * @defaultValue 'outer'
    */
   orientation?: 'inner' | 'outer';
+  /**
+   * The outer radius of circle grid.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   */
+  radius?: number | string;
   /**
    * @defaultValue false
    */
@@ -65,6 +91,10 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   scale?: ScaleType | CustomScaleDefinition;
   /**
+   * If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.
+   * If object set, ticks will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom tick element.
+   * If set a function, the function will be called to render customized ticks.
    * @defaultValue true
    */
   tick?:
@@ -73,8 +103,13 @@ export interface PolarAngleAxisProps extends ZIndexable {
     | ((props: TickItemTextProps) => ReactElement<SVGElement>)
     | boolean;
   tickCount?: number;
+  /**
+   * The formatter function of ticks.
+   */
   tickFormatter?: (value: any, index: number) => string;
   /**
+   * If false set, tick lines will not be drawn. If true set, tick lines will be drawn which have the props calculated internally.
+   * If object set, tick lines will be drawn which have the props merged by the internal calculated props and the option.
    * @defaultValue true
    */
   tickLine?: boolean | SVGProps<SVGLineElement>;
@@ -82,8 +117,12 @@ export interface PolarAngleAxisProps extends ZIndexable {
    * @defaultValue 8
    */
   tickSize?: number;
+  /**
+   * The array of every tick's value and angle.
+   */
   ticks?: ReadonlyArray<TickItem>;
   /**
+   * The type of axis.
    * @defaultValue category
    */
   type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
@@ -91,9 +130,44 @@ export interface PolarAngleAxisProps extends ZIndexable {
    * @defaultValue 500
    */
   zIndex?: number;
+  /**
+   * The customized event handler of click on the ticks of this axis
+   */
+  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousedown on the the ticks of this axis
+   */
+  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseup on the ticks of this axis
+   */
+  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousemove on the ticks of this axis
+   */
+  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseover on the ticks of this axis
+   */
+  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseout on the ticks of this axis
+   */
+  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseenter on the ticks of this axis
+   */
+  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the ticks of this axis
+   */
+  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
 }
 
-type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
+type AxisSvgProps = Omit<
+  PresentationAttributesAdaptChildEvent<any, SVGTextElement>,
+  'scale' | 'type' | 'dangerouslySetInnerHTML'
+>;
 
 export type Props = AxisSvgProps & PolarAngleAxisProps;
 
@@ -323,6 +397,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
 };
 
 /**
+ * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
  */
 export function PolarAngleAxis(outsideProps: Props): React.ReactNode {

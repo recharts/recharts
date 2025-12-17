@@ -167,6 +167,7 @@ export const LabelAPI: ApiDoc = {
     'FunnelChart',
     'LineChart',
     'PieChart',
+    'PolarAngleAxis',
     'PolarRadiusAxis',
     'RadarChart',
     'RadialBarChart',
