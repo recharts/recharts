@@ -31,7 +31,6 @@ import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
 import { LabelListAPI as LabelList } from './LabelList';
-import { CustomizedAPI as Customized } from './Customized';
 
 import { PieAPI as Pie } from './Pie';
 import { RadarAPI as Radar } from './Radar';
@@ -52,6 +51,7 @@ import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
+import { CustomizedAPI } from './CustomizedAPI.tsx';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -86,7 +86,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Text: TextAPI,
   Label: LabelAPI,
   LabelList,
-  Customized,
+  Customized: CustomizedAPI,
 
   Pie,
   RadialBar,

@@ -16,7 +16,7 @@ describe('readProject', () => {
   });
 
   it('should identify all components', () => {
-    const expectedComponents = ['Area', 'Bar', 'Brush', 'LineChart', 'ResponsiveContainer'];
+    const expectedComponents = ['Area', 'Bar', 'Brush', 'Customized', 'LineChart', 'ResponsiveContainer'];
     const unexpectedSymbols = ['useChartWidth', 'getNiceTickValues', 'Symbol', 'AreaProps', 'BarProps'];
     expect(reader.getPublicComponentNames()).toEqual(expect.arrayContaining(expectedComponents));
     unexpectedSymbols.forEach(unexpectedSymbol => {
@@ -1001,5 +1001,11 @@ describe('readProject', () => {
       names: ['boolean'],
       isInline: false,
     });
+  });
+
+  it('should return comment for component itself', () => {
+    const comment = reader.getComponentJsDocMeta('Customized')?.text;
+    assertNotNull(comment);
+    expect(comment).toContain('Customized component used to be necessary to render custom elements in Recharts 2.x');
   });
 });
