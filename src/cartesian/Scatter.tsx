@@ -208,7 +208,7 @@ interface ScatterProps extends ZIndexable {
 
   /**
    * Renders line connecting individual points.
-   * Options"
+   * Options:
    * - `false`: no line is drawn.
    * - `true`: a default line is drawn.
    * - `ReactElement`: the option is the custom line element.

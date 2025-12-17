@@ -173,7 +173,7 @@ export const ScatterAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Renders line connecting individual points. Options&quot;</p>
+            <p>Renders line connecting individual points. Options:</p>
             <ul>
               <li>
                 <code>false</code>: no line is drawn.
