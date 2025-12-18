@@ -1,34 +1,17 @@
 import { useState } from 'react';
-import { EditorView } from '@codemirror/view';
 import { SuccessIcon } from './SuccessIcon.tsx';
 import { CopyIcon } from './CopyIcon.tsx';
 import { sendEvent } from '../components/analytics.ts';
 
-export function CopyButton({
-  viewRef,
-  mode,
-  devToolsValueRef,
-}: {
-  viewRef: React.RefObject<EditorView | null>;
-  mode?: 'source' | 'devtools';
-  devToolsValueRef?: React.RefObject<unknown>;
-}) {
+export function CopyButton({ getValueToCopy }: { getValueToCopy: () => unknown }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    if (mode === 'devtools') {
-      const valueToCopy = devToolsValueRef?.current;
-      if (valueToCopy !== undefined) {
-        return navigator.clipboard.writeText(JSON.stringify(valueToCopy, null, 2));
-      }
-      return Promise.resolve(); // Nothing to copy
+    const valueToCopy = getValueToCopy();
+    if (valueToCopy !== undefined) {
+      return navigator.clipboard.writeText(JSON.stringify(valueToCopy, null, 2));
     }
-
-    if (viewRef?.current) {
-      const content = viewRef.current.state.doc.toString();
-      return navigator.clipboard.writeText(content);
-    }
-    return Promise.reject();
+    return Promise.resolve(); // Nothing to copy
   };
 
   const onClick = () => {
@@ -55,7 +38,7 @@ export function CopyButton({
   return (
     <button onClick={onClick} className="codemirror-toolbar-item" type="button">
       {copied ? <SuccessIcon /> : <CopyIcon />}
-      {mode === 'devtools' ? 'Copy Data' : 'Copy Code'}
+      Copy to clipboard
     </button>
   );
 }

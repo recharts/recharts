@@ -299,10 +299,14 @@ export function CodeMirrorEditor({
               ))}
             </select>
           )}
-          {activeMode === 'source' && <CopyButton viewRef={viewRef} mode="source" />}
-          {activeMode === 'devtools' && (
-            <CopyButton viewRef={viewRef} mode="devtools" devToolsValueRef={devToolsValue} />
-          )}
+          <CopyButton
+            getValueToCopy={() => {
+              if (activeMode === 'devtools') {
+                return devToolsValue.current;
+              }
+              return viewRef.current?.state.doc.toString();
+            }}
+          />
           {toolbarItems && toolbarItems[activeMode]}
         </div>
 
