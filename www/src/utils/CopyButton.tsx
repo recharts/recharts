@@ -6,10 +6,10 @@ import { sendEvent } from '../components/analytics.ts';
 
 export function CopyButton({
   viewRef,
-  devToolsMode,
+  mode,
 }: {
   viewRef: React.RefObject<EditorView | null>;
-  devToolsMode?: boolean;
+  mode?: 'source' | 'devtools';
 }) {
   const [copied, setCopied] = useState(false);
   const devToolsValue = useRef<unknown>(undefined);
@@ -31,7 +31,7 @@ export function CopyButton({
   }, []);
 
   const handleCopy = () => {
-    if (devToolsMode) {
+    if (mode === 'devtools') {
       if (devToolsValue.current !== undefined) {
         return navigator.clipboard.writeText(JSON.stringify(devToolsValue.current, null, 2));
       }
@@ -69,7 +69,7 @@ export function CopyButton({
   return (
     <button onClick={onClick} className="codemirror-toolbar-item" type="button">
       {copied ? <SuccessIcon /> : <CopyIcon />}
-      {devToolsMode ? 'Copy Data' : 'Copy Code'}
+      {mode === 'devtools' ? 'Copy Data' : 'Copy Code'}
     </button>
   );
 }

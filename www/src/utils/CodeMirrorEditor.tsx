@@ -44,10 +44,13 @@ type CodeMirrorEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
-  extraToolbarItems?: ReactNode[];
-  devToolsMode?: boolean;
-  renderInPortal?: boolean;
+  activeMode: EditorMode;
+  onModeChange?: (mode: EditorMode) => void;
+  tools?: { name: string; label: string }[];
+  toolbarItems?: Record<string, ReactNode[]>;
 };
+
+export type EditorMode = 'source' | 'devtools';
 
 // Custom fold service for #region/#endregion
 const regionFoldService = foldService.of((state, from, _to) => {
@@ -92,10 +95,12 @@ const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/
 export function CodeMirrorEditor({
   value,
   onChange,
-  extraToolbarItems,
   readOnly = true,
   className = '',
-  devToolsMode = false,
+  activeMode,
+  onModeChange,
+  tools,
+  toolbarItems,
 }: CodeMirrorEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
@@ -247,12 +252,37 @@ export function CodeMirrorEditor({
     });
   }, [readOnly, editExtensions, onChange]);
 
+  const handleModeChange = (newMode: string) => {
+    if (onModeChange && (newMode === 'source' || newMode === 'devtools')) {
+      onModeChange(newMode);
+    }
+  };
+
+  const defaultTools = [{ name: 'source', label: 'Source code view' }];
+
+  const effectiveTools = tools ?? defaultTools;
+
   return (
     <div className="codemirror-wrapper">
       <div id="codemirror-container">
         <div className="codemirror-toolbar">
-          <CopyButton viewRef={viewRef} devToolsMode={devToolsMode} />
-          {extraToolbarItems}
+          {effectiveTools.length > 1 && (
+            <select
+              className="codemirror-toolbar-item"
+              value={activeMode}
+              onChange={e => handleModeChange(e.target.value)}
+              style={{ paddingRight: '12px' }}
+            >
+              {effectiveTools.map(tool => (
+                <option key={tool.name} value={tool.name}>
+                  {tool.label}
+                </option>
+              ))}
+            </select>
+          )}
+          {activeMode === 'source' && <CopyButton viewRef={viewRef} mode="source" />}
+          {activeMode === 'devtools' && <CopyButton viewRef={viewRef} mode="devtools" />}
+          {toolbarItems && toolbarItems[activeMode]}
         </div>
 
         <div
@@ -263,13 +293,13 @@ export function CodeMirrorEditor({
             color: 'var(--color-text)',
             overflow: 'auto',
             padding: '10px',
-            display: devToolsMode ? 'block' : 'none',
+            display: activeMode === 'devtools' ? 'block' : 'none',
           }}
         />
         <div
           ref={editorRef}
           className={`codemirror-example-editor ${className}`}
-          style={{ height: '100%', display: devToolsMode ? 'none' : 'block' }}
+          style={{ height: '100%', display: activeMode === 'devtools' ? 'none' : 'block' }}
         />
       </div>
     </div>
