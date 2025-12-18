@@ -82,7 +82,7 @@ interface LabelProps extends ZIndexable {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
   /**
-   * The formatter function of label value which has only one parameter - the value of label.
+   * Function to customize how content is serialized before rendering.
    */
   formatter?: LabelFormatter;
   /**
@@ -135,8 +135,14 @@ interface LabelProps extends ZIndexable {
   index?: number;
   labelRef?: React.RefObject<SVGTextElement> | null;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
    * @since 3.4
    * @defaultValue 2000
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
   /**

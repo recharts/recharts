@@ -48,12 +48,12 @@ describe('cross-component prop consistency', () => {
       reason: 'Children comments vary widely based on component purpose',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross'],
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
       prop: 'height',
       reason: 'Many components assign different meanings to height',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross'],
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
       prop: 'width',
       reason: 'Many components assign different meanings to width',
     },
@@ -71,6 +71,11 @@ describe('cross-component prop consistency', () => {
       components: ['Curve'],
       prop: 'layout',
       reason: 'Curve layout means something else than the chart layout.',
+    },
+    {
+      components: ['DefaultLegendContent', 'Legend'],
+      prop: 'layout',
+      reason: 'Legend layout means something else than the chart layout.',
     },
     {
       components: ['BarStack'],
@@ -112,6 +117,31 @@ describe('cross-component prop consistency', () => {
       prop: 'shape',
       // https://github.com/recharts/recharts/issues/1753
       reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
+    },
+    {
+      components: ['Pie'],
+      prop: 'label',
+      reason: 'Pie has a custom label implementation',
+    },
+    {
+      components: ['Dot', 'SunburstChart'],
+      prop: 'cx',
+      reason: 'These components do not support percentages unlike other components',
+    },
+    {
+      components: ['Dot', 'SunburstChart'],
+      prop: 'cy',
+      reason: 'These components do not support percentages unlike other components',
+    },
+    {
+      components: ['Pie'],
+      prop: 'shape',
+      reason: 'Pie shape receives activeIndex prop but other components do not',
+    },
+    {
+      components: ['Label'],
+      prop: 'content',
+      reason: 'In other components, content is called N times. In Label, content is called once.',
     },
   ];
 

@@ -193,8 +193,13 @@ interface LineProps extends ZIndexable {
    */
   dot?: DotType;
   /**
-   * Hides the whole line when true.
-   * Useful when toggling the visibility of the line in a chart, for example through a legend.
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
+   *
    * @defaultValue false
    */
   hide?: boolean;

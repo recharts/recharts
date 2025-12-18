@@ -49,6 +49,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
   Label: { defaultProps: defaultLabelProps },
+  LabelList: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },

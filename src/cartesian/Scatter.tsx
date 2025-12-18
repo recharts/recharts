@@ -208,7 +208,7 @@ interface ScatterProps extends ZIndexable {
 
   /**
    * Renders line connecting individual points.
-   * Options"
+   * Options:
    * - `false`: no line is drawn.
    * - `true`: a default line is drawn.
    * - `ReactElement`: the option is the custom line element.
@@ -266,7 +266,8 @@ interface ScatterProps extends ZIndexable {
   name?: string;
 
   /**
-   * Scatter symbols can change when user interacts with them.
+   * This component is rendered when this graphical item is activated
+   * (could be by mouse hover, touch, keyboard, programmatically).
    *
    * @see {@link http://recharts.github.io/en-US/examples/SimpleScatterChart/ Scatter chart with custom active shape}
    * @example <Scatter activeShape={{ fill: 'red' }} />
@@ -286,6 +287,13 @@ interface ScatterProps extends ZIndexable {
    */
   shape?: ScatterCustomizedShape;
   /**
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
+   *
    * @defaultValue false
    */
   hide?: boolean;

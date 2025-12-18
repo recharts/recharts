@@ -2,7 +2,7 @@ import { AreaChartAPI as AreaChart } from './AreaChart';
 import { BarChartAPI } from './BarChart';
 import { ComposedChartAPI } from './ComposedChart';
 import { LineChartAPI as LineChart } from './LineChart';
-import { PieChartAPI as PieChart } from './PieChart';
+import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI as RadarChart } from './RadarChart';
 import { SankeyAPI } from './Sankey';
@@ -26,14 +26,12 @@ import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
 import { FunnelAPI as Funnel } from './Funnel';
 
 import { ResponsiveContainerAPI as ResponsiveContainer } from './ResponsiveContainer';
-import { LegendAPI as Legend } from './Legend';
+import { LegendAPI } from './LegendAPI';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
-import { LabelListAPI as LabelList } from './LabelList';
-import { CustomizedAPI as Customized } from './Customized';
 
-import { PieAPI as Pie } from './Pie';
+import { PieAPI } from './PieAPI';
 import { RadarAPI as Radar } from './Radar';
 import { RadialBarAPI as RadialBar } from './RadialBar';
 import { PolarAngleAxisAPI as PolarAngleAxis } from './PolarAngleAxis';
@@ -52,13 +50,15 @@ import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
+import { CustomizedAPI } from './CustomizedAPI.tsx';
+import { LabelListAPI } from './LabelListAPI.tsx';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
   BarChart: BarChartAPI,
   LineChart,
   ComposedChart: ComposedChartAPI,
-  PieChart,
+  PieChart: PieChartAPI,
   RadarChart,
   ScatterChart,
   RadialBarChart: RadialBarChartAPI,
@@ -80,15 +80,15 @@ export const allExamples: Record<string, ApiDoc> = {
   Funnel,
 
   ResponsiveContainer,
-  Legend,
+  Legend: LegendAPI,
   Tooltip,
   Cell,
   Text: TextAPI,
   Label: LabelAPI,
-  LabelList,
-  Customized,
+  LabelList: LabelListAPI,
+  Customized: CustomizedAPI,
 
-  Pie,
+  Pie: PieAPI,
   RadialBar,
   Radar,
   PolarAngleAxis,

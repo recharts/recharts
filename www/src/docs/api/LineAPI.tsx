@@ -143,9 +143,11 @@ export const LineAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>Hides the whole graphical element when true.</p>
             <p>
-              Hides the whole line when true. Useful when toggling the visibility of the line in a chart, for example
-              through a legend.
+              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
+              visible in Legend, and can be included in axis domain calculations, depending on{' '}
+              <code>includeHidden</code> props of your XAxis/YAxis.
             </p>
           </section>
         ),

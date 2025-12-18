@@ -25,9 +25,14 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'Area',
   'BarStack',
+  'Customized',
   'ErrorBar',
   'Label',
+  'LabelList',
+  'Legend',
   'Line',
+  'Pie',
+  'PieChart',
   'Scatter',
   'Text',
   'ZIndexLayer',
@@ -235,10 +240,36 @@ async function generateApiDoc(
     // Determine if optional
     const isOptional = projectReader.isOptionalProp(componentName, propName);
 
+    const propMetaList = projectReader.getPropMeta(componentName, propName);
+    let deprecated: string | boolean | undefined;
+
+    // Prefer recharts origin
+    const rechartsProp = propMetaList.find(p => p.origin === 'recharts');
+    if (rechartsProp && rechartsProp.jsDoc) {
+      const tag = getTagText(rechartsProp.jsDoc, 'deprecated');
+      if (tag) {
+        deprecated = tag.text || true;
+      }
+    }
+
+    // Fallback
+    if (deprecated === undefined) {
+      for (const p of propMetaList) {
+        if (p.jsDoc) {
+          const tag = getTagText(p.jsDoc, 'deprecated');
+          if (tag) {
+            deprecated = tag.text || true;
+            break;
+          }
+        }
+      }
+    }
+
     const prop: ApiProps = {
       name: propName,
       type: typeString,
       isOptional,
+      deprecated,
     };
 
     // Add description if available
@@ -322,6 +353,11 @@ async function generateApiDoc(
   if (componentJsDoc) {
     apiDoc.desc = await generateComponentDescription(componentName, projectReader);
 
+    const deprecatedTag = getTagText(componentJsDoc, 'deprecated');
+    if (deprecatedTag) {
+      apiDoc.deprecated = deprecatedTag.text || true;
+    }
+
     // Check for @provides tags - this component provides context to children
     const providesTags = getAllTagTexts(componentJsDoc, 'provides');
     if (providesTags.length > 0) {
@@ -392,6 +428,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
       result += `"examples": ${JSON.stringify(prop.examples)},`;
     }
 
+    if (prop.deprecated !== undefined) {
+      result += `"deprecated": ${JSON.stringify(prop.deprecated)},`;
+    }
+
     result += `},`;
   });
   result += `],`;
@@ -412,6 +452,9 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   // Add children components if available
   if (apiDoc.childrenComponents && apiDoc.childrenComponents.length > 0) {
     result += `"childrenComponents": ${JSON.stringify(apiDoc.childrenComponents)},`;
+  }
+  if (apiDoc.deprecated !== undefined) {
+    result += `"deprecated": ${JSON.stringify(apiDoc.deprecated)},`;
   }
   result += `}`;
   return result;

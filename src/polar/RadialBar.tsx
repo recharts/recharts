@@ -655,6 +655,10 @@ export function computeRadialBarDataItems({
   });
 }
 
+/**
+ * @consumes PolarChartContext
+ * @provides LabelListContext
+ */
 export function RadialBar(outsideProps: RadialBarProps) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadialBarProps);
   return (

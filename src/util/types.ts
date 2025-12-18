@@ -1140,11 +1140,66 @@ export interface ChartPointer {
   chartY: number;
 }
 
-export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
+/**
+ * Props shared with all charts.
+ */
+interface BaseChartProps extends ExternalMouseEvents {
+  /**
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
+   */
+  width?: number | Percent;
+  /**
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
+   */
+  height?: number | Percent;
+  id?: string;
+  children?: ReactNode;
+  className?: string;
   /**
    * @defaultValue true
    */
   accessibilityLayer?: boolean;
+  /**
+   * The source data. Each element should be an object.
+   */
+  data?: any[];
+  desc?: string;
+  /**
+   * Empty space around the container.
+   *
+   * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
+   */
+  margin?: Partial<Margin>;
+  style?: CSSProperties;
+  /**
+   * Charts with the same syncId will synchronize Tooltip and Brush events.
+   */
+  syncId?: number | string;
+  /**
+   * Customize how the charts will synchronize tooltips and brushes.
+   * `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
+   * `value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout).
+   * function: a custom sync method which receives tick and data as argument and returns an index.
+   *
+   * @defaultValue index
+   */
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
+   * @default false
+   */
+  responsive?: boolean;
+}
+
+export interface CartesianChartProps extends BaseChartProps {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
@@ -1166,33 +1221,14 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * The base value of area.
    */
   baseValue?: BaseValue;
-  children?: ReactNode;
-  className?: string;
   compact?: boolean;
-  /**
-   * The source data. Each element should be an object.
-   */
-  data?: any[];
   dataKey?: DataKey<any>;
-  desc?: string;
-  /**
-   * The height of chart container.
-   * Can be a number or a percent string like "100%".
-   */
-  height?: number | Percent;
-  id?: string;
   /**
    * The layout of chart defines the orientation of axes, graphical items, and tooltip.
    *
    * @defaultValue horizontal
    */
   layout?: CartesianLayout;
-  /**
-   * Empty space around the container.
-   *
-   * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
-   */
-  margin?: Partial<Margin>;
   /**
    * The maximum width of all the bars in a horizontal BarChart, or maximum height in a vertical BarChart.
    */
@@ -1204,16 +1240,6 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * @defaultValue false
    */
   reverseStackOrder?: boolean;
-  /**
-   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
-   * If false, then it renders the chart at the specified width and height and will stay that way
-   * even if the container size changes.
-   *
-   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
-   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
-   * @default false
-   */
-  responsive?: boolean;
   role?: string;
   /**
    * The type of offset function used to generate the lower and upper values in the series array.
@@ -1224,71 +1250,28 @@ export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
    * @defaultValue none
    */
   stackOffset?: StackOffsetType;
-  style?: CSSProperties;
-  /**
-   * Charts with the same syncId will synchronize Tooltip and Brush events.
-   */
-  syncId?: number | string;
-  /**
-   * Customize how the charts will synchronize tooltips and brushes.
-   * `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
-   * `value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout).
-   * function: a custom sync method which receives tick and data as argument and returns an index.
-   *
-   * @defaultValue index
-   */
-  syncMethod?: SyncMethod;
-  tabIndex?: number;
   throttleDelay?: number;
   title?: string;
-  /**
-   * The width of chart container.
-   * Can be a number or a percent string like "100%".
-   */
-  width?: number | Percent;
 }
 
-export interface PolarChartProps extends Partial<ExternalMouseEvents> {
-  accessibilityLayer?: boolean;
+export interface PolarChartProps extends BaseChartProps {
   barCategoryGap?: number | string;
   barGap?: number | string;
   barSize?: number | string;
-  children?: ReactNode;
-  className?: string;
   cx?: number | string;
   cy?: number | string;
-  data?: any[];
   dataKey?: DataKey<any>;
-  desc?: string;
   endAngle?: number;
-  height?: number | Percent;
-  id?: string;
   innerRadius?: number | string;
   layout?: PolarLayout;
-  margin?: Margin;
   maxBarSize?: number;
   outerRadius?: number | string;
   reverseStackOrder?: boolean;
   role?: string;
   stackOffset?: StackOffsetType;
   startAngle?: number;
-  style?: CSSProperties;
-  syncId?: number | string;
-  syncMethod?: SyncMethod;
-  tabIndex?: number;
   throttleDelay?: number;
   title?: string;
-  width?: number | Percent;
-  /**
-   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
-   * If false, then it renders the chart at the specified width and height and will stay that way
-   * even if the container size changes.
-   *
-   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
-   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
-   * @default false
-   */
-  responsive?: boolean;
 }
 
 export type Percent = `${number}%`;

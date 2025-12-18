@@ -83,9 +83,9 @@ export interface SunburstChartProps {
   cx?: number;
   /** The y-coordinate of center  */
   cy?: number;
-  /** Angle in degrees from which the chart should start.  */
+  /** Angle in degrees from which the chart should start. */
   startAngle?: number;
-  /** Angle, in degrees, at which the chart should end. Can be used to generate partial sunbursts.  */
+  /** Angle, in degrees, at which the chart should end. Can be used to generate partial sunbursts. */
   endAngle?: number;
   children?: React.ReactNode;
   fill?: string;
@@ -364,18 +364,16 @@ const SunburstChartImpl = ({
   return (
     <Surface width={width} height={height}>
       <Layer className={layerClass}>{sectors}</Layer>
-      <>
-        <SetSunburstTooltipEntrySettings
-          dataKey={dataKey}
-          nameKey={nameKey}
-          data={data}
-          stroke={stroke}
-          fill={fill}
-          positions={positions}
-          id={id}
-        />
-        {children}
-      </>
+      <SetSunburstTooltipEntrySettings
+        dataKey={dataKey}
+        nameKey={nameKey}
+        data={data}
+        stroke={stroke}
+        fill={fill}
+        positions={positions}
+        id={id}
+      />
+      {children}
     </Surface>
   );
 };

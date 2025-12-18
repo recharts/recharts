@@ -1,386 +1,223 @@
 import { ApiDoc } from './types';
 
-export const ScatterAPI: ApiDoc = {
-  name: 'Scatter',
+export const LegendAPI: ApiDoc = {
+  name: 'Legend',
   props: [
     {
-      name: 'activeShape',
-      type: '(union of 12 variants)',
+      name: 'align',
+      type: '"left" | "right" | "center"',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Horizontal alignment of the whole Legend container:</p>
+            <ul>
+              <li>
+                <code>left</code>: shows the Legend to the left of the chart, and chart width reduces automatically to
+                make space for it.
+              </li>
+              <li>
+                <code>right</code> shows the Legend to the right of the chart, and chart width reduces automatically.
+              </li>
+              <li>
+                <code>center</code> shows the Legend in the middle of chart, and chart width remains unchanged.
+              </li>
+            </ul>
+            <p>The exact behavior changes depending on &#39;verticalAlign&#39; prop.</p>
+          </section>
+        ),
+      },
+      defaultVal: 'center',
+    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'content',
+      type: 'ReactNode | Function',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              This component is rendered when this graphical item is activated (could be by mouse hover, touch,
-              keyboard, programmatically).
+              If set to a React element, the option will be used to render the legend. If set to a function, the
+              function is called once for each item
             </p>
           </section>
         ),
       },
-      format: ["<Scatter activeShape={{ fill: 'red' }} />"],
-      examples: [
-        {
-          name: 'Scatter chart with custom active shape',
-          url: 'http://recharts.github.io/en-US/examples/SimpleScatterChart/',
-          isExternal: true,
-        },
+      format: ['<Legend content={<CustomizedLegend external={external} />} />', '<Legend content={renderLegend} />'],
+    },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
+    {
+      name: 'formatter',
+      type: 'Formatter',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Function to customize how content is serialized before rendering.</p>
+          </section>
+        ),
+      },
+      format: [
+        "(value, entry, index) => <span style={{ color: 'red' }}>{value}</span>",
+        'https://codesandbox.io/s/legend-formatter-rmzp9',
       ],
     },
     {
-      name: 'animationBegin',
+      name: 'height',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The height of legend.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'iconSize',
       type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Specifies when the animation should begin, the unit of this option is ms.</p>
+            <p>The size of icon in each legend item.</p>
           </section>
         ),
       },
-      defaultVal: 0,
+      defaultVal: 14,
     },
     {
-      name: 'animationDuration',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies the duration of animation, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 400,
-    },
-    {
-      name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of easing function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'linear',
-    },
-    { name: 'children', type: 'ReactNode', isOptional: true },
-    { name: 'className', type: 'string', isOptional: true },
-    { name: 'data', type: 'Array<any>', isOptional: true },
-    {
-      name: 'dataKey',
-      type: 'string | number | Function',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the numerical value of this Scatter from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Scatter.
-              </li>
-            </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'hide',
-      type: 'boolean',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Hides the whole graphical element when true.</p>
-            <p>
-              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
-              visible in Legend, and can be included in axis domain calculations, depending on{' '}
-              <code>includeHidden</code> props of your XAxis/YAxis.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'id',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Unique identifier of this component. Used as a HTML attribute <code>id</code>, and also to identify this
-              element internally.
-            </p>
-            <p>If undefined, Recharts will generate a unique ID automatically.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'isAnimationActive',
-      type: 'false | true | "auto"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If set false, animation of Scatter points will be disabled. If set &quot;auto&quot;, the animation will be
-              disabled in SSR and enabled in browser.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-    },
-    {
-      name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders one label for each data point. Options:</p>
-            <ul>
-              <li>
-                <code>true</code>: renders default labels;
-              </li>
-              <li>
-                <code>false</code>: no labels are rendered;
-              </li>
-              <li>
-                <code>object</code>: the props of LabelList component;
-              </li>
-              <li>
-                <code>ReactElement</code>: a custom label element;
-              </li>
-              <li>
-                <code>function</code>: a render function of custom label.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'legendType',
+      name: 'iconType',
       type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The type of icon in legend. If set to &#39;none&#39;, no legend item will be rendered.</p>
+            <p>The type of icon in each legend item.</p>
           </section>
         ),
       },
-      defaultVal: 'circle',
-      format: ['<Scatter legendType="diamond" />'],
     },
     {
-      name: 'line',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders line connecting individual points. Options:</p>
-            <ul>
-              <li>
-                <code>false</code>: no line is drawn.
-              </li>
-              <li>
-                <code>true</code>: a default line is drawn.
-              </li>
-              <li>
-                <code>ReactElement</code>: the option is the custom line element.
-              </li>
-              <li>
-                <code>function</code>: the function will be called to render customized line.
-              </li>
-              <li>
-                <code>object</code>: the option is the props of Curve element.
-              </li>
-            </ul>
-            <p>
-              Also see the <code>lineType</code> prop which controls how is this line calculated.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-      format: [
-        '<Scatter line />',
-        '<Scatter line={CustomizedLineComponent} />',
-        "<Scatter line={{ strokeDasharray: '5 5' }} />",
-      ],
-      examples: [{ name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/' }],
-    },
-    {
-      name: 'lineJointType',
-      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Determines the shape of joint line. Same as <code>type</code> prop on Curve, Line and Area components.
-            </p>
-            <p>
-              Has no effect if <code>line</code> prop is not set or is false or if <code>lineType</code> is
-              &#39;fitting&#39;.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'linear',
-      examples: [
-        {
-          name: 'Scatter chart with joint line',
-          url: 'http://recharts.github.io/en-US/examples/JointLineScatterChart/',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'lineType',
-      type: '"fitting" | "joint"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Determines calculation method of the line if the <code>line</code> prop is set. Options:
-            </p>
-            <ul>
-              <li>
-                <code>&#39;joint&#39;</code>: line will be generated by connecting all the points.
-              </li>
-              <li>
-                <code>&#39;fitting&#39;</code>: line will be generated by fitting algorithm (linear regression).
-              </li>
-            </ul>
-            <p>
-              Has no effect if <code>line</code> prop is not set or is false.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'joint',
-      format: ['<Scatter line lineType="fitting" />'],
-      examples: [
-        {
-          name: 'Scatter chart with joint line',
-          url: 'http://recharts.github.io/en-US/examples/JointLineScatterChart/',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'name',
+      name: 'inactiveColor',
       type: 'string',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              The name of data. This option will be used in tooltip and legend to represent this graphical item. If no
-              value was set to this option, the value of dataKey will be used alternatively.
-            </p>
+            <p>The color of the icon when the item is inactive.</p>
           </section>
         ),
       },
+      defaultVal: '#ccc',
     },
     {
-      name: 'shape',
-      type: '(union of 12 variants)',
+      name: 'itemSorter',
+      type: 'null | "dataKey" | "value" | Function',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              Determines the shape of individual data points. Can be one of the predefined shapes as a string. If set a
-              ReactElement, the shape of line can be customized. If set a function, the function will be called to
-              render customized shape.
+              Sorts Legend items. Defaults to <code>value</code> which means it will sort alphabetically by the label.
+            </p>
+            <p>
+              If <code>null</code> is provided then the payload is not sorted. Be aware that without sort, the order of
+              items may change between renders!
             </p>
           </section>
         ),
       },
-      defaultVal: 'circle',
-      format: ['<Scatter shape={CustomizedShapeComponent} />', '<Scatter shape="diamond" />'],
-      examples: [{ name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/' }],
+      defaultVal: 'value',
     },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
     {
-      name: 'xAxisId',
+      name: 'layout',
+      type: '"horizontal" | "vertical"',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The layout of legend items inside the legend container.</p>
+          </section>
+        ),
+      },
+      defaultVal: 'horizontal',
+    },
+    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<LegendPayload>', isOptional: true },
+    {
+      name: 'portal',
+      type: 'null | HTMLElement',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              If portal is defined, then Legend will use this element as a target for rendering using React Portal:{' '}
+              <a href="https://react.dev/reference/react-dom/createPortal">
+                https://react.dev/reference/react-dom/createPortal
+              </a>
+            </p>
+            <p>If this is undefined then Legend renders inside the recharts-wrapper element.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'verticalAlign',
+      type: '"top" | "bottom" | "middle"',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The alignment of the whole Legend container:</p>
+            <ul>
+              <li>
+                <code>bottom</code>: shows the Legend below chart, and chart height reduces automatically to make space
+                for it.
+              </li>
+              <li>
+                <code>top</code>: shows the Legend above chart, and chart height reduces automatically.
+              </li>
+              <li>
+                <code>middle</code>: shows the Legend in the middle of chart, covering other content, and chart height
+                remains unchanged. The exact behavior changes depending on <code>align</code> prop.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+      defaultVal: 'bottom',
+    },
+    {
+      name: 'width',
       type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
+            <p>The width of legend.</p>
           </section>
         ),
       },
-      defaultVal: 0,
     },
     {
-      name: 'yAxisId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'zAxisId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of ZAxis which is corresponding to the data. Required when there are multiple ZAxes.</p>
-            <p>
-              ZAxis does not render directly, has no ticks and no tick line. It is used to control the size of each
-              scatter point.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-      examples: [{ name: 'Scatter chart with Z axis', url: '/examples/ThreeDimScatterChart/' }],
-    },
-    {
-      name: 'zIndex',
-      type: 'number',
+      name: 'wrapperStyle',
+      type: 'React.CSSProperties',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
-              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
-              content is rendered in the default layer without portals.
+              The style of legend container which is a &quot;position: absolute;&quot; div element. Because the position
+              of legend is quite flexible, so you can change the position by the value of top, left, right, bottom in
+              this option. And the format of wrapperStyle is the same as React inline style.
             </p>
           </section>
         ),
       },
-      defaultVal: 600,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      format: ["{ top: 0, left: 0, backgroundColor: 'red' }", 'https://reactjs.org/docs/dom-elements.html#style'],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -392,6 +229,7 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onAnimationStartCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    { name: 'onBBoxUpdate', type: 'Function', isOptional: true },
     { name: 'onBeforeInput', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onBeforeInputCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onBlur', type: 'AdaptChildFocusEventHandler<P, T>', isOptional: true },
@@ -402,7 +240,18 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onCanPlayThroughCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onChange', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onChangeCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
-    { name: 'onClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onClick',
+      type: 'Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of click on the items in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEnd', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEndCapture', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
@@ -470,8 +319,32 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onLostPointerCaptureCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
     { name: 'onMouseDown', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseDownCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseEnter', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseLeave', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseEnter',
+      type: 'Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseenter on the items in this group</p>
+          </section>
+        ),
+      },
+      format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
+    },
+    {
+      name: 'onMouseLeave',
+      type: 'Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseleave on the items in this group</p>
+          </section>
+        ),
+      },
+      format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
+    },
     { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
@@ -543,6 +416,5 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
-  childrenComponents: ['Cell', 'ErrorBar', 'LabelList'],
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'PieChart', 'ScatterChart'],
 };

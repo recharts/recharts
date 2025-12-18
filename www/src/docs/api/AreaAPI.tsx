@@ -136,7 +136,24 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
+    {
+      name: 'hide',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Hides the whole graphical element when true.</p>
+            <p>
+              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
+              visible in Legend, and can be included in axis domain calculations, depending on{' '}
+              <code>includeHidden</code> props of your XAxis/YAxis.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
     {
       name: 'id',
       type: 'string',

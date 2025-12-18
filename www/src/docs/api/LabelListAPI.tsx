@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const LabelAPI: ApiDoc = {
-  name: 'Label',
+export const LabelListAPI: ApiDoc = {
+  name: 'LabelList',
   props: [
     {
       name: 'angle',
@@ -20,21 +20,17 @@ export const LabelAPI: ApiDoc = {
       defaultVal: 0,
     },
     {
-      name: 'children',
-      type: 'ReactNode',
+      name: 'clockWise',
+      type: 'boolean',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              The value of label can be set as children or as the <code>value</code> prop
-            </p>
+            <p>The parameter to calculate the view box of label in radial charts.</p>
           </section>
         ),
       },
-      format: ['<Label>foo</Label>'],
     },
-    { name: 'className', type: 'string', isOptional: true },
     {
       name: 'content',
       type: 'ReactNode | Function',
@@ -43,16 +39,42 @@ export const LabelAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set a React element, the option is the custom react element of rendering label. If set a function, the
-              function will be called to render label content.
+              If set a React element, the option is the customized React element of rendering each label. If set to a
+              function, the function is called once for each item
             </p>
           </section>
         ),
       },
-      format: [
-        '<Label content={CustomizedLabel} />',
-        'const renderCustomLabel = (props) => <text {...props}>Custom Label</text>;\n<Label content={renderCustomLabel} />',
-      ],
+      format: ['<LabelList content={CustomizedLabel} />'],
+      examples: [{ name: 'Customized content of LabelList in a BarChart', url: '/examples/BarChartWithMinHeight/' }],
+    },
+    {
+      name: 'dataKey',
+      type: 'string | number | Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Decides how to extract the value of each label from the data:</p>
+            <ul>
+              <li>
+                <code>string</code>: the name of the field in the data object;
+              </li>
+              <li>
+                <code>number</code>: the index of the field in the data;
+              </li>
+              <li>
+                <code>function</code>: a function that receives the data object and returns the value of each label.
+              </li>
+            </ul>
+            <p>If set, then valueAccessor will be ignored.</p>
+            <p>
+              Scatter requires this prop to be set. Other graphical components will show the same value as the dataKey
+              of the component by default.
+            </p>
+          </section>
+        ),
+      },
     },
     {
       name: 'formatter',
@@ -81,8 +103,6 @@ export const LabelAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'index', type: 'number', isOptional: true },
-    { name: 'labelRef', type: 'null | React.RefObject<SVGTextElement>', isOptional: true },
     {
       name: 'offset',
       type: 'string | number',
@@ -96,7 +116,6 @@ export const LabelAPI: ApiDoc = {
       },
       defaultVal: 5,
     },
-    { name: 'parentViewBox', type: 'Required<CartesianViewBox> | Required<PolarViewBox>', isOptional: true },
     {
       name: 'position',
       type: '"end" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | "middle" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
@@ -112,31 +131,13 @@ export const LabelAPI: ApiDoc = {
     },
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
-      name: 'value',
-      type: 'null | string | number | false | true',
+      name: 'valueAccessor',
+      type: 'Function',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              The value of label can be set as children or as the <code>value</code> prop
-            </p>
-          </section>
-        ),
-      },
-      format: ['<Label value="foo" />'],
-    },
-    {
-      name: 'viewBox',
-      type: 'Required<CartesianViewBox> | Required<PolarViewBox>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The box of viewing area. Used for positioning. If undefined, viewBox will be calculated based on
-              surrounding context.
-            </p>
+            <p>The accessor function to get the value of each label. Is ignored if dataKey is specified.</p>
           </section>
         ),
       },
@@ -160,21 +161,5 @@ export const LabelAPI: ApiDoc = {
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
     },
   ],
-  parentComponents: [
-    'AreaChart',
-    'BarChart',
-    'ComposedChart',
-    'FunnelChart',
-    'LineChart',
-    'PieChart',
-    'PolarRadiusAxis',
-    'RadarChart',
-    'RadialBarChart',
-    'ReferenceArea',
-    'ReferenceDot',
-    'ReferenceLine',
-    'ScatterChart',
-    'XAxis',
-    'YAxis',
-  ],
+  parentComponents: ['Area', 'Bar', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],
 };

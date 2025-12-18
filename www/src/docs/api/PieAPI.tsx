@@ -1,11 +1,11 @@
 import { ApiDoc } from './types';
 
-export const ScatterAPI: ApiDoc = {
-  name: 'Scatter',
+export const PieAPI: ApiDoc = {
+  name: 'Pie',
   props: [
     {
       name: 'activeShape',
-      type: '(union of 12 variants)',
+      type: '(union of 5 variants)',
       isOptional: true,
       desc: {
         'en-US': (
@@ -17,14 +17,11 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
-      format: ["<Scatter activeShape={{ fill: 'red' }} />"],
-      examples: [
-        {
-          name: 'Scatter chart with custom active shape',
-          url: 'http://recharts.github.io/en-US/examples/SimpleScatterChart/',
-          isExternal: true,
-        },
+      format: [
+        '<Pie activeShape={<CustomActiveShape />} />',
+        'https://recharts.github.io/examples/CustomActiveShapePieChart',
       ],
+      deprecated: 'Use the `shape` prop to create each sector. `isActive` designates the "active" shape.',
     },
     {
       name: 'animationBegin',
@@ -37,7 +34,7 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 0,
+      defaultVal: 400,
     },
     {
       name: 'animationDuration',
@@ -50,7 +47,7 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 400,
+      defaultVal: 1500,
     },
     {
       name: 'animationEasing',
@@ -63,11 +60,56 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'linear',
+      defaultVal: 'ease',
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'data', type: 'Array<any>', isOptional: true },
+    { name: 'cornerRadius', type: 'string | number', isOptional: true },
+    {
+      name: 'cx',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
+              of container width.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: '50%',
+    },
+    {
+      name: 'cy',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
+              of container height.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: '50%',
+    },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
+    {
+      name: 'data',
+      type: 'Array<ChartDataInput>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The source data which each element is an object.</p>
+          </section>
+        ),
+      },
+    },
     {
       name: 'dataKey',
       type: 'string | number | Function',
@@ -75,7 +117,7 @@ export const ScatterAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Decides how to extract the numerical value of this Scatter from the data:</p>
+            <p>Decides how to extract the value of this Pie from the data:</p>
             <ul>
               <li>
                 <code>string</code>: the name of the field in the data object;
@@ -84,13 +126,26 @@ export const ScatterAPI: ApiDoc = {
                 <code>number</code>: the index of the field in the data;
               </li>
               <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Scatter.
+                <code>function</code>: a function that receives the data object and returns the value of this Pie.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
+      defaultVal: 'value',
+    },
+    {
+      name: 'endAngle',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Angle, in degrees, at which the chart should end. Can be used to generate partial pies.</p>
+          </section>
+        ),
+      },
+      defaultVal: 360,
     },
     {
       name: 'hide',
@@ -110,21 +165,35 @@ export const ScatterAPI: ApiDoc = {
       },
       defaultVal: false,
     },
+    { name: 'id', type: 'string', isOptional: true },
     {
-      name: 'id',
-      type: 'string',
+      name: 'inactiveShape',
+      type: '(union of 5 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The shape of inactive sector.</p>
+          </section>
+        ),
+      },
+      deprecated: 'Use the `shape` prop to modify each sector.',
+    },
+    {
+      name: 'innerRadius',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              Unique identifier of this component. Used as a HTML attribute <code>id</code>, and also to identify this
-              element internally.
+              The inner radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
+              percentage of maxRadius which is calculated by the width, height, cx, cy.
             </p>
-            <p>If undefined, Recharts will generate a unique ID automatically.</p>
           </section>
         ),
       },
+      defaultVal: 0,
     },
     {
       name: 'isAnimationActive',
@@ -134,8 +203,8 @@ export const ScatterAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set false, animation of Scatter points will be disabled. If set &quot;auto&quot;, the animation will be
-              disabled in SSR and enabled in browser.
+              If set false, animation will be disabled. If set &quot;auto&quot;, the animation will be disabled in SSR
+              and enabled in browser.
             </p>
           </section>
         ),
@@ -144,12 +213,12 @@ export const ScatterAPI: ApiDoc = {
     },
     {
       name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
+      type: '(union of 6 variants)',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Renders one label for each data point. Options:</p>
+            <p>Renders one label for each pie sector. Options:</p>
             <ul>
               <li>
                 <code>true</code>: renders default labels;
@@ -158,7 +227,11 @@ export const ScatterAPI: ApiDoc = {
                 <code>false</code>: no labels are rendered;
               </li>
               <li>
-                <code>object</code>: the props of LabelList component;
+                <code>object</code> that has <code>position</code> prop: the props of LabelList component;
+              </li>
+              <li>
+                <code>object</code> that does not have <code>position</code> prop: the props of a custom Pie label
+                (similar to Label with position &quot;outside&quot;); this variant supports <code>labelLine</code>
               </li>
               <li>
                 <code>ReactElement</code>: a custom label element;
@@ -167,10 +240,40 @@ export const ScatterAPI: ApiDoc = {
                 <code>function</code>: a render function of custom label.
               </li>
             </ul>
+            <p>
+              Also see the <code>labelLine</code> prop that draws a line connecting each label to the corresponding
+              sector.
+            </p>
           </section>
         ),
       },
       defaultVal: false,
+      format: [
+        '<Pie label={<CustomizedLabel />} />',
+        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
+      ],
+    },
+    {
+      name: 'labelLine',
+      type: '(union of 5 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props
+              calculated internally. If object set, label lines will be drawn which have the props merged by the
+              internal calculated props and the option. If ReactElement set, the option can be the custom label line
+              element. If set a function, the function will be called to render customized label line.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: true,
+      format: [
+        '<Pie labelLine={<CustomizedLabelLine />} />',
+        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
+      ],
     },
     {
       name: 'legendType',
@@ -183,212 +286,146 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'circle',
-      format: ['<Scatter legendType="diamond" />'],
+      defaultVal: 'rect',
     },
     {
-      name: 'line',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders line connecting individual points. Options:</p>
-            <ul>
-              <li>
-                <code>false</code>: no line is drawn.
-              </li>
-              <li>
-                <code>true</code>: a default line is drawn.
-              </li>
-              <li>
-                <code>ReactElement</code>: the option is the custom line element.
-              </li>
-              <li>
-                <code>function</code>: the function will be called to render customized line.
-              </li>
-              <li>
-                <code>object</code>: the option is the props of Curve element.
-              </li>
-            </ul>
-            <p>
-              Also see the <code>lineType</code> prop which controls how is this line calculated.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-      format: [
-        '<Scatter line />',
-        '<Scatter line={CustomizedLineComponent} />',
-        "<Scatter line={{ strokeDasharray: '5 5' }} />",
-      ],
-      examples: [{ name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/' }],
-    },
-    {
-      name: 'lineJointType',
-      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Determines the shape of joint line. Same as <code>type</code> prop on Curve, Line and Area components.
-            </p>
-            <p>
-              Has no effect if <code>line</code> prop is not set or is false or if <code>lineType</code> is
-              &#39;fitting&#39;.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'linear',
-      examples: [
-        {
-          name: 'Scatter chart with joint line',
-          url: 'http://recharts.github.io/en-US/examples/JointLineScatterChart/',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'lineType',
-      type: '"fitting" | "joint"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Determines calculation method of the line if the <code>line</code> prop is set. Options:
-            </p>
-            <ul>
-              <li>
-                <code>&#39;joint&#39;</code>: line will be generated by connecting all the points.
-              </li>
-              <li>
-                <code>&#39;fitting&#39;</code>: line will be generated by fitting algorithm (linear regression).
-              </li>
-            </ul>
-            <p>
-              Has no effect if <code>line</code> prop is not set or is false.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'joint',
-      format: ['<Scatter line lineType="fitting" />'],
-      examples: [
-        {
-          name: 'Scatter chart with joint line',
-          url: 'http://recharts.github.io/en-US/examples/JointLineScatterChart/',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'name',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The name of data. This option will be used in tooltip and legend to represent this graphical item. If no
-              value was set to this option, the value of dataKey will be used alternatively.
-            </p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'shape',
-      type: '(union of 12 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Determines the shape of individual data points. Can be one of the predefined shapes as a string. If set a
-              ReactElement, the shape of line can be customized. If set a function, the function will be called to
-              render customized shape.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'circle',
-      format: ['<Scatter shape={CustomizedShapeComponent} />', '<Scatter shape="diamond" />'],
-      examples: [{ name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/' }],
-    },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
-    {
-      name: 'xAxisId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'yAxisId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'zAxisId',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of ZAxis which is corresponding to the data. Required when there are multiple ZAxes.</p>
-            <p>
-              ZAxis does not render directly, has no ticks and no tick line. It is used to control the size of each
-              scatter point.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-      examples: [{ name: 'Scatter chart with Z axis', url: '/examples/ThreeDimScatterChart/' }],
-    },
-    {
-      name: 'zIndex',
+      name: 'maxRadius',
       type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
+            <p>the max radius of pie</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'minAngle',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The minimum angle of each unzero data.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+    },
+    {
+      name: 'nameKey',
+      type: 'string | number | Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The key of each sector&#39;s name.</p>
+          </section>
+        ),
+      },
+      defaultVal: 'name',
+    },
+    {
+      name: 'outerRadius',
+      type: 'string | number | Function',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
             <p>
-              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
-              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
-              content is rendered in the default layer without portals.
+              The outer radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
+              percentage of maxRadius which is calculated by the width, height, cx, cy. Function should return a string
+              percentage or number.
             </p>
           </section>
         ),
       },
-      defaultVal: 600,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      defaultVal: '80%',
     },
+    {
+      name: 'paddingAngle',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The angle between two sectors.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+      format: ['<Pie paddingAngle={5} />', 'https://recharts.github.io/examples/PieChartWithPaddingAngle'],
+    },
+    {
+      name: 'rootTabIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The tabindex of wrapper surrounding the cells.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+    },
+    {
+      name: 'shape',
+      type: '(union of 8 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'startAngle',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Angle in degrees from which the chart should start.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
+    },
+    { name: 'tooltipType', type: '"none"', isOptional: true },
+    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
-    { name: 'onAnimationEnd', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onAnimationEnd',
+      type: 'AdaptChildAnimationEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of animation end.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onAnimationEndCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIteration', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIterationCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
-    { name: 'onAnimationStart', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onAnimationStart',
+      type: 'AdaptChildAnimationEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of animation start.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onAnimationStartCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
@@ -402,7 +439,18 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onCanPlayThroughCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onChange', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onChangeCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
-    { name: 'onClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onClick',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of click on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEnd', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEndCapture', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
@@ -468,17 +516,94 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onLoadStartCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCaptureCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseDown', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseDown',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousedown on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseDownCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseEnter', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseLeave', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseEnter',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseenter on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseLeave',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseleave on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'onMouseMove',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousemove on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseOut',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseout on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseOutCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseOver', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseOver',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseover on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseOverCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseUp', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseUp',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseup on the sectors in this group.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseUpCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onPaste', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
     { name: 'onPasteCapture', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
@@ -543,6 +668,6 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
-  childrenComponents: ['Cell', 'ErrorBar', 'LabelList'],
+  parentComponents: ['PieChart'],
+  childrenComponents: ['LabelList'],
 };

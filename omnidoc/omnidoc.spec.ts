@@ -17,7 +17,12 @@ describe('omnidoc - documentation consistency', () => {
 
   it('all API doc symbols must exist in the project', () => {
     const projectSymbols = new Set(projectReader.getPublicSymbolNames());
-    const apiDocSymbols = apiDocReader.getPublicSymbolNames();
+    const apiDocSymbols = apiDocReader
+      .getPublicSymbolNames()
+      /*
+       * Filter out components that are auto-generated because those are guaranteed to match
+       */
+      .filter(name => !OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS.includes(name));
 
     const missingInProject: string[] = [];
 
@@ -60,7 +65,12 @@ describe('omnidoc - documentation consistency', () => {
   });
 
   it('all API doc props must exist in the project', () => {
-    const apiDocSymbols = apiDocReader.getPublicComponentNames();
+    const apiDocSymbols = apiDocReader
+      .getPublicComponentNames()
+      /*
+       * Filter out components that are auto-generated because those are guaranteed to match
+       */
+      .filter(name => !OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS.includes(name));
     const missingProps: Array<string> = [];
 
     for (const component of apiDocSymbols) {
@@ -163,24 +173,28 @@ describe('omnidoc - documentation consistency', () => {
       return null;
     }
 
-    test.each(apiDocReader.getPublicComponentNames())(
-      'if %s has default props in the API, then that default value must be the same as in the project',
-      component => {
-        const allProps = apiDocReader.getRechartsPropsOf(component);
-        const missingDefaultProps: string[] = [];
+    test.each(
+      apiDocReader
+        .getPublicComponentNames()
+        /*
+         * Filter out components that are auto-generated because those are guaranteed to match
+         */
+        .filter(name => !OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS.includes(name)),
+    )('if %s has default props in the API, then that default value must be the same as in the project', component => {
+      const allProps = apiDocReader.getRechartsPropsOf(component);
+      const missingDefaultProps: string[] = [];
 
-        for (const prop of allProps) {
-          const apiDefaultProp = apiDocReader.getDefaultValueOf(component, prop);
-          const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
-          const problem = compareDefaultValues(apiDefaultProp, projectDefaultProp);
-          if (problem) {
-            missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
-          }
+      for (const prop of allProps) {
+        const apiDefaultProp = apiDocReader.getDefaultValueOf(component, prop);
+        const projectDefaultProp = projectReader.getDefaultValueOf(component, prop);
+        const problem = compareDefaultValues(apiDefaultProp, projectDefaultProp);
+        if (problem) {
+          missingDefaultProps.push(`Component "${component}", prop "${prop}": ${problem}`);
         }
+      }
 
-        expect(missingDefaultProps).toEqual([]);
-      },
-    );
+      expect(missingDefaultProps).toEqual([]);
+    });
 
     test.each(storybookReader.getPublicComponentNames())(
       'if %s has default props in Storybook, it should also have them in the project',

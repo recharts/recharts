@@ -61,7 +61,6 @@ export const LabelListProps: StorybookArgs = {
     description:
       'If set a React element, the option is the customized react element of rendering each label. ' +
       'If set a function, the function will be called to render each label content.',
-    defaultValue: null,
     table: {
       category: 'General',
       type: {

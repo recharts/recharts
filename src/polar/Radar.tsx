@@ -569,6 +569,10 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
   );
 }
 
+/**
+ * @consumes PolarChartContext
+ * @provides LabelListContext
+ */
 export function Radar(outsideProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadarProps);
   return (
