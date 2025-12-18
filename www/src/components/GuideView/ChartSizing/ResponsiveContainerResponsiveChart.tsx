@@ -1,4 +1,5 @@
 import { Line, LineChart, ResponsiveContainer } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 export default function ResponsiveContainerResponsiveChart() {
   return (
@@ -11,6 +12,7 @@ export default function ResponsiveContainerResponsiveChart() {
           ]}
         >
           <Line dataKey="y" />
+          <RechartsDevtools />
         </LineChart>
       </ResponsiveContainer>
     </div>

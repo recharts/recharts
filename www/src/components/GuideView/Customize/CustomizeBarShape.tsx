@@ -1,4 +1,5 @@
 import { Bar, BarChart, BarProps, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -72,6 +73,7 @@ export default function CustomizeBarShape() {
       <XAxis dataKey="name" />
       <YAxis />
       <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

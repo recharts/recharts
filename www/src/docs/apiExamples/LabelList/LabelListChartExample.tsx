@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Label, LabelList } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -60,6 +61,7 @@ const LabelListChartExample = ({ isAnimationActive = true }: { isAnimationActive
     <Bar dataKey="uv" fill="#82ca9d" isAnimationActive={isAnimationActive}>
       <LabelList dataKey="uv" position="top" />
     </Bar>
+    <RechartsDevtools />
   </BarChart>
 );
 

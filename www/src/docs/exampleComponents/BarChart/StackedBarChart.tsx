@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -67,6 +68,7 @@ const StackedBarChart = () => {
       <Legend />
       <Bar dataKey="pv" stackId="a" fill="#8884d8" background />
       <Bar dataKey="uv" stackId="a" fill="#82ca9d" background />
+      <RechartsDevtools />
     </BarChart>
   );
 };

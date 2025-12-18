@@ -1,4 +1,5 @@
 import { BarChart, Bar, Brush, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -66,6 +67,7 @@ const BrushBarChart = () => {
       <Brush dataKey="name" height={30} stroke="#8884d8" />
       <Bar dataKey="pv" fill="#8884d8" />
       <Bar dataKey="uv" fill="#82ca9d" />
+      <RechartsDevtools />
     </BarChart>
   );
 };

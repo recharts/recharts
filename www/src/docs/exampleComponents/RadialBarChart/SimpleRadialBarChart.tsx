@@ -1,4 +1,5 @@
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -65,6 +66,7 @@ const SimpleRadialBarChart = () => {
     >
       <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="uv" />
       <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
+      <RechartsDevtools />
     </RadialBarChart>
   );
 };

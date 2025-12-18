@@ -1,4 +1,5 @@
 import { BarChart, Bar } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -55,6 +56,7 @@ const TinyBarChart = () => {
       data={data}
     >
       <Bar dataKey="uv" fill="#8884d8" />
+      <RechartsDevtools />
     </BarChart>
   );
 };

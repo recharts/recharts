@@ -1,4 +1,5 @@
 import { ResponsiveContainer, Treemap } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -146,7 +147,9 @@ export const TreemapExample = ({ isAnimationActive = true }: { isAnimationActive
       stroke="#fff"
       fill="#8884d8"
       isAnimationActive={isAnimationActive}
-    />
+    >
+      <RechartsDevtools />
+    </Treemap>
   </ResponsiveContainer>
 );
 

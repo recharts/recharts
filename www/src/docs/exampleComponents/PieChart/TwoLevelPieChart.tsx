@@ -1,4 +1,5 @@
 import { Pie, PieChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -48,6 +49,7 @@ export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnima
         label
         isAnimationActive={isAnimationActive}
       />
+      <RechartsDevtools />
     </PieChart>
   );
 }

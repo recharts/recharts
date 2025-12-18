@@ -1,4 +1,5 @@
 import { ResponsiveContainer, Sankey, Tooltip, useChartWidth, Layer, Rectangle } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data0 = {
@@ -63,6 +64,7 @@ const SankeyCustomNodeExample = () => (
       link={{ stroke: '#77c878' }}
     >
       <Tooltip />
+      <RechartsDevtools />
     </Sankey>
   </ResponsiveContainer>
 );

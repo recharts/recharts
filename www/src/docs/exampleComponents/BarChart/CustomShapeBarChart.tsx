@@ -1,4 +1,5 @@
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarProps } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 
@@ -83,6 +84,7 @@ export default function CustomShapeBarChart() {
           <Cell key={`cell-${index}`} fill={colors[index % 20]} />
         ))}
       </Bar>
+      <RechartsDevtools />
     </BarChart>
   );
 }

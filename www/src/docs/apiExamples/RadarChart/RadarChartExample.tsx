@@ -1,4 +1,5 @@
 import { RadarChart, Radar, PolarAngleAxis, PolarRadiusAxis, Legend, PolarGrid } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -63,6 +64,7 @@ export const RadarChartExample = ({ isAnimationActive = true }: { isAnimationAct
       isAnimationActive={isAnimationActive}
     />
     <Legend />
+    <RechartsDevtools />
   </RadarChart>
 );
 export default RadarChartExample;

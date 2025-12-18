@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelProps } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -85,6 +86,7 @@ const CustomizedLabelLineChart = () => {
       <Legend />
       <Line type="monotone" dataKey="pv" stroke="#8884d8" label={CustomizedLabel} />
       <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+      <RechartsDevtools />
     </LineChart>
   );
 };

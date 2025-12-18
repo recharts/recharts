@@ -1,4 +1,5 @@
 import { Label, LineChart, PlotArea, Rectangle, usePlotArea } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region helper component
 const PlotAreaRectangle = () => {
@@ -40,6 +41,7 @@ const LabelCartesianPositions = () => {
       <Label position="insideTopRight">insideTopRight</Label>
       <Label position="insideBottomLeft">insideBottomLeft</Label>
       <Label position="insideBottomRight">insideBottomRight</Label>
+      <RechartsDevtools />
     </LineChart>
   );
 };

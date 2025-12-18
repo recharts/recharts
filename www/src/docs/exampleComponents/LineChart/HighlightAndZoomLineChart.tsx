@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceArea, MouseHandlerDataParam } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 type Impressions = { name: number; cost: number; impression: number };
 
@@ -156,6 +157,7 @@ const HighlightAndZoomLineChart = () => {
         {refAreaLeft && refAreaRight ? (
           <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
         ) : null}
+        <RechartsDevtools />
       </LineChart>
     </div>
   );

@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -68,6 +69,7 @@ const BiaxialBarChart = () => {
       <Legend />
       <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
       <Bar yAxisId="right" dataKey="uv" fill="#82ca9d" />
+      <RechartsDevtools />
     </BarChart>
   );
 };

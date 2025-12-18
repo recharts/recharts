@@ -1,4 +1,5 @@
 import { ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -63,6 +64,7 @@ const VerticalComposedChart = () => {
       <Area dataKey="amt" fill="#8884d8" stroke="#8884d8" />
       <Bar dataKey="pv" barSize={20} fill="#413ea0" />
       <Line dataKey="uv" stroke="#ff7300" />
+      <RechartsDevtools />
     </ComposedChart>
   );
 };

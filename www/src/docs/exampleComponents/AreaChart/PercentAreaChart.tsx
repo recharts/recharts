@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, TooltipContentProps } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -103,6 +104,7 @@ const PercentAreaChart = () => {
       <Area type="monotone" dataKey="a" stackId="1" stroke="#8884d8" fill="#8884d8" />
       <Area type="monotone" dataKey="b" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
       <Area type="monotone" dataKey="c" stackId="1" stroke="#ffc658" fill="#ffc658" />
+      <RechartsDevtools />
     </AreaChart>
   );
 };

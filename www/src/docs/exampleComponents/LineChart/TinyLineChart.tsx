@@ -1,4 +1,5 @@
 import { Line, LineChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -55,6 +56,7 @@ export default function Example() {
       data={data}
     >
       <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
+      <RechartsDevtools />
     </LineChart>
   );
 }

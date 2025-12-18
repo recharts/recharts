@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, TooltipIndex } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -28,6 +29,7 @@ const SimpleScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) =
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
       <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} fill="#8884d8" />
+      <RechartsDevtools />
     </ScatterChart>
   );
 };

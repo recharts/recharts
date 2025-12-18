@@ -1,4 +1,5 @@
 import { PieChart, Pie, Label } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -38,6 +39,7 @@ export default function PieChartInFlexbox() {
         <Label position="center" fill="#666">
           Flex: 1 1 200px
         </Label>
+        <RechartsDevtools />
       </PieChart>
 
       <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', maxWidth: '300px', aspectRatio: 1 }}>
@@ -45,6 +47,7 @@ export default function PieChartInFlexbox() {
         <Label position="center" fill="#666">
           maxWidth: &#39;300px&#39;
         </Label>
+        <RechartsDevtools />
       </PieChart>
 
       <PieChart responsive style={{ height: 'calc(100% - 20px)', maxHeight: '20vh', width: '33%', aspectRatio: 1 }}>
@@ -52,6 +55,7 @@ export default function PieChartInFlexbox() {
         <Label position="center" fill="#666">
           maxHeight: &#39;20vh&#39;
         </Label>
+        <RechartsDevtools />
       </PieChart>
     </div>
   );

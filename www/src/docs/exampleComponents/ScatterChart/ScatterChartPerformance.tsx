@@ -1,5 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { between, random } from '@recharts/devtools';
+import { between, random, RechartsDevtools } from '@recharts/devtools';
 
 const gen = random(42);
 
@@ -42,6 +42,7 @@ export default function ScatterChartPerformance() {
           strokeWidth={4}
         />
       ))}
+      <RechartsDevtools />
     </ScatterChart>
   );
 }

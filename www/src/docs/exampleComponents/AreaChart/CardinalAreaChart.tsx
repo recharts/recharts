@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 import { curveCardinal } from 'd3-shape';
 
 // #region Sample data
@@ -69,6 +70,7 @@ const CardinalAreaChart = () => {
       <Tooltip />
       <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
       <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
+      <RechartsDevtools />
     </AreaChart>
   );
 };

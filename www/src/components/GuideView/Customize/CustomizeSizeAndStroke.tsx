@@ -1,4 +1,5 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -56,6 +57,7 @@ export default function CustomizeSizeAndStroke() {
       <Tooltip />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
       <Bar dataKey="uv" fill="green" barSize={30} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

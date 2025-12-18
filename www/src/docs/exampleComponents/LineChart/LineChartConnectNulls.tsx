@@ -1,4 +1,5 @@
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -31,6 +32,7 @@ export default function Example() {
         <YAxis />
         <Tooltip />
         <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <RechartsDevtools />
       </LineChart>
 
       <LineChart
@@ -49,6 +51,7 @@ export default function Example() {
         <YAxis />
         <Tooltip />
         <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <RechartsDevtools />
       </LineChart>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -53,6 +54,7 @@ const MultipleYAxesScatterChart = () => {
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
       <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
+      <RechartsDevtools />
     </ScatterChart>
   );
 };

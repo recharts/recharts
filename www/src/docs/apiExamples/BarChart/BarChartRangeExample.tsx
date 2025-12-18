@@ -1,4 +1,5 @@
 import { BarChart, XAxis, YAxis, Tooltip, Bar } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const rangeData = [
@@ -30,6 +31,7 @@ const BarChartRangeExample = ({ isAnimationActive = true }) => (
     <YAxis width="auto" />
     <Tooltip />
     <Bar dataKey="temperature" fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <RechartsDevtools />
   </BarChart>
 );
 

@@ -1,4 +1,5 @@
 import { Pie, PieChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -26,6 +27,7 @@ export default function StraightAnglePieChart({ isAnimationActive = true }: { is
         label
         isAnimationActive={isAnimationActive}
       />
+      <RechartsDevtools />
     </PieChart>
   );
 }

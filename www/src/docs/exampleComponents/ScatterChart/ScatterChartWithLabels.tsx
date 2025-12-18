@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, ZAxis, TooltipIndex } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -31,6 +32,7 @@ const ScatterChartWithLabels = ({ defaultIndex }: { defaultIndex?: TooltipIndex 
         <LabelList dataKey="x" fill="black" />
       </Scatter>
       <ZAxis range={[900, 4000]} dataKey="z" />
+      <RechartsDevtools />
     </ScatterChart>
   );
 };

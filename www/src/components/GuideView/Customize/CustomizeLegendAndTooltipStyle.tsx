@@ -1,5 +1,6 @@
 // #region Sample data
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const data = [
   {
@@ -67,6 +68,7 @@ export default function CustomizeLegendAndTooltipStyle() {
       />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
       <Bar dataKey="uv" fill="#8884d8" barSize={30} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

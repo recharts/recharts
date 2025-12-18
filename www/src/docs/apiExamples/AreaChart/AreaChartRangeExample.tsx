@@ -1,4 +1,5 @@
 import { Area, AreaChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const rangeData = [
@@ -30,6 +31,7 @@ const AreaChartRangeExample = ({ isAnimationActive = true }) => (
     <YAxis width="auto" />
     <Area dataKey="temperature" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
     <Tooltip />
+    <RechartsDevtools />
   </AreaChart>
 );
 

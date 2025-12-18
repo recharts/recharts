@@ -1,4 +1,5 @@
 import { ResponsiveContainer, AreaChart, ReferenceLine, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -65,6 +66,7 @@ export const ResponsiveContainerExample = ({ isAnimationActive = true }: { isAni
       <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
       <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
       <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <RechartsDevtools />
     </AreaChart>
   </ResponsiveContainer>
 );

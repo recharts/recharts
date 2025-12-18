@@ -44,7 +44,7 @@ type CodeMirrorEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
-  activeMode: EditorMode;
+  activeMode?: EditorMode;
   onModeChange?: (mode: EditorMode) => void;
   tools?: { name: string; label: string }[];
   toolbarItems?: Record<string, ReactNode[]>;
@@ -97,7 +97,7 @@ export function CodeMirrorEditor({
   onChange,
   readOnly = true,
   className = '',
-  activeMode,
+  activeMode = 'source',
   onModeChange,
   tools,
   toolbarItems,

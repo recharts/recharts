@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -25,6 +26,7 @@ const CellPieExample = ({ isAnimationActive = true }: { isAnimationActive?: bool
         <Cell key={`cell-${index}`} fill={colors[index]} />
       ))}
     </Pie>
+    <RechartsDevtools />
   </PieChart>
 );
 

@@ -1,4 +1,5 @@
 import { FunnelChart, Funnel, Tooltip, LabelList } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -22,6 +23,7 @@ export const FunnelChartExample = ({ isAnimationActive = true }: { isAnimationAc
     <Funnel dataKey="value" data={data} isAnimationActive={isAnimationActive}>
       <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
     </Funnel>
+    <RechartsDevtools />
   </FunnelChart>
 );
 

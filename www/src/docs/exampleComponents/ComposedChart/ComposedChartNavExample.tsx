@@ -1,4 +1,5 @@
 import { ComposedChart, Line, Bar } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const ComposedChartNavExample = () => {
   return (
@@ -14,6 +15,7 @@ const ComposedChartNavExample = () => {
     >
       <Line type="monotone" dataKey="val" stroke="#8884d8" strokeWidth={2} dot={false} />
       <Bar dataKey="val2" fill="#82ca9d" />
+      <RechartsDevtools />
     </ComposedChart>
   );
 };

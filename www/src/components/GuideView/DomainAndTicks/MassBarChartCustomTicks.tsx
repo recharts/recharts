@@ -1,4 +1,5 @@
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Solar System Data
 /**
@@ -112,6 +113,7 @@ export default function MassBarChartCustomTicks() {
       />
       <Bar dataKey="massKg" name="mass" unit=" yottagram" />
       <Tooltip formatter={kgToYottagram} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

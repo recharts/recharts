@@ -1,4 +1,5 @@
 import { Line, LineChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 export default function ChartWithoutSize() {
   return (
@@ -9,6 +10,7 @@ export default function ChartWithoutSize() {
       ]}
     >
       <Line dataKey="y" />
+      <RechartsDevtools />
     </LineChart>
   );
 }

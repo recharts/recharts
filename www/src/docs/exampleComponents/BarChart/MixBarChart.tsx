@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -68,6 +69,7 @@ const MixBarChart = () => {
       <Bar dataKey="pv" stackId="a" fill="#8884d8" />
       <Bar dataKey="amt" stackId="a" fill="#82ca9d" />
       <Bar dataKey="uv" fill="#ffc658" />
+      <RechartsDevtools />
     </BarChart>
   );
 };

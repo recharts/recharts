@@ -1,4 +1,5 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -67,6 +68,7 @@ export default function Example() {
       <Legend />
       <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
       <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
+      <RechartsDevtools />
     </LineChart>
   );
 }

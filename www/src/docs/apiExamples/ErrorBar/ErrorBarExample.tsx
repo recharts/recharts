@@ -1,4 +1,5 @@
 import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter, ErrorBar } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -89,6 +90,7 @@ const ErrorBarExample = ({ isAnimationActive = true }) => (
       />
     </Scatter>
     <Legend />
+    <RechartsDevtools />
   </ScatterChart>
 );
 

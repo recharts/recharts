@@ -1,4 +1,5 @@
 import { Pie, PieChart, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 export default function PieChartDefaultIndex({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
@@ -16,6 +17,7 @@ export default function PieChartDefaultIndex({ isAnimationActive = true }: { isA
         isAnimationActive={isAnimationActive}
       />
       <Tooltip defaultIndex={2} />
+      <RechartsDevtools />
     </PieChart>
   );
 }

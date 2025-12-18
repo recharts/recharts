@@ -1,4 +1,5 @@
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Solar System Data
 /**
@@ -101,6 +102,7 @@ export default function MassBarChartCategoricalY() {
       />
       <Bar dataKey="massKg" unit="kg" />
       <Tooltip />
+      <RechartsDevtools />
     </BarChart>
   );
 }

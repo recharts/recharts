@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -67,6 +68,7 @@ const SynchronizedAreaChart = () => {
         <YAxis width="auto" />
         <Tooltip />
         <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <RechartsDevtools />
       </AreaChart>
 
       <AreaChart
@@ -86,6 +88,7 @@ const SynchronizedAreaChart = () => {
         <YAxis width="auto" />
         <Tooltip />
         <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+        <RechartsDevtools />
       </AreaChart>
     </>
   );

@@ -1,4 +1,5 @@
 import { AreaChart, ReferenceLine, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -91,6 +92,7 @@ const ReferenceLineExample = ({ isAnimationActive = true }: { isAnimationActive?
         { x: 'Page F', y: 1500 },
       ]}
     />
+    <RechartsDevtools />
   </AreaChart>
 );
 

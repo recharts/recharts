@@ -1,4 +1,5 @@
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -66,6 +67,7 @@ export default function CustomizeLabels() {
       />
       <YAxis label={{ position: 'insideTopLeft', value: 'YAxis title', angle: -90, dy: 60 }} />
       <Bar dataKey="uv" fill="#8884d8" label={renderCustomBarLabel} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

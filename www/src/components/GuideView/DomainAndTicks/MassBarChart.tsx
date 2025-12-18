@@ -1,4 +1,5 @@
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Solar System Data
 /**
@@ -97,6 +98,7 @@ export default function MassBarChart() {
       <YAxis width="auto" label={{ value: 'Mass [kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90 }} />
       <Bar dataKey="massKg" unit="kg" />
       <Tooltip />
+      <RechartsDevtools />
     </BarChart>
   );
 }

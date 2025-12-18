@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Bar, BarChart, Cell, BarRectangleItem } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const BarChartWithCustomizedEvent = () => {
   const [data] = useState([
@@ -67,6 +68,7 @@ const BarChartWithCustomizedEvent = () => {
             <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
           ))}
         </Bar>
+        <RechartsDevtools />
       </BarChart>
       <p className="content">{`Uv of "${activeItem.name}": ${activeItem.uv}`}</p>
     </>
