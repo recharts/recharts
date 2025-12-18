@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { EditorView } from '@codemirror/view';
 import { SuccessIcon } from './SuccessIcon.tsx';
 import { CopyIcon } from './CopyIcon.tsx';
@@ -7,33 +7,19 @@ import { sendEvent } from '../components/analytics.ts';
 export function CopyButton({
   viewRef,
   mode,
+  devToolsValueRef,
 }: {
   viewRef: React.RefObject<EditorView | null>;
   mode?: 'source' | 'devtools';
+  devToolsValueRef?: React.RefObject<unknown>;
 }) {
   const [copied, setCopied] = useState(false);
-  const devToolsValue = useRef<unknown>(undefined);
-
-  useEffect(() => {
-    const container = document.getElementById('recharts-devtools-portal');
-    if (!container) return () => {};
-
-    const handleDevToolsChange = (e: CustomEvent<unknown>) => {
-      devToolsValue.current = e.detail;
-    };
-
-    // @ts-expect-error not sure how to type custom events
-    container.addEventListener('recharts-devtools-change', handleDevToolsChange);
-    return () => {
-      // @ts-expect-error not sure how to type custom events
-      container.removeEventListener('recharts-devtools-change', handleDevToolsChange);
-    };
-  }, []);
 
   const handleCopy = () => {
     if (mode === 'devtools') {
-      if (devToolsValue.current !== undefined) {
-        return navigator.clipboard.writeText(JSON.stringify(devToolsValue.current, null, 2));
+      const valueToCopy = devToolsValueRef?.current;
+      if (valueToCopy !== undefined) {
+        return navigator.clipboard.writeText(JSON.stringify(valueToCopy, null, 2));
       }
       return Promise.resolve(); // Nothing to copy
     }

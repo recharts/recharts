@@ -110,6 +110,25 @@ export function CodeMirrorEditor({
   // remove trailing newline from the value to save on vertical space
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
+  // Create a ref to store the devtools value so that it persists across re-renders/unmounts of children
+  const devToolsValue = useRef<unknown>(undefined);
+
+  useEffect(() => {
+    const container = document.getElementById('recharts-devtools-portal');
+    if (!container) return () => {};
+
+    const handleDevToolsChange = (e: CustomEvent<unknown>) => {
+      devToolsValue.current = e.detail;
+    };
+
+    // @ts-expect-error not sure how to type custom events
+    container.addEventListener('recharts-devtools-change', handleDevToolsChange);
+    return () => {
+      // @ts-expect-error not sure how to type custom events
+      container.removeEventListener('recharts-devtools-change', handleDevToolsChange);
+    };
+  }, []);
+
   // Lazy load editing extensions when switching to editable mode
   useEffect(() => {
     if (!readOnly && editExtensions.length === 0) {
@@ -281,7 +300,9 @@ export function CodeMirrorEditor({
             </select>
           )}
           {activeMode === 'source' && <CopyButton viewRef={viewRef} mode="source" />}
-          {activeMode === 'devtools' && <CopyButton viewRef={viewRef} mode="devtools" />}
+          {activeMode === 'devtools' && (
+            <CopyButton viewRef={viewRef} mode="devtools" devToolsValueRef={devToolsValue} />
+          )}
           {toolbarItems && toolbarItems[activeMode]}
         </div>
 
