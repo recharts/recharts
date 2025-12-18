@@ -56,7 +56,11 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The x-coordinate of center.</p>
+            <p>
+              The x-coordinate of center. When used inside a chart context, this prop is calculated based on the
+              chart&#39;s dimensions, and this prop is ignored.
+            </p>
+            <p>This is only used when rendered outside a chart context.</p>
           </section>
         ),
       },
@@ -69,7 +73,11 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The y-coordinate of center.</p>
+            <p>
+              The y-coordinate of center. When used inside a chart context, this prop is calculated based on the
+              chart&#39;s dimensions, and this prop is ignored.
+            </p>
+            <p>This is only used when rendered outside a chart context.</p>
           </section>
         ),
       },

@@ -56,10 +56,18 @@ export interface PolarAngleAxisProps extends ZIndexable {
   axisLineType?: 'polygon' | 'circle';
   /**
    * The x-coordinate of center.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
    */
   cx?: number;
   /**
    * The y-coordinate of center.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
    */
   cy?: number;
   /**

@@ -124,12 +124,12 @@ describe('cross-component prop consistency', () => {
       reason: 'Pie has a custom label implementation',
     },
     {
-      components: ['Dot', 'SunburstChart', 'PolarAngleAxis'],
+      components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
       prop: 'cx',
       reason: 'These components do not support percentages unlike other components',
     },
     {
-      components: ['Dot', 'SunburstChart', 'PolarAngleAxis'],
+      components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
       prop: 'cy',
       reason: 'These components do not support percentages unlike other components',
     },
@@ -153,6 +153,16 @@ describe('cross-component prop consistency', () => {
       prop: 'radius',
       reason:
         'Radius in polar charts means radius from center, unlike cartesian context where it means radius of the corner',
+    },
+    {
+      components: ['PolarGrid'],
+      prop: 'innerRadius',
+      reason: 'Unlike other components, this can not be a percentage string',
+    },
+    {
+      components: ['PolarGrid'],
+      prop: 'outerRadius',
+      reason: 'Unlike other components, this can not be a percentage string',
     },
   ];
 
