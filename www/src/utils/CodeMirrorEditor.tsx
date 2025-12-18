@@ -12,6 +12,7 @@ import {
 } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 import './CodeMirrorEditor.css';
+import { RechartsDevtoolsPortal } from '@recharts/devtools';
 import { CopyButton } from './CopyButton.tsx';
 
 // Custom highlight style with improved color contrast for accessibility
@@ -310,8 +311,7 @@ export function CodeMirrorEditor({
           {toolbarItems && toolbarItems[activeMode]}
         </div>
 
-        <div
-          id="recharts-devtools-portal"
+        <RechartsDevtoolsPortal
           style={{
             height: '100%',
             background: 'var(--color-bg)',

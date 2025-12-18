@@ -24,7 +24,7 @@ const indexTsxCode = (title: string) =>
   `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { RECHARTS_DEVTOOLS_PORTAL_ID } from '@recharts/devtools';
+import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 import Example from './Example';
 
 const container = document.getElementById('root');
@@ -34,11 +34,12 @@ if (!container) {
 const root = createRoot(container);
 
 const AppWithDevtools = () => {
-  return <>
-  <h1>${title}</h1>
-  <Example />
-  <h2>Recharts Devtools</h2>
-  <div id={RECHARTS_DEVTOOLS_PORTAL_ID} /></>
+  return <RechartsDevtoolsContext>
+    <h1>${title}</h1>
+    <Example />
+    <h2>Recharts Devtools</h2>
+    <RechartsDevtoolsPortal />
+  </RechartsDevtoolsContext>
 }
 
 root.render(<AppWithDevtools />);

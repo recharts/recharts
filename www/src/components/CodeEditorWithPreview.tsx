@@ -2,6 +2,7 @@ import React, { useState, useEffect, ComponentType } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
+import { RechartsDevtoolsContext } from '@recharts/devtools';
 import { CodeMirrorEditor, EditorMode } from '../utils/CodeMirrorEditor.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink.tsx';
 import { sendEvent } from './analytics.ts';
@@ -112,7 +113,7 @@ export function CodeEditorWithPreview({
   const [activeMode, setActiveMode] = useState<EditorMode>('source');
 
   return (
-    <>
+    <RechartsDevtoolsContext>
       <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
 
       <CodeMirrorEditor
@@ -146,6 +147,6 @@ export function CodeEditorWithPreview({
           ],
         }}
       />
-    </>
+    </RechartsDevtoolsContext>
   );
 }
