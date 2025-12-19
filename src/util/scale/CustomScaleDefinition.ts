@@ -59,5 +59,5 @@ export interface CustomScaleDefinition<Domain extends CategoricalDomainItem = Ca
    *
    * @param input
    */
-  (input: unknown): number | undefined;
+  (input: Domain): number | undefined;
 }
