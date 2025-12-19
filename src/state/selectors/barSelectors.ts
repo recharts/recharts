@@ -252,7 +252,7 @@ export const selectBarPosition: (
   },
 );
 
-const selectStackedDataOfItem: (
+export const selectStackedDataOfItem: (
   state: RechartsRootState,
   id: GraphicalItemId,
   isPanorama: boolean,
