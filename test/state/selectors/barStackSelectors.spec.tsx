@@ -142,6 +142,57 @@ describe('BarStack Selectors', () => {
     });
   });
 
+  describe('in chart with stackOffset=sign and negative values', () => {
+    // https://github.com/recharts/recharts/issues/6802
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart
+        width={100}
+        height={100}
+        data={[{ name: 'A', value1: -100, value2: 200 }]}
+        margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+        stackOffset="sign"
+      >
+        <BarStack stackId="mystackid">
+          <Bar dataKey="value1" id="red" />
+          <Bar dataKey="value2" id="green" />
+          {children}
+        </BarStack>
+        <Bar dataKey="amt" id="blue" />
+      </BarChart>
+    ));
+
+    test('selectStackRects should select edges of all rectangles in this stack', () => {
+      const { spy } = renderTestCase(state => selectStackRects(state, 'mystackid', false));
+      expectLastCalledWith(spy, [{ height: 75, width: 38, x: 10, y: 25 }]);
+    });
+
+    test('selectBarRectangles should select rectangles with negative height', () => {
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'red', false, undefined));
+      expectLastCalledWith(spy, [
+        expect.objectContaining({
+          x: 10,
+          y: 100,
+          width: 38,
+          height: -25,
+          value: [0, -100],
+        }),
+      ]);
+    });
+
+    test('selectBarRectangles should select rectangles with positive height', () => {
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'green', false, undefined));
+      expectLastCalledWith(spy, [
+        expect.objectContaining({
+          x: 10,
+          y: 25,
+          width: 38,
+          height: 50,
+          value: [0, 200],
+        }),
+      ]);
+    });
+  });
+
   describe('expandRectangle', () => {
     it('should return undefined if both rectangles are undefined', () => {
       const result = expandRectangle(undefined, undefined);
@@ -228,6 +279,38 @@ describe('BarStack Selectors', () => {
        * from y=15 to y=35 (15 + 20)
        */
       expect(result).toEqual({ x: 5, y: 5, width: 30, height: 30 });
+    });
+
+    it('should expand rectangles with negative height', () => {
+      const rect1 = { x: 10, y: 100, width: 60, height: -25 };
+      /*
+       * With stackOffset=sign, height can be negative, that means the bar goes down from YAxis zero.
+       * In other words, y is the bottom edge, and height is negative going upwards.
+       */
+      const rect2 = { x: 100, y: 25, width: -50, height: 50 };
+      const result = expandRectangle(rect1, rect2);
+      /*
+       * The resulting rectangle should start at (min x of both) and (min y of both)
+       * and should have width that both rectangles fit inside,
+       * and height that both rectangles fit inside.
+       *
+       * First rectangle width:
+       * from x=10 to x=70 (10 + 60)
+       *
+       * Second rectangle width:
+       * from x=50 (100 - 50) to x=100
+       *
+       * Total width: 10 -> 100 = 90
+       *
+       * First rectangle height:
+       * from y=75 (100 - 25) to y=100
+       *
+       * Second rectangle height:
+       * from y=25 to y=75 (25 + 50)
+       *
+       * Total height: 25 -> 100 = 75
+       */
+      expect(result).toEqual({ x: 10, y: 25, width: 90, height: 75 });
     });
   });
 });
