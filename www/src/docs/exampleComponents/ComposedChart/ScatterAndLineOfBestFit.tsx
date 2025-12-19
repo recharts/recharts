@@ -1,4 +1,5 @@
 import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -36,6 +37,7 @@ const ScatterAndLineOfBestFit = () => {
       <Scatter name="blue" dataKey="blue" fill="blue" />
       <Line dataKey="blueLine" stroke="blue" dot={false} activeDot={false} legendType="none" />
       <Line dataKey="redLine" stroke="red" dot={false} activeDot={false} legendType="none" />
+      <RechartsDevtools />
     </ComposedChart>
   );
 };

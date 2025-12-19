@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, AxisInterval } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -60,6 +61,7 @@ const LineChartAxisInterval = () => {
       <YAxis interval={interval} width="auto" />
       <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
       <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+      <RechartsDevtools />
     </LineChart>
   );
 

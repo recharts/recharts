@@ -1,4 +1,5 @@
 import { LabelList, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const LabelRadialBarPositions = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <RadialBarChart
@@ -13,6 +14,7 @@ const LabelRadialBarPositions = ({ isAnimationActive = true }: { isAnimationActi
       <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
     </RadialBar>
     <PolarAngleAxis type="number" domain={[0, 250]} tick={false} />
+    <RechartsDevtools />
   </RadialBarChart>
 );
 

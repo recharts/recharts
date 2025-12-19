@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -39,6 +40,7 @@ const ScatterChartExample = ({ isAnimationActive = true }: { isAnimationActive?:
     <Legend />
     <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
     <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
+    <RechartsDevtools />
   </ScatterChart>
 );
 

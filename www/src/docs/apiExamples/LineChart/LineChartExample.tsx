@@ -1,4 +1,5 @@
 import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -66,6 +67,7 @@ const LineChartExample = ({ isAnimationActive = true }) => (
     <Legend />
     <Line type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={isAnimationActive} />
     <Line type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={isAnimationActive} />
+    <RechartsDevtools />
   </LineChart>
 );
 

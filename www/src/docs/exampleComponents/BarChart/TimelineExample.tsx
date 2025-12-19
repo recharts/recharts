@@ -1,4 +1,5 @@
 import { Bar, BarChart, BarProps, CartesianGrid, Rectangle, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Data and helper functions
 type TimelineDataType = {
@@ -114,6 +115,7 @@ export default function TimelineExample({ defaultIndex }: { defaultIndex?: numbe
       />
       <Bar dataKey="firstCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
       <Bar dataKey="secondCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
+      <RechartsDevtools />
     </BarChart>
   );
 }

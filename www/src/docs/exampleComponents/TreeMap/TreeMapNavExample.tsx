@@ -1,4 +1,5 @@
 import { Treemap } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [{ size: 20 }, { size: 30 }, { size: 50 }];
@@ -13,7 +14,9 @@ const TreeMapNavExample = () => {
       aspectRatio={2 * 1.618}
       stroke="#fff"
       fill="#8884d8"
-    />
+    >
+      <RechartsDevtools />
+    </Treemap>
   );
 };
 

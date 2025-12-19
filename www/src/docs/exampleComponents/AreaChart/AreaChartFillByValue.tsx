@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -94,6 +95,7 @@ const AreaChartFillByValue = () => {
         </linearGradient>
       </defs>
       <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+      <RechartsDevtools />
     </AreaChart>
   );
 };

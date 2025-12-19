@@ -1,4 +1,5 @@
 import { Pie, PieChart, PieProps, PieSectorDataItem, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const chartData = [
@@ -59,6 +60,7 @@ export default function PieChartWithNeedle({ isAnimationActive = true }: { isAni
       <HalfPie isAnimationActive={isAnimationActive} />
       <HalfPie isAnimationActive={isAnimationActive} activeShape={Needle} />
       <Tooltip defaultIndex={0} content={() => null} active />
+      <RechartsDevtools />
     </PieChart>
   );
 }

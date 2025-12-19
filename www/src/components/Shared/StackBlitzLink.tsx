@@ -20,13 +20,29 @@ type StackBlitzLinkProps = Readonly<{
 
 // React 18+ boilerplate
 // language=tsx
-const indexTsxCode = `
+const indexTsxCode = (title: string) =>
+  `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 import Example from './Example';
+
 const container = document.getElementById('root');
+if (!container) {
+  throw new Error('Root container not found');
+}
 const root = createRoot(container);
-root.render(<Example />);
+
+const AppWithDevtools = () => {
+  return <RechartsDevtoolsContext>
+    <h1>${title}</h1>
+    <Example />
+    <h2>Recharts Devtools</h2>
+    <RechartsDevtoolsPortal />
+  </RechartsDevtoolsContext>
+}
+
+root.render(<AppWithDevtools />);
 `.trim();
 
 // language=HTML
@@ -140,7 +156,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
               /*
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
                */
-              'src/index.tsx': indexTsxCode,
+              'src/index.tsx': indexTsxCode(title),
               'src/Example.tsx': code,
               'tsconfig.json': tsconfigJsonCode,
               'package.json': JSON.stringify(packageJson, null, 2),

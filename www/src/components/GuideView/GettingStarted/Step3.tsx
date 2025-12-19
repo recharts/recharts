@@ -1,4 +1,5 @@
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -59,6 +60,7 @@ export default function Step3() {
       <XAxis dataKey="name" />
       <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} />
       <Legend align="right" />
+      <RechartsDevtools />
     </LineChart>
   );
 }

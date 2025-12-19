@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, LabelProps } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -93,6 +94,7 @@ const BarChartWithMinHeight = () => {
         <LabelList dataKey="name" content={renderCustomizedLabel} />
       </Bar>
       <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
+      <RechartsDevtools />
     </BarChart>
   );
 };

@@ -1,4 +1,5 @@
 import { ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -69,6 +70,7 @@ const LineBarAreaComposedChart = () => {
       <Bar dataKey="pv" barSize={20} fill="#413ea0" />
       <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       <Scatter dataKey="cnt" fill="red" />
+      <RechartsDevtools />
     </ComposedChart>
   );
 };

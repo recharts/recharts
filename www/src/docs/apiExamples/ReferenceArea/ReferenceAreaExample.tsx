@@ -1,4 +1,5 @@
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ReferenceArea } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -40,6 +41,7 @@ const ReferenceAreaExample = ({ isAnimationActive = true }) => (
     <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
     <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
     <ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke="red" strokeOpacity={0.3} />
+    <RechartsDevtools />
   </ScatterChart>
 );
 

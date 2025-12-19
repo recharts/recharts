@@ -1,4 +1,5 @@
 import { Pie, PieChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -19,6 +20,7 @@ const PieChartNavExample = ({ isAnimationActive = true }: { isAnimationActive?: 
         stroke="black"
         isAnimationActive={isAnimationActive}
       />
+      <RechartsDevtools />
     </PieChart>
   );
 };

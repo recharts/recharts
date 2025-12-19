@@ -1,4 +1,5 @@
 import { Funnel, FunnelChart, LabelList } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const LabelFunnelPositions = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => {
   return (
@@ -29,6 +30,7 @@ const LabelFunnelPositions = ({ isAnimationActive = true }: { isAnimationActive?
         <LabelList position="bottom" fill="black" valueAccessor={() => 'bottom'} />
         <LabelList position="insideBottom" fill="black" valueAccessor={() => 'insideBottom'} />
       </Funnel>
+      <RechartsDevtools />
     </FunnelChart>
   );
 };

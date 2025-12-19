@@ -2,7 +2,8 @@ import React, { useState, useEffect, ComponentType } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
-import { CodeMirrorEditor } from '../utils/CodeMirrorEditor.tsx';
+import { RechartsDevtoolsContext } from '@recharts/devtools';
+import { CodeMirrorEditor, EditorMode } from '../utils/CodeMirrorEditor.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink.tsx';
 import { sendEvent } from './analytics.ts';
 
@@ -109,8 +110,10 @@ export function CodeEditorWithPreview({
 
   const codeToDisplay = editedCode ?? sourceCode;
 
+  const [activeMode, setActiveMode] = useState<EditorMode>('source');
+
   return (
-    <>
+    <RechartsDevtoolsContext>
       <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
 
       <CodeMirrorEditor
@@ -118,24 +121,32 @@ export function CodeEditorWithPreview({
         onChange={isEditMode ? setEditedCode : undefined}
         readOnly={!isEditMode}
         className="tsx"
-        extraToolbarItems={[
-          isEditMode ? (
-            <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
-              <i className="icon-control-play" />
-              <span>Run</span>
-            </button>
-          ) : (
-            <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
-              <i className="icon-pencil" />
-              <span>Edit</span>
-            </button>
-          ),
-          <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
-            <i className="icon-share" />
-            <span>Open in StackBlitz</span>
-          </StackBlitzLink>,
+        activeMode={activeMode}
+        onModeChange={setActiveMode}
+        tools={[
+          { name: 'source', label: 'Source code view' },
+          { name: 'devtools', label: 'Hook inspector' },
         ]}
+        toolbarItems={{
+          source: [
+            isEditMode ? (
+              <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
+                <i className="icon-control-play" />
+                <span>Run</span>
+              </button>
+            ) : (
+              <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
+                <i className="icon-pencil" />
+                <span>Edit</span>
+              </button>
+            ),
+            <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
+              <i className="icon-share" />
+              <span>Open in StackBlitz</span>
+            </StackBlitzLink>,
+          ],
+        }}
       />
-    </>
+    </RechartsDevtoolsContext>
   );
 }

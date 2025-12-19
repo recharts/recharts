@@ -1,4 +1,5 @@
 import { Treemap, TreemapNode } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -177,7 +178,9 @@ const CustomContentTreemap = () => {
       stroke="#fff"
       fill="#8884d8"
       content={CustomizedContent}
-    />
+    >
+      <RechartsDevtools />
+    </Treemap>
   );
 };
 

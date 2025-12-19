@@ -1,4 +1,5 @@
 import { Radar, RadarChart, PolarGrid } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -16,6 +17,7 @@ const RadarChartNavExample = () => {
     <RadarChart responsive outerRadius="120%" data={data} style={{ aspectRatio: 1 }}>
       <PolarGrid />
       <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <RechartsDevtools />
     </RadarChart>
   );
 };

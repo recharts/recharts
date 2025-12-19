@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload, DataKey } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -90,6 +91,7 @@ const LegendEffectOpacity = () => {
         <Legend onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
         <Line type="monotone" dataKey="pv" strokeOpacity={pvOpacity} stroke="#8884d8" activeDot={{ r: 8 }} />
         <Line type="monotone" dataKey="uv" strokeOpacity={uvOpacity} stroke="#82ca9d" />
+        <RechartsDevtools />
       </LineChart>
       <p className="notes">Tips: Hover the legend !</p>
     </div>

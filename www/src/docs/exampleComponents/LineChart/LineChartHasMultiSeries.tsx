@@ -1,4 +1,5 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const series = [
@@ -40,6 +41,7 @@ export default function LineChartHasMultiSeries() {
       {series.map(s => (
         <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
       ))}
+      <RechartsDevtools />
     </LineChart>
   );
 }

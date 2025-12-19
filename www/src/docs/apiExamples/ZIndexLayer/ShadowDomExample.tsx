@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Legend, Pie, PieChart, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region shadow DOM wrapper component, and data
 interface ShadowDomWrapperProps {
@@ -67,6 +68,7 @@ export default function ShadowDomExample({ isAnimationActive = true }: { isAnima
         />
         <Tooltip />
         <Legend />
+        <RechartsDevtools />
       </PieChart>
     </ShadowDomWrapper>
   );

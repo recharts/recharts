@@ -1,4 +1,5 @@
 import { Bar, BarChart, Legend, LegendPayload, Tooltip, XAxis, YAxis, RenderableText } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Data and helper functions
 /**
@@ -105,6 +106,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
       />
       <Tooltip<number, string> formatter={formatPercent} defaultIndex={defaultIndex} />
       <Legend itemSorter={itemSorter} verticalAlign="top" align="right" />
+      <RechartsDevtools />
     </BarChart>
   );
 }

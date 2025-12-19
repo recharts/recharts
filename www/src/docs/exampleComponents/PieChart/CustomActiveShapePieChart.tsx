@@ -1,4 +1,5 @@
 import { Pie, PieChart, Sector, PieSectorDataItem, Tooltip, TooltipIndex } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -96,6 +97,7 @@ export default function CustomActiveShapePieChart({
         isAnimationActive={isAnimationActive}
       />
       <Tooltip content={() => null} defaultIndex={defaultIndex} />
+      <RechartsDevtools />
     </PieChart>
   );
 }

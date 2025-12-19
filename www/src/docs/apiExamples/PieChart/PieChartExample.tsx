@@ -1,4 +1,5 @@
 import { PieChart, Pie } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -48,6 +49,7 @@ export const PieChartExample = ({ isAnimationActive = true }: { isAnimationActiv
       label
       isAnimationActive={isAnimationActive}
     />
+    <RechartsDevtools />
   </PieChart>
 );
 

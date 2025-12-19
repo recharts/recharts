@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { Line, LineChart, ReferenceLine, Tooltip, TooltipContentProps, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region sample data and types
 const formatUsdCompressed = (n: number) => {
@@ -890,10 +891,9 @@ const App: FC = () => {
         name="Portfolio value"
         activeDot={{ fill: color }}
         dot={false}
-        stroke="url(#portfolioColor)"
-        strokeWidth={2}
         animationDuration={500}
       />
+      <RechartsDevtools />
     </LineChart>
   );
 };

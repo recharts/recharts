@@ -1,4 +1,5 @@
 import { Pie, PieChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -24,6 +25,7 @@ export default function PieChartWithPaddingAngle({ isAnimationActive = true }: {
         dataKey="value"
         isAnimationActive={isAnimationActive}
       />
+      <RechartsDevtools />
     </PieChart>
   );
 }

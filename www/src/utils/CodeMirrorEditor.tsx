@@ -12,6 +12,7 @@ import {
 } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 import './CodeMirrorEditor.css';
+import { RechartsDevtoolsPortal } from '@recharts/devtools';
 import { CopyButton } from './CopyButton.tsx';
 
 // Custom highlight style with improved color contrast for accessibility
@@ -44,8 +45,13 @@ type CodeMirrorEditorProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
-  extraToolbarItems?: ReactNode[];
+  activeMode?: EditorMode;
+  onModeChange?: (mode: EditorMode) => void;
+  tools?: { name: string; label: string }[];
+  toolbarItems?: Record<string, ReactNode[]>;
 };
+
+export type EditorMode = 'source' | 'devtools';
 
 // Custom fold service for #region/#endregion
 const regionFoldService = foldService.of((state, from, _to) => {
@@ -90,9 +96,12 @@ const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/
 export function CodeMirrorEditor({
   value,
   onChange,
-  extraToolbarItems,
   readOnly = true,
   className = '',
+  activeMode = 'source',
+  onModeChange,
+  tools,
+  toolbarItems,
 }: CodeMirrorEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
@@ -101,6 +110,25 @@ export function CodeMirrorEditor({
 
   // remove trailing newline from the value to save on vertical space
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
+
+  // Create a ref to store the devtools value so that it persists across re-renders/unmounts of children
+  const devToolsValue = useRef<unknown>(undefined);
+
+  useEffect(() => {
+    const container = document.getElementById('recharts-devtools-portal');
+    if (!container) return () => {};
+
+    const handleDevToolsChange = (e: CustomEvent<unknown>) => {
+      devToolsValue.current = e.detail;
+    };
+
+    // @ts-expect-error not sure how to type custom events
+    container.addEventListener('recharts-devtools-change', handleDevToolsChange);
+    return () => {
+      // @ts-expect-error not sure how to type custom events
+      container.removeEventListener('recharts-devtools-change', handleDevToolsChange);
+    };
+  }, []);
 
   // Lazy load editing extensions when switching to editable mode
   useEffect(() => {
@@ -244,14 +272,60 @@ export function CodeMirrorEditor({
     });
   }, [readOnly, editExtensions, onChange]);
 
+  const handleModeChange = (newMode: string) => {
+    if (onModeChange && (newMode === 'source' || newMode === 'devtools')) {
+      onModeChange(newMode);
+    }
+  };
+
+  const defaultTools = [{ name: 'source', label: 'Source code view' }];
+
+  const effectiveTools = tools ?? defaultTools;
+
   return (
     <div className="codemirror-wrapper">
       <div id="codemirror-container">
         <div className="codemirror-toolbar">
-          <CopyButton viewRef={viewRef} />
-          {extraToolbarItems}
+          {effectiveTools.length > 1 && (
+            <select
+              className="codemirror-toolbar-item"
+              value={activeMode}
+              onChange={e => handleModeChange(e.target.value)}
+              style={{ paddingRight: '12px' }}
+            >
+              {effectiveTools.map(tool => (
+                <option key={tool.name} value={tool.name}>
+                  {tool.label}
+                </option>
+              ))}
+            </select>
+          )}
+          <CopyButton
+            getValueToCopy={() => {
+              if (activeMode === 'devtools') {
+                return devToolsValue.current;
+              }
+              return viewRef.current?.state.doc.toString();
+            }}
+          />
+          {toolbarItems && toolbarItems[activeMode]}
         </div>
-        <div ref={editorRef} className={`codemirror-example-editor ${className}`} style={{ height: '100%' }} />
+
+        <RechartsDevtoolsPortal
+          style={{
+            height: '100%',
+            background: 'var(--color-bg)',
+            color: 'var(--color-text)',
+            overflow: 'auto',
+            padding: '10px',
+            display: activeMode === 'devtools' ? 'block' : 'none',
+          }}
+        />
+        <div
+          ref={editorRef}
+          className={`codemirror-example-editor ${className}`}
+          style={{ height: '100%', display: activeMode === 'devtools' ? 'none' : 'block' }}
+        />
       </div>
     </div>
   );

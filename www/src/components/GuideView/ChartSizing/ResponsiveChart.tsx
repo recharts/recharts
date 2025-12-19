@@ -1,4 +1,5 @@
 import { Line, LineChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 export default function ResponsiveChart() {
   return (
@@ -11,6 +12,7 @@ export default function ResponsiveChart() {
       ]}
     >
       <Line dataKey="y" />
+      <RechartsDevtools />
     </LineChart>
   );
 }

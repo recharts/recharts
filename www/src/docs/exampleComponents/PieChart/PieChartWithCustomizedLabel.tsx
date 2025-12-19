@@ -1,4 +1,5 @@
 import { Cell, Pie, PieChart, PieLabelRenderProps } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -44,6 +45,7 @@ export default function PieChartWithCustomizedLabel({ isAnimationActive = true }
           <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
         ))}
       </Pie>
+      <RechartsDevtools />
     </PieChart>
   );
 }

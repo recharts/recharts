@@ -1,5 +1,6 @@
 import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps, TooltipIndex } from 'recharts';
 import { ReactNode } from 'react';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data01 = [
@@ -145,6 +146,7 @@ const DayChart = ({ children }: { children: ReactNode }) => (
     responsive
   >
     {children}
+    <RechartsDevtools />
   </ScatterChart>
 );
 

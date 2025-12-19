@@ -1,4 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -65,6 +66,7 @@ const SimpleAreaChart = () => {
       <YAxis width="auto" />
       <Tooltip />
       <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      <RechartsDevtools />
     </AreaChart>
   );
 };

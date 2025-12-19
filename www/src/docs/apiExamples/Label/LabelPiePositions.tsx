@@ -1,4 +1,5 @@
 import { LabelList, Pie, PieChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const LabelPiePositions = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <PieChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
@@ -16,6 +17,7 @@ const LabelPiePositions = ({ isAnimationActive = true }: { isAnimationActive?: b
       <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
       <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
     </Pie>
+    <RechartsDevtools />
   </PieChart>
 );
 

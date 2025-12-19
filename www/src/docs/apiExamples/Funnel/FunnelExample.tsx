@@ -1,4 +1,5 @@
 import { FunnelChart, Funnel, LabelList, Trapezoid, Label, FunnelTrapezoidItem } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -45,6 +46,7 @@ const FunnelExample = ({ isAnimationActive = true }: { isAnimationActive?: boole
       >
         <LabelList position="right" fill="#000" stroke="none" dataKey="name" offset={20} />
       </Funnel>
+      <RechartsDevtools />
     </FunnelChart>
   );
 };

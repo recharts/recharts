@@ -1,4 +1,5 @@
 import { ScatterChart, XAxis, YAxis, Scatter, CartesianGrid, Tooltip, ReferenceDot } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 type DataEntry = {
   x: number;
@@ -53,6 +54,7 @@ export const ReferenceDotExample = ({ isAnimationActive = true }: { isAnimationA
       <Scatter name="A school" data={data} fill="#8884d8" isAnimationActive={isAnimationActive} />
       {mean && <ReferenceDot {...mean} r={20} fill="red" stroke="none" />}
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <RechartsDevtools />
     </ScatterChart>
   );
 };

@@ -1,4 +1,5 @@
 import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -84,6 +85,7 @@ const AreaChartExample = ({ isAnimationActive = true }) => (
       fill="url(#colorPv)"
       isAnimationActive={isAnimationActive}
     />
+    <RechartsDevtools />
   </AreaChart>
 );
 

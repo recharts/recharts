@@ -1,4 +1,5 @@
 import { Line, LineChart } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 export default function StaticDimensionChart() {
   return (
@@ -11,6 +12,7 @@ export default function StaticDimensionChart() {
       ]}
     >
       <Line dataKey="y" />
+      <RechartsDevtools />
     </LineChart>
   );
 }

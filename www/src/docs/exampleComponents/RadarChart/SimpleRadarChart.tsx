@@ -1,4 +1,5 @@
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -59,6 +60,7 @@ const SimpleRadarChart = () => {
       <PolarAngleAxis dataKey="subject" />
       <PolarRadiusAxis />
       <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <RechartsDevtools />
     </RadarChart>
   );
 };

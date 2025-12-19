@@ -1,4 +1,5 @@
 import { PieChart, Pie, Label } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -52,6 +53,7 @@ export default function PieChartInGrid() {
           <Label position="center" fill="#666">
             2x2 cell
           </Label>
+          <RechartsDevtools />
         </PieChart>
 
         <PieChart
@@ -69,6 +71,7 @@ export default function PieChartInGrid() {
           <Label position="center" fill="#666">
             1x1 cell
           </Label>
+          <RechartsDevtools />
         </PieChart>
 
         <PieChart
@@ -86,6 +89,7 @@ export default function PieChartInGrid() {
           <Label position="center" fill="#666">
             1x1 cell
           </Label>
+          <RechartsDevtools />
         </PieChart>
 
         <PieChart
@@ -104,6 +108,7 @@ export default function PieChartInGrid() {
           <Label position="center" fill="#666">
             3x1 cell
           </Label>
+          <RechartsDevtools />
         </PieChart>
       </div>
     </div>

@@ -11,6 +11,7 @@ import {
   LabelProps,
   MouseHandlerDataParam,
 } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 import { useCallback } from 'react';
 
 // #region Sample data
@@ -216,6 +217,7 @@ export default function TargetPriceChart({
         />
       </Line>
       <Tooltip content={showNothing} defaultIndex={defaultIndex} />
+      <RechartsDevtools />
     </ComposedChart>
   );
 }

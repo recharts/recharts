@@ -1,4 +1,5 @@
 import { ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, Bar, Line } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -61,6 +62,7 @@ const ComposedChartExample = ({ isAnimationActive = true }: { isAnimationActive?
     <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" isAnimationActive={isAnimationActive} />
     <Bar dataKey="pv" barSize={20} fill="#413ea0" isAnimationActive={isAnimationActive} />
     <Line type="monotone" dataKey="uv" stroke="#ff7300" isAnimationActive={isAnimationActive} />
+    <RechartsDevtools />
   </ComposedChart>
 );
 

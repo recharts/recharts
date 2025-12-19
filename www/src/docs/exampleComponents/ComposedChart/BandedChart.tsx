@@ -13,6 +13,7 @@ import {
   DefaultTooltipContent,
   TooltipContentProps,
 } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const data = [
   {
@@ -77,6 +78,7 @@ export default function BandedChart() {
       <Tooltip content={renderTooltipWithoutRange} />
       <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
       <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
+      <RechartsDevtools />
     </ComposedChart>
   );
 }

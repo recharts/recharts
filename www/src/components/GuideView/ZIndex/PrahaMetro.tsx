@@ -10,6 +10,7 @@ import {
   DefaultZIndexes,
   ZIndexLayer,
 } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 const AirplaneIcon = () => (
   // https://upload.wikimedia.org/wikipedia/commons/7/7d/Plane_icon.svg
@@ -338,6 +339,7 @@ export default function PrahaMetro() {
           <AirplaneIcon />
         </svg>
       </ZIndexLayer>
+      <RechartsDevtools />
     </LineChart>
   );
 }

@@ -1,4 +1,5 @@
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -104,6 +105,7 @@ export default function CustomizeTooltipContent() {
       <YAxis />
       <Tooltip content={CustomTooltip} defaultIndex={2} active />
       <Bar dataKey="uv" fill="#8884d8" />
+      <RechartsDevtools />
     </BarChart>
   );
 }

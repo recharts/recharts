@@ -1,4 +1,5 @@
 import { Cell, BarChart, Bar } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -19,6 +20,7 @@ const CellBarExample = ({ isAnimationActive = true }: { isAnimationActive?: bool
         <Cell key={`cell-${index}`} fill="none" stroke={colors[index]} strokeWidth={index === 2 ? 4 : 1} />
       ))}
     </Bar>
+    <RechartsDevtools />
   </BarChart>
 );
 

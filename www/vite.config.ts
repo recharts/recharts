@@ -5,6 +5,10 @@ import sitemap from 'vite-plugin-sitemap';
 import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
 
+// Use USE_LOCAL_DEVTOOLS=true to use the local source code of @recharts/devtools
+// This is useful for developing the devtools package itself, as it shares the same Context as the app.
+const useLocalDevtools = process.env.USE_LOCAL_DEVTOOLS === 'true';
+
 export default defineConfig(() => ({
   base: process.env.BASE_URL || '/',
   plugins: [
@@ -40,6 +44,23 @@ export default defineConfig(() => ({
   build: {
     outDir: resolve(__dirname, 'docs'),
   },
+  optimizeDeps: {
+    /**
+     * We have to exclude @recharts/devtools from optimization
+     * because it uses React context (indirectly) imported from recharts.
+     * When we are using local development versions (using the `resolve.alias` below),
+     * this will cause one pre-bundled version of React context to be different from the one used by the local recharts.
+     * Which means that devtools latch to different context and can't show anything.
+     *
+     * Disabling the pre-bundling for devtools solves this issue.
+     *
+     * Consumers of Recharts who install both recharts and @recharts/devtools from npm
+     * will not have this issue, so this is only needed for our local development setup here.
+     *
+     * https://vite.dev/guide/dep-pre-bundling#the-why
+     */
+    exclude: ['@recharts/devtools'],
+  },
   resolve: {
     alias: {
       /*
@@ -51,6 +72,7 @@ export default defineConfig(() => ({
        * This also gives us hot module reload for free!
        */
       recharts: resolve(__dirname, '../src'),
+      ...(useLocalDevtools ? { '@recharts/devtools': resolve(__dirname, '../../devtools/src/index.ts') } : {}),
     },
   },
 }));
