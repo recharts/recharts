@@ -53,6 +53,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "roundedBars",
             "url": "/en-US/guide/roundedBars/",
           },
+          {
+            "displayName": "Bar Alignment",
+            "key": "barAlignment",
+            "url": "/en-US/guide/barAlignment/",
+          },
         ],
         "key": "guide",
       },

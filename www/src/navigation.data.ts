@@ -18,6 +18,7 @@ const guidePages = [
   'zIndex',
   'performance',
   'roundedBars',
+  'barAlignment',
 ];
 
 export function getSiteRoutes(): string[] {

@@ -1,17 +1,27 @@
-import React, { useState, useEffect, ComponentType } from 'react';
+import React, { useState, useEffect, ComponentType, ReactNode } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
 import { RechartsDevtoolsContext } from '@recharts/devtools';
-import { CodeMirrorEditor, EditorMode } from '../utils/CodeMirrorEditor.tsx';
-import { StackBlitzLink } from './Shared/StackBlitzLink.tsx';
-import { sendEvent } from './analytics.ts';
+import { StackBlitzLink } from './Shared/StackBlitzLink';
+import { sendEvent } from './analytics';
+import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
+import { SourceCodeEditor } from './Playground/SourceCodeEditor';
+import { DevToolsPanel } from './Playground/DevToolsPanel';
+import { CopyButton } from '../utils/CopyButton';
 
-type CodeEditorWithPreviewProps = {
+/**
+ * Props passed to the previewed component.
+ */
+type CodeEditorWithPreviewProps<ControlsType> = {
   /**
    * The component to render by default (before any edits).
    */
-  Component: ComponentType;
+  Component: ComponentType<ControlsType>;
+  /**
+   * This component renders knobs, controls, and various other activities that change the chart
+   */
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
   /**
    * The source code of the component.
    */
@@ -24,16 +34,18 @@ type CodeEditorWithPreviewProps = {
    * Label for analytics tracking.
    */
   analyticsLabel?: string;
+  defaultTool?: ToolType;
 };
 
 type PreviewResultProps = {
-  Component: ComponentType;
+  Component: ComponentType<any>;
   isEditMode: boolean;
   codeToRun: string | null;
   Runner: any;
+  componentProps?: any;
 };
 
-const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner }: PreviewResultProps) => {
+const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner, componentProps }: PreviewResultProps) => {
   // If in edit mode and code has been run, use react-runner
   if (isEditMode && codeToRun && Runner) {
     const scope = {
@@ -45,11 +57,14 @@ const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner }: 
       },
     };
 
+    // Note: react-runner might not easily support passing props to the default export.
+    // If codeToRun defines a component that expects props, they might not be passed unless we wrap the runner.
+    // For now, controls mainly affect the non-edited component.
     return <Runner code={codeToRun} scope={scope} />;
   }
 
   // Otherwise, render the actual component (faster, no parsing needed)
-  return <Component />;
+  return <Component {...componentProps} />;
 });
 
 /**
@@ -59,16 +74,20 @@ const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner }: 
  * By default, renders the Component directly (fast, no parsing).
  * When user clicks "Edit", switches to react-runner for live editing.
  */
-export function CodeEditorWithPreview({
+export function CodeEditorWithPreview<T>({
   Component,
+  Controls,
   sourceCode,
   stackBlitzTitle,
   analyticsLabel,
-}: CodeEditorWithPreviewProps) {
+  defaultTool = 'source',
+}: CodeEditorWithPreviewProps<T>) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedCode, setEditedCode] = useState<string | null>(null);
   const [codeToRun, setCodeToRun] = useState<string | null>(null);
   const [Runner, setRunner] = useState<any>(null);
+  const [activeTool, setActiveTool] = useState<ToolType>(defaultTool);
+  const [controlsState, setControlsState] = useState<T | null>(null);
 
   // Lazy load react-runner when entering edit mode
   useEffect(() => {
@@ -110,43 +129,82 @@ export function CodeEditorWithPreview({
 
   const codeToDisplay = editedCode ?? sourceCode;
 
-  const [activeMode, setActiveMode] = useState<EditorMode>('source');
+  // Actions for the Source tool (Edit/Run buttons)
+  const sourceActions: ReactNode[] = [
+    <CopyButton key="copy" getValueToCopy={() => codeToDisplay} />,
+    isEditMode ? (
+      <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
+        <i className="icon-control-play" />
+        <span>Run</span>
+      </button>
+    ) : (
+      <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
+        <i className="icon-pencil" />
+        <span>Edit</span>
+      </button>
+    ),
+    <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
+      <i className="icon-share" />
+      <span>Open in StackBlitz</span>
+    </StackBlitzLink>,
+  ];
+
+  // Fix for DevTools Copy Button:
+  // DevToolsPanel needs to expose the value to the parent if we want the button in the Toolbar.
+  /* Rethinking:
+     DevToolsPanel captures the value.
+     ToolFrame renders actions.
+     We need shared state for devToolsValue in this component to pass to CopyButton.
+  */
+  // Refactor for DevTools Copy State
+  const [devToolsValue, setDevToolsValue] = useState<unknown>(undefined);
+
+  // Update tools definition
+  const actualTools: ToolItem[] = [
+    {
+      name: 'source',
+      label: 'Source code',
+      component: (
+        <SourceCodeEditor
+          value={codeToDisplay}
+          onChange={isEditMode ? setEditedCode : undefined}
+          readOnly={!isEditMode}
+          className="tsx"
+        />
+      ),
+      actions: sourceActions,
+    },
+    {
+      name: 'devtools',
+      label: 'Hook inspector',
+      component: <DevToolsPanel onValueChange={setDevToolsValue} />,
+      actions: [<CopyButton key="copy-devtools" getValueToCopy={() => devToolsValue} />],
+    },
+  ];
+
+  if (Controls) {
+    actualTools.push({
+      name: 'controls',
+      label: 'Controls',
+      component: (
+        <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
+          <Controls onChange={setControlsState} />
+        </div>
+      ),
+    });
+  }
 
   return (
     <RechartsDevtoolsContext>
-      <PreviewResult Component={Component} isEditMode={isEditMode} codeToRun={codeToRun} Runner={Runner} />
-
-      <CodeMirrorEditor
-        value={codeToDisplay}
-        onChange={isEditMode ? setEditedCode : undefined}
-        readOnly={!isEditMode}
-        className="tsx"
-        activeMode={activeMode}
-        onModeChange={setActiveMode}
-        tools={[
-          { name: 'source', label: 'Source code' },
-          { name: 'devtools', label: 'Hook inspector' },
-        ]}
-        toolbarItems={{
-          source: [
-            isEditMode ? (
-              <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
-                <i className="icon-control-play" />
-                <span>Run</span>
-              </button>
-            ) : (
-              <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
-                <i className="icon-pencil" />
-                <span>Edit</span>
-              </button>
-            ),
-            <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
-              <i className="icon-share" />
-              <span>Open in StackBlitz</span>
-            </StackBlitzLink>,
-          ],
-        }}
+      <PreviewResult
+        Component={Component}
+        isEditMode={isEditMode}
+        codeToRun={codeToRun}
+        Runner={Runner}
+        componentProps={controlsState}
       />
+
+      <ToolFrame activeTool={activeTool} onToolChange={setActiveTool} tools={actualTools} />
     </RechartsDevtoolsContext>
   );
 }

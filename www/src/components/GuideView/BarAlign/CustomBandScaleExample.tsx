@@ -1,18 +1,32 @@
+import React, { useMemo } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { scaleBand } from 'd3-scale';
 
-const data = generateMockData(10, 50);
+const data = generateMockData(5, 50);
 
-// You don't need to set domain and scale, Recharts will do it for you based on the data.
-const customScale = scaleBand().paddingInner(0.5).paddingOuter(0.8).align(0.7);
+export default function CustomBandScaleExample(props: Partial<ControlsType>) {
+  // You don't need to set domain and scale, Recharts will do it for you based on the data.
+  const customScale = useMemo(
+    () =>
+      scaleBand()
+        .paddingInner(props.paddingInner ?? 0.1)
+        .paddingOuter(props.paddingOuter ?? 0.1)
+        .align(props.align ?? 0.1),
+    [props.paddingInner, props.paddingOuter, props.align],
+  );
 
-export default function CustomBandScaleExample() {
   return (
-    <BarChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data}>
-      <Bar dataKey="x" fill="#12978f" />
-      <Bar dataKey="y" fill="#804351" />
-      <Bar dataKey="z" fill="#a16712" />
+    <BarChart
+      style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }}
+      responsive
+      data={data}
+      barCategoryGap={props.barCategoryGap == null ? undefined : `${props.barCategoryGap * 100}%`}
+      barGap={props.barGap == null ? undefined : `${props.barGap * 100}%`}
+    >
+      <Bar dataKey="x" fill="#12978f" isAnimationActive={false} />
+      <Bar dataKey="y" fill="#804351" isAnimationActive={false} />
+      <Bar dataKey="z" fill="#a16712" isAnimationActive={false} />
       <XAxis dataKey="label" scale={customScale} />
       <RechartsDevtools />
     </BarChart>
@@ -23,6 +37,8 @@ type ControlsType = {
   paddingInner: number;
   paddingOuter: number;
   align: number;
+  barGap: number;
+  barCategoryGap: number;
 };
 
 /**
@@ -32,44 +48,119 @@ type ControlsType = {
  * @param onChange
  * @constructor
  */
-export function Controls({ onChange }: { onChange: (values: ControlsType) => void }) {
+export function BarAlignControls({ onChange }: { onChange: (values: ControlsType) => void }) {
+  const [state, setState] = React.useState<ControlsType>({
+    paddingInner: 0,
+    paddingOuter: 0.8,
+    align: 0.7,
+    barGap: 0.1,
+    barCategoryGap: 0.1,
+  });
+
+  const handleChange = (key: keyof ControlsType, value: number) => {
+    const newState = { ...state, [key]: value };
+    setState(newState);
+    onChange(newState);
+  };
+
+  // Emit initial state on mount so the chart is correct
+  React.useEffect(() => {
+    onChange(state);
+  }, [onChange, state]);
+
+  // Eslint is reporting a false positive here, not sure why
+  /* eslint-disable jsx-a11y/control-has-associated-label */
   return (
     <form>
-      <label>
-        Padding Inner:
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          defaultValue="0"
-          onChange={e => onChange({ paddingInner: parseFloat(e.target.value), paddingOuter: 0, align: 0 })}
-        />
-      </label>
-      <br />
-      <label>
-        Padding Outer:
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          defaultValue="0.8"
-          onChange={e => onChange({ paddingInner: 0, paddingOuter: parseFloat(e.target.value), align: 0 })}
-        />
-      </label>
-      <br />
-      <label>
-        Align:
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          defaultValue="0.7"
-          onChange={e => onChange({ paddingInner: 0, paddingOuter: 0, align: parseFloat(e.target.value) })}
-        />
-      </label>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <label htmlFor="bar-align-bar-gap">BarChart.barGap</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id="bar-align-bar-gap"
+                type="range"
+                min="0"
+                max="0.5"
+                step="0.01"
+                value={state.barGap}
+                onChange={e => handleChange('barGap', parseFloat(e.target.value))}
+              />
+            </td>
+            <td>{`${(state.barGap * 100).toFixed(0)}%`}</td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="bar-align-bar-category-gap">BarChart.barCategoryGap</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id="bar-align-bar-category-gap"
+                type="range"
+                min="0"
+                max="0.5"
+                step="0.01"
+                value={state.barCategoryGap}
+                onChange={e => handleChange('barCategoryGap', parseFloat(e.target.value))}
+              />
+            </td>
+            <td>{`${(state.barCategoryGap * 100).toFixed(0)}%`}</td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="bar-align-padding-inner">bandScale.paddingInner</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id="bar-align-padding-inner"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={state.paddingInner}
+                onChange={e => handleChange('paddingInner', parseFloat(e.target.value))}
+              />
+            </td>
+            <td>{state.paddingInner}</td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="bar-align-padding-outer">bandScale.paddingOuter</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id="bar-align-padding-outer"
+                type="range"
+                min="0"
+                max="10"
+                step="0.01"
+                value={state.paddingOuter}
+                onChange={e => handleChange('paddingOuter', parseFloat(e.target.value))}
+              />
+            </td>
+            <td>{state.paddingOuter}</td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="bar-align-align">bandScale.align</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id="bar-align-align"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={state.align}
+                onChange={e => handleChange('align', parseFloat(e.target.value))}
+              />
+            </td>
+            <td>{state.align}</td>
+          </tr>
+        </tbody>
+      </table>
     </form>
   );
 }

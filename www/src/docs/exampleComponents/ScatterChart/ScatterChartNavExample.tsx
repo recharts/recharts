@@ -1,5 +1,4 @@
 import { Scatter, ScatterChart, ZAxis } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
 
 const ScatterChartNavExample = () => {
   return (
@@ -17,7 +16,6 @@ const ScatterChartNavExample = () => {
     >
       <Scatter dataKey="x" fill="#8884d8" />
       <ZAxis range={[20, 60]} dataKey="z" />
-      <RechartsDevtools />
     </ScatterChart>
   );
 };

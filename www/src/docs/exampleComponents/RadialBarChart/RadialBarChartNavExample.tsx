@@ -1,5 +1,4 @@
 import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -14,7 +13,6 @@ const RadialBarChartNavExample = () => {
     <RadialBarChart responsive innerRadius="20%" outerRadius="130%" data={data} style={{ aspectRatio: 1 }}>
       <RadialBar background dataKey="uv" />
       <PolarAngleAxis domain={[0, 44]} type="number" dataKey="uv" />
-      <RechartsDevtools />
     </RadialBarChart>
   );
 };
