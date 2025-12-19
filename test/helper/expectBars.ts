@@ -1,7 +1,7 @@
 import { expect } from 'vitest';
 import { assertNotNull } from './assertNotNull';
 
-type ExpectedBar = {
+export type ExpectedBar = {
   x: string;
   y: string;
   width: string;
