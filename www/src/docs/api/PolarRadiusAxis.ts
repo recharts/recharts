@@ -27,7 +27,7 @@ export const PolarRadiusAxisAPI = {
       defaultVal: true,
       isOptional: false,
       desc: {
-        'en-US': 'Allow the axis has duplicated categorys or not when the type of axis is "category".',
+        'en-US': 'Allow the axis has duplicated categories or not when the type of axis is "category".',
         'zh-CN': '是否允许类目轴有重复的类目。',
       },
     },

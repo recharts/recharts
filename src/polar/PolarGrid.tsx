@@ -254,6 +254,7 @@ export const PolarGrid = (outsideProps: Props) => {
     outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
     polarAngles,
     polarRadius,
+    zIndex,
     ...inputs,
   };
 

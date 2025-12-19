@@ -11,7 +11,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Allow the axis has duplicated categorys or not when the type of axis is &quot;category&quot;.</p>
+            <p>Allow the axis has duplicated categories or not when the type of axis is &quot;category&quot;.</p>
           </section>
         ),
       },
@@ -90,7 +90,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
+            <p>Decides how to extract the value from the data:</p>
             <ul>
               <li>
                 <code>string</code>: the name of the field in the data object;
@@ -99,10 +99,10 @@ export const PolarAngleAxisAPI: ApiDoc = {
                 <code>number</code>: the index of the field in the data;
               </li>
               <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
+                <code>function</code>: a function that receives the data object and returns the value.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of Radius or Angle axis.</p>
+            <p>If undefined, it will reuse the dataKey of graphical items.</p>
           </section>
         ),
       },

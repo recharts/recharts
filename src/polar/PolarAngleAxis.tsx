@@ -35,7 +35,7 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   allowDecimals?: boolean;
   /**
-   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   * Allow the axis has duplicated categories or not when the type of axis is "category".
    * @defaultValue true
    */
   allowDuplicatedCategory?: boolean;
@@ -71,12 +71,12 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   cy?: number;
   /**
-   * Decides how to extract the value of this Area from the data:
+   * Decides how to extract the value from the data:
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Area.
+   * - `function`: a function that receives the data object and returns the value.
    *
-   * If undefined, it will reuse the dataKey of Radius or Angle axis.
+   * If undefined, it will reuse the dataKey of graphical items.
    */
   dataKey?: DataKey<any>;
   domain?: AxisDomain;

@@ -27,7 +27,7 @@ export const ReferenceAreaAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'A boundary value of the area. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis is a category axis, the value of x must be one of the categorys. If one of x1 or x2 is invalidate, the area will cover along x-axis.',
+          'A boundary value of the area. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis is a category axis, the value of x must be one of the categories. If one of x1 or x2 is invalidate, the area will cover along x-axis.',
         'zh-CN':
           '用来描述参考区域 x 坐标的一个边界值，当 x 轴是数值类型的坐标轴时，这个值必须为数值类型。当 x 轴为类目轴时， 这个值必须为 x 轴 domain 中的一个元素。',
       },
@@ -38,7 +38,7 @@ export const ReferenceAreaAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'A boundary value of the area. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis is a category axis, the value of x must be one of the categorys. If one of x1 or x2 is invalidate, the area will cover along x-axis.',
+          'A boundary value of the area. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis is a category axis, the value of x must be one of the categories. If one of x1 or x2 is invalidate, the area will cover along x-axis.',
         'zh-CN':
           '用来描述参考区域 x 坐标的一个边界值，当 x 轴是数值类型的坐标轴时，这个值必须为数值类型。当 x 轴为类目轴时， 这个值必须为 x 轴 domain 中的一个元素。',
       },
@@ -49,7 +49,7 @@ export const ReferenceAreaAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'A boundary value of the area. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis is a category axis, the value of y must be one of the categorys. If one of y1 or y2 is invalidate, the area will cover along y-axis.',
+          'A boundary value of the area. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis is a category axis, the value of y must be one of the categories. If one of y1 or y2 is invalidate, the area will cover along y-axis.',
         'zh-CN':
           '用来描述参考区域 y 坐标的一个边界值，当 y 轴是数值类型的坐标轴时，这个值必须为数值类型。当 y 轴为类目轴时， 这个值必须为 y 轴 domain 中的一个元素。',
       },
@@ -60,7 +60,7 @@ export const ReferenceAreaAPI = {
       isOptional: true,
       desc: {
         'en-US':
-          'A boundary value of the area. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis is a category axis, the value of y must be one of the categorys. If one of y1 or y2 is invalidate, the area will cover along y-axis.',
+          'A boundary value of the area. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis is a category axis, the value of y must be one of the categories. If one of y1 or y2 is invalidate, the area will cover along y-axis.',
         'zh-CN':
           '用来描述参考区域 y 坐标的一个边界值，当 y 轴是数值类型的坐标轴时，这个值必须为数值类型。当 y 轴为类目轴时， 这个值必须为 y 轴 domain 中的一个元素。',
       },
