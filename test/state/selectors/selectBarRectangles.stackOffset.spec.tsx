@@ -1,11 +1,21 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
+import { Series } from 'victory-vendor/d3-shape';
 import { Bar, BarChart, BarRectangleItem, BarStack } from '../../../src';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { PageData } from '../../_data';
-import { selectBarRectangles } from '../../../src/state/selectors/barSelectors';
+import {
+  selectBarPosition,
+  selectBarRectangles,
+  selectStackedDataOfItem,
+} from '../../../src/state/selectors/barSelectors';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { expectBars, ExpectedBar } from '../../helper/expectBars';
+import { BarPositionPosition, getStackedData } from '../../../src/util/ChartUtils';
+import { StackDataPoint, StackSeriesIdentifier } from '../../../src/util/stacks/stackTypes';
+import { selectDisplayedStackedData } from '../../../src/state/selectors/axisSelectors';
+import { defaultAxisId } from '../../../src/state/cartesianAxisSlice';
+import { DisplayedStackedData } from '../../../src/state/selectors/combiners/combineDisplayedStackedData';
 
 describe('stackOffset=sign with all positive numbers should behave the same as stackOffset=none', () => {
   const expectedBars: ReadonlyArray<ExpectedBar> = [
@@ -272,6 +282,29 @@ describe('stackOffset=sign with all positive numbers should behave the same as s
     }),
   ];
 
+  const expectedBarPosition3: BarPositionPosition = {
+    offset: 3.166666666666667,
+    size: 25,
+  };
+
+  const expectedStackedDataOfItem3: Series<StackDataPoint, StackSeriesIdentifier> = expect.toBeRechartsStackedSeries([
+    [2800, 5200],
+    [4867, 7267],
+    [1698, 4098],
+    [10000, 12400],
+    [4186, 6586],
+    [4989, 7389],
+  ]);
+
+  const expectedStackedData: DisplayedStackedData = [
+    { blue: 2400, green: 2400, red: 400 },
+    { blue: 2400, green: 4567, red: 300 },
+    { blue: 2400, green: 1398, red: 300 },
+    { blue: 2400, green: 9800, red: 200 },
+    { blue: 2400, green: 3908, red: 278 },
+    { blue: 2400, green: 4800, red: 189 },
+  ];
+
   describe('in chart with stackOffset=none', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <BarChart width={200} height={200} data={PageData} stackOffset="none">
@@ -290,27 +323,38 @@ describe('stackOffset=sign with all positive numbers should behave the same as s
     });
 
     it('should select rectangles for first bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'red', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'red', false, undefined));
       expectLastCalledWith(spy, expectedRectangles1);
     });
 
     it('should select rectangles for second bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'green', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'green', false, undefined));
       expectLastCalledWith(spy, expectedRectangles2);
     });
 
     it('should select rectangles for third bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'blue', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'blue', false, undefined));
       expectLastCalledWith(spy, expectedRectangles3);
+    });
+
+    test('selectBarPosition', () => {
+      const { spy } = renderTestCase(state => selectBarPosition(state, 'blue', false));
+      expectLastCalledWith(spy, expectedBarPosition3);
+    });
+
+    test('selectStackedDataOfItem', () => {
+      const { spy } = renderTestCase(state => selectStackedDataOfItem(state, 'blue', false));
+      expectLastCalledWith(spy, expectedStackedDataOfItem3);
+    });
+
+    test('selectDisplayedStackedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedStackedData(state, 'yAxis', defaultAxisId, false));
+      expectLastCalledWith(spy, expectedStackedData);
+    });
+
+    test('getStackedData', () => {
+      const actual = getStackedData(expectedStackedData, ['red', 'green', 'blue'], 'none');
+      expect(actual[2]).toEqual(expectedStackedDataOfItem3);
     });
   });
 
@@ -339,27 +383,98 @@ describe('stackOffset=sign with all positive numbers should behave the same as s
     });
 
     it('should select rectangles for first bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'red', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'red', false, undefined));
       expectLastCalledWith(spy, expectedRectangles1);
     });
 
     it('should select rectangles for second bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'green', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'green', false, undefined));
       expectLastCalledWith(spy, expectedRectangles2);
     });
 
     it('should select rectangles for third bar', () => {
-      const { spy } = renderTestCase(state => {
-        return selectBarRectangles(state, 'blue', false, undefined);
-      });
-
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'blue', false, undefined));
       expectLastCalledWith(spy, expectedRectangles3);
+    });
+
+    test('selectBarPosition', () => {
+      const { spy } = renderTestCase(state => selectBarPosition(state, 'blue', false));
+      expectLastCalledWith(spy, expectedBarPosition3);
+    });
+
+    test('selectStackedDataOfItem', () => {
+      const { spy } = renderTestCase(state => selectStackedDataOfItem(state, 'blue', false));
+      expectLastCalledWith(spy, expectedStackedDataOfItem3);
+    });
+
+    test('selectDisplayedStackedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedStackedData(state, 'yAxis', defaultAxisId, false));
+      expectLastCalledWith(spy, expectedStackedData);
+    });
+
+    test('getStackedData', () => {
+      const actual = getStackedData(expectedStackedData, ['red', 'green', 'blue'], 'sign');
+      expect(actual[2]).toEqual(expectedStackedDataOfItem3);
+    });
+  });
+
+  describe('in chart with stackOffset=positive', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={200} height={200} data={PageData} stackOffset="positive">
+        <BarStack stackId="mystackid">
+          <Bar dataKey="uv" id="red" isAnimationActive={false} />
+          <Bar dataKey="pv" id="green" isAnimationActive={false} />
+          <Bar dataKey="amt" id="blue" isAnimationActive={false} />
+          {children}
+        </BarStack>
+      </BarChart>
+    ));
+
+    /*
+     * Because all numbers are positive in PageData,
+     * stackOffset=positive should behave the same as stackOffset=none
+     * This was not reported in https://github.com/recharts/recharts/issues/6803
+     * but it stands to reason that it should behave the same!
+     */
+
+    it('should render bars', () => {
+      const { container } = renderTestCase();
+      expectBars(container, expectedBars);
+    });
+
+    it('should select rectangles for first bar', () => {
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'red', false, undefined));
+      expectLastCalledWith(spy, expectedRectangles1);
+    });
+
+    it('should select rectangles for second bar', () => {
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'green', false, undefined));
+      expectLastCalledWith(spy, expectedRectangles2);
+    });
+
+    it('should select rectangles for third bar', () => {
+      const { spy } = renderTestCase(state => selectBarRectangles(state, 'blue', false, undefined));
+      expectLastCalledWith(spy, expectedRectangles3);
+    });
+
+    test('selectBarPosition', () => {
+      const { spy } = renderTestCase(state => selectBarPosition(state, 'blue', false));
+      expectLastCalledWith(spy, expectedBarPosition3);
+    });
+
+    test('selectStackedDataOfItem', () => {
+      const { spy } = renderTestCase(state => selectStackedDataOfItem(state, 'blue', false));
+      expectLastCalledWith(spy, expectedStackedDataOfItem3);
+    });
+
+    test('selectDisplayedStackedData', () => {
+      const { spy } = renderTestCase(state => selectDisplayedStackedData(state, 'yAxis', defaultAxisId, false));
+      expectLastCalledWith(spy, expectedStackedData);
+    });
+
+    test('getStackedData', () => {
+      const actual = getStackedData(expectedStackedData, ['red', 'green', 'blue'], 'positive');
+      expect(actual[2]).toEqual(expectedStackedDataOfItem3);
     });
   });
 });

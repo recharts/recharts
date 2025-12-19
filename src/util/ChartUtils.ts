@@ -371,12 +371,12 @@ export const offsetSign: OffsetAccessor = series => {
 
       if (value >= 0) {
         col[0] = positive;
-        col[1] = positive + value;
-        positive = series1;
+        positive += value;
+        col[1] = positive;
       } else {
         col[0] = negative;
-        col[1] = negative + value;
-        negative = series1;
+        negative += value;
+        col[1] = negative;
       }
     }
   }
@@ -413,9 +413,8 @@ export const offsetPositive: OffsetAccessor = series => {
 
       if (value >= 0) {
         col[0] = positive;
-        col[1] = positive + value;
-        // eslint-disable-next-line prefer-destructuring
-        positive = col[1];
+        positive += value;
+        col[1] = positive;
       } else {
         col[0] = 0;
         col[1] = 0;
