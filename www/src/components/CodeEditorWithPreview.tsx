@@ -124,7 +124,7 @@ export function CodeEditorWithPreview({
         activeMode={activeMode}
         onModeChange={setActiveMode}
         tools={[
-          { name: 'source', label: 'Source code view' },
+          { name: 'source', label: 'Source code' },
           { name: 'devtools', label: 'Hook inspector' },
         ]}
         toolbarItems={{
