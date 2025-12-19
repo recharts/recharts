@@ -33,6 +33,8 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Line',
   'Pie',
   'PieChart',
+  'PolarAngleAxis',
+  'PolarGrid',
   'Scatter',
   'Text',
   'ZIndexLayer',

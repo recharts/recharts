@@ -27,7 +27,7 @@ export const ReferenceDotAPI = {
       isOptional: false,
       desc: {
         'en-US':
-          'If the x-axis specified by xAxisId is a number axis, the type of x must be Number. If the x-axis specified by xAxisId is a category axis, the value of x must be one of the categorys, otherwise no dot will be drawn.',
+          'If the x-axis specified by xAxisId is a number axis, the type of x must be Number. If the x-axis specified by xAxisId is a category axis, the value of x must be one of the categories, otherwise no dot will be drawn.',
         'zh-CN':
           '用来描述 x 坐标的值，当 x 轴是数值类型的坐标轴时，这个值必须为数值类型。当 x 轴为类目轴时， 这个值必须为 x 轴 domain 中的一个元素。',
       },
@@ -38,7 +38,7 @@ export const ReferenceDotAPI = {
       isOptional: false,
       desc: {
         'en-US':
-          'If the y-axis specified by yAxisId is a number axis, the type of y must be Number. If the y-axis specified by yAxisId is a category axis, the value of y must be one of the categorys, otherwise no dot will be drawn.',
+          'If the y-axis specified by yAxisId is a number axis, the type of y must be Number. If the y-axis specified by yAxisId is a category axis, the value of y must be one of the categories, otherwise no dot will be drawn.',
         'zh-CN':
           '用来描述 y 坐标的值，当 y 轴是数值类型的坐标轴时，这个值必须为数值类型。当 y 轴为类目轴时， 这个值必须为 y 轴 domain 中的一个元素。',
       },

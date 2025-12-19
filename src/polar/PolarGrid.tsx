@@ -10,15 +10,51 @@ import { PolarViewBoxRequired } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface PolarGridProps extends ZIndexable {
+  /**
+   * The x-coordinate of center.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
+   */
   cx?: number;
+  /**
+   * The y-coordinate of center.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
+   */
   cy?: number;
+  /**
+   * The radius of the inner polar grid.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
+   */
   innerRadius?: number;
+  /**
+   * The radius of the outer polar grid.
+   * When used inside a chart context, this prop is calculated based on the chart's dimensions,
+   * and this prop is ignored.
+   *
+   * This is only used when rendered outside a chart context.
+   */
   outerRadius?: number;
+  /**
+   * The array of every line grid's angle.
+   */
   polarAngles?: ReadonlyArray<number>;
+  /**
+   * The array of every circle grid's radius.
+   */
   polarRadius?: ReadonlyArray<number>;
   /**
+   * The type of polar grids.
    * @defaultValue polygon
    */
   gridType?: 'polygon' | 'circle';
@@ -34,6 +70,17 @@ interface PolarGridProps extends ZIndexable {
    * @defaultValue 0
    */
   radiusAxisId?: AxisId;
+  /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
+   * @defaultValue -100
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
+   */
+  zIndex?: number;
 }
 
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
@@ -162,22 +209,32 @@ const ConcentricGridPath = (props: PropsWithDefaults) => {
   );
 };
 
+export const defaultPolarGridProps = {
+  angleAxisId: 0,
+  radiusAxisId: 0,
+  gridType: 'polygon',
+  radialLines: true,
+  zIndex: DefaultZIndexes.grid,
+} as const satisfies Partial<Props>;
+
 /**
  * @consumes PolarViewBoxContext
  */
-export const PolarGrid = ({
-  gridType = 'polygon',
-  radialLines = true,
-  angleAxisId = 0,
-  radiusAxisId = 0,
-  cx: cxFromOutside,
-  cy: cyFromOutside,
-  innerRadius: innerRadiusFromOutside,
-  outerRadius: outerRadiusFromOutside,
-  polarAngles: polarAnglesInput,
-  polarRadius: polarRadiusInput,
-  ...inputs
-}: Props) => {
+export const PolarGrid = (outsideProps: Props) => {
+  const {
+    gridType,
+    radialLines,
+    angleAxisId,
+    radiusAxisId,
+    cx: cxFromOutside,
+    cy: cyFromOutside,
+    innerRadius: innerRadiusFromOutside,
+    outerRadius: outerRadiusFromOutside,
+    polarAngles: polarAnglesInput,
+    polarRadius: polarRadiusInput,
+    zIndex,
+    ...inputs
+  } = resolveDefaultProps(outsideProps, defaultPolarGridProps);
   const polarViewBox: PolarViewBoxRequired | undefined = useAppSelector(selectPolarViewBox);
 
   const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));
@@ -197,8 +254,8 @@ export const PolarGrid = ({
     outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
     polarAngles,
     polarRadius,
+    zIndex,
     ...inputs,
-    zIndex: inputs.zIndex ?? DefaultZIndexes.grid,
   };
 
   const { outerRadius } = props;

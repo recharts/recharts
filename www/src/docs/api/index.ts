@@ -34,8 +34,8 @@ import { TextAPI } from './TextAPI';
 import { PieAPI } from './PieAPI';
 import { RadarAPI as Radar } from './Radar';
 import { RadialBarAPI as RadialBar } from './RadialBar';
-import { PolarAngleAxisAPI as PolarAngleAxis } from './PolarAngleAxis';
-import { PolarGridAPI as PolarGrid } from './PolarGrid';
+import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
+import { PolarGridAPI as PolarGrid } from './PolarGridAPI';
 import { PolarRadiusAxisAPI as PolarRadiusAxis } from './PolarRadiusAxis';
 
 import { CrossAPI as Cross } from './Cross';
@@ -50,8 +50,8 @@ import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
-import { CustomizedAPI } from './CustomizedAPI.tsx';
-import { LabelListAPI } from './LabelListAPI.tsx';
+import { CustomizedAPI } from './CustomizedAPI';
+import { LabelListAPI } from './LabelListAPI';
 
 export const allExamples: Record<string, ApiDoc> = {
   AreaChart,
@@ -91,7 +91,7 @@ export const allExamples: Record<string, ApiDoc> = {
   Pie: PieAPI,
   RadialBar,
   Radar,
-  PolarAngleAxis,
+  PolarAngleAxis: PolarAngleAxisAPI,
   PolarGrid,
   PolarRadiusAxis,
   ReferenceLine,
