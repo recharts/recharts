@@ -48,6 +48,11 @@ describe('cross-component prop consistency', () => {
       reason: 'Children comments vary widely based on component purpose',
     },
     {
+      components: ['*'],
+      prop: 'hide',
+      reason: 'multiple components have hide, the behaviour is different for each',
+    },
+    {
       components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
       prop: 'height',
       reason: 'Many components assign different meanings to height',
@@ -163,6 +168,22 @@ describe('cross-component prop consistency', () => {
       components: ['PolarGrid'],
       prop: 'outerRadius',
       reason: 'Unlike other components, this can not be a percentage string',
+    },
+    {
+      components: ['PolarRadiusAxis'],
+      prop: 'angle',
+      reason:
+        'PolarRadiusAxis angle means rotation of the whole axis, unlike other components where it means rotation of text',
+    },
+    {
+      components: ['PolarRadiusAxis'],
+      prop: 'label',
+      reason: 'Axis label renders one element, graphical items label render one per data point',
+    },
+    {
+      components: ['PolarRadiusAxis'],
+      prop: 'dataKey',
+      reason: 'Axis dataKey has different implications than graphical items dataKey',
     },
   ];
 

@@ -198,6 +198,7 @@ export const yAxisDefaultProps = {
   hide: false,
   includeHidden: implicitYAxis.includeHidden,
   interval: implicitYAxis.interval,
+  label: false,
   minTickGap: implicitYAxis.minTickGap,
   mirror: implicitYAxis.mirror,
   orientation: implicitYAxis.orientation,

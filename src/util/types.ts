@@ -758,17 +758,38 @@ export interface BaseAxisProps {
     | CustomScaleDefinition<string>
     | CustomScaleDefinition<number>
     | CustomScaleDefinition<Date>;
-  /** The option for tick */
+  /**
+   * If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.
+   * If object set, ticks will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom tick element.
+   * If set a function, the function will be called to render customized ticks.
+   * @defaultValue true
+   */
   tick?: TickProp;
-  /** The count of ticks */
+
+  /**
+   * The count of axis ticks. Not used if 'type' is 'category'.
+   * @defaultValue 5
+   */
   tickCount?: number;
-  /** The option for axisLine */
+  /**
+   * If false set, axis line will not be drawn. If true set, axis line will be drawn which have the props calculated internally.
+   * If object set, axis line will be drawn which have the props merged by the internal calculated props and the option.
+   * @defaultValue true
+   */
   axisLine?: boolean | SVGProps<SVGLineElement>;
-  /** The option for tickLine */
+
+  /**
+   * If false set, tick lines will not be drawn. If true set, tick lines will be drawn which have the props calculated internally.
+   * If object set, tick lines will be drawn which have the props merged by the internal calculated props and the option.
+   * @defaultValue true
+   */
   tickLine?: boolean | SVGProps<SVGLineElement>;
   /** The size of tick line */
   tickSize?: number;
-  /** The formatter function of tick */
+  /**
+   * The formatter function of ticks.
+   */
   tickFormatter?: (value: any, index: number) => string;
   /**
    * When domain of the axis is specified and the type of the axis is 'number',
@@ -794,14 +815,28 @@ export interface BaseAxisProps {
   domain?: AxisDomain;
   /** Consider hidden elements when computing the domain (defaults to false) */
   includeHidden?: boolean;
-  /** The name of data displayed in the axis */
+  /**
+   * The name of data.
+   * This option will be used in tooltip.
+   * If no value was set to this option, the value of dataKey will be used alternatively.
+   */
   name?: string;
-  /** The unit of data displayed in the axis */
+  /**
+   * The unit of data. This option will be used in tooltip.
+   */
   unit?: string;
   range?: AxisRange;
-  /** axis react component */
-  AxisComp?: any;
-  /** Needed to allow usage of the label prop on the X and Y axis */
+  /**
+   * Defines a single label for the whole axis. This is not controlling tick labels.
+   * This prop renders one label in the center of the axis line.
+   * Useful for labeling the axis as a whole, like "Time (in seconds)" or "Distance (in meters)".
+   *
+   * If set a string or a number, default label will be drawn, and the option is content.
+   * If set a React element, the option is the custom react element of drawing label.
+   * If set a function, the function will be called to render customized label.
+   *
+   * @defaultValue false
+   */
   label?: ImplicitLabelType;
   /** The HTML element's class name */
   className?: string;

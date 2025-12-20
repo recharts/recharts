@@ -36,7 +36,7 @@ import { RadarAPI as Radar } from './Radar';
 import { RadialBarAPI as RadialBar } from './RadialBar';
 import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI as PolarGrid } from './PolarGridAPI';
-import { PolarRadiusAxisAPI as PolarRadiusAxis } from './PolarRadiusAxis';
+import { PolarRadiusAxisAPI as PolarRadiusAxis } from './PolarRadiusAxisAPI';
 
 import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';

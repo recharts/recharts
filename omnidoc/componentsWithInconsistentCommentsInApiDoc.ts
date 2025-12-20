@@ -10,7 +10,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'CartesianAxis',
   'Cell',
   'Funnel',
-  'PolarRadiusAxis',
   'Polygon',
   'Radar',
   'RadarChart',

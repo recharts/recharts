@@ -156,6 +156,7 @@ export const xAxisDefaultProps = {
   hide: false,
   includeHidden: implicitXAxis.includeHidden,
   interval: implicitXAxis.interval,
+  label: false,
   minTickGap: implicitXAxis.minTickGap,
   mirror: implicitXAxis.mirror,
   orientation: implicitXAxis.orientation,
