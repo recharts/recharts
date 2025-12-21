@@ -63,10 +63,19 @@ export function BarAlignControls({ onChange }: { onChange: (values: ControlsType
     onChange(newState);
   };
 
-  // Emit initial state on mount so the chart is correct
+  // Emit initial state only on mount so the chart is correct
   React.useEffect(() => {
     onChange(state);
-  }, [onChange, state]);
+    /*
+     * The useEffect includes state in its dependency array while also calling onChange(state).
+     * If the parent's onChange callback causes this component to re-render with the same state object reference,
+     * this will trigger the effect again, potentially causing an infinite loop.
+     *
+     * This ensures the initial state is emitted only once on mount.
+     * Subsequent state changes are already handled by handleChange, so this effect doesn't need to run on every state update.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Eslint is reporting a false positive here, not sure why
   /* eslint-disable jsx-a11y/control-has-associated-label */

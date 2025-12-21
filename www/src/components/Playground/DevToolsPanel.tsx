@@ -15,6 +15,12 @@ type DevToolsPanelProps = {
   onValueChange?: (value: unknown) => void;
 };
 
+declare global {
+  interface HTMLElementEventMap {
+    'recharts-devtools-change': CustomEvent<unknown>;
+  }
+}
+
 /**
  * A panel that renders the Recharts DevTools portal and captures its value.
  */
@@ -33,10 +39,8 @@ export function DevToolsPanel({ className = '', onValueChange }: DevToolsPanelPr
       }
     };
 
-    // @ts-expect-error not sure how to type custom events
     container.addEventListener('recharts-devtools-change', handleDevToolsChange);
     return () => {
-      // @ts-expect-error not sure how to type custom events
       container.removeEventListener('recharts-devtools-change', handleDevToolsChange);
     };
   }, [onValueChange]);
