@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { ComponentType, FunctionComponent, isValidElement, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
-import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent, Size } from '../util/types';
+import {
+  AxisDomainType,
+  AxisInterval,
+  AxisTick,
+  RenderableAxisProps,
+  PresentationAttributesAdaptChildEvent,
+  Size,
+} from '../util/types';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
   addYAxis,
@@ -27,8 +34,20 @@ import { isLabelContentAFunction } from '../component/Label';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 
-interface YAxisProps extends BaseAxisProps {
-  /** The unique id of y-axis */
+interface YAxisProps extends RenderableAxisProps {
+  /**
+   * The type of axis. Numeric axis operates in a continuous range of numbers.
+   * Category axis operates in a discrete set of categories.
+   *
+   * @defaultValue number
+   */
+  type?: AxisDomainType;
+  /**
+   * Unique ID that represents this XAxis.
+   * Required when there are multiple XAxes.
+   *
+   * @defaultValue 0
+   */
   yAxisId?: string | number;
   /**
    * Ticks can be any type when the axis is the type of category
@@ -36,19 +55,22 @@ interface YAxisProps extends BaseAxisProps {
    */
   ticks?: ReadonlyArray<AxisTick>;
   /**
-   * The width of axis, which need to be set by user.
-   * When set to 'auto', the width will be calculated dynamically based on tick labels and axis labels.
+   * The width of the axis, which can be set by user. 'auto' will attempt to resize the axis based on its content.
+   * @defaultValue 60
    */
   width?: YAxisWidth;
   /**
+   * If set true, flips ticks around the axis line, displaying the labels inside the chart instead of outside.
    * @defaultValue false
    */
   mirror?: boolean;
   /**
+   * The orientation of axis.
    * @defaultValue left
    */
   orientation?: YAxisOrientation;
   /**
+   * Specify the padding of y-axis.
    * @defaultValue {"top":0,"bottom":0}
    */
   padding?: YAxisPadding;
@@ -66,16 +88,9 @@ interface YAxisProps extends BaseAxisProps {
    */
   interval?: AxisInterval;
   /**
-   * @defaultValue false
+   * The margin between tick line and tick.
    */
-  reversed?: boolean;
   tickMargin?: number;
-  /**
-   * The rotate angle of tick
-   *
-   * @defaultValue 0
-   */
-  angle?: number;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
@@ -252,6 +267,7 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
 };
 
 /**
+ * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
 export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual);

@@ -1436,7 +1436,7 @@ module.exports = {
 
 ### Fix
 
-- Fix the the bug of legend in ScatterChart and refactor symbols.
+- Fix the bug of legend in ScatterChart and refactor symbols.
 
 ## 0.13.1 (Aug 08, 2016)
 

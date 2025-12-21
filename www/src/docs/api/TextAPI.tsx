@@ -11,9 +11,7 @@ export const TextAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              Text rotation angle in degrees. The text will be rotated around the (x, y) coordinates as the pivot point.
-              Positive values rotate clockwise, negative values rotate counterclockwise. The rotation transform is
-              applied as <code>rotate(angle, x, y)</code>.
+              Text rotation angle in degrees. Positive values rotate clockwise, negative values rotate counterclockwise.
             </p>
           </section>
         ),

@@ -25,7 +25,4 @@ export const componentsWithInconsistentCommentsInApiDoc = [
   'Tooltip',
   'Trapezoid',
   'Treemap',
-  'XAxis',
-  'YAxis',
-  'ZAxis',
 ];

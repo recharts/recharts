@@ -15,8 +15,8 @@ import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithRev
 import { selectChartLayout } from '../../context/chartLayoutContext';
 
 export const implicitAngleAxis: AngleAxisSettings = {
-  allowDataOverflow: false,
-  allowDecimals: false,
+  allowDataOverflow: defaultPolarAngleAxisProps.allowDataOverflow,
+  allowDecimals: defaultPolarAngleAxisProps.allowDecimals,
   allowDuplicatedCategory: false, // defaultPolarAngleAxisProps.allowDuplicatedCategory has it set to true but the actual axis rendering ignores the prop because reasons,
   dataKey: undefined,
   domain: undefined,

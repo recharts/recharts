@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef } from 'react';
-import { AxisDomain, DataKey, ScaleType } from '../util/types';
-import { addZAxis, replaceZAxis, removeZAxis, ZAxisSettings, AxisId } from '../state/cartesianAxisSlice';
+import { BaseAxisProps } from '../util/types';
+import { addZAxis, AxisId, removeZAxis, replaceZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -32,35 +31,27 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
   return null;
 }
 
-export interface Props {
+export interface Props extends BaseAxisProps {
   /**
+   * The type of axis. Numeric axis operates in a continuous range of numbers.
+   * Category axis operates in a discrete set of categories.
+   *
    * @defaultValue number
    */
   type?: 'number' | 'category';
-  /** The name of data displayed in the axis */
-  name?: string;
-  /** The unit of data displayed in the axis */
-  unit?: string;
   /**
-   * The unique id of z-axis
+   * The unique id of z-axis.
    *
    * @defaultValue 0
    */
   zAxisId?: AxisId;
-  /** The key of data displayed in the axis */
-  dataKey?: DataKey<any>;
   /**
-   * The range of axis
+   * The range of axis.
+   * Unlike other axes, the range of z-axis is not informed by chart dimensions.
    *
    * @defaultValue [64,64]
    */
   range?: AxisRange;
-  /**
-   * @defaultValue auto
-   */
-  scale?: ScaleType | CustomScaleDefinition | undefined;
-  /** The domain of scale in this axis */
-  domain?: AxisDomain;
 }
 
 export const zAxisDefaultProps = {
@@ -70,6 +61,12 @@ export const zAxisDefaultProps = {
   type: implicitZAxis.type,
 } as const satisfies Partial<Props>;
 
+/**
+ * Virtual axis, does not render anything itself. Has no ticks, grid lines, or labels.
+ * Useful for dynamically setting Scatter point size, based on data.
+ *
+ * @consumes CartesianViewBoxContext
+ */
 export function ZAxis(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, zAxisDefaultProps);
   return (

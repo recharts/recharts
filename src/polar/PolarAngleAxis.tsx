@@ -7,10 +7,8 @@ import { Polygon } from '../shape/Polygon';
 import { Props as TextProps, Text, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import {
   adaptEventsOfChild,
-  AxisDomain,
-  DataKey,
   PresentationAttributesAdaptChildEvent,
-  ScaleType,
+  RenderableAxisProps,
   TickItem,
 } from '../util/types';
 import { degreeToRadian, getTickClassName, polarToCartesian } from '../util/PolarUtils';
@@ -24,12 +22,11 @@ import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { RechartsScale } from '../util/scale/RechartsScale';
-import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
-export interface PolarAngleAxisProps extends ZIndexable {
+export interface PolarAngleAxisProps extends Omit<RenderableAxisProps, 'tickCount'>, ZIndexable {
   /**
    * @defaultValue false
    */
@@ -43,12 +40,6 @@ export interface PolarAngleAxisProps extends ZIndexable {
    * @defaultValue 0
    */
   angleAxisId?: string | number;
-  /**
-   * If false set, axis line will not be drawn. If true set, axis line will be drawn which have the props calculated internally.
-   * If object set, axis line will be drawn which have the props merged by the internal calculated props and the option.
-   * @defaultValue true
-   */
-  axisLine?: boolean | SVGProps<SVGLineElement>;
   /**
    * The type of axis line.
    * @defaultValue polygon
@@ -71,16 +62,6 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   cy?: number;
   /**
-   * Decides how to extract the value from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value.
-   *
-   * If undefined, it will reuse the dataKey of graphical items.
-   */
-  dataKey?: DataKey<any>;
-  domain?: AxisDomain;
-  /**
    * The orientation of axis text.
    * @defaultValue 'outer'
    */
@@ -90,14 +71,6 @@ export interface PolarAngleAxisProps extends ZIndexable {
    * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    */
   radius?: number | string;
-  /**
-   * @defaultValue false
-   */
-  reversed?: boolean;
-  /**
-   * @defaultValue auto
-   */
-  scale?: ScaleType | CustomScaleDefinition;
   /**
    * If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.
    * If object set, ticks will be drawn which have the props merged by the internal calculated props and the option.
@@ -110,18 +83,17 @@ export interface PolarAngleAxisProps extends ZIndexable {
     | ReactElement<SVGElement>
     | ((props: TickItemTextProps) => ReactElement<SVGElement>)
     | boolean;
+
+  /**
+   * The count of axis ticks. Not used if 'type' is 'category'.
+   */
   tickCount?: number;
   /**
    * The formatter function of ticks.
    */
   tickFormatter?: (value: any, index: number) => string;
   /**
-   * If false set, tick lines will not be drawn. If true set, tick lines will be drawn which have the props calculated internally.
-   * If object set, tick lines will be drawn which have the props merged by the internal calculated props and the option.
-   * @defaultValue true
-   */
-  tickLine?: boolean | SVGProps<SVGLineElement>;
-  /**
+   * The length of tick line.
    * @defaultValue 8
    */
   tickSize?: number;
@@ -135,7 +107,14 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 500
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
   /**
@@ -143,7 +122,7 @@ export interface PolarAngleAxisProps extends ZIndexable {
    */
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
   /**
-   * The customized event handler of mousedown on the the ticks of this axis
+   * The customized event handler of mousedown on the ticks of this axis
    */
   onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
   /**

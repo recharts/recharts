@@ -38,6 +38,9 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'PolarRadiusAxis',
   'Scatter',
   'Text',
+  'XAxis',
+  'YAxis',
+  'ZAxis',
   'ZIndexLayer',
 ];
 

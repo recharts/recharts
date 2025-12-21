@@ -18,7 +18,7 @@ import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice
 import {
   AxisTick,
   AxisType,
-  BaseAxisProps,
+  RenderableAxisProps,
   CartesianLayout,
   CategoricalDomainItem,
   ChartPointer,
@@ -510,7 +510,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis: {
     dataKey?: DataKey<T>;
     allowDuplicatedCategory?: boolean;
-    type?: BaseAxisProps['type'];
+    type?: RenderableAxisProps['type'];
     scale: RechartsScale;
   };
   ticks: Array<TickItem>;

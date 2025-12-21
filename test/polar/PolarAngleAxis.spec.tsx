@@ -1068,6 +1068,7 @@ describe('<PolarAngleAxis />', () => {
 
       expect(tick).toHaveBeenCalledTimes(exampleRadarData.length);
       expect(tick).toHaveBeenNthCalledWith(1, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1087,6 +1088,7 @@ describe('<PolarAngleAxis />', () => {
         y: 46,
       });
       expect(tick).toHaveBeenNthCalledWith(2, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1106,6 +1108,7 @@ describe('<PolarAngleAxis />', () => {
         y: 105.7502166379443,
       });
       expect(tick).toHaveBeenNthCalledWith(3, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1125,6 +1128,7 @@ describe('<PolarAngleAxis />', () => {
         y: 250,
       });
       expect(tick).toHaveBeenNthCalledWith(4, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1144,6 +1148,7 @@ describe('<PolarAngleAxis />', () => {
         y: 394.2497833620557,
       });
       expect(tick).toHaveBeenNthCalledWith(5, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1163,6 +1168,7 @@ describe('<PolarAngleAxis />', () => {
         y: 454,
       });
       expect(tick).toHaveBeenNthCalledWith(6, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1182,6 +1188,7 @@ describe('<PolarAngleAxis />', () => {
         y: 394.2497833620557,
       });
       expect(tick).toHaveBeenNthCalledWith(7, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,
@@ -1201,6 +1208,7 @@ describe('<PolarAngleAxis />', () => {
         y: 250.00000000000003,
       });
       expect(tick).toHaveBeenNthCalledWith(8, {
+        angle: 0,
         cx: 250,
         cy: 250,
         fill: undefined,

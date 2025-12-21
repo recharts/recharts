@@ -53,12 +53,12 @@ describe('cross-component prop consistency', () => {
       reason: 'multiple components have hide, the behaviour is different for each',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis'],
       prop: 'height',
       reason: 'Many components assign different meanings to height',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'YAxis'],
       prop: 'width',
       reason: 'Many components assign different meanings to width',
     },
@@ -176,14 +176,34 @@ describe('cross-component prop consistency', () => {
         'PolarRadiusAxis angle means rotation of the whole axis, unlike other components where it means rotation of text',
     },
     {
-      components: ['PolarRadiusAxis'],
+      components: ['PolarAngleAxis'],
+      prop: 'ticks',
+      reason: 'PolarAngleAxis ticks are different type for some reason, unlike other axis components',
+    },
+    {
+      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
       prop: 'label',
       reason: 'Axis label renders one element, graphical items label render one per data point',
     },
     {
-      components: ['PolarRadiusAxis'],
-      prop: 'dataKey',
-      reason: 'Axis dataKey has different implications than graphical items dataKey',
+      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
+      prop: 'name',
+      reason: 'name does similar thing but from different point of view in axes vs graphical items',
+    },
+    {
+      components: ['XAxis'],
+      prop: 'xAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
+    },
+    {
+      components: ['YAxis'],
+      prop: 'yAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
+    },
+    {
+      components: ['ZAxis'],
+      prop: 'zAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
     },
   ];
 

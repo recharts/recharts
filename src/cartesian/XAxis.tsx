@@ -5,7 +5,7 @@ import * as React from 'react';
 import { ComponentType, ReactNode, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis, defaultCartesianAxisProps } from './CartesianAxis';
-import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { AxisInterval, AxisTick, RenderableAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   addXAxis,
@@ -27,9 +27,10 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 
-interface XAxisProps extends BaseAxisProps {
+interface XAxisProps extends RenderableAxisProps {
   /**
-   * The unique id of x-axis.
+   * Unique ID that represents this XAxis.
+   * Required when there are multiple XAxes.
    *
    * @defaultValue 0
    */
@@ -41,10 +42,12 @@ interface XAxisProps extends BaseAxisProps {
    */
   height?: number;
   /**
+   * If set true, flips ticks around the axis line, displaying the labels inside the chart instead of outside.
    * @defaultValue false
    */
   mirror?: boolean;
   /**
+   * The orientation of axis
    * @defaultValue bottom
    */
   orientation?: XAxisOrientation;
@@ -54,6 +57,7 @@ interface XAxisProps extends BaseAxisProps {
    */
   ticks?: ReadonlyArray<AxisTick>;
   /**
+   * Specify the padding of x-axis.
    * @defaultValue {"left":0,"right":0}
    */
   padding?: XAxisPadding;
@@ -64,19 +68,13 @@ interface XAxisProps extends BaseAxisProps {
    */
   minTickGap?: number;
   /**
+   * If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd", the ticks which is to be shown or hidden will be calculated automatically.
    * @defaultValue preserveEnd
    */
   interval?: AxisInterval;
   /**
-   * @defaultValue false
+   * The margin between tick line and tick.
    */
-  reversed?: boolean;
-  /**
-   * The rotate angle of tick
-   *
-   * @defaultValue 0
-   */
-  angle?: number;
   tickMargin?: number;
 }
 
@@ -209,6 +207,7 @@ const XAxisSettingsDispatcher = (outsideProps: Props) => {
 };
 
 /**
+ * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
 export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual);
