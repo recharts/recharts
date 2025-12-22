@@ -147,31 +147,37 @@ describe('XAxis barSize', () => {
 
     expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
       {
+        index: 0,
         coordinate: 265,
         offset: 0,
         value: 0,
       },
       {
+        index: 1,
         coordinate: 213,
         offset: 0,
         value: 20,
       },
       {
+        index: 2,
         coordinate: 161,
         offset: 0,
         value: 40,
       },
       {
+        index: 3,
         coordinate: 109,
         offset: 0,
         value: 60,
       },
       {
+        index: 4,
         coordinate: 56.999999999999986,
         offset: 0,
         value: 80,
       },
       {
+        index: 5,
         coordinate: 5,
         offset: 0,
         value: 100,

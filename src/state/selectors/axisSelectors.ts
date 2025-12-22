@@ -86,7 +86,7 @@ import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { makeRechartsScale, RechartsScale } from '../../util/scale/RechartsScale';
+import { rechartsScaleFactory, RechartsScale } from '../../util/scale/RechartsScale';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1152,9 +1152,9 @@ export function combineScaleFunction(
   }
 
   if (typeof axis.scale === 'function') {
-    return makeRechartsScale(axis.scale, axisDomain, axisRange);
+    return rechartsScaleFactory(axis.scale, axisDomain, axisRange);
   }
-  return makeRechartsScale(realScaleType, axisDomain, axisRange);
+  return rechartsScaleFactory(realScaleType, axisDomain, axisRange);
 }
 
 export const combineNiceTicks = (
@@ -1842,7 +1842,7 @@ export const combineAxisTicks = (
   niceTicks: ReadonlyArray<number> | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
-  categoricalDomain: ReadonlyArray<unknown> | undefined,
+  categoricalDomain: ReadonlyArray<CategoricalDomainItem> | undefined,
   axisType: RenderableAxisType,
 ): ReadonlyArray<TickItem> | undefined => {
   if (axis == null || scale == null) {
@@ -1871,7 +1871,7 @@ export const combineAxisTicks = (
       .map((entry: AxisTick, index: number): TickItem | null => {
         const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
-        const scaled = scale(scaleContent);
+        const scaled = scale.map(scaleContent);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -1888,8 +1888,8 @@ export const combineAxisTicks = (
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale(entry);
+      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+        const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -1904,19 +1904,23 @@ export const combineAxisTicks = (
   }
 
   if (scale.ticks) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+    return scale
+      .ticks(tickCount)
+      .map((entry: number, index: number): TickItem | null => {
+        const scaled = scale.map(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return { coordinate: scaled + offset, value: entry, index, offset };
+      })
+      .filter(isNotNil);
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
   return scale
     .domain()
     .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
-      const scaled = scale(entry);
+      const scaled = scale.map(entry);
       if (!isWellBehavedNumber(scaled)) {
         return null;
       }
@@ -1964,7 +1968,7 @@ export const combineGraphicalItemTicks = (
   scale: RechartsScale | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
-  categoricalDomain: ReadonlyArray<unknown> | undefined,
+  categoricalDomain: ReadonlyArray<CategoricalDomainItem> | undefined,
   axisType: RenderableAxisType,
 ): TickItem[] | undefined => {
   if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
@@ -1982,8 +1986,8 @@ export const combineGraphicalItemTicks = (
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale(entry);
+      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+        const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -1998,19 +2002,23 @@ export const combineGraphicalItemTicks = (
   }
 
   if (scale.ticks) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+    return scale
+      .ticks(tickCount)
+      .map((entry: number, index: number): TickItem | null => {
+        const scaled = scale.map(entry);
+        if (!isWellBehavedNumber(scaled)) {
+          return null;
+        }
+        return { coordinate: scaled + offset, value: entry, index, offset };
+      })
+      .filter(isNotNil);
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
   return scale
     .domain()
-    .map((entry: unknown, index: number): TickItem | null => {
-      const scaled = scale(entry);
+    .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      const scaled = scale.map(entry);
       if (!isWellBehavedNumber(scaled)) {
         return null;
       }

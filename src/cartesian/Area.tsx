@@ -1034,14 +1034,14 @@ export function computeArea({
     if (isHorizontalLayout) {
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isBreakPoint ? null : (yAxis.scale(value1) ?? null),
+        y: isBreakPoint ? null : (yAxis.scale.map(value1) ?? null),
         value: valueAsArray,
         payload: entry,
       };
     }
 
     return {
-      x: isBreakPoint ? null : (xAxis.scale(value1) ?? null),
+      x: isBreakPoint ? null : (xAxis.scale.map(value1) ?? null),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value: valueAsArray,
       payload: entry,
@@ -1055,18 +1055,18 @@ export function computeArea({
       if (isHorizontalLayout) {
         return {
           x: entry.x,
-          y: x != null && entry.y != null ? (yAxis.scale(x) ?? null) : null,
+          y: x != null && entry.y != null ? (yAxis.scale.map(x) ?? null) : null,
           payload: entry.payload,
         };
       }
       return {
-        x: x != null ? (xAxis.scale(x) ?? null) : null,
+        x: x != null ? (xAxis.scale.map(x) ?? null) : null,
         y: entry.y,
         payload: entry.payload,
       };
     });
   } else {
-    baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
+    baseLine = isHorizontalLayout ? yAxis.scale.map(baseValue) : xAxis.scale.map(baseValue);
   }
 
   return {

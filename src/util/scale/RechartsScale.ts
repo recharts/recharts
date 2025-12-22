@@ -31,13 +31,37 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
   range(): ReadonlyArray<number>;
 
   /**
+   * Returns the minimum value from the range.
+   */
+  rangeMin(): number;
+
+  /**
+   * Returns the maximum value from the range.
+   */
+  rangeMax(): number;
+
+  /**
+   * Returns true if the given value is within the scale's range.
+   * @param value
+   */
+  isInRange(value: number): boolean;
+
+  /**
    * Returns width of each band.
    * Most scales are not banded, so this method is optional.
    * Banded scales (like scaleBand from d3-scale) will implement this method.
    */
   bandwidth?: () => number;
   /**
-   * https://d3js.org/d3-scale/linear#linear_ticks
+   * Quantitative (continuous) scales provide a ticks method that returns representative values from the scale’s domain.
+   * Ordinal and band scales do not have this method.
+   *
+   * An optional count argument requests more or fewer ticks.
+   * The number of ticks returned, however, is not necessarily equal to the requested count.
+   *
+   * @see {@link https://d3js.org/d3-scale/linear#linear_ticks}
+   * @see {@link https://observablehq.com/@d3/scale-ticks}
+   *
    * @param count number of ticks
    */
   ticks?: (count: number | undefined) => ReadonlyArray<number>;
@@ -45,11 +69,17 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
   /**
    * Given an arbitrary input, returns the corresponding point derived from the output range if the input is in the scale's domain.
    * If the input is not included in the domain, returns undefined.
-   *
-   * @param input
    */
-  (input: unknown): number | undefined;
+  map(input: unknown, options?: { position?: BandPosition }): number | undefined;
 }
+
+/**
+ * Position within a band for banded scales.
+ * In scales that are not banded, this parameter is ignored.
+ *
+ * @inline
+ */
+export type BandPosition = 'start' | 'middle' | 'end';
 
 function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
   realScaleType: D3ScaleType,
@@ -66,19 +96,61 @@ function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDo
   return undefined;
 }
 
+export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
+  d3Scale: CustomScaleDefinition<Domain>,
+): RechartsScale<Domain> {
+  const ticksFn = d3Scale.ticks;
+  const bandwidthFn = d3Scale.bandwidth;
+  const range = d3Scale.range();
+  return {
+    domain: () => d3Scale.domain(),
+    range: () => range,
+    rangeMin: () => range[0],
+    rangeMax: () => range[1],
+    isInRange(value: number): boolean {
+      const first = range[0];
+      const last = range[range.length - 1];
+      return first <= last ? value >= first && value <= last : value >= last && value <= first;
+    },
+    bandwidth: bandwidthFn ? () => bandwidthFn.call(d3Scale) : undefined,
+    ticks: ticksFn ? (count: number | undefined) => ticksFn.call(d3Scale, count) : undefined,
+    map: (input: Domain, options?: { position?: BandPosition }) => {
+      let baseValue = d3Scale(input);
+      if (baseValue == null) {
+        return undefined;
+      }
+      if (d3Scale.bandwidth && options?.position) {
+        const bandWidth = d3Scale.bandwidth();
+        switch (options.position) {
+          case 'middle':
+            baseValue += bandWidth / 2;
+            break;
+          case 'end':
+            baseValue += bandWidth;
+            break;
+          default:
+            // 'start' requires no adjustment
+            break;
+        }
+      }
+      return baseValue;
+    },
+  };
+}
+
 /**
  * Converts external scale definition into internal RechartsScale definition.
  * @param scale custom function scale - if you have the string, use `combineRealScaleType` first
  * @param axisDomain
  * @param axisRange
  */
-export function makeRechartsScale<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
+export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
   scale: D3ScaleType | CustomScaleDefinition<Domain> | undefined,
   axisDomain: ReadonlyArray<Domain>,
   axisRange: AxisRange,
 ): RechartsScale<Domain> | undefined {
   if (typeof scale === 'function') {
-    return scale.copy().domain(axisDomain).range(axisRange);
+    return d3ScaleToRechartsScale(scale.copy().domain(axisDomain).range(axisRange));
   }
   if (scale == null) {
     return undefined;
@@ -95,5 +167,5 @@ export function makeRechartsScale<Domain extends CategoricalDomainItem = Categor
    * so it appears immutable from the outside.
    */
   checkDomainOfScale(d3ScaleFunction);
-  return d3ScaleFunction;
+  return d3ScaleToRechartsScale(d3ScaleFunction);
 }

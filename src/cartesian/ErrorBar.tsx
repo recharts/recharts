@@ -174,8 +174,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = yMid + width;
       const yMax = yMid - width;
 
-      const xMin = scale(value - lowBound);
-      const xMax = scale(value + highBound);
+      const xMin = scale.map(value - lowBound);
+      const xMax = scale.map(value + highBound);
 
       if (xMin != null && xMax != null) {
         // the right line of |--|
@@ -193,8 +193,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = xMid - width;
       const xMax = xMid + width;
 
-      const yMin = scale(value - lowBound);
-      const yMax = scale(value + highBound);
+      const yMin = scale.map(value - lowBound);
+      const yMax = scale.map(value + highBound);
 
       if (yMin != null && yMax != null) {
         // the top line

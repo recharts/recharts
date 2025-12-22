@@ -1,8 +1,8 @@
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { BaseAxisWithScale, implicitXAxis, implicitYAxis } from '../../src/state/selectors/axisSelectors';
-import { CustomScaleDefinition } from '../../src';
+import { d3ScaleToRechartsScale, RechartsScale } from '../../src/util/scale/RechartsScale';
 
-export const mockScale: CustomScaleDefinition<number> = scaleLinear().domain([0, 500]);
+export const mockScale: RechartsScale<number> = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 500]));
 
 export const mockXAxisWithScale: BaseAxisWithScale = {
   ...implicitXAxis,

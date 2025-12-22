@@ -1788,28 +1788,17 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 0, value: 400, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 34.12322274881516, value: 380, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 68.24644549763032, value: 360, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 102.36966824644551, value: 340, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 136.49289099526067, value: 320, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 170.61611374407585, value: 300, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 204.739336492891, value: 280, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 238.86255924170615, value: 260, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 272.98578199052133, value: 240, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 307.1090047393365, value: 220, offset: -0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 341.2322274881517, value: 200, offset: -0 },
+          { index: 0, coordinate: 0, value: 400, offset: -0 },
+          { index: 1, coordinate: 34.12322274881516, value: 380, offset: -0 },
+          { index: 2, coordinate: 68.24644549763032, value: 360, offset: -0 },
+          { index: 3, coordinate: 102.36966824644551, value: 340, offset: -0 },
+          { index: 4, coordinate: 136.49289099526067, value: 320, offset: -0 },
+          { index: 5, coordinate: 170.61611374407585, value: 300, offset: -0 },
+          { index: 6, coordinate: 204.739336492891, value: 280, offset: -0 },
+          { index: 7, coordinate: 238.86255924170615, value: 260, offset: -0 },
+          { index: 8, coordinate: 272.98578199052133, value: 240, offset: -0 },
+          { index: 9, coordinate: 307.1090047393365, value: 220, offset: -0 },
+          { index: 10, coordinate: 341.2322274881517, value: 200, offset: -0 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -1913,24 +1902,15 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 0, offset: -0, value: 0 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 45, offset: -0, value: 50 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 90, offset: -0, value: 100 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 135, offset: -0, value: 150 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 180, offset: -0, value: 200 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 225, offset: -0, value: 250 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 270, offset: -0, value: 300 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 315, offset: -0, value: 350 },
-          // @ts-expect-error the type demands an `index` property but the selector does not return it
-          { coordinate: 360, offset: -0, value: 400 },
+          { index: 0, coordinate: 0, offset: -0, value: 0 },
+          { index: 1, coordinate: 45, offset: -0, value: 50 },
+          { index: 2, coordinate: 90, offset: -0, value: 100 },
+          { index: 3, coordinate: 135, offset: -0, value: 150 },
+          { index: 4, coordinate: 180, offset: -0, value: 200 },
+          { index: 5, coordinate: 225, offset: -0, value: 250 },
+          { index: 6, coordinate: 270, offset: -0, value: 300 },
+          { index: 7, coordinate: 315, offset: -0, value: 350 },
+          { index: 8, coordinate: 360, offset: -0, value: 400 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });

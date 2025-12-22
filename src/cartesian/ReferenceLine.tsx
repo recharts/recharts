@@ -7,9 +7,9 @@ import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';
-import { isNan, isNumOrStr } from '../util/DataUtils';
-import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { CartesianViewBoxRequired } from '../util/types';
+import { isNumOrStr } from '../util/DataUtils';
+import { rectWithCoords } from '../util/CartesianUtils';
+import { CartesianViewBoxRequired, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -22,6 +22,8 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
+import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 /**
  * Single point that defines one end of a segment.
@@ -43,8 +45,6 @@ export type ReferenceLineSegment = readonly [
     y?: number | string;
   },
 ];
-
-export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
 interface ReferenceLineProps extends ZIndexable {
   ifOverflow?: IfOverflow;
@@ -97,7 +97,7 @@ interface ReferenceLineProps extends ZIndexable {
    * the line is drawn.
    * @defaultValue 'middle'
    */
-  position?: ReferenceLinePosition;
+  position?: BandPosition;
 
   className?: number | string;
   yAxisId?: number | string;
@@ -148,15 +148,17 @@ const getHorizontalLineEndPoints = (
   ifOverflow: IfOverflow,
   position: Props['position'],
   yAxisOrientation: Props['orientation'],
-  scales: any,
+  yAxisScale: RechartsScale,
   viewBox: CartesianViewBoxRequired,
-) => {
+): ReadonlyArray<Coordinate> | null => {
   const { x, width } = viewBox;
-  const coord = scales.y.apply(yCoord, { position });
+  const coord = yAxisScale.map(yCoord, { position });
   // don't render the line if the scale can't compute a result that makes sense
-  if (isNan(coord)) return null;
+  if (!isWellBehavedNumber(coord)) {
+    return null;
+  }
 
-  if (ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
+  if (ifOverflow === 'discard' && !yAxisScale.isInRange(coord)) {
     return null;
   }
 
@@ -172,15 +174,17 @@ const getVerticalLineEndPoints = (
   ifOverflow: IfOverflow,
   position: Props['position'],
   xAxisOrientation: Props['orientation'],
-  scales: any,
+  xAxisScale: RechartsScale,
   viewBox: CartesianViewBoxRequired,
-) => {
+): ReadonlyArray<Coordinate> | null => {
   const { y, height } = viewBox;
-  const coord = scales.x.apply(xCoord, { position });
+  const coord = xAxisScale.map(xCoord, { position });
   // don't render the line if the scale can't compute a result that makes sense
-  if (isNan(coord)) return null;
+  if (!isWellBehavedNumber(coord)) {
+    return null;
+  }
 
-  if (ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
+  if (ifOverflow === 'discard' && !xAxisScale.isInRange(coord)) {
     return null;
   }
 
@@ -195,9 +199,12 @@ const getSegmentLineEndPoints = (
   segment: ReferenceLineSegment,
   ifOverflow: IfOverflow,
   position: Props['position'],
-  scales: any,
-) => {
-  const points = segment.map(p => scales.apply(p, { position }));
+  scales: CartesianScaleHelper,
+): ReadonlyArray<Coordinate> | null => {
+  const points: [Coordinate, Coordinate] = [
+    scales.mapWithFallback(segment[0], { position, fallback: 'rangeMin' }),
+    scales.mapWithFallback(segment[1], { position, fallback: 'rangeMax' }),
+  ];
 
   if (ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
     return null;
@@ -207,25 +214,31 @@ const getSegmentLineEndPoints = (
 };
 
 export const getEndPoints = (
-  scales: any,
+  xAxisScale: RechartsScale,
+  yAxisScale: RechartsScale,
   viewBox: CartesianViewBoxRequired,
   position: Props['position'],
   xAxisOrientation: Props['orientation'],
   yAxisOrientation: Props['orientation'],
   props: EndPointsPropsSubset,
-) => {
+): ReadonlyArray<Coordinate> | null => {
   const { x: xCoord, y: yCoord, segment, ifOverflow } = props;
   const isFixedX = isNumOrStr(xCoord);
   const isFixedY = isNumOrStr(yCoord);
 
   if (isFixedY) {
-    return getHorizontalLineEndPoints(yCoord, ifOverflow, position, yAxisOrientation, scales, viewBox);
+    return getHorizontalLineEndPoints(yCoord, ifOverflow, position, yAxisOrientation, yAxisScale, viewBox);
   }
   if (isFixedX) {
-    return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, scales, viewBox);
+    return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, xAxisScale, viewBox);
   }
   if (segment != null && segment.length === 2) {
-    return getSegmentLineEndPoints(segment, ifOverflow, position, scales);
+    return getSegmentLineEndPoints(
+      segment,
+      ifOverflow,
+      position,
+      new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale }),
+    );
   }
 
   return null;
@@ -258,9 +271,15 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
-
-  const endPoints = getEndPoints(scales, viewBox, props.position, xAxis.orientation, yAxis.orientation, props);
+  const endPoints: ReadonlyArray<Coordinate> | null = getEndPoints(
+    xAxisScale,
+    yAxisScale,
+    viewBox,
+    props.position,
+    xAxis.orientation,
+    yAxis.orientation,
+    props,
+  );
   if (!endPoints) {
     return null;
   }

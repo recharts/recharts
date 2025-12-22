@@ -48,7 +48,15 @@ export interface CustomScaleDefinition<Domain extends CategoricalDomainItem = Ca
    */
   bandwidth?: () => number;
   /**
-   * https://d3js.org/d3-scale/linear#linear_ticks
+   * Quantitative (continuous) scales provide a ticks method that returns representative values from the scale’s domain.
+   * Ordinal and band scales do not have this method.
+   *
+   * An optional count argument requests more or fewer ticks.
+   * The number of ticks returned, however, is not necessarily equal to the requested count.
+   *
+   * @see {@link https://d3js.org/d3-scale/linear#linear_ticks}
+   * @see {@link https://observablehq.com/@d3/scale-ticks}
+   *
    * @param count number of ticks
    */
   ticks?: (count: number | undefined) => ReadonlyArray<number>;

@@ -1,78 +1,163 @@
 import { describe, it, expect } from 'vitest';
 import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
-import {
-  ScaleHelper,
-  createLabeledScales,
-  getAngledRectangleWidth,
-  normalizeAngle,
-} from '../../../src/util/CartesianUtils';
+import { getAngledRectangleWidth, normalizeAngle } from '../../../src/util/CartesianUtils';
+import { d3ScaleToRechartsScale } from '../../../src/util/scale/RechartsScale';
+import { CartesianScaleHelperImpl } from '../../../src/util/scale/CartesianScaleHelper';
 
 describe('ScaleHelper', () => {
-  it('apply() should return the expected value', () => {
-    const scale = new ScaleHelper(scaleLinear());
-    expect(scale.apply(2)).toEqual(2);
-  });
-
-  it('apply() should return the expected value when bandAware = true', () => {
-    const scale = new ScaleHelper(scaleLinear());
-    expect(scale.apply(2, { bandAware: true })).toEqual(2);
-  });
-
-  it('apply() should return the expected value for band scale', () => {
-    const scale = new ScaleHelper(scaleBand().domain(['0', '1', '2', '3']).range([0, 100]));
-    expect(scale.apply('2')).toEqual(50);
-  });
-
-  it('apply() should return the expected value for band scale when bandAware = true', () => {
-    const scale = new ScaleHelper(scaleBand().domain(['0', '1', '2', '3']).range([0, 100]));
-    expect(scale.apply('2', { bandAware: true })).toEqual(50 + 25 / 2);
-  });
-
-  it('apply() should return undefined for undefined', () => {
-    const scale = new ScaleHelper(scaleLinear());
-    expect(scale.apply(undefined)).toEqual(undefined);
-  });
-
-  it('apply() should return undefined for undefined', () => {
-    const scale = new ScaleHelper(scaleLinear());
-    expect(scale.apply(undefined)).toEqual(undefined);
-  });
-
-  it('isInRange() should return true for a value in range', () => {
-    const scale = new ScaleHelper(scaleLinear().domain([-200, 200]).range([0, 50]));
-    expect(scale.isInRange(35)).toEqual(true);
-  });
-
-  it('isInRange() should return false for a value out of range', () => {
-    const scale = new ScaleHelper(scaleLinear().domain([-200, 200]).range([0, 50]));
-    expect(scale.isInRange(-10)).toEqual(false);
-  });
-});
-
-describe('createLabeledScales', () => {
-  it('apply() should return the expected values', () => {
-    const scales = createLabeledScales({
-      x: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
-      y: scaleLinear().domain([-200, 200]).range([0, 50]),
+  describe.each(['start', 'middle', 'end'] as const)('with linear scales and position %s', position => {
+    const scale = new CartesianScaleHelperImpl<number, number>({
+      x: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([10, 110])),
+      y: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([10, 110])),
     });
-    expect(scales.apply({ x: '2' }, { bandAware: true })).toEqual({ x: 50 + 25 / 2 });
-    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'start' })).toEqual({ x: 50 });
-    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'middle' })).toEqual({ x: 50 + 25 / 2.0 });
-    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'end' })).toEqual({ x: 50 + 25 });
-    expect(scales.apply({ y: '100' }, { bandAware: true })).toEqual({ y: 37.5 });
+
+    describe('map', () => {
+      it('should map scaled value for both axes on position %s', () => {
+        expect(scale.map({ x: 2, y: 4 }, { position })).toEqual({ x: 30, y: 30 });
+      });
+
+      it('should map values outside the domain, to outside the range', () => {
+        expect(scale.map({ x: -5, y: 25 }, { position })).toEqual({ x: -40, y: 135 });
+      });
+    });
+
+    describe('mapWithFallback', () => {
+      it('should map scaled value for both axes', () => {
+        expect(scale.mapWithFallback({ x: 2, y: 4 }, { position, fallback: 'rangeMin' })).toEqual({
+          x: 30,
+          y: 30,
+        });
+      });
+
+      it('should use fallback for x when x is undefined', () => {
+        expect(scale.mapWithFallback({ x: undefined, y: 4 }, { position, fallback: 'rangeMin' })).toEqual({
+          x: 10,
+          y: 30,
+        });
+      });
+
+      it('should use fallback for y when y is undefined', () => {
+        expect(scale.mapWithFallback({ x: 2, y: undefined }, { position, fallback: 'rangeMax' })).toEqual({
+          x: 30,
+          y: 110,
+        });
+      });
+
+      it('should use both fallbacks if x and y are undefined', () => {
+        expect(scale.mapWithFallback({ x: undefined, y: undefined }, { position, fallback: 'rangeMax' })).toEqual({
+          x: 110,
+          y: 110,
+        });
+      });
+
+      it('should map values from outside of domain, to outside of range, and ignore fallback', () => {
+        expect(scale.mapWithFallback({ x: -5, y: 25 }, { position, fallback: 'rangeMin' })).toEqual({
+          x: -40,
+          y: 135,
+        });
+      });
+    });
+
+    describe('isInRange', () => {
+      it('should return true for a value in range', () => {
+        expect(scale.isInRange({ x: 50, y: 50 })).toEqual(true);
+      });
+
+      it('should return false for a value out of range on x axis', () => {
+        expect(scale.isInRange({ x: 5, y: 50 })).toEqual(false);
+      });
+
+      it('should return false for a value out of range on y axis', () => {
+        expect(scale.isInRange({ x: 50, y: 5 })).toEqual(false);
+      });
+
+      it('should return false for a value out of range on both axes', () => {
+        expect(scale.isInRange({ x: 5, y: 5 })).toEqual(false);
+      });
+
+      it('should return true if one coordinate is missing or null and the other is in range', () => {
+        expect(scale.isInRange({ x: null, y: 50 })).toEqual(true);
+        expect(scale.isInRange({ y: 50 })).toEqual(true);
+        expect(scale.isInRange({ x: 50, y: undefined })).toEqual(true);
+        expect(scale.isInRange({ x: 50 })).toEqual(true);
+      });
+
+      it('should return false if one coordinate is missing or null and the other is out of range', () => {
+        expect(scale.isInRange({ x: null, y: 5 })).toEqual(false);
+        expect(scale.isInRange({ y: 5 })).toEqual(false);
+        expect(scale.isInRange({ x: 5, y: undefined })).toEqual(false);
+        expect(scale.isInRange({ x: 5 })).toEqual(false);
+        expect(scale.isInRange({})).toEqual(true);
+      });
+    });
   });
 
-  it('isInRange() should return the expected values', () => {
-    const scales = createLabeledScales({
-      x: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
-      y: scaleLinear().domain([-200, 200]).range([0, 50]),
+  describe('with band scales', () => {
+    const scale = new CartesianScaleHelperImpl<string, string>({
+      x: d3ScaleToRechartsScale(scaleBand().domain(['A', 'B', 'C', 'D']).range([10, 110])),
+      y: d3ScaleToRechartsScale(scaleBand().domain(['0', '1', '2', '3']).range([10, 200])),
     });
-    expect(scales.isInRange({ x: 50 })).toEqual(true);
-    expect(scales.isInRange({ x: 50, y: 35 })).toEqual(true);
-    expect(scales.isInRange({ y: 35 })).toEqual(true);
-    expect(scales.isInRange({ y: 100 })).toEqual(false);
-    expect(scales.isInRange({ x: 50, y: 100 })).toEqual(false);
-    expect(scales.isInRange({})).toEqual(true);
+
+    describe('map', () => {
+      it('should map scaled value for both axes on position start', () => {
+        expect(scale.map({ x: 'A', y: '2' }, { position: 'start' })).toEqual({ x: 10, y: 105 });
+      });
+
+      it('should map scaled value for both axes on position middle', () => {
+        expect(scale.map({ x: 'A', y: '2' }, { position: 'middle' })).toEqual({ x: 22.5, y: 128.75 });
+      });
+
+      it('should map scaled value for both axes on position end', () => {
+        expect(scale.map({ x: 'A', y: '2' }, { position: 'end' })).toEqual({ x: 35, y: 152.5 });
+      });
+
+      it('should return 0 for unmapped values', () => {
+        expect(scale.map({ x: 'Z', y: '5' }, { position: 'middle' })).toEqual({ x: 0, y: 0 });
+      });
+    });
+
+    describe('mapWithFallback', () => {
+      it('should map scaled value for both axes', () => {
+        expect(scale.mapWithFallback({ x: 'A', y: '2' }, { position: 'middle', fallback: 'rangeMin' })).toEqual({
+          x: 22.5,
+          y: 128.75,
+        });
+      });
+
+      it('should use fallback for x when x is undefined', () => {
+        expect(scale.mapWithFallback({ x: undefined, y: '2' }, { position: 'middle', fallback: 'rangeMin' })).toEqual({
+          x: 10,
+          y: 128.75,
+        });
+      });
+
+      it('should use fallback for y when y is undefined', () => {
+        expect(scale.mapWithFallback({ x: 'A', y: undefined }, { position: 'middle', fallback: 'rangeMax' })).toEqual({
+          x: 10 + 25 / 2,
+          y: 200,
+        });
+      });
+
+      it('should use both fallbacks if x and y are undefined', () => {
+        expect(
+          scale.mapWithFallback({ x: undefined, y: undefined }, { position: 'middle', fallback: 'rangeMax' }),
+        ).toEqual({
+          x: 110,
+          y: 200,
+        });
+      });
+
+      it('should use fallback for unmapped values', () => {
+        expect(scale.mapWithFallback({ x: 'Z', y: '5' }, { position: 'middle', fallback: 'rangeMin' })).toEqual({
+          x: 10,
+          y: 10,
+        });
+        expect(scale.mapWithFallback({ x: 'Z', y: '5' }, { position: 'middle', fallback: 'rangeMax' })).toEqual({
+          x: 110,
+          y: 200,
+        });
+      });
+    });
   });
 });
 

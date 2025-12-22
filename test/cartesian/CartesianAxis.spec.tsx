@@ -21,11 +21,11 @@ const exampleScale: CustomScaleDefinition<number> = scaleLinear();
 
 describe('<CartesianAxis />', () => {
   const ticks: ReadonlyArray<TickItem> = [
-    { value: 10, coordinate: 50, index: 0 },
-    { value: 1000, coordinate: 100, index: 1 },
-    { value: 20, coordinate: 150, index: 2 },
-    { value: 40, coordinate: 200, index: 3 },
-    { value: 90, coordinate: 250, index: 4 },
+    { value: 10, coordinate: 50, index: 0, offset: 0 },
+    { value: 1000, coordinate: 100, index: 1, offset: 0 },
+    { value: 20, coordinate: 150, index: 2, offset: 0 },
+    { value: 40, coordinate: 200, index: 3, offset: 0 },
+    { value: 90, coordinate: 250, index: 4, offset: 0 },
   ];
 
   it('Renders 5 ticks in simple CartesianAxis', () => {

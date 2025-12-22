@@ -40,6 +40,7 @@ import { StackGroup } from './stacks/stackTypes';
 import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
+import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -211,7 +212,7 @@ export const getTicksOfAxis = (
       .map((entry: AxisTick, index: number): TickItem | null => {
         const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
-        const scaled = scale(scaleContent);
+        const scaled = scale.map(scaleContent);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -233,7 +234,7 @@ export const getTicksOfAxis = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
-        const scaled = scale(entry);
+        const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -251,11 +252,11 @@ export const getTicksOfAxis = (
     return scale
       .ticks(tickCount)
       .map((entry: number, index: number): TickItem | null => {
-        const scaled = scale(entry);
+        const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
-        return { coordinate: scaled + offset, value: entry, offset, index };
+        return { coordinate: scaled + offset, value: entry, index, offset };
       })
       .filter(isNotNil);
   }
@@ -264,7 +265,7 @@ export const getTicksOfAxis = (
   return scale
     .domain()
     .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
-      const scaled = scale(entry);
+      const scaled = scale.map(entry);
       if (!isWellBehavedNumber(scaled)) {
         return null;
       }
@@ -280,7 +281,7 @@ export const getTicksOfAxis = (
 };
 
 const EPS = 1e-4;
-export const checkDomainOfScale = (scale: any) => {
+export const checkDomainOfScale = <T extends CategoricalDomainItem>(scale: CustomScaleDefinition<T>): void => {
   const domain = scale.domain();
 
   if (!domain || domain.length <= 2) {
@@ -294,7 +295,7 @@ export const checkDomainOfScale = (scale: any) => {
   const first = scale(domain[0]);
   const last = scale(domain[len - 1]);
 
-  if (first < minValue || first > maxValue || last < minValue || last > maxValue) {
+  if (first == null || last == null || first < minValue || first > maxValue || last < minValue || last > maxValue) {
     scale.domain([domain[0], domain[len - 1]]);
   }
 };
@@ -536,8 +537,11 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
 
   const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);
 
-  // @ts-expect-error getValueByDataKey does not validate the output type
-  return !isNullish(value) ? axis.scale(value) : null;
+  const scaled = axis.scale.map(value);
+  if (!isNumber(scaled)) {
+    return null;
+  }
+  return scaled;
 }
 
 export const getCateCoordinateOfBar = ({
@@ -558,12 +562,14 @@ export const getCateCoordinateOfBar = ({
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }
-  const value = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
+  // @ts-expect-error getValueByDataKey does not validate the output type
+  const value: number | undefined = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
   if (isNullish(value)) {
     return null;
   }
-  const scaled = axis.scale(value);
+
+  const scaled = axis.scale.map(value);
   if (!isNumber(scaled)) {
     return null;
   }
@@ -660,7 +666,7 @@ export const getBandSizeOfAxis = (
   }
 
   if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = sortBy(ticks, (o: { coordinate: any }) => o.coordinate);
+    const orderedTicks: ReadonlyArray<TickItem> = sortBy(ticks, (o: TickItem) => o.coordinate);
     let bandSize = Infinity;
 
     for (let i = 1, len = orderedTicks.length; i < len; i++) {

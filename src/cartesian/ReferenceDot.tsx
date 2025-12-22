@@ -6,7 +6,6 @@ import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
-import { createLabeledScales } from '../util/CartesianUtils';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
@@ -18,6 +17,8 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { AxisId } from '../state/cartesianAxisSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { Coordinate } from '../util/types';
+import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 interface ReferenceDotProps extends ZIndexable {
   /**
@@ -68,7 +69,7 @@ const useCoordinate = (
   xAxisId: AxisId,
   yAxisId: AxisId,
   ifOverflow: IfOverflow,
-) => {
+): Coordinate | null => {
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
   const isPanorama = useIsPanorama();
@@ -79,9 +80,9 @@ const useCoordinate = (
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
+  const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const result = scales.apply({ x, y }, { bandAware: true });
+  const result = scales.map({ x, y }, { position: 'middle' });
 
   if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;
@@ -135,8 +136,8 @@ function ReferenceDotImpl(props: PropsWithDefaults) {
   const dotProps: DotProps = {
     clipPath,
     ...svgPropertiesAndEvents(props),
-    cx,
-    cy,
+    cx: cx ?? undefined,
+    cy: cy ?? undefined,
   };
 
   return (

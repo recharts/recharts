@@ -11,36 +11,12 @@ const EXAMPLE_INPUT: GetTicksInput = {
   orientation: 'bottom' as const,
   tick: true,
   ticks: [
-    {
-      value: '10',
-      coordinate: 50,
-      index: 0,
-    },
-    {
-      value: '1000',
-      coordinate: 100,
-      index: 1,
-    },
-    {
-      value: '20',
-      coordinate: 150,
-      index: 2,
-    },
-    {
-      value: '40',
-      coordinate: 200,
-      index: 3,
-    },
-    {
-      value: '90',
-      coordinate: 250,
-      index: 4,
-    },
-    {
-      value: 'A',
-      coordinate: 300,
-      index: 5,
-    },
+    { value: '10', coordinate: 50, index: 0, offset: 0 },
+    { value: '1000', coordinate: 100, index: 1, offset: 0 },
+    { value: '20', coordinate: 150, index: 2, offset: 0 },
+    { value: '40', coordinate: 200, index: 3, offset: 0 },
+    { value: '90', coordinate: 250, index: 4, offset: 0 },
+    { value: 'A', coordinate: 300, index: 5, offset: 0 },
   ],
   viewBox: { x: 0, y: 0, width: 500, height: 500 },
 };
@@ -60,12 +36,12 @@ describe('getTicks', () => {
       const result = getTicks(input);
 
       expect(result).toEqual([
-        { value: '10', coordinate: 50, tickCoord: 50, isShow: true, index: 0 },
-        { value: '1000', coordinate: 100, tickCoord: 100, isShow: true, index: 1 },
-        { value: '20', coordinate: 150, tickCoord: 150, isShow: true, index: 2 },
-        { value: '40', coordinate: 200, tickCoord: 200, isShow: true, index: 3 },
-        { value: '90', coordinate: 250, tickCoord: 250, isShow: true, index: 4 },
-        { value: 'A', coordinate: 300, tickCoord: 300, isShow: true, index: 5 },
+        { value: '10', coordinate: 50, tickCoord: 50, isShow: true, index: 0, offset: 0 },
+        { value: '1000', coordinate: 100, tickCoord: 100, isShow: true, index: 1, offset: 0 },
+        { value: '20', coordinate: 150, tickCoord: 150, isShow: true, index: 2, offset: 0 },
+        { value: '40', coordinate: 200, tickCoord: 200, isShow: true, index: 3, offset: 0 },
+        { value: '90', coordinate: 250, tickCoord: 250, isShow: true, index: 4, offset: 0 },
+        { value: 'A', coordinate: 300, tickCoord: 300, isShow: true, index: 5, offset: 0 },
       ]);
     });
 
@@ -75,12 +51,12 @@ describe('getTicks', () => {
       const result = getTicks(input);
 
       expect(result).toEqual([
-        { value: '10', coordinate: 50, tickCoord: 50, isShow: true, index: 0 },
-        { value: '1000', coordinate: 100, tickCoord: 100, isShow: true, index: 1 },
-        { value: '20', coordinate: 150, tickCoord: 150, isShow: true, index: 2 },
-        { value: '40', coordinate: 200, tickCoord: 200, isShow: true, index: 3 },
-        { value: '90', coordinate: 250, tickCoord: 250, isShow: true, index: 4 },
-        { value: 'A', coordinate: 300, tickCoord: 300, isShow: true, index: 5 },
+        { value: '10', coordinate: 50, tickCoord: 50, isShow: true, index: 0, offset: 0 },
+        { value: '1000', coordinate: 100, tickCoord: 100, isShow: true, index: 1, offset: 0 },
+        { value: '20', coordinate: 150, tickCoord: 150, isShow: true, index: 2, offset: 0 },
+        { value: '40', coordinate: 200, tickCoord: 200, isShow: true, index: 3, offset: 0 },
+        { value: '90', coordinate: 250, tickCoord: 250, isShow: true, index: 4, offset: 0 },
+        { value: 'A', coordinate: 300, tickCoord: 300, isShow: true, index: 5, offset: 0 },
       ]);
     });
   });
@@ -88,63 +64,63 @@ describe('getTicks', () => {
   describe('ticks are shown if there is space when displayed at an angle', () => {
     test('preserveEnd', () => {
       const ticks: ReadonlyArray<TickItem> = [
-        { value: '100_000_000_000_000', coordinate: 50, index: 0 },
-        { value: '200_000_000_000_000', coordinate: 70, index: 1 },
-        { value: '300_000_000_000_000', coordinate: 90, index: 2 },
-        { value: '400_000_000_000_000', coordinate: 110, index: 3 },
-        { value: '500_000_000_000_000', coordinate: 130, index: 4 },
-        { value: '600_000_000_000_000', coordinate: 150, index: 5 },
+        { value: '100_000_000_000_000', coordinate: 50, index: 0, offset: 0 },
+        { value: '200_000_000_000_000', coordinate: 70, index: 1, offset: 0 },
+        { value: '300_000_000_000_000', coordinate: 90, index: 2, offset: 0 },
+        { value: '400_000_000_000_000', coordinate: 110, index: 3, offset: 0 },
+        { value: '500_000_000_000_000', coordinate: 130, index: 4, offset: 0 },
+        { value: '600_000_000_000_000', coordinate: 150, index: 5, offset: 0 },
       ];
       const input = { ...EXAMPLE_INPUT, ticks, interval: 'preserveEnd' as const };
 
       // Only 3 ticks are shown
       expect(getTicks(input)).toEqual([
-        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1 },
-        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3 },
-        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5 },
+        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1, offset: 0 },
+        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3, offset: 0 },
+        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5, offset: 0 },
       ]);
 
       const angledInput = { ...input, angle: 60 };
 
       // But at an angle we can fit all ticks
       expect(getTicks(angledInput)).toEqual([
-        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0 },
-        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1 },
-        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2 },
-        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3 },
-        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4 },
-        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5 },
+        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0, offset: 0 },
+        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1, offset: 0 },
+        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2, offset: 0 },
+        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3, offset: 0 },
+        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4, offset: 0 },
+        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5, offset: 0 },
       ]);
     });
 
     test('preserveStart', () => {
       const ticks: ReadonlyArray<TickItem> = [
-        { value: '100_000_000_000_000', coordinate: 50, index: 0 },
-        { value: '200_000_000_000_000', coordinate: 70, index: 1 },
-        { value: '300_000_000_000_000', coordinate: 90, index: 2 },
-        { value: '400_000_000_000_000', coordinate: 110, index: 3 },
-        { value: '500_000_000_000_000', coordinate: 130, index: 4 },
-        { value: '600_000_000_000_000', coordinate: 150, index: 5 },
+        { value: '100_000_000_000_000', coordinate: 50, index: 0, offset: 0 },
+        { value: '200_000_000_000_000', coordinate: 70, index: 1, offset: 0 },
+        { value: '300_000_000_000_000', coordinate: 90, index: 2, offset: 0 },
+        { value: '400_000_000_000_000', coordinate: 110, index: 3, offset: 0 },
+        { value: '500_000_000_000_000', coordinate: 130, index: 4, offset: 0 },
+        { value: '600_000_000_000_000', coordinate: 150, index: 5, offset: 0 },
       ];
       const input = { ...EXAMPLE_INPUT, ticks, interval: 'preserveStart' as const };
 
       // Only 3 ticks are shown
       expect(getTicks(input)).toEqual([
-        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0 },
-        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2 },
-        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4 },
+        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0, offset: 0 },
+        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2, offset: 0 },
+        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4, offset: 0 },
       ]);
 
       const angledInput = { ...input, angle: 60 };
 
       // But at an angle we can fit all ticks
       expect(getTicks(angledInput)).toEqual([
-        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0 },
-        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1 },
-        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2 },
-        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3 },
-        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4 },
-        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5 },
+        { value: '100_000_000_000_000', coordinate: 50, tickCoord: 50, isShow: true, index: 0, offset: 0 },
+        { value: '200_000_000_000_000', coordinate: 70, tickCoord: 70, isShow: true, index: 1, offset: 0 },
+        { value: '300_000_000_000_000', coordinate: 90, tickCoord: 90, isShow: true, index: 2, offset: 0 },
+        { value: '400_000_000_000_000', coordinate: 110, tickCoord: 110, isShow: true, index: 3, offset: 0 },
+        { value: '500_000_000_000_000', coordinate: 130, tickCoord: 130, isShow: true, index: 4, offset: 0 },
+        { value: '600_000_000_000_000', coordinate: 150, tickCoord: 150, isShow: true, index: 5, offset: 0 },
       ]);
     });
   });
@@ -153,84 +129,31 @@ describe('getTicks', () => {
     const viewBoxWithSmallWidth = { x: 0, y: 0, width: 30, height: 500 };
 
     test.each([
-      [
-        (EXAMPLE_INPUT.ticks?.length ?? 0) + 1,
-        [
-          {
-            coordinate: 50,
-            value: '10',
-            index: 0,
-          },
-        ],
-      ],
+      [(EXAMPLE_INPUT.ticks?.length ?? 0) + 1, [{ coordinate: 50, value: '10', index: 0, offset: 0 }]],
       [
         2,
         [
-          {
-            coordinate: 50,
-            value: '10',
-            index: 0,
-          },
-          {
-            coordinate: 200,
-            value: '40',
-            index: 3,
-          },
+          { coordinate: 50, value: '10', index: 0, offset: 0 },
+          { coordinate: 200, value: '40', index: 3, offset: 0 },
         ],
       ],
       [
         1,
         [
-          {
-            coordinate: 50,
-            value: '10',
-            index: 0,
-          },
-          {
-            coordinate: 150,
-            value: '20',
-            index: 2,
-          },
-          {
-            coordinate: 250,
-            value: '90',
-            index: 4,
-          },
+          { coordinate: 50, value: '10', index: 0, offset: 0 },
+          { coordinate: 150, value: '20', index: 2, offset: 0 },
+          { coordinate: 250, value: '90', index: 4, offset: 0 },
         ],
       ],
       [
         0,
         [
-          {
-            coordinate: 50,
-            value: '10',
-            index: 0,
-          },
-          {
-            coordinate: 100,
-            value: '1000',
-            index: 1,
-          },
-          {
-            coordinate: 150,
-            value: '20',
-            index: 2,
-          },
-          {
-            coordinate: 200,
-            value: '40',
-            index: 3,
-          },
-          {
-            coordinate: 250,
-            value: '90',
-            index: 4,
-          },
-          {
-            coordinate: 300,
-            value: 'A',
-            index: 5,
-          },
+          { coordinate: 50, value: '10', index: 0, offset: 0 },
+          { coordinate: 100, value: '1000', index: 1, offset: 0 },
+          { coordinate: 150, value: '20', index: 2, offset: 0 },
+          { coordinate: 200, value: '40', index: 3, offset: 0 },
+          { coordinate: 250, value: '90', index: 4, offset: 0 },
+          { coordinate: 300, value: 'A', index: 5, offset: 0 },
         ],
       ],
       [
@@ -242,6 +165,7 @@ describe('getTicks', () => {
             tickCoord: 29.5,
             value: 'A',
             index: 5,
+            offset: 0,
           },
         ],
       ],
@@ -255,21 +179,13 @@ describe('getTicks', () => {
             tickCoord: 29.5,
             value: 'A',
             index: 5,
+            offset: 0,
           },
         ],
       ],
-      [
-        'equidistantPreserveStart' as const,
-        [
-          {
-            coordinate: 50,
-            value: '10',
-            index: 0,
-          },
-        ],
-      ],
+      ['equidistantPreserveStart' as const, [{ coordinate: 50, value: '10', index: 0, offset: 0 }]],
       [-1, []],
-      [undefined, [{ coordinate: 300, isShow: true, tickCoord: 29.5, value: 'A', index: 5 }]],
+      [undefined, [{ coordinate: 300, isShow: true, tickCoord: 29.5, value: 'A', index: 5, offset: 0 }]],
     ])(`interval %s works`, (interval, expectedResult) => {
       const input = {
         ...EXAMPLE_INPUT,
@@ -310,6 +226,7 @@ describe('getTicks', () => {
             value,
             coordinate: tickWidthStep * (index + 1),
             index,
+            offset: 0,
           }),
         );
         const input = {
