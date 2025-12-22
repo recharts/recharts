@@ -205,6 +205,11 @@ describe('cross-component prop consistency', () => {
       prop: 'zAxisId',
       reason: 'Axis ID describes the axis itself, not a relation to other components',
     },
+    {
+      components: ['PolarAngleAxis'],
+      prop: 'axisLine',
+      reason: 'Unlike other axes, PolarAngleAxis.axisLine does not accept a boolean value',
+    },
   ];
 
   // Build the prop-to-components map once for all tests

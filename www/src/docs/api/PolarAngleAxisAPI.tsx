@@ -59,26 +59,22 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Determines how the axis line is drawn. Options:</p>
-            <ul>
-              <li>
-                <code>true</code>: the axis line is drawn with default props;
-              </li>
-              <li>
-                <code>false</code>: the axis line is not visible;
-              </li>
-              <li>
-                <code>object</code>: passed as props to SVG <code>&lt;line&gt;</code> element representing the axis
-                line.
-              </li>
-            </ul>
+            <p>
+              Controls axis line element. These are be passed as props to SVG <code>&lt;line&gt;</code> element
+              representing the axis line. If <code>true</code> then the axis line is drawn using props of the
+              PolarAngleAxis component. If <code>false</code> then the axis line is not drawn.
+            </p>
+            <p>
+              Also see <code>axisLineType</code> prop to change the shape of the axis line.
+            </p>
           </section>
         ),
       },
       defaultVal: true,
       format: [
-        '<XAxis axisLine={false} />',
-        "<XAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />\nIf set false, no axis line will be drawn. If set a object, the option is the configuration of axis line.",
+        "<PolarAngleAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />",
+        '<PolarAngleAxis axisLine={false} />',
+        "<PolarAngleAxis stroke='red' strokeWidth={2} strokeDasharray={4} />",
       ],
     },
     {
@@ -189,14 +185,14 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
       format: [
-        "<XAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
-        '<XAxis type="number" domain={[0, \'dataMax\']} />',
-        "<XAxis type=\"number\" domain={['auto', 'auto']} />",
-        '<XAxis type="number" domain={[0, \'dataMax + 1000\']} />',
-        "<XAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
-        '<XAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
-        '<XAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
-        '<XAxis type="number" domain={[0, 100]} allowDataOverflow />',
+        "<PolarAngleAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
+        '<PolarAngleAxis type="number" domain={[0, \'dataMax\']} />',
+        "<PolarAngleAxis type=\"number\" domain={['auto', 'auto']} />",
+        '<PolarAngleAxis type="number" domain={[0, \'dataMax + 1000\']} />',
+        "<PolarAngleAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
+        '<PolarAngleAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
+        '<PolarAngleAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
+        '<PolarAngleAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
     },
     {
@@ -312,34 +308,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    {
-      name: 'scale',
-      type: '(union of 20 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Scale function determines how data values are mapped to visual values. In other words, decided the mapping
-              between data domain and coordinate range.
-            </p>
-            <p>
-              If undefined, or &#39;auto&#39;, the scale function is created internally according to the type of axis
-              and data.
-            </p>
-            <p>
-              You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale
-              definition object.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-      format: [
-        '<XAxis scale="log" />',
-        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<YAxis scale={scale} />",
-      ],
-    },
+    { name: 'scale', type: '(union of 20 variants)', isOptional: true, defaultVal: 'auto' },
     {
       name: 'tick',
       type: '(union of 5 variants)',

@@ -89,8 +89,8 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       },
       defaultVal: true,
       format: [
-        '<XAxis axisLine={false} />',
-        "<XAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />\nIf set false, no axis line will be drawn. If set a object, the option is the configuration of axis line.",
+        '<PolarRadiusAxis axisLine={false} />',
+        "<PolarRadiusAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />",
       ],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
@@ -155,14 +155,14 @@ export const PolarRadiusAxisAPI: ApiDoc = {
         ),
       },
       format: [
-        "<XAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
-        '<XAxis type="number" domain={[0, \'dataMax\']} />',
-        "<XAxis type=\"number\" domain={['auto', 'auto']} />",
-        '<XAxis type="number" domain={[0, \'dataMax + 1000\']} />',
-        "<XAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
-        '<XAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
-        '<XAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
-        '<XAxis type="number" domain={[0, 100]} allowDataOverflow />',
+        "<PolarRadiusAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
+        '<PolarRadiusAxis type="number" domain={[0, \'dataMax\']} />',
+        "<PolarRadiusAxis type=\"number\" domain={['auto', 'auto']} />",
+        '<PolarRadiusAxis type="number" domain={[0, \'dataMax + 1000\']} />',
+        "<PolarRadiusAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
+        '<PolarRadiusAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
+        '<PolarRadiusAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
+        '<PolarRadiusAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
     },
     {
@@ -264,34 +264,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    {
-      name: 'scale',
-      type: '(union of 20 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Scale function determines how data values are mapped to visual values. In other words, decided the mapping
-              between data domain and coordinate range.
-            </p>
-            <p>
-              If undefined, or &#39;auto&#39;, the scale function is created internally according to the type of axis
-              and data.
-            </p>
-            <p>
-              You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale
-              definition object.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-      format: [
-        '<XAxis scale="log" />',
-        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<YAxis scale={scale} />",
-      ],
-    },
+    { name: 'scale', type: '(union of 20 variants)', isOptional: true, defaultVal: 'auto' },
     {
       name: 'tick',
       type: '(union of 5 variants)',

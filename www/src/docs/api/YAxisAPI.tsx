@@ -87,10 +87,7 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
-      format: [
-        '<XAxis axisLine={false} />',
-        "<XAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />\nIf set false, no axis line will be drawn. If set a object, the option is the configuration of axis line.",
-      ],
+      format: ['<YAxis axisLine={false} />', "<YAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />"],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -154,14 +151,14 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       format: [
-        "<XAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
-        '<XAxis type="number" domain={[0, \'dataMax\']} />',
-        "<XAxis type=\"number\" domain={['auto', 'auto']} />",
-        '<XAxis type="number" domain={[0, \'dataMax + 1000\']} />',
-        "<XAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
-        '<XAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
-        '<XAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
-        '<XAxis type="number" domain={[0, 100]} allowDataOverflow />',
+        "<YAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
+        '<YAxis type="number" domain={[0, \'dataMax\']} />',
+        "<YAxis type=\"number\" domain={['auto', 'auto']} />",
+        '<YAxis type="number" domain={[0, \'dataMax + 1000\']} />',
+        "<YAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
+        '<YAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
+        '<YAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
+        '<YAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
     },
     {
@@ -319,34 +316,7 @@ export const YAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    {
-      name: 'scale',
-      type: '(union of 20 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Scale function determines how data values are mapped to visual values. In other words, decided the mapping
-              between data domain and coordinate range.
-            </p>
-            <p>
-              If undefined, or &#39;auto&#39;, the scale function is created internally according to the type of axis
-              and data.
-            </p>
-            <p>
-              You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale
-              definition object.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-      format: [
-        '<XAxis scale="log" />',
-        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<YAxis scale={scale} />",
-      ],
-    },
+    { name: 'scale', type: '(union of 20 variants)', isOptional: true, defaultVal: 'auto' },
     {
       name: 'tick',
       type: '(union of 5 variants)',
@@ -498,7 +468,7 @@ export const YAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Unique ID that represents this XAxis. Required when there are multiple XAxes.</p>
+            <p>Unique ID that represents this YAxis. Required when there are multiple YAxes.</p>
           </section>
         ),
       },

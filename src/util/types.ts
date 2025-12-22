@@ -846,9 +846,6 @@ export interface RenderableAxisProps extends BaseAxisProps {
    * - `false`: the axis line is not visible;
    * - `object`: passed as props to SVG `<line>` element representing the axis line.
    *
-   * @example <XAxis axisLine={false} />
-   * @example <XAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />
-   * If set false, no axis line will be drawn. If set a object, the option is the configuration of axis line.
    * @defaultValue true
    */
   axisLine?: boolean | SVGProps<SVGLineElement>;
