@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const PolarAngleAxisAPI: ApiDoc = {
-  name: 'PolarAngleAxis',
+export const PolarRadiusAxisAPI: ApiDoc = {
+  name: 'PolarRadiusAxis',
   props: [
     {
       name: 'allowDataOverflow',
@@ -21,7 +21,19 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'allowDecimals', type: 'boolean', isOptional: true, defaultVal: false },
+    {
+      name: 'allowDecimals',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Allow the ticks of axis to be decimals or not.</p>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
     {
       name: 'allowDuplicatedCategory',
       type: 'boolean',
@@ -42,16 +54,16 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>The angle of the whole axis: the line, ticks and labels, everything.</p>
             <p>
-              Tick text rotation angle in degrees. Positive values rotate clockwise, negative values rotate
-              counterclockwise.
+              This is different from other graphical elements where angle usually means the angle of text. Here, it
+              means the angle of everything.
             </p>
           </section>
         ),
       },
       defaultVal: 0,
     },
-    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
     {
       name: 'axisLine',
       type: 'false | true | React.SVGProps<SVGLineElement>',
@@ -59,36 +71,27 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Controls axis line element. These are be passed as props to SVG <code>&lt;line&gt;</code> element
-              representing the axis line. If <code>true</code> then the axis line is drawn using props of the
-              PolarAngleAxis component. If <code>false</code> then the axis line is not drawn.
-            </p>
-            <p>
-              Also see <code>axisLineType</code> prop to change the shape of the axis line.
-            </p>
+            <p>Determines how the axis line is drawn. Options:</p>
+            <ul>
+              <li>
+                <code>true</code>: the axis line is drawn with default props;
+              </li>
+              <li>
+                <code>false</code>: the axis line is not visible;
+              </li>
+              <li>
+                <code>object</code>: passed as props to SVG <code>&lt;line&gt;</code> element representing the axis
+                line.
+              </li>
+            </ul>
           </section>
         ),
       },
       defaultVal: true,
       format: [
-        "<PolarAngleAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />",
-        '<PolarAngleAxis axisLine={false} />',
-        "<PolarAngleAxis stroke='red' strokeWidth={2} strokeDasharray={4} />",
+        '<PolarRadiusAxis axisLine={false} />',
+        "<PolarRadiusAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />",
       ],
-    },
-    {
-      name: 'axisLineType',
-      type: '"circle" | "polygon"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of axis line.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'polygon',
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -103,40 +106,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
     },
-    {
-      name: 'cx',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. When used inside a chart context, this prop is calculated based on the
-              chart&#39;s dimensions, and this prop is ignored.
-            </p>
-            <p>This is only used when rendered outside a chart context.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'cy',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. When used inside a chart context, this prop is calculated based on the
-              chart&#39;s dimensions, and this prop is ignored.
-            </p>
-            <p>This is only used when rendered outside a chart context.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'dataKey',
       type: 'string | number | Function',
@@ -185,14 +155,14 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
       format: [
-        "<PolarAngleAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
-        '<PolarAngleAxis type="number" domain={[0, \'dataMax\']} />',
-        "<PolarAngleAxis type=\"number\" domain={['auto', 'auto']} />",
-        '<PolarAngleAxis type="number" domain={[0, \'dataMax + 1000\']} />',
-        "<PolarAngleAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
-        '<PolarAngleAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
-        '<PolarAngleAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
-        '<PolarAngleAxis type="number" domain={[0, 100]} allowDataOverflow />',
+        "<PolarRadiusAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
+        '<PolarRadiusAxis type="number" domain={[0, \'dataMax\']} />',
+        "<PolarRadiusAxis type=\"number\" domain={['auto', 'auto']} />",
+        '<PolarRadiusAxis type="number" domain={[0, \'dataMax + 1000\']} />',
+        "<PolarRadiusAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
+        '<PolarRadiusAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
+        '<PolarRadiusAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
+        '<PolarRadiusAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
     },
     {
@@ -271,23 +241,9 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'outer',
+      defaultVal: 'right',
     },
-    {
-      name: 'radius',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The outer radius of circle grid. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
-          </section>
-        ),
-      },
-    },
+    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
     {
       name: 'range',
       type: 'AxisRange',
@@ -338,6 +294,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      defaultVal: 5,
     },
     {
       name: 'tickFormatter',
@@ -346,7 +303,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The formatter function of ticks.</p>
+            <p>The formatter function of tick.</p>
           </section>
         ),
       },
@@ -368,31 +325,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
       defaultVal: true,
     },
-    {
-      name: 'ticks',
-      type: 'Array<readonly TickItem>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The array of every tick&#39;s value and angle.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'tickSize',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The length of tick line.</p>
-          </section>
-        ),
-      },
-      defaultVal: 8,
-    },
+    { name: 'ticks', type: 'Array<readonly TickItem>', isOptional: true },
     {
       name: 'type',
       type: '"number" | "category"',
@@ -404,7 +337,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'category',
+      defaultVal: 'number',
     },
     {
       name: 'unit',

@@ -91,9 +91,7 @@ interface TextProps {
 
   /**
    * Text rotation angle in degrees.
-   * The text will be rotated around the (x, y) coordinates as the pivot point.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
-   * The rotation transform is applied as `rotate(angle, x, y)`.
    *
    * @defaultValue 0
    */

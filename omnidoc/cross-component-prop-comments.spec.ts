@@ -48,12 +48,17 @@ describe('cross-component prop consistency', () => {
       reason: 'Children comments vary widely based on component purpose',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
+      components: ['*'],
+      prop: 'hide',
+      reason: 'multiple components have hide, the behaviour is different for each',
+    },
+    {
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis'],
       prop: 'height',
       reason: 'Many components assign different meanings to height',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend'],
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'YAxis'],
       prop: 'width',
       reason: 'Many components assign different meanings to width',
     },
@@ -163,6 +168,47 @@ describe('cross-component prop consistency', () => {
       components: ['PolarGrid'],
       prop: 'outerRadius',
       reason: 'Unlike other components, this can not be a percentage string',
+    },
+    {
+      components: ['PolarRadiusAxis'],
+      prop: 'angle',
+      reason:
+        'PolarRadiusAxis angle means rotation of the whole axis, unlike other components where it means rotation of text',
+    },
+    {
+      components: ['PolarAngleAxis'],
+      prop: 'ticks',
+      reason: 'PolarAngleAxis ticks are different type for some reason, unlike other axis components',
+    },
+    {
+      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
+      prop: 'label',
+      reason: 'Axis label renders one element, graphical items label render one per data point',
+    },
+    {
+      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
+      prop: 'name',
+      reason: 'name does similar thing but from different point of view in axes vs graphical items',
+    },
+    {
+      components: ['XAxis'],
+      prop: 'xAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
+    },
+    {
+      components: ['YAxis'],
+      prop: 'yAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
+    },
+    {
+      components: ['ZAxis'],
+      prop: 'zAxisId',
+      reason: 'Axis ID describes the axis itself, not a relation to other components',
+    },
+    {
+      components: ['PolarAngleAxis'],
+      prop: 'axisLine',
+      reason: 'Unlike other axes, PolarAngleAxis.axisLine does not accept a boolean value',
     },
   ];
 

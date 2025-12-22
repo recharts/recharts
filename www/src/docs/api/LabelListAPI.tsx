@@ -11,8 +11,7 @@ export const LabelListAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              Text rotation angle in degrees. The text will be rotated around the (x, y) coordinates as the pivot point.
-              Positive values rotate clockwise, negative values rotate counterclockwise.
+              Text rotation angle in degrees. Positive values rotate clockwise, negative values rotate counterclockwise.
             </p>
           </section>
         ),

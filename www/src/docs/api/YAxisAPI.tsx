@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const PolarAngleAxisAPI: ApiDoc = {
-  name: 'PolarAngleAxis',
+export const YAxisAPI: ApiDoc = {
+  name: 'YAxis',
   props: [
     {
       name: 'allowDataOverflow',
@@ -21,7 +21,19 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'allowDecimals', type: 'boolean', isOptional: true, defaultVal: false },
+    {
+      name: 'allowDecimals',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Allow the ticks of axis to be decimals or not.</p>
+          </section>
+        ),
+      },
+      defaultVal: true,
+    },
     {
       name: 'allowDuplicatedCategory',
       type: 'boolean',
@@ -51,7 +63,6 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
       defaultVal: 0,
     },
-    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
     {
       name: 'axisLine',
       type: 'false | true | React.SVGProps<SVGLineElement>',
@@ -59,36 +70,24 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Controls axis line element. These are be passed as props to SVG <code>&lt;line&gt;</code> element
-              representing the axis line. If <code>true</code> then the axis line is drawn using props of the
-              PolarAngleAxis component. If <code>false</code> then the axis line is not drawn.
-            </p>
-            <p>
-              Also see <code>axisLineType</code> prop to change the shape of the axis line.
-            </p>
+            <p>Determines how the axis line is drawn. Options:</p>
+            <ul>
+              <li>
+                <code>true</code>: the axis line is drawn with default props;
+              </li>
+              <li>
+                <code>false</code>: the axis line is not visible;
+              </li>
+              <li>
+                <code>object</code>: passed as props to SVG <code>&lt;line&gt;</code> element representing the axis
+                line.
+              </li>
+            </ul>
           </section>
         ),
       },
       defaultVal: true,
-      format: [
-        "<PolarAngleAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />",
-        '<PolarAngleAxis axisLine={false} />',
-        "<PolarAngleAxis stroke='red' strokeWidth={2} strokeDasharray={4} />",
-      ],
-    },
-    {
-      name: 'axisLineType',
-      type: '"circle" | "polygon"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of axis line.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'polygon',
+      format: ['<YAxis axisLine={false} />', "<YAxis axisLine={{ stroke: 'red', strokeWidth: 2 }} />"],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -103,40 +102,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
     },
-    {
-      name: 'cx',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. When used inside a chart context, this prop is calculated based on the
-              chart&#39;s dimensions, and this prop is ignored.
-            </p>
-            <p>This is only used when rendered outside a chart context.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'cy',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. When used inside a chart context, this prop is calculated based on the
-              chart&#39;s dimensions, and this prop is ignored.
-            </p>
-            <p>This is only used when rendered outside a chart context.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'dataKey',
       type: 'string | number | Function',
@@ -185,14 +151,14 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
       format: [
-        "<PolarAngleAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
-        '<PolarAngleAxis type="number" domain={[0, \'dataMax\']} />',
-        "<PolarAngleAxis type=\"number\" domain={['auto', 'auto']} />",
-        '<PolarAngleAxis type="number" domain={[0, \'dataMax + 1000\']} />',
-        "<PolarAngleAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
-        '<PolarAngleAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
-        '<PolarAngleAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
-        '<PolarAngleAxis type="number" domain={[0, 100]} allowDataOverflow />',
+        "<YAxis type=\"number\" domain={['dataMin', 'dataMax']} />",
+        '<YAxis type="number" domain={[0, \'dataMax\']} />',
+        "<YAxis type=\"number\" domain={['auto', 'auto']} />",
+        '<YAxis type="number" domain={[0, \'dataMax + 1000\']} />',
+        "<YAxis type=\"number\" domain={['dataMin - 100', 'dataMax + 100']} />",
+        '<YAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
+        '<YAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
+        '<YAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
     },
     {
@@ -224,6 +190,22 @@ export const PolarAngleAxisAPI: ApiDoc = {
       defaultVal: false,
     },
     {
+      name: 'interval',
+      type: '(union of 6 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              If set 0, all the ticks will be shown. If set &quot;preserveStart&quot;, &quot;preserveEnd&quot; or
+              &quot;preserveStartEnd&quot;, the ticks which is to be shown or hidden will be calculated automatically.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 'preserveEnd',
+    },
+    {
       name: 'label',
       type: '(union of 7 variants)',
       isOptional: true,
@@ -239,6 +221,34 @@ export const PolarAngleAxisAPI: ApiDoc = {
               If set a string or a number, default label will be drawn, and the option is content. If set a React
               element, the option is the custom react element of drawing label. If an object, the option is the props of
               a new Label instance. If set a function, the function will be called to render customized label.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
+    {
+      name: 'minTickGap',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The minimum gap between two adjacent tick labels</p>
+          </section>
+        ),
+      },
+      defaultVal: 5,
+    },
+    {
+      name: 'mirror',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              If set true, flips ticks around the axis line, displaying the labels inside the chart instead of outside.
             </p>
           </section>
         ),
@@ -267,26 +277,24 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The orientation of axis text.</p>
+            <p>The orientation of axis.</p>
           </section>
         ),
       },
-      defaultVal: 'outer',
+      defaultVal: 'left',
     },
     {
-      name: 'radius',
-      type: 'string | number',
+      name: 'padding',
+      type: '"gap" | "no-gap" | Object',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              The outer radius of circle grid. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
+            <p>Specify the padding of y-axis.</p>
           </section>
         ),
       },
+      defaultVal: { top: 0, bottom: 0 },
     },
     {
       name: 'range',
@@ -338,6 +346,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      defaultVal: 5,
     },
     {
       name: 'tickFormatter',
@@ -346,7 +355,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The formatter function of ticks.</p>
+            <p>The formatter function of tick.</p>
           </section>
         ),
       },
@@ -369,13 +378,28 @@ export const PolarAngleAxisAPI: ApiDoc = {
       defaultVal: true,
     },
     {
-      name: 'ticks',
-      type: 'Array<readonly TickItem>',
+      name: 'tickMargin',
+      type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The array of every tick&#39;s value and angle.</p>
+            <p>The margin between tick line and tick.</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'ticks',
+      type: 'Array<readonly AxisTick>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Ticks can be any type when the axis is the type of category Ticks must be numbers when the axis is the
+              type of number
+            </p>
           </section>
         ),
       },
@@ -391,20 +415,23 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 8,
+      defaultVal: 6,
     },
     {
       name: 'type',
-      type: '"number" | "category"',
+      type: 'string',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The type of axis.</p>
+            <p>
+              The type of axis. Numeric axis operates in a continuous range of numbers. Category axis operates in a
+              discrete set of categories.
+            </p>
           </section>
         ),
       },
-      defaultVal: 'category',
+      defaultVal: 'number',
     },
     {
       name: 'unit',
@@ -419,22 +446,33 @@ export const PolarAngleAxisAPI: ApiDoc = {
       },
     },
     {
-      name: 'zIndex',
-      type: 'number',
+      name: 'width',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
-              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
-              content is rendered in the default layer without portals.
+              The width of the axis, which can be set by user. &#39;auto&#39; will attempt to resize the axis based on
+              its content.
             </p>
           </section>
         ),
       },
-      defaultVal: 500,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      defaultVal: 60,
+    },
+    {
+      name: 'yAxisId',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Unique ID that represents this YAxis. Required when there are multiple YAxes.</p>
+          </section>
+        ),
+      },
+      defaultVal: 0,
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -456,18 +494,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
     { name: 'onCanPlayThroughCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onChange', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onChangeCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onClick',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of click on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEnd', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEndCapture', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
@@ -533,94 +560,17 @@ export const PolarAngleAxisAPI: ApiDoc = {
     { name: 'onLoadStartCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCaptureCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseDown',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousedown on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseDown', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseDownCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseEnter',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseenter on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseLeave',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseleave on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseMove',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousemove on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseEnter', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    { name: 'onMouseLeave', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseOut',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseout on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOutCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseOver',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseover on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseOver', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOverCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseUp',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseup on the ticks of this axis</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseUp', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseUpCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onPaste', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
     { name: 'onPasteCapture', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
@@ -685,6 +635,6 @@ export const PolarAngleAxisAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };
