@@ -16,6 +16,7 @@
   "types/cartesian/Brush.d.ts",
   "types/cartesian/CartesianAxis.d.ts",
   "types/cartesian/CartesianGrid.d.ts",
+  "types/cartesian/CartesianPosition.d.ts",
   "types/cartesian/ErrorBar.d.ts",
   "types/cartesian/Funnel.d.ts",
   "types/cartesian/GraphicalItemClipPath.d.ts",
