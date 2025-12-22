@@ -793,20 +793,13 @@ describe('ScatterChart of two dimension data', () => {
     it('should select YAxis ticks', () => {
       const { spy } = renderTestCase(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false));
       expectLastCalledWith(spy, [
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 165, value: 0, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 138.33333333333334, value: 100, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 111.66666666666669, value: 200, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 85, value: 300, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 58.33333333333334, value: 400, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 31.66666666666666, value: 500, offset: 0 },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        { coordinate: 5, value: 600, offset: 0 },
+        { index: 0, coordinate: 165, value: 0, offset: 0 },
+        { index: 1, coordinate: 138.33333333333334, value: 100, offset: 0 },
+        { index: 2, coordinate: 111.66666666666669, value: 200, offset: 0 },
+        { index: 3, coordinate: 85, value: 300, offset: 0 },
+        { index: 4, coordinate: 58.33333333333334, value: 400, offset: 0 },
+        { index: 5, coordinate: 31.66666666666666, value: 500, offset: 0 },
+        { index: 6, coordinate: 5, value: 600, offset: 0 },
       ]);
     });
 
@@ -942,36 +935,11 @@ describe('ScatterChart of two dimension data', () => {
       const { spy } = renderTestCase(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false));
 
       expectLastCalledWith(spy, [
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        {
-          coordinate: 165,
-          offset: 0,
-          value: 0,
-        },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        {
-          coordinate: 125,
-          offset: 0,
-          value: 200,
-        },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        {
-          coordinate: 85,
-          offset: 0,
-          value: 400,
-        },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        {
-          coordinate: 45,
-          offset: 0,
-          value: 600,
-        },
-        // @ts-expect-error the type says that index is required property but this selector does not return it!
-        {
-          coordinate: 5,
-          offset: 0,
-          value: 800,
-        },
+        { index: 0, coordinate: 165, offset: 0, value: 0 },
+        { index: 1, coordinate: 125, offset: 0, value: 200 },
+        { index: 2, coordinate: 85, offset: 0, value: 400 },
+        { index: 3, coordinate: 45, offset: 0, value: 600 },
+        { index: 4, coordinate: 5, offset: 0, value: 800 },
       ]);
     });
 

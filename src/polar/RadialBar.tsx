@@ -585,8 +585,8 @@ export function computeRadialBarDataItems({
     }
 
     if (layout === 'radial') {
-      startAngle = angleAxis.scale(value[0]) ?? rootStartAngle;
-      endAngle = angleAxis.scale(value[1]) ?? rootEndAngle;
+      startAngle = angleAxis.scale.map(value[0]) ?? rootStartAngle;
+      endAngle = angleAxis.scale.map(value[1]) ?? rootEndAngle;
       innerRadius = getCateCoordinateOfBar({
         axis: radiusAxis,
         ticks: radiusAxisTicks,
@@ -616,8 +616,8 @@ export function computeRadialBarDataItems({
         };
       }
     } else {
-      innerRadius = radiusAxis.scale(value[0]);
-      outerRadius = radiusAxis.scale(value[1]);
+      innerRadius = radiusAxis.scale.map(value[0]);
+      outerRadius = radiusAxis.scale.map(value[1]);
       startAngle = getCateCoordinateOfBar({
         axis: angleAxis,
         ticks: angleAxisTicks,

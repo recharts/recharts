@@ -932,7 +932,7 @@ export function computeLinePoints({
 
       if (layout === 'horizontal') {
         const x = getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index });
-        const y = isNullish(value) ? null : yAxis.scale(value);
+        const y = isNullish(value) ? null : yAxis.scale.map(value);
         return {
           x,
           y: y ?? null,
@@ -941,7 +941,7 @@ export function computeLinePoints({
         };
       }
 
-      const x = isNullish(value) ? null : xAxis.scale(value);
+      const x = isNullish(value) ? null : xAxis.scale.map(value);
       const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index });
       if (x == null || y == null) {
         return null;

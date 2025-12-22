@@ -14,10 +14,11 @@ import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
 import { calculateActiveTickIndex } from '../../src/util/getActiveCoordinate';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 import { CustomScaleDefinition } from '../../src';
+import { d3ScaleToRechartsScale } from '../../src/util/scale/RechartsScale';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
-    scale: scaleLinear(),
+    scale: d3ScaleToRechartsScale<number>(scaleLinear()),
     tickCount: 5,
     type: 'number' as const,
     axisType: 'yAxis' as const,
@@ -36,7 +37,7 @@ describe('getTicksForAxis', () => {
       .domain(['13', '14', '15', '16', '17'])
       .range([5, 866]);
     const XAxisWithActiveBrush: AxisPropsNeededForTicksGenerator = {
-      scale: stringScalePoint,
+      scale: d3ScaleToRechartsScale(stringScalePoint),
       ticks: ['12', '13', '14', '15', '16', '17', '18', '19'] as const,
       tickCount: 5,
       type: 'category' as const,
@@ -92,7 +93,7 @@ describe('getTicksForAxis', () => {
   it('Tick coordinates depend on scale', () => {
     const axis: AxisPropsNeededForTicksGenerator = {
       ...Y_AXIS_EXAMPLE,
-      scale: scaleLinear().domain([0, 1600]).range([0, 1000]),
+      scale: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 1600]).range([0, 1000])),
     };
 
     expect(getTicksOfAxis(axis, true, undefined)).toEqual([
@@ -122,7 +123,7 @@ describe('getBandSizeOfAxis', () => {
       reversed: false,
       unit: undefined,
       type: 'category',
-      scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
+      scale: d3ScaleToRechartsScale<string>(scaleBand().domain(['0', '1', '2', '3']).range([0, 100])),
     };
     expect(getBandSizeOfAxis(axis)).toBe(25);
   });
@@ -139,7 +140,7 @@ describe('getBandSizeOfAxis', () => {
       reversed: false,
       unit: undefined,
       type: 'number',
-      scale: scaleLinear(),
+      scale: d3ScaleToRechartsScale<number>(scaleLinear()),
     };
     const ticks: ReadonlyArray<TickItem> = [
       { coordinate: 13, index: 0, value: 'a' },
@@ -244,10 +245,10 @@ describe('getValueByDataKey', () => {
 
 describe('calculateActiveTickIndex', () => {
   const ticks: ReadonlyArray<TickItem> = [
-    { coordinate: 0, index: 0, value: 'a' },
-    { coordinate: 12, index: 1, value: 'b' },
-    { coordinate: 14, index: 2, value: 'c' },
-    { coordinate: 15, index: 3, value: 'd' },
+    { coordinate: 0, index: 0, value: 'a', offset: 0 },
+    { coordinate: 12, index: 1, value: 'b', offset: 0 },
+    { coordinate: 14, index: 2, value: 'c', offset: 0 },
+    { coordinate: 15, index: 3, value: 'd', offset: 0 },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
     expect(calculateActiveTickIndex(12, ticks, [], 'radiusAxis', [0, 100])).toBe(1);

@@ -956,7 +956,7 @@ export function computeBarRectangles({
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
-  const stackedBarStart: number | undefined = numericAxis.scale(baseValue);
+  const stackedBarStart: number | undefined = numericAxis.scale.map(baseValue);
 
   return displayedData
     .map((entry, index): BarRectangleItem | null => {
@@ -980,8 +980,8 @@ export function computeBarRectangles({
       const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
 
       if (layout === 'horizontal') {
-        const baseValueScale = yAxis.scale(value[0]);
-        const currentValueScale = yAxis.scale(value[1]);
+        const baseValueScale = yAxis.scale.map(value[0]);
+        const currentValueScale = yAxis.scale.map(value[1]);
         if (baseValueScale == null || currentValueScale == null) {
           return null;
         }
@@ -1006,8 +1006,8 @@ export function computeBarRectangles({
           height += delta;
         }
       } else {
-        const baseValueScale = xAxis.scale(value[0]);
-        const currentValueScale = xAxis.scale(value[1]);
+        const baseValueScale = xAxis.scale.map(value[0]);
+        const currentValueScale = xAxis.scale.map(value[1]);
         if (baseValueScale == null || currentValueScale == null) {
           return null;
         }

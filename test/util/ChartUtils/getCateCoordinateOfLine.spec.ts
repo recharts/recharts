@@ -3,7 +3,7 @@ import { getCateCoordinateOfLine } from '../../../src/util/ChartUtils';
 import { RechartsScale } from '../../../src/util/scale/RechartsScale';
 
 // @ts-expect-error incomplete mock data
-const mockScale: RechartsScale = (v: number) => v * 2;
+const mockScale: RechartsScale = { map: (v: number) => v * 2 };
 
 describe('getCateCoordinateOfLine', () => {
   describe('numerical axis', () => {

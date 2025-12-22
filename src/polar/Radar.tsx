@@ -236,9 +236,9 @@ export function computeRadarPoints({
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
     const value = getValueByDataKey(entry, dataKey);
-    const angle: number = (angleAxis.scale(name) ?? 0) + angleBandSize;
+    const angle: number = (angleAxis.scale.map(name) ?? 0) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
-    const radius: number = isNullish(pointValue) ? 0 : (radiusAxis.scale(pointValue) ?? 0);
+    const radius: number = isNullish(pointValue) ? 0 : (radiusAxis.scale.map(pointValue) ?? 0);
 
     if (Array.isArray(value) && value.length >= 2) {
       isRange = true;
@@ -263,7 +263,7 @@ export function computeRadarPoints({
     points.forEach((point: RadarPoint) => {
       if (Array.isArray(point.value)) {
         const baseValue = point.value[0];
-        const radius: number = isNullish(baseValue) ? 0 : (radiusAxis.scale(baseValue) ?? 0);
+        const radius: number = isNullish(baseValue) ? 0 : (radiusAxis.scale.map(baseValue) ?? 0);
 
         baseLinePoints.push({
           ...point,

@@ -354,7 +354,7 @@ const combineTicksOfTooltipAxis = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale(entry);
+        const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -372,7 +372,7 @@ const combineTicksOfTooltipAxis = (
   return scale
     .domain()
     .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
-      const scaled = scale(entry);
+      const scaled = scale.map(entry);
       if (!isWellBehavedNumber(scaled)) {
         return null;
       }

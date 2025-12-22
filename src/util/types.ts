@@ -833,6 +833,13 @@ export interface TickItem {
   value: any;
   coordinate: number;
   index: number;
+  /**
+   * How far this tick is offset from the start of a category band.
+   * On axes that do not have bands, this will always be zero.
+   *
+   * We never read offset internally in Recharts,
+   * but it has been part of the external API so let's keep it here for people who do use it.
+   */
   offset?: number;
 }
 

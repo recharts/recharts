@@ -1211,10 +1211,8 @@ describe('getBaseValue', () => {
 });
 
 describe('computeArea', () => {
-  const mockScale = (n: number) => n * 2;
-  mockScale.domain = () => [0, 'auto'];
-  const mockScale2 = (n: number) => n * 3;
-  mockScale2.domain = () => [0, 'auto'];
+  const mockScale = { map: (n: number) => n * 2, domain: () => [0, 'auto'] };
+  const mockScale2 = { map: (n: number) => n * 3, domain: () => [0, 'auto'] };
 
   it('should return empty points if displayedData is empty array', () => {
     const areaSettings: AreaSettings = {

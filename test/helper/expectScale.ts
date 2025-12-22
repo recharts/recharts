@@ -20,7 +20,7 @@ export type ExpectedScale = { domain: AxisDomain; range: [number, number]; bandw
  */
 export function expectScale(actual: unknown, expected: ExpectedScale) {
   const scale = actual as RechartsScale;
-  expect(scale).toBeInstanceOf(Function);
+  expect(scale.map).toBeInstanceOf(Function);
   expect(scale.domain(), 'domain error').toEqual(expected.domain);
   expect(scale.range(), 'range error').toEqual(expected.range);
   if ('bandwidth' in expected && typeof scale.bandwidth === 'function') {

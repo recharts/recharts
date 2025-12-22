@@ -158,15 +158,18 @@ describe('checkDomainOfScale', () => {
     ] as const;
 
   test.each(getAllConvergingScales())('should not throw with %s', (_, scale) => {
+    // @ts-expect-error scales in the array have various types, some incompatible with others
     expect(() => checkDomainOfScale(scale)).not.toThrow();
   });
 
   test.each(getAllDivergingScales())('should not throw with %s', (_, scale) => {
+    // @ts-expect-error scales in the array have various types, some incompatible with others
     expect(() => checkDomainOfScale(scale)).not.toThrow();
   });
 
   test.each(getAllConvergingScales())('should normalize the domain of %s', (_, scale) => {
     const domainBefore = scale.domain();
+    // @ts-expect-error scales in the array have various types, some incompatible with others
     checkDomainOfScale(scale);
     expect(scale.domain().length).toBeLessThanOrEqual(2);
     const domainAfter = scale.domain();
@@ -183,6 +186,7 @@ describe('checkDomainOfScale', () => {
       const domainBefore = scale.domain();
       expect(domainBefore).toHaveLength(3);
       expect(domainBefore).not.toContainEqual(NaN);
+      // @ts-expect-error scales in the array have various types, some incompatible with others
       checkDomainOfScale(scale);
       const domainAfter = scale.domain();
       expect(domainAfter).toHaveLength(3);
@@ -195,6 +199,7 @@ describe('checkDomainOfScale', () => {
   test.each(getAllBandScales())('should not modify the domain of %s', (_, scale) => {
     const domainBefore = scale.domain();
     expect(domainBefore).not.toContainEqual(NaN);
+    // @ts-expect-error scales in the array have various types, some incompatible with others
     checkDomainOfScale(scale);
     const domainAfter = scale.domain();
     expect(domainBefore).toEqual(domainAfter);

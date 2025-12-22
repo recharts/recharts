@@ -55,26 +55,26 @@ export class ScaleHelper {
     if (position) {
       switch (position) {
         case 'start': {
-          return this.scale(value);
+          return this.scale.map(value);
         }
         case 'middle': {
           const offset = this.bandwidth ? this.bandwidth() / 2 : 0;
-          return this.scale(value) + offset;
+          return this.scale.map(value) + offset;
         }
         case 'end': {
           const offset = this.bandwidth ? this.bandwidth() : 0;
-          return this.scale(value) + offset;
+          return this.scale.map(value) + offset;
         }
         default: {
-          return this.scale(value);
+          return this.scale.map(value);
         }
       }
     }
     if (bandAware) {
       const offset = this.bandwidth ? this.bandwidth() / 2 : 0;
-      return this.scale(value) + offset;
+      return this.scale.map(value) + offset;
     }
-    return this.scale(value);
+    return this.scale.map(value);
   }
 
   isInRange(value: number) {

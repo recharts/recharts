@@ -1,6 +1,3 @@
-/**
- * @fileOverview Cartesian Grid
- */
 import * as React from 'react';
 import { ReactElement, SVGProps } from 'react';
 

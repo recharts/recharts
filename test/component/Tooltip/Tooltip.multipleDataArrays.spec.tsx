@@ -131,13 +131,13 @@ describe('Tooltip in chart with multiple data arrays', () => {
       expect(spy).toHaveBeenCalledTimes(3);
       const scale = spy.mock.calls[2][0];
       assertNotNull(scale);
-      const chartX1 = scale(5);
+      const chartX1 = scale.map(5);
       expect(chartX1).toBe(118.75);
 
-      const chartX2 = scale(30);
+      const chartX2 = scale.map(30);
       expect(chartX2).toBe(387.5);
 
-      const chartX3 = scale(40);
+      const chartX3 = scale.map(40);
       expect(chartX3).toBe(495);
     });
 
