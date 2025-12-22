@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { EditorView, keymap } from '@codemirror/view';
 import { EditorState, Extension, Compartment } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
@@ -11,9 +11,7 @@ import {
   HighlightStyle,
 } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
-import './CodeMirrorEditor.css';
-import { RechartsDevtoolsPortal } from '@recharts/devtools';
-import { CopyButton } from './CopyButton.tsx';
+import '../../utils/CodeMirrorEditor.css'; // Keep using the same CSS for now
 
 // Custom highlight style with improved color contrast for accessibility
 const accessibleHighlightStyle = HighlightStyle.define([
@@ -36,101 +34,88 @@ const accessibleHighlightStyle = HighlightStyle.define([
   { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#0550ae' },
   { tag: [t.processingInstruction, t.string, t.inserted], color: '#0a3069' },
   { tag: t.invalid, color: '#82071e' },
-  // Property names and attribute names - fixed for better contrast
-  { tag: [t.attributeName], color: '#007070' }, // Changed from #008080 to meet 4.5:1 contrast
+  { tag: [t.attributeName], color: '#007070' },
 ]);
-
-type CodeMirrorEditorProps = {
-  value: string;
-  onChange?: (value: string) => void;
-  readOnly?: boolean;
-  className?: string;
-  activeMode?: EditorMode;
-  onModeChange?: (mode: EditorMode) => void;
-  tools?: { name: string; label: string }[];
-  toolbarItems?: Record<string, ReactNode[]>;
-};
-
-export type EditorMode = 'source' | 'devtools';
 
 // Custom fold service for #region/#endregion
 const regionFoldService = foldService.of((state, from, _to) => {
   const line = state.doc.lineAt(from);
   const { text } = line;
-
-  // Check if this line has #region
   const regionMatch = text.match(/\/\/\s*#region/);
   if (regionMatch) {
-    // Find the matching #endregion
     let endLine = line.number + 1;
     let depth = 1;
-
     while (endLine <= state.doc.lines && depth > 0) {
       const currentLine = state.doc.line(endLine);
       const currentText = currentLine.text;
-
       if (currentText.match(/\/\/\s*#region/)) {
         depth++;
       } else if (currentText.match(/\/\/\s*#endregion/)) {
         depth--;
         if (depth === 0) {
-          // Return fold range from end of #region line to start of #endregion line
           return { from: line.to, to: currentLine.from };
         }
       }
       endLine++;
     }
   }
-
   return null;
 });
 
 const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/g, '');
 
 /**
- * CodeMirror 6 editor component with lazy-loading of editing features.
- *
- * By default, the editor is read-only with syntax highlighting and code folding.
- * When readOnly is set to false, editing extensions are loaded dynamically.
+ * Props for the SourceCodeEditor component.
  */
-export function CodeMirrorEditor({
+export type SourceCodeEditorProps = {
+  /**
+   * The initial code to display in the editor.
+   */
+  value: string;
+  /**
+   * Callback when the code changes (only active if readOnly is false).
+   */
+  onChange?: (value: string) => void;
+  /**
+   * Whether the editor is read-only. Defaults to true.
+   */
+  readOnly?: boolean;
+  /**
+   * Additional CSS class name.
+   */
+  className?: string;
+  /**
+   * Ref to expose editor methods (like get value).
+   */
+  getEditorValue?: (getValue: () => string) => void;
+};
+
+/**
+ * A CodeMirror 6 editor wrapper for editing source code.
+ * Supports lazy-loading of editing capabilities.
+ */
+export function SourceCodeEditor({
   value,
   onChange,
   readOnly = true,
   className = '',
-  activeMode = 'source',
-  onModeChange,
-  tools,
-  toolbarItems,
-}: CodeMirrorEditorProps) {
+  getEditorValue,
+}: SourceCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
 
-  // remove trailing newline from the value to save on vertical space
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
-  // Create a ref to store the devtools value so that it persists across re-renders/unmounts of children
-  const devToolsValue = useRef<unknown>(undefined);
-
+  // Expose getting the value to the parent
   useEffect(() => {
-    const container = document.getElementById('recharts-devtools-portal');
-    if (!container) return () => {};
+    if (getEditorValue) {
+      getEditorValue(() => viewRef.current?.state.doc.toString() ?? '');
+    }
+  }, [getEditorValue]);
 
-    const handleDevToolsChange = (e: CustomEvent<unknown>) => {
-      devToolsValue.current = e.detail;
-    };
-
-    // @ts-expect-error not sure how to type custom events
-    container.addEventListener('recharts-devtools-change', handleDevToolsChange);
-    return () => {
-      // @ts-expect-error not sure how to type custom events
-      container.removeEventListener('recharts-devtools-change', handleDevToolsChange);
-    };
-  }, []);
-
-  // Lazy load editing extensions when switching to editable mode
+  // Lazy load editing extensions
   useEffect(() => {
     if (!readOnly && editExtensions.length === 0) {
       import('@codemirror/commands').then(({ history, historyKeymap, defaultKeymap }) => {
@@ -139,7 +124,7 @@ export function CodeMirrorEditor({
     }
   }, [readOnly, editExtensions.length]);
 
-  // Initialize the editor once
+  // Initialize editor
   useEffect(() => {
     if (!editorRef.current || viewRef.current) return () => {};
 
@@ -151,24 +136,14 @@ export function CodeMirrorEditor({
       keymap.of(foldKeymap),
       EditorView.lineWrapping,
       EditorView.theme({
-        '&': {
-          height: '100%',
-          fontSize: '14px',
-        },
-        '.cm-scroller': {
-          fontFamily: 'monospace',
-        },
-        '.cm-foldGutter': {
-          width: '20px',
-        },
-        '.cm-content': {
-          maxWidth: '100%',
-        },
+        '&': { height: '100%', fontSize: '14px' },
+        '.cm-scroller': { fontFamily: 'monospace' },
+        '.cm-foldGutter': { width: '20px' },
+        '.cm-content': { maxWidth: '100%' },
       }),
       editableCompartment.current.of([]),
     ];
 
-    // Create new view
     const startState = EditorState.create({
       doc: valueWithoutTrailingNewline,
       extensions,
@@ -179,30 +154,24 @@ export function CodeMirrorEditor({
       parent: editorRef.current,
     });
 
-    // Fold all #region blocks on mount
-    if (viewRef.current) {
-      const view = viewRef.current;
+    // Fold logic
+    const view = viewRef.current;
+    if (view) {
       const { state } = view;
       const effects = [];
-
-      // Find all lines with #region and fold them
       for (let lineNum = 1; lineNum <= state.doc.lines; lineNum++) {
         const line = state.doc.line(lineNum);
         if (line.text.match(/\/\/\s*#region/)) {
-          // Find matching endregion
           let endLine = lineNum + 1;
           let depth = 1;
-
           while (endLine <= state.doc.lines && depth > 0) {
             const currentLine = state.doc.line(endLine);
             const currentText = currentLine.text;
-
             if (currentText.match(/\/\/\s*#region/)) {
               depth++;
             } else if (currentText.match(/\/\/\s*#endregion/)) {
               depth--;
               if (depth === 0) {
-                // Fold from end of #region line to start of #endregion line
                 effects.push(foldEffect.of({ from: line.to, to: currentLine.from }));
                 break;
               }
@@ -211,122 +180,55 @@ export function CodeMirrorEditor({
           }
         }
       }
-
-      if (effects.length > 0) {
-        view.dispatch({ effects });
-      }
+      if (effects.length > 0) view.dispatch({ effects });
     }
 
     return () => {
-      // Cleanup on unmount
       if (viewRef.current) {
         viewRef.current.destroy();
         viewRef.current = null;
       }
     };
-    // Only run once on mount, which is why the deps array is empty and ignores `value` on purpose
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update document when value changes externally
+  // Update doc when value changes externally
   useEffect(() => {
     if (!viewRef.current) return;
-
     const currentValue = viewRef.current.state.doc.toString();
     if (currentValue !== valueWithoutTrailingNewline) {
       viewRef.current.dispatch({
-        changes: {
-          from: 0,
-          to: currentValue.length,
-          insert: valueWithoutTrailingNewline,
-        },
+        changes: { from: 0, to: currentValue.length, insert: valueWithoutTrailingNewline },
       });
     }
   }, [valueWithoutTrailingNewline]);
 
-  // Update editable extensions when switching between read-only and editable
+  // Update editable extensions
   useEffect(() => {
     if (!viewRef.current) return;
-
     const extensions: Extension[] = [];
-
     if (!readOnly) {
-      if (editExtensions.length > 0) {
-        extensions.push(...editExtensions);
-      }
+      if (editExtensions.length > 0) extensions.push(...editExtensions);
       if (onChange) {
         extensions.push(
           EditorView.updateListener.of(update => {
-            if (update.docChanged) {
-              onChange(update.state.doc.toString());
-            }
+            if (update.docChanged) onChange(update.state.doc.toString());
           }),
         );
       }
     } else {
       extensions.push(EditorState.readOnly.of(true));
     }
-
     viewRef.current.dispatch({
       effects: editableCompartment.current.reconfigure(extensions),
     });
   }, [readOnly, editExtensions, onChange]);
 
-  const handleModeChange = (newMode: string) => {
-    if (onModeChange && (newMode === 'source' || newMode === 'devtools')) {
-      onModeChange(newMode);
-    }
-  };
-
-  const defaultTools = [{ name: 'source', label: 'Source code view' }];
-
-  const effectiveTools = tools ?? defaultTools;
-
   return (
-    <div className="codemirror-wrapper">
-      <div id="codemirror-container">
-        <div className="codemirror-toolbar">
-          {effectiveTools.length > 1 && (
-            <select
-              className="codemirror-toolbar-item"
-              value={activeMode}
-              onChange={e => handleModeChange(e.target.value)}
-              style={{ paddingRight: '12px' }}
-            >
-              {effectiveTools.map(tool => (
-                <option key={tool.name} value={tool.name}>
-                  {tool.label}
-                </option>
-              ))}
-            </select>
-          )}
-          <CopyButton
-            getValueToCopy={() => {
-              if (activeMode === 'devtools') {
-                return devToolsValue.current;
-              }
-              return viewRef.current?.state.doc.toString();
-            }}
-          />
-          {toolbarItems && toolbarItems[activeMode]}
-        </div>
-
-        <RechartsDevtoolsPortal
-          style={{
-            height: '100%',
-            background: 'var(--color-bg)',
-            color: 'var(--color-text)',
-            overflow: 'auto',
-            padding: '10px',
-            display: activeMode === 'devtools' ? 'block' : 'none',
-          }}
-        />
-        <div
-          ref={editorRef}
-          className={`codemirror-example-editor ${className}`}
-          style={{ height: '100%', display: activeMode === 'devtools' ? 'none' : 'block' }}
-        />
-      </div>
-    </div>
+    <div
+      ref={editorRef}
+      className={`codemirror-example-editor ${className}`}
+      style={{ height: '100%', overflow: 'auto' }}
+    />
   );
 }

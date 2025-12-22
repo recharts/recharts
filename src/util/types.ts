@@ -752,7 +752,12 @@ export interface BaseAxisProps {
    *
    * @defaultValue auto
    */
-  scale?: ScaleType | CustomScaleDefinition;
+  scale?:
+    | ScaleType
+    | CustomScaleDefinition
+    | CustomScaleDefinition<string>
+    | CustomScaleDefinition<number>
+    | CustomScaleDefinition<Date>;
   /** The option for tick */
   tick?: TickProp;
   /** The count of ticks */

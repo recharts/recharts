@@ -1,4 +1,4 @@
-import { CodeMirrorEditor } from '../../../utils/CodeMirrorEditor.tsx';
+import { SourceCodeEditor } from '../../Playground/SourceCodeEditor.tsx';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
 
 const isolateComponentsBadExample = `
@@ -186,9 +186,9 @@ export function Performance() {
           changes, while the rest of the chart remains static.
         </p>
         <h3>This chart can potentially be slow</h3>
-        <CodeMirrorEditor value={isolateComponentsBadExample} />
+        <SourceCodeEditor value={isolateComponentsBadExample} />
         <h3>This chart is more performant</h3>
-        <CodeMirrorEditor value={isolateComponentsGoodExample} />
+        <SourceCodeEditor value={isolateComponentsGoodExample} />
         <p>
           You may also want to consider using{' '}
           <TargetBlankLink href="https://react.dev/reference/react/memo">React.memo</TargetBlankLink> to memoize
@@ -215,9 +215,9 @@ export function Performance() {
           component. Keeping dataKey stable with <code>useCallback</code> can help improve performance.
         </p>
         <h3>This chart can be slow because dataKey function is re-created on each render</h3>
-        <CodeMirrorEditor value={dataKeyAsFunctionBadExample} />
+        <SourceCodeEditor value={dataKeyAsFunctionBadExample} />
         <h3>This chart is more performant because dataKey function reference is stable between renders</h3>
-        <CodeMirrorEditor value={dataKeyAsFunctionGoodExample} />
+        <SourceCodeEditor value={dataKeyAsFunctionGoodExample} />
       </section>
       <section>
         <h2>eslint-plugin-react-perf</h2>
@@ -229,7 +229,7 @@ export function Performance() {
           ESLint plugin, which will help identify places where you might be creating new references unnecessarily.
         </p>
         <h3>Recommended configuration</h3>
-        <CodeMirrorEditor
+        <SourceCodeEditor
           value={`
 {
   "plugins": ["react-perf"],
@@ -277,7 +277,7 @@ export function Performance() {
           debounce and only redraw the chart after the user has stopped moving the mouse for a short period of time.
         </p>
         <h3>Example of debounced mouse handler</h3>
-        <CodeMirrorEditor value={throttledMouseHandlerExample} />
+        <SourceCodeEditor value={throttledMouseHandlerExample} />
       </section>
       <section>
         <h2>Measure, measure, measure!</h2>

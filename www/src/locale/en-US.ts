@@ -44,6 +44,7 @@ export const map = {
     domainAndTicks: 'Domain and Ticks',
     performance: 'Performance',
     roundedBars: 'Rounded Bar corners',
+    barAlignment: 'Bar Alignment',
   },
   installation: {
     installation: 'Installation',

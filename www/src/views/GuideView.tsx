@@ -9,6 +9,7 @@ import { ChartSizing } from '../components/GuideView/ChartSizing';
 import { DomainAndTicks } from '../components/GuideView/DomainAndTicks';
 import { Performance } from '../components/GuideView/Performance';
 import { RoundedBars } from '../components/GuideView/RoundedBars';
+import { BarAlign } from '../components/GuideView/BarAlign';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -20,6 +21,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   zIndex: ZIndex,
   performance: Performance,
   roundedBars: RoundedBars,
+  barAlignment: BarAlign,
 };
 
 export const allGuides = Object.keys(guideMap);
