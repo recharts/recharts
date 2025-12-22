@@ -75,7 +75,8 @@ export interface Props extends Omit<BaseAxisProps, 'domain'> {
    * @example <ZAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />
    * @example <ZAxis type="number" domain={[0, 100]} allowDataOverflow />
    */
-  domain?: AxisDomain; /**
+  domain?: AxisDomain;
+  /**
    * Scale function determines how data values are mapped to visual values.
    * In other words, decided the mapping between data domain and coordinate range.
    *
