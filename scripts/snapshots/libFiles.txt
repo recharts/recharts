@@ -16,6 +16,7 @@
   "lib/cartesian/Brush.js",
   "lib/cartesian/CartesianAxis.js",
   "lib/cartesian/CartesianGrid.js",
+  "lib/cartesian/CartesianPosition.js",
   "lib/cartesian/ErrorBar.js",
   "lib/cartesian/Funnel.js",
   "lib/cartesian/GraphicalItemClipPath.js",
