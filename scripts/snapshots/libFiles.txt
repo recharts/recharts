@@ -237,6 +237,7 @@
   "lib/util/resolveDefaultProps.js",
   "lib/util/round.js",
   "lib/util/scale",
+  "lib/util/scale/CartesianScaleHelper.js",
   "lib/util/scale/CustomScaleDefinition.js",
   "lib/util/scale/RechartsScale.js",
   "lib/util/scale/getNiceTickValues.js",

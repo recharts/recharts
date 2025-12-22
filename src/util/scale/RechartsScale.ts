@@ -31,6 +31,22 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
   range(): ReadonlyArray<number>;
 
   /**
+   * Returns the minimum value from the range.
+   */
+  rangeMin(): number;
+
+  /**
+   * Returns the maximum value from the range.
+   */
+  rangeMax(): number;
+
+  /**
+   * Returns true if the given value is within the scale's range.
+   * @param value
+   */
+  isInRange(value: number): boolean;
+
+  /**
    * Returns width of each band.
    * Most scales are not banded, so this method is optional.
    * Banded scales (like scaleBand from d3-scale) will implement this method.
@@ -58,7 +74,10 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
 }
 
 /**
- * Position within a band for banded scales. In scales that are not banded, this parameter is ignored.
+ * Position within a band for banded scales.
+ * In scales that are not banded, this parameter is ignored.
+ *
+ * @inline
  */
 export type BandPosition = 'start' | 'middle' | 'end';
 
@@ -82,9 +101,17 @@ export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = Ca
 ): RechartsScale<Domain> {
   const ticksFn = d3Scale.ticks;
   const bandwidthFn = d3Scale.bandwidth;
+  const range = d3Scale.range();
   return {
     domain: () => d3Scale.domain(),
-    range: () => d3Scale.range(),
+    range: () => range,
+    rangeMin: () => range[0],
+    rangeMax: () => range[1],
+    isInRange(value: number): boolean {
+      const first = range[0];
+      const last = range[range.length - 1];
+      return first <= last ? value >= first && value <= last : value >= last && value <= first;
+    },
     bandwidth: bandwidthFn ? () => bandwidthFn.call(d3Scale) : undefined,
     ticks: ticksFn ? (count: number | undefined) => ticksFn.call(d3Scale, count) : undefined,
     map: (input: Domain, options?: { position?: BandPosition }) => {

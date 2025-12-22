@@ -1,8 +1,30 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ReferenceLinePosition, getEndPoints, ReferenceLineSegment } from '../../../src/cartesian/ReferenceLine';
+import { scaleLinear } from 'victory-vendor/d3-scale';
+import { getEndPoints, ReferenceLineSegment } from '../../../src/cartesian/ReferenceLine';
 import { CartesianViewBoxRequired } from '../../../src/util/types';
+import { BandPosition, d3ScaleToRechartsScale, RechartsScale } from '../../../src/util/scale/RechartsScale';
 
 describe('getEndPoints', () => {
+  const throwingScale: RechartsScale = {
+    domain() {
+      throw new Error('Should not be called');
+    },
+    range() {
+      throw new Error('Should not be called');
+    },
+    rangeMax() {
+      throw new Error('Should not be called');
+    },
+    rangeMin() {
+      throw new Error('Should not be called');
+    },
+    map() {
+      throw new Error('Should not be called');
+    },
+    isInRange() {
+      throw new Error('Should not be called');
+    },
+  };
   it('should return null if X, Y are not fixed and isSegment is false too', () => {
     const viewBox: CartesianViewBoxRequired = {
       y: 10,
@@ -10,7 +32,7 @@ describe('getEndPoints', () => {
       x: 100,
       width: 100,
     };
-    const result = getEndPoints(null, viewBox, undefined, undefined, undefined, {
+    const result = getEndPoints(throwingScale, throwingScale, viewBox, undefined, undefined, undefined, {
       ifOverflow: 'discard',
     });
     expect(result).toEqual(null);
@@ -19,52 +41,33 @@ describe('getEndPoints', () => {
   describe('fixed Y location when out of range', () => {
     const position = 'start';
     const lineLocationY = 9;
-    const coord = Symbol('coord');
-    const scales = {
-      y: {
-        apply: vi.fn(),
-        isInRange: vi.fn(),
-      },
-    };
-
-    beforeEach(() => {
-      scales.y.apply.mockReset();
-      scales.y.apply.mockImplementation(() => coord);
-      scales.y.isInRange.mockReset();
-      scales.y.isInRange.mockImplementation(() => false);
-    });
+    const yScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 5]).range([0, 50]));
 
     it('should return null when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
         x: 10,
         width: 5,
         y: 0,
-        height: 0,
+        height: 10,
       };
-      const result = getEndPoints(scales, viewBox, position, 'bottom', 'left', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, 'bottom', 'left', {
         y: lineLocationY,
         ifOverflow: 'discard',
       });
       expect(result).toEqual(null);
-
-      expect(scales.y.apply).toHaveBeenCalledTimes(1);
-      expect(scales.y.apply).toHaveBeenCalledWith(lineLocationY, { position });
-
-      expect(scales.y.isInRange).toBeCalledTimes(1);
-      expect(scales.y.isInRange).toBeCalledWith(coord);
     });
 
     it('should return gibberish when viewBox is empty', () => {
       // @ts-expect-error typescript is correct here, the function demands a CartesianViewBoxRequired.
       const viewBox: CartesianViewBoxRequired = {};
-      const result = getEndPoints(scales, viewBox, position, undefined, 'left', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'left', {
         y: lineLocationY,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: undefined, y: coord },
-        { x: NaN, y: coord },
+        { x: undefined, y: 90 },
+        { x: NaN, y: 90 },
       ];
       expect(result).toEqual(expected);
     });
@@ -76,14 +79,14 @@ describe('getEndPoints', () => {
         y: 0,
         height: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, undefined, 'right', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'right', {
         y: lineLocationY,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: 15, y: coord },
-        { x: 10, y: coord },
+        { x: 15, y: 90 },
+        { x: 10, y: 90 },
       ];
       expect(result).toEqual(expected);
     });
@@ -95,14 +98,14 @@ describe('getEndPoints', () => {
         y: 0,
         height: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, undefined, 'left', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'left', {
         y: lineLocationY,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: 10, y: coord },
-        { x: 15, y: coord },
+        { x: 10, y: 90 },
+        { x: 15, y: 90 },
       ];
       expect(result).toEqual(expected);
     });
@@ -111,6 +114,7 @@ describe('getEndPoints', () => {
   describe('fixed Y location when in range', () => {
     const position = 'start';
     const lineLocationY = 9;
+    const yScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 15]).range([0, 150]));
     const coord = Symbol('coord');
     const scales = {
       y: {
@@ -133,21 +137,15 @@ describe('getEndPoints', () => {
         y: 0,
         height: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, undefined, 'right', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'right', {
         y: lineLocationY,
         ifOverflow: 'discard',
       });
       const expected = [
-        { x: 15, y: coord },
-        { x: 10, y: coord },
+        { x: 15, y: 90 },
+        { x: 10, y: 90 },
       ];
       expect(result).toEqual(expected);
-
-      expect(scales.y.apply).toHaveBeenCalledTimes(1);
-      expect(scales.y.apply).toHaveBeenCalledWith(lineLocationY, { position });
-
-      expect(scales.y.isInRange).toBeCalledTimes(1);
-      expect(scales.y.isInRange).toBeCalledWith(coord);
     });
 
     it('should return coordinates when set to display overflow when orientation is "right"', () => {
@@ -157,14 +155,14 @@ describe('getEndPoints', () => {
         y: 0,
         height: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, undefined, 'right', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'right', {
         y: lineLocationY,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: 15, y: coord },
-        { x: 10, y: coord },
+        { x: 15, y: 90 },
+        { x: 10, y: 90 },
       ];
       expect(result).toEqual(expected);
     });
@@ -176,14 +174,14 @@ describe('getEndPoints', () => {
         y: 0,
         height: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, undefined, 'left', {
+      const result = getEndPoints(throwingScale, yScale, viewBox, position, undefined, 'left', {
         y: lineLocationY,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: 10, y: coord },
-        { x: 15, y: coord },
+        { x: 10, y: 90 },
+        { x: 15, y: 90 },
       ];
       expect(result).toEqual(expected);
     });
@@ -192,20 +190,7 @@ describe('getEndPoints', () => {
   describe('fixed X location when out of range', () => {
     const position = 'start';
     const lineLocationX = 9;
-    const coord = Symbol('coord');
-    const scales = {
-      x: {
-        apply: vi.fn(),
-        isInRange: vi.fn(),
-      },
-    };
-
-    beforeEach(() => {
-      scales.x.apply.mockReset();
-      scales.x.apply.mockImplementation(() => coord);
-      scales.x.isInRange.mockReset();
-      scales.x.isInRange.mockImplementation(() => false);
-    });
+    const xScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 5]).range([0, 50]));
 
     it('should return null when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
@@ -214,17 +199,11 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'bottom', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'bottom', undefined, {
         x: lineLocationX,
         ifOverflow: 'discard',
       });
       expect(result).toEqual(null);
-
-      expect(scales.x.apply).toHaveBeenCalledTimes(1);
-      expect(scales.x.apply).toHaveBeenCalledWith(lineLocationX, { position });
-
-      expect(scales.x.isInRange).toBeCalledTimes(1);
-      expect(scales.x.isInRange).toBeCalledWith(coord);
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
@@ -234,14 +213,14 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'top', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'top', undefined, {
         x: lineLocationX,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: coord, y: 10 },
-        { x: coord, y: 15 },
+        { x: 90, y: 10 },
+        { x: 90, y: 15 },
       ];
       expect(result).toEqual(expected);
     });
@@ -253,14 +232,14 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'top', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'top', undefined, {
         x: lineLocationX,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: coord, y: 10 },
-        { x: coord, y: 15 },
+        { x: 90, y: 10 },
+        { x: 90, y: 15 },
       ];
       expect(result).toEqual(expected);
     });
@@ -269,20 +248,7 @@ describe('getEndPoints', () => {
   describe('fixed X location when in range', () => {
     const position = 'start';
     const lineLocationX = 9;
-    const coord = Symbol('coord');
-    const scales = {
-      x: {
-        apply: vi.fn(),
-        isInRange: vi.fn(),
-      },
-    };
-
-    beforeEach(() => {
-      scales.x.apply.mockReset();
-      scales.x.apply.mockImplementation(() => coord);
-      scales.x.isInRange.mockReset();
-      scales.x.isInRange.mockImplementation(() => true);
-    });
+    const xScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 15]).range([0, 150]));
 
     it('should return coordinates when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
@@ -291,21 +257,15 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'bottom', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'bottom', undefined, {
         x: lineLocationX,
         ifOverflow: 'discard',
       });
       const expected = [
-        { x: coord, y: 15 },
-        { x: coord, y: 10 },
+        { x: 90, y: 15 },
+        { x: 90, y: 10 },
       ];
       expect(result).toEqual(expected);
-
-      expect(scales.x.apply).toHaveBeenCalledTimes(1);
-      expect(scales.x.apply).toHaveBeenCalledWith(lineLocationX, { position });
-
-      expect(scales.x.isInRange).toBeCalledTimes(1);
-      expect(scales.x.isInRange).toBeCalledWith(coord);
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
@@ -315,14 +275,14 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'top', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'top', undefined, {
         x: lineLocationX,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: coord, y: 10 },
-        { x: coord, y: 15 },
+        { x: 90, y: 10 },
+        { x: 90, y: 15 },
       ];
       expect(result).toEqual(expected);
     });
@@ -334,14 +294,14 @@ describe('getEndPoints', () => {
         x: 0,
         width: 0,
       };
-      const result = getEndPoints(scales, viewBox, position, 'top', undefined, {
+      const result = getEndPoints(xScale, throwingScale, viewBox, position, 'top', undefined, {
         x: lineLocationX,
         ifOverflow: 'visible',
       });
 
       const expected = [
-        { x: coord, y: 10 },
-        { x: coord, y: 15 },
+        { x: 90, y: 10 },
+        { x: 90, y: 15 },
       ];
       expect(result).toEqual(expected);
     });
@@ -355,8 +315,8 @@ describe('getEndPoints', () => {
       width: 100,
     };
     it('should return null if segment array is empty', () => {
-      const result = getEndPoints(null, viewBox, undefined, undefined, undefined, {
-        // @ts-expect-error typescript is correct here - segment should have two items always
+      const result = getEndPoints(throwingScale, throwingScale, viewBox, undefined, undefined, undefined, {
+        // @ts-expect-error TypeScript is correct here - segment should have two items always
         segment: [],
         ifOverflow: 'visible',
       });
@@ -365,59 +325,62 @@ describe('getEndPoints', () => {
 
     it('should pass every segment into scales function', () => {
       const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
-      const scales = {
-        apply: vi.fn(_ => _),
-        isInRange: vi.fn(),
-      };
-      const position: ReferenceLinePosition = 'middle';
-      getEndPoints(scales, viewBox, position, undefined, undefined, {
+      const position: BandPosition = 'middle';
+      const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+      const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+      const result = getEndPoints(scaleX, scaleY, viewBox, position, undefined, undefined, {
         segment,
         ifOverflow: 'visible',
       });
-      expect(scales.apply).toHaveBeenCalledTimes(segment.length);
-      expect(scales.apply).toHaveBeenCalledWith({ x: 1 }, { position });
-      expect(scales.apply).toHaveBeenCalledWith({ x: 2 }, { position });
-      expect(scales.isInRange).toHaveBeenCalledTimes(0);
+      expect(result).toEqual([
+        { x: 10, y: 0 },
+        { x: 20, y: 100 },
+      ]);
     });
 
-    it('should pass every segment into isInRange function if overflow set to discard', () => {
-      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
-      const scales = {
-        apply: vi.fn(_ => _),
-        isInRange: vi.fn(() => true),
-      };
-      getEndPoints(scales, viewBox, undefined, undefined, undefined, {
-        segment,
-        ifOverflow: 'discard',
-      });
-      expect(scales.apply).toHaveBeenCalledTimes(segment.length);
-      expect(scales.isInRange).toHaveBeenCalledTimes(segment.length);
-    });
-
-    it('should return null if outside of scale and overflow set to discard', () => {
-      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
-      const scales = {
-        apply: vi.fn(_ => _),
-        isInRange: vi.fn(() => false),
-      };
-      const result = getEndPoints(scales, viewBox, undefined, undefined, undefined, {
+    it('should return null if outside of range and overflow = discard', () => {
+      const segment: ReferenceLineSegment = [{ x: 11 }, { x: 21 }];
+      const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+      const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+      const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
         segment,
         ifOverflow: 'discard',
       });
       expect(result).toEqual(null);
     });
 
-    it('should return whatever scales returned if in range', () => {
-      const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
-      const scales = {
-        apply: vi.fn(({ x }) => x * 2),
-        isInRange: vi.fn(() => true),
-      };
-      const result = getEndPoints(scales, viewBox, undefined, undefined, undefined, {
-        segment,
-        ifOverflow: 'discard',
-      });
-      expect(result).toEqual([2, 4]);
-    });
+    it.each(['hidden', 'visible', 'extendDomain'] as const)(
+      'should return point if outside of range and overflow = %s',
+      ifOverflow => {
+        const segment: ReferenceLineSegment = [{ x: 11 }, { x: 21 }];
+        const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+        const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+        const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
+          segment,
+          ifOverflow,
+        });
+        expect(result).toEqual([
+          { x: 110.00000000000001, y: 0 },
+          { x: 210, y: 100 },
+        ]);
+      },
+    );
+
+    it.each(['hidden', 'visible', 'extendDomain', 'discard'] as const)(
+      'should return whatever scales returned if in range and ifOverflow = %s',
+      ifOverflow => {
+        const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
+        const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+        const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+        const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
+          segment,
+          ifOverflow,
+        });
+        expect(result).toEqual([
+          { x: 10, y: 0 },
+          { x: 20, y: 100 },
+        ]);
+      },
+    );
   });
 });

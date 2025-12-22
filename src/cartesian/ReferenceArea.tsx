@@ -3,7 +3,7 @@ import { ReactElement, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
-import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
+import { rectWithPoints } from '../util/CartesianUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
@@ -14,12 +14,13 @@ import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
-import { RectanglePosition } from '../util/types';
+import { NullableCoordinate, RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
+import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 interface ReferenceAreaProps extends ZIndexable {
   /**
@@ -70,22 +71,23 @@ const getRect = (
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
+  const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const p1 = {
-    x: hasX1 ? scales.x.apply(xValue1, { position: 'start' }) : scales.x.rangeMin,
-    y: hasY1 ? scales.y.apply(yValue1, { position: 'start' }) : scales.y.rangeMin,
+  const p1: NullableCoordinate = {
+    x: hasX1 ? (xAxisScale.map(xValue1, { position: 'start' }) ?? null) : xAxisScale.rangeMin(),
+    y: hasY1 ? (yAxisScale.map(yValue1, { position: 'start' }) ?? null) : yAxisScale.rangeMin(),
   };
 
-  const p2 = {
-    x: hasX2 ? scales.x.apply(xValue2, { position: 'end' }) : scales.x.rangeMax,
-    y: hasY2 ? scales.y.apply(yValue2, { position: 'end' }) : scales.y.rangeMax,
+  const p2: NullableCoordinate = {
+    x: hasX2 ? (xAxisScale.map(xValue2, { position: 'end' }) ?? null) : xAxisScale.rangeMax(),
+    y: hasY2 ? (yAxisScale.map(yValue2, { position: 'end' }) ?? null) : yAxisScale.rangeMax(),
   };
 
   if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 
+  // @ts-expect-error we're sending nullable coordinates but rectWithPoints expects non-nullable Coordinate
   return rectWithPoints(p1, p2);
 };
 
