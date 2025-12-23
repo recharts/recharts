@@ -668,6 +668,6 @@ export const PieAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['PieChart'],
+  parentComponents: ['PieChart', 'RadarChart'],
   childrenComponents: ['LabelList'],
 };

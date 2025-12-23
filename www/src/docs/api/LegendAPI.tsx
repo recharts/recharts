@@ -416,5 +416,14 @@ export const LegendAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'PieChart', 'ScatterChart'],
+  parentComponents: [
+    'AreaChart',
+    'BarChart',
+    'ComposedChart',
+    'FunnelChart',
+    'LineChart',
+    'PieChart',
+    'RadarChart',
+    'ScatterChart',
+  ],
 };

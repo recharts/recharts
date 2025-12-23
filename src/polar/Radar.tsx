@@ -67,22 +67,36 @@ interface RadarProps extends ZIndexable {
    */
   angleAxisId?: string | number;
   /**
+   * Specifies when the animation should begin, the unit of this option is ms.
    * @defaultValue 0
    */
   animationBegin?: number;
   /**
+   * Specifies the duration of animation, the unit of this option is ms.
    * @defaultValue 1500
    */
   animationDuration?: AnimationDuration;
   /**
+   * The type of easing function.
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;
+  /**
+   * Decides how to extract the value of this Radar from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Radar.
+   */
   dataKey?: DataKey<any>;
   /**
+   * If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally.
+   * If object set, dots will be drawn which have the props merged by the internal calculated props and the option.
+   * If ReactElement set, the option can be the custom dot element.
+   * If set a function, the function will be called to render customized dot.
+   *
    * @defaultValue false
    */
   dot?: DotType;
@@ -91,28 +105,51 @@ interface RadarProps extends ZIndexable {
    */
   hide?: boolean;
   /**
+   * If set false, animation of polygon will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
   isRange?: boolean;
   /**
+   * Renders one label for each point. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
    * @defaultValue false
    */
   label?: ImplicitLabelListType;
   /**
+   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
    * @defaultValue rect
    */
   legendType?: LegendType;
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
   onMouseEnter?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
+  /**
+   * The coordinates of all the vertexes of the radar shape, like an array of objects with x and y coordinates.
+   */
   points?: RadarPoint[];
   /**
    * @defaultValue 0
    */
   radiusAxisId?: string | number;
 
+  /**
+   * If set a ReactElement, the shape of radar can be customized.
+   * If set a function, the function will be called to render customized shape.
+   */
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   tooltipType?: TooltipType;
   /**
