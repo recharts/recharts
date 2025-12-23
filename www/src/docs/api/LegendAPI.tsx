@@ -424,6 +424,7 @@ export const LegendAPI: ApiDoc = {
     'LineChart',
     'PieChart',
     'RadarChart',
+    'RadialBarChart',
     'ScatterChart',
   ],
 };

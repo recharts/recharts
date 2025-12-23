@@ -213,6 +213,6 @@ export const RadarAPI: ApiDoc = {
     { name: 'onMouseEnter', type: 'Function', isOptional: true },
     { name: 'onMouseLeave', type: 'Function', isOptional: true },
   ],
-  parentComponents: ['PieChart', 'RadarChart'],
+  parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['LabelList'],
 };

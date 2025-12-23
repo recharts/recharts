@@ -16,6 +16,7 @@ export const defaultRadialBarChartProps = {
 
 /**
  * @provides PolarViewBoxContext
+ * @provides PolarChartContext
  */
 export const RadialBarChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultRadialBarChartProps);

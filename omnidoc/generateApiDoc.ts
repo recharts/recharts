@@ -40,6 +40,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Polygon',
   'Radar',
   'RadarChart',
+  'RadialBar',
   'Scatter',
   'Text',
   'XAxis',
