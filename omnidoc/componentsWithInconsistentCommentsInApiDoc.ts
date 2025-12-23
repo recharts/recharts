@@ -9,7 +9,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
    */
   'CartesianAxis',
   'Cell',
-  'RadarChart',
   'RadialBar',
   'RadialBarChart',
   'Rectangle',

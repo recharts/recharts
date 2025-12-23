@@ -1384,17 +1384,42 @@ export interface PolarChartProps extends BaseChartProps {
   barCategoryGap?: number | string;
   barGap?: number | string;
   barSize?: number | string;
+  /**
+   * The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of width.
+   * @defaultValue 50%
+   */
   cx?: number | string;
+  /**
+   * The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of height.
+   * @defaultValue 50%
+   */
   cy?: number | string;
   dataKey?: DataKey<any>;
+  /**
+   * Angle, in degrees, at which the chart should end.
+   */
   endAngle?: number;
+  /**
+   * The inner radius of first circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * @defaultValue 0
+   */
   innerRadius?: number | string;
+  /**
+   * The layout of chart defines the orientation of axes, graphical items, and tooltip.
+   */
   layout?: PolarLayout;
   maxBarSize?: number;
+  /**
+   * The outer radius of last circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * @defaultValue 80%
+   */
   outerRadius?: number | string;
   reverseStackOrder?: boolean;
   role?: string;
   stackOffset?: StackOffsetType;
+  /**
+   * Angle in degrees from which the chart should start.
+   */
   startAngle?: number;
   throttleDelay?: number;
   title?: string;

@@ -141,7 +141,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Angle, in degrees, at which the chart should end. Can be used to generate partial pies.</p>
+            <p>Angle, in degrees, at which the chart should end.</p>
           </section>
         ),
       },

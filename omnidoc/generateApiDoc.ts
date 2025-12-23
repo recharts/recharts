@@ -39,6 +39,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'PolarRadiusAxis',
   'Polygon',
   'Radar',
+  'RadarChart',
   'Scatter',
   'Text',
   'XAxis',
