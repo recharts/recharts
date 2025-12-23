@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { selectChartOffsetInternal } from '../../../src/state/selectors/selectChartOffsetInternal';
 import { useAppSelector } from '../../../src/state/hooks';
-import { Customized, LineChart } from '../../../src';
+import { LineChart } from '../../../src';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 
 describe('selectChartOffset', () => {
@@ -30,7 +30,7 @@ describe('selectChartOffset', () => {
 
     render(
       <LineChart width={100} height={200}>
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
   });

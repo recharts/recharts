@@ -217,9 +217,10 @@ function Icon({
 function Items(props: InternalProps) {
   const { payload, iconSize, layout, formatter, inactiveColor, iconType, labelStyle } = props;
   const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
-  const itemStyle = {
+  const itemStyle: CSSProperties = {
     display: layout === 'horizontal' ? 'inline-block' : 'block',
     marginRight: 10,
+    whiteSpace: 'nowrap',
   };
   const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
   return payload.map((entry: LegendPayload, i: number) => {

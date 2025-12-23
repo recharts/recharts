@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CSSProperties, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { CartesianPosition, getCartesianPosition, isOutsidePosition } from '../cartesian/getCartesianPosition';
 import { useLegendPortal } from '../context/legendPortalContext';
 import {
   ContentType,
@@ -16,9 +17,13 @@ import { useLegendPayload } from '../context/legendPayloadContext';
 import { ElementOffset, useElementOffset } from '../util/useElementOffset';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { selectLegendArea } from '../state/selectors/selectLegendArea';
+import { cartesianPositionToCSSTranslate } from '../cartesian/cartesianPositionToCSSTranslate';
+import { selectChartViewBox } from '../state/selectors/selectChartOffsetInternal';
+import { RechartsRootState } from '../state/store';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
@@ -55,6 +60,41 @@ type PositionInput = {
   verticalAlign?: Props['verticalAlign'];
 };
 
+function getLayoutForPosition(position: CartesianPosition | undefined): NonNullable<Props['layout']> {
+  if (position === 'left' || position === 'right' || position === 'insideLeft' || position === 'insideRight') {
+    return 'vertical';
+  }
+
+  return 'horizontal';
+}
+
+function selectPositionViewBox(state: RechartsRootState, position: CartesianPosition | undefined) {
+  if (position == null) {
+    return null;
+  }
+
+  return isOutsidePosition(position) ? selectLegendArea(state) : selectChartViewBox(state);
+}
+
+function getOutsidePositionOffset(
+  position: CartesianPosition | undefined,
+  box: ElementOffset,
+): { top?: number; left?: number } {
+  if (position === 'top') {
+    return { top: box.height };
+  }
+  if (position === 'bottom') {
+    return { top: -box.height };
+  }
+  if (position === 'left') {
+    return { left: box.width };
+  }
+  if (position === 'right') {
+    return { left: -box.width };
+  }
+  return {};
+}
+
 function getDefaultPosition(
   style: CSSProperties | undefined,
   props: PositionInput,
@@ -62,7 +102,7 @@ function getDefaultPosition(
   chartWidth: number,
   chartHeight: number,
   box: ElementOffset,
-) {
+): CSSProperties {
   const { layout, align, verticalAlign } = props;
   let hPos, vPos;
 
@@ -154,13 +194,33 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    * @defaultValue bottom
    */
   verticalAlign?: VerticalAlignmentType;
+  /**
+   * The position of the legend relative to the chart.
+   * If this is defined, it overrides `align` and `verticalAlign`.
+   *
+   * @since 3.10
+   */
+  position?: CartesianPosition;
+  /**
+   * The offset to the specified "position". Direction of the offset depends on the position.
+   *
+   * @since 3.10
+   */
+  offset?: number;
 };
 
-function LegendSettingsDispatcher({ align, layout, verticalAlign, itemSorter }: LegendSettings): null {
+function LegendSettingsDispatcher({
+  align,
+  layout,
+  verticalAlign,
+  itemSorter,
+  position,
+  offset,
+}: LegendSettings): null {
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(setLegendSettings({ align, layout, verticalAlign, itemSorter }));
-  }, [dispatch, align, layout, verticalAlign, itemSorter]);
+    dispatch(setLegendSettings({ align, layout, verticalAlign, itemSorter, position, offset }));
+  }, [dispatch, align, layout, verticalAlign, itemSorter, position, offset]);
   return null;
 }
 
@@ -206,6 +266,7 @@ export const legendDefaultProps = {
   labelStyle: {},
   layout: 'horizontal',
   verticalAlign: 'bottom',
+  offset: 0,
 } as const satisfies Partial<Props>;
 
 /**
@@ -214,20 +275,49 @@ export const legendDefaultProps = {
  */
 function LegendImpl(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, legendDefaultProps);
+  const layout = outsideProps.layout ?? getLayoutForPosition(props.position);
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
+  const positionViewBox = useAppSelector(state => selectPositionViewBox(state, props.position));
   const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
+
+  const shouldReportDimensions =
+    portalFromProps == null && (props.position == null || isOutsidePosition(props.position));
+
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
   const [lastBoundingBox, updateBoundingBox] = useElementOffset([contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
-  if (chartWidth == null || chartHeight == null) {
+  if (chartWidth == null || chartHeight == null || (props.position != null && positionViewBox == null)) {
     return null;
   }
   const maxWidth = chartWidth - (margin?.left || 0) - (margin?.right || 0);
-  const widthOrHeight = getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
+  const widthOrHeight = getWidthOrHeight(layout, heightFromProps, widthFromProps, maxWidth);
+
+  const positionResult = getCartesianPosition({
+    /*
+     * When calculating the position we use two different view boxes.
+     * Inside positions use the plot area; outside positions use the margin-inset
+     * chart area, placing the Legend beyond any axes.
+     */
+    viewBox: positionViewBox ?? { x: 0, y: 0, width: chartWidth, height: chartHeight },
+    position: props.position,
+    offset: props.offset ?? 0,
+  });
+  const outsidePositionOffset = getOutsidePositionOffset(props.position, lastBoundingBox);
+
+  const positionStyle: React.CSSProperties | undefined = props.position
+    ? {
+        width: 'fit-content',
+        height: 'fit-content',
+        top: positionResult.y + (outsidePositionOffset.top ?? 0),
+        left: positionResult.x + (outsidePositionOffset.left ?? 0),
+        transform: cartesianPositionToCSSTranslate(positionResult.horizontalAnchor, positionResult.verticalAnchor),
+      }
+    : getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox);
+
   // if the user supplies their own portal, only use their defined wrapper styles
   const outerStyle: CSSProperties | undefined = portalFromProps
     ? wrapperStyle
@@ -235,7 +325,7 @@ function LegendImpl(outsideProps: Props) {
         position: 'absolute',
         width: widthOrHeight?.width || widthFromProps || 'auto',
         height: widthOrHeight?.height || heightFromProps || 'auto',
-        ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
+        ...positionStyle,
         ...wrapperStyle,
       };
 
@@ -248,15 +338,17 @@ function LegendImpl(outsideProps: Props) {
   const legendElement = (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
       <LegendSettingsDispatcher
-        layout={props.layout}
+        layout={layout}
         align={props.align}
         verticalAlign={props.verticalAlign}
         itemSorter={props.itemSorter}
+        position={props.position}
+        offset={props.offset}
       />
-      {/* if we have a portal from props nothing should need the size of the legend */}
-      {!portalFromProps && <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />}
+      {shouldReportDimensions && <LegendSizeDispatcher {...lastBoundingBox} />}
       <LegendContent
         {...props}
+        layout={layout}
         {...widthOrHeight}
         margin={margin}
         chartWidth={chartWidth}

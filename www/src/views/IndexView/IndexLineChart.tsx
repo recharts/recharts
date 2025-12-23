@@ -1,4 +1,4 @@
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -70,6 +70,11 @@ export default function IndexLineChart() {
         activeDot={{
           stroke: 'var(--color-surface-base)',
         }}
+      />
+      <Legend
+        position="insideTopRight"
+        offset={20}
+        wrapperStyle={{ border: '1px solid black', borderRadius: 5, padding: '1ex', background: 'white' }}
       />
       <RechartsDevtools />
     </LineChart>

@@ -1,10 +1,34 @@
 import * as React from 'react';
-import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis } from '../../src';
+import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis, CartesianPosition } from '../../src';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
 
 const data = [
-  { name: 'Page A', uv: 4000, pv: 1, amt: 2400 },
-  { name: 'Page B', uv: 1, pv: 3398, amt: 2210 },
+  { name: 'Page A', uv: 4000, pv: 1 },
+  { name: 'Page B', uv: 1, pv: 4000 },
+];
+
+const availablePositions: ReadonlyArray<CartesianPosition> = [
+  'top',
+  'left',
+  'right',
+  'bottom',
+  'insideLeft',
+  'insideRight',
+  'insideTop',
+  'insideBottom',
+  'insideTopLeft',
+  'insideBottomLeft',
+  'insideTopRight',
+  'insideBottomRight',
+  'center',
+  {
+    x: '70%',
+    y: '70%',
+  },
+  {
+    x: 300,
+    y: 100,
+  },
 ];
 
 const wrapperStyle: React.CSSProperties = {
@@ -17,6 +41,26 @@ const wrapperStyle: React.CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
 };
+
+export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
+  <div style={wrapperStyle}>
+    {availablePositions.map(position => (
+      <LineChart key={String(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+        <CartesianGrid />
+        <Legend
+          position={position}
+          offset={offset}
+          width="fit-content"
+          height="fit-content"
+          // eslint-disable-next-line react/no-unstable-nested-components
+          content={() => <div style={{ border: '1px dashed black' }}>Position: {JSON.stringify(position)}</div>}
+        />
+      </LineChart>
+    ))}
+  </div>
+);
 
 type Alignment = [HorizontalAlignmentType, VerticalAlignmentType];
 

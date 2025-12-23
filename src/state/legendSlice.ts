@@ -3,12 +3,15 @@ import { castDraft } from 'immer';
 import { LayoutType, Size } from '../util/types';
 import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
 import type { LegendItemSorter } from '../component/Legend';
+import { CartesianPosition } from '../cartesian/getCartesianPosition';
 
 export type LegendSettings = {
   layout: LayoutType;
   align: HorizontalAlignmentType;
   verticalAlign: VerticalAlignmentType;
   itemSorter: LegendItemSorter | null;
+  position?: CartesianPosition;
+  offset?: number;
 };
 
 /**
@@ -34,6 +37,8 @@ const initialState: LegendState = {
     align: 'center',
     verticalAlign: 'bottom',
     itemSorter: 'value',
+    position: undefined,
+    offset: 0,
   },
   size: {
     width: 0,
@@ -55,6 +60,8 @@ const legendSlice = createSlice({
       state.settings.layout = action.payload.layout;
       state.settings.verticalAlign = action.payload.verticalAlign;
       state.settings.itemSorter = action.payload.itemSorter;
+      state.settings.position = action.payload.position;
+      state.settings.offset = action.payload.offset;
     },
     addLegendPayload: {
       reducer(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {

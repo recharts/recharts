@@ -202,7 +202,7 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
-  'scale' | 'ref'
+  'scale' | 'ref' | 'height'
 > &
   XAxisProps<DataPointType, DataValueType>;
 

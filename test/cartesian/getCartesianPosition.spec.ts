@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   getCartesianPosition,
   GetCartesianPositionOptions,
-  CartesianPosition,
+  CalculatedCartesianPosition,
 } from '../../src/cartesian/getCartesianPosition';
 import { CartesianViewBoxRequired, TrapezoidViewBox } from '../../src/util/types';
 
@@ -25,7 +25,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 50,
         horizontalAnchor: 'middle',
@@ -41,7 +41,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 200, y: 45, horizontalAnchor: 'middle', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = {
+        x: 200,
+        y: 45,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'end',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -52,7 +57,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 200, y: 155, horizontalAnchor: 'middle', verticalAnchor: 'start' };
+      const expected: CalculatedCartesianPosition = {
+        x: 200,
+        y: 155,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'start',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -63,7 +73,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 95, y: 100, horizontalAnchor: 'end', verticalAnchor: 'middle' };
+      const expected: CalculatedCartesianPosition = {
+        x: 95,
+        y: 100,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'middle',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -74,7 +89,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 305, y: 100, horizontalAnchor: 'start', verticalAnchor: 'middle' };
+      const expected: CalculatedCartesianPosition = {
+        x: 305,
+        y: 100,
+        horizontalAnchor: 'start',
+        verticalAnchor: 'middle',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -85,7 +105,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 100,
         horizontalAnchor: 'start',
@@ -101,7 +121,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 295,
         y: 100,
         horizontalAnchor: 'end',
@@ -117,7 +137,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 145,
         horizontalAnchor: 'middle',
@@ -133,7 +153,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 55,
         horizontalAnchor: 'start',
@@ -149,7 +169,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 295,
         y: 55,
         horizontalAnchor: 'end',
@@ -165,7 +185,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 145,
         horizontalAnchor: 'start',
@@ -181,7 +201,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 295,
         y: 145,
         horizontalAnchor: 'end',
@@ -197,7 +217,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
       expect(actual).toEqual(expected);
     });
 
@@ -208,7 +228,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 100,
         horizontalAnchor: 'end',
@@ -224,7 +244,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 100,
         horizontalAnchor: 'middle',
@@ -245,7 +265,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 50,
         horizontalAnchor: 'middle',
@@ -261,7 +281,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 200, y: 45, horizontalAnchor: 'middle', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = {
+        x: 200,
+        y: 45,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'end',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -272,7 +297,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 200, y: 155, horizontalAnchor: 'middle', verticalAnchor: 'start' };
+      const expected: CalculatedCartesianPosition = {
+        x: 200,
+        y: 155,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'start',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -283,7 +313,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 107.5, y: 100, horizontalAnchor: 'end', verticalAnchor: 'middle' };
+      const expected: CalculatedCartesianPosition = {
+        x: 107.5,
+        y: 100,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'middle',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -294,7 +329,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 292.5,
         y: 100,
         horizontalAnchor: 'start',
@@ -310,7 +345,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 117.5,
         y: 100,
         horizontalAnchor: 'start',
@@ -326,7 +361,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 282.5,
         y: 100,
         horizontalAnchor: 'end',
@@ -342,7 +377,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 145,
         horizontalAnchor: 'middle',
@@ -358,7 +393,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 55,
         horizontalAnchor: 'start',
@@ -374,7 +409,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 295,
         y: 55,
         horizontalAnchor: 'end',
@@ -390,7 +425,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 130,
         y: 145,
         horizontalAnchor: 'start',
@@ -406,7 +441,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 270,
         y: 145,
         horizontalAnchor: 'end',
@@ -422,7 +457,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
       expect(actual).toEqual(expected);
     });
 
@@ -433,7 +468,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 187.5,
         y: 100,
         horizontalAnchor: 'end',
@@ -449,7 +484,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 100,
         horizontalAnchor: 'middle',
@@ -477,7 +512,12 @@ describe('useCartesianPosition', () => {
         viewBox: negativeHeightViewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = { x: 200, y: 155, horizontalAnchor: 'middle', verticalAnchor: 'start' };
+      const expected: CalculatedCartesianPosition = {
+        x: 200,
+        y: 155,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'start',
+      };
       expect(actual).toEqual(expected);
     });
   });
@@ -500,7 +540,7 @@ describe('useCartesianPosition', () => {
         viewBox: negativeWidthViewBox,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 292.5,
         y: 100,
         horizontalAnchor: 'start',
@@ -531,7 +571,7 @@ describe('useCartesianPosition', () => {
         clamp: true,
       };
       const actual = getCartesianPosition(options);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 45,
         horizontalAnchor: 'middle',
@@ -552,7 +592,7 @@ describe('useCartesianPosition', () => {
       };
       const actual = getCartesianPosition(options);
 
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 100,
         horizontalAnchor: 'start',
@@ -586,7 +626,7 @@ describe('useCartesianPosition', () => {
       };
       const actual = getCartesianPosition(options);
 
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 200,
         y: 45,
         horizontalAnchor: 'middle',
@@ -607,7 +647,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 175,
         y: 50,
         horizontalAnchor: 'middle',
@@ -623,7 +663,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = { x: 175, y: 45, horizontalAnchor: 'middle', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = {
+        x: 175,
+        y: 45,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'end',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -634,7 +679,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = { x: 175, y: 155, horizontalAnchor: 'middle', verticalAnchor: 'start' };
+      const expected: CalculatedCartesianPosition = {
+        x: 175,
+        y: 155,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'start',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -645,7 +695,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = { x: 82.5, y: 100, horizontalAnchor: 'end', verticalAnchor: 'middle' };
+      const expected: CalculatedCartesianPosition = {
+        x: 82.5,
+        y: 100,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'middle',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -656,7 +711,12 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = { x: 267.5, y: 100, horizontalAnchor: 'start', verticalAnchor: 'middle' };
+      const expected: CalculatedCartesianPosition = {
+        x: 267.5,
+        y: 100,
+        horizontalAnchor: 'start',
+        verticalAnchor: 'middle',
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -667,7 +727,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 92.5,
         y: 100,
         horizontalAnchor: 'start',
@@ -683,7 +743,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 257.5,
         y: 100,
         horizontalAnchor: 'end',
@@ -699,7 +759,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 175,
         y: 145,
         horizontalAnchor: 'middle',
@@ -715,7 +775,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 105,
         y: 55,
         horizontalAnchor: 'start',
@@ -731,7 +791,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 245,
         y: 55,
         horizontalAnchor: 'end',
@@ -747,7 +807,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 80,
         y: 145,
         horizontalAnchor: 'start',
@@ -763,7 +823,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 270,
         y: 145,
         horizontalAnchor: 'end',
@@ -779,7 +839,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
+      const expected: CalculatedCartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
       expect(actual).toEqual(expected);
     });
 
@@ -790,7 +850,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 187.5,
         y: 100,
         horizontalAnchor: 'end',
@@ -806,7 +866,7 @@ describe('useCartesianPosition', () => {
         viewBox,
       };
       const actual = getCartesianPosition(input);
-      const expected: CartesianPosition = {
+      const expected: CalculatedCartesianPosition = {
         x: 175,
         y: 100,
         horizontalAnchor: 'middle',

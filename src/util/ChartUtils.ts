@@ -40,6 +40,7 @@ import { StackGroup } from './stacks/stackTypes';
 import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
+import { isOutsidePosition } from '../cartesian/getCartesianPosition';
 
 export function getValueByDataKey<DataPointType, DataValueType>(
   obj: DataPointType | null | undefined,
@@ -94,7 +95,26 @@ export const appendOffsetOfLegend = (
 ): OffsetVertical & OffsetHorizontal => {
   if (legendSettings && legendSize) {
     const { width: boxWidth, height: boxHeight } = legendSize;
-    const { align, verticalAlign, layout } = legendSettings;
+    const { align, verticalAlign, layout, position } = legendSettings;
+
+    if (position != null) {
+      // Position-based legends are absolutely placed and must not move the plot area.
+      if (isOutsidePosition(position)) {
+        if (position === 'top' && isNumber(offset.top)) {
+          return { ...offset, top: offset.top + (boxHeight || 0) };
+        }
+        if (position === 'bottom' && isNumber(offset.bottom)) {
+          return { ...offset, bottom: offset.bottom + (boxHeight || 0) };
+        }
+        if (position === 'left' && isNumber(offset.left)) {
+          return { ...offset, left: offset.left + (boxWidth || 0) };
+        }
+        if (position === 'right' && isNumber(offset.right)) {
+          return { ...offset, right: offset.right + (boxWidth || 0) };
+        }
+      }
+      return offset;
+    }
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&

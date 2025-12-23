@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CSSProperties } from 'react';
 
 import {
   AllowInDimension,
@@ -26,8 +27,8 @@ export type TooltipBoundingBoxProps = {
   reverseDirection: AllowInDimension;
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
-  wrapperStyle: React.CSSProperties;
-  lastBoundingBox: ElementOffset;
+  wrapperStyle: CSSProperties;
+  lastBoundingBox: ElementOffset | null;
   innerRef: SetElementOffset;
   hasPortalFromProps: boolean;
 };
@@ -89,10 +90,7 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     offsetTop: typeof props.offset === 'number' ? props.offset : props.offset.y,
     position: props.position,
     reverseDirection: props.reverseDirection,
-    tooltipBox: {
-      height: props.lastBoundingBox.height,
-      width: props.lastBoundingBox.width,
-    },
+    tooltipBox: props.lastBoundingBox,
     useTranslate3d: props.useTranslate3d,
     viewBox: props.viewBox,
   });
@@ -119,7 +117,7 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
   };
   return (
     <div
-      // @ts-expect-error typescript library does not recognize xmlns attribute, but it's required for an HTML chunk inside SVG.
+      // @ts-expect-error TypeScript library does not recognize xmlns attribute, but it's required for an HTML chunk inside SVG.
       xmlns="http://www.w3.org/1999/xhtml"
       tabIndex={-1}
       className={cssClasses}

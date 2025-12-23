@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import sortBy from 'es-toolkit/compat/sortBy';
-import { RechartsRootState } from '../store';
-import { LegendSettings } from '../legendSlice';
-import { LegendPayload } from '../../component/DefaultLegendContent';
-import { Size } from '../../util/types';
+import type { RechartsRootState } from '../store';
+import type { LegendSettings } from '../legendSlice';
+import type { LegendPayload } from '../../component/DefaultLegendContent';
+import type { Size } from '../../util/types';
 
 export const selectLegendSettings = (state: RechartsRootState): LegendSettings => state.legend.settings;
 

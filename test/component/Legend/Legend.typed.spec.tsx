@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it } from 'vitest';
-import { Legend, getRelativeCoordinate } from '../../src';
+import { Legend, getRelativeCoordinate } from '../../../src';
 
 describe('Legend types', () => {
   it('should allow calling getRelativeCoordinate with the type provided by Recharts event handler', () => {

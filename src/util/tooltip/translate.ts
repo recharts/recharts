@@ -120,12 +120,12 @@ export function getTooltipTranslate({
   offsetLeft: number;
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
-  tooltipBox: { width: number; height: number };
+  tooltipBox: { width: number; height: number } | null;
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
 }): { cssProperties: CSSProperties; cssClasses: string } {
   let cssProperties: CSSProperties, translateX: number | undefined, translateY: number | undefined;
-  if (tooltipBox.height > 0 && tooltipBox.width > 0 && coordinate) {
+  if (tooltipBox && tooltipBox.height > 0 && tooltipBox.width > 0 && coordinate) {
     translateX = getTooltipTranslateXY({
       allowEscapeViewBox,
       coordinate,

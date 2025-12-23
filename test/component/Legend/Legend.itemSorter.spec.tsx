@@ -11,12 +11,12 @@ import {
   LegendPayload,
   Line,
   LineChart,
-} from '../../src';
-import { numericalData } from '../_data';
-import { expectLegendLabels } from '../helper/expectLegendLabels';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { assertNotNull } from '../helper/assertNotNull';
+} from '../../../src';
+import { numericalData } from '../../_data';
+import { expectLegendLabels } from '../../helper/expectLegendLabels';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('Legend.itemSorter', () => {
   describe('with default content', () => {
@@ -81,6 +81,7 @@ describe('Legend.itemSorter', () => {
             right: 5,
             top: 5,
           },
+          offset: 0,
           payload: [
             {
               color: '#3182bd',
@@ -182,6 +183,7 @@ describe('Legend.itemSorter', () => {
             right: 5,
             top: 5,
           },
+          offset: 0,
           payload: [
             {
               color: '#3182bd',

@@ -1,8 +1,14 @@
 import { getPercentValue, isNumber, isPercent } from '../util/DataUtils';
-import { CartesianViewBoxRequired, TrapezoidViewBox } from '../util/types';
+import { CartesianViewBoxRequired, Percent, TrapezoidViewBox } from '../util/types';
 import { TextAnchor, TextVerticalAnchor } from '../component/Text';
-import { cartesianViewBoxToTrapezoid } from '../context/chartLayoutContext';
 
+import { cartesianViewBoxToTrapezoid } from './cartesianViewBoxToTrapezoid';
+
+/**
+ * This type mixes together all the possible label positions for both cartesian and polar coordinates.
+ * It is used in some places where the 2.x API allowed both types of charts mixed together.
+ * If applicable, prefer to use {@link CalculatedCartesianPosition} instead.
+ */
 export type CartesianLabelPosition =
   | 'top'
   | 'left'
@@ -30,6 +36,25 @@ export type CartesianLabelPosition =
       y?: number | string;
     };
 
+export type CartesianPosition =
+  | 'top'
+  | 'left'
+  | 'right'
+  | 'bottom'
+  | 'center'
+  | 'insideLeft'
+  | 'insideRight'
+  | 'insideTop'
+  | 'insideBottom'
+  | 'insideTopLeft'
+  | 'insideBottomLeft'
+  | 'insideTopRight'
+  | 'insideBottomRight'
+  | {
+      x: number | Percent;
+      y: number | Percent;
+    };
+
 export type GetCartesianPositionOptions = {
   viewBox: TrapezoidViewBox | CartesianViewBoxRequired;
   parentViewBox?: CartesianViewBoxRequired;
@@ -48,7 +73,7 @@ export type GetCartesianPositionOptions = {
   clamp?: boolean;
 };
 
-export type CartesianPosition = {
+export type CalculatedCartesianPosition = {
   x: number;
   y: number;
   horizontalAnchor: TextAnchor;
@@ -63,7 +88,7 @@ export type CartesianPosition = {
  * @param options - The options including viewBox, position, and offset.
  * @returns The calculated x, y, alignment and size.
  */
-export const getCartesianPosition = (options: GetCartesianPositionOptions): CartesianPosition => {
+export const getCartesianPosition = (options: GetCartesianPositionOptions): CalculatedCartesianPosition => {
   const { viewBox, position, offset = 0, parentViewBox: parentViewBoxFromOptions, clamp } = options;
 
   const { x, y, height, upperWidth, lowerWidth } = cartesianViewBoxToTrapezoid(viewBox);
@@ -98,7 +123,7 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
   const parentViewBox = parentViewBoxFromOptions;
 
   if (position === 'top') {
-    const result: CartesianPosition = {
+    const result: CalculatedCartesianPosition = {
       x: upperX + upperWidth / 2,
       y: y - verticalOffset,
       horizontalAnchor: 'middle',
@@ -113,7 +138,7 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
   }
 
   if (position === 'bottom') {
-    const result: CartesianPosition = {
+    const result: CalculatedCartesianPosition = {
       x: lowerX + lowerWidth / 2,
       y: y + height + verticalOffset,
       horizontalAnchor: 'middle',
@@ -127,7 +152,7 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
   }
 
   if (position === 'left') {
-    const result: CartesianPosition = {
+    const result: CalculatedCartesianPosition = {
       x: middleX - horizontalOffset,
       y: y + height / 2,
       horizontalAnchor: horizontalEnd,
@@ -141,7 +166,7 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
   }
 
   if (position === 'right') {
-    const result: CartesianPosition = {
+    const result: CalculatedCartesianPosition = {
       x: middleX + midHeightWidth + horizontalOffset,
       y: y + height / 2,
       horizontalAnchor: horizontalStart,
@@ -262,3 +287,14 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
     ...sizeAttrs,
   };
 };
+
+export function isOutsidePosition(position: CartesianPosition | undefined): boolean {
+  if (position == null) {
+    return false;
+  }
+  if (typeof position === 'object') {
+    return true;
+  }
+  const absolutePositions = ['top', 'left', 'right', 'bottom'];
+  return absolutePositions.includes(position);
+}
