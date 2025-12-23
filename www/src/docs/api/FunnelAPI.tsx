@@ -22,7 +22,6 @@ export const FunnelAPI: ApiDoc = {
                 <code>function</code>: a function that receives the data object and returns the value of this Funnel.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
@@ -104,7 +103,12 @@ export const FunnelAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>If set true, the axis do not display in the chart.</p>
+            <p>Hides the whole graphical element when true.</p>
+            <p>
+              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
+              visible in Legend, and can be included in axis domain calculations, depending on{' '}
+              <code>includeHidden</code> props of your XAxis/YAxis.
+            </p>
           </section>
         ),
       },
@@ -166,7 +170,7 @@ export const FunnelAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The key of each sector&#39;s name.</p>
+            <p>The key of each trapezoid&#39;s name.</p>
           </section>
         ),
       },

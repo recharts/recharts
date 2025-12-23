@@ -103,12 +103,16 @@ interface FunnelProps {
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Funnel.
-   *
-   * If undefined, it will reuse the dataKey of YAxis.
    */
   dataKey: DataKey<any>;
   /**
-   * If set true, the axis do not display in the chart.
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
+   *
    * @defaultValue false
    */
   hide?: boolean;
@@ -136,7 +140,7 @@ interface FunnelProps {
    */
   legendType?: LegendType;
   /**
-   * The key of each sector's name.
+   * The key of each trapezoid's name.
    * @defaultValue name
    */
   nameKey?: DataKey<any>;
