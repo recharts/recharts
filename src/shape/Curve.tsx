@@ -123,7 +123,7 @@ interface CurveProps {
    */
   baseLine?: number | ReadonlyArray<NullableCoordinate>;
   /**
-   * The coordinates of all the points in the curve.
+   * The coordinates of all the points in the curve, like an array of objects with x and y coordinates.
    */
   points?: ReadonlyArray<NullableCoordinate>;
   /**

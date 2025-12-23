@@ -41,7 +41,7 @@ import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
 import { DotAPI as Dot } from './Dot';
-import { PolygonAPI as Polygon } from './Polygon';
+import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI as Rectangle } from './Rectangle';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
@@ -102,7 +102,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Cross,
   Curve,
   Dot,
-  Polygon,
+  Polygon: PolygonAPI,
   Rectangle,
   Sector,
   Trapezoid,

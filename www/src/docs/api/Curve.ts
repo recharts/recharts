@@ -151,7 +151,7 @@ export const CurveAPI: ApiDoc = {
       type: 'Array',
       isOptional: false,
       desc: {
-        'en-US': 'The coordinates of all the points in the curve.',
+        'en-US': 'The coordinates of all the points in the curve, like an array of objects with x and y coordinates.',
         'zh-CN': '曲线上所有点的坐标。形如：[{ x, y }]。',
       },
     },
