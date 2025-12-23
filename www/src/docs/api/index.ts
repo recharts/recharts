@@ -13,9 +13,9 @@ import { TreemapAPI } from './Treemap';
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';
 import { ScatterAPI } from './ScatterAPI';
-import { XAxisAPI as XAxis } from './XAxisAPI';
-import { YAxisAPI as YAxis } from './YAxisAPI';
-import { ZAxisAPI as ZAxis } from './ZAxisAPI';
+import { XAxisAPI } from './XAxisAPI';
+import { YAxisAPI } from './YAxisAPI';
+import { ZAxisAPI } from './ZAxisAPI';
 import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
 import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
 import { ReferenceAreaAPI as ReferenceArea } from './ReferenceArea';
@@ -23,7 +23,7 @@ import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
-import { FunnelAPI as Funnel } from './Funnel';
+import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI as ResponsiveContainer } from './ResponsiveContainer';
 import { LegendAPI } from './LegendAPI';
@@ -35,8 +35,8 @@ import { PieAPI } from './PieAPI';
 import { RadarAPI as Radar } from './Radar';
 import { RadialBarAPI as RadialBar } from './RadialBar';
 import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
-import { PolarGridAPI as PolarGrid } from './PolarGridAPI';
-import { PolarRadiusAxisAPI as PolarRadiusAxis } from './PolarRadiusAxisAPI';
+import { PolarGridAPI } from './PolarGridAPI';
+import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 
 import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
@@ -45,7 +45,7 @@ import { PolygonAPI as Polygon } from './Polygon';
 import { RectangleAPI as Rectangle } from './Rectangle';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
-import { ApiDoc } from './types';
+import type { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
@@ -53,7 +53,7 @@ import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
 
-export const allExamples: Record<string, ApiDoc> = {
+export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
   BarChart: BarChartAPI,
   LineChart,
@@ -71,13 +71,13 @@ export const allExamples: Record<string, ApiDoc> = {
   BarStack: BarStackAPI,
   Line: LineAPI,
   Scatter: ScatterAPI,
-  XAxis,
-  YAxis,
-  ZAxis,
+  XAxis: XAxisAPI,
+  YAxis: YAxisAPI,
+  ZAxis: ZAxisAPI,
   Brush,
   CartesianAxis,
   CartesianGrid,
-  Funnel,
+  Funnel: FunnelAPI,
 
   ResponsiveContainer,
   Legend: LegendAPI,
@@ -92,8 +92,8 @@ export const allExamples: Record<string, ApiDoc> = {
   RadialBar,
   Radar,
   PolarAngleAxis: PolarAngleAxisAPI,
-  PolarGrid,
-  PolarRadiusAxis,
+  PolarGrid: PolarGridAPI,
+  PolarRadiusAxis: PolarRadiusAxisAPI,
   ReferenceLine,
   ReferenceDot,
   ReferenceArea,

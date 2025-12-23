@@ -27,6 +27,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'BarStack',
   'Customized',
   'ErrorBar',
+  'Funnel',
   'Label',
   'LabelList',
   'Legend',

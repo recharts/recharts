@@ -1,235 +1,229 @@
 import { ApiDoc } from './types';
 
-export const LegendAPI: ApiDoc = {
-  name: 'Legend',
+export const FunnelAPI: ApiDoc = {
+  name: 'Funnel',
   props: [
     {
-      name: 'align',
-      type: '"left" | "right" | "center"',
-      isOptional: true,
+      name: 'dataKey',
+      type: 'string | number | Function',
+      isOptional: false,
       desc: {
         'en-US': (
           <section>
-            <p>Horizontal alignment of the whole Legend container:</p>
+            <p>Decides how to extract the value of this Funnel from the data:</p>
             <ul>
               <li>
-                <code>left</code>: shows the Legend to the left of the chart, and chart width reduces automatically to
-                make space for it.
+                <code>string</code>: the name of the field in the data object;
               </li>
               <li>
-                <code>right</code> shows the Legend to the right of the chart, and chart width reduces automatically.
+                <code>number</code>: the index of the field in the data;
               </li>
               <li>
-                <code>center</code> shows the Legend in the middle of chart, and chart width remains unchanged.
+                <code>function</code>: a function that receives the data object and returns the value of this Funnel.
               </li>
             </ul>
-            <p>The exact behavior changes depending on &#39;verticalAlign&#39; prop.</p>
+            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
-      defaultVal: 'center',
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
     {
-      name: 'content',
-      type: 'ReactNode | Function',
+      name: 'activeShape',
+      type: '(union of 5 variants)',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              If set to a React element, the option will be used to render the legend. If set to a function, the
-              function is called once for each item
+              This component is rendered when this graphical item is activated (could be by mouse hover, touch,
+              keyboard, programmatically).
             </p>
           </section>
         ),
       },
-      format: ['<Legend content={<CustomizedLegend external={external} />} />', '<Legend content={renderLegend} />'],
-    },
-    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
-    {
-      name: 'formatter',
-      type: 'Formatter',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Function to customize how content is serialized before rendering.</p>
-          </section>
-        ),
-      },
-      format: [
-        "(value, entry, index) => <span style={{ color: 'red' }}>{value}</span>",
-        'https://codesandbox.io/s/legend-formatter-rmzp9',
-      ],
     },
     {
-      name: 'height',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The height of legend.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'iconSize',
+      name: 'animationBegin',
       type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The size of icon in each legend item.</p>
+            <p>Specifies when the animation should begin, the unit of this option is ms.</p>
           </section>
         ),
       },
-      defaultVal: 14,
+      defaultVal: 400,
     },
     {
-      name: 'iconType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      name: 'animationDuration',
+      type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The type of icon in each legend item.</p>
+            <p>Specifies the duration of animation, the unit of this option is ms.</p>
+          </section>
+        ),
+      },
+      defaultVal: 1500,
+    },
+    {
+      name: 'animationEasing',
+      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The type of easing function.</p>
+          </section>
+        ),
+      },
+      defaultVal: 'ease',
+    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
+    { name: 'className', type: 'string', isOptional: true },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
+    {
+      name: 'data',
+      type: 'Array<any>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The source data. Each element should be an object.</p>
           </section>
         ),
       },
     },
+    { name: 'height', type: 'string | number', isOptional: true },
     {
-      name: 'inactiveColor',
+      name: 'hide',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>If set true, the axis do not display in the chart.</p>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
+    {
+      name: 'id',
       type: 'string',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The color of the icon when the item is inactive.</p>
+            <p>
+              Unique identifier of this component. Used as a HTML attribute <code>id</code>, and also to identify this
+              element internally.
+            </p>
+            <p>If undefined, Recharts will generate a unique ID automatically.</p>
           </section>
         ),
       },
-      defaultVal: '#ccc',
     },
     {
-      name: 'itemSorter',
-      type: 'null | "dataKey" | "value" | Function',
+      name: 'isAnimationActive',
+      type: 'false | true | "auto"',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              Sorts Legend items. Defaults to <code>value</code> which means it will sort alphabetically by the label.
-            </p>
-            <p>
-              If <code>null</code> is provided then the payload is not sorted. Be aware that without sort, the order of
-              items may change between renders!
+              If set false, animation of funnel will be disabled. If set &quot;auto&quot;, the animation will be
+              disabled in SSR and enabled in browser.
             </p>
           </section>
         ),
       },
-      defaultVal: 'value',
+      defaultVal: 'auto',
     },
+    { name: 'isUpdateAnimationActive', type: 'boolean', isOptional: true },
+    { name: 'label', type: 'false | true | ReactNode | Function | Props', isOptional: true },
+    { name: 'lastShapeType', type: '"triangle" | "rectangle"', isOptional: true, defaultVal: 'triangle' },
     {
-      name: 'layout',
-      type: '"horizontal" | "vertical"',
+      name: 'legendType',
+      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The layout of legend items inside the legend container.</p>
+            <p>The type of icon in legend. If set to &#39;none&#39;, no legend item will be rendered.</p>
           </section>
         ),
       },
-      defaultVal: 'horizontal',
+      defaultVal: 'rect',
     },
-    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<LegendPayload>', isOptional: true },
+    { name: 'lowerWidth', type: 'number', isOptional: true },
     {
-      name: 'portal',
-      type: 'null | HTMLElement',
+      name: 'nameKey',
+      type: 'string | number | Function',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              If portal is defined, then Legend will use this element as a target for rendering using React Portal:{' '}
-              <a href="https://react.dev/reference/react-dom/createPortal">
-                https://react.dev/reference/react-dom/createPortal
-              </a>
-            </p>
-            <p>If this is undefined then Legend renders inside the recharts-wrapper element.</p>
+            <p>The key of each sector&#39;s name.</p>
           </section>
         ),
       },
+      defaultVal: 'name',
     },
+    { name: 'reversed', type: 'boolean', isOptional: true, defaultVal: false },
     {
-      name: 'verticalAlign',
-      type: '"middle" | "top" | "bottom"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The alignment of the whole Legend container:</p>
-            <ul>
-              <li>
-                <code>bottom</code>: shows the Legend below chart, and chart height reduces automatically to make space
-                for it.
-              </li>
-              <li>
-                <code>top</code>: shows the Legend above chart, and chart height reduces automatically.
-              </li>
-              <li>
-                <code>middle</code>: shows the Legend in the middle of chart, covering other content, and chart height
-                remains unchanged. The exact behavior changes depending on <code>align</code> prop.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: 'bottom',
-    },
-    {
-      name: 'width',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The width of legend.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'wrapperStyle',
-      type: 'React.CSSProperties',
+      name: 'shape',
+      type: '(union of 5 variants)',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              The style of legend container which is a &quot;position: absolute;&quot; div element. Because the position
-              of legend is quite flexible, so you can change the position by the value of top, left, right, bottom in
-              this option. And the format of wrapperStyle is the same as React inline style.
+              If set a ReactElement, the shape of funnel can be customized. If set a function, the function will be
+              called to render customized shape.
             </p>
           </section>
         ),
       },
-      format: ["{ top: 0, left: 0, backgroundColor: 'red' }", 'https://reactjs.org/docs/dom-elements.html#style'],
     },
+    { name: 'tooltipType', type: '"none"', isOptional: true },
+    { name: 'upperWidth', type: 'number', isOptional: true },
+    { name: 'x', type: 'string | number', isOptional: true },
+    { name: 'y', type: 'string | number', isOptional: true },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
-    { name: 'onAnimationEnd', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onAnimationEnd',
+      type: 'AdaptChildAnimationEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of animation end</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onAnimationEndCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIteration', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIterationCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
-    { name: 'onAnimationStart', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onAnimationStart',
+      type: 'AdaptChildAnimationEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of animation start</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onAnimationStartCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onBBoxUpdate', type: 'Function', isOptional: true },
     { name: 'onBeforeInput', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onBeforeInputCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onBlur', type: 'AdaptChildFocusEventHandler<P, T>', isOptional: true },
@@ -242,12 +236,12 @@ export const LegendAPI: ApiDoc = {
     { name: 'onChangeCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     {
       name: 'onClick',
-      type: 'Function',
+      type: 'AdaptChildMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of click on the items in this group</p>
+            <p>The customized event handler of click on the area in this group</p>
           </section>
         ),
       },
@@ -303,8 +297,18 @@ export const LegendAPI: ApiDoc = {
     { name: 'onInvalidCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDown', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDownCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
-    { name: 'onKeyPress', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
-    { name: 'onKeyPressCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onKeyPress',
+      type: 'AdaptChildKeyboardEventHandler<P, T>',
+      isOptional: true,
+      deprecated: 'Use `onKeyUp` or `onKeyDown` instead',
+    },
+    {
+      name: 'onKeyPressCapture',
+      type: 'AdaptChildKeyboardEventHandler<P, T>',
+      isOptional: true,
+      deprecated: 'Use `onKeyUpCapture` or `onKeyDownCapture` instead',
+    },
     { name: 'onKeyUp', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyUpCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onLoad', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -317,41 +321,94 @@ export const LegendAPI: ApiDoc = {
     { name: 'onLoadStartCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCaptureCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseDown', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseDown',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousedown on the area in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseDownCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseEnter',
-      type: 'Function',
+      type: 'AdaptChildMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseenter on the items in this group</p>
+            <p>The customized event handler of mouseenter on the area in this group</p>
           </section>
         ),
       },
-      format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
     },
     {
       name: 'onMouseLeave',
-      type: 'Function',
+      type: 'AdaptChildMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseleave on the items in this group</p>
+            <p>The customized event handler of mouseleave on the area in this group</p>
           </section>
         ),
       },
-      format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
     },
-    { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseMove',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mousemove on the area in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseOut',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseout on the area in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseOutCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseOver', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseOver',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseover on the area in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseOverCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseUp', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseUp',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The customized event handler of mouseup on the area in this group</p>
+          </section>
+        ),
+      },
+    },
     { name: 'onMouseUpCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onPaste', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
     { name: 'onPasteCapture', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
@@ -416,5 +473,6 @@ export const LegendAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'PieChart', 'ScatterChart'],
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
+  childrenComponents: ['Cell', 'LabelList'],
 };
