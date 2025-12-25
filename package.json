@@ -184,8 +184,8 @@
     "webpack-dev-server": "^5.0.4"
   },
   "engines": {
-    "node": ">=24",
-    "npm": ">=11"
+    "node": ">=18",
+    "npm": ">=10"
   },
   "license": "MIT"
 }
