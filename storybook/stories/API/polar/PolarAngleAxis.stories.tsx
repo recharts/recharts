@@ -10,9 +10,9 @@ import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 const GeneralProps: StorybookArgs = {
   type: {
     description: 'The type of axis.',
-    options: ['number', 'category'],
+    options: ['number', 'category', 'auto'],
     control: 'radio',
-    table: { type: { summary: 'number | category' }, defaultValue: 'category', category: 'General' },
+    table: { type: { summary: 'number | category' }, defaultValue: 'auto', category: 'General' },
   },
   allowDuplicatedCategory: {
     description: 'Allow the axis that has duplicated category or not when the type of axis is "category".',

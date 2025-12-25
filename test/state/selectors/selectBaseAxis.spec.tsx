@@ -38,13 +38,13 @@ describe('selectBaseAxis', () => {
   it('should return implicit PolarAngleAxis when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectBaseAxis(initialState, 'angleAxis', '0');
-    expect(result).toBe(implicitAngleAxis);
+    expect(result).toEqual({ ...implicitAngleAxis, type: 'category' });
   });
 
   it('should return implicit RadiusAxis when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectBaseAxis(initialState, 'radiusAxis', '0');
-    expect(result).toBe(implicitRadiusAxis);
+    expect(result).toEqual({ ...implicitRadiusAxis, type: 'category' });
   });
 
   it('should be stable between renders', () => {

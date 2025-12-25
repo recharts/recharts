@@ -6,6 +6,7 @@ import {
   LayoutType,
   Margin,
   Percent,
+  PolarLayout,
   TrapezoidViewBox,
 } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -140,6 +141,18 @@ export const useCartesianChartLayout = (): CartesianLayout | undefined => {
     return layout;
   }
   return undefined;
+};
+
+export const selectPolarChartLayout = (state: RechartsRootState): PolarLayout | undefined => {
+  const layout = state.layout.layoutType;
+  if (layout === 'centric' || layout === 'radial') {
+    return layout;
+  }
+  return undefined;
+};
+
+export const usePolarChartLayout = (): PolarLayout | undefined => {
+  return useAppSelector(selectPolarChartLayout);
 };
 
 /**

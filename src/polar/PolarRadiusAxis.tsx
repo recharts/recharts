@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect } from 'react';
+import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import minBy from 'es-toolkit/compat/minBy';
 
@@ -17,6 +17,8 @@ import {
   TickItem,
   AxisDomain,
   ScaleType,
+  AxisDomainTypeInput,
+  EvaluatedAxisDomainType,
 } from '../util/types';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -28,6 +30,9 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
+import { noop } from '../util/DataUtils';
+import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -55,9 +60,20 @@ export interface PolarRadiusAxisProps
   angle?: number;
   /**
    * The type of axis.
-   * @defaultValue number
+   *
+   * `category`: axis maps discrete categories to angles around the circle.
+   * Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: axis maps continuous numeric values to angles around the circle.
+   * Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
+   *
+   * `auto`: the type is inferred based on the chart layout.
+   *
+   * @defaultValue auto
    */
-  type?: 'number' | 'category';
+  type?: AxisDomainTypeInput;
   /**
    * The orientation of axis text.
    * @defaultValue right
@@ -85,7 +101,8 @@ export interface PolarRadiusAxisProps
    * @example <PolarRadiusAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />
    * @example <PolarRadiusAxis type="number" domain={[0, 100]} allowDataOverflow />
    */
-  domain?: AxisDomain; /**
+  domain?: AxisDomain;
+  /**
    * Scale function determines how data values are mapped to visual values.
    * In other words, decided the mapping between data domain and coordinate range.
    *
@@ -175,9 +192,25 @@ type InsideProps = Omit<PropsWithDefaults, 'scale'> &
 
 const AXIS_TYPE = 'radiusAxis';
 
-function SetRadiusAxisSettings(settings: RadiusAxisSettings): null {
+function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
+  const layout = usePolarChartLayout();
+  const settings: RadiusAxisSettings | undefined = useMemo(() => {
+    const { type: typeFromProps, ...rest } = props;
+    const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(
+      layout,
+      'radiusAxis',
+      typeFromProps,
+    );
+    if (evaluatedType == null) {
+      return undefined;
+    }
+    return { ...rest, type: evaluatedType };
+  }, [props, layout]);
   useEffect(() => {
+    if (settings == null) {
+      return noop;
+    }
     dispatch(addRadiusAxis(settings));
     return () => {
       dispatch(removeRadiusAxis(settings));

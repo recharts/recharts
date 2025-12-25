@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ComponentType, FunctionComponent, isValidElement, SVGProps, useLayoutEffect, useRef } from 'react';
+import { ComponentType, FunctionComponent, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import {
-  AxisDomainType,
+  AxisDomainTypeInput,
   AxisInterval,
   AxisTick,
   RenderableAxisProps,
@@ -10,6 +10,7 @@ import {
   Size,
   AxisDomain,
   ScaleType,
+  EvaluatedAxisDomainType,
 } from '../util/types';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
@@ -36,6 +37,8 @@ import { isLabelContentAFunction } from '../component/Label';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | 'scale'> {
   /**
@@ -50,12 +53,21 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
    */
   axisLine?: boolean | SVGProps<SVGLineElement>;
   /**
-   * The type of axis. Numeric axis operates in a continuous range of numbers.
-   * Category axis operates in a discrete set of categories.
+   * The type of axis.
+   *
+   * `category`: axis maps discrete categories to angles around the circle.
+   * Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: axis maps continuous numeric values to angles around the circle.
+   * Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
+   *
+   * `auto`: the type is inferred based on the chart layout.
    *
    * @defaultValue number
    */
-  type?: AxisDomainType;
+  type?: AxisDomainTypeInput;
   /**
    * Specify the domain of axis when the axis is a number axis.
    *
@@ -78,7 +90,8 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
    * @example <YAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />
    * @example <YAxis type="number" domain={[0, 100]} allowDataOverflow />
    */
-  domain?: AxisDomain; /**
+  domain?: AxisDomain;
+  /**
    * Scale function determines how data values are mapped to visual values.
    * In other words, decided the mapping between data domain and coordinate range.
    *
@@ -152,11 +165,27 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
 
-function SetYAxisSettings(settings: YAxisSettings): null {
+function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
   const prevSettingsRef = useRef<YAxisSettings | null>(null);
+  const layout = useCartesianChartLayout();
+  const { type: typeFromProps, ...restProps } = props;
+  const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(layout, 'yAxis', typeFromProps);
+
+  const settings: YAxisSettings | undefined = useMemo(() => {
+    if (evaluatedType == null) {
+      return undefined;
+    }
+    return {
+      ...restProps,
+      type: evaluatedType,
+    };
+  }, [evaluatedType, restProps]);
 
   useLayoutEffect(() => {
+    if (settings == null) {
+      return;
+    }
     if (prevSettingsRef.current === null) {
       dispatch(addYAxis(settings));
     } else if (prevSettingsRef.current !== settings) {

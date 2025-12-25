@@ -29,6 +29,7 @@ import { getValueByDataKey } from '../../util/ChartUtils';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { selectStackOffsetType } from './rootPropsSelectors';
+import { combineCheckedDomain } from './combiners/combineCheckedDomain';
 
 export type PolarAxisType = 'angleAxis' | 'radiusAxis';
 
@@ -167,4 +168,13 @@ export const selectPolarAxisDomainIncludingNiceTicks: (
 ) => NumberDomain | CategoricalDomain | undefined = createSelector(
   [selectBaseAxis, selectPolarAxisDomain, selectPolarNiceTicks, pickAxisType],
   combineAxisDomainWithNiceTicks,
+);
+
+export const selectPolarAxisCheckedDomain: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
+  [selectRealScaleType, selectPolarAxisDomainIncludingNiceTicks],
+  combineCheckedDomain,
 );

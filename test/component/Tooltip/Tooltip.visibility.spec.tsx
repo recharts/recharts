@@ -61,6 +61,8 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import {
+  selectTooltipAxisDomain,
+  selectTooltipAxisDomainIncludingNiceTicks,
   selectTooltipAxisRangeWithReverse,
   selectTooltipAxisRealScaleType,
   selectTooltipAxisScale,
@@ -267,14 +269,14 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
   Wrapper: ({ children }) => (
     <RadialBarChart height={600} width={600} data={PageData}>
       <PolarGrid />
-      <PolarAngleAxis dataKey="name" />
-      <PolarRadiusAxis />
+      <PolarAngleAxis />
+      <PolarRadiusAxis dataKey="name" />
       <RadialBar name="Mike" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} id="my-item-id" />
       {children}
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(198.74853309331652px, 198.7485330933165px);',
+  expectedTransform: 'transform: translate(212.65496645665198px, 212.65496645665195px);',
   tooltipIndex: '0',
 };
 
@@ -1011,7 +1013,7 @@ describe('Tooltip visibility', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
       expectLastCalledWithScale(spy, {
         domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
-        range: [90, -270],
+        range: [-270, 90],
       });
     });
 
@@ -1289,7 +1291,7 @@ describe('Tooltip visibility', () => {
         allowDataOverflow: false,
         allowDecimals: false,
         allowDuplicatedCategory: true,
-        dataKey: undefined,
+        dataKey: 'name',
         domain: undefined,
         id: 0,
         includeHidden: false,
@@ -1299,7 +1301,7 @@ describe('Tooltip visibility', () => {
         tick: true,
         tickCount: 5,
         ticks: undefined,
-        type: 'number',
+        type: 'category',
         unit: undefined,
       });
     });
@@ -1309,10 +1311,20 @@ describe('Tooltip visibility', () => {
       expectLastCalledWith(spy, [0, 236]);
     });
 
+    test('selectTooltipAxisDomainIncludingNiceTicks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomainIncludingNiceTicks);
+      expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    });
+
+    test('selectTooltipAxisDomain', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomain);
+      expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    });
+
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
       expectLastCalledWithScale(spy, {
-        domain: [0, 1, 2, 3, 4, 5],
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
         range: [0, 236],
       });
     });
@@ -1326,40 +1338,40 @@ describe('Tooltip visibility', () => {
       const { spy } = renderTestCase(selectTooltipAxisTicks);
       expectLastCalledWith(spy, [
         {
-          coordinate: 0,
+          coordinate: 19.666666666666668,
           index: 0,
-          offset: 0,
-          value: 0,
+          offset: 19.666666666666668,
+          value: 'Page A',
         },
         {
-          coordinate: 39.333333333333336,
+          coordinate: 59,
           index: 1,
-          offset: 0,
-          value: 1,
+          offset: 19.666666666666668,
+          value: 'Page B',
         },
         {
-          coordinate: 78.66666666666667,
+          coordinate: 98.33333333333334,
           index: 2,
-          offset: 0,
-          value: 2,
+          offset: 19.666666666666668,
+          value: 'Page C',
         },
         {
-          coordinate: 118,
+          coordinate: 137.66666666666666,
           index: 3,
-          offset: 0,
-          value: 3,
+          offset: 19.666666666666668,
+          value: 'Page D',
         },
         {
-          coordinate: 157.33333333333334,
+          coordinate: 177,
           index: 4,
-          offset: 0,
-          value: 4,
+          offset: 19.666666666666668,
+          value: 'Page E',
         },
         {
-          coordinate: 196.66666666666669,
+          coordinate: 216.33333333333334,
           index: 5,
-          offset: 0,
-          value: 5,
+          offset: 19.666666666666668,
+          value: 'Page F',
         },
       ]);
     });

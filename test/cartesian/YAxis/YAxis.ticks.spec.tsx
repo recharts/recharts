@@ -70,7 +70,7 @@ describe('YAxis ticks', () => {
         spy,
         expect.toBeRechartsScale({
           domain: [0, 100],
-          range: [265, 5],
+          range: [5, 265],
         }),
       );
     });
@@ -127,7 +127,7 @@ describe('YAxis ticks', () => {
         spy,
         expect.toBeRechartsScale({
           domain: [13.98, 98],
-          range: [265, 5],
+          range: [5, 265],
         }),
       );
     });
@@ -186,7 +186,7 @@ describe('YAxis ticks', () => {
         spy,
         expect.toBeRechartsScale({
           domain: [13.98, 98],
-          range: [265, 5],
+          range: [5, 265],
         }),
       );
     });
@@ -241,7 +241,7 @@ describe('YAxis ticks', () => {
         spy,
         expect.toBeRechartsScale({
           domain: [0, 200],
-          range: [265, 5],
+          range: [5, 265],
         }),
       );
     });

@@ -7,14 +7,15 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
-import { LayoutType, PolarViewBoxRequired } from '../../util/types';
+import { AxisDomainTypeInput, LayoutType, PolarLayout, PolarViewBoxRequired } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
 import { AxisRange } from './axisSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { selectChartLayout } from '../../context/chartLayoutContext';
+import { selectChartLayout, selectPolarChartLayout } from '../../context/chartLayoutContext';
+import { getAxisTypeBasedOnLayout } from '../../util/getAxisTypeBasedOnLayout';
 
-export const implicitAngleAxis: AngleAxisSettings = {
+export const implicitAngleAxis: Omit<AngleAxisSettings, 'type'> & { type: AxisDomainTypeInput } = {
   allowDataOverflow: defaultPolarAngleAxisProps.allowDataOverflow,
   allowDecimals: defaultPolarAngleAxisProps.allowDecimals,
   allowDuplicatedCategory: false, // defaultPolarAngleAxisProps.allowDuplicatedCategory has it set to true but the actual axis rendering ignores the prop because reasons,
@@ -32,16 +33,16 @@ export const implicitAngleAxis: AngleAxisSettings = {
   unit: undefined,
 };
 
-export const implicitRadiusAxis: RadiusAxisSettings = {
+export const implicitRadiusAxis: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput } = {
   allowDataOverflow: defaultPolarRadiusAxisProps.allowDataOverflow,
-  allowDecimals: false,
+  allowDecimals: defaultPolarRadiusAxisProps.allowDecimals,
   allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
   domain: undefined,
   id: defaultPolarRadiusAxisProps.radiusAxisId,
-  includeHidden: false,
+  includeHidden: defaultPolarRadiusAxisProps.includeHidden,
   name: undefined,
-  reversed: false,
+  reversed: defaultPolarRadiusAxisProps.reversed,
   scale: defaultPolarRadiusAxisProps.scale,
   tick: defaultPolarRadiusAxisProps.tick,
   tickCount: defaultPolarRadiusAxisProps.tickCount,
@@ -50,61 +51,48 @@ export const implicitRadiusAxis: RadiusAxisSettings = {
   unit: undefined,
 };
 
-export const implicitRadialBarAngleAxis: AngleAxisSettings = {
-  allowDataOverflow: false,
-  allowDecimals: false,
-  allowDuplicatedCategory: defaultPolarAngleAxisProps.allowDuplicatedCategory,
-  dataKey: undefined,
-  domain: undefined,
-  id: defaultPolarAngleAxisProps.angleAxisId,
-  includeHidden: false,
-  name: undefined,
-  reversed: false,
-  scale: defaultPolarAngleAxisProps.scale,
-  tick: defaultPolarAngleAxisProps.tick,
-  tickCount: undefined,
-  ticks: undefined,
-  type: 'number',
-  unit: undefined,
+const selectAngleAxisNoDefaults = (
+  state: RechartsRootState,
+  angleAxisId: AxisId | undefined,
+): AngleAxisSettings | undefined => {
+  if (angleAxisId == null) {
+    return undefined;
+  }
+  return state.polarAxis.angleAxis[angleAxisId];
 };
 
-export const implicitRadialBarRadiusAxis: RadiusAxisSettings = {
-  allowDataOverflow: defaultPolarRadiusAxisProps.allowDataOverflow,
-  allowDecimals: false,
-  allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
-  dataKey: undefined,
-  domain: undefined,
-  id: defaultPolarRadiusAxisProps.radiusAxisId,
-  includeHidden: false,
-  name: undefined,
-  reversed: false,
-  scale: defaultPolarRadiusAxisProps.scale,
-  tick: defaultPolarRadiusAxisProps.tick,
-  tickCount: defaultPolarRadiusAxisProps.tickCount,
-  ticks: undefined,
-  type: 'category',
-  unit: undefined,
+export const selectAngleAxis: (state: RechartsRootState, angleAxisId: AxisId | undefined) => AngleAxisSettings =
+  createSelector(
+    [selectAngleAxisNoDefaults, selectPolarChartLayout],
+    (angleAxisSettings, layout: PolarLayout): AngleAxisSettings => {
+      if (angleAxisSettings != null) {
+        return angleAxisSettings;
+      }
+      const evaluatedType = getAxisTypeBasedOnLayout(layout, 'angleAxis', implicitAngleAxis.type) ?? 'category';
+      return {
+        ...implicitAngleAxis,
+        type: evaluatedType,
+      };
+    },
+  );
+
+const selectRadiusAxisNoDefaults = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings | undefined => {
+  return state.polarAxis.radiusAxis[radiusAxisId];
 };
 
-export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): AngleAxisSettings => {
-  if (state.polarAxis.angleAxis[angleAxisId] != null) {
-    return state.polarAxis.angleAxis[angleAxisId];
-  }
-  if (state.layout.layoutType === 'radial') {
-    return implicitRadialBarAngleAxis;
-  }
-  return implicitAngleAxis;
-};
-
-export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings => {
-  if (state.polarAxis.radiusAxis[radiusAxisId] != null) {
-    return state.polarAxis.radiusAxis[radiusAxisId];
-  }
-  if (state.layout.layoutType === 'radial') {
-    return implicitRadialBarRadiusAxis;
-  }
-  return implicitRadiusAxis;
-};
+export const selectRadiusAxis: (state: RechartsRootState, radiusAxisId: AxisId) => RadiusAxisSettings = createSelector(
+  [selectRadiusAxisNoDefaults, selectPolarChartLayout],
+  (radiusAxisSettings, layout: PolarLayout): RadiusAxisSettings => {
+    if (radiusAxisSettings != null) {
+      return radiusAxisSettings;
+    }
+    const evaluatedType = getAxisTypeBasedOnLayout(layout, 'radiusAxis', implicitRadiusAxis.type) ?? 'category';
+    return {
+      ...implicitRadiusAxis,
+      type: evaluatedType,
+    };
+  },
+);
 
 export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | null => state.polarOptions;
 

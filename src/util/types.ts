@@ -56,7 +56,34 @@ export type PolarLayout = 'centric' | 'radial';
  */
 export type LayoutType = CartesianLayout | PolarLayout;
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
-export type AxisDomainType = 'number' | 'category';
+
+/**
+ * The type of axis.
+ *
+ * `category`: axis maps discrete categories to angles around the circle.
+ * Treats data as distinct values.
+ * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+ *
+ * `number`: axis maps continuous numeric values to angles around the circle.
+ * Treats data as continuous range.
+ * Values that are numerically closer are placed closer together on the axis.
+ *
+ * `auto`: the type is inferred based on the chart layout.
+ *
+ * This is external type - users will provide this type in props.
+ * Internally we will evaluate it to either 'category' or 'number' based on the layout,
+ * before sending it to the store.
+ *
+ * @inline
+ */
+export type AxisDomainTypeInput = 'number' | 'category' | 'auto';
+
+/**
+ * Individual axes are responsible for resolving the 'auto' type to either 'number' or 'category',
+ * based on the chart layout and axis kind. Then they can start using this type.
+ */
+export type EvaluatedAxisDomainType = 'number' | 'category';
+
 /**
  * Extracts values from data objects.
  *
@@ -737,12 +764,19 @@ export type TickProp = SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((p
 
 export interface BaseAxisProps {
   /**
-   * The type of axis. Numeric axis operates in a continuous range of numbers.
-   * Category axis operates in a discrete set of categories.
+   * The type of axis.
    *
-   * @defaultValue category
+   * `category`: axis maps discrete categories to angles around the circle.
+   * Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: axis maps continuous numeric values to angles around the circle.
+   * Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
+   *
+   * `auto`: the type is inferred based on the chart layout.
    */
-  type?: AxisDomainType;
+  type?: 'category' | 'number' | 'auto';
   /**
    * The name of data.
    * This option will be used in tooltip.

@@ -10,7 +10,7 @@ import {
 import { useAppSelector } from '../../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
-import { AxisDomainType } from '../../../src/util/types';
+import { AxisDomainTypeInput } from '../../../src/util/types';
 import { pageData } from '../../../storybook/stories/data';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 
@@ -28,7 +28,7 @@ describe('<XAxis />', () => {
   describe('layout=vertical', () => {
     it.each(['category', undefined])(
       'should render categorical XAxis when type=%s',
-      (axisDomainType: AxisDomainType) => {
+      (axisDomainType: AxisDomainTypeInput) => {
         const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} layout="vertical" data={data}>
@@ -74,7 +74,7 @@ describe('<XAxis />', () => {
 
     it.each(['category', undefined])(
       'should render categorical XAxis, but ignore allowDuplicatedCategory when type=%s',
-      (axisDomainType: AxisDomainType) => {
+      (axisDomainType: AxisDomainTypeInput) => {
         const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} layout="vertical" data={data}>

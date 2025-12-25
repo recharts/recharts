@@ -6,7 +6,6 @@ import { PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '.
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
-  implicitRadialBarRadiusAxis,
   implicitRadiusAxis,
   selectRadiusAxis,
   selectRadiusAxisRangeWithReversed,
@@ -440,7 +439,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select angle settings', () => {
         const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-        expectLastCalledWith(spy, implicitRadiusAxis);
+        expectLastCalledWith(spy, { ...implicitRadiusAxis, type: 'number' });
         expect(spy).toHaveBeenCalledTimes(1);
       });
 
@@ -730,7 +729,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select angle settings', () => {
         const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-        expectLastCalledWith(spy, implicitRadialBarRadiusAxis);
+        expectLastCalledWith(spy, { ...implicitRadiusAxis, type: 'category' });
         expect(spy).toHaveBeenCalledTimes(1);
       });
 
@@ -805,7 +804,7 @@ describe('<PolarRadiusAxis />', () => {
           tick: true,
           tickCount: 5,
           ticks: undefined,
-          type: 'number',
+          type: 'category',
           unit: undefined,
         });
         expect(spy).toHaveBeenCalledTimes(2);
@@ -850,38 +849,38 @@ describe('<PolarRadiusAxis />', () => {
         expectRadiusAxisTicks(container, [
           {
             textContent: '0',
-            transform: 'rotate(90, 250, 250)',
-            x: '250',
+            transform: 'rotate(90, 266.3333333333333, 250)',
+            x: '266.3333333333333',
             y: '250',
           },
           {
             textContent: '1',
-            transform: 'rotate(90, 282.6666666666667, 250)',
-            x: '282.6666666666667',
+            transform: 'rotate(90, 299, 250)',
+            x: '299',
             y: '250',
           },
           {
             textContent: '2',
-            transform: 'rotate(90, 315.3333333333333, 250)',
-            x: '315.3333333333333',
+            transform: 'rotate(90, 331.66666666666663, 250)',
+            x: '331.66666666666663',
             y: '250',
           },
           {
             textContent: '3',
-            transform: 'rotate(90, 348, 250)',
-            x: '348',
+            transform: 'rotate(90, 364.3333333333333, 250)',
+            x: '364.3333333333333',
             y: '250',
           },
           {
             textContent: '4',
-            transform: 'rotate(90, 380.66666666666663, 250)',
-            x: '380.66666666666663',
+            transform: 'rotate(90, 397, 250)',
+            x: '397',
             y: '250',
           },
           {
             textContent: '5',
-            transform: 'rotate(90, 413.3333333333333, 250)',
-            x: '413.3333333333333',
+            transform: 'rotate(90, 429.66666666666663, 250)',
+            x: '429.66666666666663',
             y: '250',
           },
         ]);
@@ -933,8 +932,8 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
-        expectLastCalledWith(spy, 'band');
-        expect(spy).toHaveBeenCalledTimes(1);
+        expectLastCalledWith(spy, 'linear');
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select domain with nice ticks', () => {
@@ -963,9 +962,33 @@ describe('<PolarRadiusAxis />', () => {
 
         expectRadiusAxisTicks(container, [
           {
-            textContent: '400',
+            textContent: '0',
+            transform: 'rotate(90, 250, 250)',
+            x: '250',
+            y: '250',
+          },
+          {
+            textContent: '100',
+            transform: 'rotate(90, 299, 250)',
+            x: '299',
+            y: '250',
+          },
+          {
+            textContent: '200',
             transform: 'rotate(90, 348, 250)',
             x: '348',
+            y: '250',
+          },
+          {
+            textContent: '300',
+            transform: 'rotate(90, 397, 250)',
+            x: '397',
+            y: '250',
+          },
+          {
+            textContent: '400',
+            transform: 'rotate(90, 446, 250)',
+            x: '446',
             y: '250',
           },
         ]);
@@ -1006,7 +1029,7 @@ describe('<PolarRadiusAxis />', () => {
           tick: true,
           tickCount: 5,
           ticks: undefined,
-          type: 'number',
+          type: 'category',
           unit: undefined,
         });
         expect(spy).toHaveBeenCalledTimes(2);
@@ -1014,7 +1037,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
-        expectLastCalledWith(spy, [0, 400]);
+        expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -1024,9 +1047,9 @@ describe('<PolarRadiusAxis />', () => {
         expect(spy).toHaveBeenCalledTimes(1);
       });
 
-      it('should select domain with nice ticks', () => {
+      it('should select categorical domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
-        expectLastCalledWith(spy, [0, 400]);
+        expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -1039,7 +1062,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
         expectLastCalledWithScale(spy, {
-          domain: [0, 400],
+          domain: [0, 1, 2, 3, 4, 5],
           range: [0, 196],
         });
         expect(spy).toHaveBeenCalledTimes(2);
@@ -1051,8 +1074,38 @@ describe('<PolarRadiusAxis />', () => {
         expectRadiusAxisTicks(container, [
           {
             textContent: '400',
-            transform: 'rotate(90, 348, 250)',
-            x: '348',
+            transform: 'rotate(90, 266.3333333333333, 250)',
+            x: '266.3333333333333',
+            y: '250',
+          },
+          {
+            textContent: '300',
+            transform: 'rotate(90, 299, 250)',
+            x: '299',
+            y: '250',
+          },
+          {
+            textContent: '300',
+            transform: 'rotate(90, 331.66666666666663, 250)',
+            x: '331.66666666666663',
+            y: '250',
+          },
+          {
+            textContent: '200',
+            transform: 'rotate(90, 364.3333333333333, 250)',
+            x: '364.3333333333333',
+            y: '250',
+          },
+          {
+            textContent: '278',
+            transform: 'rotate(90, 397, 250)',
+            x: '397',
+            y: '250',
+          },
+          {
+            textContent: '189',
+            transform: 'rotate(90, 429.66666666666663, 250)',
+            x: '429.66666666666663',
             y: '250',
           },
         ]);
@@ -1065,7 +1118,7 @@ describe('<PolarRadiusAxis />', () => {
       });
     });
 
-    test('ignores tickCount', () => {
+    test('follows tickCount', () => {
       const { container } = render(
         <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
@@ -1075,9 +1128,21 @@ describe('<PolarRadiusAxis />', () => {
 
       expectRadiusAxisTicks(container, [
         {
-          textContent: '400',
+          textContent: '0',
+          transform: 'rotate(90, 250, 250)',
+          x: '250',
+          y: '250',
+        },
+        {
+          textContent: '200',
           transform: 'rotate(90, 348, 250)',
           x: '348',
+          y: '250',
+        },
+        {
+          textContent: '400',
+          transform: 'rotate(90, 446, 250)',
+          x: '446',
           y: '250',
         },
       ]);
@@ -1099,25 +1164,37 @@ describe('<PolarRadiusAxis />', () => {
       };
       const { rerender } = render(
         <RadarChart width={1} height={2}>
-          <PolarRadiusAxis />
+          <PolarRadiusAxis
+            allowDataOverflow
+            allowDecimals
+            allowDuplicatedCategory
+            dataKey="foo"
+            includeHidden
+            id="my-axis-id"
+            name="my-name"
+            scale="log"
+            tickCount={20}
+            unit="my-unit"
+          />
           <Comp />
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
         domain: undefined,
-        allowDataOverflow: false,
-        allowDecimals: false,
+        allowDataOverflow: true,
+        allowDecimals: true,
         allowDuplicatedCategory: true,
-        dataKey: undefined,
+        dataKey: 'foo',
         id: 0,
-        includeHidden: false,
-        name: undefined,
+        includeHidden: true,
+        name: 'my-name',
         reversed: false,
-        scale: 'auto',
+        scale: 'log',
         tick: true,
-        tickCount: 5,
+        tickCount: 20,
         ticks: undefined,
         type: 'number',
+        // why no unit on PolarRadiusAxisSettings?
         unit: undefined,
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
@@ -1127,7 +1204,7 @@ describe('<PolarRadiusAxis />', () => {
           <Comp />
         </RadarChart>,
       );
-      expect(radiusAxisSpy).toHaveBeenLastCalledWith(implicitRadiusAxis);
+      expect(radiusAxisSpy).toHaveBeenLastCalledWith({ ...implicitRadiusAxis, type: 'number' });
       expect(radiusAxisSpy).toHaveBeenCalledTimes(4);
     });
 

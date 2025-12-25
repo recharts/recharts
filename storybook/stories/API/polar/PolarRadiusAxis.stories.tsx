@@ -18,11 +18,11 @@ const GeneralProps: StorybookArgs = {
   },
   type: {
     description: 'The type of axis.',
-    options: ['number', 'category'],
+    options: ['number', 'category', 'auto'],
     control: 'radio',
     table: {
       type: { summary: 'number | category' },
-      defaultValue: 'number',
+      defaultValue: 'auto',
       category: 'General',
     },
   },

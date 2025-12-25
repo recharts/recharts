@@ -2,6 +2,7 @@ import { Mock, expect } from 'vitest';
 import { AxisDomain } from '../../src/util/types';
 
 import { RechartsScale } from '../../src/util/scale/RechartsScale';
+import { assertNotNull } from './assertNotNull';
 
 export type ExpectedScale = { domain: AxisDomain; range: [number, number]; bandwidth?: number };
 
@@ -19,6 +20,7 @@ export type ExpectedScale = { domain: AxisDomain; range: [number, number]; bandw
  * @returns void
  */
 export function expectScale(actual: unknown, expected: ExpectedScale) {
+  assertNotNull(actual);
   const scale = actual as RechartsScale;
   expect(scale.map).toBeInstanceOf(Function);
   expect(scale.domain(), 'domain error').toEqual(expected.domain);

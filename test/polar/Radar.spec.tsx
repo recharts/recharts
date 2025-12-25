@@ -12,6 +12,9 @@ import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
+import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 
 type Point = { x?: number | string; y?: number | string };
 const CustomizedShape = ({ points }: { points: Point[] }) => {
@@ -30,20 +33,46 @@ const CustomizedLabel = () => {
 const CustomizedDot = ({ x, y }: Point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
 
 describe('<Radar />', () => {
-  it('should render a polygon in a simple Radar', () => {
-    const { container } = render(
+  describe('in simple chart with implicit axes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" isAnimationActive={false} />
-      </RadarChart>,
-    );
+        {children}
+      </RadarChart>
+    ));
 
-    expectRadarPolygons(container, [
-      {
-        d: 'M250,167.68L313.7527,186.2473L445.804,250L319.2965,319.2965L250,419.344L159.9146,340.0854L100.06,250L199.4136,199.4136L250,167.68Z',
-        fill: null,
-        fillOpacity: null,
-      },
-    ]);
+    it('should select radial axis settings', () => {
+      const { spy } = renderTestCase(state => selectRadiusAxis(state, defaultAxisId));
+      expectLastCalledWith(spy, {
+        allowDataOverflow: false,
+        allowDecimals: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: 5,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should render a polygon', () => {
+      const { container } = renderTestCase();
+
+      expectRadarPolygons(container, [
+        {
+          d: 'M250,167.68L313.7527,186.2473L445.804,250L319.2965,319.2965L250,419.344L159.9146,340.0854L100.06,250L199.4136,199.4136L250,167.68Z',
+          fill: null,
+          fillOpacity: null,
+        },
+      ]);
+    });
   });
 
   it('should render Radar in a custom component', () => {

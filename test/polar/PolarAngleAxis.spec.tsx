@@ -174,7 +174,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [-270, 90] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -421,7 +421,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [-270, 90] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -620,7 +620,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [-270, 90] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -709,7 +709,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [0, 360], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 360], range: [-270, 90] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -1585,64 +1585,232 @@ describe('<PolarAngleAxis />', () => {
             y2: '250',
           },
           {
-            x1: '412.25527429148303',
-            x2: '418.8779385482782',
-            y1: '140.04898379462054',
-            y2: '135.56118721480914',
+            x1: '388.5929291125633',
+            x2: '394.2497833620557',
+            y1: '111.4070708874367',
+            y2: '105.7502166379443',
           },
           {
-            x1: '322.64055138167737',
-            x2: '325.6054718462357',
-            y1: '67.95783374458026',
-            y2: '60.52754124435904',
+            x1: '250',
+            x2: '250',
+            y1: '54',
+            y2: '46',
           },
           {
-            x1: '208.01322151584986',
-            x2: '206.2994754552723',
-            y1: '58.54997928304394',
-            y2: '50.7356927231682',
+            x1: '111.4070708874367',
+            x2: '105.7502166379443',
+            y1: '111.40707088743667',
+            y2: '105.7502166379443',
           },
           {
-            x1: '107.84336433708276',
-            x2: '102.04105267737185',
-            y1: '115.0648639641972',
-            y2: '109.55730739130729',
+            x1: '54',
+            x2: '46',
+            y1: '249.99999999999997',
+            y2: '249.99999999999997',
           },
           {
-            x1: '56.622861016384235',
-            x2: '48.72991656807338',
-            y1: '218.0424951144281',
-            y2: '216.73810715991496',
+            x1: '111.40707088743665',
+            x2: '105.75021663794428',
+            y1: '388.5929291125633',
+            y2: '394.2497833620557',
           },
           {
-            x1: '71.98866905588869',
-            x2: '64.72290044592495',
-            y1: '332.0241797002937',
-            y2: '335.3721054023465',
+            x1: '249.99999999999997',
+            x2: '249.99999999999997',
+            y1: '446',
+            y2: '454',
           },
           {
-            x1: '148.6498192965878',
-            x2: '144.51307722706076',
-            y1: '417.7621556590928',
-            y2: '424.6095905839537',
+            x1: '388.5929291125633',
+            x2: '394.24978336205567',
+            y1: '388.59292911256335',
+            y2: '394.2497833620557',
+          },
+        ]);
+      });
+
+      it('should render labels', () => {
+        const { container } = renderTestCase();
+
+        expectAngleAxisTickLabels(container, [
+          {
+            textContext: '0',
+            x: '454',
+            y: '250',
           },
           {
-            x1: '260.20927615305504',
-            x2: '260.62598130215935',
-            y1: '445.733928281304',
-            y2: '453.7230682111532',
+            textContext: '50',
+            x: '394.2497833620557',
+            y: '105.7502166379443',
           },
           {
-            x1: '368.2533327700598',
-            x2: '373.07999941373566',
-            y1: '406.30786700858505',
-            y2: '412.68777994771096',
+            textContext: '100',
+            x: '250',
+            y: '46',
           },
           {
-            x1: '435.5787538927413',
-            x2: '443.1533969087716',
-            y1: '313.05970269211036',
-            y2: '315.6335681081149',
+            textContext: '150',
+            x: '105.7502166379443',
+            y: '105.7502166379443',
+          },
+          {
+            textContext: '200',
+            x: '46',
+            y: '249.99999999999997',
+          },
+          {
+            textContext: '250',
+            x: '105.75021663794428',
+            y: '394.2497833620557',
+          },
+          {
+            textContext: '300',
+            x: '249.99999999999997',
+            y: '454',
+          },
+          {
+            textContext: '350',
+            x: '394.24978336205567',
+            y: '394.2497833620557',
+          },
+        ]);
+      });
+
+      it('should select axis settings', () => {
+        const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
+        expectLastCalledWith(spy, {
+          allowDataOverflow: false,
+          allowDecimals: false,
+          allowDuplicatedCategory: false,
+          dataKey: undefined,
+          domain: undefined,
+          id: 0,
+          includeHidden: false,
+          name: undefined,
+          reversed: false,
+          scale: 'auto',
+          tick: true,
+          tickCount: undefined,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+      });
+
+      it('should select applied values', () => {
+        const { spy } = renderTestCase(state => selectPolarAppliedValues(state, 'angleAxis', 0));
+        expectLastCalledWith(spy, [
+          { value: 400 },
+          { value: 300 },
+          { value: 300 },
+          { value: 200 },
+          { value: 278 },
+          { value: 189 },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+        expectLastCalledWith(spy, [0, 400]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
+        expectLastCalledWith(spy, [0, 360]);
+        expect(spy).toHaveBeenCalledTimes(1);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+        expectLastCalledWithScale(spy, { domain: [0, 400], range: [0, 360] });
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
+        expectLastCalledWith(spy, 'linear');
+        expect(spy).toHaveBeenCalledTimes(1);
+      });
+
+      it('should select polarItemsSettings', () => {
+        const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
+        expectLastCalledWith(spy, [
+          {
+            id: expect.stringMatching('radialBar-'),
+            maxBarSize: undefined,
+            minPointSize: 0,
+            barSize: undefined,
+            stackId: undefined,
+            type: 'radialBar',
+            angleAxisId: 0,
+            data: undefined,
+            dataKey: 'uv',
+            hide: false,
+            radiusAxisId: 0,
+          },
+        ]);
+      });
+
+      it('should select ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
+        expectLastCalledWith(spy, [
+          { coordinate: 0, index: 0, offset: -0, value: 0 },
+          { coordinate: 45, index: 1, offset: -0, value: 50 },
+          { coordinate: 90, index: 2, offset: -0, value: 100 },
+          { coordinate: 135, index: 3, offset: -0, value: 150 },
+          { coordinate: 180, index: 4, offset: -0, value: 200 },
+          { coordinate: 225, index: 5, offset: -0, value: 250 },
+          { coordinate: 270, index: 6, offset: -0, value: 300 },
+          { coordinate: 315, index: 7, offset: -0, value: 350 },
+          { coordinate: 360, index: 8, offset: -0, value: 400 },
+        ]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    describe('with category axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" />
+          <PolarAngleAxis type="category" />
+          <PolarRadiusAxis />
+          {children}
+        </RadialBarChart>
+      ));
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+        expectAngleAxisTicks(container, [
+          {
+            x1: '310.5673308974897',
+            x2: '313.0394668524893',
+            y1: '436.4070771938501',
+            y2: '444.01552932421134',
+          },
+          {
+            x1: '446',
+            x2: '454',
+            y1: '250',
+            y2: '250',
+          },
+          {
+            x1: '310.5673308974897',
+            x2: '313.0394668524893',
+            y1: '63.592922806149915',
+            y2: '55.984470675788685',
+          },
+          {
+            x1: '91.43266910251032',
+            x2: '84.96053314751074',
+            y1: '134.79409055067526',
+            y2: '130.09180853233545',
+          },
+          {
+            x1: '91.43266910251029',
+            x2: '84.96053314751072',
+            y1: '365.20590944932474',
+            y2: '369.9081914676645',
           },
         ]);
       });
@@ -1653,58 +1821,28 @@ describe('<PolarAngleAxis />', () => {
         expectAngleAxisTickLabels(container, [
           {
             textContext: '400',
+            x: '313.0394668524893',
+            y: '444.01552932421134',
+          },
+          {
+            textContext: '300',
             x: '454',
             y: '250',
           },
           {
-            textContext: '380',
-            x: '418.8779385482782',
-            y: '135.56118721480914',
-          },
-          {
-            textContext: '360',
-            x: '325.6054718462357',
-            y: '60.52754124435904',
-          },
-          {
-            textContext: '340',
-            x: '206.2994754552723',
-            y: '50.7356927231682',
-          },
-          {
-            textContext: '320',
-            x: '102.04105267737185',
-            y: '109.55730739130729',
-          },
-          {
-            textContext: '300',
-            x: '48.72991656807338',
-            y: '216.73810715991496',
-          },
-          {
-            textContext: '280',
-            x: '64.72290044592495',
-            y: '335.3721054023465',
-          },
-          {
-            textContext: '260',
-            x: '144.51307722706076',
-            y: '424.6095905839537',
-          },
-          {
-            textContext: '240',
-            x: '260.62598130215935',
-            y: '453.7230682111532',
-          },
-          {
-            textContext: '220',
-            x: '373.07999941373566',
-            y: '412.68777994771096',
-          },
-          {
             textContext: '200',
-            x: '443.1533969087716',
-            y: '315.6335681081149',
+            x: '313.0394668524893',
+            y: '55.984470675788685',
+          },
+          {
+            textContext: '278',
+            x: '84.96053314751074',
+            y: '130.09180853233545',
+          },
+          {
+            textContext: '189',
+            x: '84.96053314751072',
+            y: '369.9081914676645',
           },
         ]);
       });
@@ -1745,6 +1883,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+        // this looks like a correct, categorical domain derived from the data
         expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -1757,13 +1896,13 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [400, 189], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [400, 300, 200, 278, 189], range: [0, 360] });
       });
 
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
-        expectLastCalledWith(spy, 'linear');
-        expect(spy).toHaveBeenCalledTimes(1);
+        expectLastCalledWith(spy, 'band');
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select polarItemsSettings', () => {
@@ -1788,17 +1927,11 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          { index: 0, coordinate: 0, value: 400, offset: -0 },
-          { index: 1, coordinate: 34.12322274881516, value: 380, offset: -0 },
-          { index: 2, coordinate: 68.24644549763032, value: 360, offset: -0 },
-          { index: 3, coordinate: 102.36966824644551, value: 340, offset: -0 },
-          { index: 4, coordinate: 136.49289099526067, value: 320, offset: -0 },
-          { index: 5, coordinate: 170.61611374407585, value: 300, offset: -0 },
-          { index: 6, coordinate: 204.739336492891, value: 280, offset: -0 },
-          { index: 7, coordinate: 238.86255924170615, value: 260, offset: -0 },
-          { index: 8, coordinate: 272.98578199052133, value: 240, offset: -0 },
-          { index: 9, coordinate: 307.1090047393365, value: 220, offset: -0 },
-          { index: 10, coordinate: 341.2322274881517, value: 200, offset: -0 },
+          { coordinate: -72, index: 0, offset: -72, value: 400 },
+          { coordinate: 0, index: 1, offset: -72, value: 300 },
+          { coordinate: 72, index: 2, offset: -72, value: 200 },
+          { coordinate: 144, index: 3, offset: -72, value: 278 },
+          { coordinate: 216, index: 4, offset: -72, value: 189 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -1827,7 +1960,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: true,
+          allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -1942,14 +2075,14 @@ describe('<PolarAngleAxis />', () => {
           tick: true,
           tickCount: undefined,
           ticks: undefined,
-          type: 'category',
+          type: 'number',
           unit: undefined,
         });
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
-        expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
+        expectLastCalledWith(spy, [0, 400]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -1961,7 +2094,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectLastCalledWithScale(spy, { domain: [400, 189], range: [360, 0] });
+        expectLastCalledWithScale(spy, { domain: [0, 400], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -1975,64 +2108,46 @@ describe('<PolarAngleAxis />', () => {
             y2: '250.00000000000006',
           },
           {
-            x1: '412.2552742914829',
-            x2: '418.87793854827817',
-            y1: '359.9510162053795',
-            y2: '364.4388127851909',
+            x1: '388.5929291125633',
+            x2: '394.24978336205567',
+            y1: '388.59292911256335',
+            y2: '394.2497833620557',
           },
           {
-            x1: '322.6405513816775',
-            x2: '325.60547184623573',
-            y1: '432.0421662554197',
-            y2: '439.47245875564096',
+            x1: '249.99999999999997',
+            x2: '249.99999999999997',
+            y1: '446',
+            y2: '454',
           },
           {
-            x1: '208.0132215158498',
-            x2: '206.29947545527224',
-            y1: '441.45002071695603',
-            y2: '449.2643072768318',
+            x1: '111.40707088743665',
+            x2: '105.75021663794428',
+            y1: '388.5929291125633',
+            y2: '394.2497833620557',
           },
           {
-            x1: '107.84336433708273',
-            x2: '102.0410526773718',
-            y1: '384.93513603580277',
-            y2: '390.44269260869265',
+            x1: '54',
+            x2: '46',
+            y1: '249.99999999999997',
+            y2: '249.99999999999997',
           },
           {
-            x1: '56.622861016384235',
-            x2: '48.72991656807338',
-            y1: '281.95750488557184',
-            y2: '283.261892840085',
+            x1: '111.4070708874367',
+            x2: '105.7502166379443',
+            y1: '111.40707088743667',
+            y2: '105.7502166379443',
           },
           {
-            x1: '71.98866905588872',
-            x2: '64.72290044592498',
-            y1: '167.97582029970624',
-            y2: '164.62789459765344',
+            x1: '250',
+            x2: '250',
+            y1: '54',
+            y2: '46',
           },
           {
-            x1: '148.6498192965879',
-            x2: '144.51307722706088',
-            y1: '82.23784434090712',
-            y2: '75.39040941604617',
-          },
-          {
-            x1: '260.20927615305516',
-            x2: '260.62598130215946',
-            y1: '54.266071718696',
-            y2: '46.27693178884684',
-          },
-          {
-            x1: '368.2533327700597',
-            x2: '373.0799994137356',
-            y1: '93.69213299141492',
-            y2: '87.31222005228898',
-          },
-          {
-            x1: '435.57875389274125',
-            x2: '443.1533969087715',
-            y1: '186.94029730788952',
-            y2: '184.366431891885',
+            x1: '388.5929291125633',
+            x2: '394.2497833620557',
+            y1: '111.4070708874367',
+            y2: '105.7502166379443',
           },
         ]);
       });
@@ -2041,59 +2156,44 @@ describe('<PolarAngleAxis />', () => {
         const { container } = renderTestCase();
         expectAngleAxisTickLabels(container, [
           {
-            textContext: '400',
+            textContext: '0',
             x: '454',
             y: '250.00000000000006',
           },
           {
-            textContext: '380',
-            x: '418.87793854827817',
-            y: '364.4388127851909',
+            textContext: '50',
+            x: '394.24978336205567',
+            y: '394.2497833620557',
           },
           {
-            textContext: '360',
-            x: '325.60547184623573',
-            y: '439.47245875564096',
+            textContext: '100',
+            x: '249.99999999999997',
+            y: '454',
           },
           {
-            textContext: '340',
-            x: '206.29947545527224',
-            y: '449.2643072768318',
-          },
-          {
-            textContext: '320',
-            x: '102.0410526773718',
-            y: '390.44269260869265',
-          },
-          {
-            textContext: '300',
-            x: '48.72991656807338',
-            y: '283.261892840085',
-          },
-          {
-            textContext: '280',
-            x: '64.72290044592498',
-            y: '164.62789459765344',
-          },
-          {
-            textContext: '260',
-            x: '144.51307722706088',
-            y: '75.39040941604617',
-          },
-          {
-            textContext: '240',
-            x: '260.62598130215946',
-            y: '46.27693178884684',
-          },
-          {
-            textContext: '220',
-            x: '373.0799994137356',
-            y: '87.31222005228898',
+            textContext: '150',
+            x: '105.75021663794428',
+            y: '394.2497833620557',
           },
           {
             textContext: '200',
-            x: '443.1533969087715',
-            y: '184.366431891885',
+            x: '46',
+            y: '249.99999999999997',
+          },
+          {
+            textContext: '250',
+            x: '105.7502166379443',
+            y: '105.7502166379443',
+          },
+          {
+            textContext: '300',
+            x: '250',
+            y: '46',
+          },
+          {
+            textContext: '350',
+            x: '394.2497833620557',
+            y: '105.7502166379443',
           },
         ]);
       });
@@ -2240,76 +2340,100 @@ describe('<PolarAngleAxis />', () => {
         const { container } = renderTestCase();
         expectAngleAxisTicks(container, [
           {
-            x1: '432.5633372715354',
-            x2: '440.01490205812865',
-            y1: '178.67940070162317',
-            y2: '175.76835583230167',
+            x1: '446',
+            x2: '454',
+            y1: '250',
+            y2: '250',
           },
           {
-            x1: '375.0116093670338',
-            x2: '380.11412403507603',
-            y1: '99.04272947796076',
-            y2: '92.88120823216326',
+            x1: '430.5803711701581',
+            x2: '437.9509985648584',
+            y1: '173.79810010211077',
+            y2: '170.6878184736255',
           },
           {
-            x1: '286.04361798617344',
-            x2: '287.51478606724174',
-            y1: '57.34264197164234',
-            y2: '49.4790763378318',
+            x1: '386.74765767298027',
+            x2: '392.32919472085706',
+            y1: '109.58604727110134',
+            y2: '103.85486552706465',
           },
           {
-            x1: '188.01762147260374',
-            x2: '185.48772847148553',
-            y1: '64.05865238713966',
-            y2: '56.46920962743107',
+            x1: '321.39863678123476',
+            x2: '324.3128668539382',
+            y1: '67.46716825244476',
+            y2: '60.01684858927925',
           },
           {
-            x1: '105.56821616178345',
-            x2: '99.67304131124399',
-            y1: '117.5029818550218',
-            y2: '112.09494029808391',
+            x1: '244.8155293780266',
+            x2: '244.60391833223176',
+            y1: '54.06858020120944',
+            y2: '46.071379393095526',
           },
           {
-            x1: '59.415495602055415',
-            x2: '51.636536238874015',
-            y1: '204.24470868424243',
-            y2: '202.37714577339517',
+            x1: '169.04816292043114',
+            x2: '165.74400630493852',
+            y1: '71.49845918468117',
+            y2: '64.2126820085457',
           },
           {
-            x1: '61.15795081834642',
-            x2: '53.45011207623813',
-            y1: '302.48504987969375',
-            y2: '304.62729681355876',
+            x1: '106.01801361447642',
+            x2: '100.14119784363871',
+            y1: '117.01433311638843',
+            y2: '111.58634671297571',
           },
           {
-            x1: '110.35769102236955',
-            x2: '104.65800494164995',
-            y1: '387.53554283673725',
-            y2: '393.14923846272654',
+            x1: '65.64244378044125',
+            x2: '58.11764556739806',
+            y1: '183.4545909566089',
+            y2: '180.73845181198072',
           },
           {
-            x1: '194.65048853123875',
-            x2: '192.39132479781992',
-            y1: '438.0224230781251',
-            y2: '445.69680769355875',
+            x1: '54.274272812552084',
+            x2: '46.285467621227696',
+            y1: '260.36531316192213',
+            y2: '260.7883871685312',
           },
           {
-            x1: '292.85299286169624',
-            x2: '294.60209461115323',
-            y1: '441.25799591859004',
-            y2: '449.06444473159377',
+            x1: '73.70220455569708',
+            x2: '66.50637617021533',
+            y1: '335.645124329869',
+            y2: '339.1408436902718',
           },
           {
-            x1: '380.28625006934533',
-            x2: '385.6040561946247',
-            y1: '396.4291400059019',
-            y2: '402.4058395979795',
+            x1: '120.86938700568427',
+            x2: '115.59874974061017',
+            y1: '397.44926174013983',
+            y2: '403.46759895402306',
           },
           {
-            x1: '434.97769089490146',
-            x2: '442.52780072734646',
-            y1: '314.8016502196532',
-            y2: '317.44661553474106',
+            x1: '188.35438703671548',
+            x2: '185.83823956882634',
+            y1: '436.0532676476845',
+            y2: '443.6472785720798',
+          },
+          {
+            x1: '265.5389020767459',
+            x2: '266.1731429778376',
+            y1: '445.3830661092442',
+            y2: '453.35788513411137',
+          },
+          {
+            x1: '340.278477295892',
+            x2: '343.9633131038876',
+            y1: '423.97067723365086',
+            y2: '431.0715212023713',
+          },
+          {
+            x1: '400.81335240048736',
+            x2: '406.96899943724196',
+            y1: '375.1851937639847',
+            y2: '380.2947935094535',
+          },
+          {
+            x1: '437.6187793765148',
+            x2: '445.2766887388216',
+            y1: '306.7026774082729',
+            y2: '309.0170724045289',
           },
         ]);
       });
@@ -2318,78 +2442,97 @@ describe('<PolarAngleAxis />', () => {
         const { container } = renderTestCase();
         expectAngleAxisTickLabels(container, [
           {
-            textContext: '30',
-            x: '440.01490205812865',
-            y: '175.76835583230167',
+            textContext: '0',
+            x: '454',
+            y: '250',
           },
           {
-            textContext: '28',
-            x: '380.11412403507603',
-            y: '92.88120823216326',
+            textContext: '2',
+            x: '437.9509985648584',
+            y: '170.6878184736255',
           },
           {
-            textContext: '26',
-            x: '287.51478606724174',
-            y: '49.4790763378318',
+            textContext: '4',
+            x: '392.32919472085706',
+            y: '103.85486552706465',
           },
           {
-            textContext: '24',
-            x: '185.48772847148553',
-            y: '56.46920962743107',
-          },
-          {
-            textContext: '22',
-            x: '99.67304131124399',
-            y: '112.09494029808391',
-          },
-          {
-            textContext: '20',
-            x: '51.636536238874015',
-            y: '202.37714577339517',
-          },
-          {
-            textContext: '18',
-            x: '53.45011207623813',
-            y: '304.62729681355876',
-          },
-          {
-            textContext: '16',
-            x: '104.65800494164995',
-            y: '393.14923846272654',
-          },
-          {
-            textContext: '14',
-            x: '192.39132479781992',
-            y: '445.69680769355875',
-          },
-          {
-            textContext: '12',
-            x: '294.60209461115323',
-            y: '449.06444473159377',
-          },
-          {
-            textContext: '10',
-            x: '385.6040561946247',
-            y: '402.4058395979795',
+            textContext: '6',
+            x: '324.3128668539382',
+            y: '60.01684858927925',
           },
           {
             textContext: '8',
-            x: '442.52780072734646',
-            y: '317.44661553474106',
+            x: '244.60391833223176',
+            y: '46.071379393095526',
+          },
+          {
+            textContext: '10',
+            x: '165.74400630493852',
+            y: '64.2126820085457',
+          },
+          {
+            textContext: '12',
+            x: '100.14119784363871',
+            y: '111.58634671297571',
+          },
+          {
+            textContext: '14',
+            x: '58.11764556739806',
+            y: '180.73845181198072',
+          },
+          {
+            textContext: '16',
+            x: '46.285467621227696',
+            y: '260.7883871685312',
+          },
+          {
+            textContext: '18',
+            x: '66.50637617021533',
+            y: '339.1408436902718',
+          },
+          {
+            textContext: '20',
+            x: '115.59874974061017',
+            y: '403.46759895402306',
+          },
+          {
+            textContext: '22',
+            x: '185.83823956882634',
+            y: '443.6472785720798',
+          },
+          {
+            textContext: '24',
+            x: '266.1731429778376',
+            y: '453.35788513411137',
+          },
+          {
+            textContext: '26',
+            x: '343.9633131038876',
+            y: '431.0715212023713',
+          },
+          {
+            textContext: '28',
+            x: '406.96899943724196',
+            y: '380.2947935094535',
+          },
+          {
+            textContext: '30',
+            x: '445.2766887388216',
+            y: '309.0170724045289',
           },
         ]);
       });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
-        expectLastCalledWith(spy, [31.47, 26.69, 15.69, 8.22, 8.63, 2.63, 6.67]);
+        expectLastCalledWith(spy, [0, 31.47]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        // why is scale.domain() different from domain?
-        expectLastCalledWithScale(spy, { domain: [31.47, 6.67], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [0, 31.47], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(2);
       });
     });
@@ -2427,7 +2570,7 @@ describe('<PolarAngleAxis />', () => {
 
     test.each([
       { axisType: 'number', expectedScale: 'linear' },
-      { axisType: 'category', expectedScale: 'linear' },
+      { axisType: 'category', expectedScale: 'band' },
       { axisType: undefined, expectedScale: 'linear' },
     ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
       const realScaleTypeSpy = vi.fn();
@@ -2440,12 +2583,11 @@ describe('<PolarAngleAxis />', () => {
         <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
           <PolarAngleAxis dataKey="uv" type={axisType} />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadialBarChart>,
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -2486,7 +2628,7 @@ describe('<PolarAngleAxis />', () => {
           <Comp />
         </RadarChart>,
       );
-      expect(angleAxisSpy).toHaveBeenLastCalledWith(implicitAngleAxis);
+      expect(angleAxisSpy).toHaveBeenLastCalledWith({ ...implicitAngleAxis, type: 'category' });
       expect(angleAxisSpy).toHaveBeenCalledTimes(4);
     });
 
@@ -2535,7 +2677,7 @@ describe('<PolarAngleAxis />', () => {
             allowDecimals
             tickCount={19}
           />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 
@@ -2567,68 +2709,71 @@ describe('<PolarAngleAxis />', () => {
 
       expect(angleAxisScaleSpy).toHaveBeenCalledTimes(2);
 
-      expectLastCalledWithScale(angleAxisScaleSpy, { domain: [420, 365], range: [-270, 90] });
+      expectLastCalledWithScale(angleAxisScaleSpy, {
+        domain: [420, 460, 999, 500, 864, 650, 765, 365],
+        range: [-270, 90],
+      });
 
       expect(angleAxisTicksSpy).toHaveBeenLastCalledWith([
         {
-          coordinate: 15222.537988541328,
+          coordinate: -24172.926148617094,
+          index: 0,
           offset: -0,
           value: 1,
-          index: 0,
         },
         {
-          coordinate: 13444.697559655799,
+          coordinate: -21429.954757673444,
+          index: 1,
           offset: -0,
           value: 2,
-          index: 1,
         },
         {
-          coordinate: 12404.727576491747,
+          coordinate: -19825.41935342046,
+          index: 2,
           offset: -0,
           value: 3,
-          index: 2,
         },
         {
-          coordinate: 11666.857130770273,
+          coordinate: -18686.983366729797,
+          index: 3,
           offset: -0,
           value: 4,
-          index: 3,
         },
         {
-          coordinate: 11094.520348485423,
+          coordinate: -17803.943812512767,
+          index: 4,
           offset: -0,
           value: 5,
-          index: 4,
         },
         {
-          coordinate: 10626.887147606221,
+          coordinate: -17082.44796247681,
+          index: 5,
           offset: -0,
           value: 6,
-          index: 5,
         },
         {
-          coordinate: 10231.508909876538,
+          coordinate: -16472.431913188248,
+          index: 6,
           offset: -0,
           value: 7,
-          index: 6,
         },
         {
-          coordinate: 9889.016701884744,
+          coordinate: -15944.011975786148,
+          index: 7,
           offset: -0,
           value: 8,
-          index: 7,
         },
         {
-          coordinate: 9586.91716444217,
+          coordinate: -15477.912558223828,
+          index: 8,
           offset: -0,
           value: 9,
-          index: 8,
         },
         {
-          coordinate: 9316.679919599894,
+          coordinate: -15060.972421569122,
+          index: 9,
           offset: -0,
           value: 10,
-          index: 9,
         },
       ]);
       expect(angleAxisTicksSpy).toHaveBeenCalledTimes(2);
@@ -2657,71 +2802,56 @@ describe('<PolarAngleAxis />', () => {
       const { container } = renderTestCase();
       expectAngleAxisTickLabels(container, [
         {
-          textContext: '400°',
+          textContext: '0°',
           x: '454',
           y: '250',
         },
         {
-          textContext: '380°',
-          x: '418.8779385482782',
-          y: '135.56118721480914',
+          textContext: '50°',
+          x: '394.2497833620557',
+          y: '105.7502166379443',
         },
         {
-          textContext: '360°',
-          x: '325.6054718462357',
-          y: '60.52754124435904',
+          textContext: '100°',
+          x: '250',
+          y: '46',
         },
         {
-          textContext: '340°',
-          x: '206.2994754552723',
-          y: '50.7356927231682',
-        },
-        {
-          textContext: '320°',
-          x: '102.04105267737185',
-          y: '109.55730739130729',
-        },
-        {
-          textContext: '300°',
-          x: '48.72991656807338',
-          y: '216.73810715991496',
-        },
-        {
-          textContext: '280°',
-          x: '64.72290044592495',
-          y: '335.3721054023465',
-        },
-        {
-          textContext: '260°',
-          x: '144.51307722706076',
-          y: '424.6095905839537',
-        },
-        {
-          textContext: '240°',
-          x: '260.62598130215935',
-          y: '453.7230682111532',
-        },
-        {
-          textContext: '220°',
-          x: '373.07999941373566',
-          y: '412.68777994771096',
+          textContext: '150°',
+          x: '105.7502166379443',
+          y: '105.7502166379443',
         },
         {
           textContext: '200°',
-          x: '443.1533969087716',
-          y: '315.6335681081149',
+          x: '46',
+          y: '249.99999999999997',
+        },
+        {
+          textContext: '250°',
+          x: '105.75021663794428',
+          y: '394.2497833620557',
+        },
+        {
+          textContext: '300°',
+          x: '249.99999999999997',
+          y: '454',
+        },
+        {
+          textContext: '350°',
+          x: '394.24978336205567',
+          y: '394.2497833620557',
         },
       ]);
     });
 
     it('should call the custom tick formatter function with the tick value, and index', () => {
       renderTestCase();
-      expect(formatter).toHaveBeenCalledTimes(11);
-      expect(formatter).toHaveBeenNthCalledWith(1, 400, 0);
-      expect(formatter).toHaveBeenNthCalledWith(2, 380, 1);
-      expect(formatter).toHaveBeenNthCalledWith(3, 360, 2);
-      expect(formatter).toHaveBeenNthCalledWith(4, 340, 3);
-      expect(formatter).toHaveBeenLastCalledWith(200, 10);
+      expect(formatter).toHaveBeenCalledTimes(8);
+      expect(formatter).toHaveBeenNthCalledWith(1, 0, 0);
+      expect(formatter).toHaveBeenNthCalledWith(2, 50, 1);
+      expect(formatter).toHaveBeenNthCalledWith(3, 100, 2);
+      expect(formatter).toHaveBeenNthCalledWith(4, 150, 3);
+      expect(formatter).toHaveBeenLastCalledWith(350, 7);
     });
   });
 

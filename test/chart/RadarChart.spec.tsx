@@ -52,7 +52,7 @@ describe('<RadarChart />', () => {
 
     it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+      expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [-270, 90] });
     });
 
     it('should select angle axis scale type', () => {
