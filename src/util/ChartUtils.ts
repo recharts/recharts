@@ -40,7 +40,6 @@ import { StackGroup } from './stacks/stackTypes';
 import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
-import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -278,26 +277,6 @@ export const getTicksOfAxis = (
       };
     })
     .filter(isNotNil);
-};
-
-const EPS = 1e-4;
-export const checkDomainOfScale = <T extends CategoricalDomainItem>(scale: CustomScaleDefinition<T>): void => {
-  const domain = scale.domain();
-
-  if (!domain || domain.length <= 2) {
-    return;
-  }
-
-  const len = domain.length;
-  const range = scale.range();
-  const minValue = Math.min(range[0], range[1]) - EPS;
-  const maxValue = Math.max(range[0], range[1]) + EPS;
-  const first = scale(domain[0]);
-  const last = scale(domain[len - 1]);
-
-  if (first == null || last == null || first < minValue || first > maxValue || last < minValue || last > maxValue) {
-    scale.domain([domain[0], domain[len - 1]]);
-  }
 };
 
 /**
