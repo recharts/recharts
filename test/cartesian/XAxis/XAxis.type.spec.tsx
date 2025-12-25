@@ -9,7 +9,7 @@ import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('XAxis type', () => {
   describe('in vertical chart', () => {
-    const TestCase = ({ children, xAxisType }: { children?: ReactNode; xAxisType?: AxisDomainTypeInput }) => {
+    const TestCase = ({ children, axisType }: { children?: ReactNode; axisType?: AxisDomainTypeInput }) => {
       return (
         <BarChart
           layout="vertical"
@@ -20,7 +20,7 @@ describe('XAxis type', () => {
             { x: 'B', y: 5 },
           ]}
         >
-          <XAxis type={xAxisType} dataKey="x" />
+          <XAxis type={axisType} dataKey="x" />
           {children}
         </BarChart>
       );
@@ -41,7 +41,7 @@ describe('XAxis type', () => {
 
     describe('with explicit "number" type', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <TestCase xAxisType="number">{children}</TestCase>
+        <TestCase axisType="number">{children}</TestCase>
       ));
 
       it('should set type to "number"', () => {
@@ -52,7 +52,7 @@ describe('XAxis type', () => {
 
     describe('with explicit "category" type', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <TestCase xAxisType="category">{children}</TestCase>
+        <TestCase axisType="category">{children}</TestCase>
       ));
 
       it('should set type to "category"', () => {
@@ -62,7 +62,7 @@ describe('XAxis type', () => {
     });
 
     describe('with type="auto"', () => {
-      const renderTestCase = createSelectorTestCase(({ children }) => <TestCase xAxisType="auto">{children}</TestCase>);
+      const renderTestCase = createSelectorTestCase(({ children }) => <TestCase axisType="auto">{children}</TestCase>);
 
       it('should infer type as "number"', () => {
         const { spy } = renderTestCase(state => selectXAxisSettings(state, defaultAxisId));

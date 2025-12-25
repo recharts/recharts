@@ -367,8 +367,8 @@ export const PolarRadiusAxisAPI: ApiDoc = {
               difference.
             </p>
             <p>
-              <code>number</code>: axis maps continuous numeric values to angles around the circle. Treats data as
-              continuous range. Values that are numerically closer are placed closer together on the axis.
+              <code>number</code>: Treats data as continuous range. Values that are numerically closer are placed closer
+              together on the axis.
             </p>
             <p>
               <code>auto</code>: the type is inferred based on the chart layout.

@@ -65,8 +65,7 @@ export interface PolarRadiusAxisProps
    * Treats data as distinct values.
    * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
    *
-   * `number`: axis maps continuous numeric values to angles around the circle.
-   * Treats data as continuous range.
+   * `number`: Treats data as continuous range.
    * Values that are numerically closer are placed closer together on the axis.
    *
    * `auto`: the type is inferred based on the chart layout.
@@ -215,7 +214,7 @@ function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type:
     return () => {
       dispatch(removeRadiusAxis(settings));
     };
-  });
+  }, [dispatch, settings]);
   return null;
 }
 
