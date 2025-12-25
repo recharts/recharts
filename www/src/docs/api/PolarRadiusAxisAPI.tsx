@@ -362,9 +362,8 @@ export const PolarRadiusAxisAPI: ApiDoc = {
           <section>
             <p>The type of axis.</p>
             <p>
-              <code>category</code>: axis maps discrete categories to angles around the circle. Treats data as distinct
-              values. Each value is in the same distance from its neighbors, regardless of their actual numeric
-              difference.
+              <code>category</code>: Treats data as distinct values. Each value is in the same distance from its
+              neighbors, regardless of their actual numeric difference.
             </p>
             <p>
               <code>number</code>: Treats data as continuous range. Values that are numerically closer are placed closer

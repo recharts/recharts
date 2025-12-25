@@ -43,8 +43,7 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
   /**
    * The type of axis.
    *
-   * `category`: axis maps discrete categories to angles around the circle.
-   * Treats data as distinct values.
+   * `category`: Treats data as distinct values.
    * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
    *
    * `number`: Treats data as continuous range.

@@ -72,7 +72,7 @@ describe('YAxis type', () => {
   });
 
   describe('in horizontal chart', () => {
-    const TestCase = ({ children, xAxisType }: { children?: ReactNode; xAxisType?: AxisDomainTypeInput }) => {
+    const TestCase = ({ children, axisType }: { children?: ReactNode; axisType?: AxisDomainTypeInput }) => {
       return (
         <BarChart
           width={400}
@@ -82,7 +82,7 @@ describe('YAxis type', () => {
             { x: 5, y: 'B' },
           ]}
         >
-          <YAxis type={xAxisType} dataKey="x" />
+          <YAxis type={axisType} dataKey="x" />
           {children}
         </BarChart>
       );
@@ -99,7 +99,7 @@ describe('YAxis type', () => {
 
     describe('with explicit "number" type', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <TestCase xAxisType="number">{children}</TestCase>
+        <TestCase axisType="number">{children}</TestCase>
       ));
 
       it('should set type to "number"', () => {
@@ -110,7 +110,7 @@ describe('YAxis type', () => {
 
     describe('with explicit "category" type', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <TestCase xAxisType="category">{children}</TestCase>
+        <TestCase axisType="category">{children}</TestCase>
       ));
 
       it('should set type to "category"', () => {
@@ -120,7 +120,7 @@ describe('YAxis type', () => {
     });
 
     describe('with type="auto"', () => {
-      const renderTestCase = createSelectorTestCase(({ children }) => <TestCase xAxisType="auto">{children}</TestCase>);
+      const renderTestCase = createSelectorTestCase(({ children }) => <TestCase axisType="auto">{children}</TestCase>);
 
       it('should infer type as "number"', () => {
         const { spy } = renderTestCase(state => selectYAxisSettings(state, defaultAxisId));
