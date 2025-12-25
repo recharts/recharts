@@ -316,7 +316,34 @@ export const YAxisAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'scale', type: '(union of 20 variants)', isOptional: true, defaultVal: 'auto' },
+    {
+      name: 'scale',
+      type: '(union of 20 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Scale function determines how data values are mapped to visual values. In other words, decided the mapping
+              between data domain and coordinate range.
+            </p>
+            <p>
+              If undefined, or &#39;auto&#39;, the scale function is created internally according to the type of axis
+              and data.
+            </p>
+            <p>
+              You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale
+              definition object.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 'auto',
+      format: [
+        '<YAxis scale="log" />',
+        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<YAxis scale={scale} />",
+      ],
+    },
     {
       name: 'tick',
       type: '(union of 5 variants)',
@@ -424,9 +451,18 @@ export const YAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>The type of axis.</p>
             <p>
-              The type of axis. Numeric axis operates in a continuous range of numbers. Category axis operates in a
-              discrete set of categories.
+              <code>category</code>: axis maps discrete categories to angles around the circle. Treats data as distinct
+              values. Each value is in the same distance from its neighbors, regardless of their actual numeric
+              difference.
+            </p>
+            <p>
+              <code>number</code>: axis maps continuous numeric values to angles around the circle. Treats data as
+              continuous range. Values that are numerically closer are placed closer together on the axis.
+            </p>
+            <p>
+              <code>auto</code>: the type is inferred based on the chart layout.
             </p>
           </section>
         ),
