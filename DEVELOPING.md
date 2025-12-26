@@ -6,7 +6,7 @@ If you want to know the guidelines we follow then read [CONTRIBUTING.md](CONTRIB
 ```sh
 git clone https://github.com/recharts/recharts.git
 cd recharts
-npm install
+npm install # the right Node version can be found in .nvmrc file
 ```
 
 # Linting and types
@@ -23,11 +23,13 @@ $ npm run check-types
 The project enforces that all imports from `recharts` must use the public API entry point. Imports from internal paths like `recharts/types/*` or `recharts/src/*` are not allowed and will fail the linter.
 
 **Good:**
+
 ```typescript
 import { TooltipIndex, DataKey, BarRectangleItem } from 'recharts';
 ```
 
 **Bad:**
+
 ```typescript
 import { TooltipIndex } from 'recharts/types/state/tooltipSlice'; // ❌ Will fail lint
 import { DataKey } from 'recharts/src/util/types'; // ❌ Will fail lint
@@ -42,11 +44,13 @@ This ensures that consumers of the library only depend on stable, public APIs.
 Most unit tests are in the `test` directory, some others are in `www/test`.
 
 Run all tests:
+
 ```sh
 $ npm run test
 ```
 
 Run a specific test file:
+
 ```sh
 $ npm run test -- path/to/TestFile.spec.tsx
 ```
@@ -225,7 +229,9 @@ Running `npm run build` generates the following folders:
 - `build` - output of `tsc` build - we don't use this for anything at all I think
 
 Running `npm run test-coverage` generates:
+
 - `coverage` - code coverage report
 
 Running `npm run test-mutation` generates:
+
 - `reports` - mutation testing report
