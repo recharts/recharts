@@ -4,7 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import { BarChart, Customized, XAxis } from '../../../src';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { useAppSelector } from '../../../src/state/hooks';
-import { implicitXAxis, selectAxisSettings, selectXAxisSettings } from '../../../src/state/selectors/axisSelectors';
+import {
+  implicitXAxis,
+  selectRenderableAxisSettings,
+  selectXAxisSettings,
+} from '../../../src/state/selectors/axisSelectors';
 import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
@@ -13,7 +17,7 @@ describe('state integration', () => {
   it('should publish its configuration to redux store', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const settings = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'foo'));
+      const settings = useAppSelector(state => selectRenderableAxisSettings(state, 'xAxis', 'foo'));
       spy(settings);
       return null;
     };
@@ -77,8 +81,8 @@ describe('state integration', () => {
   it('should remove the configuration from store when DOM element is removed', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const foo = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'foo'));
-      const bar = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'bar'));
+      const foo = useAppSelector(state => selectRenderableAxisSettings(state, 'xAxis', 'foo'));
+      const bar = useAppSelector(state => selectRenderableAxisSettings(state, 'xAxis', 'bar'));
       spy({ foo, bar });
       return null;
     };

@@ -139,6 +139,7 @@
   "lib/state/selectors/combiners/combineActiveTooltipIndex.js",
   "lib/state/selectors/combiners/combineAllBarPositions.js",
   "lib/state/selectors/combiners/combineAxisRangeWithReverse.js",
+  "lib/state/selectors/combiners/combineBarPosition.js",
   "lib/state/selectors/combiners/combineBarSizeList.js",
   "lib/state/selectors/combiners/combineCoordinateForDefaultIndex.js",
   "lib/state/selectors/combiners/combineDisplayedStackedData.js",

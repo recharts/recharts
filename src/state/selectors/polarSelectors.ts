@@ -20,6 +20,7 @@ import {
   selectDomainDefinition,
   selectDomainFromUserPreference,
   selectRealScaleType,
+  selectRenderableAxisSettings,
 } from './axisSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import { CategoricalDomain, NumberDomain } from '../../util/types';
@@ -58,7 +59,7 @@ export const selectPolarDisplayedData: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
-) => ChartData | undefined = createSelector(
+) => ChartData = createSelector(
   [selectPolarGraphicalItemsData, selectChartDataAndAlwaysIgnoreIndexes],
   combineDisplayedData,
 );
@@ -155,7 +156,7 @@ export const selectPolarAxisDomain: (
 );
 
 export const selectPolarNiceTicks = createSelector(
-  [selectPolarAxisDomain, selectBaseAxis, selectRealScaleType],
+  [selectPolarAxisDomain, selectRenderableAxisSettings, selectRealScaleType],
   combineNiceTicks,
 );
 

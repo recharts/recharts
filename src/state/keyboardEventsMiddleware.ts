@@ -13,7 +13,7 @@ import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTo
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
 
-export const keyboardEventsMiddleware = createListenerMiddleware();
+export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootState>();
 
 keyboardEventsMiddleware.startListening({
   actionCreator: keyDownAction,

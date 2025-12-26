@@ -186,7 +186,7 @@ describe('<RadialBar />', () => {
     });
 
     it('should select barBandSize', () => {
-      const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0, false));
+      const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0));
       expectLastCalledWith(spy, 32.666666666666664);
     });
 

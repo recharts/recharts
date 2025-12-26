@@ -74,7 +74,7 @@ export const selectPieLegend: (
   (
     displayedData: ChartData | undefined,
     pieSettings: PieSettings | undefined,
-    cells: ReadonlyArray<ReactElement>,
+    cells: ReadonlyArray<ReactElement> | undefined,
   ): ReadonlyArray<LegendPayload> | undefined => {
     if (displayedData == null || pieSettings == null) {
       return undefined;
@@ -108,7 +108,7 @@ export const selectPieSectors: (
   [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffsetInternal],
   (
     displayedData: ChartData | undefined,
-    pieSettings: PieSettings,
+    pieSettings: PieSettings | undefined,
     cells,
     offset: ChartOffsetInternal,
   ): ReadonlyArray<PieSectorDataItem> | undefined => {

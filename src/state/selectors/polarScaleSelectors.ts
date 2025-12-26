@@ -6,7 +6,7 @@ import {
   combineCategoricalDomain,
   combineGraphicalItemTicks,
   combineScaleFunction,
-  selectAxisSettings,
+  selectRenderableAxisSettings,
   selectDuplicateDomain,
   selectRealScaleType,
 } from './axisSelectors';
@@ -72,7 +72,7 @@ export const selectPolarCategoricalDomain: (
   axisType: 'angleAxis' | 'radiusAxis',
   polarAxisId: AxisId,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
-  [selectChartLayout, selectPolarAppliedValues, selectAxisSettings, pickAxisType],
+  [selectChartLayout, selectPolarAppliedValues, selectRenderableAxisSettings, pickAxisType],
   combineCategoricalDomain,
 );
 

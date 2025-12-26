@@ -14,7 +14,7 @@ export const combineStackedData = (
   if (stackId == null) {
     return undefined;
   }
-  const stackGroup: StackGroup = stackGroups[stackId];
+  const stackGroup: StackGroup | undefined = stackGroups[stackId];
   if (!stackGroup) {
     return undefined;
   }

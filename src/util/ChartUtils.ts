@@ -514,7 +514,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
     type?: RenderableAxisProps['type'];
     scale: RechartsScale;
   };
-  ticks: Array<TickItem>;
+  ticks: ReadonlyArray<TickItem> | undefined;
   bandSize: number;
   entry: T;
   index: number;
@@ -532,7 +532,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
       }
     }
 
-    return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
+    return ticks?.[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
   const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);

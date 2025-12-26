@@ -28,10 +28,11 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
   const clockWise = (roundedHeight >= 0 && roundedWidth >= 0) || (roundedHeight < 0 && roundedWidth < 0) ? 1 : 0;
   let path;
 
-  if (maxRadius > 0 && radius instanceof Array) {
+  if (maxRadius > 0 && Array.isArray(radius)) {
     const newRadius: RectRadius = [0, 0, 0, 0];
     for (let i = 0, len = 4; i < len; i++) {
-      newRadius[i] = radius[i] > maxRadius ? maxRadius : radius[i];
+      const r: number = radius[i] ?? 0;
+      newRadius[i] = r > maxRadius ? maxRadius : r;
     }
 
     path = roundTemplateLiteral`M${x},${y + ySign * newRadius[0]}`;

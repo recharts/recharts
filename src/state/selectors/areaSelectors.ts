@@ -121,7 +121,7 @@ export const selectGraphicalItemStackedData: (
     if (stackId == null || stackSeriesIdentifier == null) {
       return undefined;
     }
-    const groups: ReadonlyArray<StackSeries> = stackGroups[stackId]?.stackedData;
+    const groups: ReadonlyArray<StackSeries> | undefined = stackGroups[stackId]?.stackedData;
     const found: StackSeries | undefined = groups?.find(v => v.key === stackSeriesIdentifier);
     if (found == null) {
       return undefined;

@@ -18,7 +18,7 @@ type ExternalEventActionPayload = {
 
 export const externalEventAction = createAction<ExternalEventActionPayload>('externalEvent');
 
-export const externalEventsMiddleware = createListenerMiddleware();
+export const externalEventsMiddleware = createListenerMiddleware<RechartsRootState>();
 
 /*
  * We need a Map keyed by event type because this middleware handles MULTIPLE different event types

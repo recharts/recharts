@@ -6,6 +6,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataWithIndexesIfNotInPanoramaPosition4 } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import {
+  BaseAxisWithScale,
   selectAxisWithScale,
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
@@ -14,6 +15,7 @@ import {
 } from './axisSelectors';
 import { ScatterSettings } from '../types/ScatterSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
+import { TickItem } from '../../util/types';
 
 const selectXAxisWithScale = (
   state: RechartsRootState,
@@ -55,8 +57,12 @@ const selectYAxisTicks = (
   isPanorama: boolean,
 ) => selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
 
-const selectZAxis = (state: RechartsRootState, _xAxisId: AxisId, _yAxisId: AxisId, zAxisId: AxisId) =>
-  selectZAxisWithScale(state, 'zAxis', zAxisId, false);
+const selectZAxis = (
+  state: RechartsRootState,
+  _xAxisId: AxisId,
+  _yAxisId: AxisId,
+  zAxisId: AxisId,
+): ZAxisWithScale | undefined => selectZAxisWithScale(state, 'zAxis', zAxisId, false);
 
 const pickScatterId = (
   _state: RechartsRootState,
@@ -119,12 +125,12 @@ export const selectScatterPoints: (
   ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
-    xAxis,
-    xAxisTicks,
-    yAxis,
-    yAxisTicks,
-    zAxis: ZAxisWithScale,
-    scatterSettings: ScatterSettings,
+    xAxis: BaseAxisWithScale | undefined,
+    xAxisTicks: ReadonlyArray<TickItem> | undefined,
+    yAxis: BaseAxisWithScale | undefined,
+    yAxisTicks: ReadonlyArray<TickItem> | undefined,
+    zAxis: ZAxisWithScale | undefined,
+    scatterSettings: ScatterSettings | undefined,
     cells,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
     if (scatterSettings == null) {

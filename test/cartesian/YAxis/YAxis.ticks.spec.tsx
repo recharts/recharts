@@ -7,7 +7,7 @@ import { expectYAxisTicks } from '../../helper/expectAxisTicks';
 import {
   RenderableAxisSettings,
   selectAxisScale,
-  selectAxisSettings,
+  selectRenderableAxisSettings,
   selectNiceTicks,
   selectTicksOfAxis,
 } from '../../../src/state/selectors/axisSelectors';
@@ -60,7 +60,7 @@ describe('YAxis ticks', () => {
     ));
 
     it('should select YAxis settings', () => {
-      const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
+      const { spy } = renderTestCase(state => selectRenderableAxisSettings(state, 'yAxis', 0));
       expectLastCalledWith(spy, defaultExpectedYAxisSettings);
     });
 
@@ -114,7 +114,7 @@ describe('YAxis ticks', () => {
     ));
 
     it('should select YAxis settings all the same except for the domain', () => {
-      const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
+      const { spy } = renderTestCase(state => selectRenderableAxisSettings(state, 'yAxis', 0));
       expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: ['dataMin', 'dataMax'],
@@ -171,7 +171,7 @@ describe('YAxis ticks', () => {
     ));
 
     it('should select YAxis settings all the same except for the domain, and tick count', () => {
-      const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
+      const { spy } = renderTestCase(state => selectRenderableAxisSettings(state, 'yAxis', 0));
       expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: ['dataMin', 'dataMax'],
@@ -226,7 +226,7 @@ describe('YAxis ticks', () => {
     ));
 
     it('should select YAxis settings all the same except for the domain, and tick count', () => {
-      const { spy } = renderTestCase(state => selectAxisSettings(state, 'yAxis', 0));
+      const { spy } = renderTestCase(state => selectRenderableAxisSettings(state, 'yAxis', 0));
       expectLastCalledWith(spy, {
         ...defaultExpectedYAxisSettings,
         domain: [0, 200],

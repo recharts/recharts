@@ -38,7 +38,7 @@ describe('RadialBarChart reproducing bug #5966', () => {
   });
 
   it('should not select any radius axis ticks', () => {
-    const { spy } = renderTestCase(state => selectRadiusAxisTicks(state, 0, 0, false));
+    const { spy } = renderTestCase(state => selectRadiusAxisTicks(state, 0));
     expectLastCalledWith(spy, undefined);
   });
 });
