@@ -313,6 +313,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Deploy
+        id: deploy
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         working-directory: gh-pages
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -337,13 +339,15 @@ jobs:
           git push --no-verify
 
       - name: Comment on PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.deploy.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          WEBSITE_URL="https://recharts.github.io/recharts/pr-$PR_NUMBER/www/"
-          REPORT_URL="https://recharts.github.io/recharts/pr-$PR_NUMBER/vr-tests/"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+          WEBSITE_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/www/"
+          REPORT_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-tests/"
 
           COMMENT_BODY=$(cat <<EOF
           **Staging Deployment Details**
