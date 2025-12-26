@@ -24,7 +24,7 @@ import { useAppSelector } from '../../../src/state/hooks';
 import {
   implicitYAxis,
   selectAxisDomain,
-  selectAxisSettings,
+  selectRenderableAxisSettings,
   selectNumericalDomain,
 } from '../../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../../src/state/cartesianAxisSlice';
@@ -956,7 +956,7 @@ describe('<YAxis />', () => {
     it('should publish its configuration to redux store', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const settings = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'foo'));
+        const settings = useAppSelector(state => selectRenderableAxisSettings(state, 'yAxis', 'foo'));
         spy(settings);
         return null;
       };
@@ -1021,8 +1021,8 @@ describe('<YAxis />', () => {
     it('should remove the configuration from store when DOM element is removed', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const foo = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'foo'));
-        const bar = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'bar'));
+        const foo = useAppSelector(state => selectRenderableAxisSettings(state, 'yAxis', 'foo'));
+        const bar = useAppSelector(state => selectRenderableAxisSettings(state, 'yAxis', 'bar'));
         spy({ foo, bar });
         return null;
       };

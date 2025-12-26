@@ -7,4 +7,4 @@ export const selectChartHeight = (state: RechartsRootState): number => state.lay
 
 export const selectContainerScale: (state: RechartsRootState) => number = state => state.layout.scale;
 
-export const selectMargin = (state: RechartsRootState): Margin | undefined => state.layout.margin;
+export const selectMargin = (state: RechartsRootState): Margin => state.layout.margin;

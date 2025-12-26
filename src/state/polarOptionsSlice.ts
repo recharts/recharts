@@ -9,14 +9,20 @@ export type PolarChartOptions = {
   outerRadius: number | string;
 };
 
-const polarOptionsSlice = createSlice({
-  name: 'polarOptions',
-  initialState: null as PolarChartOptions | null,
-  reducers: {
-    updatePolarOptions: (_state: PolarChartOptions, action: PayloadAction<PolarChartOptions>): PolarChartOptions => {
-      return action.payload;
-    },
+type PolarChartState = PolarChartOptions | null;
+
+const initialState: PolarChartState = null;
+
+const reducers = {
+  updatePolarOptions: (_state: PolarChartState, action: PayloadAction<PolarChartOptions>): PolarChartOptions => {
+    return action.payload;
   },
+};
+
+const polarOptionsSlice = createSlice<PolarChartState, typeof reducers>({
+  name: 'polarOptions',
+  initialState,
+  reducers,
 });
 
 export const { updatePolarOptions } = polarOptionsSlice.actions;

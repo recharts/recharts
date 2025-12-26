@@ -9,7 +9,7 @@ import { MousePointer } from '../util/types';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 
-export const mouseClickMiddleware = createListenerMiddleware();
+export const mouseClickMiddleware = createListenerMiddleware<RechartsRootState>();
 
 // TODO: there's a bug here when you click the chart the activeIndex resets to zero
 mouseClickMiddleware.startListening({
@@ -31,7 +31,7 @@ mouseClickMiddleware.startListening({
 
 export const mouseMoveAction = createAction<MousePointer>('mouseMove');
 
-export const mouseMoveMiddleware = createListenerMiddleware();
+export const mouseMoveMiddleware = createListenerMiddleware<RechartsRootState>();
 
 /*
  * This single rafId is safe because:

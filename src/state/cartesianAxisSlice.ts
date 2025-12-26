@@ -202,13 +202,13 @@ const cartesianAxisSlice = createSlice({
           history[0] === history[2] &&
           width === history[1] &&
           width !== axis.width &&
-          Math.abs(width - history[0]) <= 1
+          Math.abs(width - (history[0] ?? 0)) <= 1
         ) {
           return;
         }
         const newHistory = [...history, width].slice(-3);
         state.yAxis[id] = {
-          ...state.yAxis[id],
+          ...axis,
           width,
           widthHistory: newHistory,
         };

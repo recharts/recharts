@@ -4,7 +4,7 @@ import { SyncMethod } from '../../synchronisation/types';
 import { BaseValue } from '../../cartesian/Area';
 
 export const selectRootMaxBarSize = (state: RechartsRootState): number | undefined => state.rootProps.maxBarSize;
-export const selectBarGap = (state: RechartsRootState): string | number | undefined => state.rootProps.barGap;
+export const selectBarGap = (state: RechartsRootState): string | number => state.rootProps.barGap;
 export const selectBarCategoryGap = (state: RechartsRootState): string | number => state.rootProps.barCategoryGap;
 export const selectRootBarSize = (state: RechartsRootState): string | number | undefined => state.rootProps.barSize;
 export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;

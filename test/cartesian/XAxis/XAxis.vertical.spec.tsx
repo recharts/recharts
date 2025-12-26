@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BarChart, CartesianGrid, Customized, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../../src';
 import {
-  selectAxisSettings,
+  selectRenderableAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
 } from '../../../src/state/selectors/axisSelectors';
@@ -163,7 +163,7 @@ describe('<XAxis />', () => {
       const itemDataSpy = vi.fn();
       const Comp = (): null => {
         const isPanorama = useIsPanorama();
-        axisSettingsSpy(useAppSelector(state => selectAxisSettings(state, 'xAxis', 0)));
+        axisSettingsSpy(useAppSelector(state => selectRenderableAxisSettings(state, 'xAxis', 0)));
         displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0, isPanorama)));
         itemDataSpy(useAppSelector(state => selectCartesianGraphicalItemsData(state, 'xAxis', 0)));
         return null;

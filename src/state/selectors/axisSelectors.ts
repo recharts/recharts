@@ -22,7 +22,6 @@ import {
   DataKey,
   LayoutType,
   NumberDomain,
-  ScaleType,
   Size,
   StackOffsetType,
   TickItem,
@@ -251,7 +250,7 @@ const selectCartesianAxisSettings = (
  * @param axisId xAxisId | yAxisId
  * @returns axis settings object
  */
-export const selectAxisSettings = (
+export const selectRenderableAxisSettings = (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
@@ -561,7 +560,7 @@ export function getErrorDomainByDataKey(
 export const selectTooltipAxis = (state: RechartsRootState): RenderableAxisSettings => {
   const axisType = selectTooltipAxisType(state);
   const axisId = selectTooltipAxisId(state);
-  return selectAxisSettings(state, axisType, axisId);
+  return selectRenderableAxisSettings(state, axisType, axisId);
 };
 
 export const selectTooltipAxisDataKey: (state: RechartsRootState) => DataKey<any> | undefined = createSelector(
@@ -1086,7 +1085,7 @@ export const selectAxisDomain: (
   combineAxisDomain,
 );
 
-function isSupportedScaleName(name: string): name is ScaleType {
+function isSupportedScaleName(name: string): name is D3ScaleType {
   return name in d3Scales;
 }
 
@@ -1096,7 +1095,7 @@ export const combineRealScaleType = (
   hasBar: boolean,
   chartType: string,
   axisType: AllAxisTypes,
-): ScaleType | undefined => {
+): D3ScaleType | undefined => {
   if (axisConfig == null) {
     return undefined;
   }
@@ -1136,7 +1135,7 @@ export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
-) => string | undefined = createSelector(
+) => D3ScaleType | undefined = createSelector(
   [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
   combineRealScaleType,
 );
@@ -1195,7 +1194,7 @@ export const selectNiceTicks: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<number> | undefined = createSelector(
-  [selectAxisDomain, selectAxisSettings, selectRealScaleType],
+  [selectAxisDomain, selectRenderableAxisSettings, selectRealScaleType],
   combineNiceTicks,
 );
 
@@ -1219,9 +1218,9 @@ export const combineAxisDomainWithNiceTicks = (
     niceTicks.length > 0
   ) {
     const minFromDomain = domain[0];
-    const minFromTicks = niceTicks[0];
+    const minFromTicks = niceTicks[0] ?? 0;
     const maxFromDomain = domain[1];
-    const maxFromTicks = niceTicks[niceTicks.length - 1];
+    const maxFromTicks = niceTicks[niceTicks.length - 1] ?? 0;
     return [Math.min(minFromDomain, minFromTicks), Math.max(maxFromDomain, maxFromTicks)];
   }
   return domain;
@@ -1767,7 +1766,7 @@ export const selectCategoricalDomain: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
-  [selectChartLayout, selectAllAppliedValues, selectAxisSettings, pickAxisType],
+  [selectChartLayout, selectAllAppliedValues, selectRenderableAxisSettings, pickAxisType],
   combineCategoricalDomain,
 );
 
@@ -1837,12 +1836,12 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
 export const combineAxisTicks = (
   layout: LayoutType,
   axis: RenderableAxisSettings,
-  realScaleType: string | undefined,
+  realScaleType: D3ScaleType | undefined,
   scale: RechartsScale | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
-  categoricalDomain: ReadonlyArray<CategoricalDomainItem> | undefined,
+  categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: RenderableAxisType,
 ): ReadonlyArray<TickItem> | undefined => {
   if (axis == null || scale == null) {
@@ -1853,8 +1852,8 @@ export const combineAxisTicks = (
 
   const { type, ticks, tickCount } = axis;
 
-  // This is testing for `scaleBand` but for band axis the type is reported as `band` so this looks like a dead code with a workaround elsewhere?
   const offsetForBand =
+    // @ts-expect-error This is testing for `scaleBand` but for band axis the type is reported as `band` so this looks like a dead code with a workaround elsewhere?
     realScaleType === 'scaleBand' && typeof scale.bandwidth === 'function' ? scale.bandwidth() / 2 : 2;
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
@@ -1888,7 +1887,7 @@ export const combineAxisTicks = (
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      .map((entry: unknown, index: number): TickItem | null => {
         const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
@@ -1942,7 +1941,7 @@ export const selectTicksOfAxis: (
 ) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
   [
     selectChartLayout,
-    selectAxisSettings,
+    selectRenderableAxisSettings,
     selectRealScaleType,
     selectAxisScale,
     selectNiceTicks,
@@ -1968,7 +1967,7 @@ export const combineGraphicalItemTicks = (
   scale: RechartsScale | undefined,
   axisRange: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
-  categoricalDomain: ReadonlyArray<CategoricalDomainItem> | undefined,
+  categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: RenderableAxisType,
 ): TickItem[] | undefined => {
   if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
@@ -1986,7 +1985,7 @@ export const combineGraphicalItemTicks = (
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      .map((entry: unknown, index: number): TickItem | null => {
         const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
@@ -2041,7 +2040,7 @@ export const selectTicksOfGraphicalItem: (
 ) => TickItem[] | undefined = createSelector(
   [
     selectChartLayout,
-    selectAxisSettings,
+    selectRenderableAxisSettings,
     selectAxisScale,
     selectAxisRange,
     selectDuplicateDomain,

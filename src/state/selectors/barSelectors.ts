@@ -26,6 +26,7 @@ import { BarCategory, combineBarSizeList } from './combiners/combineBarSizeList'
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
+import { combineBarPosition } from './combiners/combineBarPosition';
 
 const pickIsPanorama = (_state: RechartsRootState, _id: GraphicalItemId, isPanorama: boolean): boolean => isPanorama;
 
@@ -105,28 +106,22 @@ export const selectBarCartesianAxisSize = (state: RechartsRootState, id: Graphic
   return selectCartesianAxisSize(state, 'yAxis', yAxisId);
 };
 
-export const selectBarSizeList: (
-  state: RechartsRootState,
-  id: GraphicalItemId,
-  isPanorama: boolean,
-) => SizeList | undefined = createSelector(
-  [selectAllVisibleBars, selectRootBarSize, selectBarCartesianAxisSize],
-  combineBarSizeList,
-);
+export const selectBarSizeList: (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => SizeList =
+  createSelector([selectAllVisibleBars, selectRootBarSize, selectBarCartesianAxisSize], combineBarSizeList);
 
-export const selectBarBandSize: (
+export const selectBarBandSize: (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) => number = (
   state: RechartsRootState,
   id: GraphicalItemId,
   isPanorama: boolean,
-) => number | undefined = (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean): number | undefined => {
+): number => {
   const barSettings: BarSettings | undefined = selectSynchronisedBarSettings(state, id);
   if (barSettings == null) {
-    return undefined;
+    return 0;
   }
   const xAxisId = selectXAxisIdFromGraphicalItemId(state, id);
   const yAxisId = selectYAxisIdFromGraphicalItemId(state, id);
   if (xAxisId == null || yAxisId == null) {
-    return undefined;
+    return 0;
   }
   const layout = selectChartLayout(state);
   const globalMaxBarSize: number | undefined = selectRootMaxBarSize(state);
@@ -237,19 +232,7 @@ export const selectBarPosition: (
   isPanorama: boolean,
 ) => BarPositionPosition | undefined = createSelector(
   [selectAllBarPositions, selectSynchronisedBarSettings],
-  (allBarPositions: ReadonlyArray<BarWithPosition>, barSettings) => {
-    if (allBarPositions == null || barSettings == null) {
-      return undefined;
-    }
-    const position = allBarPositions.find(
-      (p: BarWithPosition) =>
-        p.stackId === barSettings.stackId && barSettings.dataKey != null && p.dataKeys.includes(barSettings.dataKey),
-    );
-    if (position == null) {
-      return undefined;
-    }
-    return position.position;
-  },
+  combineBarPosition,
 );
 
 export const selectStackedDataOfItem: (
@@ -285,8 +268,8 @@ export const selectBarRectangles: (
   (
     offset: ChartOffsetInternal,
     axisViewBox: CartesianViewBoxRequired,
-    xAxis: BaseAxisWithScale,
-    yAxis: BaseAxisWithScale,
+    xAxis: BaseAxisWithScale | undefined,
+    yAxis: BaseAxisWithScale | undefined,
     xAxisTicks,
     yAxisTicks,
     pos: BarPositionPosition | undefined,
@@ -294,7 +277,7 @@ export const selectBarRectangles: (
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,
     stackedData,
-    barSettings: BarSettings,
+    barSettings: BarSettings | undefined,
     cells,
   ): ReadonlyArray<BarRectangleItem> | undefined => {
     if (

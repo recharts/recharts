@@ -5,7 +5,7 @@ import { getPercentValue, isNullish } from '../../../util/DataUtils';
 import { DataKey } from '../../../util/types';
 
 const getBarSize = (
-  globalSize: number | undefined,
+  globalSize: string | number | undefined,
   totalSize: number | undefined,
   selfSize: number | string | undefined,
 ): number | undefined => {
@@ -19,7 +19,7 @@ const getBarSize = (
 
 export const combineBarSizeList = (
   allBars: ReadonlyArray<MaybeStackedGraphicalItem>,
-  globalSize: number | undefined,
+  globalSize: string | number | undefined,
   totalSize: number | undefined,
 ): SizeList => {
   const initialValue: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
@@ -28,16 +28,18 @@ export const combineBarSizeList = (
   const unstackedBars = allBars.filter(b => b.stackId == null);
 
   const groupByStack: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
-    if (!acc[bar.stackId]) {
-      acc[bar.stackId] = [];
+    let s = acc[bar.stackId];
+    if (s == null) {
+      s = [];
     }
-    acc[bar.stackId].push(bar);
+    s.push(bar);
+    acc[bar.stackId] = s;
     return acc;
   }, initialValue);
 
   const stackedSizeList: SizeList = Object.entries(groupByStack).map(([stackId, bars]): BarCategory => {
     const dataKeys = bars.map(b => b.dataKey);
-    const barSize: number | undefined = getBarSize(globalSize, totalSize, bars[0].barSize);
+    const barSize: number | undefined = getBarSize(globalSize, totalSize, bars[0]?.barSize);
     return { stackId, dataKeys, barSize };
   });
 

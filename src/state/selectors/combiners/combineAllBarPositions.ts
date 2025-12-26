@@ -23,7 +23,7 @@ function getBarPositions(
 
   // whether is barSize set by user
   // Okay but why does it check only for the first element? What if the first element is set but others are not?
-  if (isWellBehavedNumber(sizeList[0].barSize)) {
+  if (isWellBehavedNumber(sizeList[0]?.barSize)) {
     let useFull = false;
     let fullBarSize: number = bandSize / len;
     let sum = sizeList.reduce((res, entry) => res + (entry.barSize || 0), 0);
@@ -54,7 +54,7 @@ function getBarPositions(
         };
         const newRes: Array<BarWithPosition> = [...res, newPosition];
 
-        prev = newRes[newRes.length - 1].position;
+        prev = newPosition.position;
 
         return newRes;
       },
@@ -93,11 +93,11 @@ function getBarPositions(
 
 export const combineAllBarPositions = (
   sizeList: SizeList,
-  globalMaxBarSize: number,
+  globalMaxBarSize: number | undefined,
   barGap: string | number,
   barCategoryGap: string | number,
   barBandSize: number,
-  bandSize: number,
+  bandSize: number | undefined,
   childMaxBarSize: number | undefined,
 ): ReadonlyArray<BarWithPosition> | undefined => {
   const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;

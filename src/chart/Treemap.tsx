@@ -208,6 +208,9 @@ const horizontalPosition = (
   let child;
   for (let i = 0, len = row.length; i < len; i++) {
     child = row[i];
+    if (child == null) {
+      continue;
+    }
     child.x = curX;
     child.y = parentRect.y;
     child.height = rowHeight;
@@ -242,6 +245,9 @@ const verticalPosition = (
   let child;
   for (let i = 0, len = row.length; i < len; i++) {
     child = row[i];
+    if (child == null) {
+      continue;
+    }
     child.x = parentRect.x;
     child.y = curY;
     child.width = rowWidth;
@@ -292,9 +298,12 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
     row.area = 0;
 
     while (tempChildren.length > 0) {
+      [child] = tempChildren;
+      if (child == null) {
+        continue;
+      }
       // row first
-      // eslint-disable-next-line prefer-destructuring
-      row.push((child = tempChildren[0]));
+      row.push(child);
       row.area += child.area;
 
       score = getWorstScore(row, size, aspectRatio);
@@ -887,6 +896,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   handleTouchMove = (e: React.TouchEvent<SVGElement>) => {
     const touchEvent = e.touches[0];
+    if (touchEvent == null) {
+      return;
+    }
     const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
     if (!target || !target.getAttribute || this.state.formatRoot == null) {
       return;

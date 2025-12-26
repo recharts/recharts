@@ -677,10 +677,10 @@ export function computeScatterPoints({
   displayedData: ReadonlyArray<any>;
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
-  zAxis: ZAxisWithScale;
+  zAxis: ZAxisWithScale | undefined;
   scatterSettings: ScatterSettings;
-  xAxisTicks: TickItem[];
-  yAxisTicks: TickItem[];
+  xAxisTicks: ReadonlyArray<TickItem> | undefined;
+  yAxisTicks: ReadonlyArray<TickItem> | undefined;
   cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<ScatterPointItem> {
   const xAxisDataKey = isNullish(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
@@ -716,7 +716,7 @@ export function computeScatterPoints({
       },
     ];
 
-    if (z !== '-') {
+    if (z !== '-' && zAxis != null) {
       tooltipPayload.push({
         // @ts-expect-error name prop should not have dataKey in it
         name: zAxis.name || zAxis.dataKey,
@@ -745,7 +745,7 @@ export function computeScatterPoints({
       index,
       dataKey: yAxisDataKey,
     });
-    const size = z !== '-' ? zAxis.scale.map(z) : defaultZ;
+    const size = z !== '-' && zAxis != null ? zAxis.scale.map(z) : defaultZ;
     const radius = size == null ? 0 : Math.sqrt(Math.max(size, 0) / Math.PI);
 
     return {
