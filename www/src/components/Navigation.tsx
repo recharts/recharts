@@ -5,6 +5,7 @@ import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.css';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
+import { ColorModePicker } from './ColorModePicker';
 
 function DesktopNav() {
   const allNavigationItems = useAllNavigationItems();
@@ -23,6 +24,7 @@ function DesktopNav() {
         ))}
       </ul>
       <LocaleSwitch />
+      <ColorModePicker />
     </nav>
   );
 }
@@ -146,6 +148,7 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           })}
         </ul>
         <LocaleSwitch />
+        <ColorModePicker />
       </div>
     </>
   );
