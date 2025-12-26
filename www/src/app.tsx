@@ -2,7 +2,9 @@ import { hydrateRoot } from 'react-dom/client';
 import { Root } from './containers/Root';
 import { ColorModePicker } from './components/ColorModePicker';
 
-ColorModePicker.setInitialColorMode();
+if (import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true') {
+  ColorModePicker.setInitialColorMode();
+}
 
 const container = document.getElementById('app');
 if (container == null) {
