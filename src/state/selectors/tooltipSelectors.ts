@@ -94,7 +94,7 @@ import { RechartsScale } from '../../util/scale/RechartsScale';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
-  [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
+  [selectTooltipAxis, selectHasBar, selectChartName],
   combineRealScaleType,
 );
 

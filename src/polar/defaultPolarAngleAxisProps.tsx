@@ -20,6 +20,6 @@ export const defaultPolarAngleAxisProps = {
   tick: true,
   tickLine: true,
   tickSize: 8,
-  type: 'category',
+  type: 'auto',
   zIndex: DefaultZIndexes.axis,
 } as const satisfies Props;

@@ -756,7 +756,7 @@ describe('<PolarGrid />', () => {
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: true,
+        allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
         id: 0,

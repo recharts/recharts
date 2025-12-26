@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType, TickProp } from '../util/types';
+import {
+  AxisDomain,
+  AxisInterval,
+  AxisTick,
+  DataKey,
+  EvaluatedAxisDomainType,
+  ScaleType,
+  TickProp,
+} from '../util/types';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import type { AxisRange } from './selectors/axisSelectors';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
@@ -23,7 +31,10 @@ export type YAxisOrientation = 'left' | 'right';
 export type BaseCartesianAxis = {
   id: AxisId;
   scale: ScaleType | CustomScaleDefinition | undefined;
-  type: AxisDomainType;
+  /**
+   * Before creating this object, evaluate the domain type based on the chart layout so that we have the 'auto' resolved.
+   */
+  type: EvaluatedAxisDomainType;
   /**
    * The axis functionality is severely restricted without a dataKey
    * - but there is still something left, and the prop is optional

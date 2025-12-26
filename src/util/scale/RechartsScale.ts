@@ -3,7 +3,6 @@ import { CustomScaleDefinition } from './CustomScaleDefinition';
 import { CategoricalDomainItem, D3ScaleType } from '../types';
 import { AxisRange } from '../../state/selectors/axisSelectors';
 import { upperFirst } from '../DataUtils';
-import { checkDomainOfScale } from '../ChartUtils';
 
 /**
  * This is internal representation of scale used in Recharts.
@@ -101,7 +100,8 @@ export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = Ca
 ): RechartsScale<Domain> {
   const ticksFn = d3Scale.ticks;
   const bandwidthFn = d3Scale.bandwidth;
-  const range = d3Scale.range();
+  const d3Range: ReadonlyArray<number> = d3Scale.range();
+  const range: [number, number] = [Math.min(...d3Range), Math.max(...d3Range)];
   return {
     domain: () => d3Scale.domain(),
     range: () => range,
@@ -109,7 +109,7 @@ export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = Ca
     rangeMax: () => range[1],
     isInRange(value: number): boolean {
       const first = range[0];
-      const last = range[range.length - 1];
+      const last = range[1];
       return first <= last ? value >= first && value <= last : value >= last && value <= first;
     },
     bandwidth: bandwidthFn ? () => bandwidthFn.call(d3Scale) : undefined,
@@ -160,12 +160,5 @@ export function rechartsScaleFactory<Domain extends CategoricalDomainItem = Cate
     return undefined;
   }
   d3ScaleFunction.domain(axisDomain).range(axisRange);
-  /*
-   * I don't like this function because it mutates the scale.
-   * We should come up with a way to compute the domain up front.
-   * Until then - let's keep this encapsulated inside this function
-   * so it appears immutable from the outside.
-   */
-  checkDomainOfScale(d3ScaleFunction);
   return d3ScaleToRechartsScale(d3ScaleFunction);
 }

@@ -89,8 +89,7 @@ describe('<RadialBar />', () => {
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
-        // generator has allowDuplicatedCategory set to true, but the actual axis rendering ignores the prop
-        allowDuplicatedCategory: true,
+        allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
         id: 0,

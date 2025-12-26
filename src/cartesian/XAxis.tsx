@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ComponentType, ReactNode, useLayoutEffect, useRef } from 'react';
+import { ComponentType, ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis, defaultCartesianAxisProps } from './CartesianAxis';
 import {
@@ -12,6 +12,8 @@ import {
   PresentationAttributesAdaptChildEvent,
   AxisDomain,
   ScaleType,
+  AxisDomainTypeInput,
+  EvaluatedAxisDomainType,
 } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -34,8 +36,24 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
+  /**
+   * The type of axis.
+   *
+   * `category`: Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
+   *
+   * `auto`: the type is inferred based on the chart layout.
+   *
+   * @defaultValue category
+   */
+  type?: AxisDomainTypeInput;
   /**
    * Unique ID that represents this XAxis.
    * Required when there are multiple XAxes.
@@ -58,7 +76,8 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
    * The orientation of axis
    * @defaultValue bottom
    */
-  orientation?: XAxisOrientation; /**
+  orientation?: XAxisOrientation;
+  /**
    * Specify the domain of axis when the axis is a number axis.
    *
    * If undefined, then the domain is calculated based on the data and dataKeys.
@@ -80,7 +99,8 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
    * @example <XAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />
    * @example <XAxis type="number" domain={[0, 100]} allowDataOverflow />
    */
-  domain?: AxisDomain; /**
+  domain?: AxisDomain;
+  /**
    * Scale function determines how data values are mapped to visual values.
    * In other words, decided the mapping between data domain and coordinate range.
    *
@@ -130,11 +150,27 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
 
-function SetXAxisSettings(settings: XAxisSettings): ReactNode {
+function SetXAxisSettings(props: Omit<XAxisSettings, 'type'> & { type: AxisDomainTypeInput }): ReactNode {
   const dispatch = useAppDispatch();
   const prevSettingsRef = useRef<XAxisSettings | null>(null);
+  const layout = useCartesianChartLayout();
+  const { type: typeFromProps, ...restProps } = props;
+  const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(layout, 'xAxis', typeFromProps);
+
+  const settings: XAxisSettings | undefined = useMemo(() => {
+    if (evaluatedType == null) {
+      return undefined;
+    }
+    return {
+      ...restProps,
+      type: evaluatedType,
+    };
+  }, [restProps, evaluatedType]);
 
   useLayoutEffect(() => {
+    if (settings == null) {
+      return;
+    }
     if (prevSettingsRef.current === null) {
       dispatch(addXAxis(settings));
     } else if (prevSettingsRef.current !== settings) {

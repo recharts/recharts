@@ -202,8 +202,8 @@ const RadialBarChartTestCase: TooltipSyncTestCase = {
   Wrapper: ({ children, syncId, dataKey, className }) => (
     <RadialBarChart height={600} width={600} data={PageData} syncId={syncId} className={className}>
       <PolarGrid />
-      <PolarAngleAxis dataKey="name" />
-      <PolarRadiusAxis />
+      <PolarAngleAxis />
+      <PolarRadiusAxis dataKey="name" />
       <RadialBar
         name="Mike"
         dataKey={dataKey}
@@ -216,7 +216,7 @@ const RadialBarChartTestCase: TooltipSyncTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '3908' } },
+  tooltipContent: { chartOne: { name: 'Mike', value: '200' }, chartTwo: { name: 'Mike', value: '9800' } },
 };
 
 // TODO: fix synchronization in Pie, Scatter, Funnel. These currently accept syncId as a prop but do not work.
@@ -608,8 +608,8 @@ describe('Tooltip synchronization', () => {
 
       showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 
-      expect(spyA).toHaveBeenLastCalledWith('4');
-      expect(spyB).toHaveBeenLastCalledWith('4');
+      expect(spyA).toHaveBeenLastCalledWith('3');
+      expect(spyB).toHaveBeenLastCalledWith('3');
     });
 
     it('should synchronise active index for tooltip', () => {
@@ -629,11 +629,11 @@ describe('Tooltip synchronization', () => {
       showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 
       expect(spyA).toHaveBeenLastCalledWith({
-        activeIndex: '4',
+        activeIndex: '3',
         isActive: true,
       });
       expect(spyB).toHaveBeenLastCalledWith({
-        activeIndex: '4',
+        activeIndex: '3',
         isActive: true,
       });
     });
@@ -657,10 +657,10 @@ describe('Tooltip synchronization', () => {
         endAngle: 360,
         innerRadius: 0,
         outerRadius: 236,
-        radius: 157.33333333333334,
+        radius: 137.66666666666666,
         startAngle: 0,
-        x: 188.74853309331652,
-        y: 188.7485330933165,
+        x: 202.65496645665198,
+        y: 202.65496645665195,
       });
       expect(spyB).toHaveBeenLastCalledWith({
         angle: 135,
@@ -670,10 +670,10 @@ describe('Tooltip synchronization', () => {
         endAngle: 360,
         innerRadius: 0,
         outerRadius: 236,
-        radius: 157.33333333333334,
+        radius: 137.66666666666666,
         startAngle: 0,
-        x: 188.74853309331652,
-        y: 188.7485330933165,
+        x: 202.65496645665198,
+        y: 202.65496645665195,
       });
     });
 
@@ -689,11 +689,11 @@ describe('Tooltip synchronization', () => {
 
       showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 
-      expectTooltipPayload(wrapperA, '4', ['Mike : 278']);
-      expectTooltipPayload(wrapperB, '4', ['Mike : 278']);
+      expectTooltipPayload(wrapperA, 'Page D', ['Mike : 200']);
+      expectTooltipPayload(wrapperB, 'Page D', ['Mike : 200']);
 
-      expectTooltipCoordinate(wrapperA, { x: 198.74853309331652, y: 198.7485330933165 });
-      expectTooltipCoordinate(wrapperB, { x: 198.74853309331652, y: 198.7485330933165 });
+      expectTooltipCoordinate(wrapperA, { x: 212.65496645665198, y: 212.65496645665195 });
+      expectTooltipCoordinate(wrapperB, { x: 212.65496645665198, y: 212.65496645665195 });
 
       hideTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 

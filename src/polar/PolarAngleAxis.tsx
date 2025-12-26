@@ -8,6 +8,8 @@ import { Props as TextProps, Text, TextAnchor, TextVerticalAnchor } from '../com
 import {
   adaptEventsOfChild,
   AxisDomain,
+  AxisDomainTypeInput,
+  EvaluatedAxisDomainType,
   PresentationAttributesAdaptChildEvent,
   RenderableAxisProps,
   ScaleType,
@@ -25,6 +27,9 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
+import { noop } from '../util/DataUtils';
+import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -106,7 +111,8 @@ export interface PolarAngleAxisProps
    * @example <PolarAngleAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />
    * @example <PolarAngleAxis type="number" domain={[0, 100]} allowDataOverflow />
    */
-  domain?: AxisDomain; /**
+  domain?: AxisDomain;
+  /**
    * Scale function determines how data values are mapped to visual values.
    * In other words, decided the mapping between data domain and coordinate range.
    *
@@ -164,9 +170,18 @@ export interface PolarAngleAxisProps
   ticks?: ReadonlyArray<TickItem>;
   /**
    * The type of axis.
-   * @defaultValue category
+   *
+   * `category`: Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
+   *
+   * `auto`: the type is inferred based on the chart layout.
+   *
+   * @defaultValue auto
    */
-  type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
+  type?: AxisDomainTypeInput;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
@@ -231,17 +246,32 @@ type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
 
 const AXIS_TYPE = 'angleAxis';
 
-type AngleAxisSettingsReporter = AngleAxisSettings & { children: ReactNode };
+type AngleAxisSettingsReporter = Omit<AngleAxisSettings, 'type'> & {
+  children: ReactNode;
+  type: AxisDomainTypeInput;
+};
 
 function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
   const dispatch = useAppDispatch();
-  const settings = useMemo(() => {
-    const { children, ...rest } = props;
-    return rest;
-  }, [props]);
-  const synchronizedSettings = useAppSelector(state => selectAngleAxis(state, settings.id));
+  const layout = usePolarChartLayout();
+  const settings: AngleAxisSettings | undefined = useMemo(() => {
+    const { children, type: typeFromProps, ...rest } = props;
+    const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(
+      layout,
+      'angleAxis',
+      typeFromProps,
+    );
+    if (evaluatedType == null) {
+      return undefined;
+    }
+    return { ...rest, type: evaluatedType };
+  }, [props, layout]);
+  const synchronizedSettings = useAppSelector(state => selectAngleAxis(state, settings?.id));
   const settingsAreSynchronized = settings === synchronizedSettings;
   useEffect(() => {
+    if (settings == null) {
+      return noop;
+    }
     dispatch(addAngleAxis(settings));
     return () => {
       dispatch(removeAngleAxis(settings));

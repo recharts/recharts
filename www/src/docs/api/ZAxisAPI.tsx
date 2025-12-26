@@ -93,10 +93,28 @@ export const ZAxisAPI: ApiDoc = {
       name: 'scale',
       type: '(union of 20 variants)',
       isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Scale function determines how data values are mapped to visual values. In other words, decided the mapping
+              between data domain and coordinate range.
+            </p>
+            <p>
+              If undefined, or &#39;auto&#39;, the scale function is created internally according to the type of axis
+              and data.
+            </p>
+            <p>
+              You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale
+              definition object.
+            </p>
+          </section>
+        ),
+      },
       defaultVal: 'auto',
       format: [
-        '<XAxis scale="log" />',
-        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<YAxis scale={scale} />",
+        '<ZAxis scale="log" />',
+        "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<ZAxis scale={scale} />",
       ],
     },
     {

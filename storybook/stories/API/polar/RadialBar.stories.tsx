@@ -38,6 +38,5 @@ export const API = {
     cornerIsExternal: true,
     tooltipType: 'responsive',
     maxBarSize: 15,
-    minPointSize: 90,
   },
 };

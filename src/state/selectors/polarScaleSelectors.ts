@@ -18,11 +18,7 @@ import {
 } from './polarAxisSelectors';
 import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import {
-  selectPolarAppliedValues,
-  selectPolarAxisDomainIncludingNiceTicks,
-  selectPolarNiceTicks,
-} from './polarSelectors';
+import { selectPolarAppliedValues, selectPolarAxisCheckedDomain, selectPolarNiceTicks } from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
 import { RechartsScale } from '../../util/scale/RechartsScale';
 
@@ -63,7 +59,7 @@ export const selectPolarAxisScale: (
   axisType: 'angleAxis' | 'radiusAxis',
   polarAxisId: AxisId,
 ) => RechartsScale | undefined = createSelector(
-  [selectPolarAxis, selectRealScaleType, selectPolarAxisDomainIncludingNiceTicks, selectPolarAxisRangeWithReversed],
+  [selectPolarAxis, selectRealScaleType, selectPolarAxisCheckedDomain, selectPolarAxisRangeWithReversed],
   combineScaleFunction,
 );
 

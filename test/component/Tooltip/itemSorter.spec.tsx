@@ -1290,8 +1290,8 @@ describe('itemSorter in RadialBarChart', () => {
           <RadialBar dataKey="uv" isAnimationActive={false} id="radialbar-uv" />
           <RadialBar dataKey="pv" isAnimationActive={false} id="radialbar-pv" />
           <RadialBar dataKey="amt" isAnimationActive={false} id="radialbar-amt" />
-          <PolarAngleAxis dataKey="name" />
-          <PolarRadiusAxis dataKey="uv" />
+          <PolarAngleAxis dataKey="uv" />
+          <PolarRadiusAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
           {children}
         </RadialBarChart>
@@ -1302,7 +1302,7 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render payload sorted by name', () => {
         const { container } = renderTestCase(undefined);
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['amt : 2400', 'pv : 2400', 'uv : 400']);
+        expectTooltipPayload(container, 'Page D', ['amt : 2400', 'pv : 9800', 'uv : 200']);
       });
 
       it('should select payload sorted by name', () => {
@@ -1322,16 +1322,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 70.8,
-                outerRadius: 98.8,
+                innerRadius: 3.9333333333333336,
+                outerRadius: 10.933333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 70.8,
+              endAngle: 360,
+              innerRadius: 3.9333333333333336,
               name: 'Page A',
-              outerRadius: 98.8,
+              outerRadius: 10.933333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1363,16 +1363,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 102.8,
-                outerRadius: 130.8,
+                innerRadius: 14.933333333333334,
+                outerRadius: 21.933333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 102.8,
+              endAngle: 2160,
+              innerRadius: 14.933333333333334,
               name: 'Page A',
-              outerRadius: 130.8,
+              outerRadius: 21.933333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1404,16 +1404,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 134.8,
-                outerRadius: 162.8,
+                innerRadius: 25.933333333333334,
+                outerRadius: 32.93333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 134.8,
+              endAngle: 2160,
+              innerRadius: 25.933333333333334,
               name: 'Page A',
-              outerRadius: 162.8,
+              outerRadius: 32.93333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1439,7 +1439,7 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('dataKey');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['amt : 2400', 'pv : 2400', 'uv : 400']);
+        expectTooltipPayload(container, 'Page D', ['amt : 2400', 'pv : 9800', 'uv : 200']);
       });
     });
 
@@ -1447,7 +1447,7 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('value');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['uv : 400', 'pv : 2400', 'amt : 2400']);
+        expectTooltipPayload(container, 'Page D', ['uv : 200', 'amt : 2400', 'pv : 9800']);
       });
     });
 
@@ -1455,7 +1455,7 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('name');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['amt : 2400', 'pv : 2400', 'uv : 400']);
+        expectTooltipPayload(container, 'Page D', ['amt : 2400', 'pv : 9800', 'uv : 200']);
       });
     });
 
@@ -1463,7 +1463,7 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase(item => item.value);
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['uv : 400', 'pv : 2400', 'amt : 2400']);
+        expectTooltipPayload(container, 'Page D', ['uv : 200', 'amt : 2400', 'pv : 9800']);
       });
 
       it('should call the function once for every payload item, and pass the item as an argument', () => {
@@ -1486,32 +1486,32 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 70.8,
-              outerRadius: 98.8,
+              innerRadius: 121.93333333333334,
+              outerRadius: 128.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 70.8,
-            name: 'Page A',
-            outerRadius: 98.8,
+            endAngle: 180,
+            innerRadius: 121.93333333333334,
+            name: 'Page D',
+            outerRadius: 128.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
-            value: 400,
+            uv: 200,
+            value: 200,
           },
           stroke: undefined,
           strokeWidth: undefined,
           type: undefined,
           unit: '',
-          value: 400,
+          value: 200,
         });
         expect(spy).toHaveBeenNthCalledWith(2, {
           color: undefined,
@@ -1527,32 +1527,32 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 102.8,
-              outerRadius: 130.8,
+              innerRadius: 132.93333333333334,
+              outerRadius: 139.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 102.8,
-            name: 'Page A',
-            outerRadius: 130.8,
+            endAngle: 8820,
+            innerRadius: 132.93333333333334,
+            name: 'Page D',
+            outerRadius: 139.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
-            value: 2400,
+            uv: 200,
+            value: 9800,
           },
           stroke: undefined,
           strokeWidth: undefined,
           type: undefined,
           unit: '',
-          value: 2400,
+          value: 9800,
         });
         expect(spy).toHaveBeenNthCalledWith(3, {
           color: undefined,
@@ -1568,25 +1568,25 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 134.8,
-              outerRadius: 162.8,
+              innerRadius: 143.93333333333334,
+              outerRadius: 150.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 134.8,
-            name: 'Page A',
-            outerRadius: 162.8,
+            endAngle: 2160,
+            innerRadius: 143.93333333333334,
+            name: 'Page D',
+            outerRadius: 150.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
+            uv: 200,
             value: 2400,
           },
           stroke: undefined,
@@ -1609,8 +1609,8 @@ describe('itemSorter in RadialBarChart', () => {
           <RadialBar dataKey="uv" isAnimationActive={false} name="RadialBar-uv" id="radialbar-uv" />
           <RadialBar dataKey="pv" isAnimationActive={false} name="RadialBar-pv" id="radialbar-pv" />
           <RadialBar dataKey="amt" isAnimationActive={false} name="RadialBar-amt" id="radialbar-amt" />
-          <PolarAngleAxis dataKey="name" name="PolarAngleAxis" />
-          <PolarRadiusAxis dataKey="uv" name="PolarRadiusAxis" />
+          <PolarAngleAxis dataKey="uv" name="PolarAngleAxis" />
+          <PolarRadiusAxis dataKey="name" name="PolarRadiusAxis" />
           <Tooltip itemSorter={itemSorter} />
           {children}
         </RadialBarChart>
@@ -1621,7 +1621,11 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render payload sorted by name', () => {
         const { container } = renderTestCase(undefined);
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['RadialBar-amt : 2400', 'RadialBar-pv : 2400', 'RadialBar-uv : 400']);
+        expectTooltipPayload(container, 'Page D', [
+          'RadialBar-amt : 2400',
+          'RadialBar-pv : 9800',
+          'RadialBar-uv : 200',
+        ]);
       });
 
       it('should select payload sorted by name', () => {
@@ -1641,16 +1645,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 70.8,
-                outerRadius: 98.8,
+                innerRadius: 3.9333333333333336,
+                outerRadius: 10.933333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 70.8,
+              endAngle: 360,
+              innerRadius: 3.9333333333333336,
               name: 'Page A',
-              outerRadius: 98.8,
+              outerRadius: 10.933333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1682,16 +1686,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 102.8,
-                outerRadius: 130.8,
+                innerRadius: 14.933333333333334,
+                outerRadius: 21.933333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 102.8,
+              endAngle: 2160,
+              innerRadius: 14.933333333333334,
               name: 'Page A',
-              outerRadius: 130.8,
+              outerRadius: 21.933333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1723,16 +1727,16 @@ describe('itemSorter in RadialBarChart', () => {
                 cx: 300,
                 cy: 300,
                 endAngle: 360,
-                innerRadius: 134.8,
-                outerRadius: 162.8,
+                innerRadius: 25.933333333333334,
+                outerRadius: 32.93333333333334,
                 startAngle: 0,
               },
               cx: 300,
               cy: 300,
-              endAngle: NaN,
-              innerRadius: 134.8,
+              endAngle: 2160,
+              innerRadius: 25.933333333333334,
               name: 'Page A',
-              outerRadius: 162.8,
+              outerRadius: 32.93333333333334,
               payload: {
                 amt: 2400,
                 name: 'Page A',
@@ -1758,7 +1762,11 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('dataKey');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['RadialBar-amt : 2400', 'RadialBar-pv : 2400', 'RadialBar-uv : 400']);
+        expectTooltipPayload(container, 'Page D', [
+          'RadialBar-amt : 2400',
+          'RadialBar-pv : 9800',
+          'RadialBar-uv : 200',
+        ]);
       });
     });
 
@@ -1766,7 +1774,11 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('value');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['RadialBar-uv : 400', 'RadialBar-pv : 2400', 'RadialBar-amt : 2400']);
+        expectTooltipPayload(container, 'Page D', [
+          'RadialBar-uv : 200',
+          'RadialBar-amt : 2400',
+          'RadialBar-pv : 9800',
+        ]);
       });
     });
 
@@ -1774,7 +1786,11 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase('name');
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['RadialBar-amt : 2400', 'RadialBar-pv : 2400', 'RadialBar-uv : 400']);
+        expectTooltipPayload(container, 'Page D', [
+          'RadialBar-amt : 2400',
+          'RadialBar-pv : 9800',
+          'RadialBar-uv : 200',
+        ]);
       });
     });
 
@@ -1782,7 +1798,11 @@ describe('itemSorter in RadialBarChart', () => {
       it('should render sorted payload', () => {
         const { container } = renderTestCase(item => item.value);
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
-        expectTooltipPayload(container, '400', ['RadialBar-uv : 400', 'RadialBar-pv : 2400', 'RadialBar-amt : 2400']);
+        expectTooltipPayload(container, 'Page D', [
+          'RadialBar-uv : 200',
+          'RadialBar-amt : 2400',
+          'RadialBar-pv : 9800',
+        ]);
       });
 
       it('should call the function once for every payload item, and pass the item as an argument', () => {
@@ -1805,32 +1825,32 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 70.8,
-              outerRadius: 98.8,
+              innerRadius: 121.93333333333334,
+              outerRadius: 128.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 70.8,
-            name: 'Page A',
-            outerRadius: 98.8,
+            endAngle: 180,
+            innerRadius: 121.93333333333334,
+            name: 'Page D',
+            outerRadius: 128.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
-            value: 400,
+            uv: 200,
+            value: 200,
           },
           stroke: undefined,
           strokeWidth: undefined,
           type: undefined,
           unit: '',
-          value: 400,
+          value: 200,
         });
         expect(spy).toHaveBeenNthCalledWith(2, {
           color: undefined,
@@ -1846,32 +1866,32 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 102.8,
-              outerRadius: 130.8,
+              innerRadius: 132.93333333333334,
+              outerRadius: 139.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 102.8,
-            name: 'Page A',
-            outerRadius: 130.8,
+            endAngle: 8820,
+            innerRadius: 132.93333333333334,
+            name: 'Page D',
+            outerRadius: 139.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
-            value: 2400,
+            uv: 200,
+            value: 9800,
           },
           stroke: undefined,
           strokeWidth: undefined,
           type: undefined,
           unit: '',
-          value: 2400,
+          value: 9800,
         });
         expect(spy).toHaveBeenNthCalledWith(3, {
           color: undefined,
@@ -1887,25 +1907,25 @@ describe('itemSorter in RadialBarChart', () => {
               cx: 300,
               cy: 300,
               endAngle: 360,
-              innerRadius: 134.8,
-              outerRadius: 162.8,
+              innerRadius: 143.93333333333334,
+              outerRadius: 150.93333333333334,
               startAngle: 0,
             },
             cx: 300,
             cy: 300,
-            endAngle: NaN,
-            innerRadius: 134.8,
-            name: 'Page A',
-            outerRadius: 162.8,
+            endAngle: 2160,
+            innerRadius: 143.93333333333334,
+            name: 'Page D',
+            outerRadius: 150.93333333333334,
             payload: {
               amt: 2400,
-              name: 'Page A',
-              pv: 2400,
-              uv: 400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
             },
-            pv: 2400,
+            pv: 9800,
             startAngle: 0,
-            uv: 400,
+            uv: 200,
             value: 2400,
           },
           stroke: undefined,

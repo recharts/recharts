@@ -44,7 +44,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNumOrStr, mathSign, upperFirst, isNotNil } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -85,7 +85,8 @@ import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { rechartsScaleFactory, RechartsScale } from '../../util/scale/RechartsScale';
+import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
+import { combineCheckedDomain } from './combiners/combineCheckedDomain';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1063,7 +1064,6 @@ export const combineAxisDomain = (
   if (stackOffsetType === 'expand') {
     return expandDomain;
   }
-
   return numericalDomain;
 };
 
@@ -1091,23 +1091,14 @@ function isSupportedScaleName(name: string): name is D3ScaleType {
 
 export const combineRealScaleType = (
   axisConfig: BaseCartesianAxis | undefined,
-  layout: LayoutType,
   hasBar: boolean,
   chartType: string,
-  axisType: AllAxisTypes,
 ): D3ScaleType | undefined => {
   if (axisConfig == null) {
     return undefined;
   }
   const { scale, type } = axisConfig;
   if (scale === 'auto') {
-    if (layout === 'radial' && axisType === 'radiusAxis') {
-      return 'band';
-    }
-    if (layout === 'radial' && axisType === 'angleAxis') {
-      return 'linear';
-    }
-
     if (
       type === 'category' &&
       chartType &&
@@ -1135,10 +1126,7 @@ export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
-) => D3ScaleType | undefined = createSelector(
-  [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
-  combineRealScaleType,
-);
+) => D3ScaleType | undefined = createSelector([selectBaseAxis, selectHasBar, selectChartName], combineRealScaleType);
 
 export function combineScaleFunction(
   axis: BaseCartesianAxis,
@@ -1473,13 +1461,23 @@ export const selectAxisRangeWithReverse: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector([selectBaseAxis, selectAxisRange], combineAxisRangeWithReverse);
 
+const selectCheckedAxisDomain: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
+  [selectRealScaleType, selectAxisDomainIncludingNiceTicks],
+  combineCheckedDomain,
+);
+
 export const selectAxisScale: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => RechartsScale | undefined = createSelector(
-  [selectBaseAxis, selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
+  [selectBaseAxis, selectRealScaleType, selectCheckedAxisDomain, selectAxisRangeWithReverse],
   combineScaleFunction,
 );
 

@@ -13,7 +13,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
-import { Customized, PolarAngleAxis, Radar, RadarChart } from '../../../src';
+import { PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart } from '../../../src';
 import { exampleRadarData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 
@@ -32,7 +32,7 @@ describe('selectRadarPoints', () => {
     render(
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" id="radar-value" />
-        <PolarAngleAxis dataKey="value" />
+        <PolarRadiusAxis dataKey="value" />
         <Comp />
       </RadarChart>,
     );
@@ -45,7 +45,7 @@ describe('selectRadarPoints', () => {
           angle: 90,
           cx: 250,
           cy: 250,
-          name: 420,
+          name: 0,
           payload: {
             half: 210,
             name: 'iPhone 3GS',
@@ -60,7 +60,7 @@ describe('selectRadarPoints', () => {
           angle: 45,
           cx: 250,
           cy: 250,
-          name: 460,
+          name: 1,
           payload: {
             half: 230,
             name: 'iPhone 4',
@@ -75,7 +75,7 @@ describe('selectRadarPoints', () => {
           angle: 0,
           cx: 250,
           cy: 250,
-          name: 999,
+          name: 2,
           payload: {
             half: 500,
             name: 'iPhone 4s',
@@ -90,7 +90,7 @@ describe('selectRadarPoints', () => {
           angle: -45,
           cx: 250,
           cy: 250,
-          name: 500,
+          name: 3,
           payload: {
             half: 250,
             name: 'iPhone 5',
@@ -105,7 +105,7 @@ describe('selectRadarPoints', () => {
           angle: -90,
           cx: 250,
           cy: 250,
-          name: 864,
+          name: 4,
           payload: {
             half: 432,
             name: 'iPhone 5s',
@@ -120,7 +120,7 @@ describe('selectRadarPoints', () => {
           angle: -135,
           cx: 250,
           cy: 250,
-          name: 650,
+          name: 5,
           payload: {
             half: 325,
             name: 'iPhone 6',
@@ -135,7 +135,7 @@ describe('selectRadarPoints', () => {
           angle: -180,
           cx: 250,
           cy: 250,
-          name: 765,
+          name: 6,
           payload: {
             half: 383,
             name: 'iPhone 6s',
@@ -150,7 +150,7 @@ describe('selectRadarPoints', () => {
           angle: -225,
           cx: 250,
           cy: 250,
-          name: 365,
+          name: 7,
           payload: {
             half: 183,
             name: 'iPhone 5se',
@@ -495,8 +495,8 @@ describe('selectRadiusAxisForBandSize', () => {
     render(
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
-        <PolarAngleAxis dataKey="value" />
-        <Customized component={<Comp />} />
+        <PolarRadiusAxis dataKey="value" />
+        <Comp />
       </RadarChart>,
     );
 
@@ -504,7 +504,7 @@ describe('selectRadiusAxisForBandSize', () => {
       allowDataOverflow: false,
       allowDecimals: false,
       allowDuplicatedCategory: true,
-      dataKey: undefined,
+      dataKey: 'value',
       domain: undefined,
       id: 0,
       includeHidden: false,
@@ -539,7 +539,7 @@ describe('selectAngleAxisForBandSize', () => {
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
         <PolarAngleAxis dataKey="value" />
-        <Customized component={<Comp />} />
+        <Comp />
       </RadarChart>,
     );
 
@@ -553,7 +553,7 @@ describe('selectAngleAxisForBandSize', () => {
       includeHidden: false,
       name: undefined,
       reversed: false,
-      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] }),
+      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [-270, 90] }),
       tick: true,
       tickCount: undefined,
       ticks: undefined,
@@ -579,7 +579,7 @@ describe('selectAngleAxisWithScaleAndViewport', () => {
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
         <PolarAngleAxis dataKey="value" />
-        <Customized component={<Comp />} />
+        <Comp />
       </RadarChart>,
     );
 
@@ -587,7 +587,7 @@ describe('selectAngleAxisWithScaleAndViewport', () => {
       cx: 250,
       cy: 250,
       dataKey: 'value',
-      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] }),
+      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [-270, 90] }),
       type: 'category',
     });
   });

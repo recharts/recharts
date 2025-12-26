@@ -18,6 +18,6 @@ export const defaultPolarRadiusAxisProps = {
   tick: true,
   tickCount: 5,
   tickLine: true,
-  type: 'number',
+  type: 'auto',
   zIndex: DefaultZIndexes.axis,
 } as const satisfies Props;
