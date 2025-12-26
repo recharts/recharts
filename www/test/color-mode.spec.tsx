@@ -102,3 +102,5 @@ test('stored mode: dark', async () => {
   expect(colorModePicker).toHaveTextContent('light');
   expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'light');
 });
+
+test.todo('on change system preference mode updates accordingly');
