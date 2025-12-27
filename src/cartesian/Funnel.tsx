@@ -73,28 +73,59 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
  * External props, intended for end users to fill in
  */
 interface FunnelProps {
+  /**
+   * This component is rendered when this graphical item is activated
+   * (could be by mouse hover, touch, keyboard, programmatically).
+   */
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   /**
+   * Specifies when the animation should begin, the unit of this option is ms.
    * @defaultValue 400
    */
   animationBegin?: number;
   /**
+   * Specifies the duration of animation, the unit of this option is ms.
    * @defaultValue 1500
    */
   animationDuration?: AnimationDuration;
   /**
+   * The type of easing function.
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
   className?: string;
+  /**
+   * The source data. Each element should be an object.
+   */
   data?: any[];
+  /**
+   * Decides how to extract the value of this Funnel from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Funnel.
+   */
   dataKey: DataKey<any>;
   /**
+   * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your XAxis/YAxis.
+   *
    * @defaultValue false
    */
   hide?: boolean;
+  /**
+   * Unique identifier of this component.
+   * Used as a HTML attribute `id`, and also to identify this element internally.
+   *
+   * If undefined, Recharts will generate a unique ID automatically.
+   */
   id?: string;
   /**
+   * If set false, animation of funnel will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
@@ -104,18 +135,62 @@ interface FunnelProps {
    */
   lastShapeType?: 'triangle' | 'rectangle';
   /**
+   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
    * @defaultValue rect
    */
   legendType?: LegendType;
   /**
+   * The key of each trapezoid's name.
    * @defaultValue name
    */
   nameKey?: DataKey<any>;
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
   reversed?: boolean;
+  /**
+   * If set a ReactElement, the shape of funnel can be customized.
+   * If set a function, the function will be called to render customized shape.
+   */
   shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   tooltipType?: TooltipType;
+  /**
+   * The customized event handler of click on the area in this group
+   */
+  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousedown on the area in this group
+   */
+  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseup on the area in this group
+   */
+  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousemove on the area in this group
+   */
+  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseover on the area in this group
+   */
+  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseout on the area in this group
+   */
+  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseenter on the area in this group
+   */
+  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the area in this group
+   */
+  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
 }
 
 type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps, 'ref'>;
@@ -597,6 +672,11 @@ export function computeFunnelTrapezoids({
   return trapezoids;
 }
 
+/**
+ * @consumes CartesianViewBoxContext
+ * @provides LabelListContext
+ * @provides CellReader
+ */
 export function Funnel(outsideProps: Props) {
   const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (

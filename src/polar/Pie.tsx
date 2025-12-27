@@ -78,7 +78,7 @@ interface PieDef {
    */
   startAngle?: number;
   /**
-   * Angle, in degrees, at which the chart should end. Can be used to generate partial pies.
+   * Angle, in degrees, at which the chart should end.
    */
   endAngle?: number;
   /**

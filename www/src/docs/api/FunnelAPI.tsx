@@ -1,8 +1,31 @@
 import { ApiDoc } from './types';
 
-export const PieAPI: ApiDoc = {
-  name: 'Pie',
+export const FunnelAPI: ApiDoc = {
+  name: 'Funnel',
   props: [
+    {
+      name: 'dataKey',
+      type: 'string | number | Function',
+      isOptional: false,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Decides how to extract the value of this Funnel from the data:</p>
+            <ul>
+              <li>
+                <code>string</code>: the name of the field in the data object;
+              </li>
+              <li>
+                <code>number</code>: the index of the field in the data;
+              </li>
+              <li>
+                <code>function</code>: a function that receives the data object and returns the value of this Funnel.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+    },
     {
       name: 'activeShape',
       type: '(union of 5 variants)',
@@ -17,11 +40,6 @@ export const PieAPI: ApiDoc = {
           </section>
         ),
       },
-      format: [
-        '<Pie activeShape={<CustomActiveShape />} />',
-        'https://recharts.github.io/examples/CustomActiveShapePieChart',
-      ],
-      deprecated: 'Use the `shape` prop to create each sector. `isActive` designates the "active" shape.',
     },
     {
       name: 'animationBegin',
@@ -64,89 +82,20 @@ export const PieAPI: ApiDoc = {
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'cornerRadius', type: 'string | number', isOptional: true },
-    {
-      name: 'cx',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container width.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
-    {
-      name: 'cy',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container height.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
-      type: 'Array<ChartDataInput>',
+      type: 'Array<any>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The source data which each element is an object.</p>
+            <p>The source data. Each element should be an object.</p>
           </section>
         ),
       },
     },
-    {
-      name: 'dataKey',
-      type: 'string | number | Function',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Pie from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Pie.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: 'value',
-    },
-    {
-      name: 'endAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle, in degrees, at which the chart should end.</p>
-          </section>
-        ),
-      },
-      defaultVal: 360,
-    },
+    { name: 'height', type: 'string | number', isOptional: true },
     {
       name: 'hide',
       type: 'boolean',
@@ -165,35 +114,21 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'id', type: 'string', isOptional: true },
     {
-      name: 'inactiveShape',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The shape of inactive sector.</p>
-          </section>
-        ),
-      },
-      deprecated: 'Use the `shape` prop to modify each sector.',
-    },
-    {
-      name: 'innerRadius',
-      type: 'string | number',
+      name: 'id',
+      type: 'string',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              The inner radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
+              Unique identifier of this component. Used as a HTML attribute <code>id</code>, and also to identify this
+              element internally.
             </p>
+            <p>If undefined, Recharts will generate a unique ID automatically.</p>
           </section>
         ),
       },
-      defaultVal: 0,
     },
     {
       name: 'isAnimationActive',
@@ -203,78 +138,17 @@ export const PieAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set false, animation will be disabled. If set &quot;auto&quot;, the animation will be disabled in SSR
-              and enabled in browser.
+              If set false, animation of funnel will be disabled. If set &quot;auto&quot;, the animation will be
+              disabled in SSR and enabled in browser.
             </p>
           </section>
         ),
       },
       defaultVal: 'auto',
     },
-    {
-      name: 'label',
-      type: '(union of 6 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders one label for each pie sector. Options:</p>
-            <ul>
-              <li>
-                <code>true</code>: renders default labels;
-              </li>
-              <li>
-                <code>false</code>: no labels are rendered;
-              </li>
-              <li>
-                <code>object</code> that has <code>position</code> prop: the props of LabelList component;
-              </li>
-              <li>
-                <code>object</code> that does not have <code>position</code> prop: the props of a custom Pie label
-                (similar to Label with position &quot;outside&quot;); this variant supports <code>labelLine</code>
-              </li>
-              <li>
-                <code>ReactElement</code>: a custom label element;
-              </li>
-              <li>
-                <code>function</code>: a render function of custom label.
-              </li>
-            </ul>
-            <p>
-              Also see the <code>labelLine</code> prop that draws a line connecting each label to the corresponding
-              sector.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-      format: [
-        '<Pie label={<CustomizedLabel />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
-    },
-    {
-      name: 'labelLine',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props
-              calculated internally. If object set, label lines will be drawn which have the props merged by the
-              internal calculated props and the option. If ReactElement set, the option can be the custom label line
-              element. If set a function, the function will be called to render customized label line.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: true,
-      format: [
-        '<Pie labelLine={<CustomizedLabelLine />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
-    },
+    { name: 'isUpdateAnimationActive', type: 'boolean', isOptional: true },
+    { name: 'label', type: 'false | true | ReactNode | Function | Props', isOptional: true },
+    { name: 'lastShapeType', type: '"triangle" | "rectangle"', isOptional: true, defaultVal: 'triangle' },
     {
       name: 'legendType',
       type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
@@ -288,31 +162,7 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 'rect',
     },
-    {
-      name: 'maxRadius',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>the max radius of pie</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'minAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The minimum angle of each unzero data.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
+    { name: 'lowerWidth', type: 'number', isOptional: true },
     {
       name: 'nameKey',
       type: 'string | number | Function',
@@ -320,83 +170,32 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The key of each sector&#39;s name.</p>
+            <p>The key of each trapezoid&#39;s name.</p>
           </section>
         ),
       },
       defaultVal: 'name',
     },
+    { name: 'reversed', type: 'boolean', isOptional: true, defaultVal: false },
     {
-      name: 'outerRadius',
-      type: 'string | number | Function',
+      name: 'shape',
+      type: '(union of 5 variants)',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              The outer radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy. Function should return a string
-              percentage or number.
+              If set a ReactElement, the shape of funnel can be customized. If set a function, the function will be
+              called to render customized shape.
             </p>
           </section>
         ),
       },
-      defaultVal: '80%',
-    },
-    {
-      name: 'paddingAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The angle between two sectors.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-      format: ['<Pie paddingAngle={5} />', 'https://recharts.github.io/examples/PieChartWithPaddingAngle'],
-    },
-    {
-      name: 'rootTabIndex',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The tabindex of wrapper surrounding the cells.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'shape',
-      type: '(union of 8 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'startAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle in degrees from which the chart should start.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
+    { name: 'upperWidth', type: 'number', isOptional: true },
+    { name: 'x', type: 'string | number', isOptional: true },
+    { name: 'y', type: 'string | number', isOptional: true },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     {
@@ -406,7 +205,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of animation end.</p>
+            <p>The customized event handler of animation end</p>
           </section>
         ),
       },
@@ -421,7 +220,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of animation start.</p>
+            <p>The customized event handler of animation start</p>
           </section>
         ),
       },
@@ -446,7 +245,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of click on the sectors in this group.</p>
+            <p>The customized event handler of click on the area in this group</p>
           </section>
         ),
       },
@@ -502,8 +301,18 @@ export const PieAPI: ApiDoc = {
     { name: 'onInvalidCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDown', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDownCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
-    { name: 'onKeyPress', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
-    { name: 'onKeyPressCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onKeyPress',
+      type: 'AdaptChildKeyboardEventHandler<P, T>',
+      isOptional: true,
+      deprecated: 'Use `onKeyUp` or `onKeyDown` instead',
+    },
+    {
+      name: 'onKeyPressCapture',
+      type: 'AdaptChildKeyboardEventHandler<P, T>',
+      isOptional: true,
+      deprecated: 'Use `onKeyUpCapture` or `onKeyDownCapture` instead',
+    },
     { name: 'onKeyUp', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyUpCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onLoad', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -523,7 +332,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousedown on the sectors in this group.</p>
+            <p>The customized event handler of mousedown on the area in this group</p>
           </section>
         ),
       },
@@ -536,7 +345,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseenter on the sectors in this group.</p>
+            <p>The customized event handler of mouseenter on the area in this group</p>
           </section>
         ),
       },
@@ -548,7 +357,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseleave on the sectors in this group.</p>
+            <p>The customized event handler of mouseleave on the area in this group</p>
           </section>
         ),
       },
@@ -560,7 +369,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousemove on the sectors in this group.</p>
+            <p>The customized event handler of mousemove on the area in this group</p>
           </section>
         ),
       },
@@ -573,7 +382,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseout on the sectors in this group.</p>
+            <p>The customized event handler of mouseout on the area in this group</p>
           </section>
         ),
       },
@@ -586,7 +395,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseover on the sectors in this group.</p>
+            <p>The customized event handler of mouseover on the area in this group</p>
           </section>
         ),
       },
@@ -599,7 +408,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseup on the sectors in this group.</p>
+            <p>The customized event handler of mouseup on the area in this group</p>
           </section>
         ),
       },
@@ -668,6 +477,6 @@ export const PieAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
-  childrenComponents: ['LabelList'],
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
+  childrenComponents: ['Cell', 'LabelList'],
 };

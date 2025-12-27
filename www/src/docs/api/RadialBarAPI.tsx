@@ -1,28 +1,11 @@
 import { ApiDoc } from './types';
 
-export const PieAPI: ApiDoc = {
-  name: 'Pie',
+export const RadialBarAPI: ApiDoc = {
+  name: 'RadialBar',
   props: [
-    {
-      name: 'activeShape',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              This component is rendered when this graphical item is activated (could be by mouse hover, touch,
-              keyboard, programmatically).
-            </p>
-          </section>
-        ),
-      },
-      format: [
-        '<Pie activeShape={<CustomActiveShape />} />',
-        'https://recharts.github.io/examples/CustomActiveShapePieChart',
-      ],
-      deprecated: 'Use the `shape` prop to create each sector. `isActive` designates the "active" shape.',
-    },
+    { name: 'dataKey', type: 'string | number | Function', isOptional: false },
+    { name: 'activeShape', type: '(union of 5 variants)', isOptional: true },
+    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
     {
       name: 'animationBegin',
       type: 'number',
@@ -34,7 +17,7 @@ export const PieAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 400,
+      defaultVal: 0,
     },
     {
       name: 'animationDuration',
@@ -62,45 +45,59 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
+    {
+      name: 'background',
+      type: '(union of 7 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Renders a background for each bar. Options:</p>
+            <ul>
+              <li>
+                <code>false</code>: no background;
+              </li>
+              <li>
+                <code>true</code>: renders default background;
+              </li>
+              <li>
+                <code>object</code>: the props of background rectangle;
+              </li>
+              <li>
+                <code>ReactElement</code>: a custom background element;
+              </li>
+              <li>
+                <code>function</code>: a render function of custom background.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
+    {
+      name: 'barSize',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The width or height of each bar. If the barSize is not specified, the size of the bar will be calculated
+              by the barCategoryGap, barGap and the quantity of bar groups.
+            </p>
+          </section>
+        ),
+      },
+    },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'cornerRadius', type: 'string | number', isOptional: true },
-    {
-      name: 'cx',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container width.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
-    {
-      name: 'cy',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container height.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
+    { name: 'cornerIsExternal', type: 'boolean', isOptional: true, defaultVal: false },
+    { name: 'cornerRadius', type: 'string | number', isOptional: true, defaultVal: 0 },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
-      type: 'Array<ChartDataInput>',
+      type: 'Array<readonly RadialBarDataItem>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -109,92 +106,10 @@ export const PieAPI: ApiDoc = {
           </section>
         ),
       },
+      defaultVal: [],
     },
-    {
-      name: 'dataKey',
-      type: 'string | number | Function',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Pie from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Pie.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: 'value',
-    },
-    {
-      name: 'endAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle, in degrees, at which the chart should end.</p>
-          </section>
-        ),
-      },
-      defaultVal: 360,
-    },
-    {
-      name: 'hide',
-      type: 'boolean',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Hides the whole graphical element when true.</p>
-            <p>
-              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
-              visible in Legend, and can be included in axis domain calculations, depending on{' '}
-              <code>includeHidden</code> props of your XAxis/YAxis.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    { name: 'id', type: 'string', isOptional: true },
-    {
-      name: 'inactiveShape',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The shape of inactive sector.</p>
-          </section>
-        ),
-      },
-      deprecated: 'Use the `shape` prop to modify each sector.',
-    },
-    {
-      name: 'innerRadius',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The inner radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
+    { name: 'forceCornerRadius', type: 'boolean', isOptional: true, defaultVal: false },
+    { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'isAnimationActive',
       type: 'false | true | "auto"',
@@ -203,8 +118,8 @@ export const PieAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If set false, animation will be disabled. If set &quot;auto&quot;, the animation will be disabled in SSR
-              and enabled in browser.
+              If set false, animation of radial bars will be disabled. If set &quot;auto&quot;, the animation will be
+              disabled in SSR and enabled in browser.
             </p>
           </section>
         ),
@@ -213,12 +128,12 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'label',
-      type: '(union of 6 variants)',
+      type: 'false | true | ReactNode | Function | Props',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Renders one label for each pie sector. Options:</p>
+            <p>Renders one label for each data point. Options:</p>
             <ul>
               <li>
                 <code>true</code>: renders default labels;
@@ -227,11 +142,7 @@ export const PieAPI: ApiDoc = {
                 <code>false</code>: no labels are rendered;
               </li>
               <li>
-                <code>object</code> that has <code>position</code> prop: the props of LabelList component;
-              </li>
-              <li>
-                <code>object</code> that does not have <code>position</code> prop: the props of a custom Pie label
-                (similar to Label with position &quot;outside&quot;); this variant supports <code>labelLine</code>
+                <code>object</code>: the props of LabelList component;
               </li>
               <li>
                 <code>ReactElement</code>: a custom label element;
@@ -240,40 +151,10 @@ export const PieAPI: ApiDoc = {
                 <code>function</code>: a render function of custom label.
               </li>
             </ul>
-            <p>
-              Also see the <code>labelLine</code> prop that draws a line connecting each label to the corresponding
-              sector.
-            </p>
           </section>
         ),
       },
       defaultVal: false,
-      format: [
-        '<Pie label={<CustomizedLabel />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
-    },
-    {
-      name: 'labelLine',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props
-              calculated internally. If object set, label lines will be drawn which have the props merged by the
-              internal calculated props and the option. If ReactElement set, the option can be the custom label line
-              element. If set a function, the function will be called to render customized label line.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: true,
-      format: [
-        '<Pie labelLine={<CustomizedLabelLine />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
     },
     {
       name: 'legendType',
@@ -288,115 +169,13 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 'rect',
     },
-    {
-      name: 'maxRadius',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>the max radius of pie</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'minAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The minimum angle of each unzero data.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'nameKey',
-      type: 'string | number | Function',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The key of each sector&#39;s name.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'name',
-    },
-    {
-      name: 'outerRadius',
-      type: 'string | number | Function',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The outer radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy. Function should return a string
-              percentage or number.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '80%',
-    },
-    {
-      name: 'paddingAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The angle between two sectors.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-      format: ['<Pie paddingAngle={5} />', 'https://recharts.github.io/examples/PieChartWithPaddingAngle'],
-    },
-    {
-      name: 'rootTabIndex',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The tabindex of wrapper surrounding the cells.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'shape',
-      type: '(union of 8 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'startAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle in degrees from which the chart should start.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
+    { name: 'maxBarSize', type: 'number', isOptional: true },
+    { name: 'minPointSize', type: 'number', isOptional: true, defaultVal: 0 },
+    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'shape', type: '(union of 5 variants)', isOptional: true },
+    { name: 'stackId', type: 'string | number', isOptional: true },
     { name: 'tooltipType', type: '"none"', isOptional: true },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
+    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 300 },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     {
@@ -406,7 +185,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of animation end.</p>
+            <p>The customized event handler of animation end</p>
           </section>
         ),
       },
@@ -421,7 +200,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of animation start.</p>
+            <p>The customized event handler of animation start</p>
           </section>
         ),
       },
@@ -446,7 +225,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of click on the sectors in this group.</p>
+            <p>The customized event handler of click in this chart.</p>
           </section>
         ),
       },
@@ -523,7 +302,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousedown on the sectors in this group.</p>
+            <p>The customized event handler of mousedown in this chart.</p>
           </section>
         ),
       },
@@ -536,7 +315,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseenter on the sectors in this group.</p>
+            <p>The customized event handler of mouseenter in this chart.</p>
           </section>
         ),
       },
@@ -548,7 +327,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseleave on the sectors in this group.</p>
+            <p>The customized event handler of mouseleave in this chart.</p>
           </section>
         ),
       },
@@ -560,7 +339,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousemove on the sectors in this group.</p>
+            <p>The customized event handler of mousemove in this chart.</p>
           </section>
         ),
       },
@@ -573,7 +352,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseout on the sectors in this group.</p>
+            <p>The customized event handler of mouseout in this chart.</p>
           </section>
         ),
       },
@@ -586,7 +365,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseover on the sectors in this group.</p>
+            <p>The customized event handler of mouseover in this chart.</p>
           </section>
         ),
       },
@@ -599,7 +378,7 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseup on the sectors in this group.</p>
+            <p>The customized event handler of mouseup in this chart.</p>
           </section>
         ),
       },
@@ -669,5 +448,5 @@ export const PieAPI: ApiDoc = {
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
-  childrenComponents: ['LabelList'],
+  childrenComponents: ['Cell', 'LabelList'],
 };

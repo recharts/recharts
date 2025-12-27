@@ -1,5 +1,5 @@
 import { allExamples } from './docs/exampleComponents';
-import { allExamples as allApiDocs } from './docs/api';
+import { allApiDocs } from './docs/api';
 
 export const apiComponents = Object.keys(allApiDocs).concat([
   // SankeyChart route now redirects to Sankey after we renamed the page

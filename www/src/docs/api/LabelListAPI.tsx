@@ -117,7 +117,7 @@ export const LabelListAPI: ApiDoc = {
     },
     {
       name: 'position',
-      type: '"end" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | "middle" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
+      type: '"end" | "middle" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
       isOptional: true,
       desc: {
         'en-US': (
@@ -160,5 +160,5 @@ export const LabelListAPI: ApiDoc = {
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
     },
   ],
-  parentComponents: ['Area', 'Bar', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],
+  parentComponents: ['Area', 'Bar', 'Funnel', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],
 };

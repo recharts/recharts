@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const PieChartAPI: ApiDoc = {
-  name: 'PieChart',
+export const RadarChartAPI: ApiDoc = {
+  name: 'RadarChart',
   props: [
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
     { name: 'barCategoryGap', type: 'string | number', isOptional: true, defaultVal: '10%' },
@@ -66,7 +66,7 @@ export const PieChartAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 360,
+      defaultVal: -270,
     },
     {
       name: 'height',
@@ -176,7 +176,7 @@ export const PieChartAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 0,
+      defaultVal: 90,
     },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {

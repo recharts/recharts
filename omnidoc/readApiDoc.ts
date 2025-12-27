@@ -1,12 +1,12 @@
 import { DefaultValue, DocReader } from './DocReader';
-import { allExamples } from '../www/src/docs/api';
+import { allApiDocs } from '../www/src/docs/api';
 
 /**
  * @fileOverview reads API docs from the website
  */
 export class ApiDocReader implements DocReader {
   getPublicSymbolNames(): ReadonlyArray<string> {
-    return Object.keys(allExamples);
+    return Object.keys(allApiDocs);
   }
 
   getPublicComponentNames(): ReadonlyArray<string> {
@@ -24,7 +24,7 @@ export class ApiDocReader implements DocReader {
   }
 
   getRechartsPropsOf(component: string): ReadonlyArray<string> {
-    const apiDoc = allExamples[component];
+    const apiDoc = allApiDocs[component];
     if (!apiDoc) {
       return [];
     }
@@ -43,7 +43,7 @@ export class ApiDocReader implements DocReader {
   }
 
   getDefaultValueOf(component: string, prop: string): DefaultValue {
-    const apiDoc = allExamples[component];
+    const apiDoc = allApiDocs[component];
     if (!apiDoc) {
       return { type: 'unreadable' };
     }
@@ -66,7 +66,7 @@ export class ApiDocReader implements DocReader {
   }
 
   getCommentOf(component: string, prop: string): string | undefined {
-    const apiDoc = allExamples[component];
+    const apiDoc = allApiDocs[component];
     if (!apiDoc) {
       return undefined;
     }
