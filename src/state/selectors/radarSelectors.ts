@@ -180,8 +180,8 @@ export const selectRadarPoints: (
     selectBandSizeOfAxis,
   ],
   (
-    radiusAxis: RadiusAxisForRadar,
-    angleAxis: AngleAxisForRadar,
+    radiusAxis: RadiusAxisForRadar | undefined,
+    angleAxis: AngleAxisForRadar | undefined,
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
     dataKey: DataKey<any> | undefined,
     bandSize: number | undefined,

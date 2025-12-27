@@ -8,8 +8,8 @@ import { Coordinate } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
 
-const isValidatePoint = (point: Coordinate) => {
-  return point && point.x === +point.x && point.y === +point.y;
+const isValidatePoint = (point: Coordinate | undefined): point is Coordinate => {
+  return point != null && point.x === +point.x && point.y === +point.y;
 };
 
 const getParsedPoints = (points: ReadonlyArray<Coordinate> = []) => {
@@ -24,8 +24,9 @@ const getParsedPoints = (points: ReadonlyArray<Coordinate> = []) => {
     }
   });
 
-  if (isValidatePoint(points[0])) {
-    segmentPoints[segmentPoints.length - 1].push(points[0]);
+  const firstPoint = points[0];
+  if (isValidatePoint(firstPoint)) {
+    segmentPoints[segmentPoints.length - 1].push(firstPoint);
   }
 
   if (segmentPoints[segmentPoints.length - 1].length <= 0) {

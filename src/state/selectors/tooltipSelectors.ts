@@ -42,6 +42,7 @@ import {
   CategoricalDomain,
   CategoricalDomainItem,
   Coordinate,
+  D3ScaleType,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -93,7 +94,7 @@ import { ActiveLabel } from '../../synchronisation/types';
 import { RechartsScale } from '../../util/scale/RechartsScale';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
-export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
+export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => D3ScaleType | undefined = createSelector(
   [selectTooltipAxis, selectHasBar, selectChartName],
   combineRealScaleType,
 );
