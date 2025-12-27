@@ -27,6 +27,7 @@
   "es6/cartesian/XAxis.js",
   "es6/cartesian/YAxis.js",
   "es6/cartesian/ZAxis.js",
+  "es6/cartesian/getCartesianPosition.js",
   "es6/cartesian/getEquidistantTicks.js",
   "es6/cartesian/getTicks.js",
   "es6/chart",

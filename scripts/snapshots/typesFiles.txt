@@ -27,6 +27,7 @@
   "types/cartesian/XAxis.d.ts",
   "types/cartesian/YAxis.d.ts",
   "types/cartesian/ZAxis.d.ts",
+  "types/cartesian/getCartesianPosition.d.ts",
   "types/cartesian/getEquidistantTicks.d.ts",
   "types/cartesian/getTicks.d.ts",
   "types/chart",
