@@ -16,20 +16,25 @@ const getParsedPoints = (points: ReadonlyArray<Coordinate> = []) => {
   let segmentPoints: Coordinate[][] = [[]];
 
   points.forEach(entry => {
+    const lastLink = segmentPoints[segmentPoints.length - 1];
     if (isValidatePoint(entry)) {
-      segmentPoints[segmentPoints.length - 1].push(entry);
-    } else if (segmentPoints[segmentPoints.length - 1].length > 0) {
+      if (lastLink) {
+        lastLink.push(entry);
+      }
+    } else if (lastLink && lastLink.length > 0) {
       // add another path
       segmentPoints.push([]);
     }
   });
 
   const firstPoint = points[0];
-  if (isValidatePoint(firstPoint)) {
-    segmentPoints[segmentPoints.length - 1].push(firstPoint);
+  const lastLink = segmentPoints[segmentPoints.length - 1];
+  if (isValidatePoint(firstPoint) && lastLink) {
+    lastLink.push(firstPoint);
   }
 
-  if (segmentPoints[segmentPoints.length - 1].length <= 0) {
+  const finalLink = segmentPoints[segmentPoints.length - 1];
+  if (finalLink && finalLink.length <= 0) {
     segmentPoints = segmentPoints.slice(0, -1);
   }
 
