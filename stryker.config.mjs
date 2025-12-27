@@ -18,7 +18,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/shape/Curve.tsx'],
+  mutate: ['src/shape/Polygon.tsx'],
   commandRunner: {
     command: 'vitest run --config ./vitest.config-mutation.mts',
   },
