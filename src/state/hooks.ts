@@ -1,5 +1,5 @@
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { type AppDispatch, type RechartsRootState } from './store';
 
 import { RechartsReduxContext } from './RechartsReduxContext';
@@ -40,11 +40,23 @@ const refEquality: EqualityFn<unknown> = (a, b) => a === b;
 export function useAppSelector<T>(selector: (state: RechartsRootState) => T): T | undefined {
   const context = useContext(RechartsReduxContext);
 
+  const outOfContextSelector: (state: RechartsRootState | undefined) => T | undefined = useMemo(() => {
+    if (!context) {
+      return noop;
+    }
+    return (state: RechartsRootState | undefined): T | undefined => {
+      if (state == null) {
+        return undefined;
+      }
+      return selector(state);
+    };
+  }, [context, selector]);
+
   return useSyncExternalStoreWithSelector<RechartsRootState | undefined, T | undefined>(
     context ? context.subscription.addNestedSub : addNestedSubNoop,
     context ? context.store.getState : noop,
     context ? context.store.getState : noop,
-    context ? selector : noop,
+    outOfContextSelector,
     refEquality,
   );
 }

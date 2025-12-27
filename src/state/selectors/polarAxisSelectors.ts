@@ -64,7 +64,7 @@ const selectAngleAxisNoDefaults = (
 export const selectAngleAxis: (state: RechartsRootState, angleAxisId: AxisId | undefined) => AngleAxisSettings =
   createSelector(
     [selectAngleAxisNoDefaults, selectPolarChartLayout],
-    (angleAxisSettings, layout: PolarLayout): AngleAxisSettings => {
+    (angleAxisSettings, layout: PolarLayout | undefined): AngleAxisSettings => {
       if (angleAxisSettings != null) {
         return angleAxisSettings;
       }
@@ -82,7 +82,7 @@ const selectRadiusAxisNoDefaults = (state: RechartsRootState, radiusAxisId: Axis
 
 export const selectRadiusAxis: (state: RechartsRootState, radiusAxisId: AxisId) => RadiusAxisSettings = createSelector(
   [selectRadiusAxisNoDefaults, selectPolarChartLayout],
-  (radiusAxisSettings, layout: PolarLayout): RadiusAxisSettings => {
+  (radiusAxisSettings, layout: PolarLayout | undefined): RadiusAxisSettings => {
     if (radiusAxisSettings != null) {
       return radiusAxisSettings;
     }

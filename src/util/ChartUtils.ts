@@ -232,7 +232,7 @@ export const getTicksOfAxis = (
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
-      .map((entry: CategoricalDomainItem, index: number): TickItem | null => {
+      .map((entry: unknown, index: number): TickItem | null => {
         const scaled = scale.map(entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
