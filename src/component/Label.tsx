@@ -23,7 +23,7 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
-import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/CartesianPosition';
+import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 
 /**
  * @inline

@@ -68,13 +68,6 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Cart
 
   const { x, y, height, upperWidth, lowerWidth } = cartesianViewBoxToTrapezoid(viewBox);
 
-  // We assume parentViewBox is generic if provided.
-  // If parentViewBox is Polar, we might ignore it or handle it differently in the future.
-  // For now, if we are here we assume we are not doing polar positioning logic *inside* this hook,
-  // but if parentViewBox is passed for clamping, we check if it is generic enough.
-  // The original code did: `if (parentViewBoxFromProps != null && !isPolar(parentViewBoxFromProps))`
-  // We will assume `parentViewBox` passed here is relevant for Cartesian.
-
   // Funnel.tsx provides a viewBox where `x` is the top-left of the trapezoid shape.
   const upperX = x;
   // The trapezoid is centered, so we can calculate the other corners from the top-left.

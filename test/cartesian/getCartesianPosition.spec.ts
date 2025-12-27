@@ -3,7 +3,7 @@ import {
   getCartesianPosition,
   GetCartesianPositionOptions,
   CartesianPosition,
-} from '../../src/cartesian/CartesianPosition';
+} from '../../src/cartesian/getCartesianPosition';
 import { CartesianViewBoxRequired, TrapezoidViewBox } from '../../src/util/types';
 
 describe('useCartesianPosition', () => {
@@ -234,7 +234,7 @@ describe('useCartesianPosition', () => {
     });
   });
 
-  describe('in regular Funnel (wide on top, narrow on bottom', () => {
+  describe('in regular Funnel (wide on top, narrow on bottom)', () => {
     const viewBox: TrapezoidViewBox = { x: 100, y: 50, upperWidth: 200, lowerWidth: 150, width: 175, height: 100 };
     const offset = 5;
 
@@ -551,17 +551,6 @@ describe('useCartesianPosition', () => {
         clamp: true,
       };
       const actual = getCartesianPosition(options);
-      // Wait, insideLeft logic clamps width?
-      // In original:
-      /*
-            if (position === 'insideLeft') {
-              return {
-                ...
-                ...sizeAttrs,
-              };
-            }
-            */
-      // sizeAttrs = parentViewBox ? { width: midHeightWidth, height } : {};
 
       const expected: CartesianPosition = {
         x: 105,
@@ -596,10 +585,6 @@ describe('useCartesianPosition', () => {
         clamp: false,
       };
       const actual = getCartesianPosition(options);
-      // Height and width should NOT be present if not clamped, ideally, or just standard.
-      // My implementation returns width/height only if clamped?
-      // "const sizeAttrs = clamp && parentViewBox ? { width: midHeightWidth, height } : {};"
-      // For top/bottom/left/right, they return size if clamped inside their blocks.
 
       const expected: CartesianPosition = {
         x: 200,
@@ -613,21 +598,219 @@ describe('useCartesianPosition', () => {
 
   describe('in reversed Funnel (narrow on top, wide on bottom', () => {
     const viewBox: TrapezoidViewBox = { x: 100, y: 50, upperWidth: 150, lowerWidth: 200, width: 175, height: 100 };
-
-    // ... (rest of tests would be similar, checking a few key ones to be sure)
+    const offset = 5;
 
     it('should return correct attributes for position "insideTop"', () => {
-      const options: GetCartesianPositionOptions = {
+      const input: GetCartesianPositionOptions = {
         position: 'insideTop',
         offset: 0,
         viewBox,
       };
-      const actual = getCartesianPosition(options);
+      const actual = getCartesianPosition(input);
       const expected: CartesianPosition = {
         x: 175,
         y: 50,
         horizontalAnchor: 'middle',
         verticalAnchor: 'start',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "top"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'top',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = { x: 175, y: 45, horizontalAnchor: 'middle', verticalAnchor: 'end' };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "bottom"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'bottom',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = { x: 175, y: 155, horizontalAnchor: 'middle', verticalAnchor: 'start' };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "left"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'left',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = { x: 82.5, y: 100, horizontalAnchor: 'end', verticalAnchor: 'middle' };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "right"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'right',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = { x: 267.5, y: 100, horizontalAnchor: 'start', verticalAnchor: 'middle' };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideLeft"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideLeft',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 92.5,
+        y: 100,
+        horizontalAnchor: 'start',
+        verticalAnchor: 'middle',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideRight"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideRight',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 257.5,
+        y: 100,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'middle',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideBottom"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideBottom',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 175,
+        y: 145,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'end',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideTopLeft"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideTopLeft',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 105,
+        y: 55,
+        horizontalAnchor: 'start',
+        verticalAnchor: 'start',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideTopRight"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideTopRight',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 245,
+        y: 55,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'start',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideBottomLeft"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideBottomLeft',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 80,
+        y: 145,
+        horizontalAnchor: 'start',
+        verticalAnchor: 'end',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "insideBottomRight"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'insideBottomRight',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 270,
+        y: 145,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'end',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position as an object with number coordinates', () => {
+      const input: GetCartesianPositionOptions = {
+        position: { x: 10, y: 20 },
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = { x: 110, y: 70, horizontalAnchor: 'end', verticalAnchor: 'end' };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position as an object with percentage coordinates', () => {
+      const input: GetCartesianPositionOptions = {
+        position: { x: '50%', y: '50%' },
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 187.5,
+        y: 100,
+        horizontalAnchor: 'end',
+        verticalAnchor: 'end',
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return correct attributes for position "center"', () => {
+      const input: GetCartesianPositionOptions = {
+        position: 'center',
+        offset,
+        viewBox,
+      };
+      const actual = getCartesianPosition(input);
+      const expected: CartesianPosition = {
+        x: 175,
+        y: 100,
+        horizontalAnchor: 'middle',
+        verticalAnchor: 'middle',
       };
       expect(actual).toEqual(expected);
     });
