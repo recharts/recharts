@@ -24,24 +24,94 @@ import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 interface ReferenceAreaProps extends ZIndexable {
   /**
+   * Defines how to draw the reference area if it falls partly outside the canvas:
+   *
+   * - `discard`: the whole reference area will not be drawn at all
+   * - `hidden`: the reference area will be clipped to the chart plot area
+   * - `visible`: the reference area will be drawn completely
+   * - `extendDomain`: the domain of the overflown axis will be extended such that the reference area fits into the plot area
+   *
    * @defaultValue discard
    */
   ifOverflow?: IfOverflow;
+  /**
+   * Starting X-coordinate of the area.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceArea will internally calculate the correct pixel position.
+   *
+   * If undefined then the area will extend to the left edge of the chart plot area.
+   *
+   * @example <ReferenceArea x1="Monday" x2="Friday" />
+   * @example <ReferenceArea x1={10} x2={50} />
+   * @example <ReferenceArea x1="Page C" />
+   */
   x1?: number | string;
+  /**
+   * Ending X-coordinate of the area.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceArea will internally calculate the correct pixel position.
+   *
+   * If undefined then the area will extend to the right edge of the chart plot area.
+   *
+   * @example <ReferenceArea x1="Monday" x2="Friday" />
+   * @example <ReferenceArea x1={10} x2={50} />
+   * @example <ReferenceArea x2="Page C" />
+   */
   x2?: number | string;
+  /**
+   * Starting Y-coordinate of the area.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceArea will internally calculate the correct pixel position.
+   *
+   * If undefined then the area will extend to the top edge of the chart plot area.
+   *
+   * @example <ReferenceArea y1={100} y2={500} />
+   * @example <ReferenceArea y1="low" y2="high" />
+   * @example <ReferenceArea y1={200} />
+   */
   y1?: number | string;
+  /**
+   * Ending Y-coordinate of the area.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceArea will internally calculate the correct pixel position.
+   *
+   * If undefined then the area will extend to the bottom edge of the chart plot area.
+   *
+   * @example <ReferenceArea y1={100} y2={500} />
+   * @example <ReferenceArea y1="low" y2="high" />
+   * @example <ReferenceArea y2={400} />
+   */
   y2?: number | string;
 
   className?: number | string;
   /**
+   * The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.
    * @defaultValue 0
    */
   yAxisId?: number | string;
   /**
+   * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
    */
   xAxisId?: number | string;
+  /**
+   * If set a ReactElement, the shape of the reference area can be customized.
+   * If set a function, the function will be called to render customized shape.
+   */
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  /**
+   * Renders a single label.
+   *
+   * - `true`: renders default label
+   * - `false`: no labels are rendered
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
+   *
+   * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
+   */
   label?: ImplicitLabelType;
   /**
    * @defaultValue 100
@@ -167,6 +237,7 @@ export const referenceAreaDefaultProps = {
   yAxisId: 0,
   radius: 0,
   fill: '#ccc',
+  label: false,
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
@@ -176,6 +247,13 @@ export const referenceAreaDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
 
 /**
+ * ReferenceArea is a component to draw a rectangular area on the chart to highlight a specific range.
+ *
+ * This component, unlike Rectangle, is aware of the cartesian coordinate system,
+ * so you specify the area by using data coordinates instead of pixels.
+ *
+ * ReferenceArea will calculate the pixels based on the provided data coordinates.
+ *
  * @provides CartesianLabelContext
  */
 export function ReferenceArea(outsideProps: Props) {

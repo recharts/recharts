@@ -25,6 +25,7 @@ const StyleProps: Args = {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
+    defaultValue: false,
     table: {
       type: {
         summary: 'String | Number | ReactElement | Function',

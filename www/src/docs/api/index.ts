@@ -18,7 +18,7 @@ import { YAxisAPI } from './YAxisAPI';
 import { ZAxisAPI } from './ZAxisAPI';
 import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
 import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
-import { ReferenceAreaAPI as ReferenceArea } from './ReferenceArea';
+import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
@@ -42,7 +42,7 @@ import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
 import { DotAPI as Dot } from './Dot';
 import { PolygonAPI } from './PolygonAPI';
-import { RectangleAPI as Rectangle } from './Rectangle';
+import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import type { ApiDoc } from './types';
@@ -96,14 +96,14 @@ export const allApiDocs: Record<string, ApiDoc> = {
   PolarRadiusAxis: PolarRadiusAxisAPI,
   ReferenceLine,
   ReferenceDot,
-  ReferenceArea,
+  ReferenceArea: ReferenceAreaAPI,
   ErrorBar: ErrorBarAPI,
 
   Cross,
   Curve,
   Dot,
   Polygon: PolygonAPI,
-  Rectangle,
+  Rectangle: RectangleAPI,
   Sector,
   Trapezoid,
 

@@ -217,11 +217,23 @@ export const YAxisAPI: ApiDoc = {
               label in the center of the axis line. Useful for labeling the axis as a whole, like &quot;Time (in
               seconds)&quot; or &quot;Distance (in meters)&quot;.
             </p>
-            <p>
-              If set a string or a number, default label will be drawn, and the option is content. If set a React
-              element, the option is the custom react element of drawing label. If an object, the option is the props of
-              a new Label instance. If set a function, the function will be called to render customized label.
-            </p>
+            <ul>
+              <li>
+                <code>true</code>: renders default label
+              </li>
+              <li>
+                <code>false</code>: no labels are rendered
+              </li>
+              <li>
+                <code>object</code>: the props of LabelList component
+              </li>
+              <li>
+                <code>ReactElement</code>: a custom label element
+              </li>
+              <li>
+                <code>function</code>: a render function of custom label
+              </li>
+            </ul>
           </section>
         ),
       },

@@ -197,19 +197,19 @@ export const AreaAPI: ApiDoc = {
             <p>Renders one label for each data point. Options:</p>
             <ul>
               <li>
-                <code>true</code>: renders default labels;
+                <code>true</code>: renders default labels
               </li>
               <li>
-                <code>false</code>: no labels are rendered;
+                <code>false</code>: no labels are rendered
               </li>
               <li>
-                <code>object</code>: the props of LabelList component;
+                <code>object</code>: the props of LabelList component
               </li>
               <li>
-                <code>ReactElement</code>: a custom label element;
+                <code>ReactElement</code>: a custom label element
               </li>
               <li>
-                <code>function</code>: a render function of custom label.
+                <code>function</code>: a render function of custom label
               </li>
             </ul>
           </section>

@@ -934,10 +934,11 @@ export interface RenderableAxisProps extends BaseAxisProps {
    * This prop renders one label in the center of the axis line.
    * Useful for labeling the axis as a whole, like "Time (in seconds)" or "Distance (in meters)".
    *
-   * If set a string or a number, default label will be drawn, and the option is content.
-   * If set a React element, the option is the custom react element of drawing label.
-   * If an object, the option is the props of a new Label instance.
-   * If set a function, the function will be called to render customized label.
+   * - `true`: renders default label
+   * - `false`: no labels are rendered
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
    *
    * @defaultValue false
    */

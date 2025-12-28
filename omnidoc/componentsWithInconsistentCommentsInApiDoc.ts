@@ -9,8 +9,6 @@ export const componentsWithInconsistentCommentsInApiDoc = [
    */
   'CartesianAxis',
   'Cell',
-  'Rectangle',
-  'ReferenceArea',
   'ReferenceDot',
   'ReferenceLine',
   'ResponsiveContainer',
