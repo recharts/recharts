@@ -58,7 +58,7 @@ describe('cross-component prop consistency', () => {
       reason: 'Many components assign different meanings to width/height',
     },
     {
-      components: ['Cross', 'ReferenceDot'],
+      components: ['Cross', 'ReferenceDot', 'ReferenceLine'],
       props: ['x', 'y'],
       reason: `Cross and ReferenceDot positions define the center,
       which is different from other components where x/y coordinates define the top-left corner.
@@ -197,6 +197,12 @@ describe('cross-component prop consistency', () => {
       props: ['label'],
       reason:
         'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
+    },
+    {
+      components: ['ReferenceLine'],
+      props: ['position'],
+      reason: `ReferenceLine.position describes position relative to the band category,
+      unlike other components where position describes placement in the chart's coordinate system.`,
     },
   ];
 

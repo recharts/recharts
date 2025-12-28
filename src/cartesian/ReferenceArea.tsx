@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { rectWithPoints } from '../util/CartesianUtils';
-import { IfOverflow } from '../util/IfOverflow';
+import { Overflowable } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 
@@ -22,18 +22,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
-interface ReferenceAreaProps extends ZIndexable {
-  /**
-   * Defines how to draw the reference area if it falls partly outside the canvas:
-   *
-   * - `discard`: the whole reference area will not be drawn at all
-   * - `hidden`: the reference area will be clipped to the chart plot area
-   * - `visible`: the reference area will be drawn completely
-   * - `extendDomain`: the domain of the overflown axis will be extended such that the reference area fits into the plot area
-   *
-   * @defaultValue discard
-   */
-  ifOverflow?: IfOverflow;
+interface ReferenceAreaProps extends Overflowable, ZIndexable {
   /**
    * Starting X-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -113,8 +102,16 @@ interface ReferenceAreaProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
    */
   label?: ImplicitLabelType;
+
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 100
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
   children?: React.ReactNode;
@@ -258,6 +255,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefault
  * consider using the `<Rectangle>` component instead.
  *
  * @provides CartesianLabelContext
+ * @consumes CartesianChartContext
  */
 export function ReferenceArea(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);

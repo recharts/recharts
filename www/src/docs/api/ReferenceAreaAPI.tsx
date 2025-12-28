@@ -12,20 +12,20 @@ export const ReferenceAreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Defines how to draw the reference area if it falls partly outside the canvas:</p>
+            <p>Defines how to draw this component if it falls partly outside the canvas:</p>
             <ul>
               <li>
-                <code>discard</code>: the whole reference area will not be drawn at all
+                <code>discard</code>: the whole component will not be drawn at all
               </li>
               <li>
-                <code>hidden</code>: the reference area will be clipped to the chart plot area
+                <code>hidden</code>: the component will be clipped to the chart plot area
               </li>
               <li>
-                <code>visible</code>: the reference area will be drawn completely
+                <code>visible</code>: the component will be drawn completely
               </li>
               <li>
-                <code>extendDomain</code>: the domain of the overflown axis will be extended such that the reference
-                area fits into the plot area
+                <code>extendDomain</code>: the domain of the overflown axis will be extended such that the whole
+                component fits into the plot area
               </li>
             </ul>
           </section>
@@ -205,7 +205,24 @@ export const ReferenceAreaAPI: ApiDoc = {
       },
       defaultVal: 0,
     },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
+    {
+      name: 'zIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
+              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
+              content is rendered in the default layer without portals.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 100,
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+    },
     {
       name: 'onClick',
       type: 'React.MouseEventHandler<T>',
@@ -319,5 +336,6 @@ export const ReferenceAreaAPI: ApiDoc = {
       </section>
     ),
   },
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };

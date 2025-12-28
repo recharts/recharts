@@ -5,7 +5,7 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { IfOverflow } from '../util/IfOverflow';
+import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
@@ -20,30 +20,20 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
-interface ReferenceDotProps extends ZIndexable {
+interface ReferenceDotProps extends Overflowable, ZIndexable {
   /**
    * The radius of the dot in pixels.
    *
    * @defaultValue 10
    */
   r?: number;
-
-  /**
-   * Defines how to draw the reference dot if it falls partly outside the canvas.
-   * If set to 'discard', the reference dot will not be drawn at all.
-   * If set to 'hidden', the reference dot will be clipped to the canvas.
-   * If set to 'visible', the reference dot will be drawn completely.
-   * If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference dot fits into the canvas.
-   *
-   * @defaultValue discard
-   */
-  ifOverflow?: IfOverflow;
   /**
    * The x-coordinate of the center of the dot.
    *
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceDot will internally calculate the correct pixel position.
    *
+   * @example <ReferenceDot x="January" y="2026" />
    */
   x?: number | string;
   /**
@@ -52,9 +42,7 @@ interface ReferenceDotProps extends ZIndexable {
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceDot will internally calculate the correct pixel position.
    *
-   * @example <ReferenceDot x1="Monday" x2="Friday" />
-   * @example <ReferenceDot x1={10} x2={50} />
-   * @example <ReferenceDot x2="Page C" />
+   * @example <ReferenceDot x="January" y="2026" />
    */
   y?: number | string;
 
@@ -90,8 +78,16 @@ interface ReferenceDotProps extends ZIndexable {
    * @defaultValue false
    */
   label?: ImplicitLabelType;
+
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 600
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
 
@@ -247,7 +243,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
  * Draws a circle on the chart to highlight a specific range.
  *
  * This component, unlike Dot or circle, is aware of the cartesian coordinate system,
- * so you specify the area by using data coordinates instead of pixels.
+ * so you specify its center by using data coordinates instead of pixels.
  *
  * ReferenceDot will calculate the pixels based on the provided data coordinates.
  *
@@ -255,6 +251,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
  * consider using the `<Dot>` component instead.
  *
  * @provides CartesianLabelContext
+ * @consumes CartesianChartContext
  */
 export function ReferenceDot(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);

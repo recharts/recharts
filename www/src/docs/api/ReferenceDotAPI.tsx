@@ -12,13 +12,22 @@ export const ReferenceDotAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Defines how to draw the reference dot if it falls partly outside the canvas. If set to &#39;discard&#39;,
-              the reference dot will not be drawn at all. If set to &#39;hidden&#39;, the reference dot will be clipped
-              to the canvas. If set to &#39;visible&#39;, the reference dot will be drawn completely. If set to
-              &#39;extendDomain&#39;, the domain of the overflown axis will be extended such that the reference dot fits
-              into the canvas.
-            </p>
+            <p>Defines how to draw this component if it falls partly outside the canvas:</p>
+            <ul>
+              <li>
+                <code>discard</code>: the whole component will not be drawn at all
+              </li>
+              <li>
+                <code>hidden</code>: the component will be clipped to the chart plot area
+              </li>
+              <li>
+                <code>visible</code>: the component will be drawn completely
+              </li>
+              <li>
+                <code>extendDomain</code>: the domain of the overflown axis will be extended such that the whole
+                component fits into the plot area
+              </li>
+            </ul>
           </section>
         ),
       },
@@ -97,6 +106,7 @@ export const ReferenceDotAPI: ApiDoc = {
           </section>
         ),
       },
+      format: ['<ReferenceDot x="January" y="2026" />'],
     },
     {
       name: 'xAxisId',
@@ -126,11 +136,7 @@ export const ReferenceDotAPI: ApiDoc = {
           </section>
         ),
       },
-      format: [
-        '<ReferenceDot x1="Monday" x2="Friday" />',
-        '<ReferenceDot x1={10} x2={50} />',
-        '<ReferenceDot x2="Page C" />',
-      ],
+      format: ['<ReferenceDot x="January" y="2026" />'],
     },
     {
       name: 'yAxisId',
@@ -145,7 +151,24 @@ export const ReferenceDotAPI: ApiDoc = {
       },
       defaultVal: 0,
     },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 600 },
+    {
+      name: 'zIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
+              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
+              content is rendered in the default layer without portals.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 600,
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+    },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationEnd', type: 'AnimationEventHandler<P, T>', isOptional: true },
@@ -400,8 +423,8 @@ export const ReferenceDotAPI: ApiDoc = {
       <section>
         <p>Draws a circle on the chart to highlight a specific range.</p>
         <p>
-          This component, unlike Dot or circle, is aware of the cartesian coordinate system, so you specify the area by
-          using data coordinates instead of pixels.
+          This component, unlike Dot or circle, is aware of the cartesian coordinate system, so you specify its center
+          by using data coordinates instead of pixels.
         </p>
         <p>ReferenceDot will calculate the pixels based on the provided data coordinates.</p>
         <p>
@@ -411,5 +434,6 @@ export const ReferenceDotAPI: ApiDoc = {
       </section>
     ),
   },
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };
