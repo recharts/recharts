@@ -22,46 +22,114 @@ import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 interface ReferenceDotProps extends ZIndexable {
   /**
-   * The radius of the dot.
+   * The radius of the dot in pixels.
    *
    * @defaultValue 10
    */
   r?: number;
 
   /**
+   * Defines how to draw the reference dot if it falls partly outside the canvas.
+   * If set to 'discard', the reference dot will not be drawn at all.
+   * If set to 'hidden', the reference dot will be clipped to the canvas.
+   * If set to 'visible', the reference dot will be drawn completely.
+   * If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference dot fits into the canvas.
+   *
    * @defaultValue discard
    */
   ifOverflow?: IfOverflow;
   /**
    * The x-coordinate of the center of the dot.
-   * It should match a value from the XAxis, so if the XAxis is a number axis, this should be a number.
-   * If the XAxis is a category axis, this should be a string.
+   *
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceDot will internally calculate the correct pixel position.
+   *
    */
   x?: number | string;
+  /**
+   * The y-coordinate of the center of the dot.
+   *
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceDot will internally calculate the correct pixel position.
+   *
+   * @example <ReferenceDot x1="Monday" x2="Friday" />
+   * @example <ReferenceDot x1={10} x2={50} />
+   * @example <ReferenceDot x2="Page C" />
+   */
   y?: number | string;
 
   className?: number | string;
   /**
-   * The id of y-axis which the dot should be attached to.
+   * The id of y-axis which is corresponding to the data.
+   * Required when there are multiple YAxes.
    *
    * @defaultValue 0
    */
   yAxisId?: number | string;
   /**
-   * The id of x-axis which the dot should be attached to.
+   * The id of x-axis which is corresponding to the data.
+   * Required when there are multiple XAxes.
    *
    * @defaultValue 0
    */
   xAxisId?: number | string;
+  /**
+   * If set a ReactElement, the shape of dot can be customized.
+   * If set a function, the function will be called to render customized shape.
+   */
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  /**
+   * Renders a single label.
+   *
+   * - `false`: no labels are rendered
+   * - `string` | `number`: the content of the label
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
+   *
+   * @defaultValue false
+   */
   label?: ImplicitLabelType;
   /**
    * @defaultValue 600
    */
   zIndex?: number;
+
+  /**
+   * The customized event handler of click in this chart.
+   */
+  onClick?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mousedown in this chart.
+   */
+  onMouseDown?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseup in this chart.
+   */
+  onMouseUp?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseover in this chart.
+   */
+  onMouseOver?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseout in this chart.
+   */
+  onMouseOut?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseenter in this chart.
+   */
+  onMouseEnter?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mousemove in this chart.
+   */
+  onMouseMove?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseleave in this chart.
+   */
+  onMouseLeave?: (e: React.MouseEvent<SVGElement>) => void;
 }
 
-export type Props = DotProps & ReferenceDotProps;
+export type Props = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps;
 
 const useCoordinate = (
   x: number | string | undefined,
@@ -165,6 +233,7 @@ export const referenceDotDefaultProps = {
   xAxisId: 0,
   yAxisId: 0,
   r: 10,
+  label: false,
   fill: '#fff',
   stroke: '#ccc',
   fillOpacity: 1,
@@ -175,6 +244,16 @@ export const referenceDotDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
 /**
+ * Draws a circle on the chart to highlight a specific range.
+ *
+ * This component, unlike Dot or circle, is aware of the cartesian coordinate system,
+ * so you specify the area by using data coordinates instead of pixels.
+ *
+ * ReferenceDot will calculate the pixels based on the provided data coordinates.
+ *
+ * If you prefer to render dots using pixels rather than data coordinates,
+ * consider using the `<Dot>` component instead.
+ *
  * @provides CartesianLabelContext
  */
 export function ReferenceDot(outsideProps: Props) {

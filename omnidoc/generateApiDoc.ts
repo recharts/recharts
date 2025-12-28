@@ -44,6 +44,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'RadialBarChart',
   'Rectangle',
   'ReferenceArea',
+  'ReferenceDot',
   'Scatter',
   'Text',
   'XAxis',

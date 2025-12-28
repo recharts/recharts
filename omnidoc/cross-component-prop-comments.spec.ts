@@ -58,10 +58,11 @@ describe('cross-component prop consistency', () => {
       reason: 'Many components assign different meanings to width/height',
     },
     {
-      components: ['Cross'],
+      components: ['Cross', 'ReferenceDot'],
       props: ['x', 'y'],
-      reason:
-        'Cross positions are defined differently than typical x/y coordinates. This prop should better be named "cx", "cy" instead.',
+      reason: `Cross and ReferenceDot positions define the center,
+      which is different from other components where x/y coordinates define the top-left corner.
+      This prop should better be named "cx", "cy" instead.`,
     },
     {
       components: ['Rectangle'],
@@ -190,6 +191,12 @@ describe('cross-component prop consistency', () => {
       components: ['PolarAngleAxis'],
       props: ['axisLine'],
       reason: 'Unlike other axes, PolarAngleAxis.axisLine does not accept a boolean value',
+    },
+    {
+      components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Pie'],
+      props: ['label'],
+      reason:
+        'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
     },
   ];
 

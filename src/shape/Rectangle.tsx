@@ -167,9 +167,6 @@ export const defaultRectangleProps = {
   y: 0,
   width: 0,
   height: 0,
-  // The radius of border
-  // The radius of four corners when radius is a number
-  // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
   radius: 0,
   isAnimationActive: false,
   isUpdateAnimationActive: false,
@@ -178,6 +175,17 @@ export const defaultRectangleProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
+/**
+ * Renders a rectangle element. Unlike the `<rect>` SVG element, this component supports rounded corners
+ * and animation.
+ *
+ * This component accepts X and Y coordinates in pixels.
+ * If you need to position the rectangle based on your chart's data,
+ * consider using the `<ReferenceArea>` component instead.
+ *
+ * @param rectangleProps
+ * @constructor
+ */
 export const Rectangle: React.FC<Props> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
   const pathRef = useRef<SVGPathElement>(null);

@@ -8,8 +8,9 @@ import { r } from '../props/DotProps';
 import { GeneralStyle } from '../props/Styles';
 import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-const GeneralProps: Args = {
+const GeneralProps: StorybookArgs = {
   ...ReferenceComponentGeneralArgs,
   x: {
     description: `If the x-axis specified by xAxisId is a number axis, the type of x must be Number.
@@ -25,11 +26,12 @@ const GeneralProps: Args = {
   },
 };
 
-const LabelProps: Args = {
+const LabelProps: StorybookArgs = {
   label: {
     description: `If set a string or a number, default label will be drawn, and the option is content.
     If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
+    defaultValue: false,
     table: {
       type: {
         summary: 'string | number | ReactElement | Function',
@@ -43,7 +45,7 @@ const LabelProps: Args = {
   },
 };
 
-const StyleProps: Args = {
+const StyleProps: StorybookArgs = {
   ...GeneralStyle,
   ...ReferenceComponentStyle,
   shape: {
@@ -66,8 +68,6 @@ export default {
     ...EventHandlers,
     // Dot
     r,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
   },
   component: ReferenceDot,
 };

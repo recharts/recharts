@@ -43,10 +43,10 @@ export const ReferenceAreaAPI: ApiDoc = {
             <p>Renders a single label.</p>
             <ul>
               <li>
-                <code>true</code>: renders default label
+                <code>false</code>: no labels are rendered
               </li>
               <li>
-                <code>false</code>: no labels are rendered
+                <code>string</code> | <code>number</code>: the content of the label
               </li>
               <li>
                 <code>object</code>: the props of LabelList component
@@ -306,12 +306,16 @@ export const ReferenceAreaAPI: ApiDoc = {
   desc: {
     'en-US': (
       <section>
-        <p>ReferenceArea is a component to draw a rectangular area on the chart to highlight a specific range.</p>
+        <p>Draws a rectangular area on the chart to highlight a specific range.</p>
         <p>
-          This component, unlike Rectangle, is aware of the cartesian coordinate system, so you specify the area by
-          using data coordinates instead of pixels.
+          This component, unlike Rectangle or rect, is aware of the cartesian coordinate system, so you specify the area
+          by using data coordinates instead of pixels.
         </p>
         <p>ReferenceArea will calculate the pixels based on the provided data coordinates.</p>
+        <p>
+          If you prefer to render rectangles using pixels rather than data coordinates, consider using the{' '}
+          <code>&lt;Rectangle&gt;</code> component instead.
+        </p>
       </section>
     ),
   },

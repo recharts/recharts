@@ -930,12 +930,15 @@ export interface RenderableAxisProps extends BaseAxisProps {
    */
   range?: AxisRange;
   /**
-   * Defines a single label for the whole axis. This is not controlling tick labels.
+   * Defines a single label for the whole axis.
    * This prop renders one label in the center of the axis line.
    * Useful for labeling the axis as a whole, like "Time (in seconds)" or "Distance (in meters)".
    *
-   * - `true`: renders default label
-   * - `false`: no labels are rendered
+   * This is not controlling tick labels.
+   * If you want to customize tick labels, please see `tickFormatter` or `tick` props.
+   *
+   * - `false`: no label is rendered
+   * - `string` | `number`: the content of the label
    * - `object`: the props of LabelList component
    * - `ReactElement`: a custom label element
    * - `function`: a render function of custom label

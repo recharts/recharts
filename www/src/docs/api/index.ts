@@ -17,7 +17,7 @@ import { XAxisAPI } from './XAxisAPI';
 import { YAxisAPI } from './YAxisAPI';
 import { ZAxisAPI } from './ZAxisAPI';
 import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
-import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
+import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
@@ -95,7 +95,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   PolarGrid: PolarGridAPI,
   PolarRadiusAxis: PolarRadiusAxisAPI,
   ReferenceLine,
-  ReferenceDot,
+  ReferenceDot: ReferenceDotAPI,
   ReferenceArea: ReferenceAreaAPI,
   ErrorBar: ErrorBarAPI,
 

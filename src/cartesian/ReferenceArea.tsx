@@ -102,8 +102,8 @@ interface ReferenceAreaProps extends ZIndexable {
   /**
    * Renders a single label.
    *
-   * - `true`: renders default label
    * - `false`: no labels are rendered
+   * - `string` | `number`: the content of the label
    * - `object`: the props of LabelList component
    * - `ReactElement`: a custom label element
    * - `function`: a render function of custom label
@@ -247,12 +247,15 @@ export const referenceAreaDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
 
 /**
- * ReferenceArea is a component to draw a rectangular area on the chart to highlight a specific range.
+ * Draws a rectangular area on the chart to highlight a specific range.
  *
- * This component, unlike Rectangle, is aware of the cartesian coordinate system,
+ * This component, unlike Rectangle or rect, is aware of the cartesian coordinate system,
  * so you specify the area by using data coordinates instead of pixels.
  *
  * ReferenceArea will calculate the pixels based on the provided data coordinates.
+ *
+ * If you prefer to render rectangles using pixels rather than data coordinates,
+ * consider using the `<Rectangle>` component instead.
  *
  * @provides CartesianLabelContext
  */

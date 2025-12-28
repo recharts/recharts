@@ -231,16 +231,20 @@ export const PolarAngleAxisAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              Defines a single label for the whole axis. This is not controlling tick labels. This prop renders one
-              label in the center of the axis line. Useful for labeling the axis as a whole, like &quot;Time (in
-              seconds)&quot; or &quot;Distance (in meters)&quot;.
+              Defines a single label for the whole axis. This prop renders one label in the center of the axis line.
+              Useful for labeling the axis as a whole, like &quot;Time (in seconds)&quot; or &quot;Distance (in
+              meters)&quot;.
+            </p>
+            <p>
+              This is not controlling tick labels. If you want to customize tick labels, please see{' '}
+              <code>tickFormatter</code> or <code>tick</code> props.
             </p>
             <ul>
               <li>
-                <code>true</code>: renders default label
+                <code>false</code>: no label is rendered
               </li>
               <li>
-                <code>false</code>: no labels are rendered
+                <code>string</code> | <code>number</code>: the content of the label
               </li>
               <li>
                 <code>object</code>: the props of LabelList component
