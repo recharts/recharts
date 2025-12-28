@@ -5,7 +5,7 @@ import { NavCategory, useAllNavigationItems } from '../navigation.ts';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.css';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
-import { ColorModePicker } from './ColorModePicker';
+import { ColorModePicker } from './color-mode';
 
 function DesktopNav() {
   const allNavigationItems = useAllNavigationItems();

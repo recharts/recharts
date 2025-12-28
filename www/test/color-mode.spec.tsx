@@ -1,17 +1,20 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
-import { defineColorModeStore } from '../src/components/color-mode';
+import { ColorModePicker, defineColorModeStore } from '../src/components/color-mode';
+import { ColorModeProvider } from '../src/components/color-mode/ColorModeProvider';
 
 const STORAGE_KEY = 'recharts-color-mode';
 
 afterEach(() => {
   localStorage.removeItem(STORAGE_KEY);
   cleanup();
+  vi.restoreAllMocks();
 });
 
-function setupTest(props: { preferredColorMode: 'light' | 'dark'; storedColorMode?: 'light' | 'dark' }) {
+function setupEnvironment(props: { preferredColorMode: 'light' | 'dark'; storedColorMode?: 'light' | 'dark' }) {
   if (props.storedColorMode) {
     localStorage.setItem(STORAGE_KEY, props.storedColorMode);
   }
@@ -34,11 +37,11 @@ function setupTest(props: { preferredColorMode: 'light' | 'dark'; storedColorMod
       },
     };
   });
-  return defineColorModeStore();
 }
 
 test('origin: system; mode: light', () => {
-  const store = setupTest({ preferredColorMode: 'light' });
+  setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
@@ -60,7 +63,8 @@ test('origin: system; mode: light', () => {
 });
 
 test('origin: system; mode: dark', () => {
-  const store = setupTest({ preferredColorMode: 'dark' });
+  setupEnvironment({ preferredColorMode: 'dark' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
@@ -82,7 +86,8 @@ test('origin: system; mode: dark', () => {
 });
 
 test('origin: storage; mode: light', () => {
-  const store = setupTest({ preferredColorMode: 'dark', storedColorMode: 'light' });
+  setupEnvironment({ preferredColorMode: 'dark', storedColorMode: 'light' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
@@ -104,7 +109,8 @@ test('origin: storage; mode: light', () => {
 });
 
 test('origin: storage; mode: dark', () => {
-  const store = setupTest({ preferredColorMode: 'light', storedColorMode: 'dark' });
+  setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'dark' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
   expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
@@ -126,7 +132,8 @@ test('origin: storage; mode: dark', () => {
 });
 
 test('storage event', () => {
-  const store = setupTest({ preferredColorMode: 'light' });
+  setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
@@ -157,7 +164,8 @@ test('storage event', () => {
 });
 
 test('system color scheme change', () => {
-  const store = setupTest({ preferredColorMode: 'light', storedColorMode: 'light' });
+  setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'light' });
+  const store = defineColorModeStore();
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
@@ -177,7 +185,8 @@ test('system color scheme change', () => {
 });
 
 test('listener', () => {
-  const store = setupTest({ preferredColorMode: 'light' });
+  setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
 
   const listener = vi.fn();
   const unsubscribe = store.subscribe(listener);
@@ -195,4 +204,37 @@ test('listener', () => {
   expect(listener).toHaveBeenCalledTimes(1);
 
   store.dispose();
+});
+
+test('ColorModePicker', async () => {
+  setupEnvironment({ preferredColorMode: 'light' });
+  render(
+    <ColorModeProvider store={defineColorModeStore()}>
+      <ColorModePicker />
+    </ColorModeProvider>,
+  );
+
+  const colorModePicker = screen.getByRole('button', { name: 'system' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(colorModePicker).toBeEnabled();
+
+  await userEvent.click(colorModePicker);
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
+  expect(colorModePicker).toHaveTextContent('light');
+
+  await userEvent.click(colorModePicker);
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
+  expect(colorModePicker).toHaveTextContent('dark');
+
+  await userEvent.click(colorModePicker);
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(colorModePicker).toHaveTextContent('system');
 });
