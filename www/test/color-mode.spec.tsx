@@ -1,106 +1,198 @@
-import { beforeEach, expect, test, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import { afterEach, expect, test, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 
-import { ColorModePicker } from '../src/components/ColorModePicker';
+import { defineColorModeStore } from '../src/components/color-mode';
 
-beforeEach(() => {
-  ColorModePicker.clearStoredColorModeStrategy();
-  vi.restoreAllMocks();
+const STORAGE_KEY = 'recharts-color-mode';
+
+afterEach(() => {
+  localStorage.removeItem(STORAGE_KEY);
+  cleanup();
 });
 
-function setupTest() {
-  ColorModePicker.setInitialColorMode();
-  return render(<ColorModePicker />);
+function setupTest(props: { preferredColorMode: 'light' | 'dark'; storedColorMode?: 'light' | 'dark' }) {
+  if (props.storedColorMode) {
+    localStorage.setItem(STORAGE_KEY, props.storedColorMode);
+  }
+  let { preferredColorMode } = props;
+  const listeners = new Set<(e: MediaQueryListEvent) => void>();
+  vi.stubGlobal('matchMedia', (query: string) => {
+    return {
+      matches: query.includes(preferredColorMode),
+      addEventListener(_type: string, listener: (e: MediaQueryListEvent) => void) {
+        listeners.add(listener);
+      },
+      removeEventListener(_type: string, listener: (e: MediaQueryListEvent) => void) {
+        listeners.delete(listener);
+      },
+      dispatchEvent() {
+        preferredColorMode = preferredColorMode === 'light' ? 'dark' : 'light';
+        listeners.forEach(listener => {
+          listener({ matches: query.includes(preferredColorMode) } as MediaQueryListEvent);
+        });
+      },
+    };
+  });
+  return defineColorModeStore();
 }
 
-test('prefers light', async () => {
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: query === '(prefers-color-scheme: light)',
-      addListener: () => {},
-      removeListener: () => {},
-    };
+test('origin: system; mode: light', () => {
+  const store = setupTest({ preferredColorMode: 'light' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'light',
   });
-  setupTest();
 
-  const colorModePicker = screen.getByRole('button', { name: 'system' });
-  expect(colorModePicker).toBeEnabled();
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'light');
+  store.dispatch('dark');
 
-  await userEvent.click(colorModePicker);
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'dark',
+  });
 
-  expect(colorModePicker).toHaveTextContent('dark');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  store.dispose();
 });
 
-test('prefers dark', async () => {
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: query === '(prefers-color-scheme: dark)',
-      addListener: () => {},
-      removeListener: () => {},
-    };
+test('origin: system; mode: dark', () => {
+  const store = setupTest({ preferredColorMode: 'dark' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'dark',
   });
-  setupTest();
 
-  const colorModePicker = screen.getByRole('button', { name: 'system' });
-  expect(colorModePicker).toBeEnabled();
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  store.dispatch('light');
 
-  await userEvent.click(colorModePicker);
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'light',
+  });
 
-  expect(colorModePicker).toHaveTextContent('light');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'light');
+  store.dispose();
 });
 
-test('stored mode: light', async () => {
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: query === '(prefers-color-scheme: dark)',
-      addListener: () => {},
-      removeListener: () => {},
-    };
+test('origin: storage; mode: light', () => {
+  const store = setupTest({ preferredColorMode: 'dark', storedColorMode: 'light' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'light',
   });
-  ColorModePicker.setStoredColorModeStrategy('light');
-  setupTest();
 
-  const colorModePicker = screen.getByRole('button', { name: 'light' });
-  expect(colorModePicker).toBeEnabled();
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'light');
+  store.dispatch('system');
 
-  await userEvent.click(colorModePicker);
-  expect(colorModePicker).toHaveTextContent('dark');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'dark',
+  });
 
-  await userEvent.click(colorModePicker);
-  expect(colorModePicker).toHaveTextContent('system');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  store.dispose();
 });
 
-test('stored mode: dark', async () => {
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: query === '(prefers-color-scheme: dark)',
-      addListener: () => {},
-      removeListener: () => {},
-    };
+test('origin: storage; mode: dark', () => {
+  const store = setupTest({ preferredColorMode: 'light', storedColorMode: 'dark' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'dark',
   });
-  ColorModePicker.setStoredColorModeStrategy('dark');
-  setupTest();
 
-  const colorModePicker = screen.getByRole('button', { name: 'dark' });
-  expect(colorModePicker).toBeEnabled();
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  store.dispatch('system');
 
-  await userEvent.click(colorModePicker);
-  expect(colorModePicker).toHaveTextContent('system');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'dark');
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'light',
+  });
 
-  await userEvent.click(colorModePicker);
-  expect(colorModePicker).toHaveTextContent('light');
-  expect(document.querySelector('[data-mode]')).toHaveAttribute('data-mode', 'light');
+  store.dispose();
 });
 
-test.todo('on change system preference mode updates accordingly');
+test('storage event', () => {
+  const store = setupTest({ preferredColorMode: 'light' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'light',
+  });
+
+  localStorage.setItem(STORAGE_KEY, 'dark');
+  window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'dark',
+  });
+
+  localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'light',
+  });
+
+  store.dispose();
+});
+
+test('system color scheme change', () => {
+  const store = setupTest({ preferredColorMode: 'light', storedColorMode: 'light' });
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
+  expect(store.getSnapshot()).toEqual({
+    origin: 'storage',
+    mode: 'light',
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').dispatchEvent(new Event('change'));
+
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(store.getSnapshot()).toEqual({
+    origin: 'system',
+    mode: 'dark',
+  });
+});
+
+test('listener', () => {
+  const store = setupTest({ preferredColorMode: 'light' });
+
+  const listener = vi.fn();
+  const unsubscribe = store.subscribe(listener);
+  expect(listener).not.toHaveBeenCalled();
+
+  store.dispatch('dark');
+  expect(listener).toHaveBeenCalledTimes(1);
+  expect(listener).toHaveBeenCalledWith({
+    origin: 'storage',
+    mode: 'dark',
+  });
+
+  unsubscribe();
+  store.dispatch('light');
+  expect(listener).toHaveBeenCalledTimes(1);
+
+  store.dispose();
+});
