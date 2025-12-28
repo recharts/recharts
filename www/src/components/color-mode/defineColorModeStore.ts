@@ -43,6 +43,12 @@ function getColorModeState(): ColorModeState {
   } as const;
 }
 function updateColorModeInDOM() {
+  /**
+   * We avoid polluting the DOM when the feature is disabled.
+   */
+  if (import.meta.env.VITE_IS_DARKMODE_ENABLED !== 'true') {
+    return;
+  }
   document.documentElement.setAttribute('data-mode', getColorModeState().mode);
 }
 
