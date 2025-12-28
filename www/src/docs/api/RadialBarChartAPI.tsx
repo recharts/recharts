@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const PieChartAPI: ApiDoc = {
-  name: 'PieChart',
+export const RadialBarChartAPI: ApiDoc = {
+  name: 'RadialBarChart',
   props: [
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
     {
@@ -147,7 +147,7 @@ export const PieChartAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'centric',
+      defaultVal: 'radial',
     },
     {
       name: 'margin',

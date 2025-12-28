@@ -1303,11 +1303,15 @@ interface BaseChartProps extends ExternalMouseEvents {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   width?: number | Percent;
   /**
    * The height of chart container.
    * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   height?: number | Percent;
   id?: string;
@@ -1351,6 +1355,8 @@ interface BaseChartProps extends ExternalMouseEvents {
    * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
    * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
    * @default false
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   responsive?: boolean;
 }
@@ -1411,8 +1417,22 @@ export interface CartesianChartProps extends BaseChartProps {
 }
 
 export interface PolarChartProps extends BaseChartProps {
+  /**
+   * The gap between two bar categories, which can be a percent value or a fixed value.
+   *
+   * @defaultValue 10%
+   */
   barCategoryGap?: number | string;
+  /**
+   * The gap between two bars in the same category.
+   *
+   * @defaultValue 4
+   */
   barGap?: number | string;
+  /**
+   * The width or height of each bar. If the barSize is not specified, the size of the
+   * bar will be calculated by the barCategoryGap, barGap and the quantity of bar groups.
+   */
   barSize?: number | string;
   /**
    * The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of width.
@@ -1430,7 +1450,8 @@ export interface PolarChartProps extends BaseChartProps {
    */
   endAngle?: number;
   /**
-   * The inner radius of first circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * The inner radius of the chart.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    * @defaultValue 0
    */
   innerRadius?: number | string;
@@ -1440,7 +1461,8 @@ export interface PolarChartProps extends BaseChartProps {
   layout?: PolarLayout;
   maxBarSize?: number;
   /**
-   * The outer radius of last circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * The outer radius of the chart.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    * @defaultValue 80%
    */
   outerRadius?: number | string;
