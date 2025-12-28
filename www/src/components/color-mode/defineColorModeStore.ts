@@ -1,6 +1,6 @@
 type ColorMode = 'light' | 'dark';
 type ColorModeOrigin = 'system' | 'storage';
-interface ColorModeState {
+export interface ColorModeState {
   mode: ColorMode;
   origin: ColorModeOrigin;
 }
@@ -23,7 +23,6 @@ function setStoredColorMode(mode: ColorMode) {
   try {
     localStorage.setItem(STORAGE_KEY, mode);
   } catch {
-    /* istanbul ignore next */
     // eslint-disable-next-line no-console
     console.warn('Failed to set color mode in localStorage, skipping.');
   }
@@ -32,7 +31,6 @@ function clearStoredColorMode() {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch {
-    /* istanbul ignore next */
     // eslint-disable-next-line no-console
     console.warn('Failed to clear color mode in localStorage, skipping.');
   }
@@ -63,7 +61,6 @@ export function defineColorModeStore() {
     });
   };
   const handleStoredColorModeChange = (e: StorageEvent) => {
-    /* istanbul ignore next */
     if (e.key !== STORAGE_KEY) {
       return;
     }

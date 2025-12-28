@@ -1,9 +1,9 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
-import { ColorModePicker, defineColorModeStore } from '../src/components/color-mode';
+import { ColorModePicker, ColorModeWatcher, defineColorModeStore } from '../src/components/color-mode';
 import { ColorModeProvider } from '../src/components/color-mode/ColorModeProvider';
 
 const STORAGE_KEY = 'recharts-color-mode';
@@ -237,4 +237,34 @@ test('ColorModePicker', async () => {
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   expect(colorModePicker).toHaveTextContent('system');
+});
+
+test('ColorModeWatcher', () => {
+  setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider store={store}>
+      <ColorModeWatcher
+        render={state => {
+          return (
+            <h1>
+              origin: {state.origin}; mode: {state.mode}
+            </h1>
+          );
+        }}
+      />
+    </ColorModeProvider>,
+  );
+  const heading = screen.getByRole('heading', { name: 'origin: system; mode: light' });
+  expect(heading).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch('dark');
+  });
+  expect(heading).toHaveTextContent('origin: storage; mode: dark');
+
+  act(() => {
+    store.dispatch('system');
+  });
+  expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
 });
