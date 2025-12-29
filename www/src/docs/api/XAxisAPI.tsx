@@ -313,7 +313,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'padding',
-      type: 'Object | "gap" | "no-gap"',
+      type: '"gap" | Object | "no-gap"',
       isOptional: true,
       desc: {
         'en-US': (

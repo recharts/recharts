@@ -189,8 +189,8 @@ export const ReferenceLineAPI: ApiDoc = {
       <section>
         <p>Draws a line on the chart connecting two points.</p>
         <p>
-          This component, unlike line, is aware of the cartesian coordinate system, so you specify the area by using
-          data coordinates instead of pixels.
+          This component, unlike <code>&lt;line&gt;</code>, is aware of the cartesian coordinate system, so you specify
+          the dimensions by using data coordinates instead of pixels.
         </p>
         <p>ReferenceLine will calculate the pixels based on the provided data coordinates.</p>
         <p>

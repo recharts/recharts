@@ -240,7 +240,7 @@ export const referenceDotDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
 /**
- * Draws a circle on the chart to highlight a specific range.
+ * Draws a circle on the chart to highlight a specific point.
  *
  * This component, unlike Dot or circle, is aware of the cartesian coordinate system,
  * so you specify its center by using data coordinates instead of pixels.
