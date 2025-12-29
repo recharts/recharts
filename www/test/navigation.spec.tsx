@@ -49,11 +49,15 @@ describe('ColorModePicker', () => {
   it('should render on both mobile and desktop navs', async () => {
     vi.stubEnv('VITE_IS_DARKMODE_ENABLED', 'true');
     vi.stubGlobal('matchMedia', (query: string) => ({
-      maches: query.includes('dark'),
+      media: query,
+      matches: query.includes('dark'),
       addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() {},
     }));
+    const store = defineColorModeStore();
     render(
-      <ColorModeProvider store={defineColorModeStore()}>
+      <ColorModeProvider store={store}>
         <MemoryRouter>
           <Navigation />
         </MemoryRouter>
@@ -71,5 +75,6 @@ describe('ColorModePicker', () => {
       expect(picker).toHaveTextContent('light');
     });
     expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+    store.dispose();
   });
 });

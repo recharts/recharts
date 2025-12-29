@@ -190,6 +190,8 @@ test('system color scheme change', () => {
     origin: 'system',
     mode: 'dark',
   });
+
+  store.dispose();
 });
 
 test('listener', () => {
@@ -216,8 +218,9 @@ test('listener', () => {
 
 test('ColorModePicker', async () => {
   setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
   render(
-    <ColorModeProvider store={defineColorModeStore()}>
+    <ColorModeProvider store={store}>
       <ColorModePicker />
     </ColorModeProvider>,
   );
@@ -245,6 +248,8 @@ test('ColorModePicker', async () => {
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   expect(colorModePicker).toHaveTextContent('system');
+
+  store.dispose();
 });
 
 test('ColorModeWatcher', () => {
@@ -275,4 +280,6 @@ test('ColorModeWatcher', () => {
     store.dispatch('system');
   });
   expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
+
+  store.dispose();
 });
