@@ -242,13 +242,13 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
 /**
  * Draws a circle on the chart to highlight a specific point.
  *
- * This component, unlike Dot or circle, is aware of the cartesian coordinate system,
+ * This component, unlike {@link Dot} or {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/circle circle}, is aware of the cartesian coordinate system,
  * so you specify its center by using data coordinates instead of pixels.
  *
  * ReferenceDot will calculate the pixels based on the provided data coordinates.
  *
  * If you prefer to render dots using pixels rather than data coordinates,
- * consider using the `<Dot>` component instead.
+ * consider using the {@link Dot} component instead.
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext

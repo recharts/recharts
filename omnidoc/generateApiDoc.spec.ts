@@ -31,6 +31,33 @@ describe('processInlineLinks', () => {
     const input = 'Just plain text without any links';
     expect(processInlineLinks(input)).toBe(input);
   });
+
+  it('should convert {@link ComponentName} to relative link for known Recharts components', () => {
+    const reader = new ProjectDocReader();
+    const componentNames = reader.getPublicComponentNames();
+
+    const input = 'This component uses {@link Rectangle} for rendering';
+    const expected = 'This component uses <a href="/api/Rectangle/">Rectangle</a> for rendering';
+    expect(processInlineLinks(input, componentNames)).toBe(expected);
+  });
+
+  it('should handle multiple component links in the same text', () => {
+    const reader = new ProjectDocReader();
+    const componentNames = reader.getPublicComponentNames();
+
+    const input = 'Use {@link Rectangle} or {@link Line} components';
+    const expected = 'Use <a href="/api/Rectangle/">Rectangle</a> or <a href="/api/Line/">Line</a> components';
+    expect(processInlineLinks(input, componentNames)).toBe(expected);
+  });
+
+  it('should not convert {@link ComponentName} if it is not a Recharts component', () => {
+    const reader = new ProjectDocReader();
+    const componentNames = reader.getPublicComponentNames();
+
+    const input = 'See {@link SomeUnknownComponent}';
+    const expected = 'See <a href="SomeUnknownComponent">SomeUnknownComponent</a>';
+    expect(processInlineLinks(input, componentNames)).toBe(expected);
+  });
 });
 
 describe('generateApiDoc', () => {

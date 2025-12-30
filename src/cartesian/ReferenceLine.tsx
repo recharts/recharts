@@ -348,13 +348,13 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
 /**
  * Draws a line on the chart connecting two points.
  *
- * This component, unlike `<line>`, is aware of the cartesian coordinate system,
+ * This component, unlike {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line line}, is aware of the cartesian coordinate system,
  * so you specify the dimensions by using data coordinates instead of pixels.
  *
  * ReferenceLine will calculate the pixels based on the provided data coordinates.
  *
  * If you prefer to render using pixels rather than data coordinates,
- * consider using the `<line>` SVG element instead.
+ * consider using the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line line SVG element} instead.
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext

@@ -161,12 +161,21 @@ function buildContextMap(
 /**
  * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags.
  * Handles both {@link url} and {@link url text} formats.
+ * If the link is a single word that matches a Recharts component name, it creates a relative link to that component's API page.
  */
-export function processInlineLinks(text: string): string {
+export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
   // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
   // The regex captures: url and optional text
   return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]+))?\}/g, (match, url, t) => {
     const displayText = t?.trim() || url;
+
+    // Check if the URL is a single word (no protocol, no slashes) and matches a component name
+    if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
+      // It's a Recharts component reference - create a relative link
+      return `<a href="/api/${url}/">${displayText}</a>`;
+    }
+
+    // Otherwise, use the URL as-is
     return `<a href="${url}">${displayText}</a>`;
   });
 }
@@ -179,8 +188,10 @@ async function generateComponentDescription(
   if (componentJsDoc) {
     const desc: { [locale: string]: string } = {};
     if (componentJsDoc.text) {
+      // Get all component names to resolve internal component references
+      const componentNames = projectReader.getPublicComponentNames();
       // Process inline {@link} tags before passing to marked
-      const textWithLinks = processInlineLinks(componentJsDoc.text);
+      const textWithLinks = processInlineLinks(componentJsDoc.text, componentNames);
       desc['en-US'] = await marked.parse(textWithLinks);
     }
     // Check for @since tag

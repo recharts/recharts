@@ -176,12 +176,12 @@ export const defaultRectangleProps = {
 } as const satisfies Partial<Props>;
 
 /**
- * Renders a rectangle element. Unlike the `<rect>` SVG element, this component supports rounded corners
+ * Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
  * and animation.
  *
  * This component accepts X and Y coordinates in pixels.
  * If you need to position the rectangle based on your chart's data,
- * consider using the `<ReferenceArea>` component instead.
+ * consider using the {@link ReferenceArea} component instead.
  *
  * @param rectangleProps
  * @constructor
