@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
 import { isPercent } from '../util/DataUtils';
 
-import { Percent } from '../util/types';
-import { Props } from './ResponsiveContainer';
+import type { Percent } from '../util/types';
+import type { Props } from './ResponsiveContainer';
 
 export const defaultResponsiveContainerProps = {
   width: '100%',
