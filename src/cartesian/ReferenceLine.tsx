@@ -55,7 +55,7 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceLine will internally calculate the correct pixel position.
    *
-   * @example <ReferenceLine x="Page D" />
+   * @example <ReferenceLine y="Page D" />
    */
   y?: number | string;
 
@@ -65,7 +65,7 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceLine will internally calculate the correct pixel position.
    *
-   * @example <ReferenceLine y="Monday" />
+   * @example <ReferenceLine x="Monday" />
    */
   x?: number | string;
 

@@ -120,7 +120,7 @@ export const ReferenceLineAPI: ApiDoc = {
           </section>
         ),
       },
-      format: ['<ReferenceLine y="Monday" />'],
+      format: ['<ReferenceLine x="Monday" />'],
     },
     {
       name: 'xAxisId',
@@ -150,7 +150,7 @@ export const ReferenceLineAPI: ApiDoc = {
           </section>
         ),
       },
-      format: ['<ReferenceLine x="Page D" />'],
+      format: ['<ReferenceLine y="Page D" />'],
     },
     {
       name: 'yAxisId',
