@@ -27,9 +27,14 @@ describe('cross-component prop consistency', () => {
 
   /**
    * Some props are legit different across components due to their unique context/use case.
-   * We can list those exceptions here to skip them in the test.
+   * We can list those exceptions here to group them together and run similarity checks only within the group.
    */
-  type CommentSimilarityException = {
+  type CommentSimilarityGroup = {
+    /**
+     * All components in this array are grouped together for prop comment similarity checks.
+     * The test will only compare comments among these components for the specified props.
+     * Use '*' to indicate all components.
+     */
     components: ReadonlyArray<string>;
     props: ReadonlyArray<string>;
     reason: string;
@@ -41,7 +46,7 @@ describe('cross-component prop consistency', () => {
    * Only add new items here if there is a semantically valid reason to have different comments.
    * Do not use this as a workaround for inconsistent documentation!
    */
-  const exceptions: ReadonlyArray<CommentSimilarityException> = [
+  const exceptions: ReadonlyArray<CommentSimilarityGroup> = [
     {
       components: ['*'],
       props: ['children'],
@@ -53,16 +58,42 @@ describe('cross-component prop consistency', () => {
       reason: 'multiple components have hide, the behaviour is different for each',
     },
     {
+      components: ['CartesianGrid'],
+      props: ['width', 'height'],
+      reason: 'CartesianGrid dimensions default to chart dimensions, unlike other components',
+    },
+    {
+      components: ['YAxis'],
+      props: ['width'],
+      reason: 'YAxis width allows "auto" value, unlike other components',
+    },
+    {
+      components: ['Brush'],
+      props: ['width'],
+      reason: 'Brush width defaults to chart width, unlike other components',
+    },
+    {
+      components: ['ErrorBar'],
+      props: ['width'],
+      reason: 'ErrorBar width describes the width of the serifs, not the whole component',
+    },
+    {
       components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
       props: ['width', 'height'],
       reason: 'Many components assign different meanings to width/height',
     },
     {
-      components: ['Cross', 'ReferenceDot', 'ReferenceLine'],
+      components: ['Dot', 'Cross'],
       props: ['x', 'y'],
-      reason: `Cross and ReferenceDot positions define the center,
+      reason: `This coordinate defines the center,
       which is different from other components where x/y coordinates define the top-left corner.
       This prop should better be named "cx", "cy" instead.`,
+    },
+    {
+      components: ['ReferenceDot', 'ReferenceLine'],
+      props: ['x', 'y'],
+      reason: `Reference positions are defined using domain values,
+      unlike most other components where x/y are pixel coordinates.`,
     },
     {
       components: ['Rectangle'],
@@ -121,9 +152,14 @@ describe('cross-component prop consistency', () => {
       reason: 'Pie has a custom label implementation',
     },
     {
-      components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
+      components: ['Dot', 'SunburstChart'],
       props: ['cx', 'cy'],
       reason: 'These components do not support percentages unlike other components',
+    },
+    {
+      components: ['PolarAngleAxis', 'PolarGrid'],
+      props: ['cx', 'cy'],
+      reason: 'In these components, cx/cy are optional and calculated from the chart context',
     },
     {
       components: ['Pie'],
@@ -226,18 +262,24 @@ describe('cross-component prop consistency', () => {
     }
     const props = projectReader.getRechartsPropsOf(component);
     for (const prop of props) {
-      if (
-        exceptions.some(
-          ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.props.includes(prop),
-        )
-      ) {
-        continue;
+      const exceptionIndex = exceptions.findIndex(
+        ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.props.includes(prop),
+      );
+
+      let key = prop;
+      if (exceptionIndex > -1) {
+        const exception = exceptions[exceptionIndex];
+        if (exception.components.includes('*')) {
+          continue;
+        }
+        key = `${prop} (consistency group: ${exception.components.join(', ')})`;
       }
+
       const comment = projectReader.getCommentOf(component, prop);
-      if (!propToComponents.has(prop)) {
-        propToComponents.set(prop, []);
+      if (!propToComponents.has(key)) {
+        propToComponents.set(key, []);
       }
-      propToComponents.get(prop)!.push({ component, comment, propName: prop });
+      propToComponents.get(key)!.push({ component, comment, propName: prop });
     }
   }
 
@@ -250,7 +292,7 @@ describe('cross-component prop consistency', () => {
     .map(([propName]) => propName);
 
   describe.each(sharedPropsWithComments)('shared prop "%s" should have similar JSDoc comments', propName => {
-    const components = propToComponents.get(propName)?.filter(({ propName: p }) => p === propName);
+    const components = propToComponents.get(propName);
     if (components == null) {
       throw new Error(`No components found for prop "${propName}"`);
     }
