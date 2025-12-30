@@ -20,7 +20,6 @@ import { ReferenceLineAPI } from './ReferenceLineAPI';
 import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
-import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
 import { FunnelAPI } from './FunnelAPI';
@@ -52,6 +51,7 @@ import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
+import { BrushAPI } from './BrushAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
@@ -74,7 +74,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   XAxis: XAxisAPI,
   YAxis: YAxisAPI,
   ZAxis: ZAxisAPI,
-  Brush,
+  Brush: BrushAPI,
   CartesianAxis,
   CartesianGrid,
   Funnel: FunnelAPI,
