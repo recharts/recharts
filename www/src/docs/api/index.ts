@@ -37,7 +37,6 @@ import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI } from './PolarGridAPI';
 import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 
-import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
 import { DotAPI as Dot } from './Dot';
 import { PolygonAPI } from './PolygonAPI';
@@ -52,6 +51,7 @@ import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI.tsx';
+import { CrossAPI } from './CrossAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
@@ -99,7 +99,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ReferenceArea: ReferenceAreaAPI,
   ErrorBar: ErrorBarAPI,
 
-  Cross,
+  Cross: CrossAPI,
   Curve,
   Dot,
   Polygon: PolygonAPI,

@@ -26,6 +26,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Area',
   'BarStack',
   'Brush',
+  'Cross',
   'Customized',
   'ErrorBar',
   'Funnel',
