@@ -192,7 +192,7 @@ export const SankeyAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Whether to sort the nodes on th y axis, or to display them as user-defined.</p>
+            <p>Whether to sort the nodes on the y axis, or to display them as user-defined.</p>
           </section>
         ),
       },
