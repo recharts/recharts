@@ -206,7 +206,7 @@ interface AreaProps extends ZIndexable {
   hide?: boolean;
   /**
    * Unique identifier of this component.
-   * Used as a HTML attribute `id`, and also to identify this element internally.
+   * Used as an HTML attribute `id`, and also to identify this element internally.
    *
    * If undefined, Recharts will generate a unique ID automatically.
    */
@@ -221,11 +221,12 @@ interface AreaProps extends ZIndexable {
   isRange?: boolean;
   /**
    * Renders one label for each data point. Options:
-   * - `true`: renders default labels;
-   * - `false`: no labels are rendered;
-   * - `object`: the props of LabelList component;
-   * - `ReactElement`: a custom label element;
-   * - `function`: a render function of custom label.
+   *
+   * - `true`: renders default labels
+   * - `false`: no labels are rendered
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
    *
    * @defaultValue false
    */

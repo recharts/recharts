@@ -80,22 +80,28 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
 interface RectangleProps {
   className?: string;
   /**
+   * The x-coordinate of top left point of the rectangle.
    * @defaultValue 0
    */
   x?: number;
   /**
+   * The y-coordinate of top left point of the rectangle.
    * @defaultValue 0
    */
   y?: number;
   /**
+   * The width of rectangle in pixels.
    * @defaultValue 0
    */
   width?: number;
   /**
+   * The height of rectangle in pixels.
    * @defaultValue 0
    */
   height?: number;
   /**
+   * If you provide a single number, it applies to all four corners.
+   * If you provide an array of four numbers, they apply to top-left, top-right, bottom-right, bottom-left corners respectively.
    * @defaultValue 0
    */
   radius?: RectRadius;
@@ -119,6 +125,39 @@ interface RectangleProps {
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+
+  /**
+   * The customized event handler of click on the rectangle
+   */
+  onClick?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mousedown on the rectangle
+   */
+  onMouseDown?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseup on the rectangle
+   */
+  onMouseUp?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mousemove on the rectangle
+   */
+  onMouseMove?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseover on the rectangle
+   */
+  onMouseOver?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseout on the rectangle
+   */
+  onMouseOut?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseenter on the rectangle
+   */
+  onMouseEnter?: (e: React.MouseEvent<SVGPathElement>) => void;
+  /**
+   * The customized event handler of mouseleave on the rectangle
+   */
+  onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
@@ -128,9 +167,6 @@ export const defaultRectangleProps = {
   y: 0,
   width: 0,
   height: 0,
-  // The radius of border
-  // The radius of four corners when radius is a number
-  // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
   radius: 0,
   isAnimationActive: false,
   isUpdateAnimationActive: false,
@@ -139,6 +175,17 @@ export const defaultRectangleProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
+/**
+ * Renders a rectangle element. Unlike the `<rect>` SVG element, this component supports rounded corners
+ * and animation.
+ *
+ * This component accepts X and Y coordinates in pixels.
+ * If you need to position the rectangle based on your chart's data,
+ * consider using the `<ReferenceArea>` component instead.
+ *
+ * @param rectangleProps
+ * @constructor
+ */
 export const Rectangle: React.FC<Props> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
   const pathRef = useRef<SVGPathElement>(null);

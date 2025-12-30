@@ -6,7 +6,7 @@ import { ReactElement, SVGProps, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
-import { IfOverflow } from '../util/IfOverflow';
+import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { rectWithCoords } from '../util/CartesianUtils';
 import { CartesianViewBoxRequired, Coordinate } from '../util/types';
@@ -34,6 +34,8 @@ import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/Ca
  *
  * Likewise for numbers. If your x-axis goes from 0 to 100,
  * and you want the line to end at 50, you would provide `50` here.
+ *
+ * @inline
  */
 export type ReferenceLineSegment = readonly [
   {
@@ -46,48 +48,29 @@ export type ReferenceLineSegment = readonly [
   },
 ];
 
-interface ReferenceLineProps extends ZIndexable {
-  ifOverflow?: IfOverflow;
-
+interface ReferenceLineProps extends Overflowable, ZIndexable {
   /**
-   * The y-coordinate of the reference line in data space.
-   * This value is used when you want to draw a horizontal reference line.
+   * If defined, renders a horizontal line on this position.
    *
-   * You should provide a value that corresponds to the data domain of the y-axis.
-   * So you would provide a value of `100` to indicate the data value `100`
-   * and then recharts will convert that to pixels.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceLine will internally calculate the correct pixel position.
    *
-   * If you provide this prop, then the `x` and `segment` props will be ignored.
+   * @example <ReferenceLine x="Page D" />
    */
   y?: number | string;
 
   /**
-   * The x-coordinate of the reference line in data space.
-   * This value is used when you want to draw a vertical reference line.
+   * If defined, renders a vertical line on this position.
    *
-   * You should provide a value that corresponds to the data domain of the x-axis.
-   * So you would provide a value of `Page A` to indicate the data value `Page A`
-   * and then recharts will convert that to pixels.
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceLine will internally calculate the correct pixel position.
    *
-   * This prop is ignored if the `y` prop is provided.
-   * If you provide this prop, then the `segment` prop will be ignored.
+   * @example <ReferenceLine y="Monday" />
    */
   x?: number | string;
 
   /**
-   * An array of two points that define the start and end of a line segment.
-   * Each point is an object with `x` and `y` properties.
-   * If this array has other than two points, it will be ignored.
-   *
-   * These coordinates are in data space, meaning that you should provide
-   * values that correspond to the data domain of the axes.
-   * So you would provide a value of `Page A` to indicate the data value `Page A`
-   * and then recharts will convert that to pixels.
-   *
-   * Likewise for numbers. If your x-axis goes from 0 to 100,
-   * and you want the line to end at 50, you would provide `50` here.
-   *
-   * This prop is only used if both `x` and `y` props are undefined.
+   * Tuple of coordinates. If defined, renders a diagonal line segment.
    */
   segment?: ReferenceLineSegment;
 
@@ -100,14 +83,49 @@ interface ReferenceLineProps extends ZIndexable {
   position?: BandPosition;
 
   className?: number | string;
+  /**
+   * The id of y-axis which is corresponding to the data.
+   * Required when there are multiple YAxes.
+   * @defaultValue 0
+   */
   yAxisId?: number | string;
+  /**
+   * The id of x-axis which is corresponding to the data.
+   * Required when there are multiple XAxes.
+   * @defaultValue 0
+   */
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  /**
+   * Renders a single label.
+   *
+   * - `false`: no labels are rendered
+   * - `string` | `number`: the content of the label
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
+   *
+   * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
+   */
   label?: ImplicitLabelType;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 400
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+  /**
+   * The width of the stroke
+   * @defaultValue 1
+   */
+  strokeWidth?: number | string;
 }
 
 /**
@@ -317,6 +335,7 @@ export const referenceLineDefaultProps = {
   xAxisId: 0,
   yAxisId: 0,
   fill: 'none',
+  label: false,
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
@@ -327,7 +346,18 @@ export const referenceLineDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
 
 /**
+ * Draws a line on the chart connecting two points.
+ *
+ * This component, unlike `<line>`, is aware of the cartesian coordinate system,
+ * so you specify the dimensions by using data coordinates instead of pixels.
+ *
+ * ReferenceLine will calculate the pixels based on the provided data coordinates.
+ *
+ * If you prefer to render using pixels rather than data coordinates,
+ * consider using the `<line>` SVG element instead.
+ *
  * @provides CartesianLabelContext
+ * @consumes CartesianChartContext
  */
 export function ReferenceLine(outsideProps: Props) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);

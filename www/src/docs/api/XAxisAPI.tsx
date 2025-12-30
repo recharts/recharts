@@ -225,15 +225,31 @@ export const XAxisAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              Defines a single label for the whole axis. This is not controlling tick labels. This prop renders one
-              label in the center of the axis line. Useful for labeling the axis as a whole, like &quot;Time (in
-              seconds)&quot; or &quot;Distance (in meters)&quot;.
+              Defines a single label for the whole axis. This prop renders one label in the center of the axis line.
+              Useful for labeling the axis as a whole, like &quot;Time (in seconds)&quot; or &quot;Distance (in
+              meters)&quot;.
             </p>
             <p>
-              If set a string or a number, default label will be drawn, and the option is content. If set a React
-              element, the option is the custom react element of drawing label. If an object, the option is the props of
-              a new Label instance. If set a function, the function will be called to render customized label.
+              This is not controlling tick labels. If you want to customize tick labels, please see{' '}
+              <code>tickFormatter</code> or <code>tick</code> props.
             </p>
+            <ul>
+              <li>
+                <code>false</code>: no label is rendered
+              </li>
+              <li>
+                <code>string</code> | <code>number</code>: the content of the label
+              </li>
+              <li>
+                <code>object</code>: the props of LabelList component
+              </li>
+              <li>
+                <code>ReactElement</code>: a custom label element
+              </li>
+              <li>
+                <code>function</code>: a render function of custom label
+              </li>
+            </ul>
           </section>
         ),
       },
@@ -297,7 +313,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'padding',
-      type: 'Object | "gap" | "no-gap"',
+      type: '"gap" | Object | "no-gap"',
       isOptional: true,
       desc: {
         'en-US': (

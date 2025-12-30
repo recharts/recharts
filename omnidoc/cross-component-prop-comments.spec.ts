@@ -31,7 +31,7 @@ describe('cross-component prop consistency', () => {
    */
   type CommentSimilarityException = {
     components: ReadonlyArray<string>;
-    prop: string;
+    props: ReadonlyArray<string>;
     reason: string;
   };
 
@@ -44,171 +44,165 @@ describe('cross-component prop consistency', () => {
   const exceptions: ReadonlyArray<CommentSimilarityException> = [
     {
       components: ['*'],
-      prop: 'children',
+      props: ['children'],
       reason: 'Children comments vary widely based on component purpose',
     },
     {
       components: ['*'],
-      prop: 'hide',
+      props: ['hide'],
       reason: 'multiple components have hide, the behaviour is different for each',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis'],
-      prop: 'height',
-      reason: 'Many components assign different meanings to height',
+      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
+      props: ['width', 'height'],
+      reason: 'Many components assign different meanings to width/height',
     },
     {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'YAxis'],
-      prop: 'width',
-      reason: 'Many components assign different meanings to width',
+      components: ['Cross', 'ReferenceDot', 'ReferenceLine'],
+      props: ['x', 'y'],
+      reason: `Cross and ReferenceDot positions define the center,
+      which is different from other components where x/y coordinates define the top-left corner.
+      This prop should better be named "cx", "cy" instead.`,
     },
     {
-      components: ['Cross'],
-      prop: 'x',
-      reason: 'Cross positions are defined differently than typical x-coordinates',
-    },
-    {
-      components: ['Cross'],
-      prop: 'y',
-      reason: 'Cross positions are defined differently than typical y-coordinates',
+      components: ['Rectangle'],
+      props: ['x', 'y'],
+      reason: 'x and y in Rectangle are required, unlike Brush where they are calculated internally.',
     },
     {
       components: ['Curve'],
-      prop: 'layout',
+      props: ['layout'],
       reason: 'Curve layout means something else than the chart layout.',
     },
     {
       components: ['DefaultLegendContent', 'Legend'],
-      prop: 'layout',
+      props: ['layout'],
       reason: 'Legend layout means something else than the chart layout.',
     },
     {
       components: ['BarStack'],
-      prop: 'stackId',
-      reason: 'This sets stackId for all Bars inside the BarStack and so it has different description',
+      props: ['stackId'],
+      reason: 'This sets stackId for all Bars inside the BarStack and so it has different description.',
+    },
+    {
+      components: ['BarStack'],
+      props: ['radius'],
+      reason: 'Applies radius to all Bars inside the BarStack, different context than usual',
     },
     {
       components: ['Label', 'LabelList'],
-      prop: 'id',
+      props: ['id'],
       reason: 'These ids are not generated automatically, unlike most other components',
     },
     {
       components: ['LabelList'],
-      prop: 'dataKey',
+      props: ['dataKey'],
       reason: 'LabelList dataKey has special complications compared to other components',
     },
     {
       components: ['Text'],
-      prop: 'width',
+      props: ['width'],
       reason: 'has extra details on automated wrapping',
     },
     {
       components: ['ErrorBar'],
-      prop: 'width',
-      reason: 'has different meaning than chart width',
-    },
-    {
-      components: ['ErrorBar'],
-      prop: 'height',
-      reason: 'has different meaning than chart height',
-    },
-    {
-      components: ['ErrorBar'],
-      prop: 'dataKey',
+      props: ['dataKey'],
       reason: 'has extra information about error bar data structure',
     },
     {
       components: ['Scatter'],
-      prop: 'shape',
+      props: ['shape'],
       // https://github.com/recharts/recharts/issues/1753
       reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
     },
     {
       components: ['Pie'],
-      prop: 'label',
+      props: ['label'],
       reason: 'Pie has a custom label implementation',
     },
     {
       components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
-      prop: 'cx',
-      reason: 'These components do not support percentages unlike other components',
-    },
-    {
-      components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
-      prop: 'cy',
+      props: ['cx', 'cy'],
       reason: 'These components do not support percentages unlike other components',
     },
     {
       components: ['Pie'],
-      prop: 'shape',
+      props: ['shape'],
       reason: 'Pie shape receives activeIndex prop but other components do not',
     },
     {
       components: ['Label'],
-      prop: 'content',
+      props: ['content'],
       reason: 'In other components, content is called N times. In Label, content is called once.',
     },
     {
       components: ['*'],
-      prop: 'type',
+      props: ['type'],
       reason: 'We have "type" in axes, and "type" in curves, with different meanings',
     },
     {
       components: ['PolarAngleAxis', 'PolarRadiusAxis'],
-      prop: 'radius',
+      props: ['radius'],
       reason:
         'Radius in polar charts means radius from center, unlike cartesian context where it means radius of the corner',
     },
     {
       components: ['PolarGrid'],
-      prop: 'innerRadius',
-      reason: 'Unlike other components, this can not be a percentage string',
-    },
-    {
-      components: ['PolarGrid'],
-      prop: 'outerRadius',
+      props: ['innerRadius', 'outerRadius'],
       reason: 'Unlike other components, this can not be a percentage string',
     },
     {
       components: ['PolarRadiusAxis'],
-      prop: 'angle',
+      props: ['angle'],
       reason:
         'PolarRadiusAxis angle means rotation of the whole axis, unlike other components where it means rotation of text',
     },
     {
       components: ['PolarAngleAxis'],
-      prop: 'ticks',
+      props: ['ticks'],
       reason: 'PolarAngleAxis ticks are different type for some reason, unlike other axis components',
     },
     {
       components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
-      prop: 'label',
+      props: ['label'],
       reason: 'Axis label renders one element, graphical items label render one per data point',
     },
     {
       components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
-      prop: 'name',
+      props: ['name'],
       reason: 'name does similar thing but from different point of view in axes vs graphical items',
     },
     {
       components: ['XAxis'],
-      prop: 'xAxisId',
+      props: ['xAxisId'],
       reason: 'Axis ID describes the axis itself, not a relation to other components',
     },
     {
       components: ['YAxis'],
-      prop: 'yAxisId',
+      props: ['yAxisId'],
       reason: 'Axis ID describes the axis itself, not a relation to other components',
     },
     {
       components: ['ZAxis'],
-      prop: 'zAxisId',
+      props: ['zAxisId'],
       reason: 'Axis ID describes the axis itself, not a relation to other components',
     },
     {
       components: ['PolarAngleAxis'],
-      prop: 'axisLine',
+      props: ['axisLine'],
       reason: 'Unlike other axes, PolarAngleAxis.axisLine does not accept a boolean value',
+    },
+    {
+      components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Pie'],
+      props: ['label'],
+      reason:
+        'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
+    },
+    {
+      components: ['ReferenceLine'],
+      props: ['position'],
+      reason: `ReferenceLine.position describes position relative to the band category,
+      unlike other components where position describes placement in the chart's coordinate system.`,
     },
   ];
 
@@ -227,7 +221,9 @@ describe('cross-component prop consistency', () => {
     const props = projectReader.getRechartsPropsOf(component);
     for (const prop of props) {
       if (
-        exceptions.some(ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.prop === prop)
+        exceptions.some(
+          ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.props.includes(prop),
+        )
       ) {
         continue;
       }

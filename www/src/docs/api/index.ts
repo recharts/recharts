@@ -6,7 +6,7 @@ import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './Sankey';
-import { RadialBarChartAPI } from './RadialBarChart';
+import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
 
@@ -16,9 +16,9 @@ import { ScatterAPI } from './ScatterAPI';
 import { XAxisAPI } from './XAxisAPI';
 import { YAxisAPI } from './YAxisAPI';
 import { ZAxisAPI } from './ZAxisAPI';
-import { ReferenceLineAPI as ReferenceLine } from './ReferenceLine';
-import { ReferenceDotAPI as ReferenceDot } from './ReferenceDot';
-import { ReferenceAreaAPI as ReferenceArea } from './ReferenceArea';
+import { ReferenceLineAPI } from './ReferenceLineAPI';
+import { ReferenceDotAPI } from './ReferenceDotAPI';
+import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
 import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
@@ -42,7 +42,7 @@ import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
 import { DotAPI as Dot } from './Dot';
 import { PolygonAPI } from './PolygonAPI';
-import { RectangleAPI as Rectangle } from './Rectangle';
+import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI as Sector } from './Sector';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import type { ApiDoc } from './types';
@@ -94,16 +94,16 @@ export const allApiDocs: Record<string, ApiDoc> = {
   PolarAngleAxis: PolarAngleAxisAPI,
   PolarGrid: PolarGridAPI,
   PolarRadiusAxis: PolarRadiusAxisAPI,
-  ReferenceLine,
-  ReferenceDot,
-  ReferenceArea,
+  ReferenceLine: ReferenceLineAPI,
+  ReferenceDot: ReferenceDotAPI,
+  ReferenceArea: ReferenceAreaAPI,
   ErrorBar: ErrorBarAPI,
 
   Cross,
   Curve,
   Dot,
   Polygon: PolygonAPI,
-  Rectangle,
+  Rectangle: RectangleAPI,
   Sector,
   Trapezoid,
 

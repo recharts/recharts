@@ -89,12 +89,12 @@ interface PieDef {
    */
   paddingAngle?: number;
   /**
-   * The inner radius of all the sectors.
+   * The inner radius of the sectors.
    * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    */
   innerRadius?: number | string;
   /**
-   * The outer radius of all the sectors.
+   * The outer radius of the sectors.
    * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    * Function should return a string percentage or number.
    */

@@ -187,7 +187,7 @@ export const PieAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The inner radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
+              The inner radius of the sectors. If set a percentage, the final value is obtained by multiplying the
               percentage of maxRadius which is calculated by the width, height, cx, cy.
             </p>
           </section>
@@ -334,7 +334,7 @@ export const PieAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The outer radius of all the sectors. If set a percentage, the final value is obtained by multiplying the
+              The outer radius of the sectors. If set a percentage, the final value is obtained by multiplying the
               percentage of maxRadius which is calculated by the width, height, cx, cy. Function should return a string
               percentage or number.
             </p>

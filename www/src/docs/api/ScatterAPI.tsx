@@ -118,7 +118,7 @@ export const ScatterAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              Unique identifier of this component. Used as a HTML attribute <code>id</code>, and also to identify this
+              Unique identifier of this component. Used as an HTML attribute <code>id</code>, and also to identify this
               element internally.
             </p>
             <p>If undefined, Recharts will generate a unique ID automatically.</p>

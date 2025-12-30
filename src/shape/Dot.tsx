@@ -31,6 +31,16 @@ interface DotProps {
 
 export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
+/**
+ * Renders a dot in the chart.
+ *
+ * This component accepts X and Y coordinates in pixels.
+ * If you need to position the rectangle based on your chart's data,
+ * consider using the `<ReferenceDot>` component instead.
+ *
+ * @param props
+ * @constructor
+ */
 export const Dot: React.FC<Props> = props => {
   const { cx, cy, r, className } = props;
   const layerClass = clsx('recharts-dot', className);

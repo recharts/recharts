@@ -271,7 +271,7 @@ export const BarAPI = {
       desc: {
         'en-US':
           'The unique identifier of this component. ' +
-          'Used as a HTML attribute `id`, and also to identify this element internally. ' +
+          'Used as an HTML attribute `id`, and also to identify this element internally. ' +
           'If undefined, Recharts will generate a unique ID automatically.',
         'zh-CN': '唯一的id，会用于生成内部的clip path id 等，建议使用SSR的时候设置这个属性。',
       },

@@ -1,206 +1,52 @@
 import { ApiDoc } from './types';
 
-export const AreaAPI: ApiDoc = {
-  name: 'Area',
+export const ReferenceDotAPI: ApiDoc = {
+  name: 'ReferenceDot',
   props: [
-    {
-      name: 'dataKey',
-      type: 'string | number | Function',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
-              </li>
-            </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'activeDot',
-      type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot
-              will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If
-              object set, active dot will be drawn which have the props merged by the internal calculated props and the
-              option. If ReactElement set, the option can be the custom active dot element. If set a function, the
-              function will be called to render customized active dot.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: true,
-    },
-    {
-      name: 'animationBegin',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies when the animation should begin, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'animationDuration',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies the duration of animation, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 1500,
-    },
-    {
-      name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of easing function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'ease',
-    },
-    {
-      name: 'baseLine',
-      type: 'number | Array<readonly NullableCoordinate>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Baseline of the area:</p>
-            <ul>
-              <li>number: uses the corresponding axis value as a flat baseline;</li>
-              <li>an array of coordinates: describes a custom baseline path.</li>
-            </ul>
-          </section>
-        ),
-      },
-    },
-    { name: 'baseValue', type: 'number | "dataMin" | "dataMax"', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
-      name: 'connectNulls',
-      type: 'boolean',
+      name: 'ifOverflow',
+      type: '"hidden" | "visible" | "discard" | "extendDomain"',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Whether to connect the curve across null points.</p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    { name: 'data', type: 'Array<unknown>', isOptional: true },
-    {
-      name: 'dot',
-      type: 'false | true | Function | Partial<Props> | ReactNode',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated
-              internally. If object set, dots will be drawn which have the props merged by the internal calculated props
-              and the option. If ReactElement set, the option can be the custom dot element. If set a function, the
-              function will be called to render customized dot.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'hide',
-      type: 'boolean',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Hides the whole graphical element when true.</p>
-            <p>
-              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
-              visible in Legend, and can be included in axis domain calculations, depending on{' '}
-              <code>includeHidden</code> props of your XAxis/YAxis.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'id',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Unique identifier of this component. Used as an HTML attribute <code>id</code>, and also to identify this
-              element internally.
-            </p>
-            <p>If undefined, Recharts will generate a unique ID automatically.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'isAnimationActive',
-      type: 'false | true | "auto"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If set false, animation of area will be disabled. If set &quot;auto&quot;, the animation will be disabled
-              in SSR and enabled in browser.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-    },
-    { name: 'isRange', type: 'boolean', isOptional: true },
-    {
-      name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders one label for each data point. Options:</p>
+            <p>Defines how to draw this component if it falls partly outside the canvas:</p>
             <ul>
               <li>
-                <code>true</code>: renders default labels
+                <code>discard</code>: the whole component will not be drawn at all
               </li>
               <li>
+                <code>hidden</code>: the component will be clipped to the chart plot area
+              </li>
+              <li>
+                <code>visible</code>: the component will be drawn completely
+              </li>
+              <li>
+                <code>extendDomain</code>: the domain of the overflown axis will be extended such that the whole
+                component fits into the plot area
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+      defaultVal: 'discard',
+    },
+    {
+      name: 'label',
+      type: '(union of 7 variants)',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Renders a single label.</p>
+            <ul>
+              <li>
                 <code>false</code>: no labels are rendered
+              </li>
+              <li>
+                <code>string</code> | <code>number</code>: the content of the label
               </li>
               <li>
                 <code>object</code>: the props of LabelList component
@@ -218,104 +64,49 @@ export const AreaAPI: ApiDoc = {
       defaultVal: false,
     },
     {
-      name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      name: 'r',
+      type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The type of icon in legend. If set to &#39;none&#39;, no legend item will be rendered.</p>
+            <p>The radius of dot.</p>
           </section>
         ),
       },
-      defaultVal: 'line',
+      defaultVal: 10,
     },
     {
-      name: 'name',
-      type: 'string',
+      name: 'shape',
+      type: 'ReactNode | Function',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              The name of data. This option will be used in tooltip and legend to represent this graphical item. If no
-              value was set to this option, the value of dataKey will be used alternatively.
+              If set a ReactElement, the shape of dot can be customized. If set a function, the function will be called
+              to render customized shape.
             </p>
           </section>
         ),
       },
     },
     {
-      name: 'stackId',
+      name: 'x',
       type: 'string | number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.</p>
+            <p>The x-coordinate of the center of the dot.</p>
+            <p>
+              This value is using your chart&#39;s domain, so you will provide a data value instead of a pixel value.
+              ReferenceDot will internally calculate the correct pixel position.
+            </p>
           </section>
         ),
       },
-    },
-    {
-      name: 'stroke',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The stroke color. If &quot;none&quot;, no line will be drawn.</p>
-          </section>
-        ),
-      },
-      defaultVal: '#3182bd',
-    },
-    {
-      name: 'strokeWidth',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The width of the stroke</p>
-          </section>
-        ),
-      },
-      defaultVal: 1,
-    },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
-    {
-      name: 'type',
-      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The interpolation type of curve. Allows custom interpolation function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'linear',
-      examples: [
-        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
-        {
-          name: 'https://github.com/d3/d3-shape#curves',
-          url: 'https://github.com/d3/d3-shape#curves',
-          isExternal: true,
-        },
-      ],
-    },
-    {
-      name: 'unit',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The unit of data. This option will be used in tooltip.</p>
-          </section>
-        ),
-      },
+      format: ['<ReferenceDot x="January" y="2026" />'],
     },
     {
       name: 'xAxisId',
@@ -324,11 +115,28 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
+            <p>The id of x-axis which is corresponding to the data. Required when there are multiple XAxes.</p>
           </section>
         ),
       },
       defaultVal: 0,
+    },
+    {
+      name: 'y',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The y-coordinate of the center of the dot.</p>
+            <p>
+              This value is using your chart&#39;s domain, so you will provide a data value instead of a pixel value.
+              ReferenceDot will internally calculate the correct pixel position.
+            </p>
+          </section>
+        ),
+      },
+      format: ['<ReferenceDot x="January" y="2026" />'],
     },
     {
       name: 'yAxisId',
@@ -337,7 +145,7 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
+            <p>The id of y-axis which is corresponding to the data. Required when there are multiple YAxes.</p>
           </section>
         ),
       },
@@ -358,38 +166,16 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 100,
+      defaultVal: 600,
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationEnd',
-      type: 'AnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation end</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationEnd', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationEndCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIteration', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIterationCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationStart',
-      type: 'AnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation start</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationStart', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationStartCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
@@ -405,12 +191,12 @@ export const AreaAPI: ApiDoc = {
     { name: 'onChangeCapture', type: 'FormEventHandler<P, T>', isOptional: true },
     {
       name: 'onClick',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of click on the curve</p>
+            <p>The customized event handler of click in this chart.</p>
           </section>
         ),
       },
@@ -482,12 +268,12 @@ export const AreaAPI: ApiDoc = {
     { name: 'onLostPointerCaptureCapture', type: 'PointerEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseDown',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousedown on the curve</p>
+            <p>The customized event handler of mousedown in this chart.</p>
           </section>
         ),
       },
@@ -495,36 +281,36 @@ export const AreaAPI: ApiDoc = {
     { name: 'onMouseDownCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseEnter',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseenter on the curve</p>
+            <p>The customized event handler of mouseenter in this chart.</p>
           </section>
         ),
       },
     },
     {
       name: 'onMouseLeave',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseleave on the curve</p>
+            <p>The customized event handler of mouseleave in this chart.</p>
           </section>
         ),
       },
     },
     {
       name: 'onMouseMove',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mousemove on the curve</p>
+            <p>The customized event handler of mousemove in this chart.</p>
           </section>
         ),
       },
@@ -532,12 +318,12 @@ export const AreaAPI: ApiDoc = {
     { name: 'onMouseMoveCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseOut',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseout on the curve</p>
+            <p>The customized event handler of mouseout in this chart.</p>
           </section>
         ),
       },
@@ -545,12 +331,12 @@ export const AreaAPI: ApiDoc = {
     { name: 'onMouseOutCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseOver',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseover on the curve</p>
+            <p>The customized event handler of mouseover in this chart.</p>
           </section>
         ),
       },
@@ -558,12 +344,12 @@ export const AreaAPI: ApiDoc = {
     { name: 'onMouseOverCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     {
       name: 'onMouseUp',
-      type: 'CurveMouseEventHandler',
+      type: 'RechartsMouseEventHandler<P, T>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The customized event handler of mouseup on the curve</p>
+            <p>The customized event handler of mouseup in this chart.</p>
           </section>
         ),
       },
@@ -632,6 +418,22 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
   ],
+  desc: {
+    'en-US': (
+      <section>
+        <p>Draws a circle on the chart to highlight a specific point.</p>
+        <p>
+          This component, unlike Dot or circle, is aware of the cartesian coordinate system, so you specify its center
+          by using data coordinates instead of pixels.
+        </p>
+        <p>ReferenceDot will calculate the pixels based on the provided data coordinates.</p>
+        <p>
+          If you prefer to render dots using pixels rather than data coordinates, consider using the{' '}
+          <code>&lt;Dot&gt;</code> component instead.
+        </p>
+      </section>
+    ),
+  },
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
-  childrenComponents: ['LabelList'],
+  childrenComponents: ['Label'],
 };

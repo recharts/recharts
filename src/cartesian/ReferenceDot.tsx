@@ -5,7 +5,7 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { IfOverflow } from '../util/IfOverflow';
+import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
@@ -20,48 +20,112 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
-interface ReferenceDotProps extends ZIndexable {
+interface ReferenceDotProps extends Overflowable, ZIndexable {
   /**
-   * The radius of the dot.
+   * The radius of the dot in pixels.
    *
    * @defaultValue 10
    */
   r?: number;
-
-  /**
-   * @defaultValue discard
-   */
-  ifOverflow?: IfOverflow;
   /**
    * The x-coordinate of the center of the dot.
-   * It should match a value from the XAxis, so if the XAxis is a number axis, this should be a number.
-   * If the XAxis is a category axis, this should be a string.
+   *
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceDot will internally calculate the correct pixel position.
+   *
+   * @example <ReferenceDot x="January" y="2026" />
    */
   x?: number | string;
+  /**
+   * The y-coordinate of the center of the dot.
+   *
+   * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
+   * ReferenceDot will internally calculate the correct pixel position.
+   *
+   * @example <ReferenceDot x="January" y="2026" />
+   */
   y?: number | string;
 
   className?: number | string;
   /**
-   * The id of y-axis which the dot should be attached to.
+   * The id of y-axis which is corresponding to the data.
+   * Required when there are multiple YAxes.
    *
    * @defaultValue 0
    */
   yAxisId?: number | string;
   /**
-   * The id of x-axis which the dot should be attached to.
+   * The id of x-axis which is corresponding to the data.
+   * Required when there are multiple XAxes.
    *
    * @defaultValue 0
    */
   xAxisId?: number | string;
-  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
-  label?: ImplicitLabelType;
   /**
+   * If set a ReactElement, the shape of dot can be customized.
+   * If set a function, the function will be called to render customized shape.
+   */
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  /**
+   * Renders a single label.
+   *
+   * - `false`: no labels are rendered
+   * - `string` | `number`: the content of the label
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
+   *
+   * @defaultValue false
+   */
+  label?: ImplicitLabelType;
+
+  /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 600
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+
+  /**
+   * The customized event handler of click in this chart.
+   */
+  onClick?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mousedown in this chart.
+   */
+  onMouseDown?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseup in this chart.
+   */
+  onMouseUp?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseover in this chart.
+   */
+  onMouseOver?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseout in this chart.
+   */
+  onMouseOut?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseenter in this chart.
+   */
+  onMouseEnter?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mousemove in this chart.
+   */
+  onMouseMove?: (e: React.MouseEvent<SVGElement>) => void;
+  /**
+   * The customized event handler of mouseleave in this chart.
+   */
+  onMouseLeave?: (e: React.MouseEvent<SVGElement>) => void;
 }
 
-export type Props = DotProps & ReferenceDotProps;
+export type Props = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps;
 
 const useCoordinate = (
   x: number | string | undefined,
@@ -165,6 +229,7 @@ export const referenceDotDefaultProps = {
   xAxisId: 0,
   yAxisId: 0,
   r: 10,
+  label: false,
   fill: '#fff',
   stroke: '#ccc',
   fillOpacity: 1,
@@ -175,7 +240,18 @@ export const referenceDotDefaultProps = {
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
 /**
+ * Draws a circle on the chart to highlight a specific point.
+ *
+ * This component, unlike Dot or circle, is aware of the cartesian coordinate system,
+ * so you specify its center by using data coordinates instead of pixels.
+ *
+ * ReferenceDot will calculate the pixels based on the provided data coordinates.
+ *
+ * If you prefer to render dots using pixels rather than data coordinates,
+ * consider using the `<Dot>` component instead.
+ *
  * @provides CartesianLabelContext
+ * @consumes CartesianChartContext
  */
 export function ReferenceDot(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);

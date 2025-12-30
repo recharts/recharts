@@ -796,6 +796,7 @@ describe('readProject', () => {
         "position",
         "segment",
         "shape",
+        "strokeWidth",
         "x",
         "xAxisId",
         "y",
@@ -820,18 +821,14 @@ describe('readProject', () => {
         },
         isRequired: false,
       },
-      {
+      expect.objectContaining({
         defaultValueFromJSDoc: { type: 'unreadable' },
         defaultValueFromObject: { type: 'none' },
         normalizedPath: expect.stringContaining('src/cartesian/ReferenceLine.tsx'),
         name: 'x',
         origin: 'recharts',
-        jsDoc: {
-          tags: [],
-          text: expect.stringContaining('The x-coordinate of the reference line in data space.'),
-        },
         isRequired: false,
-      },
+      }),
     ]);
   });
 

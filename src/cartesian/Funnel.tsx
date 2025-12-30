@@ -118,7 +118,7 @@ interface FunnelProps {
   hide?: boolean;
   /**
    * Unique identifier of this component.
-   * Used as a HTML attribute `id`, and also to identify this element internally.
+   * Used as an HTML attribute `id`, and also to identify this element internally.
    *
    * If undefined, Recharts will generate a unique ID automatically.
    */

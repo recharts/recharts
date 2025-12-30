@@ -930,14 +930,18 @@ export interface RenderableAxisProps extends BaseAxisProps {
    */
   range?: AxisRange;
   /**
-   * Defines a single label for the whole axis. This is not controlling tick labels.
+   * Defines a single label for the whole axis.
    * This prop renders one label in the center of the axis line.
    * Useful for labeling the axis as a whole, like "Time (in seconds)" or "Distance (in meters)".
    *
-   * If set a string or a number, default label will be drawn, and the option is content.
-   * If set a React element, the option is the custom react element of drawing label.
-   * If an object, the option is the props of a new Label instance.
-   * If set a function, the function will be called to render customized label.
+   * This is not controlling tick labels.
+   * If you want to customize tick labels, please see `tickFormatter` or `tick` props.
+   *
+   * - `false`: no label is rendered
+   * - `string` | `number`: the content of the label
+   * - `object`: the props of LabelList component
+   * - `ReactElement`: a custom label element
+   * - `function`: a render function of custom label
    *
    * @defaultValue false
    */
@@ -1303,11 +1307,15 @@ interface BaseChartProps extends ExternalMouseEvents {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   width?: number | Percent;
   /**
    * The height of chart container.
    * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   height?: number | Percent;
   id?: string;
@@ -1351,6 +1359,8 @@ interface BaseChartProps extends ExternalMouseEvents {
    * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
    * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
    * @default false
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   responsive?: boolean;
 }
@@ -1411,8 +1421,22 @@ export interface CartesianChartProps extends BaseChartProps {
 }
 
 export interface PolarChartProps extends BaseChartProps {
+  /**
+   * The gap between two bar categories, which can be a percent value or a fixed value.
+   *
+   * @defaultValue 10%
+   */
   barCategoryGap?: number | string;
+  /**
+   * The gap between two bars in the same category.
+   *
+   * @defaultValue 4
+   */
   barGap?: number | string;
+  /**
+   * The width or height of each bar. If the barSize is not specified, the size of the
+   * bar will be calculated by the barCategoryGap, barGap and the quantity of bar groups.
+   */
   barSize?: number | string;
   /**
    * The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage of width.
@@ -1430,7 +1454,8 @@ export interface PolarChartProps extends BaseChartProps {
    */
   endAngle?: number;
   /**
-   * The inner radius of first circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * The inner radius of the chart.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    * @defaultValue 0
    */
   innerRadius?: number | string;
@@ -1440,7 +1465,8 @@ export interface PolarChartProps extends BaseChartProps {
   layout?: PolarLayout;
   maxBarSize?: number;
   /**
-   * The outer radius of last circle grid. If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+   * The outer radius of the chart.
+   * If set a percentage, the final value is obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
    * @defaultValue 80%
    */
   outerRadius?: number | string;

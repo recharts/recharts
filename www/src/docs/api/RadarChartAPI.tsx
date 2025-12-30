@@ -4,9 +4,47 @@ export const RadarChartAPI: ApiDoc = {
   name: 'RadarChart',
   props: [
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
-    { name: 'barCategoryGap', type: 'string | number', isOptional: true, defaultVal: '10%' },
-    { name: 'barGap', type: 'string | number', isOptional: true, defaultVal: 4 },
-    { name: 'barSize', type: 'string | number', isOptional: true },
+    {
+      name: 'barCategoryGap',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The gap between two bar categories, which can be a percent value or a fixed value.</p>
+          </section>
+        ),
+      },
+      defaultVal: '10%',
+    },
+    {
+      name: 'barGap',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The gap between two bars in the same category.</p>
+          </section>
+        ),
+      },
+      defaultVal: 4,
+    },
+    {
+      name: 'barSize',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The width or height of each bar. If the barSize is not specified, the size of the bar will be calculated
+              by the barCategoryGap, barGap and the quantity of bar groups.
+            </p>
+          </section>
+        ),
+      },
+    },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -79,6 +117,7 @@ export const RadarChartAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
     },
     { name: 'id', type: 'string', isOptional: true },
     {
@@ -89,7 +128,7 @@ export const RadarChartAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The inner radius of first circle grid. If set a percentage, the final value is obtained by multiplying the
+              The inner radius of the chart. If set a percentage, the final value is obtained by multiplying the
               percentage of maxRadius which is calculated by the width, height, cx, cy.
             </p>
           </section>
@@ -132,7 +171,7 @@ export const RadarChartAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The outer radius of last circle grid. If set a percentage, the final value is obtained by multiplying the
+              The outer radius of the chart. If set a percentage, the final value is obtained by multiplying the
               percentage of maxRadius which is calculated by the width, height, cx, cy.
             </p>
           </section>
@@ -161,6 +200,7 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'role', type: 'string', isOptional: true },
@@ -225,6 +265,7 @@ export const RadarChartAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
     },
     {
       name: 'onClick',
