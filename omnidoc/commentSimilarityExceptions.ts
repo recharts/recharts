@@ -139,7 +139,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
   },
   {
-    components: ['Dot', 'SunburstChart'],
+    components: ['Dot', 'SunburstChart', 'Sector'],
     props: ['cx', 'cy'],
     reason: 'These components do not support percentages unlike other components',
   },
@@ -231,5 +231,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     components: ['Sankey'],
     props: ['data', 'dataKey', 'align', 'verticalAlign'],
     reason: 'Sankey is doing its own thing',
+  },
+  {
+    components: ['Sector'],
+    props: ['startAngle', 'endAngle', 'innerRadius', 'outerRadius'],
+    reason:
+      'Sector props describe one shape, unlike chart components and Pie where the same prop describes multiple sectors',
   },
 ];

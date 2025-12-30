@@ -40,7 +40,7 @@ import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 import { CurveAPI as Curve } from './Curve';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
-import { SectorAPI as Sector } from './Sector';
+import { SectorAPI } from './SectorAPI';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
 import type { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
@@ -104,7 +104,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Dot: DotAPI,
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,
-  Sector,
+  Sector: SectorAPI,
   Trapezoid,
 
   ZIndexLayer: ZIndexLayerAPI,
