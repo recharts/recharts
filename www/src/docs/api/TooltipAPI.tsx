@@ -399,11 +399,7 @@ export const TooltipAPI: ApiDoc = {
       url: 'https://github.com/recharts/recharts/wiki/Tooltip-event-type-and-shared-prop',
       isExternal: true,
     },
-    {
-      name: 'Active index replacement when migrating from Recharts v2 to v3',
-      url: 'http://recharts.github.io/en-US/guide/activeIndex/',
-      isExternal: true,
-    },
+    { name: 'Active index replacement when migrating from Recharts v2 to v3', url: '/guide/activeIndex/' },
   ],
   parentComponents: [
     'AreaChart',

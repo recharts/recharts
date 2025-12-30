@@ -266,7 +266,7 @@ export const defaultTooltipProps = {
  * The appearance and content of the tooltip can be customized via props.
  *
  * @see {@link https://github.com/recharts/recharts/wiki/Tooltip-event-type-and-shared-prop Tooltip event type and shared prop wiki page}
- * @see {@link http://recharts.github.io/en-US/guide/activeIndex/ Active index replacement when migrating from Recharts v2 to v3}
+ * @see {@link https://recharts.github.io/en-US/guide/activeIndex/ Active index replacement when migrating from Recharts v2 to v3}
  *
  * @consumes CartesianChartContext
  * @consumes PolarChartContext
