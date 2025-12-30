@@ -48,7 +48,7 @@ interface BrushProps {
   y?: number;
   dy?: number;
   /**
-   * The width of brush.
+   * Width of the brush in pixels.
    * If undefined, defaults to the chart width.
    */
   width?: number;
@@ -57,7 +57,7 @@ interface BrushProps {
   ariaLabel?: string;
 
   /**
-   * The height of brush in pixels.
+   * Height of the brush in pixels.
    *
    * @defaultValue 40
    */
@@ -1044,6 +1044,13 @@ export const defaultBrushProps = {
   alwaysShowText: false,
 } as const satisfies Partial<Props>;
 
+/**
+ * Renders a scrollbar that allows the user to zoom and pan in the chart along its XAxis.
+ * It also allows you to render a small overview of the chart inside the brush that is always visible
+ * and shows the full data set so that the user can see where they are zoomed in.
+ *
+ * @see {@link https://recharts.github.io/en-US/examples/BrushBarChart/ Example: BarChart with Brush}
+ */
 export function Brush(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBrushProps);
   return (

@@ -59,7 +59,7 @@ export const CrossAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The x-coordinate of the vertical line of the cross.</p>
+            <p>The x-coordinate of the vertical line of the cross in pixels.</p>
           </section>
         ),
       },
@@ -71,7 +71,7 @@ export const CrossAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The y-coordinate of the horizontal line of the cross.</p>
+            <p>The y-coordinate of the horizontal line of the cross in pixels.</p>
           </section>
         ),
       },

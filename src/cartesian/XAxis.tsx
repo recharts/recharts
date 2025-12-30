@@ -62,7 +62,7 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
    */
   xAxisId?: string | number;
   /**
-   * The height of axis in pixels
+   * Height of the axis in pixels.
    *
    * @defaultValue 30
    */

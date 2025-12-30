@@ -123,7 +123,9 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
    */
   ticks?: ReadonlyArray<AxisTick>;
   /**
-   * The width of the axis, which can be set by user. 'auto' will attempt to resize the axis based on its content.
+   * Width of the axis in pixels.
+   * `auto` will attempt to resize the axis based on its content.
+   *
    * @defaultValue 60
    */
   width?: YAxisWidth;

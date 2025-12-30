@@ -90,12 +90,12 @@ interface RectangleProps {
    */
   y?: number;
   /**
-   * The width of rectangle in pixels.
+   * Width of the rectangle in pixels.
    * @defaultValue 0
    */
   width?: number;
   /**
-   * The height of rectangle in pixels.
+   * Height of the rectangle in pixels.
    * @defaultValue 0
    */
   height?: number;

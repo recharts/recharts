@@ -87,7 +87,11 @@ export const ErrorBarAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Width of the error bar ends</p>
+            <p>
+              Width of the error bar ends (the serifs) in pixels. This is not the total width of the error bar, but just
+              the width of the little lines at the ends.
+            </p>
+            <p>The total width of the error bar is determined by the data value plus/minus the error value.</p>
           </section>
         ),
       },

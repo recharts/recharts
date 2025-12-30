@@ -504,8 +504,8 @@ export const YAxisAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The width of the axis, which can be set by user. &#39;auto&#39; will attempt to resize the axis based on
-              its content.
+              Width of the axis in pixels.
+              <code>auto</code> will attempt to resize the axis based on its content.
             </p>
           </section>
         ),

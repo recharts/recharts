@@ -56,7 +56,10 @@ interface ErrorBarProps extends ZIndexable {
    */
   dataKey: DataKey<any>;
   /**
-   * Width of the error bar ends
+   * Width of the error bar ends (the serifs) in pixels.
+   * This is not the total width of the error bar, but just the width of the little lines at the ends.
+   *
+   * The total width of the error bar is determined by the data value plus/minus the error value.
    *
    * @defaultValue 5
    */
