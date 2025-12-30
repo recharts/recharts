@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const ReferenceDotAPI: ApiDoc = {
@@ -423,14 +424,14 @@ export const ReferenceDotAPI: ApiDoc = {
       <section>
         <p>Draws a circle on the chart to highlight a specific point.</p>
         <p>
-          This component, unlike <a href="/api/Dot/">Dot</a> or{' '}
+          This component, unlike <Link to="/api/Dot/">Dot</Link> or{' '}
           <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/circle">circle</a>, is aware of
           the cartesian coordinate system, so you specify its center by using data coordinates instead of pixels.
         </p>
         <p>ReferenceDot will calculate the pixels based on the provided data coordinates.</p>
         <p>
           If you prefer to render dots using pixels rather than data coordinates, consider using the{' '}
-          <a href="/api/Dot/">Dot</a> component instead.
+          <Link to="/api/Dot/">Dot</Link> component instead.
         </p>
       </section>
     ),

@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const RectangleAPI: ApiDoc = {
@@ -184,7 +185,7 @@ export const RectangleAPI: ApiDoc = {
         </p>
         <p>
           This component accepts X and Y coordinates in pixels. If you need to position the rectangle based on your
-          chart&#39;s data, consider using the <a href="/api/ReferenceArea/">ReferenceArea</a> component instead.
+          chart&#39;s data, consider using the <Link to="/api/ReferenceArea/">ReferenceArea</Link> component instead.
         </p>
       </section>
     ),

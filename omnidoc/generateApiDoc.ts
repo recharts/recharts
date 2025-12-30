@@ -159,9 +159,9 @@ function buildContextMap(
 }
 
 /**
- * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags.
+ * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags or React Router Link components.
  * Handles both {@link url} and {@link url text} formats.
- * If the link is a single word that matches a Recharts component name, it creates a relative link to that component's API page.
+ * If the link is a single word that matches a Recharts component name, it creates a React Router Link for SPA navigation.
  */
 export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
   // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
@@ -171,11 +171,11 @@ export function processInlineLinks(text: string, componentNames?: ReadonlyArray<
 
     // Check if the URL is a single word (no protocol, no slashes) and matches a component name
     if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
-      // It's a Recharts component reference - create a relative link
-      return `<a href="/api/${url}/">${displayText}</a>`;
+      // It's a Recharts component reference - create a React Router Link for SPA navigation
+      return `<Link to="/api/${url}/">${displayText}</Link>`;
     }
 
-    // Otherwise, use the URL as-is
+    // Otherwise, use the URL as-is for external links
     return `<a href="${url}">${displayText}</a>`;
   });
 }
@@ -550,7 +550,16 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
   const varName = `${apiDoc.name}API`;
 
-  const fileContent = `import { ApiDoc } from './types';
+  // Check if the description contains Link components (for internal links)
+  const hasLinkComponents =
+    apiDoc.desc && Object.values(apiDoc.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to='));
+
+  // Add Link import if needed
+  const imports = hasLinkComponents
+    ? `import { Link } from 'react-router';\nimport { ApiDoc } from './types';`
+    : `import { ApiDoc } from './types';`;
+
+  const fileContent = `${imports}
 
 export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 `;

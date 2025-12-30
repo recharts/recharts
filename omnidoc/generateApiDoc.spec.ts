@@ -32,12 +32,12 @@ describe('processInlineLinks', () => {
     expect(processInlineLinks(input)).toBe(input);
   });
 
-  it('should convert {@link ComponentName} to relative link for known Recharts components', () => {
+  it('should convert {@link ComponentName} to React Router Link for known Recharts components', () => {
     const reader = new ProjectDocReader();
     const componentNames = reader.getPublicComponentNames();
 
     const input = 'This component uses {@link Rectangle} for rendering';
-    const expected = 'This component uses <a href="/api/Rectangle/">Rectangle</a> for rendering';
+    const expected = 'This component uses <Link to="/api/Rectangle/">Rectangle</Link> for rendering';
     expect(processInlineLinks(input, componentNames)).toBe(expected);
   });
 
@@ -46,7 +46,7 @@ describe('processInlineLinks', () => {
     const componentNames = reader.getPublicComponentNames();
 
     const input = 'Use {@link Rectangle} or {@link Line} components';
-    const expected = 'Use <a href="/api/Rectangle/">Rectangle</a> or <a href="/api/Line/">Line</a> components';
+    const expected = 'Use <Link to="/api/Rectangle/">Rectangle</Link> or <Link to="/api/Line/">Line</Link> components';
     expect(processInlineLinks(input, componentNames)).toBe(expected);
   });
 

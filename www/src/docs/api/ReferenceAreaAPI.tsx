@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const ReferenceAreaAPI: ApiDoc = {
@@ -325,14 +326,14 @@ export const ReferenceAreaAPI: ApiDoc = {
       <section>
         <p>Draws a rectangular area on the chart to highlight a specific range.</p>
         <p>
-          This component, unlike <a href="/api/Rectangle/">Rectangle</a> or{' '}
+          This component, unlike <Link to="/api/Rectangle/">Rectangle</Link> or{' '}
           <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect">rect</a>, is aware of the
           cartesian coordinate system, so you specify the area by using data coordinates instead of pixels.
         </p>
         <p>ReferenceArea will calculate the pixels based on the provided data coordinates.</p>
         <p>
           If you prefer to render rectangles using pixels rather than data coordinates, consider using the{' '}
-          <a href="/api/Rectangle/">Rectangle</a> component instead.
+          <Link to="/api/Rectangle/">Rectangle</Link> component instead.
         </p>
       </section>
     ),
