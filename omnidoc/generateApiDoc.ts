@@ -47,6 +47,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'ReferenceDot',
   'ReferenceLine',
   'ResponsiveContainer',
+  'Sankey',
   'Scatter',
   'Text',
   'XAxis',

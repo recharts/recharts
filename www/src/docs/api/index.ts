@@ -5,7 +5,7 @@ import { LineChartAPI as LineChart } from './LineChart';
 import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI } from './RadarChartAPI';
-import { SankeyAPI } from './Sankey';
+import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';

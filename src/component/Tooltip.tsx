@@ -182,6 +182,7 @@ export const defaultTooltipProps = {
 /**
  * @consumes CartesianChartContext
  * @consumes PolarChartContext
+ * @consumes TooltipEntrySettings
  */
 export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);

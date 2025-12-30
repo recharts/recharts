@@ -205,6 +205,11 @@ describe('cross-component prop consistency', () => {
       unlike other components where position describes placement in the chart's coordinate system.`,
     },
     { components: ['Text'], props: ['style'], reason: 'Text has special instruction for text wrapping' },
+    {
+      components: ['Sankey'],
+      props: ['data', 'dataKey', 'align', 'verticalAlign'],
+      reason: 'Sankey is doing its own thing',
+    },
   ];
 
   // Build the prop-to-components map once for all tests
