@@ -90,6 +90,7 @@ export const map = {
     default: '默认值：',
     format: '格式：',
     examples: '示例：',
+    links: '相关链接',
     parent: '父组件',
     children: '子组件',
     placeholder: 'Search',

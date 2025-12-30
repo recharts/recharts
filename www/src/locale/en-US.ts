@@ -96,6 +96,7 @@ export const map = {
     default: 'DEFAULT: ',
     format: 'FORMAT: ',
     examples: 'Examples: ',
+    links: 'Related Links',
     parent: 'Parent Components',
     children: 'Child Components',
     placeholder: 'Search',
