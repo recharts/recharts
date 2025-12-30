@@ -156,7 +156,38 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   {
     components: ['Label'],
     props: ['content'],
-    reason: 'In other components, content is called N times. In Label, content is called once.',
+    reason: 'In LabelList, content is called N times. In Label, content is called once.',
+  },
+  {
+    components: ['Tooltip', 'Legend'],
+    props: ['content'],
+    reason: 'Tooltip and Legend have HTML content, unlike other components which have SVG content.',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['formatter'],
+    reason: 'Tooltip formatter allows returning arrays',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['itemSorter'],
+    reason:
+      'Tooltip itemSorter has different default behavior than Legend itemSorter (like why? these should be consistent omg)',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['includeHidden'],
+    reason: 'Tooltip includeHidden is doing something different than includeHidden on the axes',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['offset', 'position'],
+    reason: 'Tooltip position uses the same prop names but works differently than other components',
+  },
+  {
+    components: ['Legend', 'DefaultLegendContent'],
+    props: ['formatter'],
+    reason: 'DefaultLegendContent formatter requires HTML context, unlike other components which use SVG',
   },
   {
     components: ['XAxis', 'YAxis', 'ZAxis', 'PolarAngleAxis', 'PolarRadiusAxis'],

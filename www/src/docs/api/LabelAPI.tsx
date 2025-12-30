@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const LabelAPI: ApiDoc = {
@@ -61,6 +62,11 @@ export const LabelAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>Function to customize how content is serialized before rendering.</p>
+            <p>
+              This should return a renderable text - something that the <Link to="/api/Text/">Text</Link> component can
+              render. Typically, a string or number. Custom components are not supported here - use the{' '}
+              <code>content</code> prop instead.
+            </p>
           </section>
         ),
       },

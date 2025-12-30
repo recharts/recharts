@@ -3,6 +3,7 @@ import { CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import {
+  ContentType,
   DefaultLegendContent,
   LegendPayload,
   Props as DefaultLegendContentProps,
@@ -94,13 +95,20 @@ export type LegendItemSorter = 'value' | 'dataKey' | ((item: LegendPayload) => n
 
 export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'verticalAlign'> & {
   /**
-   * The style of legend container which is a "position: absolute;" div element.
-   * Because the position of legend is quite flexible, so you can change the position by the value
-   * of top, left, right, bottom in this option. And the format of wrapperStyle is the same as
-   * React inline style.
+   * Renders the content of the legend.
    *
-   * @example { top: 0, left: 0, backgroundColor: 'red' }
-   * @example https://reactjs.org/docs/dom-elements.html#style
+   * This should return HTML elements, not SVG elements.
+   *
+   * - If not set, the {@link DefaultLegendContent} component is used.
+   * - If set to a React element, this element will be cloned and extra props will be passed in.
+   * - If set to a function, the function will be called and should return HTML elements.
+   *
+   * @example <Legend content={CustomizedLegend} />
+   * @example <Legend content={renderLegend} />
+   */
+  content?: ContentType;
+  /**
+   * CSS styles to be applied to the wrapper `div` element.
    */
   wrapperStyle?: CSSProperties;
   /**

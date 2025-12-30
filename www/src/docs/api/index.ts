@@ -1,3 +1,5 @@
+import type { ApiDoc } from './types';
+
 import { AreaChartAPI as AreaChart } from './AreaChart';
 import { BarChartAPI } from './BarChart';
 import { ComposedChartAPI } from './ComposedChart';
@@ -26,7 +28,7 @@ import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
 import { LegendAPI } from './LegendAPI';
-import { TooltipAPI as Tooltip } from './Tooltip';
+import { TooltipAPI } from './TooltipAPI';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
 
@@ -42,7 +44,6 @@ import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI } from './SectorAPI';
 import { TrapezoidAPI as Trapezoid } from './Trapezoid';
-import type { ApiDoc } from './types';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
@@ -81,7 +82,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
 
   ResponsiveContainer: ResponsiveContainerAPI,
   Legend: LegendAPI,
-  Tooltip,
+  Tooltip: TooltipAPI,
   Cell,
   Text: TextAPI,
   Label: LabelAPI,

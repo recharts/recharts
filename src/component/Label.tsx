@@ -83,6 +83,10 @@ interface LabelProps extends ZIndexable {
   parentViewBox?: ViewBox;
   /**
    * Function to customize how content is serialized before rendering.
+   *
+   * This should return a renderable text - something that the {@link Text} component can render.
+   * Typically, a string or number.
+   * Custom components are not supported here - use the `content` prop instead.
    */
   formatter?: LabelFormatter;
   /**

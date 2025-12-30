@@ -96,4 +96,13 @@ describe('generateApiDoc', () => {
     expect(description).not.toContain('{@link');
     expect(description).not.toContain('{@ link');
   });
+
+  it('should convert inline {@link} tags to HTML anchor tags in prop description', async () => {
+    const apiDoc = await generateApiDoc('Tooltip', reader, contextMap);
+    const contentProp = apiDoc.props.find(p => p.name === 'content');
+    expect(contentProp).toBeDefined();
+    // @ts-expect-error locale fetching is not well typed
+    const description = contentProp?.desc?.['en-US'];
+    expect(description).toContain('<Link to="/api/DefaultTooltipContent/">DefaultTooltipContent</Link>');
+  });
 });

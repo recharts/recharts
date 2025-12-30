@@ -54,6 +54,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Scatter',
   'Sector',
   'Text',
+  'Tooltip',
   'XAxis',
   'YAxis',
   'ZAxis',
@@ -307,6 +308,7 @@ async function generateApiDoc(
 ): Promise<ApiDoc> {
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
+  const componentNames = projectReader.getPublicComponentNames();
 
   for (const propName of rechartsPropNames) {
     const comment = projectReader.getCommentOf(componentName, propName);
@@ -353,9 +355,10 @@ async function generateApiDoc(
 
     // Add description if available
     if (comment) {
+      const textWithLinks = processInlineLinks(comment, componentNames);
       prop.desc = {
         // eslint-disable-next-line no-await-in-loop
-        'en-US': await marked.parse(comment),
+        'en-US': await marked.parse(textWithLinks),
       };
     }
 
@@ -556,8 +559,15 @@ function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
   const varName = `${apiDoc.name}API`;
 
   // Check if the description contains Link components (for internal links)
-  const hasLinkComponents =
+  const hasLinkInDesc =
     apiDoc.desc && Object.values(apiDoc.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to='));
+
+  // Check if any prop description contains Link components
+  const hasLinkInProps = apiDoc.props.some(
+    prop => prop.desc && Object.values(prop.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to=')),
+  );
+
+  const hasLinkComponents = hasLinkInDesc || hasLinkInProps;
 
   // Add Link import if needed
   const imports = hasLinkComponents
