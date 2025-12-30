@@ -25,4 +25,5 @@ export type ApiDoc = {
   parentComponents?: ReadonlyArray<string>;
   childrenComponents?: ReadonlyArray<string>;
   deprecated?: boolean | string;
+  links?: ReadonlyArray<PropExample>;
 };

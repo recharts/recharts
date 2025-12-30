@@ -16,7 +16,7 @@ import { componentMetaMap } from './componentsAndDefaultPropsMap';
 
 type PropOrigin = 'recharts' | 'dom' | 'other';
 
-type JSDocMeta = {
+export type JSDocMeta = {
   text?: string;
   /**
    * Can't store these in a map because there can be multiple tags with the same name (e.g., @example)

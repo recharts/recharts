@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
 import { ProjectDocReader } from './readProject';
-import { processType } from './generateApiDoc';
+import { getLinksFromProp, processType } from './generateApiDoc';
 import { assertNotNull } from '../test/helper/assertNotNull';
 
 describe('readProject', () => {
@@ -1040,6 +1040,26 @@ describe('readProject', () => {
       ['provides', 'ErrorBarContext'],
       ['provides', 'CellReader'],
       ['consumes', 'CartesianChartContext'],
+    ]);
+  });
+
+  it('should deduplicate links if both the child and parent components point to the same example', () => {
+    const propMeta = reader.getPropMeta('Line', 'type');
+    // both Line and Curve have examples for 'type' prop but we should not display duplicates
+    expect(propMeta).toHaveLength(2);
+
+    const examples = getLinksFromProp('Line', 'type', reader);
+    expect(examples).toEqual([
+      {
+        isExternal: undefined,
+        name: 'An AreaChart which has two area with different interpolation.',
+        url: '/examples/CardinalAreaChart/',
+      },
+      {
+        isExternal: true,
+        name: 'https://github.com/d3/d3-shape#curves',
+        url: 'https://github.com/d3/d3-shape#curves',
+      },
     ]);
   });
 });

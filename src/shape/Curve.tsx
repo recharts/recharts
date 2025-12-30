@@ -108,7 +108,7 @@ interface CurveProps {
    *
    * @defaultValue linear
    * @link https://github.com/d3/d3-shape#curves
-   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/|An AreaChart which has two area with different interpolation.}
+   * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
   /**

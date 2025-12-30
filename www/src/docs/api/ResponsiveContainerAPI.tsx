@@ -184,4 +184,11 @@ export const ResponsiveContainerAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    {
+      name: 'https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver',
+      url: 'https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver',
+      isExternal: true,
+    },
+  ],
 };
