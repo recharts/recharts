@@ -43,7 +43,7 @@ import { CurveAPI as Curve } from './Curve';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI } from './SectorAPI';
-import { TrapezoidAPI as Trapezoid } from './Trapezoid';
+import { TrapezoidAPI } from './TrapezoidAPI';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
@@ -106,7 +106,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,
   Sector: SectorAPI,
-  Trapezoid,
+  Trapezoid: TrapezoidAPI,
 
   ZIndexLayer: ZIndexLayerAPI,
 };

@@ -193,7 +193,7 @@ interface FunnelProps {
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
 }
 
-type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps, 'ref'>;
+type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'ref'>;
 
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 

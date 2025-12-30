@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
+import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
@@ -74,7 +74,7 @@ describe('<Funnel />', () => {
           dataKey="value"
           data={data}
           isAnimationActive={false}
-          activeShape={(payload: FunnelProps) => (
+          activeShape={(payload: FunnelTrapezoidItem) => (
             <rect
               className="custom-active-shape"
               x={payload.x}

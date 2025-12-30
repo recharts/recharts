@@ -70,7 +70,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Legend accepts arbitrary CSS size values, unlike other components',
   },
   {
-    components: ['Brush', 'CartesianGrid', 'Cross', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
+    components: ['Brush', 'CartesianGrid', 'Cross', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar', 'Trapezoid'],
     props: ['width', 'height'],
     reason: 'These components only allow number pixel values for width/height',
   },
@@ -88,7 +88,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       unlike most other components where x/y are pixel coordinates.`,
   },
   {
-    components: ['Rectangle'],
+    components: ['Rectangle', 'Trapezoid'],
     props: ['x', 'y'],
     reason: 'x and y in Rectangle are required, unlike Brush where they are calculated internally.',
   },

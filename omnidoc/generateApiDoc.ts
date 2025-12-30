@@ -55,6 +55,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Sector',
   'Text',
   'Tooltip',
+  'Trapezoid',
   'XAxis',
   'YAxis',
   'ZAxis',

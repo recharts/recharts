@@ -176,7 +176,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'verticalAlign',
-      type: '"middle" | "top" | "bottom"',
+      type: '"top" | "bottom" | "middle"',
       isOptional: true,
       desc: {
         'en-US': (
