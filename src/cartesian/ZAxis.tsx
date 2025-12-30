@@ -34,8 +34,13 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
 
 export interface Props extends Omit<BaseAxisProps, 'domain'> {
   /**
-   * The type of axis. Numeric axis operates in a continuous range of numbers.
-   * Category axis operates in a discrete set of categories.
+   * The type of axis.
+   *
+   * `category`: Treats data as distinct values.
+   * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+   *
+   * `number`: Treats data as continuous range.
+   * Values that are numerically closer are placed closer together on the axis.
    *
    * @defaultValue number
    */
