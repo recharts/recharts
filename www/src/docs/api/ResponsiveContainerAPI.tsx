@@ -170,4 +170,18 @@ export const ResponsiveContainerAPI: ApiDoc = {
       },
     },
   ],
+  desc: {
+    'en-US': (
+      <section>
+        <p>
+          The <code>ResponsiveContainer</code> component is a container that adjusts its width and height based on the
+          size of its parent element. It is used to create responsive charts that adapt to different screen sizes.
+        </p>
+        <p>
+          This component uses the <code>ResizeObserver</code> API to monitor changes to the size of its parent element.
+          If you need to support older browsers that do not support this API, you may need to include a polyfill.
+        </p>
+      </section>
+    ),
+  },
 };

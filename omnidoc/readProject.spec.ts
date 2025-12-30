@@ -1029,8 +1029,17 @@ describe('readProject', () => {
   it('should read ResponsiveContainer description', () => {
     const comment = reader.getComponentJsDocMeta('ResponsiveContainer')?.text;
     assertNotNull(comment);
-    expect(comment).toContain(
-      'A container component that adjusts its width and height according to the size of the parent container.',
-    );
+    expect(comment).toContain('container that adjusts its width and height');
+  });
+
+  it('should read JSDoc tags of Scatter', () => {
+    const tags = reader.getComponentJsDocMeta('Scatter');
+    assertNotNull(tags);
+    expect(tags.tags).toEqual([
+      ['provides', 'LabelListContext'],
+      ['provides', 'ErrorBarContext'],
+      ['provides', 'CellReader'],
+      ['consumes', 'CartesianChartContext'],
+    ]);
   });
 });

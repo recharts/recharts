@@ -244,7 +244,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * This component uses the `ResizeObserver` API to monitor changes to the size of its parent element.
  * If you need to support older browsers that do not support this API, you may need to include a polyfill.
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver}
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const responsiveContainerContext = useResponsiveContainerContext();
