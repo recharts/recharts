@@ -33,30 +33,21 @@ describe('processInlineLinks', () => {
   });
 
   it('should convert {@link ComponentName} to React Router Link for known Recharts components', () => {
-    const reader = new ProjectDocReader();
-    const componentNames = reader.getPublicComponentNames();
-
     const input = 'This component uses {@link Rectangle} for rendering';
     const expected = 'This component uses <Link to="/api/Rectangle/">Rectangle</Link> for rendering';
-    expect(processInlineLinks(input, componentNames)).toBe(expected);
+    expect(processInlineLinks(input, ['Rectangle'])).toBe(expected);
   });
 
   it('should handle multiple component links in the same text', () => {
-    const reader = new ProjectDocReader();
-    const componentNames = reader.getPublicComponentNames();
-
     const input = 'Use {@link Rectangle} or {@link Line} components';
     const expected = 'Use <Link to="/api/Rectangle/">Rectangle</Link> or <Link to="/api/Line/">Line</Link> components';
-    expect(processInlineLinks(input, componentNames)).toBe(expected);
+    expect(processInlineLinks(input, ['Rectangle', 'Line'])).toBe(expected);
   });
 
   it('should not convert {@link ComponentName} if it is not a Recharts component', () => {
-    const reader = new ProjectDocReader();
-    const componentNames = reader.getPublicComponentNames();
-
     const input = 'See {@link SomeUnknownComponent}';
     const expected = 'See <a href="SomeUnknownComponent">SomeUnknownComponent</a>';
-    expect(processInlineLinks(input, componentNames)).toBe(expected);
+    expect(processInlineLinks(input, [])).toBe(expected);
   });
 });
 
