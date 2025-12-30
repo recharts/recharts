@@ -63,7 +63,7 @@ export const TreemapAPI: ApiDoc = {
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'colorPanel', type: 'Array<>', isOptional: true },
+    { name: 'colorPanel', type: 'Array<readonly string>', isOptional: true },
     {
       name: 'content',
       type: '(union of 8 variants)',

@@ -408,7 +408,7 @@ export interface Props {
    */
   type?: 'flat' | 'nest';
 
-  colorPanel?: [];
+  colorPanel?: ReadonlyArray<string>;
 
   // customize nest index content
   nestIndexContent?: React.ReactElement | ((item: TreemapNode, i: number) => ReactNode);
@@ -498,7 +498,7 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   type: string;
-  colorPanel: string[] | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;

@@ -401,7 +401,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'Active index replacement when migrating from Recharts v2 to v3',
-      url: 'http://localhost:4000/en-US/guide/activeIndex/',
+      url: 'http://recharts.github.io/en-US/guide/activeIndex/',
       isExternal: true,
     },
   ],
