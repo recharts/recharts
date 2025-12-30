@@ -231,4 +231,5 @@ export const TreemapAPI: ApiDoc = {
     ),
   },
   parentComponents: ['ResponsiveContainer'],
+  childrenComponents: ['Tooltip'],
 };

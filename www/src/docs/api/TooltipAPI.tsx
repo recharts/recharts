@@ -416,5 +416,6 @@ export const TooltipAPI: ApiDoc = {
     'RadialBarChart',
     'Sankey',
     'ScatterChart',
+    'Treemap',
   ],
 };
