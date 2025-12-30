@@ -1030,6 +1030,13 @@ describe('readProject', () => {
     const comment = reader.getComponentJsDocMeta('ResponsiveContainer')?.text;
     assertNotNull(comment);
     expect(comment).toContain('container that adjusts its width and height');
+    expect(comment).not.toContain('/**');
+  });
+
+  it('should read ReferenceArea description', () => {
+    const comment = reader.getComponentJsDocMeta('ReferenceArea')?.text;
+    assertNotNull(comment);
+    expect(comment).not.toContain('/**');
   });
 
   it('should read JSDoc tags of Scatter', () => {

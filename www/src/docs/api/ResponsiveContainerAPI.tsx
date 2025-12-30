@@ -178,17 +178,13 @@ export const ResponsiveContainerAPI: ApiDoc = {
           size of its parent element. It is used to create responsive charts that adapt to different screen sizes.
         </p>
         <p>
-          This component uses the <code>ResizeObserver</code> API to monitor changes to the size of its parent element.
-          If you need to support older browsers that do not support this API, you may need to include a polyfill.
+          This component uses the{' '}
+          <a href="https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver">ResizeObserver</a> API to monitor
+          changes to the size of its parent element. If you need to support older browsers that do not support this API,
+          you may need to include a polyfill.
         </p>
       </section>
     ),
   },
-  links: [
-    {
-      name: 'https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver',
-      url: 'https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver',
-      isExternal: true,
-    },
-  ],
+  links: [{ name: 'Chart size guide', url: '/guide/sizes/' }],
 };

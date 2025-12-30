@@ -158,6 +158,19 @@ function buildContextMap(
   return contextMap;
 }
 
+/**
+ * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags.
+ * Handles both {@link url} and {@link url text} formats.
+ */
+export function processInlineLinks(text: string): string {
+  // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
+  // The regex captures: url and optional text
+  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]+))?\}/g, (match, url, t) => {
+    const displayText = t?.trim() || url;
+    return `<a href="${url}">${displayText}</a>`;
+  });
+}
+
 async function generateComponentDescription(
   componentName: string,
   projectReader: ProjectDocReader,
@@ -166,7 +179,9 @@ async function generateComponentDescription(
   if (componentJsDoc) {
     const desc: { [locale: string]: string } = {};
     if (componentJsDoc.text) {
-      desc['en-US'] = await marked.parse(componentJsDoc.text);
+      // Process inline {@link} tags before passing to marked
+      const textWithLinks = processInlineLinks(componentJsDoc.text);
+      desc['en-US'] = await marked.parse(textWithLinks);
     }
     // Check for @since tag
     const sinceTag = getTagText(componentJsDoc, 'since');

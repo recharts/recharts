@@ -678,15 +678,7 @@ export class ProjectDocReader implements DocReader {
   private getJSDocFromDeclaration(declaration: JSDocableNode): string | undefined {
     const jsDocNodes = declaration.getJsDocs();
     if (jsDocNodes.length > 0) {
-      const comment = jsDocNodes[0].getComment();
-      if (comment) {
-        return typeof comment === 'string'
-          ? comment
-          : comment
-              .map(c => c?.getText())
-              .join(' ')
-              .trim();
-      }
+      return jsDocNodes[0].getDescription().trim();
     }
     return undefined;
   }

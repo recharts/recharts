@@ -241,10 +241,10 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * The `ResponsiveContainer` component is a container that adjusts its width and height based on the size of its parent element.
  * It is used to create responsive charts that adapt to different screen sizes.
  *
- * This component uses the `ResizeObserver` API to monitor changes to the size of its parent element.
+ * This component uses the {@ link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver ResizeObserver} API to monitor changes to the size of its parent element.
  * If you need to support older browsers that do not support this API, you may need to include a polyfill.
  *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver}
+ * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart size guide}
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const responsiveContainerContext = useResponsiveContainerContext();

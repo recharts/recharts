@@ -246,7 +246,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefault
 /**
  * Draws a rectangular area on the chart to highlight a specific range.
  *
- * This component, unlike Rectangle or rect, is aware of the cartesian coordinate system,
+ * This component, unlike Rectangle or {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect}, is aware of the cartesian coordinate system,
  * so you specify the area by using data coordinates instead of pixels.
  *
  * ReferenceArea will calculate the pixels based on the provided data coordinates.
