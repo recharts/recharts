@@ -49,9 +49,9 @@ import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
-import { BrushAPI } from './BrushAPI.tsx';
-import { CrossAPI } from './CrossAPI.tsx';
-import { DotAPI } from './DotAPI.tsx';
+import { BrushAPI } from './BrushAPI';
+import { CrossAPI } from './CrossAPI';
+import { DotAPI } from './DotAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
