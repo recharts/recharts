@@ -167,7 +167,7 @@ export const XAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The height of axis in pixels</p>
+            <p>Height of the axis in pixels.</p>
           </section>
         ),
       },

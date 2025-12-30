@@ -1,6 +1,3 @@
-/**
- * @fileOverview Dot
- */
 import * as React from 'react';
 import { clsx } from 'clsx';
 import { PresentationAttributesWithProps, adaptEventHandlers, RechartsMouseEventHandler } from '../util/types';
@@ -11,11 +8,11 @@ import { isNumber } from '../util/DataUtils';
 interface DotProps {
   className?: string;
   /**
-   * The x-coordinate of center.
+   * The x-coordinate of center in pixels.
    */
   cx?: number;
   /**
-   * The y-coordinate of center.
+   * The y-coordinate of center in pixels.
    */
   cy?: number;
   /**

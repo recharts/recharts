@@ -720,7 +720,7 @@ interface SankeyProps {
    */
   onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   /**
-   * Whether to sort the nodes on th y axis, or to display them as user-defined.
+   * Whether to sort the nodes on the y axis, or to display them as user-defined.
    * @default true
    */
   sort?: boolean;

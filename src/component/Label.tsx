@@ -145,7 +145,8 @@ interface LabelProps extends ZIndexable {
    */
   zIndex?: number;
   /**
-   * The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.
+   * Unique identifier of this component.
+   * Used as an HTML attribute `id`.
    */
   id?: string;
 }

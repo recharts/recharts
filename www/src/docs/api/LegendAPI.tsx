@@ -70,7 +70,7 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The height of legend.</p>
+            <p>Height of the legend in pixels.</p>
           </section>
         ),
       },
@@ -197,7 +197,7 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The width of legend.</p>
+            <p>Width of the legend in pixels.</p>
           </section>
         ),
       },

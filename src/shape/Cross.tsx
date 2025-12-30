@@ -9,19 +9,19 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface CrossProps {
   /**
-   * The x-coordinate of the vertical line of the cross.
+   * The x-coordinate of the vertical line of the cross in pixels.
    */
   x?: number;
   /**
-   * The y-coordinate of the horizontal line of the cross.
+   * The y-coordinate of the horizontal line of the cross in pixels.
    */
   y?: number;
   /**
-   * The width of the horizontal line of the cross.
+   * Width of the cross in pixels.
    */
   width?: number;
   /**
-   * The height of the vertical line of the cross.
+   * Height of the cross in pixels.
    */
   height?: number;
   /**

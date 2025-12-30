@@ -105,11 +105,11 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    */
   wrapperStyle?: CSSProperties;
   /**
-   * The width of legend.
+   * Width of the legend in pixels.
    */
   width?: number;
   /**
-   * The height of legend.
+   * Height of the legend in pixels.
    */
   height?: number;
   payloadUniqBy?: UniqueOption<LegendPayload>;

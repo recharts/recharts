@@ -95,8 +95,7 @@ export const LabelListAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The unique id of this component, which will be used to generate unique clip path id internally. This props
-              is suggested to be set in SSR.
+              Unique identifier of this component. Used as an HTML attribute <code>id</code>.
             </p>
           </section>
         ),

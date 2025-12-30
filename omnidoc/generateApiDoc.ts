@@ -25,7 +25,10 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'Area',
   'BarStack',
+  'Brush',
+  'Cross',
   'Customized',
+  'Dot',
   'ErrorBar',
   'Funnel',
   'Label',

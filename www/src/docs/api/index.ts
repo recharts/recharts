@@ -20,7 +20,6 @@ import { ReferenceLineAPI } from './ReferenceLineAPI';
 import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
-import { BrushAPI as Brush } from './Brush';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
 import { FunnelAPI } from './FunnelAPI';
@@ -38,9 +37,7 @@ import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI } from './PolarGridAPI';
 import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 
-import { CrossAPI as Cross } from './Cross';
 import { CurveAPI as Curve } from './Curve';
-import { DotAPI as Dot } from './Dot';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI as Sector } from './Sector';
@@ -52,6 +49,9 @@ import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
+import { BrushAPI } from './BrushAPI.tsx';
+import { CrossAPI } from './CrossAPI.tsx';
+import { DotAPI } from './DotAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
@@ -74,7 +74,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   XAxis: XAxisAPI,
   YAxis: YAxisAPI,
   ZAxis: ZAxisAPI,
-  Brush,
+  Brush: BrushAPI,
   CartesianAxis,
   CartesianGrid,
   Funnel: FunnelAPI,
@@ -99,9 +99,9 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ReferenceArea: ReferenceAreaAPI,
   ErrorBar: ErrorBarAPI,
 
-  Cross,
+  Cross: CrossAPI,
   Curve,
-  Dot,
+  Dot: DotAPI,
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,
   Sector,

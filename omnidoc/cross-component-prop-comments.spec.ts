@@ -3,6 +3,7 @@ import { calculateSimilarityScore } from './util/calculateSimilarityScore';
 import { coloredDiff } from './util/coloredDiff';
 import { ProjectDocReader } from './readProject';
 import { componentsWithInconsistentCommentsInApiDoc } from './componentsWithInconsistentCommentsInApiDoc';
+import { commentSimilarityExceptions, CommentSimilarityGroup } from './commentSimilarityExceptions';
 
 describe('cross-component prop consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -25,193 +26,6 @@ describe('cross-component prop consistency', () => {
    */
   const SIMILARITY_THRESHOLD = 0.7;
 
-  /**
-   * Some props are legit different across components due to their unique context/use case.
-   * We can list those exceptions here to skip them in the test.
-   */
-  type CommentSimilarityException = {
-    components: ReadonlyArray<string>;
-    props: ReadonlyArray<string>;
-    reason: string;
-  };
-
-  /**
-   * List of known exceptions where prop comments are intentionally different.
-   * This list is permanent.
-   * Only add new items here if there is a semantically valid reason to have different comments.
-   * Do not use this as a workaround for inconsistent documentation!
-   */
-  const exceptions: ReadonlyArray<CommentSimilarityException> = [
-    {
-      components: ['*'],
-      props: ['children'],
-      reason: 'Children comments vary widely based on component purpose',
-    },
-    {
-      components: ['*'],
-      props: ['hide'],
-      reason: 'multiple components have hide, the behaviour is different for each',
-    },
-    {
-      components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
-      props: ['width', 'height'],
-      reason: 'Many components assign different meanings to width/height',
-    },
-    {
-      components: ['Cross', 'ReferenceDot', 'ReferenceLine'],
-      props: ['x', 'y'],
-      reason: `Cross and ReferenceDot positions define the center,
-      which is different from other components where x/y coordinates define the top-left corner.
-      This prop should better be named "cx", "cy" instead.`,
-    },
-    {
-      components: ['Rectangle'],
-      props: ['x', 'y'],
-      reason: 'x and y in Rectangle are required, unlike Brush where they are calculated internally.',
-    },
-    {
-      components: ['Curve'],
-      props: ['layout'],
-      reason: 'Curve layout means something else than the chart layout.',
-    },
-    {
-      components: ['DefaultLegendContent', 'Legend'],
-      props: ['layout'],
-      reason: 'Legend layout means something else than the chart layout.',
-    },
-    {
-      components: ['BarStack'],
-      props: ['stackId'],
-      reason: 'This sets stackId for all Bars inside the BarStack and so it has different description.',
-    },
-    {
-      components: ['BarStack'],
-      props: ['radius'],
-      reason: 'Applies radius to all Bars inside the BarStack, different context than usual',
-    },
-    {
-      components: ['Label', 'LabelList', 'ResponsiveContainer'],
-      props: ['id'],
-      reason: 'These ids are not generated automatically, unlike most other components',
-    },
-    {
-      components: ['LabelList'],
-      props: ['dataKey'],
-      reason: 'LabelList dataKey has special complications compared to other components',
-    },
-    {
-      components: ['Text'],
-      props: ['width'],
-      reason: 'has extra details on automated wrapping',
-    },
-    {
-      components: ['ErrorBar'],
-      props: ['dataKey'],
-      reason: 'has extra information about error bar data structure',
-    },
-    {
-      components: ['Scatter'],
-      props: ['shape'],
-      // https://github.com/recharts/recharts/issues/1753
-      reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
-    },
-    {
-      components: ['Pie'],
-      props: ['label'],
-      reason: 'Pie has a custom label implementation',
-    },
-    {
-      components: ['Dot', 'SunburstChart', 'PolarAngleAxis', 'PolarGrid'],
-      props: ['cx', 'cy'],
-      reason: 'These components do not support percentages unlike other components',
-    },
-    {
-      components: ['Pie'],
-      props: ['shape'],
-      reason: 'Pie shape receives activeIndex prop but other components do not',
-    },
-    {
-      components: ['Label'],
-      props: ['content'],
-      reason: 'In other components, content is called N times. In Label, content is called once.',
-    },
-    {
-      components: ['*'],
-      props: ['type'],
-      reason: 'We have "type" in axes, and "type" in curves, with different meanings',
-    },
-    {
-      components: ['PolarAngleAxis', 'PolarRadiusAxis'],
-      props: ['radius'],
-      reason:
-        'Radius in polar charts means radius from center, unlike cartesian context where it means radius of the corner',
-    },
-    {
-      components: ['PolarGrid'],
-      props: ['innerRadius', 'outerRadius'],
-      reason: 'Unlike other components, this can not be a percentage string',
-    },
-    {
-      components: ['PolarRadiusAxis'],
-      props: ['angle'],
-      reason:
-        'PolarRadiusAxis angle means rotation of the whole axis, unlike other components where it means rotation of text',
-    },
-    {
-      components: ['PolarAngleAxis'],
-      props: ['ticks'],
-      reason: 'PolarAngleAxis ticks are different type for some reason, unlike other axis components',
-    },
-    {
-      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
-      props: ['label'],
-      reason: 'Axis label renders one element, graphical items label render one per data point',
-    },
-    {
-      components: ['PolarRadiusAxis', 'PolarAngleAxis', 'XAxis', 'YAxis', 'ZAxis'],
-      props: ['name'],
-      reason: 'name does similar thing but from different point of view in axes vs graphical items',
-    },
-    {
-      components: ['XAxis'],
-      props: ['xAxisId'],
-      reason: 'Axis ID describes the axis itself, not a relation to other components',
-    },
-    {
-      components: ['YAxis'],
-      props: ['yAxisId'],
-      reason: 'Axis ID describes the axis itself, not a relation to other components',
-    },
-    {
-      components: ['ZAxis'],
-      props: ['zAxisId'],
-      reason: 'Axis ID describes the axis itself, not a relation to other components',
-    },
-    {
-      components: ['PolarAngleAxis'],
-      props: ['axisLine'],
-      reason: 'Unlike other axes, PolarAngleAxis.axisLine does not accept a boolean value',
-    },
-    {
-      components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Pie'],
-      props: ['label'],
-      reason:
-        'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
-    },
-    {
-      components: ['ReferenceLine'],
-      props: ['position'],
-      reason: `ReferenceLine.position describes position relative to the band category,
-      unlike other components where position describes placement in the chart's coordinate system.`,
-    },
-    { components: ['Text'], props: ['style'], reason: 'Text has special instruction for text wrapping' },
-    {
-      components: ['Sankey'],
-      props: ['data', 'dataKey', 'align', 'verticalAlign'],
-      reason: 'Sankey is doing its own thing',
-    },
-  ];
-
   // Build the prop-to-components map once for all tests
   const projectComponents = projectReader.getPublicComponentNames();
   const propToComponents = new Map<
@@ -226,18 +40,25 @@ describe('cross-component prop consistency', () => {
     }
     const props = projectReader.getRechartsPropsOf(component);
     for (const prop of props) {
-      if (
-        exceptions.some(
-          ex => (ex.components.includes(component) || ex.components.includes('*')) && ex.props.includes(prop),
-        )
-      ) {
-        continue;
+      const exceptionIndex = commentSimilarityExceptions.findIndex(
+        (group: CommentSimilarityGroup) =>
+          (group.components.includes(component) || group.components.includes('*')) && group.props.includes(prop),
+      );
+
+      let key = prop;
+      if (exceptionIndex > -1) {
+        const exception = commentSimilarityExceptions[exceptionIndex];
+        if (exception.components.includes('*')) {
+          continue;
+        }
+        key = `${prop} (group: ${exceptionIndex}: ${exception.components.join(', ')})`;
       }
+
       const comment = projectReader.getCommentOf(component, prop);
-      if (!propToComponents.has(prop)) {
-        propToComponents.set(prop, []);
+      if (!propToComponents.has(key)) {
+        propToComponents.set(key, []);
       }
-      propToComponents.get(prop)!.push({ component, comment, propName: prop });
+      propToComponents.get(key)!.push({ component, comment, propName: prop });
     }
   }
 
@@ -250,7 +71,7 @@ describe('cross-component prop consistency', () => {
     .map(([propName]) => propName);
 
   describe.each(sharedPropsWithComments)('shared prop "%s" should have similar JSDoc comments', propName => {
-    const components = propToComponents.get(propName)?.filter(({ propName: p }) => p === propName);
+    const components = propToComponents.get(propName);
     if (components == null) {
       throw new Error(`No components found for prop "${propName}"`);
     }

@@ -15,7 +15,7 @@ export const RectangleAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The height of rectangle in pixels.</p>
+            <p>Height of the rectangle in pixels.</p>
           </section>
         ),
       },
@@ -46,7 +46,7 @@ export const RectangleAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The width of rectangle in pixels.</p>
+            <p>Width of the rectangle in pixels.</p>
           </section>
         ),
       },
