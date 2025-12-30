@@ -70,7 +70,10 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Height of the legend in pixels.</p>
+            <p>
+              Height of the legend. Accept CSS style string values like <code>100%</code> or <code>fit-content</code>,
+              or number values like <code>400</code>.
+            </p>
           </section>
         ),
       },
@@ -197,7 +200,10 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Width of the legend in pixels.</p>
+            <p>
+              Width of the legend. Accept CSS style string values like <code>100%</code> or <code>fit-content</code>, or
+              number values like <code>400</code>.
+            </p>
           </section>
         ),
       },

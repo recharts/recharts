@@ -65,9 +65,14 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'ErrorBar width describes the width of the serifs, not the whole component',
   },
   {
-    components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
+    components: ['Legend'],
     props: ['width', 'height'],
-    reason: 'Many components assign different meanings to width/height',
+    reason: 'Legend accepts arbitrary CSS size values, unlike other components',
+  },
+  {
+    components: ['Brush', 'CartesianGrid', 'Cross', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
+    props: ['width', 'height'],
+    reason: 'These components only allow number pixel values for width/height',
   },
   {
     components: ['Dot', 'Cross'],

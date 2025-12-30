@@ -9,7 +9,6 @@ import {
   VerticalAlignmentType,
 } from './DefaultLegendContent';
 
-import { isNumber } from '../util/DataUtils';
 import { LayoutType, Margin, Size } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
@@ -105,13 +104,15 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    */
   wrapperStyle?: CSSProperties;
   /**
-   * Width of the legend in pixels.
+   * Width of the legend.
+   * Accept CSS style string values like `100%` or `fit-content`, or number values like `400`.
    */
-  width?: number;
+  width?: number | string;
   /**
-   * Height of the legend in pixels.
+   * Height of the legend.
+   * Accept CSS style string values like `100%` or `fit-content`, or number values like `400`.
    */
-  height?: number;
+  height?: number | string;
   payloadUniqBy?: UniqueOption<LegendPayload>;
   onBBoxUpdate?: (box: ElementOffset | null) => void;
   /**
@@ -165,11 +166,11 @@ function LegendSizeDispatcher(props: Size): null {
 
 function getWidthOrHeight(
   layout: LayoutType | undefined,
-  height: number | undefined,
-  width: number | undefined,
+  height: number | string | undefined,
+  width: number | string | undefined,
   maxWidth: number,
-): null | { height?: number; width?: number } {
-  if (layout === 'vertical' && isNumber(height)) {
+): null | { height?: number | string; width?: number | string } {
+  if (layout === 'vertical' && height != null) {
     return {
       height,
     };
