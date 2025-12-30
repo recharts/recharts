@@ -10,7 +10,7 @@ import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
-import { TreemapAPI } from './Treemap';
+import { TreemapAPI } from './TreemapAPI';
 
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';

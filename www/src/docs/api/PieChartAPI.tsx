@@ -400,6 +400,7 @@ export const PieChartAPI: ApiDoc = {
       },
     },
   ],
+  parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
     'Label',
     'Legend',

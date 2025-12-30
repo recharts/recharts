@@ -1216,6 +1216,7 @@ function SankeyImpl(props: InternalSankeyProps) {
  * Flow diagram in which the width of the arrows is proportional to the flow rate.
  * It is typically used to visualize energy or material or cost transfers between processes.
  *
+ * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
  */
 export function Sankey(outsideProps: Props) {

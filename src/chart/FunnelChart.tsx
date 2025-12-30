@@ -7,6 +7,7 @@ import { CartesianChartProps, TooltipEventType } from '../util/types';
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];
 
 /**
+ * @consumes ResponsiveContainerContext
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
  */

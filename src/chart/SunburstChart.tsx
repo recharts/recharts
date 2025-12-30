@@ -378,6 +378,9 @@ const SunburstChartImpl = ({
   );
 };
 
+/**
+ * @consumes ResponsiveContainerContext
+ */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
   const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);
   const { className, width, height, responsive, style, id: externalId } = props;

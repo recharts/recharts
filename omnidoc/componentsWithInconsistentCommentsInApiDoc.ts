@@ -9,5 +9,4 @@ export const componentsWithInconsistentCommentsInApiDoc = [
    */
   'CartesianAxis',
   'Cell',
-  'Treemap',
 ];

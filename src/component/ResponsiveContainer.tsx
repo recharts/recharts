@@ -245,6 +245,8 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * If you need to support older browsers that do not support this API, you may need to include a polyfill.
  *
  * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart size guide}
+ *
+ * @provides ResponsiveContainerContext
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const responsiveContainerContext = useResponsiveContainerContext();

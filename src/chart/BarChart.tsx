@@ -7,6 +7,7 @@ import { CartesianChart } from './CartesianChart';
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis', 'item'];
 
 /**
+ * @consumes ResponsiveContainerContext
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
  */

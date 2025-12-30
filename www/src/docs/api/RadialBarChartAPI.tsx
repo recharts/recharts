@@ -400,6 +400,7 @@ export const RadialBarChartAPI: ApiDoc = {
       },
     },
   ],
+  parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
     'Label',
     'Legend',
