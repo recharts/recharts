@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
 import { ProjectDocReader } from './readProject';
-import { processType } from './generateApiDoc';
+import { getLinksFromProp, processType } from './generateApiDoc';
 import { assertNotNull } from '../test/helper/assertNotNull';
 
 describe('readProject', () => {
@@ -1024,5 +1024,49 @@ describe('readProject', () => {
   it('should read known primitive default value types as primitives without the string wrapper', () => {
     expect(reader.getDefaultValueOf('Label', 'angle')).toEqual({ type: 'known', value: 0 });
     expect(reader.getDefaultValueOf('LabelList', 'angle')).toEqual({ type: 'known', value: 0 });
+  });
+
+  it('should read ResponsiveContainer description', () => {
+    const comment = reader.getComponentJsDocMeta('ResponsiveContainer')?.text;
+    assertNotNull(comment);
+    expect(comment).toContain('container that adjusts its width and height');
+    expect(comment).not.toContain('/**');
+  });
+
+  it('should read ReferenceArea description', () => {
+    const comment = reader.getComponentJsDocMeta('ReferenceArea')?.text;
+    assertNotNull(comment);
+    expect(comment).not.toContain('/**');
+  });
+
+  it('should read JSDoc tags of Scatter', () => {
+    const tags = reader.getComponentJsDocMeta('Scatter');
+    assertNotNull(tags);
+    expect(tags.tags).toEqual([
+      ['provides', 'LabelListContext'],
+      ['provides', 'ErrorBarContext'],
+      ['provides', 'CellReader'],
+      ['consumes', 'CartesianChartContext'],
+    ]);
+  });
+
+  it('should deduplicate links if both the child and parent components point to the same example', () => {
+    const propMeta = reader.getPropMeta('Line', 'type');
+    // both Line and Curve have examples for 'type' prop but we should not display duplicates
+    expect(propMeta).toHaveLength(2);
+
+    const examples = getLinksFromProp('Line', 'type', reader);
+    expect(examples).toEqual([
+      {
+        isExternal: undefined,
+        name: 'An AreaChart which has two area with different interpolation.',
+        url: '/examples/CardinalAreaChart/',
+      },
+      {
+        isExternal: true,
+        name: 'https://github.com/d3/d3-shape#curves',
+        url: 'https://github.com/d3/d3-shape#curves',
+      },
+    ]);
   });
 });

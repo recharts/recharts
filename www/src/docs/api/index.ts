@@ -5,7 +5,7 @@ import { LineChartAPI as LineChart } from './LineChart';
 import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI } from './RadarChartAPI';
-import { SankeyAPI } from './Sankey';
+import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './Treemap';
@@ -25,7 +25,7 @@ import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
 import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
 import { FunnelAPI } from './FunnelAPI';
 
-import { ResponsiveContainerAPI as ResponsiveContainer } from './ResponsiveContainer';
+import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
 import { LegendAPI } from './LegendAPI';
 import { TooltipAPI as Tooltip } from './Tooltip';
 import { CellAPI as Cell } from './Cell';
@@ -79,7 +79,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   CartesianGrid,
   Funnel: FunnelAPI,
 
-  ResponsiveContainer,
+  ResponsiveContainer: ResponsiveContainerAPI,
   Legend: LegendAPI,
   Tooltip,
   Cell,

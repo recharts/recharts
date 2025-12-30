@@ -13,7 +13,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
-import { getAllTagTexts, getTagText, ProjectDocReader } from './readProject';
+import { getAllTagTexts, getTagText, JSDocMeta, ProjectDocReader } from './readProject';
 import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 
 /**
@@ -46,6 +46,8 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'ReferenceArea',
   'ReferenceDot',
   'ReferenceLine',
+  'ResponsiveContainer',
+  'Sankey',
   'Scatter',
   'Text',
   'XAxis',
@@ -157,6 +159,28 @@ function buildContextMap(
   return contextMap;
 }
 
+/**
+ * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags or React Router Link components.
+ * Handles both {@link url} and {@link url text} formats.
+ * If the link is a single word that matches a Recharts component name, it creates a React Router Link for SPA navigation.
+ */
+export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
+  // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
+  // The regex captures: url and optional text
+  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]+))?\}/g, (match, url, t) => {
+    const displayText = t?.trim() || url;
+
+    // Check if the URL is a single word (no protocol, no slashes) and matches a component name
+    if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
+      // It's a Recharts component reference - create a React Router Link for SPA navigation
+      return `<Link to="/api/${url}/">${displayText}</Link>`;
+    }
+
+    // Otherwise, use the URL as-is for external links
+    return `<a href="${url}">${displayText}</a>`;
+  });
+}
+
 async function generateComponentDescription(
   componentName: string,
   projectReader: ProjectDocReader,
@@ -165,7 +189,11 @@ async function generateComponentDescription(
   if (componentJsDoc) {
     const desc: { [locale: string]: string } = {};
     if (componentJsDoc.text) {
-      desc['en-US'] = await marked.parse(componentJsDoc.text);
+      // Get all component names to resolve internal component references
+      const componentNames = projectReader.getPublicComponentNames();
+      // Process inline {@link} tags before passing to marked
+      const textWithLinks = processInlineLinks(componentJsDoc.text, componentNames);
+      desc['en-US'] = await marked.parse(textWithLinks);
     }
     // Check for @since tag
     const sinceTag = getTagText(componentJsDoc, 'since');
@@ -177,61 +205,92 @@ async function generateComponentDescription(
   return undefined;
 }
 
-function getLinksFromProp(componentName: string, propName: string, projectReader: ProjectDocReader): PropExample[] {
+/**
+ * Parses JSDoc tag text (from @see or @link) and extracts URL and display name.
+ * Handles formats like:
+ * - `{@link url}`
+ * - `{@link url text}`
+ * - `url text`
+ * - `url|text`
+ */
+function parseJSDocLinkTag(tag: string): PropExample {
+  let url = '';
+  let name = '';
+
+  let cleanTag = tag.trim();
+
+  // Check for {@link ...} wrapper and strip it
+  const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
+  if (linkWrapperMatch) {
+    cleanTag = linkWrapperMatch[1].trim();
+  }
+
+  // Parse "url|text" or "url text"
+  // Match first sequence of non-whitespace/non-pipe characters as URL
+  const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
+  if (parts) {
+    url = parts[1].trim();
+    name = parts[2]?.trim() ?? url;
+  } else {
+    // Fallback for weird cases
+    url = cleanTag;
+    name = cleanTag;
+  }
+
+  // Strip specific prefix
+  const prefix = 'https://recharts.github.io/en-US';
+  if (url.startsWith(prefix)) {
+    url = url.slice(prefix.length);
+  }
+
+  const isExternal = url.startsWith('http') || url.startsWith('https');
+
+  return {
+    name,
+    url,
+    isExternal: isExternal ? true : undefined,
+  };
+}
+
+function getAllLinksFromJsDoc(jsDocMeta: JSDocMeta | undefined): ReadonlyArray<PropExample> {
+  if (!jsDocMeta) return [];
+
+  const examples: PropExample[] = [];
+  const seeTags = getAllTagTexts(jsDocMeta, 'see');
+  const linkTags = getAllTagTexts(jsDocMeta, 'link');
+
+  [...seeTags, ...linkTags].forEach(tag => {
+    examples.push(parseJSDocLinkTag(tag));
+  });
+
+  return examples;
+}
+
+function deduplicatePropExamples(examples: ReadonlyArray<PropExample>): ReadonlyArray<PropExample> {
+  return examples.filter((ex, index, self) => index === self.findIndex(t => t.url === ex.url));
+}
+
+export function getLinksFromProp(
+  componentName: string,
+  propName: string,
+  projectReader: ProjectDocReader,
+): ReadonlyArray<PropExample> {
   const meta = projectReader.getPropMeta(componentName, propName);
   // getPropMeta returns an array, but standard props usually map to one definition.
   // In case of multiple (overloading), we merge tags.
-  const examples: PropExample[] = [];
+  const allExamples = meta.map(propMeta => propMeta.jsDoc).flatMap(getAllLinksFromJsDoc);
 
-  for (const propMeta of meta) {
-    if (!propMeta.jsDoc) continue;
+  return deduplicatePropExamples(allExamples);
+}
 
-    const seeTags = getAllTagTexts(propMeta.jsDoc, 'see');
-    const linkTags = getAllTagTexts(propMeta.jsDoc, 'link');
+/**
+ * Get links from component-level JSDoc (@see and @link tags)
+ */
+function getLinksFromComponent(componentName: string, projectReader: ProjectDocReader): ReadonlyArray<PropExample> {
+  const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
+  if (!componentJsDoc) return [];
 
-    // Process both tags similarly
-    [...seeTags, ...linkTags].forEach(tag => {
-      let url = '';
-      let name = '';
-
-      let cleanTag = tag.trim();
-
-      // Check for {@link ...} wrapper and strip it
-      const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
-      if (linkWrapperMatch) {
-        cleanTag = linkWrapperMatch[1].trim();
-      }
-
-      // Parse "url|text" or "url text"
-      // Match first sequence of non-whitespace/non-pipe characters as URL
-      const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
-      if (parts) {
-        url = parts[1].trim();
-        name = parts[2]?.trim() ?? url;
-      } else {
-        // Fallback for weird cases
-        url = cleanTag;
-        name = cleanTag;
-      }
-
-      // Strip specific prefix
-      const prefix = 'https://recharts.github.io/en-US';
-      if (url.startsWith(prefix)) {
-        url = url.slice(prefix.length);
-      }
-
-      const isExternal = url.startsWith('http') || url.startsWith('https');
-
-      examples.push({
-        name,
-        url,
-        isExternal: isExternal ? true : undefined,
-      });
-    });
-  }
-
-  // Deduplicate by URL
-  return examples.filter((ex, index, self) => index === self.findIndex(t => t.url === ex.url));
+  return deduplicatePropExamples(getAllLinksFromJsDoc(componentJsDoc));
 }
 
 /**
@@ -374,6 +433,12 @@ async function generateApiDoc(
       apiDoc.deprecated = deprecatedTag.text || true;
     }
 
+    // Get links from component JSDoc
+    const links = getLinksFromComponent(componentName, projectReader);
+    if (links.length > 0) {
+      apiDoc.links = links;
+    }
+
     // Check for @provides tags - this component provides context to children
     const providesTags = getAllTagTexts(componentJsDoc, 'provides');
     if (providesTags.length > 0) {
@@ -461,6 +526,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
     }
     result += `},`;
   }
+  // Add links if available
+  if (apiDoc.links && apiDoc.links.length > 0) {
+    result += `"links": ${JSON.stringify(apiDoc.links)},`;
+  }
   // Add parent components if available
   if (apiDoc.parentComponents && apiDoc.parentComponents.length > 0) {
     result += `"parentComponents": ${JSON.stringify(apiDoc.parentComponents)},`;
@@ -482,7 +551,16 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
   const varName = `${apiDoc.name}API`;
 
-  const fileContent = `import { ApiDoc } from './types';
+  // Check if the description contains Link components (for internal links)
+  const hasLinkComponents =
+    apiDoc.desc && Object.values(apiDoc.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to='));
+
+  // Add Link import if needed
+  const imports = hasLinkComponents
+    ? `import { Link } from 'react-router';\nimport { ApiDoc } from './types';`
+    : `import { ApiDoc } from './types';`;
+
+  const fileContent = `${imports}
 
 export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 `;

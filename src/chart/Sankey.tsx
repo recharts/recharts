@@ -40,6 +40,7 @@ const interpolationGenerator = (a: number, b: number) => {
 
 const centerY = (node: SankeyNode) => node.y + node.dy / 2;
 
+// TODO why is this not reading dataKey?
 const getValue = (entry: LinkDataItem | SankeyNode | undefined): number => (entry && entry.value) || 0;
 
 const getSumOfIds = (links: ReadonlyArray<LinkDataItem>, ids: number[]): number =>
@@ -610,27 +611,128 @@ type SankeyLinkOptions =
   | SVGProps<SVGPathElement>;
 
 interface SankeyProps {
+  /**
+   * The key of each sector's name.
+   * @default 'name'
+   */
   nameKey?: DataKey<any>;
+  /**
+   * dataKey prop in Sankey defines which key in the link objects represents the value of the link _in Tooltip only_.
+   *
+   * Unlike other charts where dataKey is used to extract values from the data array, in Sankey charts,
+   * the value of each link is directly taken from the 'value' property of the link objects.
+   *
+   * @default 'value'
+   */
   dataKey?: DataKey<any>;
+  /**
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
+   */
   width?: number | Percent;
+  /**
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
+   */
   height?: number | Percent;
+  /**
+   * The source data, including the array of nodes, and the relationships, represented by links.
+   *
+   * Note that Sankey requires a specific data structure.
+   * Each node should have a unique index in the nodes array, and each link should reference these nodes by their indices.
+   * This is different from other chart types in Recharts, which accept arbitrary data.
+   *
+   * @example
+   * nodes: [
+   *   { name: 'Visit' },
+   *   { name: 'Direct-Favourite' },
+   *   { name: 'Page-Click' },
+   *   { name: 'Detail-Favourite' },
+   *   { name: 'Lost' },
+   * ],
+   * links: [
+   *   { source: 0, target: 1, value: 3728.3 },
+   *   { source: 0, target: 2, value: 354170 },
+   *   { source: 2, target: 3, value: 62429 },
+   *   { source: 2, target: 4, value: 291741 },
+   * ],
+   */
   data: SankeyData;
+  /**
+   * The padding between the nodes
+   * @default 10
+   */
   nodePadding?: number;
+  /**
+   * The width of node
+   * @default 10
+   */
   nodeWidth?: number;
+  /**
+   * The curvature of width
+   * @default 0.5
+   */
   linkCurvature?: number;
+  /**
+   * The number of the iterations between the links
+   * @default 32
+   */
   iterations?: number;
-  // TODO object func
+  /**
+   * If set an object, the option is the configuration of nodes.
+   * If set a React element, the option is the custom react element of drawing the nodes.
+   *
+   * @example <Sankey node={MyCustomComponent} />
+   * @example <Sankey node={{stroke: #77c878, strokeWidth: 2}} />
+   */
   node?: SankeyNodeOptions;
+  /**
+   * If set an object, the option is the configuration of links.
+   * If set a React element, the option is the custom react element of drawing the links.
+   *
+   * @example <Sankey link={MyCustomComponent} />
+   * @example <Sankey link={{ fill: #77c878 }} />
+   */
   link?: SankeyLinkOptions;
   style?: React.CSSProperties;
   className?: string;
   children?: ReactNode;
+  /**
+   * Empty space around the container.
+   *
+   * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
+   */
   margin?: Partial<Margin>;
+  /**
+   * The customized event handler of click on the area in this group
+   */
   onClick?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  /**
+   * The customized event handler of mouseenter on the area in this group
+   */
   onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the area in this group
+   */
   onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  /**
+   * Whether to sort the nodes on th y axis, or to display them as user-defined.
+   * @default true
+   */
   sort?: boolean;
+  /**
+   * Controls the vertical spacing of nodes within a depth. 'justify' distributes nodes evenly and balances link paths, while 'top' positions the group starting from the top edge of the chart.
+   * @default 'justify'
+   */
   verticalAlign?: SankeyVerticalAlign;
+  /**
+   * If set to 'justify', the start nodes will be aligned to the left edge of the chart and the end nodes will be aligned to the right edge of the chart. If set to 'left', the start nodes will be aligned to the left edge of the chart.
+   * @default 'justify'
+   */
   align?: 'left' | 'justify';
 }
 
@@ -1110,6 +1212,12 @@ function SankeyImpl(props: InternalSankeyProps) {
   );
 }
 
+/**
+ * Flow diagram in which the width of the arrows is proportional to the flow rate.
+ * It is typically used to visualize energy or material or cost transfers between processes.
+ *
+ * @provides TooltipEntrySettings
+ */
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
   const { width, height, style, className, id: externalId } = props;

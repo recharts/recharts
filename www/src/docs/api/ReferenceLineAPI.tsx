@@ -120,7 +120,7 @@ export const ReferenceLineAPI: ApiDoc = {
           </section>
         ),
       },
-      format: ['<ReferenceLine y="Monday" />'],
+      format: ['<ReferenceLine x="Monday" />'],
     },
     {
       name: 'xAxisId',
@@ -150,7 +150,7 @@ export const ReferenceLineAPI: ApiDoc = {
           </section>
         ),
       },
-      format: ['<ReferenceLine x="Page D" />'],
+      format: ['<ReferenceLine y="Page D" />'],
     },
     {
       name: 'yAxisId',
@@ -189,13 +189,15 @@ export const ReferenceLineAPI: ApiDoc = {
       <section>
         <p>Draws a line on the chart connecting two points.</p>
         <p>
-          This component, unlike <code>&lt;line&gt;</code>, is aware of the cartesian coordinate system, so you specify
-          the dimensions by using data coordinates instead of pixels.
+          This component, unlike{' '}
+          <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line">line</a>, is aware of the
+          cartesian coordinate system, so you specify the dimensions by using data coordinates instead of pixels.
         </p>
         <p>ReferenceLine will calculate the pixels based on the provided data coordinates.</p>
         <p>
           If you prefer to render using pixels rather than data coordinates, consider using the{' '}
-          <code>&lt;line&gt;</code> SVG element instead.
+          <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line">line SVG element</a>{' '}
+          instead.
         </p>
       </section>
     ),

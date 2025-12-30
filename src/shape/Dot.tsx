@@ -36,7 +36,7 @@ export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> 
  *
  * This component accepts X and Y coordinates in pixels.
  * If you need to position the rectangle based on your chart's data,
- * consider using the `<ReferenceDot>` component instead.
+ * consider using the {@link ReferenceDot} component instead.
  *
  * @param props
  * @constructor

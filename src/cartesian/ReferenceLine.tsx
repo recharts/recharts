@@ -55,7 +55,7 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceLine will internally calculate the correct pixel position.
    *
-   * @example <ReferenceLine x="Page D" />
+   * @example <ReferenceLine y="Page D" />
    */
   y?: number | string;
 
@@ -65,7 +65,7 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
    * ReferenceLine will internally calculate the correct pixel position.
    *
-   * @example <ReferenceLine y="Monday" />
+   * @example <ReferenceLine x="Monday" />
    */
   x?: number | string;
 
@@ -348,13 +348,13 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
 /**
  * Draws a line on the chart connecting two points.
  *
- * This component, unlike `<line>`, is aware of the cartesian coordinate system,
+ * This component, unlike {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line line}, is aware of the cartesian coordinate system,
  * so you specify the dimensions by using data coordinates instead of pixels.
  *
  * ReferenceLine will calculate the pixels based on the provided data coordinates.
  *
  * If you prefer to render using pixels rather than data coordinates,
- * consider using the `<line>` SVG element instead.
+ * consider using the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/line line SVG element} instead.
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext

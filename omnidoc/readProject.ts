@@ -3,6 +3,7 @@
  */
 import {
   ExportedDeclarations,
+  JSDocableNode,
   JSDocTagInfo,
   Node,
   Project,
@@ -15,7 +16,7 @@ import { componentMetaMap } from './componentsAndDefaultPropsMap';
 
 type PropOrigin = 'recharts' | 'dom' | 'other';
 
-type JSDocMeta = {
+export type JSDocMeta = {
   text?: string;
   /**
    * Can't store these in a map because there can be multiple tags with the same name (e.g., @example)
@@ -634,27 +635,60 @@ export class ProjectDocReader implements DocReader {
     }
   }
 
-  private getJSDocFromDeclaration(declaration: Node): string | undefined {
-    if (!Node.isJSDocable(declaration)) {
-      return undefined;
+  /**
+   * Sometimes the declaration points to an export, or an alias.
+   * This method will attempt to find a JSDocableNode in the declaration chain.
+   */
+  private getJsDocableDeclaration(declaration: Node): JSDocableNode | undefined {
+    if (Node.isJSDocable(declaration)) {
+      return declaration;
     }
-    const jsDocNodes = declaration.getJsDocs();
-    if (jsDocNodes.length > 0) {
-      const comment = jsDocNodes[0].getComment();
-      if (comment) {
-        return typeof comment === 'string'
-          ? comment
-          : comment
-              .map(c => c?.getText())
-              .join(' ')
-              .trim();
+    // If the declaration itself is not JSDocable, try to get JSDoc from the symbol's declarations
+    const symbol = declaration.getSymbol();
+    if (symbol) {
+      const declarations = symbol.getDeclarations();
+      for (const decl of declarations) {
+        if (decl !== declaration) {
+          const jsDocableDecl = this.getJsDocableDeclaration(decl);
+          if (jsDocableDecl) {
+            return jsDocableDecl;
+          }
+        }
+
+        // For VariableDeclaration, check the parent VariableStatement
+        const parent = decl.getParent();
+        if (parent) {
+          const parentJsDoc = this.getJsDocableDeclaration(parent);
+          if (parentJsDoc) {
+            return parentJsDoc;
+          }
+          const grandparent = parent.getParent();
+          if (grandparent) {
+            const grandparentJsDoc = this.getJsDocableDeclaration(grandparent);
+            if (grandparentJsDoc) {
+              return grandparentJsDoc;
+            }
+          }
+        }
       }
     }
     return undefined;
   }
 
+  private getJSDocFromDeclaration(declaration: JSDocableNode): string | undefined {
+    const jsDocNodes = declaration.getJsDocs();
+    if (jsDocNodes.length > 0) {
+      return jsDocNodes[0].getDescription().trim();
+    }
+    return undefined;
+  }
+
   private getJsDocMeta(declaration: Node): JSDocMeta {
-    const text = this.getJSDocFromDeclaration(declaration);
+    const docableDeclaration: JSDocableNode | undefined = this.getJsDocableDeclaration(declaration);
+    if (!docableDeclaration) {
+      return { text: undefined, tags: [] };
+    }
+    const text = this.getJSDocFromDeclaration(docableDeclaration);
     const tags: Array<[string, string | undefined]> = [];
     declaration
       .getSymbol()

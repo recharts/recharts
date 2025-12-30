@@ -212,6 +212,14 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
           </p>
         )}
         {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
+        {api.links && api.links.length ? (
+          <div className="links">
+            <h4 className="sub-title">{localeGet(locale, 'api', 'links')}</h4>
+            <ul className="list">
+              <PropsExamples examples={api.links} locale={locale} />
+            </ul>
+          </div>
+        ) : null}
         <ApiExamples examples={examples} componentName={page} />
 
         {api.parentComponents && api.parentComponents.length ? (
