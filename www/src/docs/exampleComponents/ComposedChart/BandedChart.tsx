@@ -52,7 +52,7 @@ const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContent
   return <DefaultTooltipContent payload={newPayload} {...rest} />;
 };
 
-const renderLegendWithoutRange = ({ payload, content, ref, ...rest }: DefaultLegendContentProps) => {
+const renderLegendWithoutRange = ({ payload, ref, ...rest }: DefaultLegendContentProps) => {
   const newPayload = payload?.filter(x => x.dataKey !== 'a');
   return <DefaultLegendContent payload={newPayload} {...rest} />;
 };
