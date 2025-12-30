@@ -7,3 +7,5 @@ public/examples
 /docs/
 /.idea/
 /coverage
+
+*.local
