@@ -90,7 +90,7 @@ describe('cross-component prop consistency', () => {
       reason: 'Applies radius to all Bars inside the BarStack, different context than usual',
     },
     {
-      components: ['Label', 'LabelList'],
+      components: ['Label', 'LabelList', 'ResponsiveContainer'],
       props: ['id'],
       reason: 'These ids are not generated automatically, unlike most other components',
     },
@@ -204,6 +204,7 @@ describe('cross-component prop consistency', () => {
       reason: `ReferenceLine.position describes position relative to the band category,
       unlike other components where position describes placement in the chart's coordinate system.`,
     },
+    { components: ['Text'], props: ['style'], reason: 'Text has special instruction for text wrapping' },
   ];
 
   // Build the prop-to-components map once for all tests

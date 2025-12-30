@@ -2,6 +2,18 @@ import type { CSSProperties } from 'react';
 import { isPercent } from '../util/DataUtils';
 
 import { Percent } from '../util/types';
+import { Props } from './ResponsiveContainer';
+
+export const defaultResponsiveContainerProps = {
+  width: '100%',
+  height: '100%',
+  debounce: 0,
+  minWidth: 0,
+  initialDimension: {
+    width: -1,
+    height: -1,
+  },
+} as const satisfies Partial<Props>;
 
 export const calculateChartDimensions = (
   containerWidth: number | undefined,
@@ -13,7 +25,12 @@ export const calculateChartDimensions = (
     maxHeight: number | undefined;
   },
 ) => {
-  const { width = '100%', height = '100%', aspect, maxHeight } = props;
+  const {
+    width = defaultResponsiveContainerProps.width,
+    height = defaultResponsiveContainerProps.height,
+    aspect,
+    maxHeight,
+  } = props;
 
   /*
    * The containerWidth and containerHeight are already percentage based because it's set as that percentage in CSS.
@@ -100,12 +117,12 @@ export function getDefaultWidthAndHeight({
   let calculatedHeight = height;
 
   if (calculatedWidth === undefined && calculatedHeight === undefined) {
-    calculatedWidth = '100%';
-    calculatedHeight = '100%';
+    calculatedWidth = defaultResponsiveContainerProps.width;
+    calculatedHeight = defaultResponsiveContainerProps.height;
   } else if (calculatedWidth === undefined) {
-    calculatedWidth = aspect && aspect > 0 ? undefined : '100%';
+    calculatedWidth = aspect && aspect > 0 ? undefined : defaultResponsiveContainerProps.width;
   } else if (calculatedHeight === undefined) {
-    calculatedHeight = aspect && aspect > 0 ? undefined : '100%';
+    calculatedHeight = aspect && aspect > 0 ? undefined : defaultResponsiveContainerProps.height;
   }
 
   return { width: calculatedWidth, height: calculatedHeight };

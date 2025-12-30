@@ -32,6 +32,7 @@ import { defaultRadialBarChartProps } from '../src/chart/RadialBarChart';
 import { sankeyDefaultProps } from '../src/chart/Sankey';
 import { defaultBarStackProps } from '../src/cartesian/BarStack';
 import { defaultPolarGridProps } from '../src/polar/PolarGrid';
+import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -67,6 +68,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
   ReferenceDot: { defaultProps: referenceDotDefaultProps },
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
+  ResponsiveContainer: { defaultProps: defaultResponsiveContainerProps },
   Sankey: { defaultProps: sankeyDefaultProps },
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },

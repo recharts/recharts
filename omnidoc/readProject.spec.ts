@@ -1025,4 +1025,12 @@ describe('readProject', () => {
     expect(reader.getDefaultValueOf('Label', 'angle')).toEqual({ type: 'known', value: 0 });
     expect(reader.getDefaultValueOf('LabelList', 'angle')).toEqual({ type: 'known', value: 0 });
   });
+
+  it('should read ResponsiveContainer description', () => {
+    const comment = reader.getComponentJsDocMeta('ResponsiveContainer')?.text;
+    assertNotNull(comment);
+    expect(comment).toContain(
+      'A container component that adjusts its width and height according to the size of the parent container.',
+    );
+  });
 });

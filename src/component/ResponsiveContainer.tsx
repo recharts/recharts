@@ -16,36 +16,44 @@ import {
 import throttle from 'es-toolkit/compat/throttle';
 import { isNumber, noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { calculateChartDimensions, getDefaultWidthAndHeight, getInnerDivStyle } from './responsiveContainerUtils';
+import {
+  calculateChartDimensions,
+  defaultResponsiveContainerProps,
+  getDefaultWidthAndHeight,
+  getInnerDivStyle,
+} from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 export interface Props {
   /**
-   * The aspect ratio of the chart. It is calculated as `width / height`.
-   * If specified, the height will be calculated by the width and this ratio.
+   * width / height. If specified, the height will be calculated by width / aspect.
    */
   aspect?: number;
   /**
-   * The width of the container. If a percentage string is specified, it is calculated responsive to the width of the parent element.
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
    * @default '100%'
    */
   width?: Percent | number;
   /**
-   * The height of the container. If a percentage string is specified, it is calculated responsive to the height of the parent element.
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
    * @default '100%'
    */
   height?: Percent | number;
   /**
-   * The minimum width of the container. It can be a percentage string or a number.
+   * The minimum width of the container.
    * @default 0
    */
   minWidth?: string | number;
-  /** The minimum height of the container. It can be a percentage string or a number. */
+  /**
+   * The minimum height of the container.
+   */
   minHeight?: string | number;
   /**
    * The initial width and height of the container.
-   * @default { width: -1, height: -1 }
+   * @default {"width":-1,"height":-1}
    */
   initialDimension?: {
     width: number;
@@ -59,25 +67,26 @@ export interface Props {
    */
   children: ReactNode;
   /**
-   * The debounce time for resizing events.
+   * If specified a positive number, debounced function will be used to handle the resize event.
    * @default 0
    */
   debounce?: number;
-  /** The id of the container. */
+  /**
+   * Unique identifier of this component.
+   * Used as an HTML attribute `id`.
+   */
   id?: string | number;
-  /** The class name of the container. */
+  /** The HTML element's class name */
   className?: string | number;
   /** The style of the container. */
   style?: Omit<CSSProperties, keyof Props>;
   /**
-   * A callback function that will be called when the container is resized.
-   * @param width The new width of the container.
-   * @param height The new height of the container.
+   * If specified provides a callback providing the updated chart width and height values.
    */
   onResize?: (width: number, height: number) => void;
 }
 
-const ResponsiveContainerContext = createContext<Size>({ width: -1, height: -1 });
+const ResponsiveContainerContext = createContext<Size>(defaultResponsiveContainerProps.initialDimension);
 
 function isAcceptableSize(size: { width: number | undefined; height: number | undefined }): size is Size {
   return isPositiveNumber(size.width) && isPositiveNumber(size.height);
@@ -110,21 +119,18 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
   (
     {
       aspect,
-      initialDimension = {
-        width: -1,
-        height: -1,
-      },
+      initialDimension = defaultResponsiveContainerProps.initialDimension,
       width,
       height,
       /*
        * default min-width to 0 if not specified - 'auto' causes issues with flexbox
        * https://github.com/recharts/recharts/issues/172
        */
-      minWidth = 0,
+      minWidth = defaultResponsiveContainerProps.minWidth,
       minHeight,
       maxHeight,
       children,
-      debounce = 0,
+      debounce = defaultResponsiveContainerProps.debounce,
       id,
       className,
       onResize,
