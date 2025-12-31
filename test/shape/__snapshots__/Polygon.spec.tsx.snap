@@ -1,19 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Polygon /> > Don't render any path when points is empty or null 1`] = `
-<div>
-  <svg
-    class="recharts-surface"
-    height="400"
-    viewBox="0 0 400 400"
-    width="400"
-  >
-    <title />
-    <desc />
-  </svg>
-</div>
-`;
-
 exports[`<Polygon /> > Render 1 path in simple Polygon 1`] = `
 <div>
   <svg
@@ -28,6 +14,44 @@ exports[`<Polygon /> > Render 1 path in simple Polygon 1`] = `
       class="recharts-polygon"
       d="M100,300L300,300L200,50L100,300Z"
       fill="#ff7300"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Polygon /> > Render 1 path in simple Polygon when connectNulls is true 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-polygon"
+      d="M100,300L300,300L200,50L400,300L600,300L500,50L100,300Z"
+      fill="#ff7300"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Polygon /> > Render multi paths in simple Polygon when connectNulls is false 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-polygon"
+      d="M100,300L300,300L200,50M400,300L600,300L500,50L100,300"
+      fill="none"
     />
   </svg>
 </div>
