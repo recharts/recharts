@@ -108,20 +108,16 @@
 
   .who.block {
     max-width: 100%;
+
     .users {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      width: 100%;
       max-width: 1600px;
-      margin: auto;
+      overflow-x: auto;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(300px, 1fr));
       gap: 20px;
 
-      @media (min-width: 1600px) {
-        grid-template-columns: repeat(5, 1fr);
-      }
-
       .user {
-        text-align: center;
-
         > a {
           display: flex;
           flex-direction: column;
