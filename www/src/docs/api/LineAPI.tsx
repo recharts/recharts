@@ -292,11 +292,24 @@ export const LineAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The pattern of dashes and gaps used to paint the line</p>
+            <p>The pattern of dashes and gaps used to paint the line.</p>
           </section>
         ),
       },
-      format: ['<Line strokeDasharray="4" />', '<Line strokeDasharray="4 1" />', '<Line strokeDasharray="4 1 2" />'],
+      format: [
+        'strokeDasharray="5 5"',
+        'strokeDasharray={10}',
+        '<Line strokeDasharray="4" />',
+        '<Line strokeDasharray="4 1" />',
+        '<Line strokeDasharray="4 1 2" />',
+      ],
+      examples: [
+        {
+          name: '://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          url: 'https',
+          isExternal: true,
+        },
+      ],
     },
     {
       name: 'strokeWidth',

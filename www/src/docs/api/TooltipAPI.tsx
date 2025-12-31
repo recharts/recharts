@@ -260,7 +260,7 @@ export const TooltipAPI: ApiDoc = {
       },
       defaultVal: 10,
     },
-    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<Payload<TValue, TName>>', isOptional: true },
+    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<TooltipPayloadEntry>', isOptional: true },
     {
       name: 'portal',
       type: 'null | HTMLElement',

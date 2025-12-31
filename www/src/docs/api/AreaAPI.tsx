@@ -271,6 +271,26 @@ export const AreaAPI: ApiDoc = {
       defaultVal: '#3182bd',
     },
     {
+      name: 'strokeDasharray',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The pattern of dashes and gaps used to paint the line.</p>
+          </section>
+        ),
+      },
+      format: ['strokeDasharray="5 5"', 'strokeDasharray={10}'],
+      examples: [
+        {
+          name: '://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          url: 'https',
+          isExternal: true,
+        },
+      ],
+    },
+    {
       name: 'strokeWidth',
       type: 'string | number',
       isOptional: true,
