@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     # due to pull_request_target this workflow can potentially expose secrets to untrusted party,
     # so it's critical to limit its execution to only trusted actors (here, dependabot)
-    if: github.actor == 'dependabot[bot]'
+    if: github.actor == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == 'recharts/recharts'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
