@@ -329,8 +329,9 @@ function HorizontalStripes(props: CartesianGridInternalProps) {
 
   const items = roundedSortedHorizontalPoints.map((entry, i) => {
     // Why do we strip only the last stripe if it is invisible, and not all invisible stripes?
-    const lastStripe = !roundedSortedHorizontalPoints[i + 1];
-    const lineHeight = lastStripe ? y + height - entry : roundedSortedHorizontalPoints[i + 1] - entry;
+    const nextPoint = roundedSortedHorizontalPoints[i + 1];
+    const lastStripe = nextPoint == null;
+    const lineHeight = lastStripe ? y + height - entry : nextPoint - entry;
     if (lineHeight <= 0) {
       return null;
     }
@@ -366,8 +367,9 @@ function VerticalStripes(props: CartesianGridInternalProps) {
   }
 
   const items = roundedSortedVerticalPoints.map((entry, i) => {
-    const lastStripe = !roundedSortedVerticalPoints[i + 1];
-    const lineWidth = lastStripe ? x + width - entry : roundedSortedVerticalPoints[i + 1] - entry;
+    const nextPoint = roundedSortedVerticalPoints[i + 1];
+    const lastStripe = nextPoint == null;
+    const lineWidth = lastStripe ? x + width - entry : nextPoint - entry;
 
     if (lineWidth <= 0) {
       return null;

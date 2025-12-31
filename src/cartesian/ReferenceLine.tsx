@@ -302,7 +302,13 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
     return null;
   }
 
-  const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
+  const point1 = endPoints[0];
+  const point2 = endPoints[1];
+  if (point1 == null || point2 == null) {
+    return null;
+  }
+  const { x: x1, y: y1 } = point1;
+  const { x: x2, y: y2 } = point2;
 
   const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 

@@ -179,10 +179,7 @@ const defaultSunburstMargin: Margin = {
   left: 0,
 };
 
-export const payloadSearcher: TooltipPayloadSearcher<SunburstData[], SunburstData> = (
-  data: SunburstData[],
-  activeIndex: TooltipIndex,
-): SunburstData | undefined => {
+export const payloadSearcher: TooltipPayloadSearcher = (data: unknown, activeIndex: TooltipIndex): unknown => {
   if (activeIndex == null) {
     return undefined;
   }

@@ -247,15 +247,17 @@ function getIndexInRange(valueRange: number[], x: number) {
 
   while (end - start > 1) {
     const middle = Math.floor((start + end) / 2);
+    const middleValue = valueRange[middle];
 
-    if (valueRange[middle] > x) {
+    if (middleValue != null && middleValue > x) {
       end = middle;
     } else {
       start = middle;
     }
   }
 
-  return x >= valueRange[end] ? end : start;
+  const endValue = valueRange[end];
+  return endValue != null && x >= endValue ? end : start;
 }
 
 function getIndex({
@@ -638,8 +640,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   };
 
   handleTouchMove = (e: TouchEvent<SVGGElement>) => {
-    if (e.changedTouches != null && e.changedTouches.length > 0) {
-      this.handleDrag(e.changedTouches[0]);
+    const touch = e.changedTouches?.[0];
+    if (touch != null) {
+      this.handleDrag(touch);
     }
   };
 
@@ -692,6 +695,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleSlideDragStart = (e: MouseOrTouchEvent) => {
     const event = isTouch(e) ? e.changedTouches[0] : e;
+    if (event == null) {
+      return;
+    }
 
     this.setState({
       isTravellerMoving: false,
@@ -736,6 +742,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleTravellerDragStart(id: BrushTravellerId, e: MouseOrTouchEvent) {
     const event = isTouch(e) ? e.changedTouches[0] : e;
+    if (event == null) {
+      return;
+    }
 
     this.setState({
       isSlideMoving: false,
@@ -824,6 +833,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     const newScaleValue = scaleValues[newIndex];
+    if (newScaleValue == null) {
+      return;
+    }
 
     // Prevent travellers from being on top of each other or overlapping
     if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {

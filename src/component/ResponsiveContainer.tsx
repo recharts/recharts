@@ -172,7 +172,11 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
         return noop;
       }
       let callback = (entries: ResizeObserverEntry[]) => {
-        const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
+        const entry = entries[0];
+        if (entry == null) {
+          return;
+        }
+        const { width: containerWidth, height: containerHeight } = entry.contentRect;
         setContainerSize(containerWidth, containerHeight);
         onResizeRef.current?.(containerWidth, containerHeight);
       };

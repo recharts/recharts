@@ -578,30 +578,44 @@ export function computeFunnelTrapezoids({
   graphicalItemId: GraphicalItemId;
 }): ReadonlyArray<FunnelTrapezoidItem> {
   const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(customWidth, offset);
-  const maxValue = Math.max.apply(
-    null,
-    displayedData.map((entry: unknown) => getValueByDataKey(entry, dataKey, 0)),
-  );
+  const values = displayedData.map((entry: unknown) => {
+    const val = getValueByDataKey(entry, dataKey, 0);
+    return typeof val === 'number' ? val : 0;
+  });
+  const maxValue = Math.max.apply(null, values);
   const len = displayedData.length;
   const rowHeight = realHeight / len;
   const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
   let trapezoids: ReadonlyArray<FunnelTrapezoidItem> = displayedData.map(
-    (entry: object, i: number): FunnelTrapezoidItem => {
+    (entry: unknown, i: number): FunnelTrapezoidItem => {
       // @ts-expect-error getValueByDataKey does not validate the output type
       const rawVal: number | ReadonlyArray<number> = getValueByDataKey(entry, dataKey, 0);
       const name: string = String(getValueByDataKey(entry, nameKey, i));
       let val = rawVal;
-      let nextVal;
+      let nextVal: number | ReadonlyArray<number> | undefined;
 
       if (i !== len - 1) {
-        nextVal = getValueByDataKey(displayedData[i + 1], dataKey, 0);
-
-        if (nextVal instanceof Array) {
-          [val, nextVal] = nextVal;
+        const nextDataValue = getValueByDataKey(displayedData[i + 1], dataKey, 0);
+        if (typeof nextDataValue === 'number') {
+          nextVal = nextDataValue;
+        } else if (Array.isArray(nextDataValue)) {
+          const [first, second] = nextDataValue;
+          if (typeof first === 'number') {
+            val = first;
+          }
+          if (typeof second === 'number') {
+            nextVal = second;
+          }
         }
       } else if (rawVal instanceof Array && rawVal.length === 2) {
-        [val, nextVal] = rawVal;
+        const [first, second] = rawVal;
+        if (typeof first === 'number') {
+          val = first;
+        }
+        if (typeof second === 'number') {
+          nextVal = second;
+        }
       } else if (lastShapeType === 'rectangle') {
         nextVal = val;
       } else {
@@ -613,6 +627,7 @@ export function computeFunnelTrapezoids({
       const y = rowHeight * i + offsetY;
       // @ts-expect-error getValueByDataKey does not validate the output type
       const upperWidth = (val / maxValue) * realWidth;
+      // @ts-expect-error nextVal could be an array
       const lowerWidth = (nextVal / maxValue) * realWidth;
 
       const tooltipPayload: TooltipPayload = [
@@ -638,7 +653,7 @@ export function computeFunnelTrapezoids({
         val,
         tooltipPayload,
         tooltipPosition,
-        ...omit(entry, ['width']),
+        ...(entry != null && typeof entry === 'object' ? omit(entry, ['width']) : {}),
         payload: entry,
         parentViewBox,
         labelViewBox: trapezoidViewBox,

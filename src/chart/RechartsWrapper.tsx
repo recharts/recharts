@@ -26,7 +26,6 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
-import { isPercent } from '../util/DataUtils';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -106,7 +105,11 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
         const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
         setContainerSize(containerWidth, containerHeight);
         const callback = (entries: ResizeObserverEntry[]) => {
-          const { width, height } = entries[0].contentRect;
+          const entry = entries[0];
+          if (entry == null) {
+            return;
+          }
+          const { width, height } = entry.contentRect;
           setContainerSize(width, height);
         };
         const observer = new ResizeObserver(callback);
@@ -181,7 +184,7 @@ type StaticDivProps = HTMLAttributes<HTMLDivElement> & {
   height: number;
 };
 
-const StaticDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: StaticDivProps, ref): ReactNode => {
+const StaticDiv = forwardRef<HTMLDivElement, StaticDivProps>((props: StaticDivProps, ref): ReactNode => {
   const { width, height } = props;
 
   return (
@@ -194,14 +197,26 @@ const StaticDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: StaticDivP
 
 const NonResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: WrapperDivProps, ref): ReactNode => {
   const { width, height } = props;
-  if (isPercent(width) || isPercent(height)) {
+  // When width or height are percentages or CSS short names, read size from DOM once
+  if (typeof width === 'string' || typeof height === 'string') {
     return <ReadSizeOnceDiv {...props} ref={ref} />;
   }
-  return <StaticDiv {...props} ref={ref} />;
+  // When both are numbers, use them directly
+  if (typeof width === 'number' && typeof height === 'number') {
+    return <StaticDiv {...props} width={width} height={height} ref={ref} />;
+  }
+  // When width/height are undefined, render wrapper div without reporting size
+  // This results in no SVG being rendered (intentional for backwards compatibility)
+  return (
+    <>
+      <ReportChartSize width={width} height={height} />
+      <div ref={ref} {...props} />
+    </>
+  );
 });
 
 function getWrapperDivComponent(responsive: boolean) {
-  return responsive === true ? ResponsiveDiv : NonResponsiveDiv;
+  return responsive ? ResponsiveDiv : NonResponsiveDiv;
 }
 
 export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapperProps>(
