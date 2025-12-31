@@ -874,8 +874,8 @@ function SectorsWithAnimation({
       >
         {(t: number) => {
           const stepData: PieSectorDataItem[] = [];
-          const first = sectors && sectors[0];
-          let curAngle = first?.startAngle;
+          const first: PieSectorDataItem | undefined = sectors && sectors[0];
+          let curAngle: number = first?.startAngle ?? 0;
 
           sectors?.forEach((entry, index) => {
             const prev = prevSectors && prevSectors[index];

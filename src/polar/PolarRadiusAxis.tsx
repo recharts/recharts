@@ -264,8 +264,11 @@ const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<
 
 const renderAxisLine = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactElement => {
   const { cx, cy, angle, axisLine, ...others } = props;
-  const extent = ticks.reduce(
-    (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
+  const extent: [number, number] = ticks.reduce(
+    (result: [number, number], entry: TickItem): [number, number] => [
+      Math.min(result[0], entry.coordinate),
+      Math.max(result[1], entry.coordinate),
+    ],
     [Infinity, -Infinity],
   );
   const point0 = polarToCartesian(cx, cy, extent[0], angle);

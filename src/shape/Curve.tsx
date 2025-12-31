@@ -20,8 +20,8 @@ import {
   curveStep,
   curveStepAfter,
   curveStepBefore,
-  Area,
-  Line,
+  Area as D3AreaCurve,
+  Line as D3LineCurve,
 } from 'victory-vendor/d3-shape';
 
 import { clsx } from 'clsx';
@@ -88,7 +88,7 @@ const areaDefined = (d: NullableAreaPoint): d is AreaPoint => d.base != null && 
 const getX = (p: Coordinate) => p.x;
 const getY = (p: Coordinate) => p.y;
 
-const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
+const getCurveFactory = (type: CurveType, layout: LayoutType | undefined): CurveFactory => {
   if (typeof type === 'function') {
     return type;
   }
@@ -96,7 +96,10 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
   const name = `curve${upperFirst(type)}`;
 
   if ((name === 'curveMonotone' || name === 'curveBump') && layout) {
-    return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+    const factory = CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+    if (factory) {
+      return factory;
+    }
   }
   return CURVE_FACTORIES[name] || curveLinear;
 };
@@ -205,13 +208,14 @@ export const getPath = ({
 }: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
   const formatPoints: ReadonlyArray<NullableCoordinate> = connectNulls ? points.filter(defined) : points;
-  let lineFunction: Area<Coordinate> | Line<Coordinate>;
 
   // When dealing with an area chart (where `baseLine` is an array),
   // we need to pair points with their corresponding `baseLine` points first.
   // This is to ensure that we filter points and their baseline counterparts together,
   // preventing errors from mismatched array lengths and ensuring `defined` checks both.
   if (Array.isArray(baseLine)) {
+    let lineFunction: D3AreaCurve<AreaPoint>;
+
     const areaPoints: ReadonlyArray<NullableAreaPoint> = points.map((entry, index) => ({
       ...entry,
       base: baseLine[index],
@@ -237,14 +241,15 @@ export const getPath = ({
      * However. d3 types are mutable, but we can pretend that they are not, and we can pretend
      * that calling defined() returns a new function with a different generic type.
      */
-    const nullableLineFunction: Area<NullableCoordinate> | Line<NullableCoordinate> = lineFunction
-      .defined(areaDefined)
-      .curve(curveFactory);
+    // @ts-expect-error the defined call changes the generic type internally but d3 types don't reflect that
+    const nullableLineFunction: D3AreaCurve<NullableAreaPoint> = lineFunction.defined(areaDefined).curve(curveFactory);
 
     const finalPoints: ReadonlyArray<NullableAreaPoint> = connectNulls ? areaPoints.filter(areaDefined) : areaPoints;
 
     return nullableLineFunction(finalPoints);
   }
+
+  let lineFunction: D3LineCurve<Coordinate>;
   if (layout === 'vertical' && isNumber(baseLine)) {
     lineFunction = shapeArea<Coordinate>().y(getY).x1(getX).x0(baseLine);
   } else if (isNumber(baseLine)) {
@@ -253,9 +258,8 @@ export const getPath = ({
     lineFunction = shapeLine<Coordinate>().x(getX).y(getY);
   }
 
-  const nullableLineFunction: Area<NullableCoordinate> | Line<NullableCoordinate> = lineFunction
-    .defined(defined)
-    .curve(curveFactory);
+  // @ts-expect-error the defined call changes the generic type internally but d3 types don't reflect that
+  const nullableLineFunction: D3LineCurve<NullableCoordinate> = lineFunction.defined(defined).curve(curveFactory);
 
   return nullableLineFunction(formatPoints);
 };

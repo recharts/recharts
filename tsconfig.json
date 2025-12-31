@@ -14,13 +14,13 @@
     "strictBindCallApply": true,
     "strictBuiltinIteratorReturn": true,
     // TODO: Enable this option and fix errors https://github.com/recharts/recharts/issues/6645
-    "strictFunctionTypes": false,
+    "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     // TODO: Enable this option and fix errors https://github.com/recharts/recharts/issues/6645
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "sourceMap": true,
     "target": "es6",
     "types": ["vitest/globals"]

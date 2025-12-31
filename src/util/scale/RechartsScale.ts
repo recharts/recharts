@@ -144,6 +144,30 @@ export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = Ca
  * @param axisDomain
  * @param axisRange
  */
+export function rechartsScaleFactory(
+  scale:
+    | CustomScaleDefinition
+    | CustomScaleDefinition<string>
+    | CustomScaleDefinition<number>
+    | CustomScaleDefinition<Date>,
+  axisDomain: ReadonlyArray<CategoricalDomainItem>,
+  axisRange: AxisRange,
+): RechartsScale;
+export function rechartsScaleFactory(
+  scale: D3ScaleType,
+  axisDomain: ReadonlyArray<CategoricalDomainItem>,
+  axisRange: AxisRange,
+): RechartsScale;
+export function rechartsScaleFactory(
+  scale: D3ScaleType | undefined,
+  axisDomain: ReadonlyArray<CategoricalDomainItem>,
+  axisRange: AxisRange,
+): RechartsScale | undefined;
+export function rechartsScaleFactory(
+  scale: undefined,
+  axisDomain: ReadonlyArray<CategoricalDomainItem>,
+  axisRange: AxisRange,
+): undefined;
 export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
   scale: D3ScaleType | CustomScaleDefinition<Domain> | undefined,
   axisDomain: ReadonlyArray<Domain>,
