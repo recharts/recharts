@@ -91,6 +91,7 @@ import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipA
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
+import { noop } from '../../../src/util/DataUtils';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -1121,7 +1122,7 @@ describe('Tooltip visibility', () => {
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: '#8884d8',
               dataKey: 'uv',
@@ -1213,7 +1214,7 @@ describe('Tooltip visibility', () => {
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: '#8884d8',
               dataKey: 'uv',

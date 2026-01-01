@@ -124,7 +124,7 @@ type PropertiesFromContext = {
   x: number;
   y: number;
   width: number;
-  data: any[];
+  data: ChartData;
   startIndex: number;
   endIndex: number;
   onChange: OnBrushUpdate;
@@ -156,6 +156,19 @@ function Traveller(props: { travellerType: BrushTravellerType | undefined; trave
     return travellerType(travellerProps);
   }
   return <DefaultTraveller {...travellerProps} />;
+}
+
+function getNameFromUnknown(value: unknown): string | undefined {
+  if (isNotNil(value) && typeof value === 'object' && 'name' in value && typeof value.name === 'string') {
+    return value.name;
+  }
+  return undefined;
+}
+
+function getAriaLabel(data: ReadonlyArray<unknown>, startIndex: number, endIndex: number) {
+  const start = getNameFromUnknown(data[startIndex]);
+  const end = getNameFromUnknown(data[endIndex]);
+  return `Min value: ${start}, Max value: ${end}`;
 }
 
 function TravellerLayer({
@@ -191,7 +204,7 @@ function TravellerLayer({
     height,
   };
 
-  const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex]?.name}, Max value: ${data[endIndex]?.name}`;
+  const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex);
 
   return (
     <Layer
@@ -223,7 +236,7 @@ function TravellerLayer({
 
 type TextOfTickProps = {
   index: number;
-  data: any[];
+  data: ChartData;
   dataKey: DataKey<any> | undefined;
   tickFormatter: BrushTickFormatter | undefined;
 };
@@ -271,7 +284,7 @@ function getIndex({
   endX: number;
   scaleValues: number[];
   gap: number;
-  data: any[];
+  data: ChartData;
 }): BrushStartEndIndex {
   const lastIndex = data.length - 1;
   const min = Math.min(startX, endX);
@@ -323,7 +336,7 @@ function BrushText({
   stroke: string | undefined;
   tickFormatter: BrushTickFormatter | undefined;
   dataKey: DataKey<any> | undefined;
-  data: any[];
+  data: ChartData;
   startX: number;
   endX: number;
 }) {
@@ -409,7 +422,7 @@ function Panorama({
   y: number;
   width: number;
   height: number;
-  data: any[];
+  data: ChartData;
   children: ReactElement | undefined;
   padding: Padding;
 }) {
@@ -448,7 +461,7 @@ interface State {
   scale?: ScalePoint<number>;
   scaleValues?: number[];
 
-  prevData?: any[];
+  prevData?: ChartData;
   prevWidth?: number;
   prevX?: number;
   prevTravellerWidth?: number;

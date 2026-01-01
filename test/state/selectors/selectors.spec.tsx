@@ -35,7 +35,7 @@ import {
 import { TooltipTrigger } from '../../../src/chart/types';
 import { produceState } from '../../helper/produceState';
 import { arrayTooltipSearcher } from '../../../src/state/optionsSlice';
-import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
+import { Area, BarChart, ComposedChart, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
 import { PageData } from '../../_data';
 import { pageData } from '../../../storybook/stories/data';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
@@ -50,6 +50,7 @@ import { selectTooltipState } from '../../../src/state/selectors/selectTooltipSt
 import { combineTooltipPayload } from '../../../src/state/selectors/combiners/combineTooltipPayload';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
+import { noop } from '../../../src/util/DataUtils';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -86,7 +87,7 @@ const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
       },
     ],
   ],
-  positions: undefined,
+  getPosition: noop,
 };
 
 const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
@@ -124,7 +125,7 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
       },
     ],
   ],
-  positions: undefined,
+  getPosition: noop,
 };
 
 type TestCaseTooltipCombination = { tooltipEventType: TooltipEventType; trigger: TooltipTrigger };
@@ -261,7 +262,7 @@ describe('selectTooltipPayload', () => {
   it('should return settings and data from axis hover, if activeIndex is set for the item', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: { nameKey: 'y', graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: undefined,
     };
@@ -274,7 +275,7 @@ describe('selectTooltipPayload', () => {
       graphicalItemId: 'graphicalItemId1',
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -319,7 +320,7 @@ describe('selectTooltipPayload', () => {
   it('should return settings and data if defaultIndex is provided', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: { nameKey: 'y', graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: undefined,
     };
@@ -332,7 +333,7 @@ describe('selectTooltipPayload', () => {
       graphicalItemId: 'graphicalItemId1',
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -366,7 +367,7 @@ describe('selectTooltipPayload', () => {
   it('should fill in chartData, if it is not defined on the item for item hover', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -412,7 +413,7 @@ describe('selectTooltipPayload', () => {
   it('should return sliced data if set by Brush for item hover', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -506,7 +507,7 @@ describe('selectTooltipPayload', () => {
     const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
       settings: { nameKey: undefined, graphicalItemId: 'graphicalItemId1' },
       dataDefinedOnItem: [],
-      positions: undefined,
+      getPosition: noop,
     };
     const chartDataState: ChartDataState = initialChartDataState;
     const activeLabel: string | undefined = undefined;
@@ -1181,7 +1182,7 @@ describe('selectActiveIndexFromChartPointer', () => {
     render(
       <LineChart data={pageData} width={100} height={100}>
         <Line dataKey="pv" />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
   });
@@ -1212,7 +1213,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
     };
     render(
       <BarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledTimes(1);
@@ -1234,7 +1235,7 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         <Line data={[40, 50, 60]} />
         <Scatter data={[{ x: 7 }, { x: 8 }, { x: 9 }]} dataKey="x" />
         <Scatter data={[{ y: 70 }, { y: 80 }, { y: 90 }]} dataKey="y" />
-        <Customized component={Comp} />
+        <Comp />
       </ComposedChart>,
     );
     expect(spy).toHaveBeenCalledTimes(3);

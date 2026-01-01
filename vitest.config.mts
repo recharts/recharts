@@ -33,7 +33,12 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:lib',
-          setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
+          setupFiles: [
+            'test/vitest.setup.ts',
+            'test/helper/toBeRechartsScale.ts',
+            'test/helper/expectStackGroups.ts',
+            './test/helper/expectFunctionReturning.ts',
+          ],
           include: ['test/**/*.spec.ts?(x)'],
         },
       },

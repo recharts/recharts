@@ -22,7 +22,7 @@ import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
-import { interpolate, isNan, mathSign } from '../util/DataUtils';
+import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
 import {
   BarPositionPosition,
@@ -85,6 +85,7 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { ChartData } from '../state/chartDataSlice';
 
 type Rectangle = {
   x: number | null;
@@ -410,7 +411,7 @@ const SetBarTooltipEntrySettings = React.memo(
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke,
         strokeWidth,
@@ -947,7 +948,7 @@ export function computeBarRectangles({
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
   offset: ChartOffsetInternal;
-  displayedData: any[];
+  displayedData: ChartData;
   cells: ReadonlyArray<ReactElement> | undefined;
   parentViewBox: CartesianViewBoxRequired;
   dataStartIndex: number;
@@ -959,7 +960,7 @@ export function computeBarRectangles({
   const stackedBarStart: number | undefined = numericAxis.scale.map(baseValue);
 
   return displayedData
-    .map((entry, index): BarRectangleItem | null => {
+    .map((entry: unknown, index): BarRectangleItem | null => {
       let value, x: number | null, y, width, height, background: Rectangle;
 
       if (stackedData) {
@@ -1035,6 +1036,7 @@ export function computeBarRectangles({
       }
 
       const barRectangleItem: BarRectangleItem = {
+        // @ts-expect-error spread of unknown type
         ...entry,
         stackedBarStart,
         x,

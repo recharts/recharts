@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 
 /**
@@ -11,7 +12,7 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
  *
  * @inline
  */
-export type ChartData = unknown[];
+export type ChartData = ReadonlyArray<unknown>;
 
 /**
  * So this is the same unknown type as ChartData but this is after the dataKey has been applied.
@@ -55,7 +56,7 @@ const chartDataSlice = createSlice({
   initialState: initialChartDataState,
   reducers: {
     setChartData(state, action: PayloadAction<ChartData | undefined>) {
-      state.chartData = action.payload;
+      state.chartData = castDraft(action.payload);
       if (action.payload == null) {
         state.dataStartIndex = 0;
         state.dataEndIndex = 0;

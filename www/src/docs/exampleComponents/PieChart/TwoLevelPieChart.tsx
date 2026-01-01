@@ -1,4 +1,4 @@
-import { Pie, PieChart } from 'recharts';
+import { Pie, PieChart, Tooltip, TooltipIndex } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -23,7 +23,13 @@ const data02 = [
 ];
 
 // #endregion
-export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+export default function TwoLevelPieChart({
+  isAnimationActive = true,
+  defaultIndex,
+}: {
+  isAnimationActive?: boolean;
+  defaultIndex?: TooltipIndex;
+}) {
   return (
     <PieChart
       style={{ width: '100%', height: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
@@ -49,6 +55,7 @@ export default function TwoLevelPieChart({ isAnimationActive = true }: { isAnima
         label
         isAnimationActive={isAnimationActive}
       />
+      <Tooltip defaultIndex={defaultIndex} />
       <RechartsDevtools />
     </PieChart>
   );

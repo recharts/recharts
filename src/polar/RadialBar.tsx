@@ -14,7 +14,7 @@ import {
   PolarLabelListEntry,
 } from '../component/LabelList';
 import { Cell } from '../component/Cell';
-import { interpolate, mathSign } from '../util/DataUtils';
+import { interpolate, mathSign, noop } from '../util/DataUtils';
 import {
   BarPositionPosition,
   getCateCoordinateOfBar,
@@ -440,7 +440,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         graphicalItemId: id,
         stroke,

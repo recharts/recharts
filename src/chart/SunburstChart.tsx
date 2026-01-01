@@ -127,14 +127,6 @@ function getMaxDepthOf(node: SunburstData): number {
   return 1 + Math.max(...childDepths);
 }
 
-function convertMapToRecord<K extends keyof any, V>(map: Map<K, V>): Record<K, V> {
-  const record: Record<K, V> = {} as Record<K, V>;
-  map.forEach((value, key) => {
-    record[key] = value;
-  });
-  return record;
-}
-
 const SetSunburstTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -149,8 +141,7 @@ const SetSunburstTooltipEntrySettings = React.memo(
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data.children,
-      // Redux store will not accept a Map because it's not serializable
-      positions: convertMapToRecord(positions),
+      getPosition: index => positions.get(index),
       // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
       settings: {
         stroke,
@@ -186,7 +177,7 @@ export const payloadSearcher: TooltipPayloadSearcher = (data: unknown, activeInd
   return get(data, activeIndex);
 };
 
-export const addToSunburstNodeIndex = (
+const addToSunburstNodeIndex = (
   indexInChildrenArr: number,
   activeTooltipIndexSoFar: TooltipIndex | undefined = '',
 ): TooltipIndex => {

@@ -33,6 +33,7 @@ import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 import { BaseValue } from '../cartesian/Area';
 import { ImplicitLabelType } from '../component/Label';
 import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
+import { ChartData } from '../state/chartDataSlice';
 
 /**
  * Determines how values are stacked:
@@ -1328,7 +1329,7 @@ interface BaseChartProps extends ExternalMouseEvents {
   /**
    * The source data. Each element should be an object.
    */
-  data?: any[];
+  data?: ChartData;
   desc?: string;
   /**
    * Empty space around the container.

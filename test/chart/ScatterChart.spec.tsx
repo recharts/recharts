@@ -1730,32 +1730,14 @@ describe('Tooltip integration', () => {
                 },
               ],
             ],
-            positions: [
-              {
-                x: 67.5,
-                y: 50.6,
-              },
-              {
-                x: 72.5,
-                y: 37.598,
-              },
-              {
-                x: 77.5,
-                y: 56.611999999999995,
-              },
-              {
-                x: 82.5,
-                y: 6.200000000000001,
-              },
-              {
-                x: 87.5,
-                y: 41.552,
-              },
-              {
-                x: 92.5,
-                y: 36.2,
-              },
-            ],
+            getPosition: expect.functionReturning([
+              ['0', { x: 67.5, y: 50.6 }],
+              ['1', { x: 72.5, y: 37.598 }],
+              ['2', { x: 77.5, y: 56.611999999999995 }],
+              ['3', { x: 82.5, y: 6.200000000000001 }],
+              ['4', { x: 87.5, y: 41.552 }],
+              ['5', { x: 92.5, y: 36.2 }],
+            ]),
             settings: {
               color: undefined,
               dataKey: undefined,
@@ -1950,32 +1932,14 @@ describe('Tooltip integration', () => {
               },
             ],
           ],
-          positions: [
-            {
-              x: 67.5,
-              y: 50.6,
-            },
-            {
-              x: 72.5,
-              y: 37.598,
-            },
-            {
-              x: 77.5,
-              y: 56.611999999999995,
-            },
-            {
-              x: 82.5,
-              y: 6.200000000000001,
-            },
-            {
-              x: 87.5,
-              y: 41.552,
-            },
-            {
-              x: 92.5,
-              y: 36.2,
-            },
-          ],
+          getPosition: expect.functionReturning([
+            ['0', { x: 67.5, y: 50.6 }],
+            ['1', { x: 72.5, y: 37.598 }],
+            ['2', { x: 77.5, y: 56.611999999999995 }],
+            ['3', { x: 82.5, y: 6.200000000000001 }],
+            ['4', { x: 87.5, y: 41.552 }],
+            ['5', { x: 92.5, y: 36.2 }],
+          ]),
           settings: {
             color: undefined,
             dataKey: undefined,
@@ -2005,32 +1969,14 @@ describe('Tooltip integration', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', '0'));
       const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         {
-          positions: [
-            {
-              x: 67.5,
-              y: 50.6,
-            },
-            {
-              x: 72.5,
-              y: 37.598,
-            },
-            {
-              x: 77.5,
-              y: 56.611999999999995,
-            },
-            {
-              x: 82.5,
-              y: 6.200000000000001,
-            },
-            {
-              x: 87.5,
-              y: 41.552,
-            },
-            {
-              x: 92.5,
-              y: 36.2,
-            },
-          ],
+          getPosition: expect.functionReturning([
+            ['0', { x: 67.5, y: 50.6 }],
+            ['1', { x: 72.5, y: 37.598 }],
+            ['2', { x: 77.5, y: 56.611999999999995 }],
+            ['3', { x: 82.5, y: 6.200000000000001 }],
+            ['4', { x: 87.5, y: 41.552 }],
+            ['5', { x: 92.5, y: 36.2 }],
+          ]),
           dataDefinedOnItem: [
             [
               {
@@ -2366,20 +2312,11 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
             },
           ],
         ],
-        positions: [
-          {
-            x: 280,
-            y: 388.33333333333337,
-          },
-          {
-            x: 280,
-            y: 235,
-          },
-          {
-            x: 280,
-            y: 81.66666666666667,
-          },
-        ],
+        getPosition: expect.functionReturning([
+          ['0', { x: 280, y: 388.33333333333337 }],
+          ['1', { x: 280, y: 235 }],
+          ['2', { x: 280, y: 81.66666666666667 }],
+        ]),
         settings: {
           color: undefined,
           dataKey: undefined,

@@ -472,7 +472,6 @@ const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coor
     selectTooltipAxisTicks,
     selectDefaultIndex,
     selectTooltipPayloadConfigurations,
-    selectTooltipPayloadSearcher,
   ],
   combineCoordinateForDefaultIndex,
 );

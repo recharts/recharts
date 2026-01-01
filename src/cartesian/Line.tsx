@@ -22,7 +22,7 @@ import {
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
-import { interpolate, isNullish } from '../util/DataUtils';
+import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -360,7 +360,7 @@ const SetLineTooltipEntrySettings = React.memo(
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke,
         strokeWidth,
@@ -924,7 +924,7 @@ export function computeLinePoints({
   yAxisTicks: TickItem[];
   dataKey: Props['dataKey'];
   bandSize: number;
-  displayedData: any[];
+  displayedData: ChartData;
 }): ReadonlyArray<LinePointItem> {
   return displayedData
     .map((entry, index): LinePointItem | null => {

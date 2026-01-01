@@ -43,6 +43,7 @@ import { BarSettings } from '../../src/state/types/BarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
+import { noop } from '../../src/util/DataUtils';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1615,7 +1616,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: undefined,
               dataKey: 'x',
@@ -1632,7 +1633,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: undefined,
               dataKey: 'y',
@@ -1688,7 +1689,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: undefined,
               dataKey: 'x',
@@ -1705,7 +1706,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: undefined,
               dataKey: 'y',

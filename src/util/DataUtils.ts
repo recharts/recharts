@@ -207,4 +207,4 @@ export function isNotNil<T>(value: T): value is NonNullable<T> {
  * No-operation function that does nothing.
  * Useful as a placeholder or default callback function.
  */
-export function noop(): void {}
+export function noop(): undefined {}

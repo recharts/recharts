@@ -227,7 +227,7 @@ const SetFunnelTooltipEntrySettings = React.memo(
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      positions: trapezoids.map(({ tooltipPosition }) => tooltipPosition),
+      getPosition: index => trapezoids[Number(index)]?.tooltipPosition,
       settings: {
         stroke,
         strokeWidth,

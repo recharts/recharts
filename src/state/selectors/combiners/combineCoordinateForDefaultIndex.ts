@@ -1,5 +1,5 @@
 import { ChartOffsetInternal, Coordinate, LayoutType, TickItem } from '../../../util/types';
-import { TooltipIndex, TooltipPayloadConfiguration, TooltipPayloadSearcher } from '../../tooltipSlice';
+import { TooltipIndex, TooltipPayloadConfiguration } from '../../tooltipSlice';
 
 export const combineCoordinateForDefaultIndex = (
   width: number,
@@ -9,16 +9,17 @@ export const combineCoordinateForDefaultIndex = (
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   defaultIndex: TooltipIndex | undefined,
   tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
-  tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
 ): Coordinate | undefined => {
-  if (defaultIndex == null || tooltipPayloadSearcher == null) {
+  if (defaultIndex == null) {
     return undefined;
   }
-  // With defaultIndex alone, we don't have enough information to decide _which_ of the multiple tooltips to display. So we choose the first one.
+  /*
+   * With defaultIndex alone, we don't have enough information to decide _which_ of the multiple tooltips to display.
+   * Maybe one day we could add new prop `activeGraphicalItemId` to the chart to help with that.
+   * Until then, we choose the first one.
+   */
   const firstConfiguration = tooltipConfigurations[0];
-  // @ts-expect-error we need to rethink the tooltipPayloadSearcher type
-  const maybePosition: Coordinate | undefined =
-    firstConfiguration == null ? undefined : tooltipPayloadSearcher(firstConfiguration.positions, defaultIndex);
+  const maybePosition: Coordinate | undefined = firstConfiguration?.getPosition(defaultIndex);
   if (maybePosition != null) {
     return maybePosition;
   }

@@ -396,7 +396,7 @@ const SetScatterTooltipEntrySettings = React.memo(
   }: InputRequiredToComputeTooltipEntrySettings) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
-      positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
+      getPosition: index => points?.[Number(index)]?.tooltipPosition,
       settings: {
         stroke,
         strokeWidth,
