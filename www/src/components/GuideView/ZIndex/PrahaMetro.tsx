@@ -9,6 +9,7 @@ import {
   YAxis,
   DefaultZIndexes,
   ZIndexLayer,
+  LabelListEntry,
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
@@ -211,13 +212,13 @@ function MetroLine(props: LineProps) {
         position="top"
         dy={-15}
         dx={5}
-        valueAccessor={entry => {
-          // @ts-expect-error untyped payload
-          if (customLabels.includes(entry.payload.name)) {
-            return null;
+        valueAccessor={(entry: LabelListEntry) => {
+          // @ts-expect-error Recharts does not have types for the payload property
+          const label: string | undefined = entry.payload?.name;
+          if (label != null && customLabels.includes(label)) {
+            return undefined;
           }
-          // @ts-expect-error untyped payload
-          return entry.payload.name;
+          return label;
         }}
       />
     </Line>

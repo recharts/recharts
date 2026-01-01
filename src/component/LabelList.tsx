@@ -12,7 +12,7 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
-interface BaseLabelListEntry {
+export interface LabelListEntry {
   /**
    * Value is what renders in the UI as the label content.
    * If undefined, then the LabelList will pull it from the payload using the dataKey.
@@ -34,7 +34,7 @@ interface BaseLabelListEntry {
  *
  * It's not necessary to pass redundant data, but we keep it for backward compatibility.
  */
-export interface CartesianLabelListEntry extends BaseLabelListEntry, TrapezoidViewBox {
+export interface CartesianLabelListEntry extends LabelListEntry, TrapezoidViewBox {
   /**
    * The bounding box of the graphical element that this label is attached to.
    * This will be an individual Bar for example.
@@ -43,7 +43,7 @@ export interface CartesianLabelListEntry extends BaseLabelListEntry, TrapezoidVi
   parentViewBox?: CartesianViewBoxRequired;
 }
 
-export interface PolarLabelListEntry extends BaseLabelListEntry {
+export interface PolarLabelListEntry extends LabelListEntry {
   viewBox: PolarViewBoxRequired;
   parentViewBox?: PolarViewBoxRequired;
   clockWise?: boolean;
@@ -145,7 +145,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
-const defaultAccessor = (entry: BaseLabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
+const defaultAccessor = (entry: LabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
 
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 

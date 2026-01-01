@@ -68,6 +68,7 @@ export interface TreemapNode {
   height: number;
   name: string;
   tooltipIndex: TooltipIndex;
+  root: TreemapNode;
 
   [k: string]: unknown;
 }

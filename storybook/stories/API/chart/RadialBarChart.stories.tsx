@@ -3,7 +3,16 @@
 import { Args, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
-import { Cell, Legend, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import {
+  Cell,
+  DefaultLegendContentProps,
+  Legend,
+  LegendPayload,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+  Tooltip,
+} from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
@@ -35,7 +44,7 @@ export const Simple: StoryObj = {
 export const WithCustomizedClickLegendEvent = {
   render: (args: Args) => {
     const { data } = args;
-    const [selectedRadialBar, setSelectedRadialBar] = useState('35-39');
+    const [selectedRadialBar, setSelectedRadialBar] = useState<string | undefined>('35-39');
 
     return (
       <ResponsiveContainer width="100%" height="100%">
@@ -51,9 +60,9 @@ export const WithCustomizedClickLegendEvent = {
             height={140}
             layout="vertical"
             verticalAlign="middle"
-            content={({ payload }) => (
+            content={({ payload }: DefaultLegendContentProps) => (
               <ul>
-                {payload?.map((entry: { value: string; color: string }) => {
+                {payload?.map((entry: LegendPayload) => {
                   return (
                     <li
                       onClick={() => setSelectedRadialBar(entry.value)}

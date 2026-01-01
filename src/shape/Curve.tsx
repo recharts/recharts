@@ -249,7 +249,7 @@ export const getPath = ({
     return nullableLineFunction(finalPoints);
   }
 
-  let lineFunction: D3LineCurve<Coordinate>;
+  let lineFunction: D3LineCurve<Coordinate> | D3AreaCurve<Coordinate>;
   if (layout === 'vertical' && isNumber(baseLine)) {
     lineFunction = shapeArea<Coordinate>().y(getY).x1(getX).x0(baseLine);
   } else if (isNumber(baseLine)) {
