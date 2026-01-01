@@ -50,7 +50,7 @@ type BaseValueTestCase = {
 describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ ChartElement }) => {
   describe('label', () => {
     test('Render customized label when label is set to be a function', () => {
-      const renderLabel = (props: { index: number; x: number; y: number }) => {
+      const renderLabel = (props: { index?: number; x?: string | number; y?: string | number }) => {
         const { index, x, y } = props;
 
         return (
@@ -70,7 +70,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     });
 
     test('Render customized label when label is set to be a react element', () => {
-      const Label: FC<{ index: number; x: number; y: number }> = props => {
+      const Label: FC<{ index?: number; x?: string | number; y?: string | number }> = props => {
         const { index, x, y } = props;
 
         return (
@@ -86,7 +86,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             dataKey="value"
             isAnimationActive={false}
             baseLine={200}
-            label={({ index, x, y }: { index: number; x: number; y: number }) => <Label index={index} x={x} y={y} />}
+            label={({ index, x, y }) => <Label index={index} x={x} y={y} />}
           />
         </ChartElement>,
       );

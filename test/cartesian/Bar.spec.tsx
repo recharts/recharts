@@ -1260,7 +1260,11 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Bar isAnimationActive={false} minPointSize={(value: number) => (value > 0 ? 2 : 0)} dataKey="value" />
+          <Bar
+            isAnimationActive={false}
+            minPointSize={(value: number | undefined | null) => (value != null && value > 0 ? 2 : 0)}
+            dataKey="value"
+          />
         </ChartElement>,
       );
       /*

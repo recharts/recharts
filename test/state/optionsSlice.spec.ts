@@ -4,7 +4,6 @@ import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 describe('arrayTooltipSearcher', () => {
   it('should return undefined when called with empty array or empty index', () => {
     expect(arrayTooltipSearcher([], '0')).toBeUndefined();
-    // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input
     expect(arrayTooltipSearcher(undefined, '0')).toBeUndefined();
     expect(arrayTooltipSearcher([1, 2, 3], '')).toBeUndefined();
     // @ts-expect-error typescript is correct here, but we are testing runtime behavior with invalid input

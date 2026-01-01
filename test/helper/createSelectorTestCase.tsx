@@ -9,7 +9,7 @@ import { assertUniqueHtmlIds } from '../util/assertUniqueHtmlIds';
 import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
 import { CompositeAnimationManager } from '../animation/CompositeAnimationManager';
 
-const emptySelector: Selector<RechartsRootState, undefined, never> = () => {};
+const emptySelector = (): undefined => undefined;
 
 type TestCaseResult<T> = {
   container: HTMLElement;
@@ -35,12 +35,12 @@ type ReactHook<T> = {
   (): T;
 };
 
-function isReactHook<T>(fn: ReactHook<T> | Selector<RechartsRootState, T, never>): fn is ReactHook<T> {
+function isReactHook<T>(fn: ReactHook<T> | ((state: RechartsRootState) => T)): fn is ReactHook<T> {
   return /^use[A-Z].*$/.test(fn.name);
 }
 
 function getComp<T>(
-  selector: ReactHook<T> | ((state: RechartsRootState, ...params: never) => T) | undefined,
+  selector: ReactHook<T> | ((state: RechartsRootState) => T) | undefined,
   spy: Mock<(selectorResult: T | undefined) => void>,
 ) {
   if (selector == null) {

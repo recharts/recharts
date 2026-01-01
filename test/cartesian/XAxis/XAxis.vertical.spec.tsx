@@ -10,7 +10,6 @@ import {
 import { useAppSelector } from '../../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
-import { AxisDomainTypeInput } from '../../../src/util/types';
 import { pageData } from '../../../storybook/stories/data';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 
@@ -26,55 +25,52 @@ describe('<XAxis />', () => {
   ];
 
   describe('layout=vertical', () => {
-    it.each(['category', undefined])(
-      'should render categorical XAxis when type=%s',
-      (axisDomainType: AxisDomainTypeInput) => {
-        const axisDomainSpy = vi.fn();
-        const { container } = render(
-          <BarChart width={300} height={300} layout="vertical" data={data}>
-            <XAxis dataKey="z" type={axisDomainType} />
-            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          </BarChart>,
-        );
-        expectXAxisTicks(container, [
-          {
-            textContent: '90',
-            x: '29.166666666666668',
-            y: '273',
-          },
-          {
-            textContent: '200',
-            x: '77.5',
-            y: '273',
-          },
-          {
-            textContent: '260',
-            x: '125.83333333333334',
-            y: '273',
-          },
-          {
-            textContent: '400',
-            x: '174.16666666666666',
-            y: '273',
-          },
-          {
-            textContent: '280',
-            x: '222.5',
-            y: '273',
-          },
-          {
-            textContent: '500',
-            x: '270.83333333333337',
-            y: '273',
-          },
-        ]);
-        expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 200, 260, 400, 280, 500]);
-      },
-    );
+    it.each(['category', undefined] as const)('should render categorical XAxis when type=%s', axisDomainType => {
+      const axisDomainSpy = vi.fn();
+      const { container } = render(
+        <BarChart width={300} height={300} layout="vertical" data={data}>
+          <XAxis dataKey="z" type={axisDomainType} />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '90',
+          x: '29.166666666666668',
+          y: '273',
+        },
+        {
+          textContent: '200',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '280',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '500',
+          x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 200, 260, 400, 280, 500]);
+    });
 
-    it.each(['category', undefined])(
+    it.each(['category', undefined] as const)(
       'should render categorical XAxis, but ignore allowDuplicatedCategory when type=%s',
-      (axisDomainType: AxisDomainTypeInput) => {
+      axisDomainType => {
         const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} layout="vertical" data={data}>

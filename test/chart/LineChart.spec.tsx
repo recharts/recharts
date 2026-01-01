@@ -491,7 +491,7 @@ describe('<LineChart />', () => {
   });
 
   test('Renders 6 labels when label is a function', () => {
-    const renderLabel = (props: { x: number; y: number; key: string }) => {
+    const renderLabel = (props: { x?: string | number; y?: string | number; key?: string }) => {
       const { x, y, key } = props;
       return (
         <text className="customized-label" x={x} y={y} key={key}>

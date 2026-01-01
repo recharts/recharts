@@ -769,7 +769,6 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
     expectLastCalledWith(spy, [
       {
         cornerRadius: undefined,
-        // @ts-expect-error we don't have type for the spread properties
         customProp: 'test1',
         cx: 205,
         cy: 205,
@@ -816,7 +815,6 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
       },
       {
         cornerRadius: undefined,
-        // @ts-expect-error we don't have type for the spread properties
         customProp: 'test2',
         cx: 205,
         cy: 205,

@@ -68,7 +68,7 @@ function rechartsStackedDataMatcher(received: ExpectedStackedData, expected: Exp
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: e instanceof Error ? e.message : String(e),
     };
   }
 }
@@ -88,7 +88,7 @@ function rechartsStackedSeriesMatcher(
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: e instanceof Error ? e.message : String(e),
     };
   }
 }
@@ -111,7 +111,7 @@ function rechartsStackedSeriesPointMatcher(
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: e instanceof Error ? e.message : String(e),
     };
   }
 }

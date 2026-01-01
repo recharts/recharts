@@ -3,7 +3,7 @@ import { ExpectedScale, expectScale } from './expectScale';
 
 import { RechartsScale } from '../../src/util/scale/RechartsScale';
 
-function rechartsScaleMatcher(received: unknown, expected: ExpectedScale) {
+function rechartsScaleMatcher(received: unknown, expected: ExpectedScale): { pass: boolean; message: () => string } {
   try {
     expectScale(received, expected);
     return {
@@ -13,9 +13,10 @@ function rechartsScaleMatcher(received: unknown, expected: ExpectedScale) {
   } catch (e) {
     // Uncomment the `debugger` here to see the actual error message, or place a breakpoint in your IDE
     // debugger;
+    const errorMessage = e instanceof Error ? e.message : String(e);
     return {
       pass: false,
-      message: e.message,
+      message: () => errorMessage,
     };
   }
 }
