@@ -1049,7 +1049,11 @@ export const defaultBrushProps = {
  * It also allows you to render a small overview of the chart inside the brush that is always visible
  * and shows the full data set so that the user can see where they are zoomed in.
  *
- * @see {@link https://recharts.github.io/en-US/examples/BrushBarChart/ Example: BarChart with Brush}
+ * If a chart is synchronized with other charts using the `syncId` prop on the chart,
+ * the brush will also synchronize the zooming and panning between all synchronized charts.
+ *
+ * @see {@link https://recharts.github.io/en-US/examples/BrushBarChart/ BarChart with Brush}
+ * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
  */
 export function Brush(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBrushProps);

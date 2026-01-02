@@ -174,8 +174,15 @@ export const BrushAPI: ApiDoc = {
           render a small overview of the chart inside the brush that is always visible and shows the full data set so
           that the user can see where they are zoomed in.
         </p>
+        <p>
+          If a chart is synchronized with other charts using the <code>syncId</code> prop on the chart, the brush will
+          also synchronize the zooming and panning between all synchronized charts.
+        </p>
       </section>
     ),
   },
-  links: [{ name: 'Example: BarChart with Brush', url: '/examples/BrushBarChart/' }],
+  links: [
+    { name: 'BarChart with Brush', url: '/examples/BrushBarChart/' },
+    { name: 'Synchronized Brush', url: '/examples/SynchronizedLineChart/' },
+  ],
 };

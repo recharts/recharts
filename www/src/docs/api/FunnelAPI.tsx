@@ -95,7 +95,6 @@ export const FunnelAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'height', type: 'string | number', isOptional: true },
     {
       name: 'hide',
       type: 'boolean',
@@ -146,7 +145,6 @@ export const FunnelAPI: ApiDoc = {
       },
       defaultVal: 'auto',
     },
-    { name: 'isUpdateAnimationActive', type: 'boolean', isOptional: true },
     { name: 'label', type: 'false | true | ReactNode | Function | Props', isOptional: true },
     { name: 'lastShapeType', type: '"triangle" | "rectangle"', isOptional: true, defaultVal: 'triangle' },
     {
@@ -162,7 +160,6 @@ export const FunnelAPI: ApiDoc = {
       },
       defaultVal: 'rect',
     },
-    { name: 'lowerWidth', type: 'number', isOptional: true },
     {
       name: 'nameKey',
       type: 'string | number | Function',
@@ -193,9 +190,6 @@ export const FunnelAPI: ApiDoc = {
       },
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
-    { name: 'upperWidth', type: 'number', isOptional: true },
-    { name: 'x', type: 'string | number', isOptional: true },
-    { name: 'y', type: 'string | number', isOptional: true },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     {
@@ -301,18 +295,8 @@ export const FunnelAPI: ApiDoc = {
     { name: 'onInvalidCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDown', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyDownCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onKeyPress',
-      type: 'AdaptChildKeyboardEventHandler<P, T>',
-      isOptional: true,
-      deprecated: 'Use `onKeyUp` or `onKeyDown` instead',
-    },
-    {
-      name: 'onKeyPressCapture',
-      type: 'AdaptChildKeyboardEventHandler<P, T>',
-      isOptional: true,
-      deprecated: 'Use `onKeyUpCapture` or `onKeyDownCapture` instead',
-    },
+    { name: 'onKeyPress', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
+    { name: 'onKeyPressCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyUp', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onKeyUpCapture', type: 'AdaptChildKeyboardEventHandler<P, T>', isOptional: true },
     { name: 'onLoad', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },

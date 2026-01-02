@@ -43,14 +43,6 @@ export interface LegendPayload {
 
 interface DefaultLegendContentProps {
   /**
-   * If set to a React element, the option will be used to render the legend.
-   * If set to a function, the function is called once for each item
-   *
-   * @example <Legend content={<CustomizedLegend external={external} />} />
-   * @example <Legend content={renderLegend} />
-   */
-  content?: ContentType;
-  /**
    * The size of icon in each legend item.
    * @defaultValue 14
    */
@@ -94,6 +86,9 @@ interface DefaultLegendContentProps {
   inactiveColor?: string;
   /**
    * Function to customize how content is serialized before rendering.
+   *
+   * This should return HTML elements, or strings.
+   *
    * @example (value, entry, index) => <span style={{ color: 'red' }}>{value}</span>
    * @example https://codesandbox.io/s/legend-formatter-rmzp9
    */

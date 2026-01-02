@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const LabelListAPI: ApiDoc = {
@@ -83,6 +84,11 @@ export const LabelListAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>Function to customize how content is serialized before rendering.</p>
+            <p>
+              This should return a renderable text - something that the <Link to="/api/Text/">Text</Link> component can
+              render. Typically, a string or number. Custom components are not supported here - use the{' '}
+              <code>content</code> prop instead.
+            </p>
           </section>
         ),
       },
@@ -116,7 +122,7 @@ export const LabelListAPI: ApiDoc = {
     },
     {
       name: 'position',
-      type: '"end" | "middle" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
+      type: '"end" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | "middle" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
       isOptional: true,
       desc: {
         'en-US': (

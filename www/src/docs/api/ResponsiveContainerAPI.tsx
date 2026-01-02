@@ -187,4 +187,18 @@ export const ResponsiveContainerAPI: ApiDoc = {
     ),
   },
   links: [{ name: 'Chart size guide', url: '/guide/sizes/' }],
+  childrenComponents: [
+    'AreaChart',
+    'BarChart',
+    'ComposedChart',
+    'FunnelChart',
+    'LineChart',
+    'PieChart',
+    'RadarChart',
+    'RadialBarChart',
+    'Sankey',
+    'ScatterChart',
+    'SunburstChart',
+    'Treemap',
+  ],
 };

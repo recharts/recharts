@@ -65,9 +65,14 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'ErrorBar width describes the width of the serifs, not the whole component',
   },
   {
-    components: ['Brush', 'CartesianGrid', 'Cross', 'Legend', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar'],
+    components: ['Legend'],
     props: ['width', 'height'],
-    reason: 'Many components assign different meanings to width/height',
+    reason: 'Legend accepts arbitrary CSS size values, unlike other components',
+  },
+  {
+    components: ['Brush', 'CartesianGrid', 'Cross', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar', 'Trapezoid'],
+    props: ['width', 'height'],
+    reason: 'These components only allow number pixel values for width/height',
   },
   {
     components: ['Dot', 'Cross'],
@@ -83,7 +88,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       unlike most other components where x/y are pixel coordinates.`,
   },
   {
-    components: ['Rectangle'],
+    components: ['Rectangle', 'Trapezoid'],
     props: ['x', 'y'],
     reason: 'x and y in Rectangle are required, unlike Brush where they are calculated internally.',
   },
@@ -134,7 +139,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
   },
   {
-    components: ['Dot', 'SunburstChart'],
+    components: ['Dot', 'SunburstChart', 'Sector'],
     props: ['cx', 'cy'],
     reason: 'These components do not support percentages unlike other components',
   },
@@ -151,7 +156,38 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   {
     components: ['Label'],
     props: ['content'],
-    reason: 'In other components, content is called N times. In Label, content is called once.',
+    reason: 'In LabelList, content is called N times. In Label, content is called once.',
+  },
+  {
+    components: ['Tooltip', 'Legend'],
+    props: ['content'],
+    reason: 'Tooltip and Legend have HTML content, unlike other components which have SVG content.',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['formatter'],
+    reason: 'Tooltip formatter allows returning arrays',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['itemSorter'],
+    reason:
+      'Tooltip itemSorter has different default behavior than Legend itemSorter (like why? these should be consistent omg)',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['includeHidden'],
+    reason: 'Tooltip includeHidden is doing something different than includeHidden on the axes',
+  },
+  {
+    components: ['Tooltip'],
+    props: ['offset', 'position'],
+    reason: 'Tooltip position uses the same prop names but works differently than other components',
+  },
+  {
+    components: ['Legend', 'DefaultLegendContent'],
+    props: ['formatter'],
+    reason: 'DefaultLegendContent formatter requires HTML context, unlike other components which use SVG',
   },
   {
     components: ['XAxis', 'YAxis', 'ZAxis', 'PolarAngleAxis', 'PolarRadiusAxis'],
@@ -226,5 +262,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     components: ['Sankey'],
     props: ['data', 'dataKey', 'align', 'verticalAlign'],
     reason: 'Sankey is doing its own thing',
+  },
+  {
+    components: ['Sector'],
+    props: ['startAngle', 'endAngle', 'innerRadius', 'outerRadius'],
+    reason:
+      'Sector props describe one shape, unlike chart components and Pie where the same prop describes multiple sectors',
   },
 ];

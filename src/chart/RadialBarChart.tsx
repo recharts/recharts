@@ -15,6 +15,7 @@ export const defaultRadialBarChartProps = {
 } as const satisfies Partial<PolarChartProps>;
 
 /**
+ * @consumes ResponsiveContainerContext
  * @provides PolarViewBoxContext
  * @provides PolarChartContext
  */

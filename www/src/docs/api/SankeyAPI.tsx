@@ -275,5 +275,6 @@ export const SankeyAPI: ApiDoc = {
       </section>
     ),
   },
+  parentComponents: ['ResponsiveContainer'],
   childrenComponents: ['Tooltip'],
 };

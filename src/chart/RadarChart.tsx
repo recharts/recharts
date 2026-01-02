@@ -36,6 +36,7 @@ type RadarChartProps = Omit<PolarChartProps, 'layout' | 'startAngle' | 'endAngle
 };
 
 /**
+ * @consumes ResponsiveContainerContext
  * @provides PolarViewBoxContext
  * @provides PolarChartContext
  */

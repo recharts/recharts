@@ -1,3 +1,5 @@
+import type { ApiDoc } from './types';
+
 import { AreaChartAPI as AreaChart } from './AreaChart';
 import { BarChartAPI } from './BarChart';
 import { ComposedChartAPI } from './ComposedChart';
@@ -8,7 +10,7 @@ import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
-import { TreemapAPI } from './Treemap';
+import { TreemapAPI } from './TreemapAPI';
 
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';
@@ -26,7 +28,7 @@ import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
 import { LegendAPI } from './LegendAPI';
-import { TooltipAPI as Tooltip } from './Tooltip';
+import { TooltipAPI } from './TooltipAPI';
 import { CellAPI as Cell } from './Cell';
 import { TextAPI } from './TextAPI';
 
@@ -40,18 +42,17 @@ import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 import { CurveAPI as Curve } from './Curve';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
-import { SectorAPI as Sector } from './Sector';
-import { TrapezoidAPI as Trapezoid } from './Trapezoid';
-import type { ApiDoc } from './types';
+import { SectorAPI } from './SectorAPI';
+import { TrapezoidAPI } from './TrapezoidAPI';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
 import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
-import { BrushAPI } from './BrushAPI.tsx';
-import { CrossAPI } from './CrossAPI.tsx';
-import { DotAPI } from './DotAPI.tsx';
+import { BrushAPI } from './BrushAPI';
+import { CrossAPI } from './CrossAPI';
+import { DotAPI } from './DotAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart,
@@ -81,7 +82,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
 
   ResponsiveContainer: ResponsiveContainerAPI,
   Legend: LegendAPI,
-  Tooltip,
+  Tooltip: TooltipAPI,
   Cell,
   Text: TextAPI,
   Label: LabelAPI,
@@ -104,8 +105,8 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Dot: DotAPI,
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,
-  Sector,
-  Trapezoid,
+  Sector: SectorAPI,
+  Trapezoid: TrapezoidAPI,
 
   ZIndexLayer: ZIndexLayerAPI,
 };

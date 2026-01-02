@@ -400,6 +400,7 @@ export const RadarChartAPI: ApiDoc = {
       },
     },
   ],
+  parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
     'Label',
     'Legend',

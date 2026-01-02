@@ -338,10 +338,21 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
 type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
 export interface Props {
+  /**
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
+   */
   width?: number | Percent;
 
+  /**
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
+   */
   height?: number | Percent;
 
+  /**
+   * The source data. Each element should be an object.
+   */
   data?: ReadonlyArray<TreemapDataType>;
 
   /**
@@ -352,12 +363,15 @@ export interface Props {
   style?: React.CSSProperties;
 
   /**
-   * This is aspect ratio of the individual treemap rectangles.
-   * If you want to define aspect ratio of the chart itself, set it via the `style` prop:
-   * e.g. `<Treemap style={{ aspectRatio: 4 / 3 }}>`
+   * The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.
+   * @default 1.618033988749895
    */
   aspectRatio?: number;
 
+  /**
+   * If set to a React element, the option is the customized React element of rendering the content.
+   * If set to a function, the function will be called to render the content.
+   */
   content?: TreemapContentType;
 
   fill?: string;
@@ -366,8 +380,19 @@ export interface Props {
 
   className?: string;
 
+  /**
+   * The key of each sector's name.
+   * @default 'name'
+   */
   nameKey?: DataKey<any>;
 
+  /**
+   * Decides how to extract the value of this Treemap from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value of this Treemap.
+   * @default 'value'
+   */
   dataKey?: DataKey<any>;
 
   children?: ReactNode;
@@ -383,13 +408,19 @@ export interface Props {
    */
   type?: 'flat' | 'nest';
 
-  colorPanel?: [];
+  colorPanel?: ReadonlyArray<string>;
 
   // customize nest index content
   nestIndexContent?: React.ReactElement | ((item: TreemapNode, i: number) => ReactNode);
 
+  /**
+   * The customized event handler of animation start
+   */
   onAnimationStart?: () => void;
 
+  /**
+   * The customized event handler of animation end
+   */
   onAnimationEnd?: () => void;
 
   onMouseEnter?: (node: TreemapNode, e: React.MouseEvent) => void;
@@ -398,14 +429,31 @@ export interface Props {
 
   onClick?: (node: TreemapNode) => void;
 
+  /**
+   * If set false, animation of treemap will be disabled.
+   * If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * @default 'auto'
+   */
   isAnimationActive?: boolean | 'auto';
 
   isUpdateAnimationActive?: boolean | 'auto';
 
+  /**
+   * Specifies when the animation should begin, the unit of this option is ms.
+   * @default 0
+   */
   animationBegin?: number;
 
+  /**
+   * Specifies the duration of animation, the unit of this option is ms.
+   * @default 1500
+   */
   animationDuration?: AnimationDuration;
 
+  /**
+   * The type of easing function.
+   * @default 'linear'
+   */
   animationEasing?: AnimationTiming;
 
   id?: string;
@@ -450,7 +498,7 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   type: string;
-  colorPanel: string[] | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -972,6 +1020,12 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
   );
 }
 
+/**
+ * The Treemap chart is used to visualize hierarchical data using nested rectangles.
+ *
+ * @consumes ResponsiveContainerContext
+ * @provides TooltipEntrySettings
+ */
 export function Treemap(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
   const { className, style, width, height } = props;

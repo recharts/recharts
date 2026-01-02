@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const LegendAPI: ApiDoc = {
@@ -37,14 +38,19 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              If set to a React element, the option will be used to render the legend. If set to a function, the
-              function is called once for each item
-            </p>
+            <p>Renders the content of the legend.</p>
+            <p>This should return HTML elements, not SVG elements.</p>
+            <ul>
+              <li>
+                If not set, the <Link to="/api/DefaultLegendContent/">DefaultLegendContent</Link> component is used.
+              </li>
+              <li>If set to a React element, this element will be cloned and extra props will be passed in.</li>
+              <li>If set to a function, the function will be called and should return HTML elements.</li>
+            </ul>
           </section>
         ),
       },
-      format: ['<Legend content={<CustomizedLegend external={external} />} />', '<Legend content={renderLegend} />'],
+      format: ['<Legend content={CustomizedLegend} />', '<Legend content={renderLegend} />'],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -55,6 +61,7 @@ export const LegendAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>Function to customize how content is serialized before rendering.</p>
+            <p>This should return HTML elements, or strings.</p>
           </section>
         ),
       },
@@ -70,7 +77,10 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Height of the legend in pixels.</p>
+            <p>
+              Height of the legend. Accept CSS style string values like <code>100%</code> or <code>fit-content</code>,
+              or number values like <code>400</code>.
+            </p>
           </section>
         ),
       },
@@ -166,7 +176,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'verticalAlign',
-      type: '"middle" | "top" | "bottom"',
+      type: '"top" | "bottom" | "middle"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -197,7 +207,10 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Width of the legend in pixels.</p>
+            <p>
+              Width of the legend. Accept CSS style string values like <code>100%</code> or <code>fit-content</code>, or
+              number values like <code>400</code>.
+            </p>
           </section>
         ),
       },
@@ -210,14 +223,11 @@ export const LegendAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              The style of legend container which is a &quot;position: absolute;&quot; div element. Because the position
-              of legend is quite flexible, so you can change the position by the value of top, left, right, bottom in
-              this option. And the format of wrapperStyle is the same as React inline style.
+              CSS styles to be applied to the wrapper <code>div</code> element.
             </p>
           </section>
         ),
       },
-      format: ["{ top: 0, left: 0, backgroundColor: 'red' }", 'https://reactjs.org/docs/dom-elements.html#style'],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },

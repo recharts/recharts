@@ -338,6 +338,9 @@ jobs:
           git pull --rebase
           git push --no-verify
 
+          echo "Website deployed to URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TARGET_DIR/www/"
+          echo "VR report deployed to URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TARGET_DIR/vr-tests/"
+
       - name: Comment on PR
         if: github.event_name == 'pull_request' && steps.deploy.outcome == 'success'
         env:
