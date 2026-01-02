@@ -68,14 +68,27 @@ export interface TreemapNode {
   height: number;
   name: string;
   tooltipIndex: TooltipIndex;
+  root: TreemapNode;
 
-  [k: string]: any;
+  [k: string]: unknown;
 }
 
-export const treemapPayloadSearcher: TooltipPayloadSearcher<TreemapNode, TreemapNode> = (
-  data: TreemapNode,
-  activeIndex: TooltipIndex,
-): TreemapNode | undefined => {
+function isTreemapNode(value: unknown): value is TreemapNode {
+  return (
+    value != null &&
+    typeof value === 'object' &&
+    'x' in value &&
+    'y' in value &&
+    'width' in value &&
+    'height' in value &&
+    typeof (value as TreemapNode).x === 'number' &&
+    typeof (value as TreemapNode).y === 'number' &&
+    typeof (value as TreemapNode).width === 'number' &&
+    typeof (value as TreemapNode).height === 'number'
+  );
+}
+
+export const treemapPayloadSearcher: TooltipPayloadSearcher = (data: unknown, activeIndex: TooltipIndex): unknown => {
   if (!data || !activeIndex) {
     return undefined;
   }
@@ -131,10 +144,12 @@ export const computeNode = ({
   let nodeValue: number;
 
   if (computedChildren && computedChildren.length) {
-    nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
+    nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child.value, 0);
   } else {
     // TODO need to verify dataKey
-    nodeValue = isNan(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
+    const rawNodeValue = node[dataKey as string];
+    const numericValue = typeof rawNodeValue === 'number' ? rawNodeValue : 0;
+    nodeValue = isNan(numericValue) || numericValue <= 0 ? 0 : numericValue;
   }
 
   return {
@@ -907,7 +922,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       <div className="recharts-treemap-nest-index-wrapper" style={{ marginTop: '8px', textAlign: 'center' }}>
         {nestIndex.map((item: TreemapNode, i: number) => {
           // TODO need to verify nameKey type
-          const name: string = get(item, nameKey as string, 'root');
+          const rawName = get(item, nameKey as string, 'root');
+          const name: string = typeof rawName === 'string' ? rawName : 'root';
           let content: ReactNode;
           if (React.isValidElement(nestIndexContent)) {
             // the cloned content is ignored at all times - let's remove it?
@@ -953,7 +969,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
     const itemIndex = target.getAttribute('data-recharts-item-index');
     const activeNode = treemapPayloadSearcher(this.state.formatRoot, itemIndex);
-    if (!activeNode) {
+    if (!isTreemapNode(activeNode)) {
       return;
     }
 

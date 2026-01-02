@@ -1,7 +1,13 @@
 import { expect } from 'vitest';
 import { StackDataPoint, StackSeries } from '../../src/util/stacks/stackTypes';
-
 import { MaybeStackedGraphicalItem } from '../../src/state/types/StackedGraphicalItem';
+
+interface SyncExpectationResult {
+  pass: boolean;
+  message: () => string;
+  actual?: unknown;
+  expected?: unknown;
+}
 
 export type ExpectedStackedDataSeries = ReadonlyArray<StackDataPoint>;
 
@@ -56,7 +62,10 @@ export function expectStackedSeries(received: ExpectedStackedDataSeries, expecte
   expect(actualSeriesToExpectedSeries(received)).toEqual(expected);
 }
 
-function rechartsStackedDataMatcher(received: ExpectedStackedData, expected: ExpectedStackedData) {
+function rechartsStackedDataMatcher(
+  received: ExpectedStackedData,
+  expected: ExpectedStackedData,
+): SyncExpectationResult {
   try {
     expectStackedData(received, expected);
     return {
@@ -68,7 +77,7 @@ function rechartsStackedDataMatcher(received: ExpectedStackedData, expected: Exp
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: () => (e instanceof Error ? e.message : String(e)),
     };
   }
 }
@@ -76,7 +85,7 @@ function rechartsStackedDataMatcher(received: ExpectedStackedData, expected: Exp
 function rechartsStackedSeriesMatcher(
   received: ExpectedStackedDataSeries,
   expected: ExpectedStackedDataSeries,
-): { pass: boolean; message: () => string } {
+): SyncExpectationResult {
   try {
     expectStackedSeries(received, expected);
     return {
@@ -88,15 +97,12 @@ function rechartsStackedSeriesMatcher(
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: () => (e instanceof Error ? e.message : String(e)),
     };
   }
 }
 
-function rechartsStackedSeriesPointMatcher(
-  received: StackDataPoint,
-  expected: StackDataPoint,
-): { pass: boolean; message: () => string } {
+function rechartsStackedSeriesPointMatcher(received: StackDataPoint, expected: StackDataPoint): SyncExpectationResult {
   try {
     if (!Array.isArray(received)) {
       throw new Error(`stackedSeriesPoint error: expected ${received} to be an array`);
@@ -111,7 +117,7 @@ function rechartsStackedSeriesPointMatcher(
     // debugger;
     return {
       pass: false,
-      message: e.message,
+      message: () => (e instanceof Error ? e.message : String(e)),
     };
   }
 }

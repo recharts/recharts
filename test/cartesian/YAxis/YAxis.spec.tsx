@@ -1226,7 +1226,7 @@ describe('<YAxis />', () => {
   });
 
   describe('in stacked BarChart', () => {
-    it.each([undefined, 'none'])(
+    it.each([undefined, 'none'] as const)(
       'should render sum of stacked values with stackOffset = %s',
       (stackOffset: StackOffsetType | undefined) => {
         const stackedData = [

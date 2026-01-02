@@ -91,6 +91,9 @@ export function getEquidistantPreserveEndTicks(
     // 2. Iterate through the end-anchored sequence: offset, offset + stepsize, ..., len - 1
     for (let index = offset; index < len; index += stepsize) {
       const entry = ticks[index];
+      if (entry == null) {
+        continue;
+      }
       const i = index;
       let size: number | undefined;
 
@@ -126,7 +129,10 @@ export function getEquidistantPreserveEndTicks(
       // Build the final result array explicitly using the validated stepsize and offset.
       const finalTicks: CartesianTickItem[] = [];
       for (let index = offset; index < len; index += stepsize) {
-        finalTicks.push(ticks[index]);
+        const tick = ticks[index];
+        if (tick != null) {
+          finalTicks.push(tick);
+        }
       }
       return finalTicks;
     }

@@ -6,6 +6,7 @@ import {
   Brush,
   CartesianGrid,
   Customized,
+  LabelProps,
   Legend,
   Line,
   LineChart,
@@ -491,7 +492,7 @@ describe('<LineChart />', () => {
   });
 
   test('Renders 6 labels when label is a function', () => {
-    const renderLabel = (props: { x: number; y: number; key: string }) => {
+    const renderLabel = (props: LabelProps) => {
       const { x, y, key } = props;
       return (
         <text className="customized-label" x={x} y={y} key={key}>

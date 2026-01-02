@@ -505,13 +505,16 @@ const getPayloadOfTooltip = (
   return undefined;
 };
 
-export const sankeyPayloadSearcher: TooltipPayloadSearcher<any, any> = (
-  _: SankeyData,
+export const sankeyPayloadSearcher: TooltipPayloadSearcher = (
+  _: unknown,
   activeIndex: TooltipIndex,
-  computedData: { links: SankeyLink[]; nodes: SankeyNode[] },
-  nameKey,
+  computedData?: unknown,
+  nameKey?,
 ): SankeyTooltipPayload | undefined => {
   if (activeIndex == null || typeof activeIndex !== 'string') {
+    return undefined;
+  }
+  if (computedData == null || typeof computedData !== 'object') {
     return undefined;
   }
   const splitIndex = activeIndex.split('-');

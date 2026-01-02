@@ -113,7 +113,7 @@ describe('<Scatter />', () => {
   });
 
   test('Render customized symbols when shape is set to be a function', () => {
-    const renderCustomizedShape = ({ cx, cy }: { cx: number; cy: number }) => (
+    const renderCustomizedShape = ({ cx, cy }: { cx?: number; cy?: number }) => (
       <circle cx={cx} cy={cy} r={5} className="customized-shape" />
     );
     const { container } = render(

@@ -1,15 +1,12 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "esModuleInterop": true,
-    "jsx": "react",
-    "module": "commonjs",
     "noEmit": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
     "target": "es2023",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    /* Disable noUncheckedIndexedAccess in tests - fixing all array access would be a large undertaking */
+    "noUncheckedIndexedAccess": false
   },
   "include": ["./**/*", "../types.d.ts", "./helper/toBeRechartsScale.ts"]
 }

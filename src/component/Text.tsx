@@ -427,8 +427,9 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
 
   const transforms = [];
-  if (scaleToFit) {
-    const lineWidth = wordsByLines[0].width;
+  const firstLine = wordsByLines[0];
+  if (scaleToFit && firstLine != null) {
+    const lineWidth = firstLine.width;
     const { width } = props;
     transforms.push(`scale(${isNumber(width) && isNumber(lineWidth) ? width / lineWidth : 1})`);
   }

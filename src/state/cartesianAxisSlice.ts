@@ -30,7 +30,12 @@ export type YAxisOrientation = 'left' | 'right';
  */
 export type BaseCartesianAxis = {
   id: AxisId;
-  scale: ScaleType | CustomScaleDefinition | undefined;
+  scale:
+    | ScaleType
+    | CustomScaleDefinition
+    | CustomScaleDefinition<string>
+    | CustomScaleDefinition<number>
+    | CustomScaleDefinition<Date>;
   /**
    * Before creating this object, evaluate the domain type based on the chart layout so that we have the 'auto' resolved.
    */

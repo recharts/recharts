@@ -22,11 +22,15 @@ function getTicksEnd(
   let { end } = boundaries;
 
   for (let i = len - 1; i >= 0; i--) {
-    let entry = result[i];
+    const initialEntry = result[i];
+    if (initialEntry == null) {
+      continue;
+    }
+    let entry = initialEntry;
     let size: number | undefined;
     const getSize = () => {
       if (size === undefined) {
-        size = getTickSize(entry, i);
+        size = getTickSize(initialEntry, i);
       }
 
       return size;
@@ -72,30 +76,36 @@ function getTicksStart(
   if (preserveEnd) {
     // Try to guarantee the tail to be displayed
     let tail = ticks[len - 1];
-    const tailSize = getTickSize(tail, len - 1);
-    const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
-    result[len - 1] = tail = {
-      ...tail,
-      tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
-    };
+    if (tail != null) {
+      const tailSize = getTickSize(tail, len - 1);
+      const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
+      result[len - 1] = tail = {
+        ...tail,
+        tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
+      };
 
-    if (tail.tickCoord != null) {
-      const isTailShow = isVisible(sign, tail.tickCoord, () => tailSize, start, end);
+      if (tail.tickCoord != null) {
+        const isTailShow = isVisible(sign, tail.tickCoord, () => tailSize, start, end);
 
-      if (isTailShow) {
-        end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
-        result[len - 1] = { ...tail, isShow: true };
+        if (isTailShow) {
+          end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
+          result[len - 1] = { ...tail, isShow: true };
+        }
       }
     }
   }
 
   const count = preserveEnd ? len - 1 : len;
   for (let i = 0; i < count; i++) {
-    let entry = result[i];
+    const initialEntry = result[i];
+    if (initialEntry == null) {
+      continue;
+    }
+    let entry = initialEntry;
     let size: number | undefined;
     const getSize = () => {
       if (size === undefined) {
-        size = getTickSize(entry, i);
+        size = getTickSize(initialEntry, i);
       }
 
       return size;
@@ -165,7 +175,9 @@ export function getTicks(
       : getStringSize(value, { fontSize, letterSpacing })[sizeKey];
   };
 
-  const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
+  const tick0 = ticks[0];
+  const tick1 = ticks[1];
+  const sign = ticks.length >= 2 && tick0 != null && tick1 != null ? mathSign(tick1.coordinate - tick0.coordinate) : 1;
   const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
 
   if (interval === 'equidistantPreserveStart') {

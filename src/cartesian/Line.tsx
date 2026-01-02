@@ -407,8 +407,9 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
   const restLength = totalLength - length;
 
   let remainLines: number[] = [];
-  for (let i = 0, sum = 0; i < lines.length; sum += lines[i], ++i) {
-    if (sum + lines[i] > remainLength) {
+  for (let i = 0, sum = 0; i < lines.length; sum += lines[i] ?? 0, ++i) {
+    const lineValue = lines[i];
+    if (lineValue != null && sum + lineValue > remainLength) {
       remainLines = [...lines.slice(0, i), remainLength - sum];
       break;
     }

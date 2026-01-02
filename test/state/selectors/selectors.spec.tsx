@@ -741,7 +741,7 @@ describe('selectTooltipPayloadConfigurations', () => {
     },
   );
 
-  describe.each(['hover', 'click'])('tooltipEventType: "axis" tooltipTrigger: %s', (trigger: TooltipTrigger) => {
+  describe.each<TooltipTrigger>(['hover', 'click'])('tooltipEventType: "axis" tooltipTrigger: %s', trigger => {
     it('should return unfiltered configurations with tooltipEventType: axis', () => {
       const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         exampleTooltipPayloadConfiguration1,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentType, FunctionComponent, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
+import { ComponentType, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import {
   AxisDomainTypeInput,
@@ -206,7 +206,7 @@ function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomai
   return null;
 }
 
-const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
+function YAxisImpl(props: PropsWithDefaults) {
   const { yAxisId, className, width, label } = props;
 
   const cartesianAxisRef = useRef<CartesianAxisRef>(null);
@@ -288,7 +288,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: PropsWithDefaults) => {
       axisType={axisType}
     />
   );
-};
+}
 
 export const yAxisDefaultProps = {
   allowDataOverflow: implicitYAxis.allowDataOverflow,

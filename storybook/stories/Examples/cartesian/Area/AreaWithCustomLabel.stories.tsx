@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
+import { ComposedChart, Area, ResponsiveContainer, LabelProps } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
@@ -9,7 +9,7 @@ export default {
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
-const renderLabel = (props: { index: number; x: number; y: number }) => {
+const renderLabel = (props: LabelProps) => {
   const { index, x, y } = props;
   return (
     <text key={index} x={x} y={y} className="customized-label">

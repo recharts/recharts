@@ -1,7 +1,7 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { sizeData, treemapData } from '../../data';
-import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
+import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
 import { animationBegin, animationDuration, isAnimationActive } from '../props/AnimationProps';
 import { isUpdateAnimationActive } from '../props/RectangleProps';
@@ -149,7 +149,7 @@ export const WithCustomContent = {
           dataKey="size"
           stroke="#fff"
           fill="#8884d8"
-          content={props => {
+          content={(props: TreemapNode) => {
             const { root, depth, x, y, width, height, index, name } = props;
 
             return (
@@ -160,7 +160,7 @@ export const WithCustomContent = {
                   width={width}
                   height={height}
                   style={{
-                    fill: depth < 2 ? colors[Math.floor((index / root.children.length) * 6)] : '#ffffff00',
+                    fill: depth < 2 ? colors[Math.floor((index / (root.children?.length ?? 1)) * 6)] : '#ffffff00',
                     stroke: '#fff',
                     strokeWidth: 2 / (depth + 1e-10),
                     strokeOpacity: 1 / (depth + 1e-10),

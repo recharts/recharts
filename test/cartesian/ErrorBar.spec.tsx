@@ -2,7 +2,6 @@ import React from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
-import { AxisDomainTypeInput } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisDomainIncludingNiceTicks, selectNumericalDomain } from '../../src/state/selectors/axisSelectors';
 import { expectBars } from '../helper/expectBars';
@@ -1261,9 +1260,9 @@ describe('<ErrorBar />', () => {
     ]);
   });
 
-  test.each(['category', undefined])(
+  test.each(['category', undefined] as const)(
     'does not render anything when direction=x and XAxis id type=%s',
-    (domainType: AxisDomainTypeInput) => {
+    domainType => {
       const { container } = rechartsTestRender(
         <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="name" type={domainType} />

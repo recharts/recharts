@@ -27,14 +27,18 @@ export type ChartOptions = {
   eventEmitter: symbol | undefined;
 };
 
-export function arrayTooltipSearcher<T>(data: ReadonlyArray<T>, strIndex: TooltipIndex): T | undefined {
+export const arrayTooltipSearcher: TooltipPayloadSearcher = (
+  data: unknown,
+  strIndex: TooltipIndex,
+): unknown | undefined => {
   if (!strIndex) return undefined;
+  if (!Array.isArray(data)) return undefined;
   const numIndex = Number.parseInt(strIndex, 10);
   if (isNan(numIndex)) {
     return undefined;
   }
-  return data?.[numIndex];
-}
+  return data[numIndex];
+};
 
 const initialState: ChartOptions = {
   chartName: '',

@@ -12,7 +12,7 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
-interface BaseLabelListEntry {
+export interface LabelListEntry {
   /**
    * Value is what renders in the UI as the label content.
    * If undefined, then the LabelList will pull it from the payload using the dataKey.
@@ -22,7 +22,7 @@ interface BaseLabelListEntry {
    * Payload is the source data object for this entry. The shape of this depends on what the user has passed
    * as the data prop to the chart.
    */
-  payload: unknown;
+  payload: Record<string, unknown> | null | undefined;
   fill: string | undefined;
 }
 
@@ -34,7 +34,7 @@ interface BaseLabelListEntry {
  *
  * It's not necessary to pass redundant data, but we keep it for backward compatibility.
  */
-export interface CartesianLabelListEntry extends BaseLabelListEntry, TrapezoidViewBox {
+export interface CartesianLabelListEntry extends LabelListEntry, TrapezoidViewBox {
   /**
    * The bounding box of the graphical element that this label is attached to.
    * This will be an individual Bar for example.
@@ -43,7 +43,7 @@ export interface CartesianLabelListEntry extends BaseLabelListEntry, TrapezoidVi
   parentViewBox?: CartesianViewBoxRequired;
 }
 
-export interface PolarLabelListEntry extends BaseLabelListEntry {
+export interface PolarLabelListEntry extends LabelListEntry {
   viewBox: PolarViewBoxRequired;
   parentViewBox?: PolarViewBoxRequired;
   clockWise?: boolean;
@@ -77,7 +77,7 @@ interface LabelListProps extends ZIndexable {
    * Scatter requires this prop to be set.
    * Other graphical components will show the same value as the dataKey of the component by default.
    */
-  dataKey?: DataKey<Record<string, any>>;
+  dataKey?: DataKey<Record<string, unknown>>;
   /**
    * If set a React element, the option is the customized React element of rendering each label.
    * If set to a function, the function is called once for each item
@@ -149,7 +149,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
-const defaultAccessor = (entry: BaseLabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
+const defaultAccessor = (entry: LabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
 
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
@@ -185,7 +185,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
         {data.map((entry, index) => {
           const value = isNullish(dataKey)
             ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
+            : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
           const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 

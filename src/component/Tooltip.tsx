@@ -25,7 +25,7 @@ import {
 import { useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setTooltipSettingsState, TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
+import { setTooltipSettingsState, TooltipIndex, TooltipPayload, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
@@ -35,7 +35,7 @@ export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
   | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
-function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
+function defaultUniqBy(entry: Payload<ValueType, NameType>) {
   return entry.dataKey;
 }
 
@@ -181,7 +181,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * @defaultValue 10
    */
   offset?: number;
-  payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
+  payloadUniqBy?: UniqueOption<TooltipPayloadEntry>;
   /**
    * If portal is defined, then Tooltip will use this element as a target
    * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal

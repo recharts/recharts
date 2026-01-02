@@ -26,7 +26,7 @@ export type { Props as TextProps, RenderableText } from './component/Text';
 export { Label } from './component/Label';
 export type { Props as LabelProps } from './component/Label';
 export { LabelList } from './component/LabelList';
-export type { Props as LabelListProps } from './component/LabelList';
+export type { Props as LabelListProps, LabelListEntry } from './component/LabelList';
 export { Customized } from './component/Customized';
 export type { Props as CustomizedProps } from './component/Customized';
 

@@ -41,7 +41,11 @@ import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
 
-export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
+export function getValueByDataKey<T>(
+  obj: T | null | undefined,
+  dataKey: DataKey<T> | undefined,
+  defaultValue?: any,
+): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
