@@ -27,6 +27,7 @@
   "lib/cartesian/XAxis.js",
   "lib/cartesian/YAxis.js",
   "lib/cartesian/ZAxis.js",
+  "lib/cartesian/getCartesianPosition.js",
   "lib/cartesian/getEquidistantTicks.js",
   "lib/cartesian/getTicks.js",
   "lib/chart",

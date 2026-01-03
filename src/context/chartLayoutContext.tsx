@@ -19,6 +19,8 @@ import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/b
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
+export function cartesianViewBoxToTrapezoid(box: undefined): undefined;
+export function cartesianViewBoxToTrapezoid(box: CartesianViewBoxRequired | TrapezoidViewBox): TrapezoidViewBox;
 export function cartesianViewBoxToTrapezoid(
   box: CartesianViewBoxRequired | TrapezoidViewBox | undefined,
 ): TrapezoidViewBox | undefined {
