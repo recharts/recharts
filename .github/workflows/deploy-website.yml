@@ -40,6 +40,14 @@ jobs:
         working-directory: www
         run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` npm run build
 
+      - name: Build storybook
+        run: npm run build-storybook
+
+      - name: Move storybook to docs folder
+        run: |
+          mkdir www/docs/storybook-static
+          cp -r storybook/public/* www/docs/storybook-static/
+
       - name: Publish artifact
         id: publish-gh-pages
         uses: actions/upload-pages-artifact@v3
