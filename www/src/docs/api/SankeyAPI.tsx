@@ -73,7 +73,7 @@ export const SankeyAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     {
       name: 'iterations',
@@ -226,7 +226,7 @@ export const SankeyAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     {
       name: 'onClick',

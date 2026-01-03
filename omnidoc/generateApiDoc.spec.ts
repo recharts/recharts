@@ -67,7 +67,7 @@ describe('generateApiDoc', () => {
     expect(guideLink).toBeDefined();
     expect(guideLink?.name).toBe('Chart size guide');
     // Internal Recharts link should not be marked as external
-    expect(guideLink?.isExternal).toBeUndefined();
+    expect(guideLink?.isExternal).toBe(false);
   });
 
   it('should not include links for components without @see or @link tags', async () => {

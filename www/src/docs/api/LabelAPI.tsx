@@ -161,7 +161,7 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       defaultVal: 2000,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
   parentComponents: [

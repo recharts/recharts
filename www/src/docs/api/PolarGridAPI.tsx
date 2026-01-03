@@ -123,7 +123,7 @@ export const PolarGridAPI: ApiDoc = {
         ),
       },
       defaultVal: -100,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],

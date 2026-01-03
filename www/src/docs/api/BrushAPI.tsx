@@ -182,7 +182,7 @@ export const BrushAPI: ApiDoc = {
     ),
   },
   links: [
-    { name: 'BarChart with Brush', url: '/examples/BrushBarChart/' },
-    { name: 'Synchronized Brush', url: '/examples/SynchronizedLineChart/' },
+    { name: 'BarChart with Brush', url: '/examples/BrushBarChart/', isExternal: false },
+    { name: 'Synchronized Brush', url: '/examples/SynchronizedLineChart/', isExternal: false },
   ],
 };

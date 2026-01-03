@@ -488,7 +488,7 @@ export const PolarAngleAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 500,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },

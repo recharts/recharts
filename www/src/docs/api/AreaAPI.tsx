@@ -284,8 +284,8 @@ export const AreaAPI: ApiDoc = {
       format: ['strokeDasharray="5 5"', 'strokeDasharray={10}'],
       examples: [
         {
-          name: '://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
-          url: 'https',
+          name: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
           isExternal: true,
         },
       ],
@@ -317,7 +317,11 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: 'linear',
       examples: [
-        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
+        {
+          name: 'An AreaChart which has two area with different interpolation.',
+          url: '/examples/CardinalAreaChart/',
+          isExternal: false,
+        },
         {
           name: 'https://github.com/d3/d3-shape#curves',
           url: 'https://github.com/d3/d3-shape#curves',
@@ -379,7 +383,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 100,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },

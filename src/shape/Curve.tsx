@@ -142,7 +142,7 @@ interface CurveProps {
    *
    * @example strokeDasharray="5 5"
    * @example strokeDasharray={10}
-   * @see https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray}
    */
   strokeDasharray?: string | number;
 }

@@ -223,7 +223,7 @@ export const ScatterAPI: ApiDoc = {
         '<Scatter line={CustomizedLineComponent} />',
         "<Scatter line={{ strokeDasharray: '5 5' }} />",
       ],
-      examples: [{ name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/' }],
+      examples: [{ name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/', isExternal: false }],
     },
     {
       name: 'lineJointType',
@@ -317,7 +317,9 @@ export const ScatterAPI: ApiDoc = {
       },
       defaultVal: 'circle',
       format: ['<Scatter shape={CustomizedShapeComponent} />', '<Scatter shape="diamond" />'],
-      examples: [{ name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/' }],
+      examples: [
+        { name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/', isExternal: false },
+      ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     {
@@ -362,7 +364,7 @@ export const ScatterAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Scatter chart with Z axis', url: '/examples/ThreeDimScatterChart/' }],
+      examples: [{ name: 'Scatter chart with Z axis', url: '/examples/ThreeDimScatterChart/', isExternal: false }],
     },
     {
       name: 'zIndex',
@@ -380,7 +382,7 @@ export const ScatterAPI: ApiDoc = {
         ),
       },
       defaultVal: 600,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
