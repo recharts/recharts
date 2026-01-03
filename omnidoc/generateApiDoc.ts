@@ -219,8 +219,9 @@ async function generateComponentDescription(
  * - `{@link url text}`
  * - `url text`
  * - `url|text`
+ * - @see url
  */
-function parseJSDocLinkTag(tag: string): PropExample {
+export function parseJSDocLinkTag(tag: string): PropExample {
   let url: string, name: string;
 
   let cleanTag = tag.trim();
@@ -254,7 +255,7 @@ function parseJSDocLinkTag(tag: string): PropExample {
   return {
     name,
     url,
-    isExternal: isExternal ? true : undefined,
+    isExternal,
   };
 }
 
