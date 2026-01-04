@@ -1,6 +1,6 @@
 .codemirror-wrapper {
   .codemirror-toolbar {
-    background-color: #f6f6f6;
+    background-color: var(--color-surface-sunken);
     height: 40px;
     padding: 0 10px 0 20px;
     display: flex;
@@ -23,8 +23,8 @@
       line-height: 1;
 
       &:hover {
-        background: var(--brand-primary);
-        border-color: var(--brand-primary);
+        background: var(--color-solid-brand-1);
+        border-color: var(--color-solid-brand-1);
         color: white;
       }
 

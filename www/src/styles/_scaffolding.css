@@ -28,8 +28,8 @@ html {
 body {
   font-family: var(--font-family-base), serif;
   font-size: var(--font-size-base);
-  color: var(--text-color-body);
-  background-color: var(--background-color);
+  color: var(--color-text-3);
+  background-color: var(--color-surface-base);
 }
 
 /* Reset fonts for relevant elements*/
@@ -45,11 +45,11 @@ textarea {
 /* Links */
 
 a {
-  color: var(--link-color);
+  color: var(--color-text-3);
 
   &:hover,
   &:focus {
-    color: var(--link-color-hover);
+    color: var(--color-text-1);
   }
 
   &:focus {
@@ -116,8 +116,8 @@ a.button {
   font-family: var(--font-family-code), sans-serif;
   font-weight: 700;
   color: #fff;
-  background-color: var(--brand-primary);
-  border-bottom: 2px solid var(--brand-second);
+  background-color: var(--color-solid-brand-1);
+  border-bottom: 2px solid var(--color-solid-brand-2);
   padding: 12px 14px;
   border-radius: 4px;
   transition: all 0.15s ease;

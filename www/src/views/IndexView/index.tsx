@@ -64,7 +64,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
 
         <div className="block">
           <h2 className="block-title">Thanks to our sponsors</h2>
-          <p style={{ fontSize: '21px', color: 'black' }}>
+          <p style={{ fontSize: '21px', color: 'var(--color-text-1)' }}>
             Browser testing via{' '}
             <a
               href="https://www.lambdatest.com/?utm_source=recharts&utm_medium=sponsor"

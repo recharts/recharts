@@ -4,34 +4,18 @@
 
   /* Primitive colors */
   --color-white: #fff;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
-  --color-gray-950: #030712;
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f4;
+  --color-gray-200: #e7e5e4;
+  --color-gray-300: #d6d3d1;
+  --color-gray-400: #a8a29e;
+  --color-gray-500: #78716c;
+  --color-gray-600: #52525b;
+  --color-gray-700: #3f3f46;
+  --color-gray-800: #27272a;
+  --color-gray-900: #18181b;
+  --color-gray-950: #09090b;
   --color-black: #000;
-
-  /* Colors */
-  --background-color: #fff;
-  --text-color: #666;
-  --title-color: #333;
-  --subtitle-text-color: #757575;
-  --border-color: #ccc;
-
-  --brand-primary: #1074b6;
-  --brand-second: #2e96ea;
-  --brand-info: #18828a;
-
-  --link-color: var(--text-color);
-  --link-color-hover: #333;
-
-  --text-color-body: var(--text-color);
 
   /* Font sizes */
   --font-size-base: 14px;
@@ -54,86 +38,86 @@
 :root,
 [data-mode='light'] {
   /* Semantic colors */
-  --color-surface-base: red;
-  --color-surface-raised: red;
-  --color-surface-sunken: red;
+  --color-surface-base: var(--color-white);
+  --color-surface-raised: var(--color-gray-50);
+  --color-surface-sunken: var(--color-gray-100);
 
-  --color-text-1: red;
-  --color-text-2: red;
-  --color-text-3: red;
+  --color-text-1: var(--color-gray-900);
+  --color-text-2: var(--color-gray-700);
+  --color-text-3: var(--color-gray-600);
 
-  --color-border-1: red;
-  --color-border-2: red;
-  --color-border-3: red;
+  --color-border-1: var(--color-gray-500);
+  --color-border-2: var(--color-gray-400);
+  --color-border-3: var(--color-gray-300);
 
-  --color-solid-brand-1: red; /* brand */
-  --color-solid-brand-2: red;
-  --color-solid-info-1: red;
+  --color-solid-brand-1: #1074b6; /* brand */
+  --color-solid-brand-2: #2e96ea;
+  --color-solid-info-1: #18828a;
 
   /* Chart series colors */
-  --color-chart-1: red;
-  --color-chart-2: red;
-  --color-chart-3: red;
-  --color-chart-4: red;
-  --color-chart-5: red;
-  --color-chart-6: red;
-  --color-chart-7: red;
-  --color-chart-8: red;
-  --color-chart-9: red;
-  --color-chart-10: red;
-  --color-chart-11: red;
+  --color-chart-1: #8884d8; /* Indigo */
+  --color-chart-2: #82ca9d; /* Green */
+  --color-chart-3: #ffc658; /* Orange */
+  --color-chart-4: #8dd1e1; /* Cyan */
+  --color-chart-5: #a4de6c; /* Light Green */
+  --color-chart-6: #d0ed57; /* Lime */
+  --color-chart-7: #83a6ed; /* Violet blue */
+  --color-chart-8: #ff7300; /* Orange Red */
+  --color-chart-9: #413ea0; /* Blue */
+  --color-chart-10: #6ea1c7; /* Cyan */
+  --color-chart-11: #ed7485; /* Pink */
 
   /* Code block colors */
-  --color-code-1: red;
-  --color-code-2: red;
-  --color-code-3: red;
-  --color-code-4: red;
-  --color-code-5: red;
-  --color-code-6: red;
-  --color-code-7: red;
-  --color-code-8: red;
-  --color-code-9: red;
+  --color-code-1: #0077aa; /* Cyan */
+  --color-code-2: #6639ba; /* Indigo */
+  --color-code-3: #24292f; /* Gray */
+  --color-code-4: #116329; /* Green */
+  --color-code-5: #953800; /* Orange */
+  --color-code-6: #0550ae; /* Blue */
+  --color-code-7: #6a737d; /* Gray */
+  --color-code-8: #0a3069; /* Blue */
+  --color-code-9: #007070; /* Teal */
 }
 
 [data-mode='dark'] {
   /* Semantic colors */
-  --color-surface-base: red;
-  --color-surface-raised: red;
-  --color-surface-sunken: red;
+  --color-surface-raised: var(--color-gray-800);
+  --color-surface-base: var(--color-gray-900);
+  --color-surface-sunken: var(--color-gray-950);
 
-  --color-text-1: red;
-  --color-text-2: red;
-  --color-text-3: red;
+  --color-text-1: var(--color-gray-100);
+  --color-text-2: var(--color-gray-200);
+  --color-text-3: var(--color-gray-300);
 
-  --color-border-1: red;
-  --color-border-2: red;
-  --color-border-3: red;
+  --color-border-1: var(--color-gray-400);
+  --color-border-2: var(--color-gray-700);
+  --color-border-3: var(--color-gray-800);
 
-  --color-solid-brand-1: red; /* brand */
-  --color-solid-brand-2: red;
-  --color-solid-info-1: red;
+  --color-solid-brand-1: #2e96ea; /* brand */
+  --color-solid-brand-2: #1074b6;
+  --color-solid-info-1: #53b0b8;
 
   /* Chart series colors */
-  --color-chart-1: red;
-  --color-chart-2: red;
-  --color-chart-3: red;
-  --color-chart-4: red;
-  --color-chart-5: red;
-  --color-chart-6: red;
-  --color-chart-7: red;
-  --color-chart-8: red;
-  --color-chart-9: red;
-  --color-chart-10: red;
-  --color-chart-11: red;
+  --color-chart-1: #8884d8; /* Indigo */
+  --color-chart-2: #82ca9d; /* Green */
+  --color-chart-3: #ffc658; /* Orange */
+  --color-chart-4: #8dd1e1; /* Cyan */
+  --color-chart-5: #a4de6c; /* Light Green */
+  --color-chart-6: #d0ed57; /* Lime */
+  --color-chart-7: #83a6ed; /* Violet blue */
+  --color-chart-8: #ff7300; /* Orange Red */
+  --color-chart-9: #413ea0; /* Blue */
+  --color-chart-10: #6ea1c7; /* Cyan */
+  --color-chart-11: #ed7485; /* Pink */
 
   /* Code block colors */
-  --color-code-1: red;
-  --color-code-2: red;
-  --color-code-3: red;
-  --color-code-4: red;
-  --color-code-5: red;
-  --color-code-6: red;
-  --color-code-7: red;
-  --color-code-8: red;
-  --color-code-9: red;
+  --color-code-1: #59b5ec;
+  --color-code-2: #be99ff;
+  --color-code-3: #d1d8e0;
+  --color-code-4: #74bf80;
+  --color-code-5: #ffc194;
+  --color-code-6: #69aeff;
+  --color-code-7: #6a737d;
+  --color-code-8: #9ac6ff;
+  --color-code-9: #79d0cf;
 }

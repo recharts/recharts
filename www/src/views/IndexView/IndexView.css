@@ -6,7 +6,7 @@
   .block {
     max-width: 1000px;
     padding: 50px 20px;
-    border-top: 1px solid #e6e6e6;
+    border-top: 1px solid var(--color-border-3);
 
     display: flex;
     flex-direction: column;
@@ -31,12 +31,12 @@
     h1 {
       font-size: 64px;
       font-family: var(--font-family-logo), sans-serif;
-      color: var(--brand-info);
+      color: var(--color-solid-info-1);
     }
 
     .subtitle {
       font-size: 24px;
-      color: var(--subtitle-text-color);
+      color: var(--color-text-2);
     }
 
     iframe {
@@ -134,7 +134,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
             .user-name {
-              color: var(--brand-info);
+              color: var(--color-solid-info-1);
             }
           }
 
