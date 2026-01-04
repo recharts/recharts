@@ -28,7 +28,7 @@ function DesktopNav() {
           display: 'flex',
           alignItems: 'center',
           gap: '1.5rem',
-          paddingInlineEnd: '1.25rem',
+          paddingInlineEnd: '2rem',
         }}
       >
         <LocaleSwitch />
@@ -161,8 +161,8 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             display: 'flex',
             alignItems: 'center',
             gap: '1.5rem',
-            paddingInline: '1.25rem',
-            paddingBlockStart: '0.625rem',
+            paddingInline: '2rem',
+            paddingBlockStart: '0.5rem',
           }}
         >
           <LocaleSwitch />

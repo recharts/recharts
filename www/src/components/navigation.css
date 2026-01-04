@@ -29,7 +29,9 @@
     height: 3px;
     background-color: var(--brand-info);
     margin-bottom: 5px;
-    transition: transform 0.3s, opacity 0.3s;
+    transition:
+      transform 0.3s,
+      opacity 0.3s;
 
     &:last-child {
       margin-bottom: 0;
@@ -47,7 +49,9 @@
   z-index: 999;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
 
   &.open {
     opacity: 1;
@@ -86,9 +90,6 @@
   }
 }
 
-.language-switch {
-  padding: 0 2rem;
-}
 .slide-right-mobile-nav {
   position: fixed;
   top: 0;
