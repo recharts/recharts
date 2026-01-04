@@ -139,7 +139,6 @@ export const selectCoordinateForDefaultIndex: (
     selectTooltipAxisTicks,
     pickDefaultIndex,
     selectTooltipPayloadConfigurations,
-    selectTooltipPayloadSearcher,
   ],
   combineCoordinateForDefaultIndex,
 );

@@ -8,5 +8,5 @@
     /* Disable noUncheckedIndexedAccess in tests - fixing all array access would be a large undertaking */
     "noUncheckedIndexedAccess": false
   },
-  "include": ["./**/*", "../types.d.ts", "./helper/toBeRechartsScale.ts"]
+  "include": ["./**/*", "../types.d.ts", "./helper/toBeRechartsScale.ts","./helper/expectFunctionReturning.ts"]
 }

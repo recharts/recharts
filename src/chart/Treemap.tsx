@@ -9,7 +9,7 @@ import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { isNan, uniqueId } from '../util/DataUtils';
+import { isNan, noop, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import {
   AnimationDuration,
@@ -81,14 +81,17 @@ function isTreemapNode(value: unknown): value is TreemapNode {
     'y' in value &&
     'width' in value &&
     'height' in value &&
-    typeof (value as TreemapNode).x === 'number' &&
-    typeof (value as TreemapNode).y === 'number' &&
-    typeof (value as TreemapNode).width === 'number' &&
-    typeof (value as TreemapNode).height === 'number'
+    typeof value.x === 'number' &&
+    typeof value.y === 'number' &&
+    typeof value.width === 'number' &&
+    typeof value.height === 'number'
   );
 }
 
-export const treemapPayloadSearcher: TooltipPayloadSearcher = (data: unknown, activeIndex: TooltipIndex): unknown => {
+export const treemapPayloadSearcher: TooltipPayloadSearcher = (
+  data: unknown,
+  activeIndex: TooltipIndex,
+): TreemapNode | undefined => {
   if (!data || !activeIndex) {
     return undefined;
   }
@@ -477,7 +480,7 @@ export interface Props {
 interface State {
   isAnimationFinished: boolean;
   formatRoot: TreemapNode | null;
-  currentRoot: TreemapNode | null;
+  currentRoot: TreemapNode | undefined;
   nestIndex: Array<TreemapNode>;
   prevData?: ReadonlyArray<TreemapDataType>;
   prevType?: 'flat' | 'nest';
@@ -502,7 +505,7 @@ export const defaultTreeMapProps = {
 const defaultState: State = {
   isAnimationFinished: false,
   formatRoot: null,
-  currentRoot: null,
+  currentRoot: undefined,
   nestIndex: [],
   prevAspectRatio: defaultTreeMapProps.aspectRatio,
   prevDataKey: defaultTreeMapProps.dataKey,
@@ -628,11 +631,11 @@ const SetTreemapTooltipEntrySettings = React.memo(
     currentRoot,
     id,
   }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
-    currentRoot: TreemapNode | null;
+    currentRoot: TreemapNode | undefined;
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
-      positions: undefined, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
+      getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
       settings: {
         stroke,
         strokeWidth: undefined,
@@ -968,7 +971,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       return;
     }
     const itemIndex = target.getAttribute('data-recharts-item-index');
-    const activeNode = treemapPayloadSearcher(this.state.formatRoot, itemIndex);
+    const activeNode: unknown = treemapPayloadSearcher(this.state.formatRoot, itemIndex);
     if (!isTreemapNode(activeNode)) {
       return;
     }

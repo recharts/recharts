@@ -27,7 +27,6 @@ import {
   BarChart,
   CartesianGrid,
   ComposedChart,
-  Customized,
   ErrorBar,
   Legend,
   Line,
@@ -174,7 +173,7 @@ describe('selectAxisDomain', () => {
         <Scatter />
         <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
         <XAxis dataKey="x" />
-        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
+        <ExpectAxisDomain axisType="xAxis" assert={domainSpy} />
       </ComposedChart>,
     );
     expectXAxisTicks(container, [
@@ -239,7 +238,7 @@ describe('selectAxisDomain', () => {
         <Scatter />
         <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
         <XAxis />
-        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
+        <ExpectAxisDomain axisType="xAxis" assert={domainSpy} />
       </ComposedChart>,
     );
     expectXAxisTicks(container, [
@@ -1450,7 +1449,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
         <XAxis />
         <Comp />
-        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
+        <ExpectAxisDomain axisType="xAxis" assert={domainSpy} />
       </ComposedChart>,
     );
     // Scatter - surprises again - and provides empty array instead of proper undefined like the other elements! Coincidentally that makes no difference

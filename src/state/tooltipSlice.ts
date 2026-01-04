@@ -43,12 +43,12 @@ export type TooltipIndex = string | null;
  * the only requirement is that the chart also provides a searcher function
  * that accepts the data, and a key, and returns whatever the payload in Tooltip should be.
  */
-export type TooltipPayloadSearcher<T = unknown, R = T> = (
+export type TooltipPayloadSearcher<T = unknown> = (
   data: T,
   index: TooltipIndex,
   computedData?: unknown,
   nameKey?: DataKey<any>,
-) => R | undefined;
+) => T | undefined;
 
 export type TooltipPayloadConfiguration = {
   // This is the data that is the same for all tooltip payloads, regardless of activeIndex
@@ -57,6 +57,14 @@ export type TooltipPayloadConfiguration = {
    * This is the data that the item has provided, all of it mixed together.
    * Later as user is interacting with the chart, a redux selector will use this
    * data + activeIndex, pass it to the TooltipPayloadSearcher, and render the result in a Tooltip.
+   *
+   * Because we have no controls over which data shape the graphical item provides,
+   * this is typed as unknown, and it is the responsibility of the selector
+   * to know what to do with it.
+   *
+   * We can't have better typing here because different graphical items
+   * may provide different data shapes. For example someone may decide to put Area element
+   * in a Sankey chart.
    */
   dataDefinedOnItem: unknown;
   /**
@@ -65,8 +73,11 @@ export type TooltipPayloadConfiguration = {
    *
    * If undefined, then Recharts will use mouse interaction coordinates, or the axis coordinates,
    * with some defaults (like, top/left of the chart).
+   *
+   * Unlike the chart data which can be nested, the positions are expected to be flat array or record.
+   * They however should reuse the same tooltip index format as the chart data.
    */
-  positions: Record<NonNullable<TooltipIndex>, Coordinate> | ReadonlyArray<Coordinate> | undefined;
+  getPosition: (tooltipIndex: NonNullable<TooltipIndex>) => Coordinate | undefined;
 };
 
 export type ActiveTooltipProps = {

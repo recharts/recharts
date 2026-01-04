@@ -3,7 +3,7 @@ import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useCal
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
-import { interpolate, isNullish } from '../util/DataUtils';
+import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
@@ -215,7 +215,7 @@ const SetRadarTooltipEntrySettings = React.memo(
        * So, undefined it is.
        */
       dataDefinedOnItem: undefined,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke,
         strokeWidth,

@@ -36,6 +36,7 @@ import {
 import { selectTooltipPayload, selectTooltipPayloadConfigurations } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { noop } from '../../../src/util/DataUtils';
 
 describe('itemSorter in ComposedChart', () => {
   beforeEach(() => {
@@ -82,7 +83,7 @@ describe('itemSorter in ComposedChart', () => {
         expectLastCalledWith(spy, [
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: '#3182bd',
               dataKey: 'uv',
@@ -99,7 +100,7 @@ describe('itemSorter in ComposedChart', () => {
           },
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: undefined,
               dataKey: 'pv',
@@ -116,7 +117,7 @@ describe('itemSorter in ComposedChart', () => {
           },
           {
             dataDefinedOnItem: undefined,
-            positions: undefined,
+            getPosition: noop,
             settings: {
               color: '#3182bd',
               dataKey: 'amt',
@@ -302,14 +303,14 @@ describe('itemSorter in ComposedChart', () => {
                 },
               ],
             ],
-            positions: [
-              { x: 84.16666666666667, y: 202.6 },
-              { x: 122.50000000000001, y: 146.258 },
-              { x: 160.83333333333334, y: 228.65200000000002 },
-              { x: 199.16666666666666, y: 10.200000000000005 },
-              { x: 237.5, y: 163.392 },
-              { x: 275.83333333333337, y: 140.20000000000002 },
-            ],
+            getPosition: expect.functionReturning([
+              ['0', { x: 84.16666666666667, y: 202.6 }],
+              ['1', { x: 122.50000000000001, y: 146.258 }],
+              ['2', { x: 160.83333333333334, y: 228.65200000000002 }],
+              ['3', { x: 199.16666666666666, y: 10.200000000000005 }],
+              ['4', { x: 237.5, y: 163.392 }],
+              ['5', { x: 275.83333333333337, y: 140.20000000000002 }],
+            ]),
             settings: {
               color: undefined,
               dataKey: 'uv',

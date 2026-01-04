@@ -1,11 +1,11 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import PieChartExample from './PieChartExample.tsx';
-import PieChartExampleSource from './PieChartExample.tsx?raw';
+import TwoLevelPieChart from '../../exampleComponents/PieChart/TwoLevelPieChart.tsx';
+import TwoLevelPieChartSource from '../../exampleComponents/PieChart/TwoLevelPieChart.tsx?raw';
 
 export const pieChartApiExamples: ReadonlyArray<ChartExample> = [
   {
-    Component: PieChartExample,
-    sourceCode: PieChartExampleSource,
+    Component: TwoLevelPieChart,
+    sourceCode: TwoLevelPieChartSource,
     name: 'Pie Chart Example',
   },
 ];

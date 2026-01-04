@@ -20,7 +20,7 @@ import {
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
-import { interpolate, isNan, isNullish, isNumber } from '../util/DataUtils';
+import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
   getNormalizedStackId,
@@ -96,7 +96,7 @@ interface InternalAreaProps extends ZIndexable {
   baseValue?: BaseValue;
   className?: string;
   connectNulls: boolean;
-  data?: any[];
+  data?: ChartData;
   dataKey: DataKey<any>;
   dot: DotType;
   height: number;
@@ -351,7 +351,7 @@ const SetAreaTooltipEntrySettings = React.memo(
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke,
         strokeWidth,

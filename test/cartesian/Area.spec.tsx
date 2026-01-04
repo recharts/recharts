@@ -22,6 +22,7 @@ import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { TooltipPayloadConfiguration } from '../../src/state/tooltipSlice';
+import { noop } from '../../src/util/DataUtils';
 
 type TestCase = CartesianChartTestCase;
 
@@ -868,7 +869,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expectLastCalledWith(tooltipSpy, [
         {
           dataDefinedOnItem: undefined,
-          positions: undefined,
+          getPosition: noop,
           settings: {
             color: '#3182bd',
             dataKey: 'value',

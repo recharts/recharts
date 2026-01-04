@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import PieChartExample from '../../../www/src/docs/apiExamples/PieChart/PieChartExample';
 import TwoLevelPieChart from '../../../www/src/docs/exampleComponents/PieChart/TwoLevelPieChart';
 import StraightAnglePieChart from '../../../www/src/docs/exampleComponents/PieChart/StraightAnglePieChart';
 import CustomActiveShapePieChart from '../../../www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart';
@@ -54,11 +53,6 @@ test('StraightAnglePieChart', async ({ mount }) => {
 });
 
 test('TwoLevelPieChart', async ({ mount }) => {
-  const component = await mount(<TwoLevelPieChart isAnimationActive={false} />);
-  await expect(component).toHaveScreenshot();
-});
-
-test('PieChartExample', async ({ mount }) => {
-  const component = await mount(<PieChartExample isAnimationActive={false} />);
+  const component = await mount(<TwoLevelPieChart isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });

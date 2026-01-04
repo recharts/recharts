@@ -441,7 +441,7 @@ const SetPieTooltipEntrySettings = React.memo(
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
-      positions: sectors.map((p: PieSectorDataItem) => p.tooltipPosition),
+      getPosition: index => sectors[Number(index)]?.tooltipPosition,
       settings: {
         stroke,
         strokeWidth,

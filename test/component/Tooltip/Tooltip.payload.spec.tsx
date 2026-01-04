@@ -80,6 +80,7 @@ import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipA
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { LineSettings } from '../../../src/state/types/LineSettings';
+import { noop } from '../../../src/util/DataUtils';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
@@ -970,7 +971,7 @@ describe('Tooltip payload', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
       expectLastCalledWith(spy, [
         {
-          positions: undefined,
+          getPosition: noop,
           dataDefinedOnItem: [
             {
               amt: 2400,
@@ -1024,7 +1025,7 @@ describe('Tooltip payload', () => {
           },
         },
         {
-          positions: undefined,
+          getPosition: noop,
           dataDefinedOnItem: [
             {
               amt: 2400,
@@ -1078,7 +1079,7 @@ describe('Tooltip payload', () => {
           },
         },
         {
-          positions: undefined,
+          getPosition: noop,
           dataDefinedOnItem: [
             {
               amt: 2400,

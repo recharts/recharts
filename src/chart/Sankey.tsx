@@ -27,7 +27,7 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { isNotNil } from '../util/DataUtils';
+import { isNotNil, noop } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
@@ -548,7 +548,7 @@ const SetSankeyTooltipEntrySettings = React.memo(
   }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'>) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      positions: undefined,
+      getPosition: noop,
       settings: {
         stroke,
         strokeWidth,
