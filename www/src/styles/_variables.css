@@ -37,6 +37,8 @@
 
 :root,
 [data-mode='light'] {
+  color-scheme: light;
+
   /* Semantic colors */
   --color-surface-base: var(--color-white);
   --color-surface-raised: var(--color-gray-50);
@@ -80,6 +82,8 @@
 }
 
 [data-mode='dark'] {
+  color-scheme: dark;
+
   /* Semantic colors */
   --color-surface-raised: var(--color-gray-800);
   --color-surface-base: var(--color-gray-900);
