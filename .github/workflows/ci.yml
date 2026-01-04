@@ -101,13 +101,6 @@ jobs:
         env:
           BASE_URL: ${{ env.BASE_URL }}
 
-      - name: Upload website artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: website-build
-          path: www/docs
-          retention-days: 14
-
       - name: Unit Tests
         run: npm run test-coverage
 
@@ -129,6 +122,18 @@ jobs:
 
       - name: Storybook Build
         run: npm run build-storybook
+
+      - name: Copy storybook to docs folder
+        run: |
+          mkdir www/docs/storybook-static
+          cp -r storybook/public/* www/docs/storybook-static/
+
+      - name: Upload website artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-build
+          path: www/docs
+          retention-days: 14
 
       - name: Pack Library
         # Give this step an ID so we can reference its output
