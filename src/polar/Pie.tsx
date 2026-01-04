@@ -119,7 +119,7 @@ export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offs
   PieLabelExtraProps &
   Coordinate;
 
-type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
+export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
  * The `label` prop in Pie accepts a variety of alternatives.

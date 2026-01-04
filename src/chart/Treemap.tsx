@@ -353,7 +353,7 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   return node;
 };
 
-type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
+export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
 export interface Props {
   /**

@@ -16,7 +16,10 @@ export { Tooltip } from './component/Tooltip';
 export type { TooltipProps, TooltipContentProps } from './component/Tooltip';
 export type { TooltipIndex } from './state/tooltipSlice';
 export { DefaultTooltipContent } from './component/DefaultTooltipContent';
-export type { Props as DefaultTooltipContentProps } from './component/DefaultTooltipContent';
+export type {
+  Props as DefaultTooltipContentProps,
+  Payload as TooltipPayloadEntry,
+} from './component/DefaultTooltipContent';
 export { ResponsiveContainer } from './component/ResponsiveContainer';
 export type { Props as ResponsiveContainerProps } from './component/ResponsiveContainer';
 export { Cell } from './component/Cell';
@@ -60,6 +63,7 @@ export type {
   PieLabelRenderProps,
   PieSectorDataItem,
   PieSectorShapeProps,
+  LabelListPropsWithPosition,
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
@@ -102,14 +106,16 @@ export { LineChart } from './chart/LineChart';
 export { BarChart } from './chart/BarChart';
 export { PieChart } from './chart/PieChart';
 export { Treemap } from './chart/Treemap';
-export type { Props as TreemapProps, TreemapNode } from './chart/Treemap';
+export type { Props as TreemapProps, TreemapNode, TreemapContentType } from './chart/Treemap';
 export { Sankey } from './chart/Sankey';
+export type { Props as SankeyProps } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
 export { ScatterChart } from './chart/ScatterChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
+export type { SunburstData, SunburstChartProps } from './chart/SunburstChart';
 
 export { Funnel } from './cartesian/Funnel';
 export type { Props as FunnelProps, FunnelTrapezoidItem } from './cartesian/Funnel';
@@ -118,7 +124,7 @@ export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
-export type { LegendType, DataKey, AxisInterval } from './util/types';
+export type { LegendType, DataKey, AxisInterval, Coordinate, NumberDomain, Margin, AxisDomainItem } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
@@ -140,4 +146,7 @@ export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutC
 
 export type { ChartOffset, PlotArea } from './types';
 
-export type { MouseHandlerDataParam } from './synchronisation/types';
+export type { MouseHandlerDataParam, ActiveLabel } from './synchronisation/types';
+
+export type { AxisId } from './state/cartesianAxisSlice';
+export type { AxisRange } from './state/selectors/axisSelectors';

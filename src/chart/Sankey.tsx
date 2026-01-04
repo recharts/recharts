@@ -739,7 +739,7 @@ interface SankeyProps {
   align?: 'left' | 'justify';
 }
 
-type Props = SVGProps<SVGSVGElement> & SankeyProps;
+export type Props = SVGProps<SVGSVGElement> & SankeyProps;
 
 type SankeyElementType = 'node' | 'link';
 
