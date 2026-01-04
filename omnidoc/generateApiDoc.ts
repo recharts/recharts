@@ -134,7 +134,7 @@ export function processType(typeNames: string[], isInline: boolean): string {
 /**
  * Builds a map of contexts to their providers and consumers
  */
-function buildContextMap(
+export function buildContextMap(
   componentNames: ReadonlyArray<string>,
   projectReader: ProjectDocReader,
 ): Map<string, { providers: string[]; consumers: string[] }> {
@@ -219,24 +219,24 @@ async function generateComponentDescription(
  * - `{@link url text}`
  * - `url text`
  * - `url|text`
+ * - @see url
  */
-function parseJSDocLinkTag(tag: string): PropExample {
-  let url = '';
-  let name = '';
+export function parseJSDocLinkTag(tag: string): PropExample {
+  let url: string, name: string;
 
   let cleanTag = tag.trim();
 
   // Check for {@link ...} wrapper and strip it
   const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
   if (linkWrapperMatch) {
-    cleanTag = linkWrapperMatch[1].trim();
+    cleanTag = linkWrapperMatch[1]?.trim() ?? '';
   }
 
   // Parse "url|text" or "url text"
   // Match first sequence of non-whitespace/non-pipe characters as URL
   const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
   if (parts) {
-    url = parts[1].trim();
+    url = parts[1]?.trim() ?? '';
     name = parts[2]?.trim() ?? url;
   } else {
     // Fallback for weird cases
@@ -255,7 +255,7 @@ function parseJSDocLinkTag(tag: string): PropExample {
   return {
     name,
     url,
-    isExternal: isExternal ? true : undefined,
+    isExternal,
   };
 }
 
@@ -359,7 +359,6 @@ async function generateApiDoc(
     if (comment) {
       const textWithLinks = processInlineLinks(comment, componentNames);
       prop.desc = {
-        // eslint-disable-next-line no-await-in-loop
         'en-US': await marked.parse(textWithLinks),
       };
     }
@@ -602,7 +601,6 @@ async function main() {
 
   for (const componentName of componentsToGenerate) {
     try {
-      // eslint-disable-next-line no-await-in-loop
       const apiDoc = await generateApiDoc(componentName, projectReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);
       writeApiDocFile(apiDoc, outputPath);

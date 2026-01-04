@@ -137,6 +137,14 @@ interface CurveProps {
   connectNulls?: boolean;
   path?: string;
   pathRef?: Ref<SVGPathElement>;
+  /**
+   * The pattern of dashes and gaps used to paint the line.
+   *
+   * @example strokeDasharray="5 5"
+   * @example strokeDasharray={10}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray}
+   */
+  strokeDasharray?: string | number;
 }
 
 export type CurveMouseEventHandler = RechartsMouseEventHandler<Props, SVGPathElement>;

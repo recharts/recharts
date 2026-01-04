@@ -395,6 +395,8 @@ const omnidocOverrides = [
       'class-methods-use-this': 'off',
       // omnidoc can use console logs
       'no-console': 'off',
+      // we're okay if the docs are generated sequentially
+      'no-await-in-loop': 'off',
     },
   },
 ];

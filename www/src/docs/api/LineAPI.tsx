@@ -26,7 +26,9 @@ export const LineAPI: ApiDoc = {
         '<Line dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2, r: 10 }} />',
         '<Line dataKey="value" activeDot={CustomizedActiveDot} />',
       ],
-      examples: [{ name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/' }],
+      examples: [
+        { name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/', isExternal: false },
+      ],
     },
     { name: 'animateNewValues', type: 'boolean', isOptional: true, defaultVal: true },
     {
@@ -83,7 +85,11 @@ export const LineAPI: ApiDoc = {
       },
       defaultVal: false,
       examples: [
-        { name: 'A lineChart connect nulls and a lineChart disconnect nulls', url: '/examples/LineChartConnectNulls/' },
+        {
+          name: 'A lineChart connect nulls and a lineChart disconnect nulls',
+          url: '/examples/LineChartConnectNulls/',
+          isExternal: false,
+        },
       ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
@@ -134,7 +140,9 @@ export const LineAPI: ApiDoc = {
         '<Line dataKey="value" dot={{ stroke: \'red\', strokeWidth: 2 }} />',
         '<Line dataKey="value" dot={CustomizedDot} />',
       ],
-      examples: [{ name: 'A line chart with customized dot', url: '/examples/CustomizedDotLineChart/' }],
+      examples: [
+        { name: 'A line chart with customized dot', url: '/examples/CustomizedDotLineChart/', isExternal: false },
+      ],
     },
     {
       name: 'hide',
@@ -220,7 +228,9 @@ export const LineAPI: ApiDoc = {
         '<Line dataKey="value" label={{ fill: \'red\', fontSize: 20 }} />',
         '<Line dataKey="value" label={CustomizedLabel} />',
       ],
-      examples: [{ name: 'A line chart with customized label', url: '/examples/CustomizedLabelLineChart/' }],
+      examples: [
+        { name: 'A line chart with customized label', url: '/examples/CustomizedLabelLineChart/', isExternal: false },
+      ],
     },
     {
       name: 'legendType',
@@ -292,11 +302,24 @@ export const LineAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The pattern of dashes and gaps used to paint the line</p>
+            <p>The pattern of dashes and gaps used to paint the line.</p>
           </section>
         ),
       },
-      format: ['<Line strokeDasharray="4" />', '<Line strokeDasharray="4 1" />', '<Line strokeDasharray="4 1 2" />'],
+      format: [
+        'strokeDasharray="5 5"',
+        'strokeDasharray={10}',
+        '<Line strokeDasharray="4" />',
+        '<Line strokeDasharray="4 1" />',
+        '<Line strokeDasharray="4 1 2" />',
+      ],
+      examples: [
+        {
+          name: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          isExternal: true,
+        },
+      ],
     },
     {
       name: 'strokeWidth',
@@ -325,7 +348,11 @@ export const LineAPI: ApiDoc = {
       },
       defaultVal: 'linear',
       examples: [
-        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
+        {
+          name: 'An AreaChart which has two area with different interpolation.',
+          url: '/examples/CardinalAreaChart/',
+          isExternal: false,
+        },
         {
           name: 'https://github.com/d3/d3-shape#curves',
           url: 'https://github.com/d3/d3-shape#curves',
@@ -387,7 +414,7 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: 400,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },

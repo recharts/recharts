@@ -117,7 +117,7 @@ export const PieChartAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     { name: 'id', type: 'string', isOptional: true },
     {
@@ -200,7 +200,7 @@ export const PieChartAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'role', type: 'string', isOptional: true },
@@ -265,7 +265,7 @@ export const PieChartAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/' }],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     {
       name: 'onClick',

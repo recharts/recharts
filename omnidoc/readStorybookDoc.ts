@@ -112,6 +112,20 @@ export class StorybookDocReader implements DocReader {
       return { type: 'unreadable' };
     }
 
+    /*
+     * The argType may contain defaultValue directly, or inside table.defaultValue
+     * We prefer to read defaultValue directly because that one is allowed to be any type,
+     * while table.defaultValue is required to be a string summary.
+     */
+    if ('defaultValue' in argType) {
+      const { defaultValue } = argType;
+      if (defaultValue === undefined) {
+        return { type: 'known', value: undefined };
+      }
+
+      return { type: 'known', value: defaultValue };
+    }
+
     const tableDefaultValue = argType?.table?.defaultValue;
     if (tableDefaultValue != null && typeof tableDefaultValue === 'object' && 'summary' in tableDefaultValue) {
       return { type: 'known', value: tableDefaultValue.summary };
@@ -120,15 +134,8 @@ export class StorybookDocReader implements DocReader {
     if (tableDefaultValue != null) {
       return { type: 'known', value: tableDefaultValue };
     }
-    if (!('defaultValue' in argType)) {
-      return { type: 'none' };
-    }
-    const { defaultValue } = argType;
-    if (defaultValue === undefined) {
-      return { type: 'known', value: undefined };
-    }
 
-    return { type: 'known', value: defaultValue };
+    return { type: 'none' };
   }
 
   getCommentOf(component: string, prop: string): string | undefined {

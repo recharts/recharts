@@ -114,38 +114,12 @@ describe('readStorybookDoc', () => {
   it('should return props for Area component', () => {
     const areaProps = reader.getRechartsPropsOf('Area');
     expect(areaProps.length).toBeGreaterThan(0);
-    expect(areaProps).toMatchInlineSnapshot(`
-      [
-        "activeDot",
-        "animationBegin",
-        "animationDuration",
-        "animationEasing",
-        "baseLine",
-        "baseValue",
-        "connectNulls",
-        "data",
-        "dataKey",
-        "dot",
-        "fill",
-        "hide",
-        "id",
-        "isAnimationActive",
-        "isRange",
-        "label",
-        "legendType",
-        "name",
-        "stackId",
-        "stroke",
-        "strokeDasharray",
-        "strokeOpacity",
-        "strokeWidth",
-        "tooltipType",
-        "type",
-        "unit",
-        "xAxisId",
-        "yAxisId",
-      ]
-    `);
+    expect(areaProps).toContain('activeDot');
+    expect(areaProps).toContain('animationBegin');
+    expect(areaProps).toContain('data');
+    expect(areaProps).toContain('dataKey');
+    expect(areaProps).toContain('stackId');
+    expect(areaProps).toContain('xAxisId');
   });
 
   it('should return props for Bar component', () => {

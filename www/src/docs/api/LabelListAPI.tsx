@@ -46,7 +46,13 @@ export const LabelListAPI: ApiDoc = {
         ),
       },
       format: ['<LabelList content={CustomizedLabel} />'],
-      examples: [{ name: 'Customized content of LabelList in a BarChart', url: '/examples/BarChartWithMinHeight/' }],
+      examples: [
+        {
+          name: 'Customized content of LabelList in a BarChart',
+          url: '/examples/BarChartWithMinHeight/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'dataKey',
@@ -162,7 +168,7 @@ export const LabelListAPI: ApiDoc = {
         ),
       },
       defaultVal: 2000,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
   parentComponents: ['Area', 'Bar', 'Funnel', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],

@@ -4,6 +4,7 @@ import { coloredDiff } from './util/coloredDiff';
 import { ProjectDocReader } from './readProject';
 import { componentsWithInconsistentCommentsInApiDoc } from './componentsWithInconsistentCommentsInApiDoc';
 import { commentSimilarityExceptions, CommentSimilarityGroup } from './commentSimilarityExceptions';
+import { assertNotNull } from '../test/helper/assertNotNull';
 
 describe('cross-component prop consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -48,6 +49,7 @@ describe('cross-component prop consistency', () => {
       let key = prop;
       if (exceptionIndex > -1) {
         const exception = commentSimilarityExceptions[exceptionIndex];
+        assertNotNull(exception);
         if (exception.components.includes('*')) {
           continue;
         }
@@ -85,7 +87,9 @@ describe('cross-component prop consistency', () => {
       for (let i = 0; i < componentsWithComments.length; i++) {
         for (let j = i + 1; j < componentsWithComments.length; j++) {
           const component1 = componentsWithComments[i];
+          assertNotNull(component1);
           const component2 = componentsWithComments[j];
+          assertNotNull(component2);
 
           const similarity = calculateSimilarityScore(component1.comment, component2.comment);
 

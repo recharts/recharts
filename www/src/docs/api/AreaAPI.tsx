@@ -271,6 +271,26 @@ export const AreaAPI: ApiDoc = {
       defaultVal: '#3182bd',
     },
     {
+      name: 'strokeDasharray',
+      type: 'string | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The pattern of dashes and gaps used to paint the line.</p>
+          </section>
+        ),
+      },
+      format: ['strokeDasharray="5 5"', 'strokeDasharray={10}'],
+      examples: [
+        {
+          name: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+          isExternal: true,
+        },
+      ],
+    },
+    {
       name: 'strokeWidth',
       type: 'string | number',
       isOptional: true,
@@ -297,7 +317,11 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: 'linear',
       examples: [
-        { name: 'An AreaChart which has two area with different interpolation.', url: '/examples/CardinalAreaChart/' },
+        {
+          name: 'An AreaChart which has two area with different interpolation.',
+          url: '/examples/CardinalAreaChart/',
+          isExternal: false,
+        },
         {
           name: 'https://github.com/d3/d3-shape#curves',
           url: 'https://github.com/d3/d3-shape#curves',
@@ -359,7 +383,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 100,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
-import { ProjectDocReader } from './readProject';
+import { getTagText, ProjectDocReader } from './readProject';
 import { getLinksFromProp, processType } from './generateApiDoc';
 import { assertNotNull } from '../test/helper/assertNotNull';
 
@@ -1015,10 +1015,10 @@ describe('readProject', () => {
 
   it('should read @deprecated tag from prop', () => {
     const propMeta = reader.getPropMeta('Customized', 'component');
-    const deprecated = propMeta[0].jsDoc?.tags.find(t => t[0] === 'deprecated');
-    expect(deprecated).toBeDefined();
+    const deprecated = propMeta[0]?.jsDoc?.tags.find(t => t[0] === 'deprecated');
+    assertNotNull(deprecated);
     // The prop deprecated tag has no text in the source code
-    expect(deprecated?.[1]).toBeUndefined();
+    expect(deprecated[1]).toBeUndefined();
   });
 
   it('should read known primitive default value types as primitives without the string wrapper', () => {
@@ -1058,7 +1058,7 @@ describe('readProject', () => {
     const examples = getLinksFromProp('Line', 'type', reader);
     expect(examples).toEqual([
       {
-        isExternal: undefined,
+        isExternal: false,
         name: 'An AreaChart which has two area with different interpolation.',
         url: '/examples/CardinalAreaChart/',
       },
@@ -1068,5 +1068,15 @@ describe('readProject', () => {
         url: 'https://github.com/d3/d3-shape#curves',
       },
     ]);
+  });
+
+  it('should get links from jsdoc tags', () => {
+    const [, propMeta] = reader.getPropMeta('Line', 'strokeDasharray');
+    assertNotNull(propMeta);
+    const tagText = getTagText(propMeta.jsDoc, 'see');
+    assertNotNull(tagText);
+    expect(tagText.text).toEqual(
+      '{@link  https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray }',
+    );
   });
 });

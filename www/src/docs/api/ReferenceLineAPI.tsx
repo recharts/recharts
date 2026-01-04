@@ -61,7 +61,9 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Reference elements with a label', url: '/examples/LineChartWithReferenceLines/' }],
+      examples: [
+        { name: 'Reference elements with a label', url: '/examples/LineChartWithReferenceLines/', isExternal: false },
+      ],
     },
     {
       name: 'position',
@@ -181,7 +183,7 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       defaultVal: 400,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/' }],
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
   desc: {

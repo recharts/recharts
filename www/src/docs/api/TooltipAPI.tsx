@@ -100,7 +100,7 @@ export const TooltipAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Example with custom content', url: '/examples/CustomContentOfTooltip/' }],
+      examples: [{ name: 'Example with custom content', url: '/examples/CustomContentOfTooltip/', isExternal: false }],
     },
     {
       name: 'contentStyle',
@@ -260,7 +260,7 @@ export const TooltipAPI: ApiDoc = {
       },
       defaultVal: 10,
     },
-    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<Payload<TValue, TName>>', isOptional: true },
+    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<TooltipPayloadEntry>', isOptional: true },
     {
       name: 'portal',
       type: 'null | HTMLElement',
@@ -399,7 +399,11 @@ export const TooltipAPI: ApiDoc = {
       url: 'https://github.com/recharts/recharts/wiki/Tooltip-event-type-and-shared-prop',
       isExternal: true,
     },
-    { name: 'Active index replacement when migrating from Recharts v2 to v3', url: '/guide/activeIndex/' },
+    {
+      name: 'Active index replacement when migrating from Recharts v2 to v3',
+      url: '/guide/activeIndex/',
+      isExternal: false,
+    },
   ],
   parentComponents: [
     'AreaChart',

@@ -186,7 +186,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [{ name: 'Chart size guide', url: '/guide/sizes/' }],
+  links: [{ name: 'Chart size guide', url: '/guide/sizes/', isExternal: false }],
   childrenComponents: [
     'AreaChart',
     'BarChart',
