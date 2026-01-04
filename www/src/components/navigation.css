@@ -39,6 +39,16 @@
   }
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+nav.desktop-only {
+  padding-inline-end: 2rem;
+}
+
 .mobile-nav-backdrop {
   position: fixed;
   top: 0;
@@ -161,6 +171,10 @@
         }
       }
     }
+  }
+
+  .nav-actions {
+    padding-inline: 2rem;
   }
 }
 

@@ -23,14 +23,7 @@ function DesktopNav() {
           </li>
         ))}
       </ul>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.5rem',
-          paddingInlineEnd: '2rem',
-        }}
-      >
+      <div className="nav-actions">
         <LocaleSwitch />
         {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
       </div>
@@ -156,15 +149,7 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             );
           })}
         </ul>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.5rem',
-            paddingInline: '2rem',
-            paddingBlockStart: '0.5rem',
-          }}
-        >
+        <div className="nav-actions">
           <LocaleSwitch />
           {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
         </div>
