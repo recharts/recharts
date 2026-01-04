@@ -2,6 +2,21 @@
   /* Breakpoints */
   --mobile-breakpoint: 991px;
 
+  /* Primitive colors */
+  --color-white: #fff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+  --color-black: #000;
+
   /* Colors */
   --background-color: #fff;
   --text-color: #666;
@@ -34,4 +49,91 @@
   --z-index-sidebar-content: 1020;
   --z-index-header: 1030;
   --z-index-main-nav: 1040;
+}
+
+:root,
+[data-mode='light'] {
+  /* Semantic colors */
+  --color-surface-base: red;
+  --color-surface-raised: red;
+  --color-surface-sunken: red;
+
+  --color-text-1: red;
+  --color-text-2: red;
+  --color-text-3: red;
+
+  --color-border-1: red;
+  --color-border-2: red;
+  --color-border-3: red;
+
+  --color-solid-brand-1: red; /* brand */
+  --color-solid-brand-2: red;
+  --color-solid-info-1: red;
+
+  /* Chart series colors */
+  --color-chart-1: red;
+  --color-chart-2: red;
+  --color-chart-3: red;
+  --color-chart-4: red;
+  --color-chart-5: red;
+  --color-chart-6: red;
+  --color-chart-7: red;
+  --color-chart-8: red;
+  --color-chart-9: red;
+  --color-chart-10: red;
+  --color-chart-11: red;
+
+  /* Code block colors */
+  --color-code-1: red;
+  --color-code-2: red;
+  --color-code-3: red;
+  --color-code-4: red;
+  --color-code-5: red;
+  --color-code-6: red;
+  --color-code-7: red;
+  --color-code-8: red;
+  --color-code-9: red;
+}
+
+[data-mode='dark'] {
+  /* Semantic colors */
+  --color-surface-base: red;
+  --color-surface-raised: red;
+  --color-surface-sunken: red;
+
+  --color-text-1: red;
+  --color-text-2: red;
+  --color-text-3: red;
+
+  --color-border-1: red;
+  --color-border-2: red;
+  --color-border-3: red;
+
+  --color-solid-brand-1: red; /* brand */
+  --color-solid-brand-2: red;
+  --color-solid-info-1: red;
+
+  /* Chart series colors */
+  --color-chart-1: red;
+  --color-chart-2: red;
+  --color-chart-3: red;
+  --color-chart-4: red;
+  --color-chart-5: red;
+  --color-chart-6: red;
+  --color-chart-7: red;
+  --color-chart-8: red;
+  --color-chart-9: red;
+  --color-chart-10: red;
+  --color-chart-11: red;
+
+  /* Code block colors */
+  --color-code-1: red;
+  --color-code-2: red;
+  --color-code-3: red;
+  --color-code-4: red;
+  --color-code-5: red;
+  --color-code-6: red;
+  --color-code-7: red;
+  --color-code-8: red;
+  --color-code-9: red;
 }
