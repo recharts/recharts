@@ -1,5 +1,14 @@
 import { FC, useMemo, useState } from 'react';
-import { Line, LineChart, ReferenceLine, Tooltip, TooltipContentProps, XAxis, YAxis } from 'recharts';
+import {
+  Line,
+  LineChart,
+  ReferenceLine,
+  Tooltip,
+  TooltipContentProps,
+  XAxis,
+  YAxis,
+  MouseHandlerDataParam,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region sample data and types
@@ -13,9 +22,17 @@ const formatUsdCompressed = (n: number) => {
     .toUpperCase();
 };
 
-const getDataKeyClose = (point: any) => point.close;
-const getDataKeyNetDeposits = (point: any) => point.netDeposits;
-const getDataKeyReinvestClose = (point: any) => point.reinvestClose;
+interface DataPoint {
+  date: number;
+  close: number;
+  maxClose?: number;
+  reinvestClose?: number;
+  netDeposits?: number;
+}
+
+const getDataKeyClose = (point: DataPoint) => point.close;
+const getDataKeyNetDeposits = (point: DataPoint) => point.netDeposits;
+const getDataKeyReinvestClose = (point: DataPoint) => point.reinvestClose;
 
 const CustomTooltip: FC<TooltipContentProps<any, any>> = ({ active, payload }) => {
   const activePayload = payload?.[0]?.payload;
@@ -25,7 +42,7 @@ const CustomTooltip: FC<TooltipContentProps<any, any>> = ({ active, payload }) =
   return <span className="text-frecDarkGray flex -translate-x-1/2 select-none">{activePayload.date}</span>;
 };
 
-const data = [
+const data: DataPoint[] = [
   {
     date: 1754265600000,
     close: 200250.28586,
@@ -770,7 +787,7 @@ const App: FC = () => {
   const handleMouseLeave = useMemo(() => () => setHoverIndex(-1), []);
   const handleMouseMove = useMemo(
     () =>
-      ({ activeIndex }: any) =>
+      ({ activeIndex }: MouseHandlerDataParam) =>
         setHoverIndex(Number(activeIndex ?? -1)),
     [],
   );

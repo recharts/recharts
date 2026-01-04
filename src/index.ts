@@ -64,6 +64,7 @@ export type {
   PieSectorDataItem,
   PieSectorShapeProps,
   LabelListPropsWithPosition,
+  PieShape,
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
@@ -108,7 +109,13 @@ export { PieChart } from './chart/PieChart';
 export { Treemap } from './chart/Treemap';
 export type { Props as TreemapProps, TreemapNode, TreemapContentType } from './chart/Treemap';
 export { Sankey } from './chart/Sankey';
-export type { Props as SankeyProps } from './chart/Sankey';
+export type {
+  Props as SankeyProps,
+  NodeProps as SankeyNodeProps,
+  LinkProps as SankeyLinkProps,
+  SankeyData,
+} from './chart/Sankey';
+export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
 export { ScatterChart } from './chart/ScatterChart';
 export { AreaChart } from './chart/AreaChart';
@@ -124,7 +131,19 @@ export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
-export type { LegendType, DataKey, AxisInterval, Coordinate, NumberDomain, Margin, AxisDomainItem } from './util/types';
+export type {
+  LegendType,
+  DataKey,
+  AxisInterval,
+  Coordinate,
+  PolarCoordinate,
+  NumberDomain,
+  Margin,
+  AxisDomainItem,
+  Padding,
+  CartesianViewBox,
+  SankeyNode,
+} from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';

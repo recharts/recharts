@@ -1,6 +1,7 @@
 import { Project, Symbol, Type, SymbolFlags } from 'ts-morph';
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'path';
+import { assertNotNull } from '../test/helper/assertNotNull';
 
 const PROJECT_ROOT = resolve(__dirname, '..');
 const TS_CONFIG_PATH = resolve(PROJECT_ROOT, 'tsconfig.json');
@@ -50,25 +51,24 @@ describe('Public API Exports', () => {
   const forbiddenExports: string[] = [];
   const visitedSymbols = new Map<string, boolean>();
 
-  // We need a queue for BFS: { type, trace, checkExport }
+  // We need a queue for BFS: { type, trace, checkSelf, checkConstituents }
   type QueueItem = {
     type: Type;
     trace: string; // e.g. "Tooltip -> props -> payloadUniqBy"
-    checkExport: boolean;
+    checkSelf: boolean; // Should we strictly check if THIS type is exported?
+    checkConstituents: boolean; // Should we traverse children/members as visible/public?
   };
 
   /**
    * Traverses a type and adds its specific constituent parts to the queue.
    *
    * Strategy:
-   * - **Strong Reachability (`checkExport: true`)**: Types reached via Properties, Unions, Function Params/Returns.
+   * - **Strong Reachability (`checkConstituents: true`)**: Types reached via Properties, Unions, Function Params/Returns.
    *   These types are "direct" dependencies and MUST be exported if they are named types.
-   * - **Weak Reachability (`checkExport: false`)**: Types reached via Intersections.
-   *   These are often internal mixins (e.g. `DOMAttributesWithProps`) and do NOT strictly need to be exported.
-   *   If a type is reached ONLY via weak paths, we ignore missing exports.
-   *   If a type is reached via a strong path later, we "upgrade" it and check exports.
+   * - **Intersection Parts**: We treat the *parts* of an intersection as `checkSelf: false` (don't force export of the mixin itself),
+   *   BUT `checkConstituents: inherit` (if the parent was strong, the mixin's members are visible, so traverse strongly).
    */
-  function processType(type: Type, trace: string, queue: QueueItem[], checkExport: boolean) {
+  function processType(type: Type, trace: string, queue: QueueItem[], checkSelf: boolean, checkConstituents: boolean) {
     // 1. Check if type is forbidden or missing export
     const symbol = type.getSymbol() || type.getAliasSymbol();
 
@@ -83,14 +83,13 @@ describe('Public API Exports', () => {
       }
 
       // If visiting weakly and already visited (weakly or strongly), skip.
-      if (!checkExport && wasVisitedWeakly) {
+      if (!checkConstituents && wasVisitedWeakly) {
         return;
       }
 
       // Mark visited status
-      // If checkExport is true, we mark as true (strong visit).
-      // If checkExport is false, we mark as false (weak visit) ONLY if not already true.
-      visitedSymbols.set(symId, checkExport || wasVisitedStrongly);
+      // We track "Strong Visit" based on checkConstituents (are we in a public subtree?)
+      visitedSymbols.set(symId, checkConstituents || wasVisitedStrongly);
 
       const name = symbol.getName();
       const decls = symbol.getDeclarations();
@@ -108,8 +107,8 @@ describe('Public API Exports', () => {
           forbiddenExports.push(`Forbidden type "${name}" is reachable via: ${trace}`);
         }
 
-        // Check Missing Export (Only if strong reachability)
-        if (checkExport) {
+        // Check Missing Export (Only if STRICT checkSelf is requested)
+        if (checkSelf) {
           // We check if this symbol (or its alias) is in the exportedSymbols set
           // We only enforce named exports (Classes, Interfaces, Type Aliases, Enums)
           const isNamedType =
@@ -130,8 +129,10 @@ describe('Public API Exports', () => {
             if (!isExported) {
               const declsToCheck = symbol.getDeclarations();
               if (declsToCheck.length > 0) {
-                const declPath = declsToCheck[0].getSourceFile().getFilePath();
-                const declStart = declsToCheck[0].getStart();
+                const element = declsToCheck[0];
+                assertNotNull(element);
+                const declPath = element.getSourceFile().getFilePath();
+                const declStart = element.getStart();
 
                 for (const exportedSym of exportedSymbols) {
                   if (symbol === exportedSym) {
@@ -192,7 +193,8 @@ describe('Public API Exports', () => {
         queue.push({
           type: memberType,
           trace: `${trace} -> member: ${memberName}`,
-          checkExport, // Inherit strength
+          checkSelf: checkConstituents, // Members of a public type must be public
+          checkConstituents, // Continue recursion strength
         });
       }
     }
@@ -206,19 +208,21 @@ describe('Public API Exports', () => {
         queue.push({
           type: part,
           trace: `${trace} (union part)`,
-          checkExport, // Inherit
+          checkSelf: checkConstituents, // If union is required, parts are required
+          checkConstituents, // Inherit
         });
       }
     }
 
-    // Intersection: Weak (Members are mixins, user might not need them directly) -> Always False
+    // Intersection: PARTS are Internal mixins usually, but their CONTENT is public.
     if (type.isIntersection()) {
       const parts = type.getIntersectionTypes();
       for (const part of parts) {
         queue.push({
           type: part,
           trace: `${trace} (intersection part)`,
-          checkExport: false, // WEAK REACHABILITY
+          checkSelf: false, // Don't require the Mixin Type itself to be exported
+          checkConstituents, // BUT require its contents to be valid if we are in a strong path
         });
       }
     }
@@ -230,7 +234,8 @@ describe('Public API Exports', () => {
         queue.push({
           type: elemType,
           trace: `${trace} (array element)`,
-          checkExport, // Inherit
+          checkSelf: checkConstituents, // If array is public, element is public
+          checkConstituents, // Inherit
         });
       }
     }
@@ -241,7 +246,8 @@ describe('Public API Exports', () => {
       queue.push({
         type: arg,
         trace: `${trace} <generic arg>`,
-        checkExport, // Inherit
+        checkSelf: checkConstituents,
+        checkConstituents,
       });
     }
 
@@ -251,14 +257,16 @@ describe('Public API Exports', () => {
       queue.push({
         type: sig.getReturnType(),
         trace: `${trace} -> returnType`,
-        checkExport, // Inherit
+        checkSelf: checkConstituents,
+        checkConstituents,
       });
       for (const param of sig.getParameters()) {
         const paramType = param.getTypeAtLocation(sig.getDeclaration());
         queue.push({
           type: paramType,
           trace: `${trace} -> param: ${param.getName()}`,
-          checkExport, // Inherit
+          checkSelf: checkConstituents,
+          checkConstituents,
         });
       }
     }
@@ -271,7 +279,8 @@ describe('Public API Exports', () => {
         queue.push({
           type: propType,
           trace: `${trace} -> prop: ${prop.getName()}`,
-          checkExport, // Inherit
+          checkSelf: checkConstituents,
+          checkConstituents,
         });
       }
     }
@@ -287,7 +296,8 @@ describe('Public API Exports', () => {
       queue.push({
         type,
         trace: `Export: ${name}`,
-        checkExport: true, // Initial exports are Strong
+        checkSelf: true, // Exports are definitely public
+        checkConstituents: true, // And their children are public
       });
     }
   }
@@ -298,7 +308,7 @@ describe('Public API Exports', () => {
   while (queue.length > 0 && i < MAX_ITERATIONS) {
     const item = queue.shift();
     if (item) {
-      processType(item.type, item.trace, queue, item.checkExport);
+      processType(item.type, item.trace, queue, item.checkSelf, item.checkConstituents);
     }
     i++;
   }

@@ -182,7 +182,7 @@ export type PieSectorDataItem = PiePresentationProps &
   };
 
 export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
-type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
+export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
