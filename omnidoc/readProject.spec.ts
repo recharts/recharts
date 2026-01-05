@@ -1079,4 +1079,13 @@ describe('readProject', () => {
       '{@link  https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray }',
     );
   });
+
+  it('should consider props defined with Partial as optional', () => {
+    const propMeta = reader.getPropMeta('Bar', 'onClick');
+    assertNotNull(propMeta);
+    expect(propMeta).toHaveLength(1);
+    const first = propMeta[0];
+    assertNotNull(first);
+    expect(first.isRequired).toBe(false);
+  });
 });
