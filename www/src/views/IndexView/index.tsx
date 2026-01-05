@@ -98,7 +98,6 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
         </div>
 
         <div className="like block">
-          <i className="icon-rocket" />
           <LuRocket />
           <p className="text">{localeGet(locale, 'home', 'like')}</p>
           <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
