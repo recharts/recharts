@@ -1,7 +1,7 @@
 import type { ApiDoc } from './types';
 
 import { AreaChartAPI } from './AreaChartAPI';
-import { BarChartAPI } from './BarChart';
+import { BarChartAPI } from './BarChartAPI';
 import { ComposedChartAPI } from './ComposedChart';
 import { LineChartAPI as LineChart } from './LineChart';
 import { PieChartAPI } from './PieChartAPI';

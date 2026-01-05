@@ -3,15 +3,16 @@ import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { BarChartProps } from '../props/BarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { BarChartArgs } from '../arg-types/BarChartArgs';
 
 export default {
-  argTypes: BarChartProps,
+  argTypes: BarChartArgs,
   component: BarChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     return (
       <StrictMode>
@@ -25,7 +26,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     data: pageData,
     margin: {
       top: 0,
@@ -65,7 +66,7 @@ export const BarInBar = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     data: pageData,
     margin: {
       top: 0,
@@ -94,7 +95,7 @@ export const Stacked = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
     id: 'BarChart-Stacked',
@@ -122,7 +123,7 @@ export const VerticalWithMultipleAxes = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     data: pageData,
     width: 500,
     height: 300,
