@@ -4,7 +4,7 @@
  */
 import { StorybookArgs } from '../../../StorybookArgs';
 
-export const LineChartArgs: StorybookArgs = {
+export const ScatterChartArgs: StorybookArgs = {
   accessibilityLayer: {
     description: 'Turn on accessibility support for keyboard-only and screen reader users.',
     control: {

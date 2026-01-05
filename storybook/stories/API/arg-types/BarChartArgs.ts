@@ -166,15 +166,10 @@ export const BarChartArgs: StorybookArgs = {
       },
       category: 'General',
       defaultValue: {
-        summary: '[object Object]',
+        summary: '{"top":5,"right":5,"bottom":5,"left":5}',
       },
     },
-    defaultValue: {
-      top: 5,
-      right: 5,
-      bottom: 5,
-      left: 5,
-    },
+    defaultValue: '{"top":5,"right":5,"bottom":5,"left":5}',
   },
   maxBarSize: {
     description:

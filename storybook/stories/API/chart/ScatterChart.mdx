@@ -1,22 +1,36 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as ScatterChartStories from './ScatterChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './ScatterChart.stories';
 
 # ScatterChart
 
-<Meta of={ScatterChartStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={ScatterChartStories.Simple} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The ScatterChart can be used within: `<ResponsiveContainer />`.
+The ScatterChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Child component
+## Child Components
 
-The ScatterChart can be used with the following child components: `<XAxis />`, `<YAxis />`, `<ZAxis />`, `<ReferenceArea />`, `<ReferenceDot />`, `<ReferenceLine />`, `<Brush />`, `<CartesianGrid />`, `<Legend />`, `<Tooltip />`, `<Scatter />`, `<Customized />` or valid svg elements.
+The ScatterChart can be used with the following child components:
+- `<Area/>`
+- `<Bar/>`
+- `<Brush/>`
+- `<Funnel/>`
+- `<Label/>`
+- `<Legend/>`
+- `<Line/>`
+- `<ReferenceArea/>`
+- `<ReferenceDot/>`
+- `<ReferenceLine/>`
+- `<Scatter/>`
+- `<Tooltip/>`
+- `<XAxis/>`
+- `<YAxis/>`
+- `<ZAxis/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={ScatterChartStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />
