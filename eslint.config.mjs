@@ -9,6 +9,7 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import reactPerf from 'eslint-plugin-react-perf';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -438,6 +439,37 @@ const generatedApiDocsOverrides = {
   },
 };
 
+const jsdocConfig = [
+  {
+    name: 'jsdoc/config',
+    files: allFiles,
+    plugins: {
+      jsdoc,
+    },
+    settings: {
+      jsdoc: {
+        mode: 'typescript',
+      },
+    },
+    rules: {
+      'jsdoc/match-description': [
+        'error',
+        {
+          contexts: ['any'],
+          matchDescription: '[\\s\\S]*',
+          tags: {
+            see: {
+              match: '^(?!http).*',
+              message:
+                '@see must not immediately follow http. Use {@link ...} instead. If you use @see https://example.com, then omnidoc splits the https and example.com and the link will be malformed in docs.',
+            },
+          },
+        },
+      ],
+    },
+  },
+];
+
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -463,6 +495,8 @@ export default [
   ...settings,
   // Omnidoc Overrides
   ...omnidocOverrides,
+  // JSDoc Config
+  ...jsdocConfig,
   generatedApiDocsOverrides,
   perfOptimization,
 ];

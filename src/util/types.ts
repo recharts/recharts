@@ -44,7 +44,7 @@ import { ChartData } from '../state/chartDataSlice';
  * - `sign` stacks positive values above zero and negative values below zero. Similar to `none` but handles negatives.
  * - `positive` ignores all negative values, and then behaves like \`none\`.
  *
- * @see https://d3js.org/d3-shape/stack#stack-offsets
+ * @see {@link https://d3js.org/d3-shape/stack#stack-offsets}
  * (note that the `diverging` offset in d3 is named `sign` in recharts)
  *
  * @inline
@@ -1441,7 +1441,7 @@ export interface CartesianChartProps extends BaseChartProps {
    * Only applicable for stacked Area or Bar charts.
    * Has no effect when the stackId prop is not set on Area or Bar components.
    *
-   * @see https://d3js.org/d3-shape/stack#stack_offset
+   * @link https://d3js.org/d3-shape/stack#stack_offset
    * @see {@link https://recharts.github.io/en-US/examples/BarChartStackedBySign/ Chart with stackOffset=sign example}
    *
    * @defaultValue none

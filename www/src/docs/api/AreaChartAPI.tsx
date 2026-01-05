@@ -216,8 +216,12 @@ export const AreaChartAPI: ApiDoc = {
       },
       defaultVal: 'none',
       examples: [
-        { name: '://d3js.org/d3-shape/stack#stack_offset', url: 'https', isExternal: true },
         { name: 'Chart with stackOffset=sign example', url: '/examples/BarChartStackedBySign/', isExternal: false },
+        {
+          name: 'https://d3js.org/d3-shape/stack#stack_offset',
+          url: 'https://d3js.org/d3-shape/stack#stack_offset',
+          isExternal: true,
+        },
       ],
     },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
