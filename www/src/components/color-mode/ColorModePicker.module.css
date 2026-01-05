@@ -4,7 +4,7 @@
   border: 0 none;
   display: inline-flex;
   padding: 0;
-  font-size: 1.25em;
+  font-size: 2rem;
 
   &:hover {
     color: #333;

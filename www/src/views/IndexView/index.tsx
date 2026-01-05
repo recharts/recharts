@@ -1,8 +1,8 @@
 import { PureComponent } from 'react';
 import { Link } from 'react-router';
+import { LuLayers, LuPuzzle, LuRocket, LuZap } from 'react-icons/lu';
 import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
 import './IndexView.css';
-import 'simple-line-icons/css/simple-line-icons.css';
 import { users } from '../../docs/users/users';
 import { RouteComponentProps, withRouter } from '../../routes/withRouter.tsx';
 import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.tsx';
@@ -18,7 +18,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           <h1>Recharts</h1>
           <p className="subtitle">{localeGet(locale, 'home', 'slogan')}</p>
           <Link to={`/${locale}/guide/installation/`} className="button install-btn">
-            <i className="icon-energy" />
+            <LuZap />
             &nbsp;
             {localeGet(locale, 'home', 'install')}
             {import.meta.env.VITE_RECHARTS_LATEST_VERSION
@@ -45,17 +45,17 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           <h2 className="block-title">{localeGet(locale, 'home', 'feature')}</h2>
           <ul className="feat">
             <li>
-              <i className="icon-puzzle" />
+              <LuPuzzle />
               <strong>{localeGet(locale, 'home', 'composable')}</strong>
               <p className="text">{localeGet(locale, 'home', 'composableContent')}</p>
             </li>
             <li>
-              <i className="icon-layers" />
+              <LuLayers />
               <strong>{localeGet(locale, 'home', 'reliable')}</strong>
               <p className="text">{localeGet(locale, 'home', 'reliableContent')}</p>
             </li>
             <li>
-              <i className="icon-energy" />
+              <LuZap />
               <strong>{localeGet(locale, 'home', 'powerful')}</strong>
               <p className="text">{localeGet(locale, 'home', 'powerfulContent')}</p>
             </li>
@@ -99,6 +99,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
 
         <div className="like block">
           <i className="icon-rocket" />
+          <LuRocket />
           <p className="text">{localeGet(locale, 'home', 'like')}</p>
           <Link to={`/${locale}/guide/getting-started/`} className="button getting-started-btn">
             {localeGet(locale, 'home', 'get-started')}

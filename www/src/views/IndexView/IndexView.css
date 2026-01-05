@@ -68,6 +68,7 @@
       > li {
         width: 250px;
 
+        svg,
         i {
           font-size: 48px;
         }
@@ -89,7 +90,7 @@
 
   .like {
     padding-top: 42px;
-    i {
+    svg {
       font-size: 48px;
     }
 

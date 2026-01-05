@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { FiMoon, FiMonitor, FiSun } from 'react-icons/fi';
+import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu';
 
 import styles from './ColorModePicker.module.css';
 import { useColorModeStore } from './ColorModeProvider';
@@ -7,12 +7,12 @@ import { ColorModeState } from './defineColorModeStore';
 
 function ColorModePickerIcon(props: ColorModeState) {
   if (props.origin === 'system') {
-    return <FiMonitor />;
+    return <LuMonitor />;
   }
   if (props.mode === 'light') {
-    return <FiSun />;
+    return <LuSun />;
   }
-  return <FiMoon />;
+  return <LuMoon />;
 }
 
 export function ColorModePicker(props: React.ComponentPropsWithRef<'button'>) {
