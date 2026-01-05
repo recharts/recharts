@@ -31,7 +31,7 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -93,7 +93,7 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -118,7 +118,7 @@ export const TreemapAPI: ApiDoc = {
     { name: 'fill', type: 'string', isOptional: true },
     {
       name: 'height',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -131,7 +131,7 @@ export const TreemapAPI: ApiDoc = {
     { name: 'id', type: 'string', isOptional: true },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -145,10 +145,10 @@ export const TreemapAPI: ApiDoc = {
       },
       defaultVal: 'auto',
     },
-    { name: 'isUpdateAnimationActive', type: 'false | true | "auto"', isOptional: true, defaultVal: 'auto' },
+    { name: 'isUpdateAnimationActive', type: '"auto" | false | true', isOptional: true, defaultVal: 'auto' },
     {
       name: 'nameKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -159,7 +159,7 @@ export const TreemapAPI: ApiDoc = {
       },
       defaultVal: 'name',
     },
-    { name: 'nestIndexContent', type: 'ReactNode | Function', isOptional: true },
+    { name: 'nestIndexContent', type: 'Function | ReactNode', isOptional: true },
     { name: 'stroke', type: 'string', isOptional: true },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
@@ -185,7 +185,7 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (

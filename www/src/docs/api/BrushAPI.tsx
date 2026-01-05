@@ -9,7 +9,7 @@ export const BrushAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -30,7 +30,7 @@ export const BrushAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'dy', type: 'string | number', isOptional: true },
+    { name: 'dy', type: 'number | string', isOptional: true },
     {
       name: 'endIndex',
       type: 'number',
@@ -61,7 +61,7 @@ export const BrushAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -98,7 +98,7 @@ export const BrushAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'traveller', type: 'ReactNode | Function', isOptional: true },
+    { name: 'traveller', type: 'Function | ReactNode', isOptional: true },
     {
       name: 'travellerWidth',
       type: 'number',
@@ -114,7 +114,7 @@ export const BrushAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -126,7 +126,7 @@ export const BrushAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -140,7 +140,7 @@ export const BrushAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

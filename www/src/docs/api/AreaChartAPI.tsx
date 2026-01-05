@@ -6,7 +6,7 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
     {
       name: 'barCategoryGap',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -20,7 +20,7 @@ export const AreaChartAPI: ApiDoc = {
     },
     {
       name: 'barGap',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -34,7 +34,7 @@ export const AreaChartAPI: ApiDoc = {
     },
     {
       name: 'barSize',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -49,7 +49,7 @@ export const AreaChartAPI: ApiDoc = {
     },
     {
       name: 'baseValue',
-      type: 'number | "dataMin" | "dataMax"',
+      type: '"dataMax" | "dataMin" | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -74,11 +74,11 @@ export const AreaChartAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'dataKey', type: 'string | number | Function', isOptional: true },
+    { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
     {
       name: 'height',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -170,7 +170,7 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'role', type: 'string', isOptional: true },
     {
       name: 'stackOffset',
-      type: '"none" | "sign" | "expand" | "wiggle" | "silhouette" | "positive"',
+      type: '"expand" | "none" | "positive" | "sign" | "silhouette" | "wiggle"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -192,7 +192,7 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
       name: 'syncId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -228,7 +228,7 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'title', type: 'string', isOptional: true },
     {
       name: 'width',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (

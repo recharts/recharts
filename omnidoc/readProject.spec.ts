@@ -981,7 +981,7 @@ describe('readProject', () => {
     const originalTexts = reader.getTypeOf('Label', 'content')?.names;
     assertNotNull(originalTexts);
     const result = processType(originalTexts, false);
-    expect(result).toEqual('ReactNode | Function');
+    expect(result).toEqual('Function | ReactNode');
   });
 
   it('should say that children type is ReactNode, and not attempt to explain the union', () => {

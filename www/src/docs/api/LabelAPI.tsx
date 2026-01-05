@@ -37,7 +37,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'content',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -86,10 +86,10 @@ export const LabelAPI: ApiDoc = {
       },
     },
     { name: 'index', type: 'number', isOptional: true },
-    { name: 'labelRef', type: 'null | React.RefObject<SVGTextElement>', isOptional: true },
+    { name: 'labelRef', type: 'React.RefObject<SVGTextElement> | null', isOptional: true },
     {
       name: 'offset',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -103,7 +103,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'parentViewBox', type: 'Required<CartesianViewBox> | Required<PolarViewBox>', isOptional: true },
     {
       name: 'position',
-      type: '"end" | "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "insideStart" | "insideEnd" | "center" | "centerTop" | "centerBottom" | "middle" | { x?: number | `${number}%` | undefined; y?: number | `${number}%` | undefined; }',
+      type: '"bottom" | "center" | "centerBottom" | "centerTop" | "end" | "inside" | "insideBottom" | "insideBottomLeft" | "insideBottomRight" | "insideEnd" | "insideLeft" | "insideRight" | "insideStart" | "insideTop" | "insideTopLeft" | "insideTopRight" | "left" | "middle" | "outside" | "right" | "top" | { x?: string | number | undefined; y?: string | number | undefined; }',
       isOptional: true,
       desc: {
         'en-US': (
@@ -117,7 +117,7 @@ export const LabelAPI: ApiDoc = {
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'value',
-      type: 'null | string | number | false | true',
+      type: 'false | null | number | string | true',
       isOptional: true,
       desc: {
         'en-US': (

@@ -65,7 +65,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'axisLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -104,7 +104,7 @@ export const XAxisAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -128,7 +128,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly string> | Array<readonly number> | readonly [AxisDomainItem, AxisDomainItem] | Function',
+      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -162,7 +162,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -300,7 +300,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'orientation',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -313,7 +313,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'padding',
-      type: '"gap" | Object | "no-gap"',
+      type: '"gap" | "no-gap" | Object',
       isOptional: true,
       desc: {
         'en-US': (
@@ -417,7 +417,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'tickLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -510,7 +510,7 @@ export const XAxisAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

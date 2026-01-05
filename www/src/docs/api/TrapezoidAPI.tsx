@@ -7,14 +7,14 @@ export const TrapezoidAPI: ApiDoc = {
     { name: 'animationDuration', type: 'number', isOptional: true, defaultVal: 1500 },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       defaultVal: 'ease',
     },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -66,7 +66,7 @@ export const TrapezoidAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -79,7 +79,7 @@ export const TrapezoidAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

@@ -10,7 +10,7 @@ export const RectangleAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -25,7 +25,7 @@ export const RectangleAPI: ApiDoc = {
     { name: 'isUpdateAnimationActive', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'radius',
-      type: 'number | [number, number, number, number]',
+      type: '[number, number, number, number] | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -41,7 +41,7 @@ export const RectangleAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -54,7 +54,7 @@ export const RectangleAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -67,7 +67,7 @@ export const RectangleAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

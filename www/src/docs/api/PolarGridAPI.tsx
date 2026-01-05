@@ -3,10 +3,10 @@ import { ApiDoc } from './types';
 export const PolarGridAPI: ApiDoc = {
   name: 'PolarGrid',
   props: [
-    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'angleAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'cx',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -22,7 +22,7 @@ export const PolarGridAPI: ApiDoc = {
     },
     {
       name: 'cy',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -106,7 +106,7 @@ export const PolarGridAPI: ApiDoc = {
       },
     },
     { name: 'radialLines', type: 'boolean', isOptional: true, defaultVal: true },
-    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'radiusAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'zIndex',
       type: 'number',

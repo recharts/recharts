@@ -25,7 +25,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'align',
-      type: '"left" | "justify"',
+      type: '"justify" | "left"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -44,7 +44,7 @@ export const SankeyAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -64,7 +64,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -90,7 +90,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'link',
-      type: 'React.SVGProps<SVGPathElement> | ReactNode | Function',
+      type: 'Function | React.SVGProps<SVGPathElement> | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -132,7 +132,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'nameKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -145,7 +145,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'node',
-      type: 'Props | ReactNode | Function',
+      type: 'Function | Props | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -201,7 +201,7 @@ export const SankeyAPI: ApiDoc = {
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
       name: 'verticalAlign',
-      type: '"top" | "justify"',
+      type: '"justify" | "top"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -217,7 +217,7 @@ export const SankeyAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

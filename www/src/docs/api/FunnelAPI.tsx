@@ -5,7 +5,7 @@ export const FunnelAPI: ApiDoc = {
   props: [
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: false,
       desc: {
         'en-US': (
@@ -69,7 +69,7 @@ export const FunnelAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -131,7 +131,7 @@ export const FunnelAPI: ApiDoc = {
     },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -145,11 +145,11 @@ export const FunnelAPI: ApiDoc = {
       },
       defaultVal: 'auto',
     },
-    { name: 'label', type: 'false | true | ReactNode | Function | Props', isOptional: true },
-    { name: 'lastShapeType', type: '"triangle" | "rectangle"', isOptional: true, defaultVal: 'triangle' },
+    { name: 'label', type: 'Function | Props | ReactNode | false | true', isOptional: true },
+    { name: 'lastShapeType', type: '"rectangle" | "triangle"', isOptional: true, defaultVal: 'triangle' },
     {
       name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -162,7 +162,7 @@ export const FunnelAPI: ApiDoc = {
     },
     {
       name: 'nameKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (

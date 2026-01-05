@@ -6,7 +6,7 @@ export const LegendAPI: ApiDoc = {
   props: [
     {
       name: 'align',
-      type: '"left" | "right" | "center"',
+      type: '"center" | "left" | "right"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -33,7 +33,7 @@ export const LegendAPI: ApiDoc = {
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
       name: 'content',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -72,7 +72,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -100,7 +100,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'iconType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -125,7 +125,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'itemSorter',
-      type: 'null | "dataKey" | "value" | Function',
+      type: '"dataKey" | "value" | Function | null',
       isOptional: true,
       desc: {
         'en-US': (
@@ -155,10 +155,10 @@ export const LegendAPI: ApiDoc = {
       },
       defaultVal: 'horizontal',
     },
-    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<LegendPayload>', isOptional: true },
+    { name: 'payloadUniqBy', type: 'UniqueFunc<LegendPayload> | false | true', isOptional: true },
     {
       name: 'portal',
-      type: 'null | HTMLElement',
+      type: 'HTMLElement | null',
       isOptional: true,
       desc: {
         'en-US': (
@@ -176,7 +176,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'verticalAlign',
-      type: '"top" | "bottom" | "middle"',
+      type: '"bottom" | "middle" | "top"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -202,7 +202,7 @@ export const LegendAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

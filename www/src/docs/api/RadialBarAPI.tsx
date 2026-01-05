@@ -3,9 +3,9 @@ import { ApiDoc } from './types';
 export const RadialBarAPI: ApiDoc = {
   name: 'RadialBar',
   props: [
-    { name: 'dataKey', type: 'string | number | Function', isOptional: false },
+    { name: 'dataKey', type: 'Function | number | string', isOptional: false },
     { name: 'activeShape', type: '(union of 5 variants)', isOptional: true },
-    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'angleAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'animationBegin',
       type: 'number',
@@ -34,7 +34,7 @@ export const RadialBarAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -93,7 +93,7 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'cornerIsExternal', type: 'boolean', isOptional: true, defaultVal: false },
-    { name: 'cornerRadius', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'cornerRadius', type: 'number | string', isOptional: true, defaultVal: 0 },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
@@ -112,7 +112,7 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -128,7 +128,7 @@ export const RadialBarAPI: ApiDoc = {
     },
     {
       name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
+      type: 'Function | Props | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -158,7 +158,7 @@ export const RadialBarAPI: ApiDoc = {
     },
     {
       name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -171,9 +171,9 @@ export const RadialBarAPI: ApiDoc = {
     },
     { name: 'maxBarSize', type: 'number', isOptional: true },
     { name: 'minPointSize', type: 'number', isOptional: true, defaultVal: 0 },
-    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'radiusAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     { name: 'shape', type: '(union of 5 variants)', isOptional: true },
-    { name: 'stackId', type: 'string | number', isOptional: true },
+    { name: 'stackId', type: 'number | string', isOptional: true },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 300 },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },

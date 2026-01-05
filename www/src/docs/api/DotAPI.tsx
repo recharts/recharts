@@ -9,7 +9,7 @@ export const DotAPI: ApiDoc = {
     { name: 'clipDot', type: 'boolean', isOptional: true },
     {
       name: 'cx',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -21,7 +21,7 @@ export const DotAPI: ApiDoc = {
     },
     {
       name: 'cy',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -34,7 +34,7 @@ export const DotAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'r',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

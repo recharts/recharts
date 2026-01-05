@@ -121,11 +121,11 @@ export function processType(typeNames: string[], isInline: boolean): string {
 
   // If it's a simple union, join with |
   if (isInline || uniqueParts.length <= 4) {
-    if (uniqueParts.length === 0) return 'undefined';
-    // If it's just 'undefined', we might have filtered it out above?
-    // If the original type was exactly 'undefined', filtering leaves empty.
-    // So if empty, we might return 'undefined' or handled elsewhere.
-    return uniqueParts.join(' | ');
+    if (uniqueParts.length === 0) {
+      return 'undefined';
+    }
+    // sort alphabetically for consistency
+    return uniqueParts.sort().join(' | ');
   }
   // For complex unions, just return a generic type
   return `(union of ${uniqueParts.length} variants)`;

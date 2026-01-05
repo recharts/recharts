@@ -5,7 +5,7 @@ export const ZAxisAPI: ApiDoc = {
   props: [
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -29,7 +29,7 @@ export const ZAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly string> | Array<readonly number> | readonly [AxisDomainItem, AxisDomainItem] | Function',
+      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -119,7 +119,7 @@ export const ZAxisAPI: ApiDoc = {
     },
     {
       name: 'type',
-      type: '"number" | "category"',
+      type: '"category" | "number"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -152,7 +152,7 @@ export const ZAxisAPI: ApiDoc = {
     },
     {
       name: 'zAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

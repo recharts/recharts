@@ -8,7 +8,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'ifOverflow',
-      type: '"hidden" | "visible" | "discard" | "extendDomain"',
+      type: '"discard" | "extendDomain" | "hidden" | "visible"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -69,7 +69,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'radius',
-      type: 'number | [number, number, number, number]',
+      type: '[number, number, number, number] | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -85,7 +85,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'shape',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -100,7 +100,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'x1',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -121,7 +121,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'x2',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -142,7 +142,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -155,7 +155,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'y1',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -176,7 +176,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'y2',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -197,7 +197,7 @@ export const ReferenceAreaAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
