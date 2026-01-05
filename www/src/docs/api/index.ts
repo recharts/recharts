@@ -1,6 +1,6 @@
 import type { ApiDoc } from './types';
 
-import { AreaChartAPI as AreaChart } from './AreaChart';
+import { AreaChartAPI } from './AreaChartAPI';
 import { BarChartAPI } from './BarChart';
 import { ComposedChartAPI } from './ComposedChart';
 import { LineChartAPI as LineChart } from './LineChart';
@@ -12,6 +12,7 @@ import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './TreemapAPI';
 
+import { AreaAPI } from './AreaAPI';
 import { BarAPI as Bar } from './Bar';
 import { LineAPI } from './LineAPI';
 import { ScatterAPI } from './ScatterAPI';
@@ -47,7 +48,6 @@ import { TrapezoidAPI } from './TrapezoidAPI';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
-import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI';
@@ -55,7 +55,7 @@ import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
-  AreaChart,
+  AreaChart: AreaChartAPI,
   BarChart: BarChartAPI,
   LineChart,
   ComposedChart: ComposedChartAPI,

@@ -185,4 +185,5 @@ export const BrushAPI: ApiDoc = {
     { name: 'BarChart with Brush', url: '/examples/BrushBarChart/', isExternal: false },
     { name: 'Synchronized Brush', url: '/examples/SynchronizedLineChart/', isExternal: false },
   ],
+  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
 };

@@ -124,7 +124,7 @@ export const AreaArgs: StorybookArgs = {
   data: {
     table: {
       type: {
-        summary: 'Array<unknown>',
+        summary: 'ReadonlyArray<unknown>',
       },
       category: 'General',
     },

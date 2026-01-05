@@ -93,7 +93,7 @@ export const LineAPI: ApiDoc = {
       ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
-    { name: 'data', type: 'Array<unknown>', isOptional: true },
+    { name: 'data', type: 'ReadonlyArray<unknown>', isOptional: true },
     {
       name: 'dataKey',
       type: 'string | number | Function',

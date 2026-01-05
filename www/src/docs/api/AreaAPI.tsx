@@ -117,7 +117,7 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'data', type: 'Array<unknown>', isOptional: true },
+    { name: 'data', type: 'ReadonlyArray<unknown>', isOptional: true },
     {
       name: 'dot',
       type: 'false | true | Function | Partial<Props> | ReactNode',

@@ -81,7 +81,7 @@ export const RadarChartAPI: ApiDoc = {
     },
     {
       name: 'data',
-      type: 'Array<any>',
+      type: 'ReadonlyArray<unknown>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -204,7 +204,12 @@ export const RadarChartAPI: ApiDoc = {
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'role', type: 'string', isOptional: true },
-    { name: 'stackOffset', type: '(union of 6 variants)', isOptional: true, defaultVal: 'none' },
+    {
+      name: 'stackOffset',
+      type: '"none" | "sign" | "expand" | "wiggle" | "silhouette" | "positive"',
+      isOptional: true,
+      defaultVal: 'none',
+    },
     {
       name: 'startAngle',
       type: 'number',
@@ -230,6 +235,7 @@ export const RadarChartAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Synchronized Charts Example', url: '/examples/SynchronizedAreaChart/', isExternal: false }],
     },
     {
       name: 'syncMethod',

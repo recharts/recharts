@@ -1,7 +1,7 @@
 import { ApiDoc } from './types';
 
-export const RadialBarChartAPI: ApiDoc = {
-  name: 'RadialBarChart',
+export const AreaChartAPI: ApiDoc = {
+  name: 'AreaChart',
   props: [
     { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
     {
@@ -16,6 +16,7 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: '10%',
+      examples: [{ name: 'Bar Alignment Guide', url: '/guide/barAlignment/', isExternal: false }],
     },
     {
       name: 'barGap',
@@ -29,6 +30,7 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 4,
+      examples: [{ name: 'Bar Alignment Guide', url: '/guide/barAlignment/', isExternal: false }],
     },
     {
       name: 'barSize',
@@ -45,40 +47,21 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
     },
+    {
+      name: 'baseValue',
+      type: 'number | "dataMin" | "dataMax"',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The base value of area.</p>
+          </section>
+        ),
+      },
+    },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    {
-      name: 'cx',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of width.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
-    {
-      name: 'cy',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of height.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
+    { name: 'compact', type: 'boolean', isOptional: true },
     {
       name: 'data',
       type: 'ReadonlyArray<unknown>',
@@ -94,19 +77,6 @@ export const RadialBarChartAPI: ApiDoc = {
     { name: 'dataKey', type: 'string | number | Function', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
     {
-      name: 'endAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle, in degrees, at which the chart should end.</p>
-          </section>
-        ),
-      },
-      defaultVal: 360,
-    },
-    {
       name: 'height',
       type: 'number | `${number}%`',
       isOptional: true,
@@ -121,24 +91,8 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     { name: 'id', type: 'string', isOptional: true },
     {
-      name: 'innerRadius',
-      type: 'string | number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The inner radius of the chart. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
       name: 'layout',
-      type: '"centric" | "radial"',
+      type: '"horizontal" | "vertical"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -147,7 +101,7 @@ export const RadialBarChartAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'radial',
+      defaultVal: 'horizontal',
     },
     {
       name: 'margin',
@@ -162,22 +116,17 @@ export const RadialBarChartAPI: ApiDoc = {
       },
       defaultVal: { top: 5, right: 5, bottom: 5, left: 5 },
     },
-    { name: 'maxBarSize', type: 'number', isOptional: true },
     {
-      name: 'outerRadius',
-      type: 'string | number',
+      name: 'maxBarSize',
+      type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>
-              The outer radius of the chart. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
+            <p>The maximum width of all the bars in a horizontal BarChart, or maximum height in a vertical BarChart.</p>
           </section>
         ),
       },
-      defaultVal: '80%',
     },
     {
       name: 'responsive',
@@ -202,26 +151,43 @@ export const RadialBarChartAPI: ApiDoc = {
       defaultVal: false,
       examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
-    { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
+    {
+      name: 'reverseStackOrder',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              If false set, stacked items will be rendered left to right. If true set, stacked items will be rendered
+              right to left. Render direction affects SVG layering, not x position.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: false,
+    },
     { name: 'role', type: 'string', isOptional: true },
     {
       name: 'stackOffset',
       type: '"none" | "sign" | "expand" | "wiggle" | "silhouette" | "positive"',
       isOptional: true,
-      defaultVal: 'none',
-    },
-    {
-      name: 'startAngle',
-      type: 'number',
-      isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Angle in degrees from which the chart should start.</p>
+            <p>
+              The type of offset function used to generate the lower and upper values in the series array. The types are
+              built-in offsets in d3-shape. Only applicable for stacked Area or Bar charts. Has no effect when the
+              stackId prop is not set on Area or Bar components.
+            </p>
           </section>
         ),
       },
-      defaultVal: 0,
+      defaultVal: 'none',
+      examples: [
+        { name: '://d3js.org/d3-shape/stack#stack_offset', url: 'https', isExternal: true },
+        { name: 'Chart with stackOffset=sign example', url: '/examples/BarChartStackedBySign/', isExternal: false },
+      ],
     },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
@@ -408,14 +374,20 @@ export const RadialBarChartAPI: ApiDoc = {
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
+    'Area',
+    'Bar',
+    'Brush',
+    'Funnel',
     'Label',
     'Legend',
-    'Pie',
-    'PolarAngleAxis',
-    'PolarGrid',
-    'PolarRadiusAxis',
-    'Radar',
-    'RadialBar',
+    'Line',
+    'ReferenceArea',
+    'ReferenceDot',
+    'ReferenceLine',
+    'Scatter',
     'Tooltip',
+    'XAxis',
+    'YAxis',
+    'ZAxis',
   ],
 };
