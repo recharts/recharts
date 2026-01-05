@@ -17,7 +17,7 @@ describe('<ResponsiveContainer />', () => {
    * Use this function to simulate a change fired by a window.ResizeObserver
    * You just need to pass a param with ResizeObserverEntry structure like:
    *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
+   * @link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
    */
   let notifyResizeObserverChange: (arg: unknown) => void,
     consoleWarnSpy: MockInstance<(...args: any[]) => void>,
@@ -27,7 +27,7 @@ describe('<ResponsiveContainer />', () => {
     /**
      * ResizeObserver is not available, so we have to create a mock to avoid error coming
      * from `react-resize-detector`.
-     * @see https://github.com/maslianok/react-resize-detector/issues/145
+     * @link https://github.com/maslianok/react-resize-detector/issues/145
      *
      * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
      * from inside our test.

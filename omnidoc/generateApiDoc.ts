@@ -37,6 +37,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'LabelList',
   'Legend',
   'Line',
+  'LineChart',
   'Pie',
   'PieChart',
   'PolarAngleAxis',

@@ -3,7 +3,7 @@ import type { ApiDoc } from './types';
 import { AreaChartAPI } from './AreaChartAPI';
 import { BarChartAPI } from './BarChartAPI';
 import { ComposedChartAPI } from './ComposedChart';
-import { LineChartAPI as LineChart } from './LineChart';
+import { LineChartAPI } from './LineChartAPI';
 import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';
 import { RadarChartAPI } from './RadarChartAPI';
@@ -57,7 +57,7 @@ import { DotAPI } from './DotAPI';
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
   BarChart: BarChartAPI,
-  LineChart,
+  LineChart: LineChartAPI,
   ComposedChart: ComposedChartAPI,
   PieChart: PieChartAPI,
   RadarChart: RadarChartAPI,
