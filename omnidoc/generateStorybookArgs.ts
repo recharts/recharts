@@ -26,6 +26,7 @@ import { defaultLocale } from '../www/src/utils/LocaleUtils';
 export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'Area',
+  'AreaChart',
 ];
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');

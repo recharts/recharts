@@ -1325,6 +1325,8 @@ interface BaseChartProps extends ExternalMouseEvents {
   children?: ReactNode;
   className?: string;
   /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
    * @defaultValue true
    */
   accessibilityLayer?: boolean;
@@ -1355,6 +1357,9 @@ interface BaseChartProps extends ExternalMouseEvents {
    * @defaultValue index
    */
   syncMethod?: SyncMethod;
+  /**
+   * If and where the chart should appear in the tab order
+   */
   tabIndex?: number;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
@@ -1409,12 +1414,17 @@ export interface CartesianChartProps extends BaseChartProps {
    */
   maxBarSize?: number;
   /**
-   * If false set, stacked items will be rendered left to right. If true set, stacked items
-   * will be rendered right to left. Render direction affects SVG layering, not x position.
+   * If `false`, stacked items will be rendered left to right.
+   * If `true`, stacked items will be rendered right to left.
+   *
+   * Render direction affects SVG layering, not x position.
    *
    * @defaultValue false
    */
   reverseStackOrder?: boolean;
+  /**
+   * The ARIA role for the chart, which provides semantic information for screen reader users.
+   */
   role?: string;
   /**
    * The type of offset function used to generate the lower and upper values in the series array.

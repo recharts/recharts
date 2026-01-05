@@ -3,7 +3,19 @@ import { ApiDoc } from './types';
 export const RadarChartAPI: ApiDoc = {
   name: 'RadarChart',
   props: [
-    { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
+    {
+      name: 'accessibilityLayer',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Turn on accessibility support for keyboard-only and screen reader users.</p>
+          </section>
+        ),
+      },
+      defaultVal: true,
+    },
     {
       name: 'barCategoryGap',
       type: 'number | string',
@@ -257,7 +269,18 @@ export const RadarChartAPI: ApiDoc = {
       },
       defaultVal: 'index',
     },
-    { name: 'tabIndex', type: 'number', isOptional: true },
+    {
+      name: 'tabIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>If and where the chart should appear in the tab order</p>
+          </section>
+        ),
+      },
+    },
     { name: 'throttleDelay', type: 'number', isOptional: true },
     { name: 'title', type: 'string', isOptional: true },
     {

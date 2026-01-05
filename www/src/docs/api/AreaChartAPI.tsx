@@ -3,7 +3,19 @@ import { ApiDoc } from './types';
 export const AreaChartAPI: ApiDoc = {
   name: 'AreaChart',
   props: [
-    { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
+    {
+      name: 'accessibilityLayer',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Turn on accessibility support for keyboard-only and screen reader users.</p>
+          </section>
+        ),
+      },
+      defaultVal: true,
+    },
     {
       name: 'barCategoryGap',
       type: 'number | string',
@@ -159,15 +171,27 @@ export const AreaChartAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If false set, stacked items will be rendered left to right. If true set, stacked items will be rendered
-              right to left. Render direction affects SVG layering, not x position.
+              If <code>false</code>, stacked items will be rendered left to right. If <code>true</code>, stacked items
+              will be rendered right to left.
             </p>
+            <p>Render direction affects SVG layering, not x position.</p>
           </section>
         ),
       },
       defaultVal: false,
     },
-    { name: 'role', type: 'string', isOptional: true },
+    {
+      name: 'role',
+      type: 'string',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>The ARIA role for the chart, which provides semantic information for screen reader users.</p>
+          </section>
+        ),
+      },
+    },
     {
       name: 'stackOffset',
       type: '"expand" | "none" | "positive" | "sign" | "silhouette" | "wiggle"',
@@ -223,7 +247,18 @@ export const AreaChartAPI: ApiDoc = {
       },
       defaultVal: 'index',
     },
-    { name: 'tabIndex', type: 'number', isOptional: true },
+    {
+      name: 'tabIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>If and where the chart should appear in the tab order</p>
+          </section>
+        ),
+      },
+    },
     { name: 'throttleDelay', type: 'number', isOptional: true },
     { name: 'title', type: 'string', isOptional: true },
     {
