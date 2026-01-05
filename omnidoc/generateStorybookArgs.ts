@@ -29,6 +29,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'AreaChart',
   'Bar',
   'BarChart',
+  'ComposedChart',
   'LineChart',
 ];
 

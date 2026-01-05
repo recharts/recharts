@@ -28,6 +28,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'BarChart',
   'BarStack',
   'Brush',
+  'ComposedChart',
   'Cross',
   'Customized',
   'Dot',

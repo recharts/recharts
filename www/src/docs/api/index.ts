@@ -2,7 +2,7 @@ import type { ApiDoc } from './types';
 
 import { AreaChartAPI } from './AreaChartAPI';
 import { BarChartAPI } from './BarChartAPI';
-import { ComposedChartAPI } from './ComposedChart';
+import { ComposedChartAPI } from './ComposedChartAPI';
 import { LineChartAPI } from './LineChartAPI';
 import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI as ScatterChart } from './ScatterChart';

@@ -18,13 +18,12 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ComposedChartArgs } from '../arg-types/ComposedChartArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-  },
+  argTypes: ComposedChartArgs,
   component: Composed,
 };
 
@@ -52,9 +51,11 @@ const HorizontalChartTemplate = {
   },
 };
 
-export const SimpleChart = {
+export const API = {
+  name: 'Simple Chart',
   ...HorizontalChartTemplate,
   args: {
+    ...getStoryArgsFromArgsTypesObject(ComposedChartArgs),
     data: pageData,
     children: (
       <>
@@ -69,6 +70,7 @@ export const SimpleChart = {
 export const ComplexChart = {
   ...HorizontalChartTemplate,
   args: {
+    ...getStoryArgsFromArgsTypesObject(ComposedChartArgs),
     data: pageData,
     children: (
       <>
@@ -95,6 +97,7 @@ export const ComplexChart = {
 export const LineBarAreaScatter = {
   ...HorizontalChartTemplate,
   args: {
+    ...getStoryArgsFromArgsTypesObject(ComposedChartArgs),
     data: pageData,
     children: (
       <>
@@ -116,6 +119,7 @@ export const LineBarAreaScatter = {
 export const LineBarHorizontal = {
   ...HorizontalChartTemplate,
   args: {
+    ...getStoryArgsFromArgsTypesObject(ComposedChartArgs),
     data: pageData,
     children: (
       <>
@@ -182,11 +186,10 @@ export const LineBarAreaScatterTimeScale = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(ComposedChartArgs),
     from: new Date('2019-07-04T00:00:00.000Z'),
     to: new Date('2019-07-10T00:00:00.000Z'),
     timeData,
     data: pageData,
   },
 };
-
-// TODO: Add a template for vertical stories.
