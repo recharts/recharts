@@ -24,6 +24,7 @@ import {
   ChartOffsetInternal,
   Coordinate,
   DataKey,
+  DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
@@ -72,7 +73,7 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
 /**
  * External props, intended for end users to fill in
  */
-interface FunnelProps {
+interface FunnelProps extends DataProvider {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -94,10 +95,6 @@ interface FunnelProps {
    */
   animationEasing?: AnimationTiming;
   className?: string;
-  /**
-   * The source data. Each element should be an object.
-   */
-  data?: any[];
   /**
    * Decides how to extract the value of this Funnel from the data:
    * - `string`: the name of the field in the data object;

@@ -103,7 +103,7 @@ export const PieChartAPI: ApiDoc = {
               different data dimensions.
             </p>
             <p>
-              Use the <code>dataKey</code> prop on child components to specify which properties to use.
+              Use the <code>dataKey</code> prop to specify which properties to use.
             </p>
           </section>
         ),

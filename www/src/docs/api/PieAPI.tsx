@@ -100,15 +100,22 @@ export const PieAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
-      type: 'Array<ChartDataInput>',
+      type: 'ReadonlyArray<unknown>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The source data which each element is an object.</p>
+            <p>
+              The source data. Each element should be an object. The properties of each object represent the values of
+              different data dimensions.
+            </p>
+            <p>
+              Use the <code>dataKey</code> prop to specify which properties to use.
+            </p>
           </section>
         ),
       },
+      format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
     },
     {
       name: 'dataKey',

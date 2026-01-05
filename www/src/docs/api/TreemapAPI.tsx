@@ -86,7 +86,16 @@ export const TreemapAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The source data. Each element should be an object.</p>
+            <p>
+              The source data. Each element should be an object. The properties of each object represent the values of
+              different data dimensions.
+            </p>
+            <p>
+              Use the <code>dataKey</code> prop to specify which properties to use.
+            </p>
+            <p>
+              If the <code>children</code> property is present on an element, it will be treated as a nested treemap.
+            </p>
           </section>
         ),
       },

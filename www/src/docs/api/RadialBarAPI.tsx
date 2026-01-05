@@ -95,19 +95,6 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'cornerIsExternal', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'cornerRadius', type: 'number | string', isOptional: true, defaultVal: 0 },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
-    {
-      name: 'data',
-      type: 'Array<readonly RadialBarDataItem>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The source data which each element is an object.</p>
-          </section>
-        ),
-      },
-      defaultVal: [],
-    },
     { name: 'forceCornerRadius', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
     {

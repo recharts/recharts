@@ -269,4 +269,9 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason:
       'Sector props describe one shape, unlike chart components and Pie where the same prop describes multiple sectors',
   },
+  {
+    components: ['Treemap'],
+    props: ['data'],
+    reason: 'Treemap data structure allows `children` properties for nested nodes',
+  },
 ];
