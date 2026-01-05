@@ -13,7 +13,7 @@ import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './TreemapAPI';
 
 import { AreaAPI } from './AreaAPI';
-import { BarAPI as Bar } from './Bar';
+import { BarAPI } from './BarAPI';
 import { LineAPI } from './LineAPI';
 import { ScatterAPI } from './ScatterAPI';
 import { XAxisAPI } from './XAxisAPI';
@@ -68,7 +68,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Treemap: TreemapAPI,
 
   Area: AreaAPI,
-  Bar,
+  Bar: BarAPI,
   BarStack: BarStackAPI,
   Line: LineAPI,
   Scatter: ScatterAPI,

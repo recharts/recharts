@@ -97,7 +97,8 @@ export const AreaChartArgs: StorybookArgs = {
     },
   },
   data: {
-    description: 'The source data. Each element should be an object.',
+    description:
+      'The source data. Each element should be an object.\nThe properties of each object represent the values of different data dimensions.\n\nUse the `dataKey` prop on child components to specify which properties to use.',
     table: {
       type: {
         summary: 'ReadonlyArray<unknown>',

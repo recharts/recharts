@@ -24,6 +24,7 @@ import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Area',
   'AreaChart',
+  'Bar',
   'BarStack',
   'Brush',
   'Cross',
@@ -250,7 +251,12 @@ export function parseJSDocLinkTag(tag: string): PropExample {
     url = url.slice(prefix.length);
   }
 
-  const isExternal = url.startsWith('http') || url.startsWith('https');
+  const isExternal = url.startsWith('http');
+
+  if (!isExternal && !url.startsWith('/')) {
+    // Assume it's a Recharts component reference
+    url = `/api/${url}`;
+  }
 
   return {
     name,

@@ -33,12 +33,12 @@ describe('parseJSDocLinkTag', () => {
     });
   });
 
-  describe('should parse internal reference', () => {
+  describe('should parse reference to Recharts component', () => {
     it.each(['SomeComponent', '{@link SomeComponent}'])('input: %s', input => {
       const actual = parseJSDocLinkTag(input);
       expect(actual).toEqual({
         name: 'SomeComponent',
-        url: 'SomeComponent',
+        url: '/api/SomeComponent',
         isExternal: false,
       });
     });

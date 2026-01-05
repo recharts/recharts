@@ -1332,6 +1332,12 @@ interface BaseChartProps extends ExternalMouseEvents {
   accessibilityLayer?: boolean;
   /**
    * The source data. Each element should be an object.
+   * The properties of each object represent the values of different data dimensions.
+   *
+   * Use the `dataKey` prop on child components to specify which properties to use.
+   *
+   * @example data={[{ name: 'a', value: 12 }]}
+   * @example data={[{ label: 'foo', measurements: [5, 12] }]}
    */
   data?: ChartData;
   desc?: string;

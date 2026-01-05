@@ -30,6 +30,7 @@ export const RectangleAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>The radius of corners.</p>
             <p>
               If you provide a single number, it applies to all four corners. If you provide an array of four numbers,
               they apply to top-left, top-right, bottom-right, bottom-left corners respectively.
@@ -38,6 +39,7 @@ export const RectangleAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Guide: Rounded bar corners', url: '/guide/roundedBars/', isExternal: false }],
     },
     {
       name: 'width',

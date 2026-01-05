@@ -87,7 +87,7 @@ import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
-type Rectangle = {
+type BarRectangleType = {
   x: number | null;
   y: number | null;
   width: number;
@@ -97,7 +97,7 @@ type Rectangle = {
 export interface BarRectangleItem extends RectangleProps {
   value: number | [number, number];
   /** the coordinate of background rectangle */
-  background?: Rectangle;
+  background?: BarRectangleType;
   tooltipPosition: Coordinate;
   readonly payload?: any;
   parentViewBox: CartesianViewBoxRequired;
@@ -129,6 +129,10 @@ export interface BarProps extends ZIndexable {
   yAxisId?: AxisId;
   /**
    * When two Bars have the same axisId and same stackId, then the two Bars are stacked in the chart.
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/StackedBarChart/ Stacked bar chart example}
+   * @see {@link https://recharts.github.io/en-US/examples/MixBarChart/ Chart with both stacked and non-stacked bars}
+   * @see {@link BarStack}
    */
   stackId?: StackId;
   /**
@@ -171,6 +175,8 @@ export interface BarProps extends ZIndexable {
    * You may provide a function to conditionally change this prop based on Bar value.
    *
    * @defaultValue 0
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithMinHeight Chart with min bar height}
    */
   minPointSize?: MinPointSize;
   /**
@@ -192,6 +198,8 @@ export interface BarProps extends ZIndexable {
    * If set a ReactElement, the shape of bar can be customized.
    * If set a function, the function will be called to render customized shape.
    * By default, renders a rectangle.
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/CustomShapeBarChart/ Custom shape bar chart example}
    */
   shape?: ActiveShape<BarProps, SVGPathElement>;
 
@@ -204,6 +212,11 @@ export interface BarProps extends ZIndexable {
    * - `ReactElement`: the active bar element.
    *
    * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/SimpleBarChart/ activeBar example}
+   *
+   * @example <Bar activeBar={{ fill: 'red' }} />
+   * @example <Bar activeBar={CustomActiveBarFn} />
    */
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
   /**
@@ -215,8 +228,18 @@ export interface BarProps extends ZIndexable {
    *  - `function`: a render function of custom background.
    *
    * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartHasBackground/ BarChart with background example}
    */
   background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
+  /**
+   * The radius of corners.
+   *
+   * If you provide a single number, it applies to all four corners.
+   * If you provide an array of four numbers, they apply to top-left, top-right, bottom-right, bottom-left corners respectively.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/roundedBars/ Guide: Rounded bar corners}
+   */
   radius?: RectRadius;
   /**
    * The customized event handler of animation start
@@ -267,6 +290,10 @@ export interface BarProps extends ZIndexable {
    * - `function`: a render function of custom label.
    *
    * @defaultValue false
+   *
+   * @example <Bar label />
+   * @example <Bar label={{ position: 'top', fontSize: 20 }} />
+   * @example <Bar label={CustomizedLabelFn} />
    */
   label?: ImplicitLabelListType;
   /**
@@ -291,6 +318,8 @@ type BarMouseEvent = (
 interface BarEvents {
   /**
    * The customized event handler of click on the bars in this group
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithCustomizedEvent/ Chart with customized event example}
    */
   onClick: BarMouseEvent;
   /**
@@ -961,7 +990,7 @@ export function computeBarRectangles({
 
   return displayedData
     .map((entry: unknown, index): BarRectangleItem | null => {
-      let value, x: number | null, y, width, height, background: Rectangle;
+      let value, x: number | null, y, width, height, background: BarRectangleType;
 
       if (stackedData) {
         // Use dataStartIndex to access the correct element in the full stackedData array

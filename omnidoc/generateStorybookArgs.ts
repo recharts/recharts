@@ -27,6 +27,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'Area',
   'AreaChart',
+  'Bar',
 ];
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');
