@@ -3,13 +3,13 @@ import type { ApiDoc } from './types';
 import { AreaChartAPI } from './AreaChartAPI';
 import { BarChartAPI } from './BarChartAPI';
 import { ComposedChartAPI } from './ComposedChartAPI';
+import { FunnelChartAPI } from './FunnelChartAPI';
 import { LineChartAPI } from './LineChartAPI';
 import { PieChartAPI } from './PieChartAPI';
 import { ScatterChartAPI } from './ScatterChartAPI';
 import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
-import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './TreemapAPI';
 
 import { AreaAPI } from './AreaAPI';
@@ -63,7 +63,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   RadarChart: RadarChartAPI,
   ScatterChart: ScatterChartAPI,
   RadialBarChart: RadialBarChartAPI,
-  FunnelChart,
+  FunnelChart: FunnelChartAPI,
   Sankey: SankeyAPI,
   Treemap: TreemapAPI,
 

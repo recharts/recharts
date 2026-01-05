@@ -34,6 +34,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Dot',
   'ErrorBar',
   'Funnel',
+  'FunnelChart',
   'Label',
   'LabelList',
   'Legend',
