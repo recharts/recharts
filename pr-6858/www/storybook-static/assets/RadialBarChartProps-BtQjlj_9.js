@@ -1,0 +1,1 @@
+import{B as r}from"./BarChartProps-NaDbaloH.js";import{P as a}from"./PolarChartProps-BGKE_54j.js";const l={...r,...a,startAngle:{...a.startAngle,defaultValue:0},endAngle:{...a.endAngle,defaultValue:360}};export{l as R};

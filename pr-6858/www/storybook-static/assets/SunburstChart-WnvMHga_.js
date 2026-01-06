@@ -1,0 +1,12 @@
+import{j as t}from"./jsx-runtime-CHgIia86.js";import{useMDXComponents as n}from"./index-Uw3SpPuJ.js";import{M as s,C as p,A as a}from"./blocks-DKGmVktE.js";import{S as i,a as m}from"./SunburstChart.stories-aipZoDn3.js";import"./iframe-DP2mOMln.js";import"./preload-helper-Dp1pzeXC.js";import"./index-CMQ1Twes.js";import"./ChartProps-h4DKB0dX.js";import"./EventHandlers-CQuYL328.js";import"./PolarChartProps-BGKE_54j.js";import"./resolveDefaultProps-_qLwNxhH.js";import"./arrayEqualityCheck-5iTHPuD6.js";import"./PolarUtils-DkgNb_vz.js";import"./Layer-BZqUSVid.js";import"./Sector-CAH7EP92.js";import"./Text-C5XiBNyf.js";import"./DOMUtils-DWLh1SLI.js";import"./RechartsWrapper-T4ODBC4p.js";import"./hooks-zeoTqeYF.js";import"./axisSelectors-1ZBBcU4q.js";import"./zIndexSlice-Cik2D4vv.js";import"./RegisterGraphicalItemId-30jUMiK8.js";import"./RechartsHookInspector-DVpbP7qM.js";import"./ChartSizeDimensions-fmpk3s6Q.js";import"./OffsetShower-B4eNU7sm.js";import"./PlotAreaShower-CPDnvxOK.js";import"./Tooltip-CtUAS5no.js";import"./useElementOffset-Bme7kzJ-.js";import"./iteratee-VohP_WFB.js";import"./types-DdS-Ezdx.js";import"./Curve-DYGBu986.js";import"./Cross-CBOoYy9A.js";import"./Rectangle-DcVYjSDm.js";import"./useAnimationId-BuyyHYgP.js";import"./ZIndexLayer-BOwqkVYS.js";function o(e){const r={code:"code",h1:"h1",h2:"h2",p:"p",...n(),...e.components};return t.jsxs(t.Fragment,{children:[t.jsx(r.h1,{id:"sunburst",children:"Sunburst"}),`
+`,t.jsx(s,{of:i}),`
+`,t.jsx(p,{of:m,layout:"padded"}),`
+`,t.jsx(r.p,{children:`The sunburst is a hierarchical chart, similar to a treemap, plotted in polar coordinates.
+Sunburst charts effectively convey the hierarchical relationships and proportions within each level.
+It is easy to see all the middle layers in the hierarchy, which might get lost in other visualizations.
+For some datasets, the radial layout may be more visually appealing and intuitive than a traditional treemap.`}),`
+`,t.jsx(r.h2,{id:"parent-component",children:"Parent Component"}),`
+`,t.jsxs(r.p,{children:["The Sunburst can be used within: ",t.jsx(r.code,{children:"<ResponsiveContainer />"}),"."]}),`
+`,t.jsx(r.h2,{id:"properties",children:"Properties"}),`
+`,t.jsx(r.p,{children:"Properties in the groups Other and Internal are not recommended to be used."}),`
+`,t.jsx(a,{of:i,sort:"requiredFirst"})]})}function K(e={}){const{wrapper:r}={...n(),...e.components};return r?t.jsx(r,{...e,children:t.jsx(o,{...e})}):o(e)}export{K as default};
