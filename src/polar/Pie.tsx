@@ -382,7 +382,7 @@ type InternalProps = PieSvgAttributes & InternalPieProps;
 
 export type Props = PieSvgAttributes & PieProps;
 
-type RealPieData = any;
+type RealPieData = Record<string, unknown>;
 
 export type PieCoordinate = {
   cx: number;
@@ -694,7 +694,7 @@ export function computePieSectors({
   offset,
 }: {
   pieSettings: PieSettings;
-  displayedData: ReadonlyArray<RealPieData>;
+  displayedData: ChartData;
   cells: ReadonlyArray<ReactElement> | undefined;
   offset: ChartOffsetInternal;
 }): ReadonlyArray<PieSectorDataItem> | undefined {
@@ -716,7 +716,7 @@ export function computePieSectors({
 
   if (sum > 0) {
     let prev: PieSectorDataItem;
-    sectors = displayedData.map((entry: any, i: number) => {
+    sectors = displayedData.map((entry: unknown, i: number) => {
       // @ts-expect-error getValueByDataKey does not validate the output type
       const val: number = getValueByDataKey(entry, dataKey, 0);
       // @ts-expect-error getValueByDataKey does not validate the output type
@@ -725,7 +725,8 @@ export function computePieSectors({
       const percent = (isNumber(val) ? val : 0) / sum;
       let tempStartAngle;
 
-      const entryWithCellInfo: ChartData = { ...entry, ...(cells && cells[i] && cells[i].props) };
+      // @ts-expect-error can't spread unknown
+      const entryWithCellInfo: RealPieData = { ...entry, ...(cells && cells[i] && cells[i].props) };
 
       if (i) {
         tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
@@ -750,7 +751,6 @@ export function computePieSectors({
       ];
       const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
 
-      // @ts-expect-error entryWithCellInfo spreads unknown properties
       prev = {
         ...pieSettings.presentationProps,
         percent,
