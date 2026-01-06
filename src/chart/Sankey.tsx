@@ -603,9 +603,9 @@ export interface SankeyData {
 }
 
 // TODO: improve types - NodeOptions uses SankeyNode, LinkOptions uses LinkProps. Standardize.
-type SankeyNodeOptions =
+export type SankeyNodeOptions =
   | ReactElement<SVGProps<SVGRectElement>>
-  | ((props: NodeProps) => ReactElement<SVGProps<SVGRectElement>>)
+  | ((props: NodeProps) => ReactNode)
   | RectangleProps;
 
 type SankeyLinkOptions =
@@ -739,7 +739,7 @@ interface SankeyProps {
   align?: 'left' | 'justify';
 }
 
-type Props = SVGProps<SVGSVGElement> & SankeyProps;
+export type Props = SVGProps<SVGSVGElement> & SankeyProps;
 
 type SankeyElementType = 'node' | 'link';
 

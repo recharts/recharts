@@ -1,4 +1,4 @@
-import { ResponsiveContainer, Sankey, Tooltip, useChartWidth, Layer, Rectangle } from 'recharts';
+import { ResponsiveContainer, Sankey, Tooltip, useChartWidth, Layer, Rectangle, SankeyNodeProps } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -19,7 +19,7 @@ const data0 = {
 };
 
 // #endregion
-function MyCustomSankeyNode({ x, y, width, height, index, payload }: any) {
+function MyCustomSankeyNode({ x, y, width, height, index, payload }: SankeyNodeProps) {
   const containerWidth = useChartWidth();
   if (containerWidth == null) {
     return null; // Return null if used outside a chart context
@@ -55,7 +55,6 @@ const SankeyCustomNodeExample = () => (
   <ResponsiveContainer width="100%" aspect={2}>
     <Sankey
       data={data0}
-      // @ts-expect-error Recharts type does not allow null but it should! TODO fix
       node={MyCustomSankeyNode}
       nodePadding={50}
       margin={{

@@ -41,6 +41,7 @@
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
     "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit:*",
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
+    "test-exports": "vitest run scripts/verify-exports.test.ts",
     "omnidoc": "npx tsx omnidoc/generateApiDoc.ts && npx tsx omnidoc/generateStorybookArgs.ts && prettier www/src/docs/api storybook/stories/API/arg-types --write",
     "test-mutation": "stryker run",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",

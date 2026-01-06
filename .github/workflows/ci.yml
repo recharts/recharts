@@ -110,6 +110,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Verify Public Exports
+        run: npm run test-exports
+
       - name: omnidoc - documentation test
         run: npm run test-omnidoc
 

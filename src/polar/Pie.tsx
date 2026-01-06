@@ -119,7 +119,7 @@ export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offs
   PieLabelExtraProps &
   Coordinate;
 
-type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
+export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
  * The `label` prop in Pie accepts a variety of alternatives.
@@ -182,7 +182,7 @@ export type PieSectorDataItem = PiePresentationProps &
   };
 
 export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
-type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
+export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state

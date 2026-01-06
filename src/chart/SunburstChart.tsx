@@ -6,7 +6,7 @@ import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
-import { Text } from '../component/Text';
+import { Text, Props as TextProps } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -45,16 +45,6 @@ interface SunburstNode extends SunburstData {
   tooltipIndex: TooltipIndex;
 }
 
-interface TextOptions {
-  fontFamily?: string;
-  fontWeight?: string;
-  paintOrder?: string;
-  stroke?: string;
-  fill?: string;
-  fontSize?: string;
-  pointerEvents?: string;
-}
-
 export interface SunburstChartProps {
   className?: string;
   data: SunburstData;
@@ -91,7 +81,7 @@ export interface SunburstChartProps {
   fill?: string;
   stroke?: string;
   /* an object with svg text options to control the appearance of the chart labels. */
-  textOptions?: TextOptions;
+  textOptions?: TextProps;
 
   onMouseEnter?: (node: SunburstData, e: React.MouseEvent) => void;
 
