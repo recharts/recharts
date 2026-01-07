@@ -1,0 +1,1 @@
+import{r as e}from"./iframe-2t9JIeSz.js";import{c as p,s as l}from"./resolveDefaultProps-CwSOlvvS.js";const s=e.forwardRef((r,a)=>{const{children:t,className:o,...c}=r,n=p("recharts-layer",o);return e.createElement("g",{className:n,...l(c),ref:a},t)});try{s.displayName="Layer",s.__docgenInfo={description:"",displayName:"Layer",props:{}}}catch{}export{s as L};
