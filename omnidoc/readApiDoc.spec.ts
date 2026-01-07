@@ -31,6 +31,7 @@ describe('readApiDoc', () => {
         "Funnel",
         "ResponsiveContainer",
         "Legend",
+        "DefaultLegendContent",
         "Tooltip",
         "Cell",
         "Text",

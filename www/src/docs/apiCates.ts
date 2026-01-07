@@ -20,6 +20,7 @@ export const apiCates = [
     items: [
       'ResponsiveContainer',
       'Legend',
+      'DefaultLegendContent',
       'Tooltip',
       'Cell',
       'Text',

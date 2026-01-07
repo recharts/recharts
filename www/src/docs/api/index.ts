@@ -53,6 +53,7 @@ import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI';
 import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
+import { DefaultLegendContentAPI } from './DefaultLegendContentAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -82,6 +83,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
 
   ResponsiveContainer: ResponsiveContainerAPI,
   Legend: LegendAPI,
+  DefaultLegendContent: DefaultLegendContentAPI,
   Tooltip: TooltipAPI,
   Cell,
   Text: TextAPI,

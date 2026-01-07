@@ -10,6 +10,7 @@ import { coloredDiff } from './util/coloredDiff';
 import { componentsExcludedFromOmnidoc } from './componentsExcludedFromOmnidoc';
 import { OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS } from './generateApiDoc';
 import { apiCates } from '../www/src/docs/apiCates';
+import { allApiDocs } from '../www/src/docs/api/index';
 
 describe('omnidoc - documentation consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -50,6 +51,7 @@ describe('omnidoc - documentation consistency', () => {
         continue;
       }
       expect(OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS).toContain(symbol);
+      expect(allApiDocs).toHaveProperty(symbol);
     }
   });
 

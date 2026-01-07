@@ -33,6 +33,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'Cross',
   'Curve',
   'Customized',
+  'DefaultLegendContent',
   'Dot',
   'ErrorBar',
   'Funnel',
