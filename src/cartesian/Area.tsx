@@ -274,7 +274,7 @@ interface AreaProps extends ZIndexable {
    * The interpolation type of curve. Allows custom interpolation function.
    *
    * @defaultValue linear
-   * @link https://github.com/d3/d3-shape#curves
+   * @link https://d3js.org/d3-shape/curve
    * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
