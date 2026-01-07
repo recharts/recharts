@@ -981,7 +981,7 @@ describe('readProject', () => {
     const originalTexts = reader.getTypeOf('Label', 'content')?.names;
     assertNotNull(originalTexts);
     const result = processType(originalTexts, false);
-    expect(result).toEqual('ReactNode | Function');
+    expect(result).toEqual('Function | ReactNode');
   });
 
   it('should say that children type is ReactNode, and not attempt to explain the union', () => {
@@ -1078,5 +1078,14 @@ describe('readProject', () => {
     expect(tagText.text).toEqual(
       '{@link  https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray }',
     );
+  });
+
+  it('should consider props defined with Partial as optional', () => {
+    const propMeta = reader.getPropMeta('Bar', 'onClick');
+    assertNotNull(propMeta);
+    expect(propMeta).toHaveLength(1);
+    const first = propMeta[0];
+    assertNotNull(first);
+    expect(first.isRequired).toBe(false);
   });
 });

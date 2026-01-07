@@ -5,11 +5,11 @@ export const RadarAPI: ApiDoc = {
   props: [
     {
       name: 'activeDot',
-      type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode',
+      type: 'Function | Partial<ActiveDotProps> | ReactNode | false | true',
       isOptional: true,
       defaultVal: true,
     },
-    { name: 'angleAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'angleAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'animationBegin',
       type: 'number',
@@ -38,7 +38,7 @@ export const RadarAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -54,7 +54,7 @@ export const RadarAPI: ApiDoc = {
     { name: 'connectNulls', type: 'boolean', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -77,7 +77,7 @@ export const RadarAPI: ApiDoc = {
     },
     {
       name: 'dot',
-      type: 'false | true | Function | Partial<Props> | ReactNode',
+      type: 'Function | Partial<Props> | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -96,7 +96,7 @@ export const RadarAPI: ApiDoc = {
     { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -113,7 +113,7 @@ export const RadarAPI: ApiDoc = {
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
       name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
+      type: 'Function | Props | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -143,7 +143,7 @@ export const RadarAPI: ApiDoc = {
     },
     {
       name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -168,10 +168,10 @@ export const RadarAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'radiusAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'shape',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (

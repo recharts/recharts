@@ -8,7 +8,7 @@ export const ReferenceDotAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'ifOverflow',
-      type: '"hidden" | "visible" | "discard" | "extendDomain"',
+      type: '"discard" | "extendDomain" | "hidden" | "visible"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -66,7 +66,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'r',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -79,7 +79,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'shape',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -94,7 +94,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -111,7 +111,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -124,7 +124,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -141,7 +141,7 @@ export const ReferenceDotAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

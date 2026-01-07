@@ -26,6 +26,13 @@ import { defaultLocale } from '../www/src/utils/LocaleUtils';
 export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   // Add components here as they become ready for auto-generation by default
   'Area',
+  'AreaChart',
+  'Bar',
+  'BarChart',
+  'ComposedChart',
+  'FunnelChart',
+  'LineChart',
+  'ScatterChart',
 ];
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');
@@ -180,9 +187,13 @@ function generateStorybookArgs(componentName: string, projectReader: ProjectDocR
 
     // Default value
     if (defaultValue.type === 'known' && defaultValue.value !== undefined) {
-      arg.defaultValue = defaultValue.value;
+      arg.defaultValue =
+        typeof defaultValue.value === 'object' ? JSON.stringify(defaultValue.value) : defaultValue.value;
       if (arg.table) {
-        arg.table.defaultValue = { summary: String(defaultValue.value) };
+        arg.table.defaultValue = {
+          summary:
+            typeof defaultValue.value === 'object' ? JSON.stringify(defaultValue.value) : String(defaultValue.value),
+        };
       }
     }
 

@@ -3,10 +3,22 @@ import { ApiDoc } from './types';
 export const RadialBarChartAPI: ApiDoc = {
   name: 'RadialBarChart',
   props: [
-    { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: true },
+    {
+      name: 'accessibilityLayer',
+      type: 'boolean',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Turn on accessibility support for keyboard-only and screen reader users.</p>
+          </section>
+        ),
+      },
+      defaultVal: true,
+    },
     {
       name: 'barCategoryGap',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -19,7 +31,7 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'barGap',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -32,7 +44,7 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'barSize',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -49,7 +61,7 @@ export const RadialBarChartAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'cx',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -65,7 +77,7 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'cy',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -81,17 +93,24 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'data',
-      type: 'Array<any>',
+      type: 'ReadonlyArray<unknown>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The source data. Each element should be an object.</p>
+            <p>
+              The source data. Each element should be an object. The properties of each object represent the values of
+              different data dimensions.
+            </p>
+            <p>
+              Use the <code>dataKey</code> prop to specify which properties to use.
+            </p>
           </section>
         ),
       },
+      format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
     },
-    { name: 'dataKey', type: 'string | number | Function', isOptional: true },
+    { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
     {
       name: 'endAngle',
@@ -108,7 +127,7 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -122,7 +141,7 @@ export const RadialBarChartAPI: ApiDoc = {
     { name: 'id', type: 'string', isOptional: true },
     {
       name: 'innerRadius',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -165,7 +184,7 @@ export const RadialBarChartAPI: ApiDoc = {
     { name: 'maxBarSize', type: 'number', isOptional: true },
     {
       name: 'outerRadius',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -204,7 +223,12 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'role', type: 'string', isOptional: true },
-    { name: 'stackOffset', type: '(union of 6 variants)', isOptional: true, defaultVal: 'none' },
+    {
+      name: 'stackOffset',
+      type: '"expand" | "none" | "positive" | "sign" | "silhouette" | "wiggle"',
+      isOptional: true,
+      defaultVal: 'none',
+    },
     {
       name: 'startAngle',
       type: 'number',
@@ -221,7 +245,7 @@ export const RadialBarChartAPI: ApiDoc = {
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
       name: 'syncId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -230,6 +254,7 @@ export const RadialBarChartAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Synchronized Charts Example', url: '/examples/SynchronizedAreaChart/', isExternal: false }],
     },
     {
       name: 'syncMethod',
@@ -251,12 +276,23 @@ export const RadialBarChartAPI: ApiDoc = {
       },
       defaultVal: 'index',
     },
-    { name: 'tabIndex', type: 'number', isOptional: true },
+    {
+      name: 'tabIndex',
+      type: 'number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>If and where the chart should appear in the tab order</p>
+          </section>
+        ),
+      },
+    },
     { name: 'throttleDelay', type: 'number', isOptional: true },
     { name: 'title', type: 'string', isOptional: true },
     {
       name: 'width',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (

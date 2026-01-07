@@ -21,6 +21,7 @@ import {
   ChartOffsetInternal,
   Coordinate,
   DataKey,
+  DataProvider,
   GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -61,8 +62,7 @@ import {
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-
-type ChartDataInput = Record<string, unknown>;
+import { ChartData } from '../state/chartDataSlice';
 
 interface PieDef {
   /**
@@ -187,7 +187,7 @@ export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps extends PieDef, ZIndexable {
+interface InternalPieProps extends DataProvider, PieDef, ZIndexable {
   id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
@@ -199,8 +199,6 @@ interface InternalPieProps extends PieDef, ZIndexable {
   /** the max radius of pie */
   maxRadius?: number;
   hide?: boolean;
-  /** the input data */
-  data?: ChartDataInput[];
   sectors: ReadonlyArray<PieSectorDataItem>;
   /** @deprecated */
   activeShape?: ActiveShape<PieSectorDataItem>;
@@ -221,7 +219,7 @@ interface InternalPieProps extends PieDef, ZIndexable {
   rootTabIndex?: number;
 }
 
-interface PieProps extends PieDef, ZIndexable {
+interface PieProps extends DataProvider, PieDef, ZIndexable {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -247,10 +245,6 @@ interface PieProps extends PieDef, ZIndexable {
    */
   animationEasing?: AnimationTiming;
   className?: string;
-  /**
-   * The source data which each element is an object.
-   */
-  data?: ChartDataInput[];
   /**
    * Decides how to extract the value of this Pie from the data:
    * - `string`: the name of the field in the data object;
@@ -388,7 +382,7 @@ type InternalProps = PieSvgAttributes & InternalPieProps;
 
 export type Props = PieSvgAttributes & PieProps;
 
-type RealPieData = any;
+type RealPieData = Record<string, unknown>;
 
 export type PieCoordinate = {
   cx: number;
@@ -700,7 +694,7 @@ export function computePieSectors({
   offset,
 }: {
   pieSettings: PieSettings;
-  displayedData: ReadonlyArray<RealPieData>;
+  displayedData: ChartData;
   cells: ReadonlyArray<ReactElement> | undefined;
   offset: ChartOffsetInternal;
 }): ReadonlyArray<PieSectorDataItem> | undefined {
@@ -722,7 +716,7 @@ export function computePieSectors({
 
   if (sum > 0) {
     let prev: PieSectorDataItem;
-    sectors = displayedData.map((entry: any, i: number) => {
+    sectors = displayedData.map((entry: unknown, i: number) => {
       // @ts-expect-error getValueByDataKey does not validate the output type
       const val: number = getValueByDataKey(entry, dataKey, 0);
       // @ts-expect-error getValueByDataKey does not validate the output type
@@ -731,7 +725,8 @@ export function computePieSectors({
       const percent = (isNumber(val) ? val : 0) / sum;
       let tempStartAngle;
 
-      const entryWithCellInfo: ChartDataInput = { ...entry, ...(cells && cells[i] && cells[i].props) };
+      // @ts-expect-error can't spread unknown
+      const entryWithCellInfo: RealPieData = { ...entry, ...(cells && cells[i] && cells[i].props) };
 
       if (i) {
         tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);

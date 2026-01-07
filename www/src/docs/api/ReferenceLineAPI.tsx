@@ -6,7 +6,7 @@ export const ReferenceLineAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'ifOverflow',
-      type: '"hidden" | "visible" | "discard" | "extendDomain"',
+      type: '"discard" | "extendDomain" | "hidden" | "visible"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -93,10 +93,10 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'shape', type: 'ReactNode | Function', isOptional: true },
+    { name: 'shape', type: 'Function | ReactNode', isOptional: true },
     {
       name: 'strokeWidth',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -109,7 +109,7 @@ export const ReferenceLineAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -126,7 +126,7 @@ export const ReferenceLineAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -139,7 +139,7 @@ export const ReferenceLineAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -156,7 +156,7 @@ export const ReferenceLineAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

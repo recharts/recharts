@@ -32,7 +32,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'className',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -57,7 +57,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'height',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -70,7 +70,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'id',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -109,7 +109,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'minHeight',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -121,7 +121,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'minWidth',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -146,7 +146,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'number | `${number}%`',
+      type: '`${number}%` | number',
       isOptional: true,
       desc: {
         'en-US': (

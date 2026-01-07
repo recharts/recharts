@@ -2,16 +2,17 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { coordinateData } from '../../data';
 import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ScatterChartArgs } from '../arg-types/ScatterChartArgs';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: ScatterChartArgs,
   component: ScatterChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     const { data, ...rest } = args;
     return (
@@ -26,7 +27,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(ScatterChartArgs),
     data: coordinateData,
     margin: {
       top: 0,

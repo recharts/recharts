@@ -66,7 +66,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     },
     {
       name: 'axisLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -109,7 +109,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -133,7 +133,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly string> | Array<readonly number> | readonly [AxisDomainItem, AxisDomainItem] | Function',
+      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -248,7 +248,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     },
     {
       name: 'orientation',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -259,7 +259,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       },
       defaultVal: 'right',
     },
-    { name: 'radiusAxisId', type: 'string | number', isOptional: true, defaultVal: 0 },
+    { name: 'radiusAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
       name: 'range',
       type: 'AxisRange',
@@ -353,7 +353,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     },
     {
       name: 'tickLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -371,7 +371,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     { name: 'ticks', type: 'Array<readonly TickItem>', isOptional: true },
     {
       name: 'type',
-      type: '"number" | "auto" | "category"',
+      type: '"auto" | "category" | "number"',
       isOptional: true,
       desc: {
         'en-US': (

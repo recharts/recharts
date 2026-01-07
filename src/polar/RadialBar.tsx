@@ -192,7 +192,7 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem> | null>;
 }) {
   const {
-    data,
+    sectors,
     isAnimationActive,
     animationBegin,
     animationDuration,
@@ -233,8 +233,8 @@ function SectorsWithAnimation({
       {(t: number) => {
         const stepData: ReadonlyArray<RadialBarDataItem> | undefined =
           t === 1
-            ? data
-            : (data ?? STABLE_EMPTY_ARRAY).map((entry: RadialBarDataItem, index: number): RadialBarDataItem => {
+            ? sectors
+            : (sectors ?? STABLE_EMPTY_ARRAY).map((entry: RadialBarDataItem, index: number): RadialBarDataItem => {
                 const prev = prevData && prevData[index];
 
                 if (prev) {
@@ -320,10 +320,9 @@ interface InternalRadialBarProps extends ZIndexable {
    */
   cornerRadius?: string | number;
   /**
-   * The source data which each element is an object.
-   * @defaultValue []
+   * Calculated radial bar sectors
    */
-  data?: ReadonlyArray<RadialBarDataItem>;
+  sectors: ReadonlyArray<RadialBarDataItem>;
   dataKey: string | number | ((obj: any) => any);
   /**
    * @defaultValue false
@@ -414,9 +413,9 @@ interface InternalRadialBarProps extends ZIndexable {
 }
 
 export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
-  InternalRadialBarProps;
+  Omit<InternalRadialBarProps, 'sectors'>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults>;
+type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
@@ -426,7 +425,7 @@ function SetRadialBarPayloadLegend(props: RadialBarProps) {
 const SetRadialBarTooltipEntrySettings = React.memo(
   ({
     dataKey,
-    data,
+    sectors,
     stroke,
     strokeWidth,
     name,
@@ -435,11 +434,11 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: Pick<
-    WithIdRequired<PropsWithDefaults>,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'id'
+    InternalProps,
+    'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: data,
+      dataDefinedOnItem: sectors,
       getPosition: noop,
       settings: {
         graphicalItemId: id,
@@ -501,7 +500,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 
   render() {
-    const { hide, data, className, background } = this.props;
+    const { hide, sectors, className, background } = this.props;
 
     if (hide) {
       return null;
@@ -512,7 +511,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
     return (
       <ZIndexLayer zIndex={this.props.zIndex}>
         <Layer className={layerClass}>
-          {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
+          {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(sectors)}</Layer>}
           <Layer className="recharts-radial-bar-sectors">
             <RenderSectors {...this.props} />
           </Layer>
@@ -537,7 +536,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     angleAxisId: props.angleAxisId,
     radiusAxisId: props.radiusAxisId,
   };
-  const data: ReadonlyArray<RadialBarDataItem> =
+  const sectors: ReadonlyArray<RadialBarDataItem> =
     useAppSelector(state =>
       selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
     ) ?? STABLE_EMPTY_ARRAY;
@@ -545,7 +544,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     <>
       <SetRadialBarTooltipEntrySettings
         dataKey={props.dataKey}
-        data={data}
+        sectors={sectors}
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
         name={props.name}
@@ -554,7 +553,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
         tooltipType={props.tooltipType}
         id={props.id}
       />
-      <RadialBarWithState {...props} data={data} />
+      <RadialBarWithState {...props} sectors={sectors} />
     </>
   );
 }
@@ -567,7 +566,6 @@ export const defaultRadialBarProps = {
   background: false,
   cornerIsExternal: false,
   cornerRadius: 0,
-  data: [] as ReadonlyArray<RadialBarDataItem>,
   forceCornerRadius: false,
   hide: false,
   isAnimationActive: 'auto',

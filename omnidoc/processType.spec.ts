@@ -3,12 +3,12 @@ import { processType } from './generateApiDoc';
 
 describe('processType', () => {
   it('should handle simple unions', () => {
-    expect(processType(['string', 'number'], false)).toBe('string | number');
+    expect(processType(['string', 'number'], false)).toBe('number | string');
   });
 
   it('should handle unions with object types containing unions', () => {
     const input = ['"top"', '"left"', '{ x?: number | Percent; y?: number | Percent; }'];
-    const expected = '"top" | "left" | { x?: number | Percent; y?: number | Percent; }';
+    const expected = '"left" | "top" | { x?: number | Percent; y?: number | Percent; }';
     expect(processType(input, true)).toBe(expected);
   });
 

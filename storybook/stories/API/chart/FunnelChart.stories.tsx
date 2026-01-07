@@ -1,17 +1,18 @@
 import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { FunnelChartArgs } from '../arg-types/FunnelChartArgs';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: FunnelChartArgs,
   component: FunnelChart,
 };
 
-export const Simple: StoryObj = {
+export const API: StoryObj = {
+  name: 'Simple',
   render: (args: Args) => {
     const { data } = args;
     return (
@@ -34,6 +35,7 @@ export const Simple: StoryObj = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(FunnelChartArgs),
     shape: {},
     activeShape: { fill: 'gold', stroke: 'purple' },
     data: [
@@ -122,7 +124,7 @@ export const WithChangingDataKey: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(FunnelChartArgs),
     data: pageDataWithFillColor,
     width: 360,
     height: 360,

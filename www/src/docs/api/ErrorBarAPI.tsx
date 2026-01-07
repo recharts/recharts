@@ -5,7 +5,7 @@ export const ErrorBarAPI: ApiDoc = {
   props: [
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: false,
       desc: {
         'en-US': (
@@ -34,13 +34,13 @@ export const ErrorBarAPI: ApiDoc = {
     { name: 'animationDuration', type: 'number', isOptional: true, defaultVal: 400 },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       defaultVal: 'ease-in-out',
     },
     {
       name: 'direction',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -69,7 +69,7 @@ export const ErrorBarAPI: ApiDoc = {
     },
     {
       name: 'strokeWidth',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -82,7 +82,7 @@ export const ErrorBarAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

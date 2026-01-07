@@ -3,16 +3,17 @@ import { curveCardinal } from 'victory-vendor/d3-shape';
 import { Args } from '@storybook/react-vite';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { pageData, subjectData } from '../../data';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { AreaChartArgs } from '../arg-types/AreaChartArgs';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: AreaChartArgs,
   component: AreaChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -34,9 +35,8 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     data: pageData,
-    layout: 'horizontal',
     margin: {
       top: 0,
       bottom: 0,
@@ -60,7 +60,7 @@ export const CustomType = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     data: pageData,
     layout: 'horizontal',
     margin: {
@@ -86,7 +86,7 @@ export const CategoricalAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     data: subjectData,
     layout: 'horizontal',
     margin: {

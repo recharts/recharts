@@ -5,7 +5,7 @@ export const AreaAPI: ApiDoc = {
   props: [
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: false,
       desc: {
         'en-US': (
@@ -29,7 +29,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'activeDot',
-      type: 'false | true | Function | Partial<ActiveDotProps> | ReactNode',
+      type: 'Function | Partial<ActiveDotProps> | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -74,7 +74,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -87,7 +87,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'baseLine',
-      type: 'number | Array<readonly NullableCoordinate>',
+      type: 'Array<readonly NullableCoordinate> | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -101,7 +101,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'baseValue', type: 'number | "dataMin" | "dataMax"', isOptional: true },
+    { name: 'baseValue', type: '"dataMax" | "dataMin" | number', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -117,10 +117,10 @@ export const AreaAPI: ApiDoc = {
       },
       defaultVal: false,
     },
-    { name: 'data', type: 'Array<unknown>', isOptional: true },
+    { name: 'data', type: 'ReadonlyArray<unknown>', isOptional: true },
     {
       name: 'dot',
-      type: 'false | true | Function | Partial<Props> | ReactNode',
+      type: 'Function | Partial<Props> | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -172,7 +172,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -189,7 +189,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
       name: 'label',
-      type: 'false | true | ReactNode | Function | Props',
+      type: 'Function | Props | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -219,7 +219,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -247,7 +247,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'stackId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -272,7 +272,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'strokeDasharray',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -292,7 +292,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'strokeWidth',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -306,7 +306,7 @@ export const AreaAPI: ApiDoc = {
     { name: 'tooltipType', type: '"none"', isOptional: true },
     {
       name: 'type',
-      type: '"step" | "basis" | "basisClosed" | "basisOpen" | "bumpX" | "bumpY" | "bump" | "linear" | "linearClosed" | "natural" | "monotoneX" | "monotoneY" | "monotone" | "stepBefore" | "stepAfter" | CurveFactory',
+      type: '"basis" | "basisClosed" | "basisOpen" | "bump" | "bumpX" | "bumpY" | "linear" | "linearClosed" | "monotone" | "monotoneX" | "monotoneY" | "natural" | "step" | "stepAfter" | "stepBefore" | CurveFactory',
       isOptional: true,
       desc: {
         'en-US': (
@@ -331,7 +331,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'unit',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -343,7 +343,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'xAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -356,7 +356,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

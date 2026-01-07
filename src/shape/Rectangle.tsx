@@ -100,8 +100,13 @@ interface RectangleProps {
    */
   height?: number;
   /**
+   * The radius of corners.
+   *
    * If you provide a single number, it applies to all four corners.
    * If you provide an array of four numbers, they apply to top-left, top-right, bottom-right, bottom-left corners respectively.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/roundedBars/ Guide: Rounded bar corners}
+   *
    * @defaultValue 0
    */
   radius?: RectRadius;

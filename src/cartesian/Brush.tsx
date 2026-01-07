@@ -1079,6 +1079,8 @@ export const defaultBrushProps = {
  *
  * @see {@link https://recharts.github.io/en-US/examples/BrushBarChart/ BarChart with Brush}
  * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
+ *
+ * @consumes CartesianChartContext
  */
 export function Brush(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultBrushProps);

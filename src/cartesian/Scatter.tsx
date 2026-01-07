@@ -31,6 +31,7 @@ import {
   AnimationTiming,
   Coordinate,
   DataKey,
+  DataProvider,
   isNonEmptyArray,
   LegendType,
   NonEmptyArray,
@@ -74,6 +75,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { ChartData } from '../state/chartDataSlice';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -131,7 +133,7 @@ export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElemen
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface ScatterInternalProps extends ZIndexable {
-  data?: any[];
+  data?: ChartData;
   xAxisId: string | number;
   yAxisId: string | number;
   zAxisId: string | number;
@@ -166,7 +168,7 @@ interface ScatterInternalProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps extends ZIndexable {
+interface ScatterProps extends DataProvider, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.
@@ -174,7 +176,6 @@ interface ScatterProps extends ZIndexable {
    * If undefined, Recharts will generate a unique ID automatically.
    */
   id?: string;
-  data?: any[];
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0

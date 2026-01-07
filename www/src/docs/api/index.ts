@@ -1,18 +1,19 @@
 import type { ApiDoc } from './types';
 
-import { AreaChartAPI as AreaChart } from './AreaChart';
-import { BarChartAPI } from './BarChart';
-import { ComposedChartAPI } from './ComposedChart';
-import { LineChartAPI as LineChart } from './LineChart';
+import { AreaChartAPI } from './AreaChartAPI';
+import { BarChartAPI } from './BarChartAPI';
+import { ComposedChartAPI } from './ComposedChartAPI';
+import { FunnelChartAPI } from './FunnelChartAPI';
+import { LineChartAPI } from './LineChartAPI';
 import { PieChartAPI } from './PieChartAPI';
-import { ScatterChartAPI as ScatterChart } from './ScatterChart';
+import { ScatterChartAPI } from './ScatterChartAPI';
 import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
-import { FunnelChartAPI as FunnelChart } from './FunnelChart';
 import { TreemapAPI } from './TreemapAPI';
 
-import { BarAPI as Bar } from './Bar';
+import { AreaAPI } from './AreaAPI';
+import { BarAPI } from './BarAPI';
 import { LineAPI } from './LineAPI';
 import { ScatterAPI } from './ScatterAPI';
 import { XAxisAPI } from './XAxisAPI';
@@ -47,7 +48,6 @@ import { TrapezoidAPI } from './TrapezoidAPI';
 import { BarStackAPI } from './BarStackAPI';
 import { LabelAPI } from './LabelAPI';
 import { ZIndexLayerAPI } from './ZIndexLayerAPI';
-import { AreaAPI } from './AreaAPI';
 import { CustomizedAPI } from './CustomizedAPI';
 import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI';
@@ -55,20 +55,20 @@ import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
-  AreaChart,
+  AreaChart: AreaChartAPI,
   BarChart: BarChartAPI,
-  LineChart,
+  LineChart: LineChartAPI,
   ComposedChart: ComposedChartAPI,
   PieChart: PieChartAPI,
   RadarChart: RadarChartAPI,
-  ScatterChart,
+  ScatterChart: ScatterChartAPI,
   RadialBarChart: RadialBarChartAPI,
-  FunnelChart,
+  FunnelChart: FunnelChartAPI,
   Sankey: SankeyAPI,
   Treemap: TreemapAPI,
 
   Area: AreaAPI,
-  Bar,
+  Bar: BarAPI,
   BarStack: BarStackAPI,
   Line: LineAPI,
   Scatter: ScatterAPI,

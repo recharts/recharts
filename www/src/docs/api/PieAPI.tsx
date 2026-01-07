@@ -51,7 +51,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -64,10 +64,10 @@ export const PieAPI: ApiDoc = {
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'cornerRadius', type: 'string | number', isOptional: true },
+    { name: 'cornerRadius', type: 'number | string', isOptional: true },
     {
       name: 'cx',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -83,7 +83,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'cy',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -100,19 +100,26 @@ export const PieAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
-      type: 'Array<ChartDataInput>',
+      type: 'ReadonlyArray<unknown>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>The source data which each element is an object.</p>
+            <p>
+              The source data. Each element should be an object. The properties of each object represent the values of
+              different data dimensions.
+            </p>
+            <p>
+              Use the <code>dataKey</code> prop to specify which properties to use.
+            </p>
           </section>
         ),
       },
+      format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
     },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -181,7 +188,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'innerRadius',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -197,7 +204,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -277,7 +284,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'legendType',
-      type: '"none" | "circle" | "cross" | "diamond" | "line" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
+      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -315,7 +322,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'nameKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -328,7 +335,7 @@ export const PieAPI: ApiDoc = {
     },
     {
       name: 'outerRadius',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (

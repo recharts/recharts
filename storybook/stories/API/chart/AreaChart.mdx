@@ -1,22 +1,36 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as AreaChartStories from './AreaChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './AreaChart.stories';
 
 # AreaChart
 
-<Meta of={AreaChartStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={AreaChartStories.Simple} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The AreaChart can be used within: `<ResponsiveContainer />`.
+The AreaChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Child component
+## Child Components
 
-The AreaChart can be used with the following child components: `<XAxis />`, `<YAxis />`, `<ReferenceArea />`, `<ReferenceDot />`, `<ReferenceLine />`, `<Brush />`, `<CartesianGrid />`, `<Legend />`, `<Tooltip />`, `<Area />`, `<Customized />` or `<validate svg elements... />`.
+The AreaChart can be used with the following child components:
+- `<Area/>`
+- `<Bar/>`
+- `<Brush/>`
+- `<Funnel/>`
+- `<Label/>`
+- `<Legend/>`
+- `<Line/>`
+- `<ReferenceArea/>`
+- `<ReferenceDot/>`
+- `<ReferenceLine/>`
+- `<Scatter/>`
+- `<Tooltip/>`
+- `<XAxis/>`
+- `<YAxis/>`
+- `<ZAxis/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={AreaChartStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />

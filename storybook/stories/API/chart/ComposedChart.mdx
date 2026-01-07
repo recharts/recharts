@@ -1,22 +1,36 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as ComposedChartStories from './ComposedChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './ComposedChart.stories';
 
 # ComposedChart
 
-<Meta of={ComposedChartStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={ComposedChartStories.SimpleChart} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The ComposedChart can be used within: `<ResponsiveContainer />`.
+The ComposedChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Child component
+## Child Components
 
-The ComposedChart can be used with the following child components: `<XAxis />`, `<YAxis />`, `<ReferenceArea />`, `<ReferenceDot />`, `<ReferenceLine />`, `<Brush />`, `<CartesianGrid />`, `<Legend />`, `<Tooltip />`, `<Area />`, `<Line />`, `<Bar />`, `<Customized />` or valid svg elements.
+The ComposedChart can be used with the following child components:
+- `<Area/>`
+- `<Bar/>`
+- `<Brush/>`
+- `<Funnel/>`
+- `<Label/>`
+- `<Legend/>`
+- `<Line/>`
+- `<ReferenceArea/>`
+- `<ReferenceDot/>`
+- `<ReferenceLine/>`
+- `<Scatter/>`
+- `<Tooltip/>`
+- `<XAxis/>`
+- `<YAxis/>`
+- `<ZAxis/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={ComposedChartStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />

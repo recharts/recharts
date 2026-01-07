@@ -55,7 +55,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'lineHeight',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -166,7 +166,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'textAnchor',
-      type: '"end" | "middle" | "inherit" | "start"',
+      type: '"end" | "inherit" | "middle" | "start"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -211,7 +211,7 @@ export const TextAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

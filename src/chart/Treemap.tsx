@@ -370,6 +370,11 @@ export interface Props {
 
   /**
    * The source data. Each element should be an object.
+   * The properties of each object represent the values of different data dimensions.
+   *
+   * Use the `dataKey` prop to specify which properties to use.
+   *
+   * If the `children` property is present on an element, it will be treated as a nested treemap.
    */
   data?: ReadonlyArray<TreemapDataType>;
 

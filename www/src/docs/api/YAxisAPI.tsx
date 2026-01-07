@@ -65,7 +65,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'axisLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -105,7 +105,7 @@ export const YAxisAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'dataKey',
-      type: 'string | number | Function',
+      type: 'Function | number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -129,7 +129,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly string> | Array<readonly number> | readonly [AxisDomainItem, AxisDomainItem] | Function',
+      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -288,7 +288,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'orientation',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -405,7 +405,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'tickLine',
-      type: 'false | true | React.SVGProps<SVGLineElement>',
+      type: 'React.SVGProps<SVGLineElement> | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -498,7 +498,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -514,7 +514,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'yAxisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

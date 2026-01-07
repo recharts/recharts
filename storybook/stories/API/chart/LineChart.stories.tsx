@@ -2,15 +2,17 @@ import React, { useCallback, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { LineChartArgs } from '../arg-types/LineChartArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: LineChartArgs,
   component: LineChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -38,6 +40,7 @@ export const Simple = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
   },
 };
@@ -61,6 +64,7 @@ export const SynchronizedTooltip = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
     syncId: 'example-syncId',
     width: 400,

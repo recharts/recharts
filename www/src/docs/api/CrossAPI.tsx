@@ -6,7 +6,7 @@ export const CrossAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'height',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -42,7 +42,7 @@ export const CrossAPI: ApiDoc = {
     },
     {
       name: 'width',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -54,7 +54,7 @@ export const CrossAPI: ApiDoc = {
     },
     {
       name: 'x',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -66,7 +66,7 @@ export const CrossAPI: ApiDoc = {
     },
     {
       name: 'y',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (

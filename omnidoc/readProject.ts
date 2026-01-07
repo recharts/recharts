@@ -278,7 +278,7 @@ export class ProjectDocReader implements DocReader {
             origin === 'recharts' ? this.getDefaultValueFromObject(componentName, propName) : { type: 'unreadable' },
           defaultValueFromJSDoc: this.getDefaultValueFromJSDoc(prop),
           jsDoc: this.getJsDocMeta(declaration),
-          isRequired: Node.isPropertySignature(declaration) && !declaration.hasQuestionToken(),
+          isRequired: !prop.hasFlags(SymbolFlags.Optional),
         };
 
         properties.push(propMeta);

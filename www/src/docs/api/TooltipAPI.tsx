@@ -48,7 +48,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'animationEasing',
-      type: '"linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"',
+      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
       isOptional: true,
       desc: {
         'en-US': (
@@ -61,7 +61,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'axisId',
-      type: 'string | number',
+      type: 'number | string',
       isOptional: true,
       desc: {
         'en-US': (
@@ -83,7 +83,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'content',
-      type: 'ReactNode | Function',
+      type: 'Function | ReactNode',
       isOptional: true,
       desc: {
         'en-US': (
@@ -117,7 +117,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'cursor',
-      type: 'false | true | React.SVGProps<SVGElement> | ReactNode',
+      type: 'React.SVGProps<SVGElement> | ReactNode | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -131,7 +131,7 @@ export const TooltipAPI: ApiDoc = {
       },
       defaultVal: true,
     },
-    { name: 'defaultIndex', type: 'null | string | number', isOptional: true },
+    { name: 'defaultIndex', type: 'null | number | string', isOptional: true },
     {
       name: 'filterNull',
       type: 'boolean',
@@ -178,7 +178,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'isAnimationActive',
-      type: 'false | true | "auto"',
+      type: '"auto" | false | true',
       isOptional: true,
       desc: {
         'en-US': (
@@ -194,7 +194,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'itemSorter',
-      type: '"name" | "dataKey" | "value" | Function',
+      type: '"dataKey" | "name" | "value" | Function',
       isOptional: true,
       desc: {
         'en-US': (
@@ -260,10 +260,10 @@ export const TooltipAPI: ApiDoc = {
       },
       defaultVal: 10,
     },
-    { name: 'payloadUniqBy', type: 'false | true | UniqueFunc<TooltipPayloadEntry>', isOptional: true },
+    { name: 'payloadUniqBy', type: 'UniqueFunc<TooltipPayloadEntry> | false | true', isOptional: true },
     {
       name: 'portal',
-      type: 'null | HTMLElement',
+      type: 'HTMLElement | null',
       isOptional: true,
       desc: {
         'en-US': (
@@ -345,7 +345,7 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'trigger',
-      type: '"hover" | "click"',
+      type: '"click" | "hover"',
       isOptional: true,
       desc: {
         'en-US': (

@@ -44,8 +44,10 @@ import { ChartData } from '../state/chartDataSlice';
  * - `sign` stacks positive values above zero and negative values below zero. Similar to `none` but handles negatives.
  * - `positive` ignores all negative values, and then behaves like \`none\`.
  *
- * Also see https://d3js.org/d3-shape/stack#stack-offsets
+ * @see {@link https://d3js.org/d3-shape/stack#stack-offsets}
  * (note that the `diverging` offset in d3 is named `sign` in recharts)
+ *
+ * @inline
  */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
 export type CartesianLayout = 'horizontal' | 'vertical';
@@ -1301,10 +1303,23 @@ export interface ChartPointer {
   chartY: number;
 }
 
+export interface DataProvider {
+  /**
+   * The source data. Each element should be an object.
+   * The properties of each object represent the values of different data dimensions.
+   *
+   * Use the `dataKey` prop to specify which properties to use.
+   *
+   * @example data={[{ name: 'a', value: 12 }]}
+   * @example data={[{ label: 'foo', measurements: [5, 12] }]}
+   */
+  data?: ChartData;
+}
+
 /**
  * Props shared with all charts.
  */
-interface BaseChartProps extends ExternalMouseEvents {
+interface BaseChartProps extends DataProvider, ExternalMouseEvents {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -1323,13 +1338,11 @@ interface BaseChartProps extends ExternalMouseEvents {
   children?: ReactNode;
   className?: string;
   /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
    * @defaultValue true
    */
   accessibilityLayer?: boolean;
-  /**
-   * The source data. Each element should be an object.
-   */
-  data?: ChartData;
   desc?: string;
   /**
    * Empty space around the container.
@@ -1340,6 +1353,8 @@ interface BaseChartProps extends ExternalMouseEvents {
   style?: CSSProperties;
   /**
    * Charts with the same syncId will synchronize Tooltip and Brush events.
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/SynchronizedAreaChart/ Synchronized Charts Example}
    */
   syncId?: number | string;
   /**
@@ -1351,6 +1366,9 @@ interface BaseChartProps extends ExternalMouseEvents {
    * @defaultValue index
    */
   syncMethod?: SyncMethod;
+  /**
+   * If and where the chart should appear in the tab order
+   */
   tabIndex?: number;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
@@ -1371,12 +1389,16 @@ export interface CartesianChartProps extends BaseChartProps {
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
    * @defaultValue 10%
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/barAlignment/ Bar Alignment Guide}
    */
   barCategoryGap?: number | string;
   /**
    * The gap between two bars in the same category.
    *
    * @defaultValue 4
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/barAlignment/ Bar Alignment Guide}
    */
   barGap?: number | string;
   /**
@@ -1401,18 +1423,26 @@ export interface CartesianChartProps extends BaseChartProps {
    */
   maxBarSize?: number;
   /**
-   * If false set, stacked items will be rendered left to right. If true set, stacked items
-   * will be rendered right to left. Render direction affects SVG layering, not x position.
+   * If `false`, stacked items will be rendered left to right.
+   * If `true`, stacked items will be rendered right to left.
+   *
+   * Render direction affects SVG layering, not x position.
    *
    * @defaultValue false
    */
   reverseStackOrder?: boolean;
+  /**
+   * The ARIA role for the chart, which provides semantic information for screen reader users.
+   */
   role?: string;
   /**
    * The type of offset function used to generate the lower and upper values in the series array.
    * The types are built-in offsets in d3-shape.
    * Only applicable for stacked Area or Bar charts.
    * Has no effect when the stackId prop is not set on Area or Bar components.
+   *
+   * @link https://d3js.org/d3-shape/stack#stack_offset
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartStackedBySign/ Chart with stackOffset=sign example}
    *
    * @defaultValue none
    */
