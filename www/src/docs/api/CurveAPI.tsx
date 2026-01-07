@@ -32,7 +32,7 @@ export const CurveAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: 'false',
+      defaultVal: false,
       examples: [
         {
           name: 'LineChart with connectNull true and false',

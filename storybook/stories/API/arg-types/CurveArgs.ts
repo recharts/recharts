@@ -48,7 +48,7 @@ export const CurveArgs: StorybookArgs = {
         summary: 'false',
       },
     },
-    defaultValue: 'false',
+    defaultValue: false,
   },
   dangerouslySetInnerHTML: {
     table: {

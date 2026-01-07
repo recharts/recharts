@@ -33,6 +33,7 @@ import { sankeyDefaultProps } from '../src/chart/Sankey';
 import { defaultBarStackProps } from '../src/cartesian/BarStack';
 import { defaultPolarGridProps } from '../src/polar/PolarGrid';
 import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
+import { defaultCurveProps } from '../src/shape/Curve';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -47,6 +48,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Brush: { defaultProps: defaultBrushProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
+  Curve: { defaultProps: defaultCurveProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
