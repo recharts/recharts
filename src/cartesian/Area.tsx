@@ -171,7 +171,9 @@ interface AreaProps extends ZIndexable {
 
   /**
    * Whether to connect the area across null points.
+   *
    * @defaultValue false
+   * @see {@link https://recharts.github.io/en-US/examples/AreaChartConnectNulls/ AreaChart with connectNull true and false}
    */
   connectNulls?: boolean;
   data?: ChartData;

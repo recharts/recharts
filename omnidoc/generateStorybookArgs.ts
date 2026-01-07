@@ -31,6 +31,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'BarChart',
   'CartesianGrid',
   'ComposedChart',
+  'Curve',
   'FunnelChart',
   'LineChart',
   'ScatterChart',

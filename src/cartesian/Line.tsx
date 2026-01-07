@@ -164,7 +164,7 @@ interface LineProps extends ZIndexable {
    * Whether to connect the line across null points.
    * @defaultValue false
    *
-   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ A lineChart connect nulls and a lineChart disconnect nulls}
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ LineChart with connectNull true and false}
    */
   connectNulls?: boolean;
   data?: ChartData;

@@ -40,7 +40,7 @@ import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI } from './PolarGridAPI';
 import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 
-import { CurveAPI as Curve } from './Curve';
+import { CurveAPI } from './CurveAPI';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI } from './SectorAPI';
@@ -101,7 +101,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ErrorBar: ErrorBarAPI,
 
   Cross: CrossAPI,
-  Curve,
+  Curve: CurveAPI,
   Dot: DotAPI,
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,

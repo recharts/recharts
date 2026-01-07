@@ -1,90 +1,8 @@
 import { ApiDoc } from './types';
 
-export const AreaAPI: ApiDoc = {
-  name: 'Area',
+export const CurveAPI: ApiDoc = {
+  name: 'Curve',
   props: [
-    {
-      name: 'dataKey',
-      type: 'Function | number | string',
-      isOptional: false,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Decides how to extract the value of this Area from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Area.
-              </li>
-            </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'activeDot',
-      type: 'Function | Partial<ActiveDotProps> | ReactNode | false | true',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot
-              will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If
-              object set, active dot will be drawn which have the props merged by the internal calculated props and the
-              option. If ReactElement set, the option can be the custom active dot element. If set a function, the
-              function will be called to render customized active dot.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: true,
-    },
-    {
-      name: 'animationBegin',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies when the animation should begin, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'animationDuration',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies the duration of animation, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 1500,
-    },
-    {
-      name: 'animationEasing',
-      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of easing function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'ease',
-    },
     {
       name: 'baseLine',
       type: 'Array<readonly NullableCoordinate> | number',
@@ -101,7 +19,6 @@ export const AreaAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'baseValue', type: '"dataMax" | "dataMin" | number', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -115,7 +32,7 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
-      defaultVal: false,
+      defaultVal: 'false',
       examples: [
         {
           name: 'LineChart with connectNull true and false',
@@ -129,158 +46,35 @@ export const AreaAPI: ApiDoc = {
         },
       ],
     },
-    { name: 'data', type: 'ReadonlyArray<unknown>', isOptional: true },
+    { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
-      name: 'dot',
-      type: 'Function | Partial<Props> | ReactNode | false | true',
+      name: 'layout',
+      type: '"centric" | "horizontal" | "radial" | "vertical"',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated
-              internally. If object set, dots will be drawn which have the props merged by the internal calculated props
-              and the option. If ReactElement set, the option can be the custom dot element. If set a function, the
-              function will be called to render customized dot.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'hide',
-      type: 'boolean',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Hides the whole graphical element when true.</p>
-            <p>
-              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
-              visible in Legend, and can be included in axis domain calculations, depending on{' '}
-              <code>includeHidden</code> props of your XAxis/YAxis.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'id',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Unique identifier of this component. Used as an HTML attribute <code>id</code>, and also to identify this
-              element internally.
-            </p>
-            <p>If undefined, Recharts will generate a unique ID automatically.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'isAnimationActive',
-      type: '"auto" | false | true',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If set false, animation of area will be disabled. If set &quot;auto&quot;, the animation will be disabled
-              in SSR and enabled in browser.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-    },
-    { name: 'isRange', type: 'boolean', isOptional: true },
-    {
-      name: 'label',
-      type: 'Function | Props | ReactNode | false | true',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders one label for each data point. Options:</p>
-            <ul>
-              <li>
-                <code>true</code>: renders default labels
-              </li>
-              <li>
-                <code>false</code>: no labels are rendered
-              </li>
-              <li>
-                <code>object</code>: the props of LabelList component
-              </li>
-              <li>
-                <code>ReactElement</code>: a custom label element
-              </li>
-              <li>
-                <code>function</code>: a render function of custom label
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: false,
-    },
-    {
-      name: 'legendType',
-      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of icon in legend. If set to &#39;none&#39;, no legend item will be rendered.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'line',
-    },
-    {
-      name: 'name',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The name of data. This option will be used in tooltip and legend to represent this graphical item. If no
-              value was set to this option, the value of dataKey will be used alternatively.
+              This option affects the interpolation algorithm when the <code>type</code> prop is set to
+              &#39;monotone&#39;. It also specifies the type of baseline when the curve is closed.
             </p>
           </section>
         ),
       },
     },
+    { name: 'path', type: 'string', isOptional: true },
+    { name: 'pathRef', type: 'Function | React.RefObject<SVGPathElement> | null', isOptional: true },
     {
-      name: 'stackId',
-      type: 'number | string',
+      name: 'points',
+      type: 'Array<readonly NullableCoordinate>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.</p>
+            <p>The coordinates of all the points in the curve, like an array of objects with x and y coordinates.</p>
           </section>
         ),
       },
-    },
-    {
-      name: 'stroke',
-      type: 'string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The stroke color. If &quot;none&quot;, no line will be drawn.</p>
-          </section>
-        ),
-      },
-      defaultVal: '#3182bd',
     },
     {
       name: 'strokeDasharray',
@@ -303,20 +97,6 @@ export const AreaAPI: ApiDoc = {
       ],
     },
     {
-      name: 'strokeWidth',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The width of the stroke</p>
-          </section>
-        ),
-      },
-      defaultVal: 1,
-    },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
-    {
       name: 'type',
       type: '"basis" | "basisClosed" | "basisOpen" | "bump" | "bumpX" | "bumpY" | "linear" | "linearClosed" | "monotone" | "monotoneX" | "monotoneY" | "natural" | "step" | "stepAfter" | "stepBefore" | CurveFactory',
       isOptional: true,
@@ -335,98 +115,15 @@ export const AreaAPI: ApiDoc = {
           isExternal: false,
         },
         { name: 'https://d3js.org/d3-shape/curve', url: 'https://d3js.org/d3-shape/curve', isExternal: true },
-        {
-          name: 'https://github.com/d3/d3-shape#curves',
-          url: 'https://github.com/d3/d3-shape#curves',
-          isExternal: true,
-        },
       ],
-    },
-    {
-      name: 'unit',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The unit of data. This option will be used in tooltip.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'xAxisId',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'yAxisId',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'zIndex',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
-              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
-              content is rendered in the default layer without portals.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 100,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationEnd',
-      type: 'AnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation end</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationEnd', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationEndCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIteration', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIterationCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationStart',
-      type: 'AnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation start</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationStart', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationStartCapture', type: 'AnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'RechartsMouseEventHandler<P, T>', isOptional: true },
@@ -669,6 +366,4 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
-  childrenComponents: ['LabelList'],
 };
