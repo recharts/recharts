@@ -58,6 +58,7 @@ import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
 import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
 import { LayerAPI } from './LayerAPI';
 import { SurfaceAPI } from './SurfaceAPI';
+import { SymbolsAPI } from './SymbolsAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -117,6 +118,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Rectangle: RectangleAPI,
   Sector: SectorAPI,
   Trapezoid: TrapezoidAPI,
+  Symbols: SymbolsAPI,
 
   ZIndexLayer: ZIndexLayerAPI,
 };
