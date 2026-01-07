@@ -39,6 +39,7 @@ describe('readApiDoc', () => {
         "Label",
         "LabelList",
         "Customized",
+        "Layer",
         "Pie",
         "RadialBar",
         "Radar",

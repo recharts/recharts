@@ -55,6 +55,7 @@ import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
 import { DefaultLegendContentAPI } from './DefaultLegendContentAPI.tsx';
 import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI.tsx';
+import { LayerAPI } from './LayerAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -92,6 +93,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Label: LabelAPI,
   LabelList: LabelListAPI,
   Customized: CustomizedAPI,
+  Layer: LayerAPI,
 
   Pie: PieAPI,
   RadialBar: RadialBarAPI,
