@@ -73,7 +73,7 @@ export const CartesianGridArgs: StorybookArgs = {
         summary: '[]',
       },
     },
-    defaultValue: '[]',
+    defaultValue: [],
   },
   horizontalPoints: {
     description:
@@ -87,7 +87,7 @@ export const CartesianGridArgs: StorybookArgs = {
         summary: '[]',
       },
     },
-    defaultValue: '[]',
+    defaultValue: [],
   },
   horizontalValues: {
     description:
@@ -159,7 +159,7 @@ export const CartesianGridArgs: StorybookArgs = {
         summary: '[]',
       },
     },
-    defaultValue: '[]',
+    defaultValue: [],
   },
   verticalPoints: {
     description:
@@ -173,7 +173,7 @@ export const CartesianGridArgs: StorybookArgs = {
         summary: '[]',
       },
     },
-    defaultValue: '[]',
+    defaultValue: [],
   },
   verticalValues: {
     description:

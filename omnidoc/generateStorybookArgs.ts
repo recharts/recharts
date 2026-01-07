@@ -188,8 +188,7 @@ function generateStorybookArgs(componentName: string, projectReader: ProjectDocR
 
     // Default value
     if (defaultValue.type === 'known' && defaultValue.value !== undefined) {
-      arg.defaultValue =
-        typeof defaultValue.value === 'object' ? JSON.stringify(defaultValue.value) : defaultValue.value;
+      arg.defaultValue = defaultValue.value;
       if (arg.table) {
         arg.table.defaultValue = {
           summary:

@@ -169,7 +169,12 @@ export const LineChartArgs: StorybookArgs = {
         summary: '{"top":5,"right":5,"bottom":5,"left":5}',
       },
     },
-    defaultValue: '{"top":5,"right":5,"bottom":5,"left":5}',
+    defaultValue: {
+      top: 5,
+      right: 5,
+      bottom: 5,
+      left: 5,
+    },
   },
   maxBarSize: {
     description:
