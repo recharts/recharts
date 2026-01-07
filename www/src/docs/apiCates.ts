@@ -31,6 +31,7 @@ export const apiCates = [
       'Layer',
       'Customized',
       'ZIndexLayer',
+      'Surface',
     ],
   },
   {

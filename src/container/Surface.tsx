@@ -24,6 +24,13 @@ interface SurfaceProps {
 
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
+/**
+ * Renders an SVG element.
+ *
+ * Other charts already include a Surface component, so you would not normally use this directly.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg
+ */
 export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
   const { children, width, height, viewBox, className, style, title, desc, ...others } = props;
   const svgView = viewBox || { width, height, x: 0, y: 0 };

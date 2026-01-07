@@ -57,6 +57,7 @@ import { DotAPI } from './DotAPI';
 import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
 import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
 import { LayerAPI } from './LayerAPI';
+import { SurfaceAPI } from './SurfaceAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -96,6 +97,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   LabelList: LabelListAPI,
   Customized: CustomizedAPI,
   Layer: LayerAPI,
+  Surface: SurfaceAPI,
 
   Pie: PieAPI,
   RadialBar: RadialBarAPI,

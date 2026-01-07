@@ -65,6 +65,7 @@ export const OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS: string[] = [
   'ScatterChart',
   'Sector',
   'SunburstChart',
+  'Surface',
   'Text',
   'Tooltip',
   'Trapezoid',
