@@ -1,23 +1,30 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as SunburstStories from './SunburstChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './SunburstChart.stories';
 
-# Sunburst
+# SunburstChart
 
-<Meta of={SunburstStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={SunburstStories.Sunburst} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
-The sunburst is a hierarchical chart, similar to a treemap, plotted in polar coordinates.
+## Description
+
+<p>The sunburst is a hierarchical chart, similar to a <Link to="/api/Treemap/">Treemap</Link>, plotted in polar coordinates.
 Sunburst charts effectively convey the hierarchical relationships and proportions within each level.
 It is easy to see all the middle layers in the hierarchy, which might get lost in other visualizations.
-For some datasets, the radial layout may be more visually appealing and intuitive than a traditional treemap.
+For some datasets, the radial layout may be more visually appealing and intuitive than a traditional <Link to="/api/Treemap/">Treemap</Link>.</p>
+
 
 ## Parent Component
 
-The Sunburst can be used within: `<ResponsiveContainer />`.
+The SunburstChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Properties
+## Child Components
 
-Properties in the groups Other and Internal are not recommended to be used.
+The SunburstChart can be used with the following child components:
+- `<Tooltip/>`
 
-<ArgTypes of={SunburstStories} sort={'requiredFirst'} />
+## Props
+
+<Controls of={ComponentStories.API} />

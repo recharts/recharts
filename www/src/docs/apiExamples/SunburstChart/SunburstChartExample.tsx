@@ -1,14 +1,7 @@
-import React from 'react';
-import { Args } from '@storybook/react-vite';
-import { ResponsiveContainer, SunburstChart, SunburstData, Tooltip } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { SunburstChartArgs } from '../arg-types/SunburstChartArgs';
+import { ResponsiveContainer, SunburstChart, SunburstData, Tooltip } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
-export default {
-  argTypes: SunburstChartArgs,
-  component: SunburstChart,
-};
-
+// #region Sample data
 const hierarchy: SunburstData = {
   name: 'Root',
   value: 100,
@@ -88,22 +81,15 @@ const hierarchy: SunburstData = {
     },
   ],
 };
+// #endregion
 
-export const API = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height={450}>
-        <SunburstChart {...args} data={args.data}>
-          <Tooltip />
-          <RechartsHookInspector />
-        </SunburstChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    data: hierarchy,
-    innerRadius: 40,
-    startAngle: 90,
-    endAngle: 270,
-  },
-};
+export default function SunburstChartExample() {
+  return (
+    <ResponsiveContainer width="100%" height={450}>
+      <SunburstChart startAngle={90} endAngle={270} data={hierarchy}>
+        <Tooltip />
+        <RechartsDevtools />
+      </SunburstChart>
+    </ResponsiveContainer>
+  );
+}

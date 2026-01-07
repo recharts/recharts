@@ -13,6 +13,7 @@ export const apiCates = [
       'FunnelChart',
       'Treemap',
       'Sankey',
+      'SunburstChart',
     ],
   },
   {

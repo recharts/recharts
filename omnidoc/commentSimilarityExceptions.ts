@@ -133,6 +133,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'has extra information about error bar data structure',
   },
   {
+    components: ['SunburstChart'],
+    props: ['dataKey'],
+    reason: 'Sunburst is special because it provides the dataKey for its own data, and does not interact with axes',
+  },
+  {
     components: ['Scatter'],
     props: ['shape'],
     // https://github.com/recharts/recharts/issues/1753

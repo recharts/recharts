@@ -47,8 +47,28 @@ interface SunburstNode extends SunburstData {
 
 export interface SunburstChartProps {
   className?: string;
+  /**
+   * The source data. Each element should be an object.
+   * The properties of each object represent the values of different data dimensions.
+   *
+   * Use the `dataKey` prop to specify which properties to use.
+   *
+   * @example data={[{ name: 'a', value: 12, fill: '#8884d8' }, { name: 'b', value: 5, fill: '#83a6ed' }]}
+   */
   data: SunburstData;
+  /**
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
+   */
   width?: number | Percent;
+  /**
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
+   */
   height?: number | Percent;
   /**
    * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
@@ -60,18 +80,54 @@ export interface SunburstChartProps {
    * @default false
    */
   responsive?: boolean;
+  /**
+   * The padding between sectors.
+   *
+   * @defaultValue 2
+   */
   padding?: number;
+  /**
+   * Decides how to extract value from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value.
+   *
+   * @defaultValue value
+   */
   dataKey?: string;
+  /**
+   * Decides how to extract name from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @defaultValue name
+   */
   nameKey?: DataKey<any>;
-  /* Padding between each hierarchical level. */
+  /**
+   * Padding between each hierarchical level.
+   */
   ringPadding?: number;
-  /* The radius of the inner circle at the center of the chart. */
+  /**
+   * The radius of the inner circle at the center of the chart.
+   *
+   * @defaultValue 50
+   */
   innerRadius?: number;
-  /* Outermost edge of the chart. Defaults to the max possible radius for a circle inscribed in the chart container */
+  /**
+   * Outermost edge of the chart.
+   * Defaults to the max possible radius for a circle inscribed in the chart container
+   */
   outerRadius?: number;
-  /** The x-coordinate of center  */
+  /**
+   * The x-coordinate of center in pixels.
+   * If undefined, it will be set to half of the chart width.
+   */
   cx?: number;
-  /** The y-coordinate of center  */
+  /**
+   * The y-coordinate of center in pixels.
+   * If undefined, it will be set to half of the chart height.
+   */
   cy?: number;
   /** Angle in degrees from which the chart should start. */
   startAngle?: number;
@@ -80,7 +136,9 @@ export interface SunburstChartProps {
   children?: React.ReactNode;
   fill?: string;
   stroke?: string;
-  /* an object with svg text options to control the appearance of the chart labels. */
+  /**
+   * An object with svg text options to control the appearance of the chart labels.
+   */
   textOptions?: TextProps;
 
   onMouseEnter?: (node: SunburstData, e: React.MouseEvent) => void;
@@ -357,7 +415,13 @@ const SunburstChartImpl = ({
 };
 
 /**
+ * The sunburst is a hierarchical chart, similar to a {@link Treemap}, plotted in polar coordinates.
+ * Sunburst charts effectively convey the hierarchical relationships and proportions within each level.
+ * It is easy to see all the middle layers in the hierarchy, which might get lost in other visualizations.
+ * For some datasets, the radial layout may be more visually appealing and intuitive than a traditional {@link Treemap}.
+ *
  * @consumes ResponsiveContainerContext
+ * @provides TooltipEntrySettings
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
   const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);

@@ -11,6 +11,7 @@ import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { TreemapAPI } from './TreemapAPI';
+import { SunburstChartAPI } from './SunburstChartAPI';
 
 import { AreaAPI } from './AreaAPI';
 import { BarAPI } from './BarAPI';
@@ -53,9 +54,9 @@ import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI';
 import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
-import { DefaultLegendContentAPI } from './DefaultLegendContentAPI.tsx';
-import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI.tsx';
-import { LayerAPI } from './LayerAPI.tsx';
+import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
+import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
+import { LayerAPI } from './LayerAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -69,6 +70,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   FunnelChart: FunnelChartAPI,
   Sankey: SankeyAPI,
   Treemap: TreemapAPI,
+  SunburstChart: SunburstChartAPI,
 
   Area: AreaAPI,
   Bar: BarAPI,
