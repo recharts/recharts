@@ -316,7 +316,13 @@ interface PieProps extends DataProvider, PieDef, ZIndexable {
    */
   minAngle?: number;
   /**
-   * The key of each sector's name.
+   * Name represents each sector in the tooltip, and legend.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
    * @defaultValue name
    */
   nameKey?: DataKey<any>;

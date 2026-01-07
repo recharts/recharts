@@ -81,22 +81,21 @@ export interface SunburstChartProps {
    */
   responsive?: boolean;
   /**
-   * The padding between sectors.
+   * Distance between sectors.
    *
    * @defaultValue 2
    */
   padding?: number;
   /**
-   * Decides how to extract value from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value.
+   * Decides how to extract value from the data.
    *
    * @defaultValue value
    */
   dataKey?: string;
   /**
-   * Decides how to extract name from the data:
+   * Name represents each sector in the tooltip.
+   * This allows you to extract the name from the data:
+   *
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the name.
@@ -244,7 +243,7 @@ const preloadedState: Partial<RechartsRootState> = {
 
 type SunburstPositionMap = Map<string, ChartCoordinate>;
 
-const defaultSunburstChartProps = {
+export const defaultSunburstChartProps = {
   padding: 2,
   dataKey: 'value',
   nameKey: 'name',

@@ -59,8 +59,7 @@ export const SunburstChartArgs: StorybookArgs = {
     },
   },
   dataKey: {
-    description:
-      'Decides how to extract value from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value.',
+    description: 'Decides how to extract value from the data.',
     control: {
       type: 'text',
     },
@@ -85,7 +84,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'number',
       },
       category: 'General',
+      defaultValue: {
+        summary: '360',
+      },
     },
+    defaultValue: 360,
   },
   fill: {
     control: {
@@ -96,7 +99,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'string',
       },
       category: 'Style',
+      defaultValue: {
+        summary: '#333',
+      },
     },
+    defaultValue: '#333',
   },
   height: {
     description: 'The height of chart container.\nCan be a number or a percent string like "100%".',
@@ -132,11 +139,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: '50',
       },
     },
-    defaultValue: '50',
+    defaultValue: 50,
   },
   nameKey: {
     description:
-      'Decides how to extract name from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the name.',
+      'Name represents each sector in the tooltip.\nThis allows you to extract the name from the data:\n\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the name.',
     table: {
       type: {
         summary: 'Function | number | string',
@@ -186,7 +193,7 @@ export const SunburstChartArgs: StorybookArgs = {
     },
   },
   padding: {
-    description: 'The padding between sectors.',
+    description: 'Distance between sectors.',
     control: {
       type: 'number',
     },
@@ -199,7 +206,7 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: '2',
       },
     },
-    defaultValue: '2',
+    defaultValue: 2,
   },
   responsive: {
     description:
@@ -216,7 +223,7 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'false',
       },
     },
-    defaultValue: 'false',
+    defaultValue: false,
   },
   ringPadding: {
     description: 'Padding between each hierarchical level.',
@@ -228,7 +235,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'number',
       },
       category: 'General',
+      defaultValue: {
+        summary: '2',
+      },
     },
+    defaultValue: 2,
   },
   startAngle: {
     description: 'Angle in degrees from which the chart should start.',
@@ -240,7 +251,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'number',
       },
       category: 'General',
+      defaultValue: {
+        summary: '0',
+      },
     },
+    defaultValue: 0,
   },
   stroke: {
     control: {
@@ -251,7 +266,11 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'string',
       },
       category: 'Style',
+      defaultValue: {
+        summary: '#FFF',
+      },
     },
+    defaultValue: '#FFF',
   },
   style: {
     table: {
@@ -268,6 +287,18 @@ export const SunburstChartArgs: StorybookArgs = {
         summary: 'Props',
       },
       category: 'General',
+      defaultValue: {
+        summary:
+          '{"fontWeight":"bold","paintOrder":"stroke fill","fontSize":".75rem","stroke":"#FFF","fill":"black","pointerEvents":"none"}',
+      },
+    },
+    defaultValue: {
+      fontWeight: 'bold',
+      paintOrder: 'stroke fill',
+      fontSize: '.75rem',
+      stroke: '#FFF',
+      fill: 'black',
+      pointerEvents: 'none',
     },
   },
   width: {

@@ -34,6 +34,7 @@ import { defaultBarStackProps } from '../src/cartesian/BarStack';
 import { defaultPolarGridProps } from '../src/polar/PolarGrid';
 import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
 import { defaultCurveProps } from '../src/shape/Curve';
+import { defaultSunburstChartProps } from '../src/chart/SunburstChart';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -75,6 +76,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
   Sector: { defaultProps: defaultSectorProps },
+  SunburstChart: { defaultProps: defaultSunburstChartProps },
   Text: { defaultProps: textDefaultProps },
   Tooltip: { defaultProps: defaultTooltipProps },
   Trapezoid: { defaultProps: defaultTrapezoidProps },

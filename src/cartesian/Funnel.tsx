@@ -137,7 +137,13 @@ interface FunnelProps extends DataProvider {
    */
   legendType?: LegendType;
   /**
-   * The key of each trapezoid's name.
+   * Name represents each sector in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
    * @defaultValue name
    */
   nameKey?: DataKey<any>;
