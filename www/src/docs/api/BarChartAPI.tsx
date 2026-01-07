@@ -423,6 +423,7 @@ export const BarChartAPI: ApiDoc = {
     'Area',
     'Bar',
     'Brush',
+    'CartesianGrid',
     'Funnel',
     'Label',
     'Legend',

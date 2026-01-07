@@ -423,6 +423,7 @@ export const ComposedChartAPI: ApiDoc = {
     'Area',
     'Bar',
     'Brush',
+    'CartesianGrid',
     'Funnel',
     'Label',
     'Legend',

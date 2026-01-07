@@ -24,7 +24,7 @@ import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
-import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
+import { CartesianGridAPI } from './CartesianGridAPI';
 import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
@@ -77,7 +77,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ZAxis: ZAxisAPI,
   Brush: BrushAPI,
   CartesianAxis,
-  CartesianGrid,
+  CartesianGrid: CartesianGridAPI,
   Funnel: FunnelAPI,
 
   ResponsiveContainer: ResponsiveContainerAPI,
