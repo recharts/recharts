@@ -4,17 +4,27 @@ import { ApiDoc } from './types';
 export const DefaultTooltipContentAPI: ApiDoc = {
   name: 'DefaultTooltipContent',
   props: [
-    { name: 'accessibilityLayer', type: 'boolean', isOptional: false },
-    { name: 'contentStyle', type: 'React.CSSProperties', isOptional: true },
+    { name: 'accessibilityLayer', type: 'boolean', isOptional: true, defaultVal: false },
+    {
+      name: 'contentStyle',
+      type: 'React.CSSProperties',
+      isOptional: true,
+      defaultVal: { margin: 0, padding: 10, backgroundColor: '#fff', border: '1px solid #ccc', whiteSpace: 'nowrap' },
+    },
     { name: 'formatter', type: 'Formatter<TValue, TName>', isOptional: true },
     { name: 'itemSorter', type: '"dataKey" | "name" | "value" | Function', isOptional: true },
-    { name: 'itemStyle', type: 'React.CSSProperties', isOptional: true },
+    {
+      name: 'itemStyle',
+      type: 'React.CSSProperties',
+      isOptional: true,
+      defaultVal: { display: 'block', paddingTop: 4, paddingBottom: 4, color: '#000' },
+    },
     { name: 'label', type: 'ReactNode', isOptional: true },
     { name: 'labelClassName', type: 'string', isOptional: true },
     { name: 'labelFormatter', type: 'Function', isOptional: true },
-    { name: 'labelStyle', type: 'React.CSSProperties', isOptional: true },
+    { name: 'labelStyle', type: 'React.CSSProperties', isOptional: true, defaultVal: {} },
     { name: 'payload', type: 'Array<readonly Payload<TValue, TName>>', isOptional: true },
-    { name: 'separator', type: 'string', isOptional: true },
+    { name: 'separator', type: 'string', isOptional: true, defaultVal: ' : ' },
     { name: 'wrapperClassName', type: 'string', isOptional: true },
   ],
   desc: {

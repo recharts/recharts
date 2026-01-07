@@ -1007,6 +1007,9 @@ export interface Margin {
   left: number;
 }
 
+/**
+ * @inline
+ */
 export interface CartesianViewBox {
   x?: number;
   y?: number;

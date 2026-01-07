@@ -35,6 +35,7 @@ import { defaultPolarGridProps } from '../src/polar/PolarGrid';
 import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
 import { defaultCurveProps } from '../src/shape/Curve';
 import { defaultSunburstChartProps } from '../src/chart/SunburstChart';
+import { defaultDefaultTooltipContentProps } from '../src/component/DefaultTooltipContent';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -50,6 +51,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   Curve: { defaultProps: defaultCurveProps },
+  DefaultTooltipContent: { defaultProps: defaultDefaultTooltipContentProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },

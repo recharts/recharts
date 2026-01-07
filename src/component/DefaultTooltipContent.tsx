@@ -59,8 +59,27 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   label?: ReactNode;
   payload?: ReadonlyArray<Payload<TValue, TName>>;
   itemSorter?: 'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
-  accessibilityLayer: boolean;
+  accessibilityLayer?: boolean;
 }
+
+export const defaultDefaultTooltipContentProps = {
+  separator: ' : ',
+  contentStyle: {
+    margin: 0,
+    padding: 10,
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    whiteSpace: 'nowrap',
+  },
+  itemStyle: {
+    display: 'block',
+    paddingTop: 4,
+    paddingBottom: 4,
+    color: '#000',
+  },
+  labelStyle: {},
+  accessibilityLayer: false,
+} as const satisfies Partial<Props<any, any>>;
 
 /**
  * This component is by default rendered inside the {@link Tooltip} component. You would not use it directly.
@@ -72,10 +91,10 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
   props: Props<TValue, TName>,
 ) => {
   const {
-    separator = ' : ',
-    contentStyle = {},
-    itemStyle = {},
-    labelStyle = {},
+    separator = defaultDefaultTooltipContentProps.separator,
+    contentStyle,
+    itemStyle,
+    labelStyle = defaultDefaultTooltipContentProps.labelStyle,
     payload,
     formatter,
     itemSorter,
@@ -83,7 +102,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     labelClassName,
     label,
     labelFormatter,
-    accessibilityLayer = false,
+    accessibilityLayer = defaultDefaultTooltipContentProps.accessibilityLayer,
   } = props;
 
   const renderContent = () => {
@@ -112,10 +131,8 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
           }
 
           const finalItemStyle = {
-            display: 'block',
-            paddingTop: 4,
-            paddingBottom: 4,
-            color: entry.color || '#000',
+            ...defaultDefaultTooltipContentProps.itemStyle,
+            color: entry.color || defaultDefaultTooltipContentProps.itemStyle.color,
             ...itemStyle,
           };
 
@@ -141,11 +158,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
   };
 
   const finalStyle: React.CSSProperties = {
-    margin: 0,
-    padding: 10,
-    backgroundColor: '#fff',
-    border: '1px solid #ccc',
-    whiteSpace: 'nowrap',
+    ...defaultDefaultTooltipContentProps.contentStyle,
     ...contentStyle,
   };
   const finalLabelStyle = {

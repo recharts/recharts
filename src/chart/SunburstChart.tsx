@@ -337,7 +337,7 @@ const SunburstChartImpl = ({
   }
 
   // recursively add nodes for each data point and its children
-  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions, depth: number = 1): any {
+  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions, depth: number = 1): void {
     const { radius, innerR, initialAngle, childColor, nestedActiveTooltipIndex } = options;
 
     let currentAngle = initialAngle;

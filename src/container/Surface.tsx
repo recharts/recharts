@@ -5,16 +5,12 @@ import * as React from 'react';
 import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { CartesianViewBox } from '../util/types';
 
 interface SurfaceProps {
-  width: number;
-  height: number;
-  viewBox?: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  };
+  width: number | string;
+  height: number | string;
+  viewBox?: CartesianViewBox;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;

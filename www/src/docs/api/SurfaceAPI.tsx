@@ -10,7 +10,7 @@ export const SurfaceAPI: ApiDoc = {
     { name: 'desc', type: 'string', isOptional: true },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
     { name: 'title', type: 'string', isOptional: true },
-    { name: 'viewBox', type: 'Object', isOptional: true },
+    { name: 'viewBox', type: 'CartesianViewBox', isOptional: true },
   ],
   desc: {
     'en-US': (
