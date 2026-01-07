@@ -22,6 +22,7 @@ export const apiCates = [
       'Legend',
       'DefaultLegendContent',
       'Tooltip',
+      'DefaultTooltipContent',
       'Cell',
       'Text',
       'Label',

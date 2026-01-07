@@ -55,13 +55,19 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  labelFormatter?: (label: any, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
-  label?: any;
+  labelFormatter?: (label: ReactNode, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
+  label?: ReactNode;
   payload?: ReadonlyArray<Payload<TValue, TName>>;
   itemSorter?: 'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
   accessibilityLayer: boolean;
 }
 
+/**
+ * This component is by default rendered inside the {@link Tooltip} component. You would not use it directly.
+ *
+ * You can use this component to customize the content of the tooltip,
+ * or you can provide your own completely independent content.
+ */
 export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType>(
   props: Props<TValue, TName>,
 ) => {
@@ -147,7 +153,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     ...labelStyle,
   };
   const hasLabel = !isNullish(label);
-  let finalLabel = hasLabel ? label : '';
+  let finalLabel: ReactNode = hasLabel ? label : '';
   const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
   const labelCN = clsx('recharts-tooltip-label', labelClassName);
 

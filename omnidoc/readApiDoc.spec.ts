@@ -33,6 +33,7 @@ describe('readApiDoc', () => {
         "Legend",
         "DefaultLegendContent",
         "Tooltip",
+        "DefaultTooltipContent",
         "Cell",
         "Text",
         "Label",

@@ -54,6 +54,7 @@ import { BrushAPI } from './BrushAPI';
 import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
 import { DefaultLegendContentAPI } from './DefaultLegendContentAPI.tsx';
+import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -85,6 +86,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Legend: LegendAPI,
   DefaultLegendContent: DefaultLegendContentAPI,
   Tooltip: TooltipAPI,
+  DefaultTooltipContent: DefaultTooltipContentAPI,
   Cell,
   Text: TextAPI,
   Label: LabelAPI,
