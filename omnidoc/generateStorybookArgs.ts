@@ -311,6 +311,13 @@ async function main() {
 
   console.log('Generating Storybook ArgTypes and MDX for:', componentsToGenerate);
 
+  /**
+   * Strips <Link> and <a> tags from a string, preserving the text content.
+   */
+  function stripLinks(html: string): string {
+    return html.replace(/<Link\s+[^>]*>(.*?)<\/Link>/g, '$1').replace(/<a\s+[^>]*>(.*?)<\/a>/g, '$1');
+  }
+
   for (const componentName of componentsToGenerate) {
     try {
       // Generate Args
@@ -320,7 +327,8 @@ async function main() {
 
       // Generate MDX
       const apiDoc = await generateApiDoc(componentName, projectReader, contextMap);
-      const description = typeof apiDoc.desc === 'string' ? apiDoc.desc : apiDoc.desc?.[defaultLocale];
+      const descriptionRaw = typeof apiDoc.desc === 'string' ? apiDoc.desc : apiDoc.desc?.[defaultLocale];
+      const description = descriptionRaw ? stripLinks(descriptionRaw) : descriptionRaw;
 
       // Find stories file
       const storiesFile = storiesFiles.find(f => path.basename(f) === `${componentName}.stories.tsx`);
