@@ -1,0 +1,74 @@
+import{r as v,e}from"./iframe-D9q7UUmi.js";import{B as i}from"./Brush-D7tzS5F5.js";import{R}from"./arrayEqualityCheck-CJJXJ9Rv.js";import{C as p}from"./ComposedChart-BrSXjugh.js";import{L as t}from"./Line-BGi21o2A.js";import{R as c}from"./RechartsHookInspector-Btgon49z.js";import{X as S}from"./XAxis-Dxn9Zo0N.js";import{Y as A}from"./YAxis-Ds2QNT8w.js";import{C as m}from"./CartesianGrid-ocgArU4K.js";import{L as w}from"./Legend-D31ymzRq.js";import{R as d}from"./ReferenceLine-BvNlIroj.js";import{L as B}from"./LineChart-DkIzBThE.js";import{T as N}from"./Tooltip-BLBubyYz.js";import{p as l}from"./Page-DPte-9pC.js";import"./preload-helper-Dp1pzeXC.js";import"./resolveDefaultProps-D-3coS0e.js";import"./axisSelectors-DCJHWbvW.js";import"./Layer-CUKLQgPC.js";import"./Text-CLmUy_On.js";import"./DOMUtils-BXuH-NK6.js";import"./chartDataContext-C5vcePQl.js";import"./RechartsWrapper-8_jXv7hz.js";import"./hooks-b1KD0qBL.js";import"./zIndexSlice-CxekzBSL.js";import"./PolarUtils-cf4CEJPT.js";import"./CartesianChart-B58H7xZp.js";import"./CategoricalChart-ak-_6B9f.js";import"./ReactUtils-CfRgqXT5.js";import"./Label-CDSn628C.js";import"./ZIndexLayer-CtgCGO4x.js";import"./ActivePoints-B6AA5Rbz.js";import"./Dot-CrGRPD2L.js";import"./types-FPdAMXDy.js";import"./RegisterGraphicalItemId-B8upk-8m.js";import"./ErrorBarContext-D_fOmF9j.js";import"./GraphicalItemClipPath-CYdNpZeU.js";import"./SetGraphicalItem-DllIbSlC.js";import"./useAnimationId-DeN0uxUI.js";import"./getRadiusAndStrokeWidthFromDot-Ct_S_qD5.js";import"./ActiveShapeUtils-Cf3wP9DQ.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-aQPjrzEG.js";import"./Trapezoid-CrYCphId.js";import"./Sector-BIUbLnT5.js";import"./Symbols-B3oT9PiF.js";import"./Curve-DEESCjbc.js";import"./index-YTWFD20P.js";import"./ChartSizeDimensions-CGOPgU1Q.js";import"./OffsetShower-D7RAK20_.js";import"./PlotAreaShower-DDsxyFt0.js";import"./CartesianAxis-DBnbCnpE.js";import"./useElementOffset-D1mKrQqH.js";import"./iteratee-JJOOie1Z.js";import"./CartesianScaleHelper-C9Oze4oB.js";import"./Cross-Cb3_Opci.js";const _e={component:i},a={render:u=>{const[h,y]=v.useState(2),[k,g]=v.useState(5);return e.createElement(e.Fragment,null,e.createElement(R,{width:"100%",height:400},e.createElement(p,{data:l},e.createElement(t,{dataKey:"uv",isAnimationActive:!1}),e.createElement(i,{startIndex:h,endIndex:k,onChange:r=>{g(r.endIndex),y(r.startIndex)},alwaysShowText:!0}),e.createElement(c,null))),e.createElement("input",{type:"number","aria-label":"startIndex",value:h,onChange:r=>{const n=Number(r.target.value);Number.isInteger(n)&&y(n)}}),e.createElement("input",{"aria-label":"endIndex",value:k,onChange:r=>{const n=Number(r.target.value);Number.isInteger(n)&&g(n)}}))}},o={render:u=>e.createElement(p,{width:600,height:300,data:l,margin:{top:0,right:0,left:0,bottom:0}},e.createElement(S,{dataKey:"name"}),e.createElement(A,null),e.createElement(m,{strokeDasharray:"3 3"}),e.createElement(w,null),e.createElement(t,{type:"monotone",dataKey:"pv",stroke:"#8884d8",activeDot:{r:8}}),e.createElement(t,{type:"monotone",dataKey:"uv",stroke:"#82ca9d"}),e.createElement(d,{stroke:"red",strokeOpacity:"red",strokeWidth:3,strokeLinecap:"round",y:1e3}),e.createElement(i,{dataKey:"name"},e.createElement(B,null,e.createElement(d,{key:"test",stroke:"red",strokeOpacity:"red",strokeWidth:3,strokeLinecap:"round",y:1e3}),e.createElement(m,{strokeDasharray:"1 1",verticalPoints:[10,20,30],horizontalPoints:[10,20,30]}),e.createElement(t,{type:"monotone",dataKey:"pv",stroke:"#8884d8",activeDot:{r:8}}),e.createElement(t,{type:"monotone",dataKey:"uv",stroke:"#82ca9d"}))),e.createElement(N,null),e.createElement(c,null))},s={render:u=>e.createElement(p,{width:600,height:300,data:l},e.createElement(i,null,e.createElement(B,null,e.createElement(d,{key:"test",stroke:"red",strokeOpacity:"red",strokeWidth:3,strokeLinecap:"round",y:1e3}),e.createElement(m,{strokeDasharray:"1 1",verticalPoints:[10,20,30],horizontalPoints:[10,20,30]}),e.createElement(t,{type:"monotone",dataKey:"pv",stroke:"#8884d8",activeDot:{r:8}}),e.createElement(t,{type:"monotone",dataKey:"uv",stroke:"#82ca9d"}))),e.createElement(c,null))};var C,E,x;a.parameters={...a.parameters,docs:{...(C=a.parameters)==null?void 0:C.docs,source:{originalSource:`{
+  render: (_args: Args) => {
+    const [startIndex, setStartIndex] = useState<number | undefined>(2);
+    const [endIndex, setEndIndex] = useState<number | undefined>(5);
+    return <>
+        <ResponsiveContainer width="100%" height={400}>
+          <ComposedChart data={pageData}>
+            <Line dataKey="uv" isAnimationActive={false} />
+
+            <Brush startIndex={startIndex} endIndex={endIndex} onChange={e => {
+            setEndIndex(e.endIndex);
+            setStartIndex(e.startIndex);
+          }} alwaysShowText />
+            <RechartsHookInspector />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <input type="number" aria-label="startIndex" value={startIndex} onChange={evt => {
+        const num = Number(evt.target.value);
+        if (Number.isInteger(num)) setStartIndex(num);
+      }} />
+        <input aria-label="endIndex" value={endIndex} onChange={evt => {
+        const num = Number(evt.target.value);
+        if (Number.isInteger(num)) setEndIndex(num);
+      }} />
+      </>;
+  }
+}`,...(x=(E=a.parameters)==null?void 0:E.docs)==null?void 0:x.source}}};var I,f,L;o.parameters={...o.parameters,docs:{...(I=o.parameters)==null?void 0:I.docs,source:{originalSource:`{
+  render: (_args: Args) => {
+    return <ComposedChart width={600} height={300} data={pageData} margin={{
+      top: 0,
+      right: 0,
+      left: 0,
+      bottom: 0
+    }}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Legend />
+        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{
+        r: 8
+      }} />
+        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <ReferenceLine stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+        <Brush dataKey="name">
+          <LineChart>
+            <ReferenceLine key="test" stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+            <CartesianGrid strokeDasharray="1 1" verticalPoints={[10, 20, 30]} horizontalPoints={[10, 20, 30]} />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{
+            r: 8
+          }} />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>
+        </Brush>
+        <Tooltip />
+        <RechartsHookInspector />
+      </ComposedChart>;
+  }
+}`,...(L=(f=o.parameters)==null?void 0:f.docs)==null?void 0:L.source}}};var b,K,D;s.parameters={...s.parameters,docs:{...(b=s.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  render: (_args: Args) => {
+    return <ComposedChart width={600} height={300} data={pageData}>
+        <Brush>
+          <LineChart>
+            <ReferenceLine key="test" stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+            <CartesianGrid strokeDasharray="1 1" verticalPoints={[10, 20, 30]} horizontalPoints={[10, 20, 30]} />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{
+            r: 8
+          }} />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>
+        </Brush>
+        <RechartsHookInspector />
+      </ComposedChart>;
+  }
+}`,...(D=(K=s.parameters)==null?void 0:K.docs)==null?void 0:D.source}}};const Oe=["ControlledBrush","PanoramicBrush","NoChartBrush"];export{a as ControlledBrush,s as NoChartBrush,o as PanoramicBrush,Oe as __namedExportsOrder,_e as default};
