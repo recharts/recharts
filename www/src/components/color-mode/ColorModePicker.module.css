@@ -1,0 +1,12 @@
+.ColorModePicker {
+  background-color: unset;
+  height: min-content;
+  border: 0 none;
+  display: inline-flex;
+  padding: 0;
+  font-size: 2rem;
+
+  &:hover {
+    color: #333;
+  }
+}

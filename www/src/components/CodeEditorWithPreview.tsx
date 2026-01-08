@@ -3,6 +3,7 @@ import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
 import { RechartsDevtoolsContext } from '@recharts/devtools';
+import { LuPencil, LuPlay, LuShare2 } from 'react-icons/lu';
 import { StackBlitzLink } from './Shared/StackBlitzLink';
 import { sendEvent } from './analytics';
 import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
@@ -134,17 +135,17 @@ export function CodeEditorWithPreview<T>({
     <CopyButton key="copy" getValueToCopy={() => codeToDisplay} />,
     isEditMode ? (
       <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
-        <i className="icon-control-play" />
+        <LuPlay />
         <span>Run</span>
       </button>
     ) : (
       <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
-        <i className="icon-pencil" />
+        <LuPencil />
         <span>Edit</span>
       </button>
     ),
     <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
-      <i className="icon-share" />
+      <LuShare2 />
       <span>Open in StackBlitz</span>
     </StackBlitzLink>,
   ];

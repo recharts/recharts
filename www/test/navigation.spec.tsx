@@ -72,7 +72,7 @@ describe('ColorModePicker', () => {
     });
     await userEvent.click(pickers[0]);
     pickers.forEach(picker => {
-      expect(picker).toHaveTextContent('light');
+      expect(picker).toHaveAccessibleName('light');
     });
     expect(document.documentElement).toHaveAttribute('data-mode', 'light');
     store.dispose();

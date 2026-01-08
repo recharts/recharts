@@ -23,8 +23,10 @@ function DesktopNav() {
           </li>
         ))}
       </ul>
-      <LocaleSwitch />
-      {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
+      <div className="nav-actions">
+        <LocaleSwitch />
+        {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
+      </div>
     </nav>
   );
 }
@@ -147,8 +149,10 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             );
           })}
         </ul>
-        <LocaleSwitch />
-        {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
+        <div className="nav-actions">
+          <LocaleSwitch />
+          {import.meta.env.VITE_IS_DARKMODE_ENABLED === 'true' && <ColorModePicker />}
+        </div>
       </div>
     </>
   );

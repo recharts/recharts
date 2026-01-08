@@ -235,19 +235,19 @@ test('ColorModePicker', async () => {
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
-  expect(colorModePicker).toHaveTextContent('light');
+  expect(colorModePicker).toHaveAccessibleName('light');
 
   await userEvent.click(colorModePicker);
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
   expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
-  expect(colorModePicker).toHaveTextContent('dark');
+  expect(colorModePicker).toHaveAccessibleName('dark');
 
   await userEvent.click(colorModePicker);
 
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(colorModePicker).toHaveTextContent('system');
+  expect(colorModePicker).toHaveAccessibleName('system');
 
   store.dispose();
 });
