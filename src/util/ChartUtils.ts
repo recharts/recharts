@@ -41,6 +41,9 @@ import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
 
+/**
+ * @deprecated uses `any` - use `getTypedValue` instead
+ */
 export function getValueByDataKey<T>(
   obj: T | null | undefined,
   dataKey: DataKey<T> | undefined,
@@ -291,11 +294,11 @@ export const getTicksOfAxis = (
  * @returns tuple of two numbers
  */
 export const truncateByDomain = (
-  value: SeriesPoint<Record<number, number>>,
-  domain: ReadonlyArray<number>,
-): [number, number] | SeriesPoint<Record<number, number>> => {
+  value: SeriesPoint<Record<PropertyKey, unknown>>,
+  domain: ReadonlyArray<unknown> | null | undefined,
+): [number, number] | undefined => {
   if (!domain || domain.length !== 2 || !isNumber(domain[0]) || !isNumber(domain[1])) {
-    return value;
+    return undefined;
   }
 
   const minValue = Math.min(domain[0], domain[1]);

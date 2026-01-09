@@ -63,6 +63,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
+import { getTypedValue } from '../util/getTypedValue';
 
 interface PieDef {
   /**
@@ -603,7 +604,7 @@ function PieLabels({
       >
         <Layer>
           {labelLine && renderLabelLineItem(labelLine, lineProps)}
-          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+          {renderLabelItem(label, labelProps, getTypedValue(entry, dataKey))}
         </Layer>
       </ZIndexLayer>
     );

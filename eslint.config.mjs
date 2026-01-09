@@ -470,6 +470,21 @@ const jsdocConfig = [
   },
 ];
 
+const neverAny = {
+  name: 'no-any/config',
+  files: ['src/util/scale/**'],
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/ban-ts-comment': 'error',
+    '@typescript-eslint/consistent-type-assertions': [
+      'error',
+      {
+        assertionStyle: 'never',
+      },
+    ],
+  },
+};
+
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -497,6 +512,7 @@ export default [
   ...omnidocOverrides,
   // JSDoc Config
   ...jsdocConfig,
+  neverAny,
   generatedApiDocsOverrides,
   perfOptimization,
 ];
