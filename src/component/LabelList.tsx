@@ -1,23 +1,22 @@
 import * as React from 'react';
 import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
-import last from 'es-toolkit/compat/last';
-
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
-import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getTypedValue } from '../util/getTypedValue';
+import { isRenderableText, RenderableText } from './Text';
 
 export interface LabelListEntry {
   /**
    * Value is what renders in the UI as the label content.
    * If undefined, then the LabelList will pull it from the payload using the dataKey.
    */
-  value: number | string | Array<number | string> | undefined;
+  value: unknown;
   /**
    * Payload is the source data object for this entry. The shape of this depends on what the user has passed
    * as the data prop to the chart.
@@ -60,7 +59,7 @@ interface LabelListProps extends ZIndexable {
    * @param entry
    * @param index
    */
-  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => string | number | undefined;
+  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => RenderableText;
   /**
    * The parameter to calculate the view box of label in radial charts.
    */
@@ -149,7 +148,15 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
-const defaultAccessor = (entry: LabelListEntry) => (Array.isArray(entry.value) ? last(entry.value) : entry.value);
+const defaultAccessor: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => RenderableText = (
+  entry: LabelListEntry,
+) => {
+  const val = Array.isArray(entry.value) ? entry.value[entry.value.length - 1] : entry.value;
+  if (isRenderableText(val)) {
+    return val;
+  }
+  return undefined;
+};
 
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
@@ -183,9 +190,13 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
     <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
       <Layer className="recharts-label-list">
         {data.map((entry, index) => {
-          const value = isNullish(dataKey)
+          const value: unknown = isNullish(dataKey)
             ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry.payload, dataKey) as string | number);
+            : getTypedValue(entry.payload, dataKey);
+
+          if (!isRenderableText(value)) {
+            return null;
+          }
 
           const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 

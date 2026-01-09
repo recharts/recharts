@@ -36,6 +36,8 @@ import { ChartData } from '../state/chartDataSlice';
 import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
+import { TypedDataKey } from './getTypedValue';
+
 /**
  * Determines how values are stacked:
  *
@@ -91,7 +93,7 @@ export type EvaluatedAxisDomainType = 'number' | 'category';
  *
  * @inline
  */
-export type DataKey<T> = string | number | ((obj: T) => any);
+export type DataKey<T> = TypedDataKey<T>;
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
