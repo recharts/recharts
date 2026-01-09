@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import {
   MutableRefObject,
   PureComponent,
@@ -20,13 +21,8 @@ import {
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
-import {
-  getCateCoordinateOfLine,
-  getNormalizedStackId,
-  getTooltipNameProp,
-  getValueByDataKey,
-  StackId,
-} from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getNormalizedStackId, getTooltipNameProp, StackId } from '../util/ChartUtils';
+import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -98,7 +94,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey: TypedDataKey<any>;
   dot: DotType;
   height: number;
   hide: boolean;
@@ -1030,19 +1026,19 @@ export function computeArea({
     if (hasStack) {
       valueAsArray = stackedData[dataStartIndex + index];
     } else {
-      const rawValue = getValueByDataKey(entry, dataKey);
+      const rawValue = getTypedValue(entry, dataKey);
 
-      if (!Array.isArray(rawValue)) {
-        valueAsArray = [baseValue, rawValue];
-      } else {
+      if (Array.isArray(rawValue)) {
         valueAsArray = rawValue;
         isRange = true;
+      } else {
+        valueAsArray = [baseValue, rawValue];
       }
     }
 
     const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getTypedValue(entry, dataKey) == null);
 
     if (isHorizontalLayout) {
       return {

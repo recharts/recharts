@@ -516,6 +516,7 @@ export default [
   ...omnidocOverrides,
   // JSDoc Config
   ...jsdocConfig,
+  neverAny,
   generatedApiDocsOverrides,
   perfOptimization,
   neverAny,
