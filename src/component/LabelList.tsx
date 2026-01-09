@@ -2,13 +2,13 @@ import * as React from 'react';
 import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
-import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getTypedValue } from '../util/getTypedValue';
 import { isRenderableText, RenderableText } from './Text';
 
 export interface LabelListEntry<DataPointItem = any> {
@@ -188,9 +188,13 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
     <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
       <Layer className="recharts-label-list">
         {data.map((entry, index) => {
-          const value = isNullish(dataKey)
+          const value: unknown = isNullish(dataKey)
             ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry.payload, dataKey) as string | number);
+            : getTypedValue(entry.payload, dataKey);
+
+          if (!isRenderableText(value)) {
+            return null;
+          }
 
           const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 

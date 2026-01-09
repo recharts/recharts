@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentType,
-  MutableRefObject,
-  PureComponent,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -21,13 +12,8 @@ import {
 import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
-import {
-  getCateCoordinateOfLine,
-  getNormalizedStackId,
-  getTooltipNameProp,
-  getValueByDataKey,
-  StackId,
-} from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getNormalizedStackId, getTooltipNameProp, StackId } from '../util/ChartUtils';
+import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -99,7 +85,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey: TypedDataKey<any>;
   dot: DotType;
   height: number;
   hide: boolean;
@@ -317,7 +303,7 @@ type AreaSvgProps = Omit<
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
-export type Props = AreaSvgProps & AreaProps;
+export type Props<DataPointType = any, ValueAxisType = any> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -1020,19 +1006,19 @@ export function computeArea({
     if (hasStack) {
       valueAsArray = stackedData[dataStartIndex + index];
     } else {
-      const rawValue = getValueByDataKey(entry, dataKey);
+      const rawValue = getTypedValue(entry, dataKey);
 
-      if (!Array.isArray(rawValue)) {
-        valueAsArray = [baseValue, rawValue];
-      } else {
+      if (Array.isArray(rawValue)) {
         valueAsArray = rawValue;
         isRange = true;
+      } else {
+        valueAsArray = [baseValue, rawValue];
       }
     }
 
     const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getTypedValue(entry, dataKey) == null);
 
     if (isHorizontalLayout) {
       return {
@@ -1079,7 +1065,7 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props) {
+function AreaFn<T = any>(outsideProps: Props<T>) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -1126,5 +1112,8 @@ function AreaFn(outsideProps: Props) {
  * @provides LabelListContext
  * @consumes CartesianChartContext
  */
-export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
+export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => React.ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 Area.displayName = 'Area';

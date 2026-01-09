@@ -20,7 +20,6 @@ import {
   getCateCoordinateOfBar,
   getNormalizedStackId,
   getTooltipNameProp,
-  getValueByDataKey,
   truncateByDomain,
 } from '../util/ChartUtils';
 import {
@@ -63,6 +62,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
+import { getTypedValue } from '../util/getTypedValue';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -650,10 +650,17 @@ export function computeRadialBarDataItems({
       backgroundSector;
 
     if (stackedData) {
-      // @ts-expect-error truncateByDomain expects only numerical domain, but it can received categorical domain too
-      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      const untruncatedValue = stackedData[index + dataStartIndex];
+      if (untruncatedValue == null) {
+        return null;
+      }
+      const truncated = truncateByDomain(untruncatedValue, stackedDomain);
+      if (truncated == null) {
+        return null;
+      }
+      value = truncated;
     } else {
-      value = getValueByDataKey(entry, dataKey);
+      value = getTypedValue(entry, dataKey);
       if (!Array.isArray(value)) {
         value = [baseValue, value];
       }

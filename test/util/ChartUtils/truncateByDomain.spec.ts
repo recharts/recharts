@@ -10,12 +10,11 @@ function createMockSeriesPoint(val: [number, number]): SeriesPoint<Record<number
 
 describe('truncateByDomain', () => {
   test.each([{ domain: [] }, { domain: [1] }, { domain: ['', ''] }])(
-    'should return value without change if domain is %o',
+    'should return undefined if domain is %o',
     ({ domain }) => {
       const value = createMockSeriesPoint([1, 2]);
       const result = truncateByDomain(value, domain as never);
-      expect(result).toBe(value);
-      expect(result).toEqual(createMockSeriesPoint([1, 2]));
+      expect(result).toBe(undefined);
     },
   );
 
@@ -54,11 +53,11 @@ describe('truncateByDomain', () => {
     expect(result).toEqual([100, 100]);
   });
 
-  it('should not change value if domain has NaN in it', () => {
+  it('should return undefined if domain has NaN in it', () => {
     const value = createMockSeriesPoint([0, 30]);
     const domain = [NaN, NaN];
     const result = truncateByDomain(value, domain);
-    expect(result).toEqual(createMockSeriesPoint([0, 30]));
+    expect(result).toEqual(undefined);
   });
 
   it('should return domain if value has NaN in it', () => {
