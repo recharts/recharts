@@ -1,6 +1,3 @@
-/**
- * @fileOverview Default Legend Content
- */
 import * as React from 'react';
 import { ReactNode, MouseEvent, ReactElement } from 'react';
 
@@ -237,6 +234,12 @@ function Items(props: InternalProps) {
   });
 }
 
+/**
+ * This component is by default rendered inside the {@link Legend} component. You would not use it directly.
+ *
+ * You can use this component to customize the content of the legend,
+ * or you can provide your own completely independent content.
+ */
 export const DefaultLegendContent = (outsideProps: Props) => {
   const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
   const { payload, layout, align } = props;

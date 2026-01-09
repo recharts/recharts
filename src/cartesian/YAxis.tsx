@@ -140,7 +140,8 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
    */
   orientation?: YAxisOrientation;
   /**
-   * Specify the padding of y-axis.
+   * Axis padding is the distance between the edge of plot area and the first/last tick.
+   *
    * @defaultValue {"top":0,"bottom":0}
    */
   padding?: YAxisPadding;

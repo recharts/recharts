@@ -1064,8 +1064,8 @@ describe('readProject', () => {
       },
       {
         isExternal: true,
-        name: 'https://github.com/d3/d3-shape#curves',
-        url: 'https://github.com/d3/d3-shape#curves',
+        name: 'https://d3js.org/d3-shape/curve',
+        url: 'https://d3js.org/d3-shape/curve',
       },
     ]);
   });

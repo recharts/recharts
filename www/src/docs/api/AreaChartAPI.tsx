@@ -423,6 +423,7 @@ export const AreaChartAPI: ApiDoc = {
     'Area',
     'Bar',
     'Brush',
+    'CartesianGrid',
     'Funnel',
     'Label',
     'Legend',

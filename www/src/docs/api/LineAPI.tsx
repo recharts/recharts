@@ -86,8 +86,13 @@ export const LineAPI: ApiDoc = {
       defaultVal: false,
       examples: [
         {
-          name: 'A lineChart connect nulls and a lineChart disconnect nulls',
+          name: 'LineChart with connectNull true and false',
           url: '/examples/LineChartConnectNulls/',
+          isExternal: false,
+        },
+        {
+          name: 'AreaChart with connectNull true and false',
+          url: '/examples/AreaChartConnectNulls/',
           isExternal: false,
         },
       ],
@@ -353,11 +358,7 @@ export const LineAPI: ApiDoc = {
           url: '/examples/CardinalAreaChart/',
           isExternal: false,
         },
-        {
-          name: 'https://github.com/d3/d3-shape#curves',
-          url: 'https://github.com/d3/d3-shape#curves',
-          isExternal: true,
-        },
+        { name: 'https://d3js.org/d3-shape/curve', url: 'https://d3js.org/d3-shape/curve', isExternal: true },
       ],
     },
     {

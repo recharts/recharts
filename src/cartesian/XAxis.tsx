@@ -127,7 +127,8 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
    */
   ticks?: ReadonlyArray<AxisTick>;
   /**
-   * Specify the padding of x-axis.
+   * Axis padding is the distance between the edge of plot area and the first/last tick.
+   *
    * @defaultValue {"left":0,"right":0}
    */
   padding?: XAxisPadding;

@@ -162,7 +162,18 @@ export const TreemapAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The key of each sector&#39;s name.</p>
+            <p>Name represents each sector in the tooltip. This allows you to extract the name from the data:</p>
+            <ul>
+              <li>
+                <code>string</code>: the name of the field in the data object;
+              </li>
+              <li>
+                <code>number</code>: the index of the field in the data;
+              </li>
+              <li>
+                <code>function</code>: a function that receives the data object and returns the name.
+              </li>
+            </ul>
           </section>
         ),
       },

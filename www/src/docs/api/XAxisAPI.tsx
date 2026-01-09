@@ -318,7 +318,7 @@ export const XAxisAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>Specify the padding of x-axis.</p>
+            <p>Axis padding is the distance between the edge of plot area and the first/last tick.</p>
           </section>
         ),
       },

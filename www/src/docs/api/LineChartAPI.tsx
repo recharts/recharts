@@ -423,6 +423,7 @@ export const LineChartAPI: ApiDoc = {
     'Area',
     'Bar',
     'Brush',
+    'CartesianGrid',
     'Funnel',
     'Label',
     'Legend',

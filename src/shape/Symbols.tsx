@@ -81,6 +81,9 @@ const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
 
+/**
+ * Renders a symbol from a set of predefined shapes.
+ */
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
   const props = { ...rest, type, size, sizeType };
   let realType: SymbolType = 'circle';

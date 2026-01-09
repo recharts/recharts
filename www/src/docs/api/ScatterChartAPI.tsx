@@ -423,6 +423,7 @@ export const ScatterChartAPI: ApiDoc = {
     'Area',
     'Bar',
     'Brush',
+    'CartesianGrid',
     'Funnel',
     'Label',
     'Legend',

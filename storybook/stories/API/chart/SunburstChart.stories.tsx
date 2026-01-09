@@ -1,31 +1,11 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
-import { SunburstData } from '../../../../src/chart/SunburstChart';
-import { CategoricalChartProps, ChartSizeProps, data, dataKey } from '../props/ChartProps';
-import { PolarChartProps } from '../props/PolarChartProps';
+import { ResponsiveContainer, SunburstChart, SunburstData, Tooltip } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-
-const { innerRadius, outerRadius, cx, cy, startAngle, endAngle } = PolarChartProps;
-
-const { onClick, onMouseEnter, onMouseLeave, className } = CategoricalChartProps;
+import { SunburstChartArgs } from '../arg-types/SunburstChartArgs';
 
 export default {
-  argTypes: {
-    data,
-    ...ChartSizeProps,
-    dataKey,
-    innerRadius,
-    outerRadius,
-    cx,
-    cy,
-    startAngle,
-    endAngle,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    className,
-  },
+  argTypes: SunburstChartArgs,
   component: SunburstChart,
 };
 
@@ -109,41 +89,7 @@ const hierarchy: SunburstData = {
   ],
 };
 
-export const Sunburst = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height={450}>
-        <SunburstChart {...args} data={args.data}>
-          <RechartsHookInspector />
-        </SunburstChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    data: hierarchy,
-    innerRadius: 40,
-  },
-};
-
-export const WithStartAndEndAngle = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height={450}>
-        <SunburstChart {...args} data={args.data}>
-          <RechartsHookInspector />
-        </SunburstChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    data: hierarchy,
-    innerRadius: 40,
-    startAngle: 90,
-    endAngle: 270,
-  },
-};
-
-export const WithTooltip = {
+export const API = {
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
@@ -157,5 +103,7 @@ export const WithTooltip = {
   args: {
     data: hierarchy,
     innerRadius: 40,
+    startAngle: 90,
+    endAngle: 270,
   },
 };

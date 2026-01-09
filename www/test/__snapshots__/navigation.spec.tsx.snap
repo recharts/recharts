@@ -127,6 +127,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "Sankey",
             "url": "/en-US/api/Sankey/",
           },
+          {
+            "displayName": "SunburstChart",
+            "key": "SunburstChart",
+            "url": "/en-US/api/SunburstChart/",
+          },
         ],
         "key": "charts",
       },
@@ -145,9 +150,19 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/Legend/",
           },
           {
+            "displayName": "DefaultLegendContent",
+            "key": "DefaultLegendContent",
+            "url": "/en-US/api/DefaultLegendContent/",
+          },
+          {
             "displayName": "Tooltip",
             "key": "Tooltip",
             "url": "/en-US/api/Tooltip/",
+          },
+          {
+            "displayName": "DefaultTooltipContent",
+            "key": "DefaultTooltipContent",
+            "url": "/en-US/api/DefaultTooltipContent/",
           },
           {
             "displayName": "Cell",
@@ -170,6 +185,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/LabelList/",
           },
           {
+            "displayName": "Layer",
+            "key": "Layer",
+            "url": "/en-US/api/Layer/",
+          },
+          {
             "displayName": "Customized",
             "key": "Customized",
             "url": "/en-US/api/Customized/",
@@ -178,6 +198,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "displayName": "ZIndexLayer",
             "key": "ZIndexLayer",
             "url": "/en-US/api/ZIndexLayer/",
+          },
+          {
+            "displayName": "Surface",
+            "key": "Surface",
+            "url": "/en-US/api/Surface/",
           },
         ],
         "key": "general-components",
@@ -344,6 +369,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "displayName": "Trapezoid",
             "key": "Trapezoid",
             "url": "/en-US/api/Trapezoid/",
+          },
+          {
+            "displayName": "Symbols",
+            "key": "Symbols",
+            "url": "/en-US/api/Symbols/",
           },
         ],
         "key": "shapes",

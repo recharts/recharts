@@ -33,6 +33,9 @@ import { sankeyDefaultProps } from '../src/chart/Sankey';
 import { defaultBarStackProps } from '../src/cartesian/BarStack';
 import { defaultPolarGridProps } from '../src/polar/PolarGrid';
 import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
+import { defaultCurveProps } from '../src/shape/Curve';
+import { defaultSunburstChartProps } from '../src/chart/SunburstChart';
+import { defaultDefaultTooltipContentProps } from '../src/component/DefaultTooltipContent';
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -47,6 +50,8 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Brush: { defaultProps: defaultBrushProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
+  Curve: { defaultProps: defaultCurveProps },
+  DefaultTooltipContent: { defaultProps: defaultDefaultTooltipContentProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
@@ -73,6 +78,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
   Sector: { defaultProps: defaultSectorProps },
+  SunburstChart: { defaultProps: defaultSunburstChartProps },
   Text: { defaultProps: textDefaultProps },
   Tooltip: { defaultProps: defaultTooltipProps },
   Trapezoid: { defaultProps: defaultTrapezoidProps },

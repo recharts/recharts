@@ -164,7 +164,7 @@ interface LineProps extends ZIndexable {
    * Whether to connect the line across null points.
    * @defaultValue false
    *
-   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ A lineChart connect nulls and a lineChart disconnect nulls}
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ LineChart with connectNull true and false}
    */
   connectNulls?: boolean;
   data?: ChartData;
@@ -268,7 +268,7 @@ interface LineProps extends ZIndexable {
    * The interpolation type of curve. Allows custom interpolation function.
    *
    * @defaultValue linear
-   * @link https://github.com/d3/d3-shape#curves
+   * @link https://d3js.org/d3-shape/curve
    * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;

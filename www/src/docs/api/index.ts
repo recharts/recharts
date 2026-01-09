@@ -11,6 +11,7 @@ import { RadarChartAPI } from './RadarChartAPI';
 import { SankeyAPI } from './SankeyAPI';
 import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { TreemapAPI } from './TreemapAPI';
+import { SunburstChartAPI } from './SunburstChartAPI';
 
 import { AreaAPI } from './AreaAPI';
 import { BarAPI } from './BarAPI';
@@ -24,7 +25,7 @@ import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
 import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
-import { CartesianGridAPI as CartesianGrid } from './CartesianGrid';
+import { CartesianGridAPI } from './CartesianGridAPI';
 import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
@@ -40,7 +41,7 @@ import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI } from './PolarGridAPI';
 import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
 
-import { CurveAPI as Curve } from './Curve';
+import { CurveAPI } from './CurveAPI';
 import { PolygonAPI } from './PolygonAPI';
 import { RectangleAPI } from './RectangleAPI';
 import { SectorAPI } from './SectorAPI';
@@ -53,6 +54,11 @@ import { LabelListAPI } from './LabelListAPI';
 import { BrushAPI } from './BrushAPI';
 import { CrossAPI } from './CrossAPI';
 import { DotAPI } from './DotAPI';
+import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
+import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
+import { LayerAPI } from './LayerAPI';
+import { SurfaceAPI } from './SurfaceAPI';
+import { SymbolsAPI } from './SymbolsAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -66,6 +72,7 @@ export const allApiDocs: Record<string, ApiDoc> = {
   FunnelChart: FunnelChartAPI,
   Sankey: SankeyAPI,
   Treemap: TreemapAPI,
+  SunburstChart: SunburstChartAPI,
 
   Area: AreaAPI,
   Bar: BarAPI,
@@ -77,17 +84,21 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ZAxis: ZAxisAPI,
   Brush: BrushAPI,
   CartesianAxis,
-  CartesianGrid,
+  CartesianGrid: CartesianGridAPI,
   Funnel: FunnelAPI,
 
   ResponsiveContainer: ResponsiveContainerAPI,
   Legend: LegendAPI,
+  DefaultLegendContent: DefaultLegendContentAPI,
   Tooltip: TooltipAPI,
+  DefaultTooltipContent: DefaultTooltipContentAPI,
   Cell,
   Text: TextAPI,
   Label: LabelAPI,
   LabelList: LabelListAPI,
   Customized: CustomizedAPI,
+  Layer: LayerAPI,
+  Surface: SurfaceAPI,
 
   Pie: PieAPI,
   RadialBar: RadialBarAPI,
@@ -101,12 +112,13 @@ export const allApiDocs: Record<string, ApiDoc> = {
   ErrorBar: ErrorBarAPI,
 
   Cross: CrossAPI,
-  Curve,
+  Curve: CurveAPI,
   Dot: DotAPI,
   Polygon: PolygonAPI,
   Rectangle: RectangleAPI,
   Sector: SectorAPI,
   Trapezoid: TrapezoidAPI,
+  Symbols: SymbolsAPI,
 
   ZIndexLayer: ZIndexLayerAPI,
 };

@@ -55,21 +55,46 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  labelFormatter?: (label: any, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
-  label?: any;
+  labelFormatter?: (label: ReactNode, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
+  label?: ReactNode;
   payload?: ReadonlyArray<Payload<TValue, TName>>;
   itemSorter?: 'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
-  accessibilityLayer: boolean;
+  accessibilityLayer?: boolean;
 }
 
+export const defaultDefaultTooltipContentProps = {
+  separator: ' : ',
+  contentStyle: {
+    margin: 0,
+    padding: 10,
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    whiteSpace: 'nowrap',
+  },
+  itemStyle: {
+    display: 'block',
+    paddingTop: 4,
+    paddingBottom: 4,
+    color: '#000',
+  },
+  labelStyle: {},
+  accessibilityLayer: false,
+} as const satisfies Partial<Props<any, any>>;
+
+/**
+ * This component is by default rendered inside the {@link Tooltip} component. You would not use it directly.
+ *
+ * You can use this component to customize the content of the tooltip,
+ * or you can provide your own completely independent content.
+ */
 export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType>(
   props: Props<TValue, TName>,
 ) => {
   const {
-    separator = ' : ',
-    contentStyle = {},
-    itemStyle = {},
-    labelStyle = {},
+    separator = defaultDefaultTooltipContentProps.separator,
+    contentStyle,
+    itemStyle,
+    labelStyle = defaultDefaultTooltipContentProps.labelStyle,
     payload,
     formatter,
     itemSorter,
@@ -77,7 +102,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     labelClassName,
     label,
     labelFormatter,
-    accessibilityLayer = false,
+    accessibilityLayer = defaultDefaultTooltipContentProps.accessibilityLayer,
   } = props;
 
   const renderContent = () => {
@@ -106,10 +131,8 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
           }
 
           const finalItemStyle = {
-            display: 'block',
-            paddingTop: 4,
-            paddingBottom: 4,
-            color: entry.color || '#000',
+            ...defaultDefaultTooltipContentProps.itemStyle,
+            color: entry.color || defaultDefaultTooltipContentProps.itemStyle.color,
             ...itemStyle,
           };
 
@@ -135,11 +158,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
   };
 
   const finalStyle: React.CSSProperties = {
-    margin: 0,
-    padding: 10,
-    backgroundColor: '#fff',
-    border: '1px solid #ccc',
-    whiteSpace: 'nowrap',
+    ...defaultDefaultTooltipContentProps.contentStyle,
     ...contentStyle,
   };
   const finalLabelStyle = {
@@ -147,7 +166,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     ...labelStyle,
   };
   const hasLabel = !isNullish(label);
-  let finalLabel = hasLabel ? label : '';
+  let finalLabel: ReactNode = hasLabel ? label : '';
   const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
   const labelCN = clsx('recharts-tooltip-label', labelClassName);
 

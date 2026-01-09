@@ -69,12 +69,14 @@ interface CartesianGridProps extends ZIndexable {
   height?: number;
   /**
    * A function that generates the y-coordinates of all horizontal lines.
-   * The generator gets passed an object of the shape { yAxis, width, height, offset }.
+   *
+   * @see {@link https://codesandbox.io/p/sandbox/cartesian-grid-with-coordinate-generators-my38cg?file=%2Fsrc%2FApp.tsx Cartesian grid with coordinate generators}
    */
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   /**
    * A function that generates the x-coordinates of all vertical lines.
-   * The generator gets passed an object of the shape { xAxis, width, height, offset }.
+   *
+   * @see {@link https://codesandbox.io/p/sandbox/cartesian-grid-with-coordinate-generators-my38cg?file=%2Fsrc%2FApp.tsx Cartesian grid with coordinate generators}
    */
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
   /**
@@ -117,10 +119,14 @@ interface CartesianGridProps extends ZIndexable {
    * The background color used to fill the space between grid lines
    *
    * @defaultValue none
+   * @example <CartesianGrid fill="red" />
+   * @example <CartesianGrid fill="#ccc" />
    */
   fill?: string;
   /**
    * The opacity of the background used to fill the space between grid lines
+   *
+   * @example <CartesianGrid fill="red" fillOpacity={0.6} />
    */
   fillOpacity?: number | string;
   /**
@@ -173,6 +179,11 @@ interface CartesianGridProps extends ZIndexable {
   verticalValues?: number[] | string[];
   /**
    * The pattern of dashes and gaps used to paint the lines of the grid
+   *
+   * @example <CartesianGrid strokeDasharray="3 3" />
+   * @example <CartesianGrid strokeDasharray={[5, 5, 1, 5]} />
+   * @example <CartesianGrid strokeDasharray="5 5 1 5" />
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray stroke-dasharray on MDN}
    */
   strokeDasharray?: string | number[];
   /**
@@ -444,6 +455,11 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
+/**
+ * Renders background grid with lines and fill colors in a Cartesian chart.
+ *
+ * @consumes CartesianChartContext
+ */
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();

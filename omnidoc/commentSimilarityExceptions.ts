@@ -133,15 +133,31 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'has extra information about error bar data structure',
   },
   {
+    components: ['SunburstChart'],
+    props: ['dataKey'],
+    reason: 'Sunburst is special because it provides the dataKey for its own data, and does not interact with axes',
+  },
+  {
+    components: ['SunburstChart'],
+    props: ['padding'],
+    reason:
+      'Here padding means distance between sectors, unlike chart padding which means distance from container edge',
+  },
+  {
     components: ['Scatter'],
     props: ['shape'],
     // https://github.com/recharts/recharts/issues/1753
     reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
   },
   {
-    components: ['Dot', 'SunburstChart', 'Sector'],
+    components: ['Dot', 'Sector'],
     props: ['cx', 'cy'],
     reason: 'These components do not support percentages unlike other components',
+  },
+  {
+    components: ['SunburstChart'],
+    props: ['cx', 'cy'],
+    reason: 'These are calculated from the chart context by default, unlike other components where they are required',
   },
   {
     components: ['PolarAngleAxis', 'PolarGrid'],
@@ -207,6 +223,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   },
   {
     components: ['PolarGrid'],
+    props: ['innerRadius', 'outerRadius'],
+    reason: 'PolarGrid ignores these two props completely if used in a chart, we should just remove them',
+  },
+  {
+    components: ['SunburstChart'],
     props: ['innerRadius', 'outerRadius'],
     reason: 'Unlike other components, this can not be a percentage string',
   },

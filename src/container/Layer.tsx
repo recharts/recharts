@@ -10,6 +10,14 @@ interface LayerProps {
 
 export type Props = SVGAttributes<SVGGElement> & LayerProps;
 
+/**
+ * Creates an SVG group element to group other SVG elements.
+ *
+ * Useful if you want to apply transformations or styles to a set of elements
+ * without affecting other elements in the SVG.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/g
+ */
 export const Layer = React.forwardRef<SVGGElement, Props>((props: Props, ref) => {
   const { children, className, ...others } = props;
   const layerClass = clsx('recharts-layer', className);

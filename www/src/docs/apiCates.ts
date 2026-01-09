@@ -13,6 +13,7 @@ export const apiCates = [
       'FunnelChart',
       'Treemap',
       'Sankey',
+      'SunburstChart',
     ],
   },
   {
@@ -20,13 +21,17 @@ export const apiCates = [
     items: [
       'ResponsiveContainer',
       'Legend',
+      'DefaultLegendContent',
       'Tooltip',
+      'DefaultTooltipContent',
       'Cell',
       'Text',
       'Label',
       'LabelList',
+      'Layer',
       'Customized',
       'ZIndexLayer',
+      'Surface',
     ],
   },
   {
@@ -56,6 +61,6 @@ export const apiCates = [
   },
   {
     name: 'shapes',
-    items: ['Cross', 'Curve', 'Dot', 'Polygon', 'Rectangle', 'Sector', 'Trapezoid'],
+    items: ['Cross', 'Curve', 'Dot', 'Polygon', 'Rectangle', 'Sector', 'Trapezoid', 'Symbols'],
   },
 ];

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { calculateSimilarityScore } from './util/calculateSimilarityScore';
 import { coloredDiff } from './util/coloredDiff';
 import { ProjectDocReader } from './readProject';
-import { componentsWithInconsistentCommentsInApiDoc } from './componentsWithInconsistentCommentsInApiDoc';
+import { componentsExcludedFromOmnidoc } from './componentsExcludedFromOmnidoc';
 import { commentSimilarityExceptions, CommentSimilarityGroup } from './commentSimilarityExceptions';
 import { assertNotNull } from '../test/helper/assertNotNull';
 
@@ -35,7 +35,7 @@ describe('cross-component prop consistency', () => {
   >();
 
   for (const component of projectComponents) {
-    if (componentsWithInconsistentCommentsInApiDoc.includes(component)) {
+    if (componentsExcludedFromOmnidoc.includes(component)) {
       // temporarily skip components with known inconsistencies
       continue;
     }

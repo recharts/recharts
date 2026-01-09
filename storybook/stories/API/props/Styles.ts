@@ -107,7 +107,7 @@ export const LineStyle: Args = {
   },
   type: {
     description: `The interpolation type of line. It's the same as type in Area.
-      And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves`,
+      And customized interpolation function can be set to type. https://d3js.org/d3-shape/curve`,
     options: [
       'basis',
       'basisClosed',

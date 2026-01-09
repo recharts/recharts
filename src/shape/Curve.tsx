@@ -110,7 +110,7 @@ interface CurveProps {
    * The interpolation type of curve. Allows custom interpolation function.
    *
    * @defaultValue linear
-   * @link https://github.com/d3/d3-shape#curves
+   * @link https://d3js.org/d3-shape/curve
    * @see {@link https://recharts.github.io/en-US/examples/CardinalAreaChart/ An AreaChart which has two area with different interpolation.}
    */
   type?: CurveType;
@@ -133,6 +133,9 @@ interface CurveProps {
    * Whether to connect the curve across null points.
    *
    * @defaultValue false
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ LineChart with connectNull true and false}
+   * @see {@link https://recharts.github.io/en-US/examples/AreaChartConnectNulls/ AreaChart with connectNull true and false}
    */
   connectNulls?: boolean;
   path?: string;
@@ -203,16 +206,21 @@ export type Props = Omit<
 
 type GetPathProps = Pick<Props, 'type' | 'points' | 'baseLine' | 'layout' | 'connectNulls'>;
 
+export const defaultCurveProps = {
+  connectNulls: false,
+  type: 'linear',
+} as const satisfies Partial<Props>;
+
 /**
  * Calculate the path of curve. Returns null if points is an empty array.
  * @return path or null
  */
 export const getPath = ({
-  type = 'linear',
+  type = defaultCurveProps.type,
   points = [],
   baseLine,
   layout,
-  connectNulls = false,
+  connectNulls = defaultCurveProps.connectNulls,
 }: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
   const formatPoints: ReadonlyArray<NullableCoordinate> = connectNulls ? points.filter(defined) : points;

@@ -3,149 +3,12 @@ import { Args } from '@storybook/react-vite';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { StorybookArgs } from '../../../StorybookArgs';
-
-const CartesianGridArgTypes: StorybookArgs = {
-  x: {
-    description: 'The x-coordinate of grid.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Position',
-    },
-  },
-  y: {
-    description: 'The y-coordinate of grid.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Position',
-    },
-  },
-  xAxisId: {
-    description: 'The id of x-axis which the grid should be attached to.',
-    table: {
-      type: {
-        summary: 'String | Number',
-      },
-      defaultValue: {
-        summary: 0,
-      },
-      category: 'Axis',
-    },
-  },
-  yAxisId: {
-    description: 'The id of y-axis which the grid should be attached to.',
-    table: {
-      type: {
-        summary: 'String | Number',
-      },
-      defaultValue: {
-        summary: 0,
-      },
-      category: 'Axis',
-    },
-  },
-  width: {
-    description: 'The width of grid.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Position',
-    },
-  },
-  height: {
-    description: 'The height of grid.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Position',
-    },
-  },
-  horizontal: {
-    description: 'If set false, no horizontal grid lines will be drawn.',
-    control: {
-      type: 'boolean',
-    },
-    table: {
-      type: {
-        summary: 'boolean',
-      },
-      defaultValue: {
-        summary: true,
-      },
-      category: 'General',
-    },
-  },
-  vertical: {
-    description: 'If set false, no vertical grid lines will be drawn.',
-    control: {
-      type: 'boolean',
-    },
-    table: {
-      type: {
-        summary: 'Boolean',
-      },
-      defaultValue: {
-        summary: true,
-      },
-      category: 'General',
-    },
-  },
-  horizontalPoints: {
-    description: 'The y-coordinates of all horizontal lines.',
-    table: {
-      type: {
-        summary: 'Array',
-      },
-      defaultValue: {
-        summary: [],
-      },
-      category: 'General',
-    },
-  },
-  verticalPoints: {
-    description: 'The x-coordinates of all vertical lines.',
-    table: {
-      type: {
-        summary: 'Array',
-      },
-      defaultValue: {
-        summary: [],
-      },
-      category: 'General',
-    },
-  },
-  strokeDasharray: {
-    description: 'The pattern of dashes and gaps used to paint the lines of the grid',
-    table: {
-      type: {
-        summary: 'String',
-      },
-      category: 'General',
-    },
-  },
-  syncWithTicks: {
-    description: 'If true, the grid will align with the axis ticks.',
-    table: {
-      type: {
-        summary: 'Boolean',
-      },
-      defaultValue: {
-        summary: false,
-      },
-      category: 'General',
-    },
-  },
-};
+import { CartesianGridArgs } from '../arg-types/CartesianGridArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   component: CartesianGrid,
-  argTypes: CartesianGridArgTypes,
+  argTypes: CartesianGridArgs,
   args: {
     horizontal: true,
     vertical: true,
@@ -165,6 +28,7 @@ export const API = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CartesianGridArgs),
     y: 0,
     x: 0,
     width: 500,
@@ -193,6 +57,7 @@ export const MultipleGrids = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CartesianGridArgs),
     displayGridA: true,
     displayGridB: true,
   },
