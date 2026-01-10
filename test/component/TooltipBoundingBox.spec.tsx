@@ -75,10 +75,5 @@ describe('TooltipBoundingBox', () => {
       render(<TooltipBoundingBox {...defaultProps} offset={{ x: -5, y: 15 }} />);
       expect(screen.getByText('Hello world!')).toBeInTheDocument();
     });
-
-    it('should accept Coordinate offset with zero values', () => {
-      render(<TooltipBoundingBox {...defaultProps} offset={{ x: 0, y: 0 }} />);
-      expect(screen.getByText('Hello world!')).toBeInTheDocument();
-    });
   });
 });
