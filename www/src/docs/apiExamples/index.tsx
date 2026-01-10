@@ -24,6 +24,14 @@ import { barStackApiExamples } from './BarStack';
 import { zIndexLayerApiExamples } from './ZIndexLayer';
 import { sunburstChartApiExamples } from './SunburstChart';
 import { defaultZIndexesApiExamples } from './DefaultZIndexes';
+import { useActiveTooltipDataPointsApiExamples } from './useActiveTooltipDataPoints';
+import { useActiveTooltipLabelApiExamples } from './useActiveTooltipLabel';
+import { useMarginApiExamples } from './useMargin';
+import { useOffsetApiExamples } from './useOffset';
+import { usePlotAreaApiExamples } from './usePlotArea';
+import { useChartWidthAndHeightApiExamples } from './useChartWidth';
+import { useXAxisDomainApiExamples } from './useXAxisDomain';
+import { useYAxisDomainApiExamples } from './useYAxisDomain';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -51,4 +59,13 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   SunburstChart: sunburstChartApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
   DefaultZIndexes: defaultZIndexesApiExamples,
+  useActiveTooltipDataPoints: useActiveTooltipDataPointsApiExamples,
+  useActiveTooltipLabel: useActiveTooltipLabelApiExamples,
+  useMargin: useMarginApiExamples,
+  useOffset: useOffsetApiExamples,
+  usePlotArea: usePlotAreaApiExamples,
+  useChartWidth: useChartWidthAndHeightApiExamples,
+  useChartHeight: useChartWidthAndHeightApiExamples,
+  useXAxisDomain: useXAxisDomainApiExamples,
+  useYAxisDomain: useYAxisDomainApiExamples,
 };

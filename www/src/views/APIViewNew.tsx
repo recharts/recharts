@@ -175,6 +175,8 @@ function ApiExamples({ examples, componentName }: ApiExamplesProps) {
                   sourceCode={example.sourceCode}
                   stackBlitzTitle={`Recharts API example: ${componentName} - ${example.name || `Example ${i + 1}`}`}
                   analyticsLabel={`${componentName}-api-example-${i}`}
+                  defaultTool={example.defaultTool}
+                  defaultToolTab={example.defaultToolTab}
                 />
               </div>
             </div>

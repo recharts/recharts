@@ -20,6 +20,8 @@ export type ChartExample = {
    * Extra information about the example.
    */
   description?: ReactNode;
+  defaultTool?: 'source' | 'devtools' | 'controls';
+  defaultToolTab?: string;
 };
 
 export type ComponentExamples = {
