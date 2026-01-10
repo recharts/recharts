@@ -51,8 +51,6 @@ export function defineColorModeStore() {
   const mql = window.matchMedia('(prefers-color-scheme: dark)');
   let state = getColorModeState();
 
-  updateColorModeInDOM();
-
   const emitStateChange = () => {
     state = getColorModeState();
     updateColorModeInDOM();
@@ -60,6 +58,18 @@ export function defineColorModeStore() {
       listener(state);
     });
   };
+
+  /**
+   * Because the dark mode is not stable yet, we imperatively set it to light if there is
+   * no stored preference.
+   */
+  if (getStoredColorMode() == null) {
+    setStoredColorMode('light');
+  }
+
+  updateColorModeInDOM();
+  emitStateChange();
+
   const handleStoredColorModeChange = (e: StorageEvent) => {
     if (e.key !== STORAGE_KEY) {
       return;
