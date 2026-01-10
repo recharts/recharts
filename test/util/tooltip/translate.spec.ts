@@ -356,4 +356,40 @@ describe('getTooltipTranslate', () => {
     const expected = 'recharts-tooltip-wrapper recharts-tooltip-wrapper-right recharts-tooltip-wrapper-bottom';
     expect(cssClasses).toEqual(expected);
   });
+
+  describe('when offsetTop and offsetLeft are different', () => {
+    it('should apply different offsets to x and y axes', () => {
+      const { cssProperties } = getTooltipTranslate({
+        allowEscapeViewBox: { x: true, y: true },
+        coordinate: { x: 100, y: 100 },
+        offsetTop: 20,
+        offsetLeft: 10,
+        position: {},
+        reverseDirection: {},
+        tooltipBox: { height: 50, width: 100 },
+        useTranslate3d: false,
+        viewBox: { height: 400, width: 400, x: 0, y: 0 },
+      });
+      expect(cssProperties).toEqual({
+        transform: 'translate(110px, 120px)',
+      });
+    });
+
+    it('should handle negative offsetTop with positive offsetLeft', () => {
+      const { cssProperties } = getTooltipTranslate({
+        allowEscapeViewBox: { x: true, y: true },
+        coordinate: { x: 100, y: 100 },
+        offsetTop: -15,
+        offsetLeft: 25,
+        position: {},
+        reverseDirection: {},
+        tooltipBox: { height: 50, width: 100 },
+        useTranslate3d: false,
+        viewBox: { height: 400, width: 400, x: 0, y: 0 },
+      });
+      expect(cssProperties).toEqual({
+        transform: 'translate(125px, 85px)',
+      });
+    });
+  });
 });
