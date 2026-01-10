@@ -249,12 +249,16 @@ export const TooltipAPI: ApiDoc = {
     },
     {
       name: 'offset',
-      type: 'number',
+      type: 'number | Coordinate',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>The offset size between the position of tooltip and the mouse cursor position.</p>
+            <p>
+              When a number is provided, the same offset is applied to both x and y axes. When a Coordinate object is
+              provided, you can specify different offsets for each axis using <code>{`{ x: number, y: number }`}</code>.
+            </p>
           </section>
         ),
       },
