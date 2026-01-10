@@ -248,7 +248,6 @@
   "es6/util/scale/index.js",
   "es6/util/scale/util",
   "es6/util/scale/util/arithmetic.js",
-  "es6/util/scale/util/utils.js",
   "es6/util/stacks",
   "es6/util/stacks/getStackSeriesIdentifier.js",
   "es6/util/stacks/stackTypes.js",
