@@ -20,7 +20,7 @@ export type TooltipBoundingBoxProps = {
   coordinate: Coordinate | PolarCoordinate | undefined;
   hasPayload: boolean;
   isAnimationActive: boolean | 'auto';
-  offset: number;
+  offset: number | Coordinate;
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   useTranslate3d: boolean;
@@ -96,11 +96,14 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       hasPortalFromProps,
     } = this.props;
 
+    const offsetLeft = typeof offset === 'number' ? offset : offset.x;
+    const offsetTop = typeof offset === 'number' ? offset : offset.y;
+
     const { cssClasses, cssProperties } = getTooltipTranslate({
       allowEscapeViewBox,
       coordinate,
-      offsetLeft: offset,
-      offsetTop: offset,
+      offsetLeft,
+      offsetTop,
       position,
       reverseDirection,
       tooltipBox: {
