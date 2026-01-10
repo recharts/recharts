@@ -14,5 +14,6 @@ export const zIndexLayerApiExamples: ReadonlyArray<ChartExample> = [
     Component: ShadowDomExample,
     sourceCode: shadowDomExampleSource,
     name: 'Rendering into Shadow DOM',
+    description: 'Renders chart into a shadow DOM.',
   },
 ];

@@ -143,6 +143,10 @@ export class ProjectDocReader implements DocReader {
     return result;
   }
 
+  getAllRuntimeExportedNames(): ReadonlyArray<string> {
+    return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function);
+  }
+
   private getComponentDeclaration(component: string): ExportedDeclarations {
     const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
     const exportedDeclarations = sourceFile.getExportedDeclarations();
@@ -214,8 +218,12 @@ export class ProjectDocReader implements DocReader {
     return { type: 'none' };
   }
 
-  private collectPropertiesFromType(componentName: string, type: Type): ReadonlyArray<PropMeta> {
+  private collectPropertiesFromType(componentName: string, type: Type | undefined): ReadonlyArray<PropMeta> {
     const properties: PropMeta[] = [];
+
+    if (!type) {
+      return properties;
+    }
 
     // Get direct properties
     const typeProperties = type.getProperties();
@@ -303,7 +311,10 @@ export class ProjectDocReader implements DocReader {
     return properties.filter(p => p.name === prop);
   }
 
-  private extractSVGElementFromType(type: Type): string | null {
+  private extractSVGElementFromType(type: Type | undefined): string | null {
+    if (!type) {
+      return null;
+    }
     // Handle intersection types
     if (type.isIntersection()) {
       for (const intersectionType of type.getIntersectionTypes()) {
@@ -348,7 +359,7 @@ export class ProjectDocReader implements DocReader {
     throw new Error(`Expected to find type arguments for type ${type.getText()}, but found none.`);
   }
 
-  private getTypeArgumentOfFunctionCallSignature(declaration: ExportedDeclarations): Type {
+  private getTypeArgumentOfFunctionCallSignature(declaration: ExportedDeclarations): Type | undefined {
     const type = declaration.getType();
     // Try to get call signatures (for function components)
     const callSignatures = type.getCallSignatures();
@@ -379,23 +390,20 @@ export class ProjectDocReader implements DocReader {
         return propsProperty.getTypeAtLocation(declaration);
       }
 
-      throw new Error(
-        `Expected to find at least one call signature for declaration ${declaration.getText()}, but found none.`,
-      );
+      // Some of our exports are not functions or components
+      return undefined;
     }
     const firstSignature = callSignatures[0];
-    const parameters = firstSignature.getParameters();
-    if (parameters.length === 0) {
-      throw new Error(
-        `Expected to find at least one parameter for declaration ${declaration.getText()}, but found none.`,
-      );
+    const parameters = firstSignature?.getParameters();
+    if (parameters?.length === 0) {
+      return undefined;
     }
 
     const firstParameter = parameters[0];
-    return firstParameter.getTypeAtLocation(declaration);
+    return firstParameter?.getTypeAtLocation(declaration);
   }
 
-  private getPropsType(component: string): Type {
+  private getPropsType(component: string): Type | undefined {
     const declaration = this.getComponentDeclaration(component);
     const type = declaration.getType();
 
@@ -756,6 +764,35 @@ export class ProjectDocReader implements DocReader {
       return examples;
     } catch {
       return [];
+    }
+  }
+
+  getReturnTypeOf(component: string): { names: string[]; isInline: boolean } | undefined {
+    try {
+      const declaration = this.getComponentDeclaration(component);
+      const type = declaration.getType();
+      const callSignatures = type.getCallSignatures();
+
+      if (callSignatures.length === 0) {
+        return undefined;
+      }
+
+      const returnType = callSignatures[0].getReturnType();
+      let names: string[] = [returnType.getText()];
+      const isInline = false;
+
+      if (returnType.isUnion()) {
+        names = returnType.getUnionTypes().map(t => t.getText());
+      }
+
+      // Coalesce boolean
+      if (names.length === 2 && names.includes('true') && names.includes('false')) {
+        names = ['boolean'];
+      }
+
+      return { names, isInline };
+    } catch {
+      return undefined;
     }
   }
 }

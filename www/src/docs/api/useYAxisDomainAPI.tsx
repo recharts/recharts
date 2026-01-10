@@ -1,0 +1,35 @@
+import { ApiDoc } from './types';
+
+export const useYAxisDomainAPI: ApiDoc = {
+  name: 'useYAxisDomain',
+  props: [],
+  desc: {
+    'en-US': (
+      <section>
+        <p>Returns the calculated domain of a Y-axis.</p>
+        <p>
+          The domain can be numerical: <code>[min, max]</code>, or categorical:{' '}
+          <code>[&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</code>.
+        </p>
+        <p>
+          The type of the domain is defined by the <code>type</code> prop of the YAxis.
+        </p>
+        <p>
+          The values of the domain are calculated based on the data and the <code>dataKey</code> of the axis.
+        </p>
+        <p>Does not interact with Brushes, as Y-axes do not support brushing.</p>
+      </section>
+    ),
+  },
+  returnValue: 'CategoricalDomain | NumberDomain | undefined',
+  returnDesc: {
+    'en-US': (
+      <section>
+        <p>
+          The domain of the Y-axis, or <code>undefined</code> if it cannot be calculated or if used outside a chart
+          context.
+        </p>
+      </section>
+    ),
+  },
+};

@@ -24,14 +24,14 @@ import { ReferenceLineAPI } from './ReferenceLineAPI';
 import { ReferenceDotAPI } from './ReferenceDotAPI';
 import { ReferenceAreaAPI } from './ReferenceAreaAPI';
 import { ErrorBarAPI } from './ErrorBarAPI';
-import { CartesianAxisAPI as CartesianAxis } from './CartesianAxis';
+import { CartesianAxisAPI } from './CartesianAxisAPI';
 import { CartesianGridAPI } from './CartesianGridAPI';
 import { FunnelAPI } from './FunnelAPI';
 
 import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
 import { LegendAPI } from './LegendAPI';
 import { TooltipAPI } from './TooltipAPI';
-import { CellAPI as Cell } from './Cell';
+import { CellAPI } from './CellAPI';
 import { TextAPI } from './TextAPI';
 
 import { PieAPI } from './PieAPI';
@@ -59,6 +59,18 @@ import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
 import { LayerAPI } from './LayerAPI';
 import { SurfaceAPI } from './SurfaceAPI';
 import { SymbolsAPI } from './SymbolsAPI';
+import { DefaultZIndexesAPI } from './DefaultZIndexesAPI';
+import { useActiveTooltipDataPointsAPI } from './useActiveTooltipDataPointsAPI';
+import { useActiveTooltipLabelAPI } from './useActiveTooltipLabelAPI';
+import { useMarginAPI } from './useMarginAPI';
+import { useOffsetAPI } from './useOffsetAPI';
+import { usePlotAreaAPI } from './usePlotAreaAPI';
+import { useChartWidthAPI } from './useChartWidthAPI';
+import { useChartHeightAPI } from './useChartHeightAPI';
+import { getNiceTickValuesAPI } from './getNiceTickValuesAPI';
+import { GlobalAPI } from './GlobalAPI';
+import { useXAxisDomainAPI } from './useXAxisDomainAPI';
+import { useYAxisDomainAPI } from './useYAxisDomainAPI';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -80,10 +92,12 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Line: LineAPI,
   Scatter: ScatterAPI,
   XAxis: XAxisAPI,
+  useXAxisDomain: useXAxisDomainAPI,
   YAxis: YAxisAPI,
+  useYAxisDomain: useYAxisDomainAPI,
   ZAxis: ZAxisAPI,
   Brush: BrushAPI,
-  CartesianAxis,
+  CartesianAxis: CartesianAxisAPI,
   CartesianGrid: CartesianGridAPI,
   Funnel: FunnelAPI,
 
@@ -91,14 +105,24 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Legend: LegendAPI,
   DefaultLegendContent: DefaultLegendContentAPI,
   Tooltip: TooltipAPI,
+  useActiveTooltipDataPoints: useActiveTooltipDataPointsAPI,
+  useActiveTooltipLabel: useActiveTooltipLabelAPI,
   DefaultTooltipContent: DefaultTooltipContentAPI,
-  Cell,
+  Cell: CellAPI,
   Text: TextAPI,
   Label: LabelAPI,
   LabelList: LabelListAPI,
   Customized: CustomizedAPI,
   Layer: LayerAPI,
   Surface: SurfaceAPI,
+
+  useMargin: useMarginAPI,
+  useOffset: useOffsetAPI,
+  usePlotArea: usePlotAreaAPI,
+  useChartWidth: useChartWidthAPI,
+  useChartHeight: useChartHeightAPI,
+  getNiceTickValues: getNiceTickValuesAPI,
+  Global: GlobalAPI,
 
   Pie: PieAPI,
   RadialBar: RadialBarAPI,
@@ -121,4 +145,5 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Symbols: SymbolsAPI,
 
   ZIndexLayer: ZIndexLayerAPI,
+  DefaultZIndexes: DefaultZIndexesAPI,
 };

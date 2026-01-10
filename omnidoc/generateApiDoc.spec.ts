@@ -105,4 +105,10 @@ describe('generateApiDoc', () => {
     const description = contentProp?.desc?.['en-US'];
     expect(description).toContain('<Link to="/api/DefaultTooltipContent/">DefaultTooltipContent</Link>');
   });
+
+  it('should include return value in API doc for hooks', async () => {
+    const apiDoc = await generateApiDoc('useChartHeight', reader, contextMap);
+    expect(apiDoc.returnValue).toBeDefined();
+    expect(apiDoc.returnValue).toBe('number | undefined');
+  });
 });

@@ -23,6 +23,7 @@ import { ChartExample } from '../exampleComponents/types.ts';
 import { barStackApiExamples } from './BarStack';
 import { zIndexLayerApiExamples } from './ZIndexLayer';
 import { sunburstChartApiExamples } from './SunburstChart';
+import { defaultZIndexesApiExamples } from './DefaultZIndexes';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -49,4 +50,5 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   Sankey: sankeyApiExamples,
   SunburstChart: sunburstChartApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
+  DefaultZIndexes: defaultZIndexesApiExamples,
 };
