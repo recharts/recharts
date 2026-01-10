@@ -34,7 +34,7 @@ export function getTooltipTranslateXY({
   allowEscapeViewBox,
   coordinate,
   key,
-  offsetTopLeft,
+  offset,
   position,
   reverseDirection,
   tooltipDimension,
@@ -44,7 +44,7 @@ export function getTooltipTranslateXY({
   allowEscapeViewBox: AllowInDimension;
   coordinate: Coordinate;
   key: Dimension2D;
-  offsetTopLeft: number;
+  offset: number;
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   tooltipDimension: number;
@@ -55,8 +55,8 @@ export function getTooltipTranslateXY({
     return position[key];
   }
 
-  const negative = coordinate[key] - tooltipDimension - (offsetTopLeft > 0 ? offsetTopLeft : 0);
-  const positive = coordinate[key] + offsetTopLeft;
+  const negative = coordinate[key] - tooltipDimension - (offset > 0 ? offset : 0);
+  const positive = coordinate[key] + offset;
 
   if (allowEscapeViewBox[key]) {
     return reverseDirection[key] ? negative : positive;
@@ -106,7 +106,8 @@ export function getTransformStyle({
 export function getTooltipTranslate({
   allowEscapeViewBox,
   coordinate,
-  offsetTopLeft,
+  offsetTop,
+  offsetLeft,
   position,
   reverseDirection,
   tooltipBox,
@@ -115,7 +116,8 @@ export function getTooltipTranslate({
 }: {
   allowEscapeViewBox: AllowInDimension;
   coordinate: Coordinate | undefined;
-  offsetTopLeft: number;
+  offsetTop: number;
+  offsetLeft: number;
   position: Partial<Coordinate> | undefined;
   reverseDirection: AllowInDimension;
   tooltipBox: { width: number; height: number };
@@ -128,7 +130,7 @@ export function getTooltipTranslate({
       allowEscapeViewBox,
       coordinate,
       key: 'x',
-      offsetTopLeft,
+      offset: offsetLeft,
       position,
       reverseDirection,
       tooltipDimension: tooltipBox.width,
@@ -140,7 +142,7 @@ export function getTooltipTranslate({
       allowEscapeViewBox,
       coordinate,
       key: 'y',
-      offsetTopLeft,
+      offset: offsetTop,
       position,
       reverseDirection,
       tooltipDimension: tooltipBox.height,

@@ -99,7 +99,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     const { cssClasses, cssProperties } = getTooltipTranslate({
       allowEscapeViewBox,
       coordinate,
-      offsetTopLeft: offset,
+      offsetLeft: offset,
+      offsetTop: offset,
       position,
       reverseDirection,
       tooltipBox: {
