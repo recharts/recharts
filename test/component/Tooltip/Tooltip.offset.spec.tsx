@@ -47,6 +47,12 @@ describe('Tooltip offset', () => {
       showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
       expectTooltipCoordinate(container, { x: 20, y: 40 });
     });
+
+    it('should position tooltip at { x: 0, y: 20 } with offset=0', () => {
+      const { container } = renderTestCase(0);
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
+      expectTooltipCoordinate(container, { x: 0, y: 20 });
+    });
   });
 
   describe('with Coordinate offset (different x and y)', () => {
@@ -55,12 +61,30 @@ describe('Tooltip offset', () => {
       showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
       expectTooltipCoordinate(container, { x: 10, y: 50 });
     });
+
+    it('should position tooltip at { x: 0, y: 30 } with offset={ x: 0, y: 10 }', () => {
+      const { container } = renderTestCase({ x: 0, y: 10 });
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
+      expectTooltipCoordinate(container, { x: 0, y: 30 });
+    });
+
+    it('should position tooltip at { x: 10, y: 20 } with offset={ x: 10, y: 0 }', () => {
+      const { container } = renderTestCase({ x: 10, y: 0 });
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
+      expectTooltipCoordinate(container, { x: 10, y: 20 });
+    });
   });
 
   describe('with negative offset value', () => {
     it('should position tooltip at { x: 45, y: 35 } with offset={ x: -5, y: 15 }', () => {
       const { container } = renderTestCase({ x: -5, y: 15 });
       showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, { clientX: 50, clientY: 20 });
+      /*
+       * Data points: A(x=0), B(x=50), C(x=100) with width=100, margin=0
+       * Mouse at (50, 20) is closest to point B at x=50
+       * tooltipX = 50 + offset(-5) = 45
+       * tooltipY = 20 + offset(15) = 35
+       */
       expectTooltipCoordinate(container, { x: 45, y: 35 });
     });
   });
