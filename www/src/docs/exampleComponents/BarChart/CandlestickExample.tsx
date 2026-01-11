@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import { MarketCandle } from '@recharts/devtools/dist/generateMockMarketData';
 
-const data: ReadonlyArray<MarketCandle> = generateMockMarketData(100, 1337);
+const data: ReadonlyArray<MarketCandle> = generateMockMarketData(100, 1337, 100, 1768145757834);
 
 const barDataKey: (entry: MarketCandle) => [number, number] = entry => [
   Math.min(entry.close, entry.open),
@@ -29,7 +29,7 @@ const whiskerDataKey: (entry: MarketCandle) => [number, number] = entry => {
 
 const timestampToMinutes = (timestamp: number) => {
   const date = new Date(timestamp);
-  return `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+  return `${date.getUTCHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
 const formatDollars = (value: number) => `$${value.toFixed(2)}`;
