@@ -7,70 +7,79 @@ import { routes } from '../../src/routes';
 import { ColorModeProvider, defineColorModeStore } from '../../src/components/color-mode';
 
 function baseRender(url: string) {
+  const colorModeStore = defineColorModeStore();
   const renderResult = render(
-    <ColorModeProvider store={defineColorModeStore()}>
+    <ColorModeProvider store={colorModeStore}>
       <MemoryRouter initialEntries={[url]}>{routes()}</MemoryRouter>
     </ColorModeProvider>,
   );
   expect(renderResult.getByRole('main')).toBeInTheDocument();
-  return renderResult;
+  return { screen: renderResult, dispose: colorModeStore.dispose } as const;
 }
 
 function testIndexView(url: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('heading', { name: 'Recharts' })).toBeInTheDocument();
-  expect(getByRole('heading', { name: 'Features' })).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: 'Recharts' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Features' })).toBeInTheDocument();
+  dispose();
 }
 
 function testInstallationView(url: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('main')).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('main')).toBeInTheDocument();
   // h2 in the nav
-  expect(getByRole('heading', { name: 'Guide', level: 2 })).toBeInTheDocument();
-  expect(getByRole('heading', { name: 'Installation' })).toBeInTheDocument();
-  expect(getByRole('heading', { name: 'NPM' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'Installation' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'Getting Started' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'Customize' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'API' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'Examples' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Guide', level: 2 })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Installation' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'NPM' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Installation' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Getting Started' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Customize' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'API' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Examples' })).toBeInTheDocument();
+  dispose();
 }
 
 function testGettingStartedView(url: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument();
+  dispose();
 }
 
 function testAPIView(url: string, heading: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('heading', { name: heading })).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
+  dispose();
 }
 
 function testExamplesIndexView(url: string) {
-  const { getByRole } = baseRender(url);
+  const { screen, dispose } = baseRender(url);
   // h1 for the page title
-  expect(getByRole('heading', { name: 'Examples', level: 1 })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Examples', level: 1 })).toBeInTheDocument();
   // h2 in navigation sidebar
-  expect(getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
+  dispose();
 }
 
 function testExamplesView(url: string, heading: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('heading', { name: heading })).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
   // h2 in navigation sidebar
-  expect(getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
+  dispose();
 }
 
 function testStorybookView(url: string) {
-  const { container } = baseRender(url);
-  expect(container.querySelector('iframe.fullscreen')).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.container.querySelector('iframe.fullscreen')).toBeInTheDocument();
+  dispose();
 }
 
 function testNotFoundView(url: string) {
-  const { getByRole } = baseRender(url);
-  expect(getByRole('heading', { name: '404' })).toBeInTheDocument();
-  expect(getByRole('heading', { name: 'Page Not Found' })).toBeInTheDocument();
-  expect(getByRole('link', { name: 'Go to Homepage' })).toBeInTheDocument();
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: '404' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Page Not Found' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Go to Homepage' })).toBeInTheDocument();
+  dispose();
 }
 
 describe('routes', () => {
