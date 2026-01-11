@@ -296,10 +296,98 @@ export class ProjectDocReader implements DocReader {
     return properties;
   }
 
+  private collectArgumentsFromHook(componentName: string): ReadonlyArray<PropMeta> {
+    try {
+      const declaration = this.getComponentDeclaration(componentName);
+      const type = declaration.getType();
+      const callSignatures = type.getCallSignatures();
+
+      if (callSignatures.length === 0) {
+        return [];
+      }
+
+      const signature = callSignatures[0];
+      const parameters = signature.getParameters();
+      const functionJsDoc = this.getJsDocMeta(declaration);
+
+      const properties: PropMeta[] = [];
+
+      parameters.forEach(paramSymbol => {
+        const propName = paramSymbol.getName();
+        const decls = paramSymbol.getDeclarations();
+        if (decls.length === 0) return;
+
+        const paramDecl = decls[0];
+        const origin = this.getDeclarationOrigin(paramDecl);
+        const sourceFile = paramDecl.getSourceFile();
+        const normalizedPath = sourceFile.getFilePath().replace(/\\/g, '/');
+
+        let defaultValueFromObject: DefaultValue = { type: 'unreadable' };
+        let isRequired = true;
+
+        if (Node.isParameterDeclaration(paramDecl)) {
+          const initializer = paramDecl.getInitializer();
+          if (initializer) {
+            defaultValueFromObject = { type: 'known', value: initializer.getText() };
+            isRequired = false;
+          }
+          if (paramDecl.isOptional()) {
+            isRequired = false;
+          }
+        }
+
+        let jsDoc: JSDocMeta | undefined;
+        // Try to find on parameter itself
+        const paramOwnDocs = this.getJsDocMeta(paramDecl);
+        if (paramOwnDocs.text) {
+          jsDoc = paramOwnDocs;
+        } else {
+          // Look in function JSDoc @param
+          const paramTag = functionJsDoc.tags.find(
+            t => t[0] === 'param' && (t[1]?.startsWith(`${propName} `) || t[1] === propName),
+          );
+          if (paramTag && paramTag[1]) {
+            // strip name
+            // e.g. "xAxisId The id..." -> "The id..."
+            const text = paramTag[1].substring(propName.length).trim();
+            // Remove hyphen if present " - The id..."
+            const cleanText = text.replace(/^-\s*/, '');
+            jsDoc = {
+              text: cleanText,
+              tags: [],
+            };
+          }
+        }
+
+        properties.push({
+          name: propName,
+          origin,
+          normalizedPath,
+          defaultValueFromObject,
+          defaultValueFromJSDoc: { type: 'unreadable' },
+          jsDoc,
+          isRequired,
+        });
+      });
+
+      return properties;
+    } catch (e) {
+      console.error(`Error collecting arguments for hook ${componentName}`, e);
+      return [];
+    }
+  }
+
   private getCachedProps(component: string): ReadonlyArray<PropMeta> {
     if (this.propCache.has(component)) {
       return this.propCache.get(component)!;
     }
+
+    if (component.startsWith('use')) {
+      const props = this.collectArgumentsFromHook(component);
+      this.propCache.set(component, props);
+      return props;
+    }
+
     const paramType = this.getPropsType(component);
     const props = this.collectPropertiesFromType(component, paramType);
     this.propCache.set(component, props);
@@ -521,8 +609,87 @@ export class ProjectDocReader implements DocReader {
     return undefined;
   }
 
+  private extractTypeInfo(type: Type, declaration: Node): { names: string[]; isInline: boolean } {
+    let isInline = false;
+    let names: string[] = [type.getText()];
+
+    let aliasSymbol = type.getAliasSymbol();
+    if (!aliasSymbol && type.isUnion()) {
+      aliasSymbol = type.getNonNullableType().getAliasSymbol();
+    }
+
+    if (!aliasSymbol && (Node.isPropertySignature(declaration) || Node.isParameterDeclaration(declaration))) {
+      const typeNode =
+        Node.isPropertySignature(declaration) || Node.isParameterDeclaration(declaration)
+          ? (declaration as any).getTypeNode() // casting because both have getTypeNode
+          : undefined;
+
+      if (typeNode) {
+        const nodeType = typeNode.getType();
+        aliasSymbol = nodeType.getAliasSymbol();
+      }
+    }
+
+    if (aliasSymbol) {
+      const jsDocTags = aliasSymbol.getJsDocTags();
+      const hasInlineTag = jsDocTags.some(t => t.getName() === 'inline');
+
+      if (hasInlineTag) {
+        isInline = true;
+        if (type.isUnion()) {
+          const parts = type.getUnionTypes();
+          names = parts
+            .map(part => {
+              if (part.getAliasSymbol() === aliasSymbol) {
+                if (part.isUnion()) {
+                  return part.getUnionTypes().map(t => t.getText());
+                }
+                const declarations2 = aliasSymbol.getDeclarations();
+                const declaration0 = declarations2[0];
+                if (declarations2.length > 0 && Node.isTypeAliasDeclaration(declaration0)) {
+                  return declaration0.getTypeNode()?.getText() ?? part.getText();
+                }
+              }
+              return part.getText();
+            })
+            .flat();
+        }
+      }
+    }
+
+    if (type.isUnion() && !isInline) {
+      const isReactNode =
+        aliasSymbol?.getName() === 'ReactNode' && aliasSymbol.getDeclarations()[0]?.getSourceFile().isInNodeModules();
+      if (isReactNode) {
+        names = ['ReactNode'];
+      } else {
+        names = type.getUnionTypes().map(t => t.getText());
+      }
+    }
+
+    names = names.filter(n => n !== 'undefined');
+
+    if (names.length === 2 && names.includes('true') && names.includes('false')) {
+      names = ['boolean'];
+    }
+
+    return { names, isInline };
+  }
+
   getTypeOf(component: string, prop: string): { names: string[]; isInline: boolean } | undefined {
     try {
+      if (component.startsWith('use')) {
+        const declaration = this.getComponentDeclaration(component);
+        const type = declaration.getType();
+        const signature = type.getCallSignatures()[0];
+        if (!signature) return undefined;
+        const param = signature.getParameters().find(p => p.getName() === prop);
+        if (!param) return undefined;
+        const decl = param.getDeclarations()[0];
+        if (!decl) return undefined;
+        return this.extractTypeInfo(decl.getType(), decl);
+      }
+
       const paramType = this.getPropsType(component);
       const properties = paramType.getProperties();
       const property = properties.find(p => p.getName() === prop);
@@ -537,96 +704,9 @@ export class ProjectDocReader implements DocReader {
       }
 
       const declaration = declarations[0];
-
       const type = declaration.getType();
-      let isInline = false;
-      let names: string[] = [type.getText()];
 
-      let aliasSymbol = type.getAliasSymbol();
-      if (!aliasSymbol && type.isUnion()) {
-        aliasSymbol = type.getNonNullableType().getAliasSymbol();
-      }
-
-      if (!aliasSymbol && Node.isPropertySignature(declaration)) {
-        const typeNode = declaration.getTypeNode();
-        if (typeNode) {
-          const nodeType = typeNode.getType();
-          aliasSymbol = nodeType.getAliasSymbol();
-        }
-      }
-
-      if (aliasSymbol) {
-        const jsDocTags = aliasSymbol.getJsDocTags();
-        const hasInlineTag = jsDocTags.some(t => t.getName() === 'inline');
-
-        if (hasInlineTag) {
-          isInline = true;
-          if (type.isUnion()) {
-            const parts = type.getUnionTypes();
-            names = parts
-              .map(part => {
-                if (part.getAliasSymbol() === aliasSymbol) {
-                  if (part.isUnion()) {
-                    // If the part is itself a union (nested), we might want to flatten it or keep it as is?
-                    // For now, let's keep the existing logic of using the text, but maybe split it if it's not what we want.
-                    // Actually, getUnionTypes() returns the parts.
-                    // If we want to return strings, we should map them to text.
-                    return part.getUnionTypes().map(t => t.getText());
-                  }
-                  const declarations2 = aliasSymbol.getDeclarations();
-                  const declaration0 = declarations2[0];
-                  if (declarations2.length > 0 && Node.isTypeAliasDeclaration(declaration0)) {
-                    return declaration0.getTypeNode()?.getText() ?? part.getText();
-                  }
-                }
-                return part.getText();
-              })
-              .flat();
-          } else {
-            // If inline but not a union, it might be just one type
-            // But valid `names` expect array.
-            // We can just use the type text, as it was before, but ensure it is in an array.
-            // But wait, the previous code was doing `typeText = expandedParts.join(' | ')` for unions.
-            // For non-union inline, it fell through to `typeText` which was `type.getText()`.
-          }
-        }
-      }
-
-      // If it is a union but NOT inline, we usually just want the type text (e.g. "Foo | Bar").
-      // But passing it as a single string means consumers have to split it again if they want parts.
-      // However, our goal is to avoid `splitTypeString`.
-      // So if it's a union, we should probably ALWAYS return the parts?
-      // But standard TS `getText()` might return "string | number".
-      // If we simply return `[type.getText()]`, the consumer sees one string "string | number".
-      // If the consumer (simplifyType) expects to split it, it will fail if we removed splitting.
-      // So we SHOULD return the parts if it is a union.
-
-      if (type.isUnion() && !isInline) {
-        // If it's a union, let's break it down.
-        // But be careful about booleans (true | false) which TS might treat as boolean?
-        // type.getUnionTypes() is robust.
-
-        const isReactNode =
-          aliasSymbol?.getName() === 'ReactNode' && aliasSymbol.getDeclarations()[0]?.getSourceFile().isInNodeModules();
-        if (isReactNode) {
-          names = ['ReactNode'];
-        } else {
-          names = type.getUnionTypes().map(t => t.getText());
-        }
-      }
-
-      // Filter out duplicate "undefined" or nulls if we want?
-      // The previous logic filters 'undefined' in simplifyType.
-      // We'll leave filtering to the consumer or do it here.
-      // Let's stick to returning what TS says.
-      names = names.filter(n => n !== 'undefined');
-
-      // Coalesce boolean
-      if (names.length === 2 && names.includes('true') && names.includes('false')) {
-        names = ['boolean'];
-      }
-
-      return { names, isInline };
+      return this.extractTypeInfo(type, declaration);
     } catch {
       return undefined;
     }

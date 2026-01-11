@@ -2,7 +2,23 @@ import { ApiDoc } from './types';
 
 export const useYAxisDomainAPI: ApiDoc = {
   name: 'useYAxisDomain',
-  props: [],
+  props: [
+    {
+      name: 'yAxisId',
+      type: 'number | string',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The <code>yAxisId</code> of the Y-axis. Defaults to <code>0</code> if not provided.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 'defaultAxisId',
+    },
+  ],
   desc: {
     'en-US': (
       <section>

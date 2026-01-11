@@ -111,4 +111,14 @@ describe('generateApiDoc', () => {
     expect(apiDoc.returnValue).toBeDefined();
     expect(apiDoc.returnValue).toBe('number | undefined');
   });
+
+  it('should include arguments as props for useXAxisDomain', async () => {
+    const apiDoc = await generateApiDoc('useXAxisDomain', reader, contextMap);
+    expect(apiDoc.props).toBeDefined();
+    expect(apiDoc.props.length).toBeGreaterThan(0);
+    const xAxisId = apiDoc.props.find(p => p.name === 'xAxisId');
+    expect(xAxisId).toBeDefined();
+    expect(xAxisId?.isOptional).toBe(true);
+    expect(xAxisId?.type).toContain('string');
+  });
 });

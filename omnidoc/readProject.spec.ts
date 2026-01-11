@@ -1123,4 +1123,16 @@ describe('readProject', () => {
     // or we'll see if it remains.
     expect(returnsTag?.text).toContain('The height of the chart in pixels');
   });
+
+  it('should read useXAxisDomain arguments as props', () => {
+    const propMeta = reader.getPropMeta('useXAxisDomain', 'xAxisId');
+    assertNotNull(propMeta);
+    expect(propMeta).toHaveLength(1);
+    const arg = propMeta[0];
+    expect(arg.name).toBe('xAxisId');
+    expect(arg.isRequired).toBe(false); // It has a default value
+    expect(arg.defaultValueFromObject.value).toContain('defaultAxisId'); // or '0' depending on how it's resolved, usually text
+    // JSDoc check
+    expect(arg.jsDoc?.text).toContain('The `xAxisId` of the X-axis');
+  });
 });

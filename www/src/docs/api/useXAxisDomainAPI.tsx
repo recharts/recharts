@@ -2,7 +2,23 @@ import { ApiDoc } from './types';
 
 export const useXAxisDomainAPI: ApiDoc = {
   name: 'useXAxisDomain',
-  props: [],
+  props: [
+    {
+      name: 'xAxisId',
+      type: 'number | string',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              The <code>xAxisId</code> of the X-axis. Defaults to <code>0</code> if not provided.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: 'defaultAxisId',
+    },
+  ],
   desc: {
     'en-US': (
       <section>
