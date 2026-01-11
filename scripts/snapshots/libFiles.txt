@@ -248,7 +248,6 @@
   "lib/util/scale/index.js",
   "lib/util/scale/util",
   "lib/util/scale/util/arithmetic.js",
-  "lib/util/scale/util/utils.js",
   "lib/util/stacks",
   "lib/util/stacks/getStackSeriesIdentifier.js",
   "lib/util/stacks/stackTypes.js",

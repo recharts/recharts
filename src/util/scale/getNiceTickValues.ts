@@ -4,7 +4,6 @@
  * @date 2015-09-17
  */
 import Decimal from 'decimal.js-light';
-import { compose, range, map } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 import { NumberDomain } from '../types';
 
@@ -87,13 +86,13 @@ export const getTickOfSingleValue = (value: number, tickCount: number, allowDeci
   }
 
   const middleIndex = Math.floor((tickCount - 1) / 2);
+  const ticks: Array<number> = [];
 
-  const fn = compose(
-    map((n: number) => middle.add(new Decimal(n - middleIndex).mul(step)).toNumber()),
-    range,
-  );
+  for (let i = 0; i < tickCount; i++) {
+    ticks.push(middle.add(new Decimal(i - middleIndex).mul(step)).toNumber());
+  }
 
-  return fn(0, tickCount);
+  return ticks;
 };
 
 /**
@@ -178,10 +177,10 @@ export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allow
   const [cormin, cormax] = getValidInterval([min, max]);
 
   if (cormin === -Infinity || cormax === Infinity) {
-    const values =
+    const values: Array<number> =
       cormax === Infinity
-        ? [cormin, ...range(0, tickCount - 1).map(() => Infinity)]
-        : [...range(0, tickCount - 1).map(() => -Infinity), cormax];
+        ? [cormin, ...Array(tickCount - 1).fill(Infinity)]
+        : [...Array(tickCount - 1).fill(-Infinity), cormax];
 
     return min > max ? values.reverse() : values;
   }
