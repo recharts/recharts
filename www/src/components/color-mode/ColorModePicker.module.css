@@ -7,6 +7,6 @@
   font-size: 2rem;
 
   &:hover {
-    color: #333;
+    color: var(--color-text-1);
   }
 }

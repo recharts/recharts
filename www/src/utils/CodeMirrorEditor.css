@@ -14,11 +14,12 @@
       gap: 6px;
       cursor: pointer;
       padding: 6px 12px;
-      background: white;
-      border: 1px solid #ddd;
+      height: 3.2rem;
+      background-color: transparent;
+      border: 1px solid var(--color-border-2);
       border-radius: 4px;
       font-size: 14px;
-      color: #333;
+      color: var(--color-text-2);
       transition: all 0.2s;
       line-height: 1;
 
