@@ -31,10 +31,7 @@ export const TooltipArgTypes: StorybookArgs = {
     The offset can be negative.`,
     defaultValue: 10,
     table: {
-      type: {
-        summary: 'number | Coordinate',
-        detail: 'number | { x: number, y: number }',
-      },
+      type: { summary: 'number' },
       category: 'Position',
     },
   },
