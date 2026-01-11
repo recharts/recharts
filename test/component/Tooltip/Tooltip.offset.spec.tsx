@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React from 'react';
 import { describe, it, beforeEach } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { Line, LineChart, Tooltip } from '../../../src';
@@ -11,7 +11,7 @@ describe('Tooltip offset', () => {
     mockGetBoundingClientRect({ width: 10, height: 10 });
   });
 
-  const renderTestCase = (offset: ComponentProps<typeof Tooltip>['offset']) =>
+  const renderTestCase = (offset: React.ComponentProps<typeof Tooltip>['offset']) =>
     createSelectorTestCase(({ children }) => (
       <LineChart
         width={100}
