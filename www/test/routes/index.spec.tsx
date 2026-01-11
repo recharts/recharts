@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router';
@@ -74,6 +74,15 @@ function testNotFoundView(url: string) {
 }
 
 describe('routes', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      media: query,
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+  });
   describe('index view', () => {
     it.each(['/', '', '/en-US', '/en-US/'])('should render IndexView at %s', testIndexView);
   });
