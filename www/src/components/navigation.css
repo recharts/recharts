@@ -85,7 +85,6 @@ nav.desktop-only {
       gap: 40px;
 
       a {
-        display: inline-block;
         height: 61px;
         font-size: var(--font-size-lg);
         text-decoration: none;
@@ -107,7 +106,7 @@ nav.desktop-only {
   width: 80%;
   max-width: 500px;
   height: 100%;
-  background: #fff;
+  background-color: var(--color-surface-base);
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
