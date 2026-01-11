@@ -22,6 +22,8 @@ export type ApiDoc = {
   name: string;
   desc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   props: ReadonlyArray<ApiProps>;
+  returnValue?: string;
+  returnDesc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   parentComponents?: ReadonlyArray<string>;
   childrenComponents?: ReadonlyArray<string>;
   deprecated?: boolean | string;

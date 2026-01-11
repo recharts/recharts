@@ -1,6 +1,3 @@
-/**
- * @fileOverview Surface
- */
 import * as React from 'react';
 import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
 import { clsx } from 'clsx';
@@ -23,7 +20,7 @@ export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 /**
  * Renders an SVG element.
  *
- * Other charts already include a Surface component, so you would not normally use this directly.
+ * All charts already include a Surface component, so you would not normally use this directly.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg
  */

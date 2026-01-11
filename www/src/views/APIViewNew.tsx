@@ -47,49 +47,52 @@ function PropsList({ props, locale }: PropsListProps) {
 
   return (
     <>
-      {props.map((entry: ApiProps) => (
-        <li className="props-item" key={entry.name} id={entry.name}>
-          <p className={`header ${entry.deprecated ? 'deprecated' : ''}`}>
-            <span className="title">
-              <a href={`#${entry.name}`}>{entry.name}</a>
-            </span>
-            <span className="type">{entry.type}</span>
-            {entry.isOptional ? <em className="optional">optional</em> : null}
-            {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
-          </p>
-          {entry.deprecated && typeof entry.deprecated === 'string' ? (
-            <p className="deprecated-message">
-              <strong>Deprecated:</strong> {entry.deprecated}
+      <h4 className="sub-title">Props</h4>
+      <ul className="props-list">
+        {props.map((entry: ApiProps) => (
+          <li className="props-item" key={entry.name} id={entry.name}>
+            <p className={`header ${entry.deprecated ? 'deprecated' : ''}`}>
+              <span className="title">
+                <a href={`#${entry.name}`}>{entry.name}</a>
+              </span>
+              <span className="type">{entry.type}</span>
+              {entry.isOptional ? <em className="optional">optional</em> : null}
+              {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
             </p>
-          ) : null}
-          <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
-          {entry.defaultVal !== null &&
-          entry.defaultVal !== undefined &&
-          entry.defaultVal !== 'null' &&
-          entry.defaultVal !== 'undefined' ? (
-            <p className="default">
-              <span className="title">{localeGet(locale, 'api', 'default')}</span>
-              <code>{JSON.stringify(entry.defaultVal)}</code>
-            </p>
-          ) : null}
-          {entry.format && entry.format.length ? (
-            <div className="format">
-              <p className="title">{localeGet(locale, 'api', 'format')}</p>
-              <pre className="format-code">
-                <code>{entry.format.join('\n')}</code>
-              </pre>
-            </div>
-          ) : null}
-          {entry.examples && entry.examples.length ? (
-            <div className="examples">
-              <p className="title">{localeGet(locale, 'api', 'examples')}</p>
-              <ul className="list">
-                <PropsExamples examples={entry.examples} locale={locale} />
-              </ul>
-            </div>
-          ) : null}
-        </li>
-      ))}
+            {entry.deprecated && typeof entry.deprecated === 'string' ? (
+              <p className="deprecated-message">
+                <strong>Deprecated:</strong> {entry.deprecated}
+              </p>
+            ) : null}
+            <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
+            {entry.defaultVal !== null &&
+            entry.defaultVal !== undefined &&
+            entry.defaultVal !== 'null' &&
+            entry.defaultVal !== 'undefined' ? (
+              <p className="default">
+                <span className="title">{localeGet(locale, 'api', 'default')}</span>
+                <code>{JSON.stringify(entry.defaultVal)}</code>
+              </p>
+            ) : null}
+            {entry.format && entry.format.length ? (
+              <div className="format">
+                <p className="title">{localeGet(locale, 'api', 'format')}</p>
+                <pre className="format-code">
+                  <code>{entry.format.join('\n')}</code>
+                </pre>
+              </div>
+            ) : null}
+            {entry.examples && entry.examples.length ? (
+              <div className="examples">
+                <p className="title">{localeGet(locale, 'api', 'examples')}</p>
+                <ul className="list">
+                  <PropsExamples examples={entry.examples} locale={locale} />
+                </ul>
+              </div>
+            ) : null}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
@@ -172,6 +175,8 @@ function ApiExamples({ examples, componentName }: ApiExamplesProps) {
                   sourceCode={example.sourceCode}
                   stackBlitzTitle={`Recharts API example: ${componentName} - ${example.name || `Example ${i + 1}`}`}
                   analyticsLabel={`${componentName}-api-example-${i}`}
+                  defaultTool={example.defaultTool}
+                  defaultToolTab={example.defaultToolTab}
                 />
               </div>
             </div>
@@ -229,10 +234,17 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
           <ChildrenComponents componentName={api.name} components={api.childrenComponents} locale={locale} />
         ) : null}
 
-        <h4 className="sub-title">Properties</h4>
-        <ul className="props-list">
-          <PropsList props={api && api.props} locale={locale} />
-        </ul>
+        {api.returnValue && (
+          <div>
+            <h4 className="sub-title">Return value</h4>
+            <p>
+              <code>{api.returnValue}</code>
+            </p>
+            {api.returnDesc && <p className="desc">{parseLocalObj(locale, api.returnDesc)}</p>}
+          </div>
+        )}
+
+        <PropsList props={api && api.props} locale={locale} />
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ type DevToolsPanelProps = {
    * Callback to capture the current DevTools value (useful for copying functionality).
    */
   onValueChange?: (value: unknown) => void;
+  initialTab?: string;
 };
 
 declare global {
@@ -24,9 +25,10 @@ declare global {
 /**
  * A panel that renders the Recharts DevTools portal and captures its value.
  */
-export function DevToolsPanel({ className = '', onValueChange }: DevToolsPanelProps) {
+export function DevToolsPanel({ className = '', onValueChange, initialTab }: DevToolsPanelProps) {
   // Create a ref to store the devtools value so that it persists across re-renders
   const devToolsValue = useRef<unknown>(undefined);
+  const DevToolsPortal = RechartsDevtoolsPortal;
 
   useEffect(() => {
     const container = document.getElementById('recharts-devtools-portal');
@@ -46,7 +48,8 @@ export function DevToolsPanel({ className = '', onValueChange }: DevToolsPanelPr
   }, [onValueChange]);
 
   return (
-    <RechartsDevtoolsPortal
+    <DevToolsPortal
+      initialTab={initialTab}
       style={{
         height: '100%',
         background: 'var(--color-bg)',

@@ -165,6 +165,16 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/DefaultTooltipContent/",
           },
           {
+            "displayName": "useActiveTooltipDataPoints",
+            "key": "useActiveTooltipDataPoints",
+            "url": "/en-US/api/useActiveTooltipDataPoints/",
+          },
+          {
+            "displayName": "useActiveTooltipLabel",
+            "key": "useActiveTooltipLabel",
+            "url": "/en-US/api/useActiveTooltipLabel/",
+          },
+          {
             "displayName": "Cell",
             "key": "Cell",
             "url": "/en-US/api/Cell/",
@@ -200,9 +210,49 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/ZIndexLayer/",
           },
           {
+            "displayName": "DefaultZIndexes",
+            "key": "DefaultZIndexes",
+            "url": "/en-US/api/DefaultZIndexes/",
+          },
+          {
             "displayName": "Surface",
             "key": "Surface",
             "url": "/en-US/api/Surface/",
+          },
+          {
+            "displayName": "useMargin",
+            "key": "useMargin",
+            "url": "/en-US/api/useMargin/",
+          },
+          {
+            "displayName": "useOffset",
+            "key": "useOffset",
+            "url": "/en-US/api/useOffset/",
+          },
+          {
+            "displayName": "usePlotArea",
+            "key": "usePlotArea",
+            "url": "/en-US/api/usePlotArea/",
+          },
+          {
+            "displayName": "useChartWidth",
+            "key": "useChartWidth",
+            "url": "/en-US/api/useChartWidth/",
+          },
+          {
+            "displayName": "useChartHeight",
+            "key": "useChartHeight",
+            "url": "/en-US/api/useChartHeight/",
+          },
+          {
+            "displayName": "getNiceTickValues",
+            "key": "getNiceTickValues",
+            "url": "/en-US/api/getNiceTickValues/",
+          },
+          {
+            "displayName": "Global",
+            "key": "Global",
+            "url": "/en-US/api/Global/",
           },
         ],
         "key": "general-components",
@@ -242,9 +292,19 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "url": "/en-US/api/XAxis/",
           },
           {
+            "displayName": "useXAxisDomain",
+            "key": "useXAxisDomain",
+            "url": "/en-US/api/useXAxisDomain/",
+          },
+          {
             "displayName": "YAxis",
             "key": "YAxis",
             "url": "/en-US/api/YAxis/",
+          },
+          {
+            "displayName": "useYAxisDomain",
+            "key": "useYAxisDomain",
+            "url": "/en-US/api/useYAxisDomain/",
           },
           {
             "displayName": "ZAxis",

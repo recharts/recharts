@@ -125,10 +125,10 @@ export function simplifyOneType(originalText: string, isInline: boolean = false)
   return simplifiedText;
 }
 
-export function processType(typeNames: string[], isInline: boolean): string {
+export function processType(typeNames: string[], isInline: boolean, keepUndefined: boolean = false): string {
   const simplifiedParts = typeNames
     .map(p => p.trim())
-    .filter(p => p !== 'undefined')
+    .filter(p => keepUndefined || p !== 'undefined')
     .map(p => simplifyOneType(p, isInline));
 
   const uniqueParts = Array.from(new Set(simplifiedParts));
@@ -450,10 +450,25 @@ async function generateApiDoc(
     props,
   };
 
+  if (!componentNames.includes(componentName)) {
+    const returnTypeInfo = projectReader.getReturnTypeOf(componentName);
+    if (returnTypeInfo) {
+      apiDoc.returnValue = processType(returnTypeInfo.names, returnTypeInfo.isInline, true);
+    }
+  }
+
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
     apiDoc.desc = await generateComponentDescription(componentName, projectReader);
+
+    const returnTag = getTagText(componentJsDoc, 'returns') || getTagText(componentJsDoc, 'return');
+    if (returnTag?.text) {
+      const textWithLinks = processInlineLinks(returnTag.text, componentNames);
+      apiDoc.returnDesc = {
+        'en-US': await marked.parse(textWithLinks),
+      };
+    }
 
     const deprecatedTag = getTagText(componentJsDoc, 'deprecated');
     if (deprecatedTag) {
@@ -568,6 +583,18 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   if (apiDoc.deprecated !== undefined) {
     result += `"deprecated": ${JSON.stringify(apiDoc.deprecated)},`;
   }
+  if (apiDoc.returnValue) {
+    result += `"returnValue": ${JSON.stringify(apiDoc.returnValue)},`;
+  }
+  if (apiDoc.returnDesc && Object.values(apiDoc.returnDesc).some(Boolean)) {
+    result += `"returnDesc": {`;
+    for (const [locale, html] of Object.entries(apiDoc.returnDesc)) {
+      if (!html) continue;
+      // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
+      result += `"${locale}": (<section>${html}</section>),`;
+    }
+    result += `},`;
+  }
   result += `}`;
   return result;
 }
@@ -607,9 +634,9 @@ export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
  * Main function
  */
 async function main() {
-  const componentsToGenerate = OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS;
-
   const projectReader = new ProjectDocReader();
+
+  const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Build context map from all public components, not just the ones we're generating
   // This ensures we can find all providers and consumers even if they're not being generated

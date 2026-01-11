@@ -36,6 +36,7 @@ type CodeEditorWithPreviewProps<ControlsType> = {
    */
   analyticsLabel?: string;
   defaultTool?: ToolType;
+  defaultToolTab?: string;
 };
 
 type PreviewResultProps = {
@@ -82,6 +83,7 @@ export function CodeEditorWithPreview<T>({
   stackBlitzTitle,
   analyticsLabel,
   defaultTool = 'source',
+  defaultToolTab,
 }: CodeEditorWithPreviewProps<T>) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedCode, setEditedCode] = useState<string | null>(null);
@@ -178,7 +180,7 @@ export function CodeEditorWithPreview<T>({
     {
       name: 'devtools',
       label: 'Hook inspector',
-      component: <DevToolsPanel onValueChange={setDevToolsValue} />,
+      component: <DevToolsPanel onValueChange={setDevToolsValue} initialTab={defaultToolTab} />,
       actions: [<CopyButton key="copy-devtools" getValueToCopy={() => devToolsValue} />],
     },
   ];
