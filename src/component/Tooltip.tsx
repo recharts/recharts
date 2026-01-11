@@ -180,7 +180,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * The offset size between the position of tooltip and the mouse cursor position.
    * @defaultValue 10
    */
-  offset?: number;
+  offset?: number | Coordinate;
   payloadUniqBy?: UniqueOption<TooltipPayloadEntry>;
   /**
    * If portal is defined, then Tooltip will use this element as a target

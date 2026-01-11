@@ -15,7 +15,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: {},
         coordinate: { x: 1, y: 2 },
         key: dimension,
-        offsetTopLeft: 100,
+        offset: 100,
         position: { [dimension]: 8 },
         reverseDirection: {},
         tooltipDimension: 9,
@@ -32,7 +32,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: true },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: {},
         tooltipDimension: 15,
@@ -47,7 +47,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: true },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: true },
         tooltipDimension: 15,
@@ -57,12 +57,12 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
       expect(result).toBe(132);
     });
 
-    it('should return number outside of viewBox even when offsetTopLeft is negative', () => {
+    it('should return number outside of viewBox even when offset is negative', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: true },
         coordinate: { x: 1, y: 2, [dimension]: 900 },
         key: dimension,
-        offsetTopLeft: -35,
+        offset: -35,
         position: {},
         reverseDirection: { [dimension]: false },
         tooltipDimension: 70,
@@ -77,7 +77,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: true },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: true },
         tooltipDimension: 15,
@@ -94,7 +94,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: true },
         tooltipDimension: 15,
@@ -109,7 +109,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: true },
         tooltipDimension: 15,
@@ -126,7 +126,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: false },
         tooltipDimension: 15,
@@ -143,7 +143,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 190 },
         key: dimension,
-        offsetTopLeft: 3,
+        offset: 3,
         position: {},
         reverseDirection: { [dimension]: false },
         tooltipDimension: 15,
@@ -160,7 +160,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 900 },
         key: dimension,
-        offsetTopLeft: -35,
+        offset: -35,
         position: {},
         reverseDirection: { [dimension]: false },
         tooltipDimension: 70,
@@ -256,7 +256,8 @@ describe('getTooltipTranslate', () => {
       getTooltipTranslate({
         allowEscapeViewBox: {},
         coordinate: { x: 1, y: 2 },
-        offsetTopLeft: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
         position: {},
         reverseDirection: {},
         tooltipBox: { height: 0, width: 100 },
@@ -268,7 +269,8 @@ describe('getTooltipTranslate', () => {
       getTooltipTranslate({
         allowEscapeViewBox: {},
         coordinate: { x: 1, y: 2 },
-        offsetTopLeft: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
         position: {},
         reverseDirection: {},
         tooltipBox: { height: -10, width: 100 },
@@ -280,7 +282,8 @@ describe('getTooltipTranslate', () => {
       getTooltipTranslate({
         allowEscapeViewBox: {},
         coordinate: { x: 1, y: 2 },
-        offsetTopLeft: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
         position: {},
         reverseDirection: {},
         tooltipBox: { height: 100, width: 0 },
@@ -292,7 +295,8 @@ describe('getTooltipTranslate', () => {
       getTooltipTranslate({
         allowEscapeViewBox: {},
         coordinate: { x: 1, y: 2 },
-        offsetTopLeft: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
         position: {},
         reverseDirection: {},
         tooltipBox: { height: 10, width: -100 },
@@ -308,7 +312,8 @@ describe('getTooltipTranslate', () => {
       getTooltipTranslate({
         allowEscapeViewBox: {},
         coordinate: undefined,
-        offsetTopLeft: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
         position: {},
         reverseDirection: {},
         tooltipBox: { height: 100, width: 100 },
@@ -322,7 +327,8 @@ describe('getTooltipTranslate', () => {
     const { cssProperties } = getTooltipTranslate({
       allowEscapeViewBox: {},
       coordinate: { x: 15, y: 67 },
-      offsetTopLeft: 0,
+      offsetTop: 0,
+      offsetLeft: 0,
       position: { x: 33, y: 87 },
       reverseDirection: {},
       tooltipBox: { height: 90, width: 120 },
@@ -339,7 +345,8 @@ describe('getTooltipTranslate', () => {
     const { cssClasses } = getTooltipTranslate({
       allowEscapeViewBox: {},
       coordinate: { x: 15, y: 67 },
-      offsetTopLeft: 0,
+      offsetTop: 0,
+      offsetLeft: 0,
       position: { x: 33, y: 87 },
       reverseDirection: {},
       tooltipBox: { height: 90, width: 120 },
@@ -348,5 +355,41 @@ describe('getTooltipTranslate', () => {
     });
     const expected = 'recharts-tooltip-wrapper recharts-tooltip-wrapper-right recharts-tooltip-wrapper-bottom';
     expect(cssClasses).toEqual(expected);
+  });
+
+  describe('when offsetTop and offsetLeft are different', () => {
+    it('should apply different offsets to x and y axes', () => {
+      const { cssProperties } = getTooltipTranslate({
+        allowEscapeViewBox: { x: true, y: true },
+        coordinate: { x: 100, y: 100 },
+        offsetTop: 20,
+        offsetLeft: 10,
+        position: {},
+        reverseDirection: {},
+        tooltipBox: { height: 50, width: 100 },
+        useTranslate3d: false,
+        viewBox: { height: 400, width: 400, x: 0, y: 0 },
+      });
+      expect(cssProperties).toEqual({
+        transform: 'translate(110px, 120px)',
+      });
+    });
+
+    it('should handle negative offsetTop with positive offsetLeft', () => {
+      const { cssProperties } = getTooltipTranslate({
+        allowEscapeViewBox: { x: true, y: true },
+        coordinate: { x: 100, y: 100 },
+        offsetTop: -15,
+        offsetLeft: 25,
+        position: {},
+        reverseDirection: {},
+        tooltipBox: { height: 50, width: 100 },
+        useTranslate3d: false,
+        viewBox: { height: 400, width: 400, x: 0, y: 0 },
+      });
+      expect(cssProperties).toEqual({
+        transform: 'translate(125px, 85px)',
+      });
+    });
   });
 });

@@ -59,4 +59,21 @@ describe('TooltipBoundingBox', () => {
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });
+
+  describe('offset prop', () => {
+    it('should accept number offset', () => {
+      render(<TooltipBoundingBox {...defaultProps} offset={15} />);
+      expect(screen.getByText('Hello world!')).toBeInTheDocument();
+    });
+
+    it('should accept Coordinate offset with different x and y values', () => {
+      render(<TooltipBoundingBox {...defaultProps} offset={{ x: 10, y: 20 }} />);
+      expect(screen.getByText('Hello world!')).toBeInTheDocument();
+    });
+
+    it('should accept Coordinate offset with negative values', () => {
+      render(<TooltipBoundingBox {...defaultProps} offset={{ x: -5, y: 15 }} />);
+      expect(screen.getByText('Hello world!')).toBeInTheDocument();
+    });
+  });
 });
