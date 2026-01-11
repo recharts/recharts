@@ -6,7 +6,6 @@
   padding: 2rem;
   overflow: auto;
   z-index: 1;
-  background: #fff;
 
   .menu {
     list-style: none;
@@ -24,12 +23,12 @@
       text-decoration: none;
 
       &:hover {
-        color: var(--brand-primary);
+        color: var(--color-solid-brand-1);
       }
 
       &.active {
         text-decoration: underline;
-        color: var(--brand-primary);
+        color: var(--color-solid-brand-1);
         font-weight: 700;
       }
     }

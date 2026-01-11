@@ -20,14 +20,14 @@
   gap: 8px;
 
   &:focus {
-    outline: 2px solid var(--brand-info);
+    outline: 2px solid var(--color-solid-info-1);
   }
 
   .hamburger-icon span {
     display: block;
     width: 24px;
     height: 3px;
-    background-color: var(--brand-info);
+    background-color: var(--color-solid-info-1);
     margin-bottom: 5px;
     transition:
       transform 0.3s,
@@ -91,8 +91,8 @@ nav.desktop-only {
         text-decoration: none;
 
         &.active {
-          color: var(--brand-primary);
-          border-bottom: 2px solid var(--brand-primary);
+          color: var(--color-solid-brand-1);
+          border-bottom: 2px solid var(--color-solid-brand-1);
           cursor: default;
         }
       }
@@ -133,7 +133,7 @@ nav.desktop-only {
       font-size: var(--font-size-lg);
 
       &.active {
-        color: var(--brand-primary);
+        color: var(--color-solid-brand-1);
         text-decoration: underline;
       }
     }

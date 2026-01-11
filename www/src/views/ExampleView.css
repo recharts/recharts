@@ -13,7 +13,7 @@
     margin: 0;
 
     .example-code-sandbox-link {
-      color: var(--brand-primary);
+      color: var(--color-solid-brand-1);
       font-weight: 700;
       font-size: 14px;
     }

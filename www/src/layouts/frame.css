@@ -1,6 +1,6 @@
 header {
   width: 100%;
-  background-color: #fcfcfc;
+  background-color: var(--color-surface-raised);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
@@ -20,7 +20,7 @@ header {
     white-space: nowrap;
 
     > a {
-      color: var(--brand-info);
+      color: var(--color-solid-info-1);
       text-decoration: none;
     }
   }

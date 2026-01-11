@@ -34,7 +34,7 @@ const LogoLine = (props: LineProps) => (
     dataKey="y"
     dot={false}
     strokeWidth={1.5}
-    stroke="var(--brand-primary, black)"
+    stroke="var(--color-solid-brand-1, black)"
     isAnimationActive={false}
     {...props}
   />
@@ -58,7 +58,7 @@ export function RechartsLogo() {
       <LogoLine data={slash} />
       <LogoLine data={rbracket1} />
       <LogoLine data={rbracket2} />
-      <Label position="insideLeft" offset={13} width={10} fill="var(--brand-primary, black)">
+      <Label position="insideLeft" offset={13} width={10} fill="var(--color-solid-brand-1, black)">
         Recharts
       </Label>
     </LineChart>

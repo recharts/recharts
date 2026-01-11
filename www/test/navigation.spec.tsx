@@ -33,21 +33,7 @@ describe('ColorModePicker', () => {
     cleanup();
     vi.restoreAllMocks();
   });
-  it('does not render when feature flag is disabled', () => {
-    render(
-      <MemoryRouter>
-        <Navigation />
-      </MemoryRouter>,
-    );
-    const navigations = screen.getAllByRole('navigation');
-    expect(navigations).toHaveLength(2);
-    navigations.forEach(nav => {
-      const picker = within(nav).queryByRole('button', { name: 'system' });
-      expect(picker).not.toBeInTheDocument();
-    });
-  });
   it('should render on both mobile and desktop navs', async () => {
-    vi.stubEnv('VITE_IS_DARKMODE_ENABLED', 'true');
     vi.stubGlobal('matchMedia', (query: string) => ({
       media: query,
       matches: query.includes('dark'),

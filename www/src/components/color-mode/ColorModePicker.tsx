@@ -17,7 +17,7 @@ function ColorModePickerIcon(props: ColorModeState) {
 
 export function ColorModePicker(props: React.ComponentPropsWithRef<'button'>) {
   const store = useColorModeStore();
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   return (
     <button
       {...props}

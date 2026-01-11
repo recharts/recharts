@@ -12,8 +12,8 @@
 
   .example-card {
     display: block;
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--color-surface-base);
+    border: 1px solid var(--color-border-3);
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.2s ease;
@@ -23,17 +23,17 @@
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-color: #3182ce;
+      border-color: var(--color-solid-brand-1);
     }
   }
 
   .example-card-preview {
     height: 200px;
-    background: #f7fafc;
+    background-color: var(--color-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-border-3);
     overflow: hidden;
 
     svg {
@@ -57,6 +57,6 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--color-text-1);
   }
 }
