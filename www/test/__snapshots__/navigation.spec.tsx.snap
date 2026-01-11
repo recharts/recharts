@@ -668,6 +668,11 @@ exports[`getAllNavigationItems > should return all navigation items 1`] = `
             "key": "TimelineExample",
             "url": "/en-US/examples/TimelineExample/",
           },
+          {
+            "displayName": "Candlestick",
+            "key": "CandleStick",
+            "url": "/en-US/examples/CandleStick/",
+          },
         ],
         "key": "BarChart",
       },
