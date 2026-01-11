@@ -19,6 +19,12 @@ import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart
 import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
 import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
 import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/TimelineExample';
+import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
+
+test('CandlestickExample', async ({ mount }) => {
+  const component = await mount(<CandlestickExample defaultIndex="50" />);
+  await expect(component).toHaveScreenshot();
+});
 
 test('TimelineExample', async ({ mount }) => {
   /*

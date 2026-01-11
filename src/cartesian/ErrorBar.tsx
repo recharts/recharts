@@ -264,6 +264,25 @@ export const errorBarDefaultProps = {
 } as const satisfies Partial<Props>;
 
 /**
+ * ErrorBar renders whiskers to represent error margins on a chart.
+ *
+ * It must be a child of a graphical element.
+ *
+ * ErrorBar expects data in one of the following forms:
+ * - Symmetric error bars: a single error value representing both lower and upper bounds.
+ * - Asymmetric error bars: an array of two values representing lower and upper bounds separately. First value is the lower bound, second value is the upper bound.
+ *
+ * The values provided are relative to the main data value.
+ * For example, if the main data value is 10 and the error value is 2,
+ * the error bar will extend from 8 to 12 for symmetric error bars.
+ *
+ * In other words, what ErrorBar will render is:
+ * - For symmetric error bars: [value - errorVal, value + errorVal]
+ * - For asymmetric error bars: [value - errorVal[0], value + errorVal[1]]
+ *
+ * In stacked or ranged Bar charts, ErrorBar will use the higher data value
+ * as the reference point for calculating the error bar positions.
+ *
  * @consumes ErrorBarContext
  */
 export function ErrorBar(outsideProps: Props) {
