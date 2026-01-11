@@ -12,7 +12,7 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
  *
  * @inline
  */
-export type ChartData = ReadonlyArray<unknown>;
+export type ChartData<T = unknown> = ReadonlyArray<T>;
 
 /**
  * So this is the same unknown type as ChartData but this is after the dataKey has been applied.

@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentType,
-  MutableRefObject,
-  PureComponent,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -21,19 +12,13 @@ import {
 import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
-import {
-  getCateCoordinateOfLine,
-  getNormalizedStackId,
-  getTooltipNameProp,
-  getValueByDataKey,
-  StackId,
-} from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getNormalizedStackId, getTooltipNameProp, StackId } from '../util/ChartUtils';
+import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   CartesianLayout,
-  DataKey,
   DotType,
   LegendType,
   NullableCoordinate,
@@ -97,7 +82,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey: TypedDataKey<any>;
   dot: DotType;
   height: number;
   hide: boolean;
@@ -133,7 +118,7 @@ interface InternalAreaProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface AreaProps extends ZIndexable {
+interface AreaProps<DataPointType, ValueAxisType> extends ZIndexable {
   /**
    * The dot is shown when user enter an area chart and this chart has tooltip.
    * If false set, no active dot will not be drawn.
@@ -176,16 +161,15 @@ interface AreaProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/examples/AreaChartConnectNulls/ AreaChart with connectNull true and false}
    */
   connectNulls?: boolean;
-  data?: ChartData;
+  data?: ChartData<DataPointType>;
   /**
    * Decides how to extract the value of this Area from the data:
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Area.
-   *
-   * If undefined, it will reuse the dataKey of YAxis.
    */
-  dataKey: DataKey<any>;
+  dataKey: TypedDataKey<DataPointType, ValueAxisType>;
+  // dataKey: DataKey<T>;
   /**
    * If false set, dots will not be drawn.
    * If true set, dots will be drawn which have the props calculated internally.
@@ -315,7 +299,7 @@ type AreaSvgProps = Omit<
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
-export type Props = AreaSvgProps & AreaProps;
+export type Props<DataPointType = any, ValueAxisType = any> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -1013,26 +997,24 @@ export function computeArea({
   let isRange = false;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
-    let valueAsArray: [number, number] | undefined;
+    let valueAsArray: ReadonlyArray<unknown> | undefined;
 
     if (hasStack) {
       valueAsArray = stackedData[dataStartIndex + index];
     } else {
-      const rawValue = getValueByDataKey(entry, dataKey);
+      const rawValue = getTypedValue(entry, dataKey);
 
-      if (!Array.isArray(rawValue)) {
-        // @ts-expect-error getValueByDataKey is not checking its return value
-        valueAsArray = [baseValue, rawValue];
-      } else {
-        // @ts-expect-error getValueByDataKey is not checking its return value
+      if (Array.isArray(rawValue)) {
         valueAsArray = rawValue;
         isRange = true;
+      } else {
+        valueAsArray = [baseValue, rawValue];
       }
     }
 
     const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getTypedValue(entry, dataKey) == null);
 
     if (isHorizontalLayout) {
       return {
@@ -1079,7 +1061,7 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props) {
+function AreaFn<T = any>(outsideProps: Props<T>) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
@@ -1126,5 +1108,8 @@ function AreaFn(outsideProps: Props) {
  * @provides LabelListContext
  * @consumes CartesianChartContext
  */
-export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
+export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => React.ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 Area.displayName = 'Area';
