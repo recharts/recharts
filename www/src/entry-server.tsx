@@ -3,9 +3,14 @@ import { StaticRouter } from 'react-router';
 import { routes } from './routes';
 import { supportedLocales } from './locale';
 import { getSiteRoutes } from './navigation.data';
+import { ColorModeProvider, defineColorModeStore } from './components/color-mode';
 
 export function render(url: string, template: string) {
-  const appHtml = renderToString(<StaticRouter location={url}>{routes()}</StaticRouter>);
+  const appHtml = renderToString(
+    <ColorModeProvider store={defineColorModeStore()}>
+      <StaticRouter location={url}>{routes()}</StaticRouter>
+    </ColorModeProvider>,
+  );
 
   return template.replace('<div id="app"></div>', `<div id="app">${appHtml}</div>`);
 }
