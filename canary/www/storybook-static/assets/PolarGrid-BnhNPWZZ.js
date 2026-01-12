@@ -1,7 +1,0 @@
-import{j as r}from"./jsx-runtime-C8Off1Wo.js";import{useMDXComponents as n}from"./index-D548ORSe.js";import{C as i,A as s}from"./blocks-DxnYakJ1.js";import{S as a,P as p}from"./PolarGrid.stories-DdH1ApwH.js";import"./iframe-BlK4-FEU.js";import"./preload-helper-Dp1pzeXC.js";import"./index-B4rQ1OLH.js";import"./PolarGrid-CmUHYCO9.js";import"./resolveDefaultProps-CZGT4OJp.js";import"./PolarUtils-Bw67yi1j.js";import"./arrayEqualityCheck-D3CpbvMw.js";import"./polarScaleSelectors-CGswz5ch.js";import"./axisSelectors-t10Pjb8y.js";import"./polarSelectors-SaLfq0MB.js";import"./ZIndexLayer-BXfqJV7n.js";import"./zIndexSlice-BTFlkBrM.js";function t(e){const o={code:"code",h1:"h1",h2:"h2",p:"p",...n(),...e.components};return r.jsxs(r.Fragment,{children:[r.jsx(o.h1,{id:"polargrid",children:"PolarGrid"}),`
-`,r.jsx(i,{of:a,layout:"padded"}),`
-`,r.jsx(o.h2,{id:"parent-component",children:"Parent Component"}),`
-`,r.jsxs(o.p,{children:["The PolarGrid can be used within a ",r.jsx(o.code,{children:"<RadarChart />"})," or a ",r.jsx(o.code,{children:"<RadialBarChart />"}),"."]}),`
-`,r.jsx(o.h2,{id:"properties",children:"Properties"}),`
-`,r.jsx(o.p,{children:"Properties in the groups Other and Internal are not recommended to be used."}),`
-`,r.jsx(s,{of:p,sort:"requiredFirst"})]})}function R(e={}){const{wrapper:o}={...n(),...e.components};return o?r.jsx(o,{...e,children:r.jsx(t,{...e})}):t(e)}export{R as default};
