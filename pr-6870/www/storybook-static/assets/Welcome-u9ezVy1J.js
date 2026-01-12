@@ -1,0 +1,20 @@
+import{j as t}from"./jsx-runtime-WcQf8sum.js";import{useMDXComponents as s}from"./index-CfnNZBUz.js";import{p as a}from"./Page-DPte-9pC.js";import{L as n}from"./LineChart-CkCz9mIz.js";import{C as m}from"./CartesianGrid-C8kB-52l.js";import{X as p}from"./XAxis-DlZ1onwt.js";import{Y as h}from"./YAxis-V3Y4BL5v.js";import{L as o}from"./Line-wjUPJFe4.js";import{T as c}from"./Tooltip-DWE8kPry.js";import"./iframe-C9kyXynm.js";import"./preload-helper-Dp1pzeXC.js";import"./RechartsWrapper-ultCJT0w.js";import"./arrayEqualityCheck-BdbBdFIu.js";import"./resolveDefaultProps-BCZIpR14.js";import"./PolarUtils-B_1hBJ6O.js";import"./hooks-BzniDeZ2.js";import"./axisSelectors-50fqgJ0X.js";import"./zIndexSlice-cJxKJ8ug.js";import"./CartesianChart-EinDqxZ_.js";import"./chartDataContext-CZ4PAiww.js";import"./CategoricalChart-5uqkh1gH.js";import"./CartesianAxis-DH1-Rlhr.js";import"./Layer-LG3hnzpE.js";import"./Text-BcrXlrdS.js";import"./DOMUtils-CQZn70zK.js";import"./Label-C-oa8ua5.js";import"./ZIndexLayer-7ELyukPI.js";import"./types-BfqR7E8K.js";import"./ReactUtils-D_EEBxyT.js";import"./ActivePoints-B59gHKqE.js";import"./Dot-BiJvCsb9.js";import"./RegisterGraphicalItemId-oP_vlkHV.js";import"./ErrorBarContext-CHSQnyV_.js";import"./GraphicalItemClipPath-DJAtFFUQ.js";import"./SetGraphicalItem-DyyRaUbx.js";import"./useAnimationId-XLZTjrUv.js";import"./getRadiusAndStrokeWidthFromDot-Bxt3ny70.js";import"./ActiveShapeUtils-CGirhXo2.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-DSM7deum.js";import"./Trapezoid-91tzOikz.js";import"./Sector-D1DtIzuz.js";import"./Symbols-DR9F1KQK.js";import"./Curve-WEIhibNB.js";import"./useElementOffset-CMzOGP_X.js";import"./iteratee-DoJqJKsx.js";import"./Cross-GDyFEfaG.js";function i(e){const r={a:"a",code:"code",h1:"h1",img:"img",p:"p",pre:"pre",...s(),...e.components};return t.jsxs(t.Fragment,{children:[t.jsx(r.h1,{id:"recharts",children:"Recharts"}),`
+`,t.jsx(r.p,{children:"A composable charting library built on React components"}),`
+`,t.jsxs(n,{width:500,height:300,data:a,accessibilityLayer:!0,margin:{top:5,right:5,bottom:5,left:0},children:[t.jsx(m,{stroke:"#eee",strokeDasharray:"5 5"}),t.jsx(p,{dataKey:"name"}),t.jsx(h,{}),t.jsx(o,{type:"monotone",dataKey:"uv",stroke:"#8884d8"}),t.jsx(o,{type:"monotone",dataKey:"pv",stroke:"#82ca9d"}),t.jsx(c,{})]}),`
+`,t.jsx(r.pre,{children:t.jsx(r.code,{className:"language-typescript",children:`  <LineChart width={500} height={300} data={data} accessibilityLayer>
+    <XAxis dataKey="name"/>
+    <YAxis/>
+    <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+    <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+    <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+    <Tooltip/>
+  </LineChart>
+`})}),`
+`,t.jsx("iframe",{src:"https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median",frameBorder:"0",scrolling:"0",width:"150",height:"20",title:"GitHub"}),`
+`,t.jsxs(r.p,{children:[t.jsx(r.a,{href:"https://bundlephobia.com/package/recharts",rel:"nofollow",children:t.jsx(r.img,{src:"https://badgen.net/bundlephobia/minzip/recharts",alt:"Size"})})," ",t.jsx(r.a,{href:"https://github.com/recharts/recharts/actions",rel:"nofollow",children:t.jsx(r.img,{src:"https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg",alt:`Build
+Status`})}),`
+`,t.jsx(r.a,{href:"https://coveralls.io/github/recharts/recharts?branch=main",rel:"nofollow",children:t.jsx(r.img,{src:"https://coveralls.io/repos/recharts/recharts/badge.svg?branch=main&service=github",alt:`Coverage
+Status`})}),`
+`,t.jsx(r.a,{href:"http://badge.fury.io/js/recharts",rel:"nofollow",children:t.jsx(r.img,{src:"https://badge.fury.io/js/recharts.svg",alt:"npm version"})})," ",t.jsx(r.a,{href:"https://www.npmjs.com/package/recharts",rel:"nofollow",children:t.jsx(r.img,{src:"https://img.shields.io/npm/dm/recharts.svg?style=flat-square",alt:`npm
+downloads`})})," ",t.jsx(r.a,{href:"/LICENSE",children:t.jsx(r.img,{src:"https://img.shields.io/badge/license-MIT-blue.svg?style=flat",alt:`MIT
+License`})})]})]})}function st(e={}){const{wrapper:r}={...s(),...e.components};return r?t.jsx(r,{...e,children:t.jsx(i,{...e})}):i(e)}export{st as default};
