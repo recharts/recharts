@@ -25,9 +25,10 @@ export const TooltipArgTypes: StorybookArgs = {
   },
   offset: {
     description: `Gap (in px) between the position of tooltip and the active position.
-      This number sets both horizontal and vertical offsets.
-      The active position depends on the data point, and mouse cursor position.
-      The offset can be negative.`,
+    When a number is provided, the same offset is applied to both horizontal and vertical axes.
+    When a Coordinate object is provided, you can specify different offsets for each axis.
+    The active position depends on the data point, and mouse cursor position.
+    The offset can be negative.`,
     defaultValue: 10,
     table: {
       type: { summary: 'number' },

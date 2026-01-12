@@ -178,9 +178,12 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   labelStyle?: CSSProperties;
   /**
    * The offset size between the position of tooltip and the mouse cursor position.
+   * When a number is provided, the same offset is applied to both x and y axes.
+   *
+   * When a Coordinate object is provided, you can specify different offsets for each axis (x and y as numbers)
    * @defaultValue 10
    */
-  offset?: number;
+  offset?: number | Coordinate;
   payloadUniqBy?: UniqueOption<TooltipPayloadEntry>;
   /**
    * If portal is defined, then Tooltip will use this element as a target
