@@ -334,7 +334,6 @@ describe('omnidoc - documentation consistency', () => {
       'AreaChart',
       'Bar',
       'BarChart',
-      'Brush',
       'CartesianAxis',
       'CartesianGrid',
       'Cell',
