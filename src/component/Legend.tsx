@@ -125,9 +125,11 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
   onBBoxUpdate?: (box: ElementOffset | null) => void;
   /**
    * If portal is defined, then Legend will use this element as a target
-   * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal
+   * for rendering using React Portal.
    *
    * If this is undefined then Legend renders inside the recharts-wrapper element.
+   *
+   * @see {@link https://react.dev/reference/react-dom/createPortal}
    */
   portal?: HTMLElement | null;
   /**

@@ -163,16 +163,18 @@ export const LegendAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              If portal is defined, then Legend will use this element as a target for rendering using React Portal:{' '}
-              <a href="https://react.dev/reference/react-dom/createPortal">
-                https://react.dev/reference/react-dom/createPortal
-              </a>
-            </p>
+            <p>If portal is defined, then Legend will use this element as a target for rendering using React Portal.</p>
             <p>If this is undefined then Legend renders inside the recharts-wrapper element.</p>
           </section>
         ),
       },
+      examples: [
+        {
+          name: 'https://react.dev/reference/react-dom/createPortal',
+          url: 'https://react.dev/reference/react-dom/createPortal',
+          isExternal: true,
+        },
+      ],
     },
     {
       name: 'verticalAlign',
