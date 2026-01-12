@@ -74,9 +74,7 @@ export class StorybookDocReader implements DocReader {
       }
 
       const props = this.extractPropsFromArgTypes(argTypes);
-      if (props.length > 0) {
-        this.componentCache!.set(componentName, props);
-      }
+      this.componentCache!.set(componentName, props);
     }
   }
 

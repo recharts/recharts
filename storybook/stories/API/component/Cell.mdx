@@ -3,18 +3,24 @@ import * as ComponentStories from './Cell.stories';
 
 # Cell
 
-Cell can be wrapped by Pie, Bar, or RadialBar to specify attributes of each child.
-In Pie, for example, we can specify the attributes of each child node through data,
-but the props of Cell have higher priority.
-
 <Meta of={ComponentStories} />
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
-## Parent Components
+## Description
 
-The Cell can be used within a `<Bar />`, `<Scatter />`, `<Pie />`, `<RadialBar />` or a `<Funnel />`
+<p>Cell can be wrapped by Pie, Bar, or RadialBar to specify attributes of each child. In Pie , for example, we can specify the attributes of each child node through data, but the props of Cell have higher priority</p>
 
-## Properties
+
+## Parent Component
+
+The Cell can be used within the following parent components:
+- `<Bar/>`
+- `<Funnel/>`
+- `<Pie/>`
+- `<RadialBar/>`
+- `<Scatter/>`
+
+## Props
 
 <Controls of={ComponentStories.API} />
