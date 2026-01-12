@@ -1,7 +1,0 @@
-import{j as t}from"./jsx-runtime-BIubXg9o.js";import{useMDXComponents as s}from"./index-DcfrOaTx.js";import{M as i,C as p,a as m}from"./blocks-Cd1fioHh.js";import{C as a,A as r}from"./Text.stories-CPe3sI0R.js";import"./iframe-Dnh1Ryvb.js";import"./preload-helper-Dp1pzeXC.js";import"./index-BBrJvbdK.js";import"./Text-DuqEZ_1u.js";import"./resolveDefaultProps-Coi4LBhI.js";import"./DOMUtils-Bor3dP_R.js";import"./arrayEqualityCheck-DCevfetv.js";import"./PolarUtils-Cgm959MD.js";import"./RechartsHookInspector-DMji7YUm.js";import"./hooks-TRp6kMUA.js";import"./axisSelectors-CwAmoCkz.js";import"./ChartSizeDimensions-DbCZNQtH.js";import"./OffsetShower-DAcHGjow.js";import"./PlotAreaShower-5JxeAXKY.js";function n(e){const o={code:"code",h1:"h1",h2:"h2",p:"p",...s(),...e.components};return t.jsxs(t.Fragment,{children:[t.jsx(o.h1,{id:"text",children:"Text"}),`
-`,t.jsxs(o.p,{children:["This component is used to render text in a paragraph, but can also be used to render text in other contexts, such as in a ",t.jsx(o.code,{children:"Label"}),"."]}),`
-`,t.jsx(i,{of:a}),`
-`,t.jsx(p,{of:r,layout:"padded"}),`
-`,t.jsx(o.h2,{id:"properties",children:"Properties"}),`
-`,t.jsx(o.p,{children:"Properties in the groups Other and Internal are not recommended to be used."}),`
-`,t.jsx(m,{of:r})]})}function L(e={}){const{wrapper:o}={...s(),...e.components};return o?t.jsx(o,{...e,children:t.jsx(n,{...e})}):n(e)}export{L as default};
