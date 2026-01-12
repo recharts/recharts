@@ -32,6 +32,9 @@ import PopulationPyramidExample from './PopulationPyramidExample';
 import populationPyramidExampleSource from './PopulationPyramidExample?raw';
 import TimelineExample from './TimelineExample';
 import timelineExampleSource from './TimelineExample?raw';
+import CandlestickExample from './CandlestickExample';
+import candlestickExampleSource from './CandlestickExample?raw';
+import { RechartsLink } from '../../../components/Shared/RechartsLink.tsx';
 
 export { BarChartNavExample };
 
@@ -140,6 +143,17 @@ export const barChartExamples: Record<string, ChartExample> = {
           This example also demonstrates the use of <code>shape</code> prop instead of <code>Cell</code>.
         </p>
       </article>
+    ),
+  },
+  Candlestick: {
+    Component: CandlestickExample,
+    sourceCode: candlestickExampleSource,
+    name: 'Candlestick',
+    description: (
+      <>
+        Candlestick chart is used to represent stock price movements. This example uses <RechartsLink api="Bar" /> and{' '}
+        <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
+      </>
     ),
   },
 };

@@ -99,5 +99,34 @@ export const ErrorBarAPI: ApiDoc = {
     },
     { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 400 },
   ],
+  desc: {
+    'en-US': (
+      <section>
+        <p>ErrorBar renders whiskers to represent error margins on a chart.</p>
+        <p>It must be a child of a graphical element.</p>
+        <p>ErrorBar expects data in one of the following forms:</p>
+        <ul>
+          <li>Symmetric error bars: a single error value representing both lower and upper bounds.</li>
+          <li>
+            Asymmetric error bars: an array of two values representing lower and upper bounds separately. First value is
+            the lower bound, second value is the upper bound.
+          </li>
+        </ul>
+        <p>
+          The values provided are relative to the main data value. For example, if the main data value is 10 and the
+          error value is 2, the error bar will extend from 8 to 12 for symmetric error bars.
+        </p>
+        <p>In other words, what ErrorBar will render is:</p>
+        <ul>
+          <li>For symmetric error bars: [value - errorVal, value + errorVal]</li>
+          <li>For asymmetric error bars: [value - errorVal[0], value + errorVal[1]]</li>
+        </ul>
+        <p>
+          In stacked or ranged Bar charts, ErrorBar will use the higher data value as the reference point for
+          calculating the error bar positions.
+        </p>
+      </section>
+    ),
+  },
   parentComponents: ['Bar', 'Line', 'Scatter'],
 };
