@@ -3,11 +3,11 @@ import { Args } from '@storybook/react-vite';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { ResponsiveContainer, LabelList, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';
-import { LabelListProps } from '../props/LabelListProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { LabelListArgs } from '../arg-types/LabelListArgs';
 
 export default {
-  argTypes: LabelListProps,
+  argTypes: LabelListArgs,
   component: LabelList,
 };
 
@@ -37,7 +37,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(LabelListProps),
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
     // This API story should have explicit values for all props
     dataKey: 'uv',
     position: 'top',

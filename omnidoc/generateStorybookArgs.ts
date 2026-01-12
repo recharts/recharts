@@ -40,6 +40,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'Funnel',
   'FunnelChart',
   'Label',
+  'LabelList',
   'LineChart',
   'ScatterChart',
   'SunburstChart',
