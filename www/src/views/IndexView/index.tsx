@@ -30,6 +30,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
             src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
             width="120px"
             height="22px"
+            data-testid="github-star-btn"
           />
         </div>
 
