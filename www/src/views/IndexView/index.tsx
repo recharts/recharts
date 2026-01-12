@@ -89,7 +89,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
             {users.map(entry => (
               <li className="user" key={`user-${entry.url}`}>
                 <a href={entry.url} target="_blank" title={entry.name} rel="noreferrer">
-                  <img src={entry.logoImgUrl} title={entry.name} alt={entry.name} />
+                  <img src={entry.logoImgUrl} alt="" />
                   <span className="user-name">{entry.name}</span>
                 </a>
               </li>
