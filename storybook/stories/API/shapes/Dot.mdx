@@ -1,21 +1,20 @@
-import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Dot.stories';
 
 # Dot
-
-The Dot is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
-This is a building block used internally to recharts to create scatter and line points, etc.
-
-```jsx
-<Dot {...dotProps} />
-```
 
 <Meta of={ComponentStories} />
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
-## Properties
+## Description
 
-The following table shows a complete list of all properties of the Dot.
+<p>Renders a dot in the chart.</p>
+<p>This component accepts X and Y coordinates in pixels.
+If you need to position the rectangle based on your chart&#39;s data,
+consider using the ReferenceDot component instead.</p>
+
+
+## Props
 
 <Controls of={ComponentStories.API} />
