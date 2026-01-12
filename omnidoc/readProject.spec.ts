@@ -11,7 +11,7 @@ describe('readProject', () => {
      * Let's assert a few known symbols to make sure the reader is working.
      * We don't need to list them all here, that just makes a brittle test
      */
-    const expectedComponents = ['Area', 'AreaProps', 'Bar', 'BarProps'];
+    const expectedComponents = ['Area', 'AreaProps', 'Bar', 'BarProps', 'useChartWidth', 'getNiceTickValues'];
     expect(reader.getPublicSymbolNames()).toEqual(expect.arrayContaining(expectedComponents));
   });
 
@@ -21,6 +21,23 @@ describe('readProject', () => {
     expect(reader.getPublicComponentNames()).toEqual(expect.arrayContaining(expectedComponents));
     unexpectedSymbols.forEach(unexpectedSymbol => {
       expect(reader.getPublicComponentNames()).not.toContain(unexpectedSymbol);
+    });
+  });
+
+  it('should identify all runtime exports', () => {
+    const expectedComponents = [
+      'Area',
+      'Bar',
+      'Brush',
+      'Customized',
+      'LineChart',
+      'ResponsiveContainer',
+      'useChartWidth',
+    ];
+    const unexpectedSymbols = ['AreaProps', 'BarProps'];
+    expect(reader.getAllRuntimeExportedNames()).toEqual(expect.arrayContaining(expectedComponents));
+    unexpectedSymbols.forEach(unexpectedSymbol => {
+      expect(reader.getAllRuntimeExportedNames()).not.toContain(unexpectedSymbol);
     });
   });
 
@@ -1087,5 +1104,35 @@ describe('readProject', () => {
     const first = propMeta[0];
     assertNotNull(first);
     expect(first.isRequired).toBe(false);
+  });
+
+  it('should get return type of useChartHeight', () => {
+    const returnType = reader.getReturnTypeOf('useChartHeight');
+    expect(returnType).toBeDefined();
+    expect(returnType?.names).toHaveLength(2);
+    expect(returnType?.names).toContain('number');
+    expect(returnType?.names).toContain('undefined');
+    expect(returnType?.isInline).toBe(false);
+  });
+
+  it('should get returns tag description of useChartHeight', () => {
+    const jsDoc = reader.getComponentJsDocMeta('useChartHeight');
+    const returnsTag = getTagText(jsDoc, 'returns');
+    expect(returnsTag).toBeDefined();
+    // The type {number | undefined} should be stripped by ts-morph if parsed correctly,
+    // or we'll see if it remains.
+    expect(returnsTag?.text).toContain('The height of the chart in pixels');
+  });
+
+  it('should read useXAxisDomain arguments as props', () => {
+    const propMeta = reader.getPropMeta('useXAxisDomain', 'xAxisId');
+    assertNotNull(propMeta);
+    expect(propMeta).toHaveLength(1);
+    const arg = propMeta[0];
+    expect(arg.name).toBe('xAxisId');
+    expect(arg.isRequired).toBe(false); // It has a default value
+    expect(arg.defaultValueFromObject.value).toContain('defaultAxisId'); // or '0' depending on how it's resolved, usually text
+    // JSDoc check
+    expect(arg.jsDoc?.text).toContain('The `xAxisId` of the X-axis');
   });
 });

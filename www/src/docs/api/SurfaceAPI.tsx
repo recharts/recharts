@@ -16,7 +16,7 @@ export const SurfaceAPI: ApiDoc = {
     'en-US': (
       <section>
         <p>Renders an SVG element.</p>
-        <p>Other charts already include a Surface component, so you would not normally use this directly.</p>
+        <p>All charts already include a Surface component, so you would not normally use this directly.</p>
       </section>
     ),
   },

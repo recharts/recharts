@@ -1,451 +1,122 @@
 import { ApiDoc } from './types';
 
-export const PieAPI: ApiDoc = {
-  name: 'Pie',
+export const CartesianAxisAPI: ApiDoc = {
+  name: 'CartesianAxis',
   props: [
     {
-      name: 'activeShape',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              This component is rendered when this graphical item is activated (could be by mouse hover, touch,
-              keyboard, programmatically).
-            </p>
-          </section>
-        ),
-      },
-      format: [
-        '<Pie activeShape={<CustomActiveShape />} />',
-        'https://recharts.github.io/examples/CustomActiveShapePieChart',
-      ],
-      deprecated: 'Use the `shape` prop to create each sector. `isActive` designates the "active" shape.',
-    },
-    {
-      name: 'animationBegin',
+      name: 'angle',
       type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Specifies when the animation should begin, the unit of this option is ms.</p>
+            <p>Angle in which ticks will be rendered.</p>
           </section>
         ),
       },
-      defaultVal: 400,
     },
-    {
-      name: 'animationDuration',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Specifies the duration of animation, the unit of this option is ms.</p>
-          </section>
-        ),
-      },
-      defaultVal: 1500,
-    },
-    {
-      name: 'animationEasing',
-      type: '"ease" | "ease-in" | "ease-in-out" | "ease-out" | "linear"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of easing function.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'ease',
-    },
+    { name: 'axisLine', type: 'React.SVGProps<SVGLineElement> | false | true', isOptional: true },
+    { name: 'axisType', type: '"xAxis" | "yAxis"', isOptional: true },
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'cornerRadius', type: 'number | string', isOptional: true },
-    {
-      name: 'cx',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The x-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container width.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
-    {
-      name: 'cy',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The y-coordinate of center. If set a percentage, the final value is obtained by multiplying the percentage
-              of container height.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '50%',
-    },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
+    { name: 'height', type: 'number | string', isOptional: true },
+    { name: 'hide', type: 'boolean', isOptional: true },
+    { name: 'interval', type: '(union of 6 variants)', isOptional: true },
+    { name: 'label', type: '(union of 7 variants)', isOptional: true },
+    { name: 'labelRef', type: 'React.RefObject<SVGTextElement> | null', isOptional: true },
+    { name: 'minTickGap', type: 'number', isOptional: true },
+    { name: 'mirror', type: 'boolean', isOptional: true },
+    { name: 'orientation', type: 'number | string', isOptional: true },
     {
-      name: 'data',
-      type: 'ReadonlyArray<unknown>',
+      name: 'padding',
+      type: '"gap" | "no-gap" | Object',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Padding information passed to custom tick components</p>
+          </section>
+        ),
+      },
+    },
+    {
+      name: 'scale',
+      type: 'unknown',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>CartesianAxis reads scale internally and this prop is ignored since 3.0</p>
+          </section>
+        ),
+      },
+      deprecated: true,
+    },
+    { name: 'tick', type: '(union of 5 variants)', isOptional: true },
+    { name: 'tickFormatter', type: 'TickFormatter', isOptional: true },
+    { name: 'tickLine', type: 'React.SVGProps<SVGLineElement> | false | true', isOptional: true },
+    { name: 'tickMargin', type: 'number', isOptional: true },
+    {
+      name: 'ticks',
+      type: 'Array<readonly CartesianTickItem>',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
             <p>
-              The source data. Each element should be an object. The properties of each object represent the values of
-              different data dimensions.
-            </p>
-            <p>
-              Use the <code>dataKey</code> prop to specify which properties to use.
+              Careful - this is the same name as XAxis + YAxis <code>ticks</code> but completely different object!
             </p>
           </section>
         ),
       },
-      format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
     },
+    { name: 'tickSize', type: 'number', isOptional: true },
     {
-      name: 'dataKey',
-      type: 'Function | number | string',
+      name: 'tickTextProps',
+      type: 'Props',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Decides how to extract the value of this Pie from the data:</p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the value of this Pie.
-              </li>
-            </ul>
+            <p>
+              Additional props to spread to each tick Text element. Optional, the CartesianAxis component will provide
+              its own defaults calculated from other props.
+            </p>
           </section>
         ),
       },
-      defaultVal: 'value',
     },
+    { name: 'unit', type: 'number | string', isOptional: true },
+    { name: 'viewBox', type: 'CartesianViewBox', isOptional: true },
+    { name: 'width', type: 'number | string', isOptional: true },
+    { name: 'x', type: 'number | string', isOptional: true },
+    { name: 'y', type: 'number | string', isOptional: true },
     {
-      name: 'endAngle',
+      name: 'zIndex',
       type: 'number',
       isOptional: true,
       desc: {
         'en-US': (
           <section>
-            <p>Angle, in degrees, at which the chart should end.</p>
-          </section>
-        ),
-      },
-      defaultVal: 360,
-    },
-    {
-      name: 'hide',
-      type: 'boolean',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Hides the whole graphical element when true.</p>
             <p>
-              Hiding an element is different from removing it from the chart: Hidden graphical elements are still
-              visible in Legend, and can be included in axis domain calculations, depending on{' '}
-              <code>includeHidden</code> props of your XAxis/YAxis.
+              Z-Index of this component and its children. The higher the value, the more on top it will be rendered.
+              Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the
+              content is rendered in the default layer without portals.
             </p>
           </section>
         ),
       },
-      defaultVal: false,
+      defaultVal: '0',
+      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
-    { name: 'id', type: 'string', isOptional: true },
-    {
-      name: 'inactiveShape',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The shape of inactive sector.</p>
-          </section>
-        ),
-      },
-      deprecated: 'Use the `shape` prop to modify each sector.',
-    },
-    {
-      name: 'innerRadius',
-      type: 'number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The inner radius of the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'isAnimationActive',
-      type: '"auto" | false | true',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If set false, animation will be disabled. If set &quot;auto&quot;, the animation will be disabled in SSR
-              and enabled in browser.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: 'auto',
-    },
-    {
-      name: 'label',
-      type: '(union of 6 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Renders one label for each pie sector. Options:</p>
-            <ul>
-              <li>
-                <code>true</code>: renders default labels;
-              </li>
-              <li>
-                <code>false</code>: no labels are rendered;
-              </li>
-              <li>
-                <code>object</code> that has <code>position</code> prop: the props of LabelList component;
-              </li>
-              <li>
-                <code>object</code> that does not have <code>position</code> prop: the props of a custom Pie label
-                (similar to Label with position &quot;outside&quot;); this variant supports <code>labelLine</code>
-              </li>
-              <li>
-                <code>ReactElement</code>: a custom label element;
-              </li>
-              <li>
-                <code>function</code>: a render function of custom label.
-              </li>
-            </ul>
-            <p>
-              Also see the <code>labelLine</code> prop that draws a line connecting each label to the corresponding
-              sector.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: false,
-      format: [
-        '<Pie label={<CustomizedLabel />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
-    },
-    {
-      name: 'labelLine',
-      type: '(union of 5 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props
-              calculated internally. If object set, label lines will be drawn which have the props merged by the
-              internal calculated props and the option. If ReactElement set, the option can be the custom label line
-              element. If set a function, the function will be called to render customized label line.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: true,
-      format: [
-        '<Pie labelLine={<CustomizedLabelLine />} />',
-        'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
-      ],
-    },
-    {
-      name: 'legendType',
-      type: '"circle" | "cross" | "diamond" | "line" | "none" | "plainline" | "rect" | "square" | "star" | "triangle" | "wye"',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The type of icon in legend. If set to &#39;none&#39;, no legend item will be rendered.</p>
-          </section>
-        ),
-      },
-      defaultVal: 'rect',
-    },
-    {
-      name: 'maxRadius',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>the max radius of pie</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'minAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The minimum angle of each unzero data.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'nameKey',
-      type: 'Function | number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              Name represents each sector in the tooltip, and legend. This allows you to extract the name from the data:
-            </p>
-            <ul>
-              <li>
-                <code>string</code>: the name of the field in the data object;
-              </li>
-              <li>
-                <code>number</code>: the index of the field in the data;
-              </li>
-              <li>
-                <code>function</code>: a function that receives the data object and returns the name.
-              </li>
-            </ul>
-          </section>
-        ),
-      },
-      defaultVal: 'name',
-    },
-    {
-      name: 'outerRadius',
-      type: 'Function | number | string',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>
-              The outer radius of the sectors. If set a percentage, the final value is obtained by multiplying the
-              percentage of maxRadius which is calculated by the width, height, cx, cy. Function should return a string
-              percentage or number.
-            </p>
-          </section>
-        ),
-      },
-      defaultVal: '80%',
-    },
-    {
-      name: 'paddingAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The angle between two sectors.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-      format: ['<Pie paddingAngle={5} />', 'https://recharts.github.io/examples/PieChartWithPaddingAngle'],
-    },
-    {
-      name: 'rootTabIndex',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The tabindex of wrapper surrounding the cells.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    {
-      name: 'shape',
-      type: '(union of 8 variants)',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'startAngle',
-      type: 'number',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>Angle in degrees from which the chart should start.</p>
-          </section>
-        ),
-      },
-      defaultVal: 0,
-    },
-    { name: 'tooltipType', type: '"none"', isOptional: true },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationEnd',
-      type: 'AdaptChildAnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation end.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationEnd', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationEndCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIteration', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationIterationCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onAnimationStart',
-      type: 'AdaptChildAnimationEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of animation start.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onAnimationStart', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAnimationStartCapture', type: 'AdaptChildAnimationEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onAuxClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
@@ -459,18 +130,7 @@ export const PieAPI: ApiDoc = {
     { name: 'onCanPlayThroughCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onChange', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
     { name: 'onChangeCapture', type: 'AdaptChildFormEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onClick',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of click on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onClick', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEnd', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEndCapture', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
@@ -536,94 +196,17 @@ export const PieAPI: ApiDoc = {
     { name: 'onLoadStartCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
     { name: 'onLostPointerCaptureCapture', type: 'AdaptChildPointerEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseDown',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousedown on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseDown', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseDownCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseEnter',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseenter on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseLeave',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseleave on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
-    {
-      name: 'onMouseMove',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mousemove on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseEnter', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    { name: 'onMouseLeave', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseOut',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseout on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOutCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseOver',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseover on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseOver', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOverCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    {
-      name: 'onMouseUp',
-      type: 'AdaptChildMouseEventHandler<P, T>',
-      isOptional: true,
-      desc: {
-        'en-US': (
-          <section>
-            <p>The customized event handler of mouseup on the sectors in this group.</p>
-          </section>
-        ),
-      },
-    },
+    { name: 'onMouseUp', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseUpCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onPaste', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
     { name: 'onPasteCapture', type: 'AdaptChildClipboardEventHandler<P, T>', isOptional: true },
@@ -688,6 +271,6 @@ export const PieAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
-  childrenComponents: ['Cell', 'LabelList'],
+  deprecated:
+    'This component is not meant to be used directly in app code.\nUse XAxis or YAxis instead.\n\nStarting from Recharts v4.0 we will make this component internal only.',
 };

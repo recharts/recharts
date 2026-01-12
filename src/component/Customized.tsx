@@ -27,7 +27,6 @@ export type Props<P, C extends Comp<P>> = P & {
  * @example After: `<MyCustomComponent />`
  *
  * @deprecated Just render your components directly. Will be removed in 4.0
- * @returns {Object}   svg elements
  */
 export function Customized<P, C extends Comp<P>>({ component, ...props }: Props<P, C>) {
   let child;

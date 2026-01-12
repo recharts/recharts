@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { ProjectDocReader } from './readProject';
 import { ApiDocReader } from './readApiDoc';
 import { StorybookDocReader } from './readStorybookDoc';
+import { componentsExcludedFromOmnidoc } from './componentsExcludedFromOmnidoc';
 
 describe('confusing defaults', () => {
   const projectReader = new ProjectDocReader();
@@ -43,19 +44,22 @@ describe('confusing defaults', () => {
     });
 
     describe('API docs', () => {
-      test.each(apiDocReader.getPublicComponentNames())('%s', component => {
-        const problematicProps: Array<{ component: string; prop: string; defaultValue: unknown }> = [];
-        const allProps = apiDocReader.getRechartsPropsOf(component);
-        for (const prop of allProps) {
-          const defaultValue = apiDocReader.getDefaultValueOf(component, prop);
-          if (defaultValue.type === 'known') {
-            if (bannedValues.includes(defaultValue.value)) {
-              problematicProps.push({ component, prop, defaultValue: defaultValue.value });
+      test.each(apiDocReader.getPublicComponentNames().filter(name => !componentsExcludedFromOmnidoc.includes(name)))(
+        '%s',
+        component => {
+          const problematicProps: Array<{ component: string; prop: string; defaultValue: unknown }> = [];
+          const allProps = apiDocReader.getRechartsPropsOf(component);
+          for (const prop of allProps) {
+            const defaultValue = apiDocReader.getDefaultValueOf(component, prop);
+            if (defaultValue.type === 'known') {
+              if (bannedValues.includes(defaultValue.value)) {
+                problematicProps.push({ component, prop, defaultValue: defaultValue.value });
+              }
             }
           }
-        }
-        expect(problematicProps).toEqual([]);
-      });
+          expect(problematicProps).toEqual([]);
+        },
+      );
     });
 
     describe('Storybook', () => {

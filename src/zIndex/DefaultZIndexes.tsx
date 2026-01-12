@@ -1,5 +1,7 @@
 /**
- * A collection of all default zIndex values used throughout the library.
+ * A collection of all default zIndex values used by Recharts.
+ *
+ * You can reuse these, or you can define your own.
  */
 export const DefaultZIndexes = {
   /**
