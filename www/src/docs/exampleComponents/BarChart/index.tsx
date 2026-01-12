@@ -145,15 +145,14 @@ export const barChartExamples: Record<string, ChartExample> = {
       </article>
     ),
   },
-  CandleStick: {
+  Candlestick: {
     Component: CandlestickExample,
     sourceCode: candlestickExampleSource,
     name: 'Candlestick',
     description: (
       <>
         Candlestick chart is used to represent stock price movements. This example uses <RechartsLink api="Bar" /> and{' '}
-        <RechartsLink api="ErrorBar" /> to render a 15-minute interval candlestick chart with custom{' '}
-        <RechartsLink api="Tooltip" />.
+        <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
       </>
     ),
   },

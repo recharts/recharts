@@ -29,7 +29,7 @@ const whiskerDataKey: (entry: MarketCandle) => [number, number] = entry => {
 
 const timestampToMinutes = (timestamp: number) => {
   const date = new Date(timestamp);
-  return `${date.getUTCHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+  return `${date.getUTCHours()}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
 };
 
 const formatDollars = (value: number) => `$${value.toFixed(2)}`;
