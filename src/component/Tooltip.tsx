@@ -11,7 +11,7 @@ import {
 import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
-import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate, PolarCoordinate } from '../util/types';
+import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useElementOffset } from '../util/useElementOffset';
@@ -329,7 +329,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
     selectActiveLabel(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const coordinate: Coordinate | PolarCoordinate | undefined = useAppSelector(state =>
+  const coordinate: Coordinate | undefined = useAppSelector(state =>
     selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
   );
   const payload: TooltipPayload | undefined = payloadFromRedux;

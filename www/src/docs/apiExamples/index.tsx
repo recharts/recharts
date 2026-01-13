@@ -32,6 +32,8 @@ import { usePlotAreaApiExamples } from './usePlotArea';
 import { useChartWidthAndHeightApiExamples } from './useChartWidth';
 import { useXAxisDomainApiExamples } from './useXAxisDomain';
 import { useYAxisDomainApiExamples } from './useYAxisDomain';
+import { useIsTooltipActiveApiExamples } from './useIsTooltipActive';
+import { useActiveTooltipCoordinateApiExamples } from './useActiveTooltipCoordinate';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -59,6 +61,8 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   SunburstChart: sunburstChartApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
   DefaultZIndexes: defaultZIndexesApiExamples,
+  useIsTooltipActive: useIsTooltipActiveApiExamples,
+  useActiveTooltipCoordinate: useActiveTooltipCoordinateApiExamples,
   useActiveTooltipDataPoints: useActiveTooltipDataPointsApiExamples,
   useActiveTooltipLabel: useActiveTooltipLabelApiExamples,
   useMargin: useMarginApiExamples,

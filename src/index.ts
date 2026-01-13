@@ -159,6 +159,8 @@ export {
   useActiveTooltipDataPoints,
   useXAxisDomain,
   useYAxisDomain,
+  useIsTooltipActive,
+  useActiveTooltipCoordinate,
 } from './hooks';
 
 export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';

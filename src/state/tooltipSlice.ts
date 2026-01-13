@@ -82,7 +82,7 @@ export type TooltipPayloadConfiguration = {
 
 export type ActiveTooltipProps = {
   activeIndex: TooltipIndex;
-  activeCoordinate: Coordinate | PolarCoordinate | undefined;
+  activeCoordinate: Coordinate | undefined;
 };
 
 /**

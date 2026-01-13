@@ -148,13 +148,12 @@ export const selectActiveCoordinate: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-  // TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
-) => Coordinate | PolarCoordinate | undefined = createSelector(
+) => Coordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (
     tooltipInteractionState: TooltipInteractionState,
     defaultIndexCoordinate: Coordinate | undefined,
-  ): Coordinate | PolarCoordinate | undefined => {
+  ): Coordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );
