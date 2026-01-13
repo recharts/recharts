@@ -44,6 +44,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'Legend',
   'Line',
   'LineChart',
+  'Pie',
   'ScatterChart',
   'SunburstChart',
 ];

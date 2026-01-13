@@ -11,6 +11,7 @@ import { componentsExcludedFromOmnidoc } from './componentsExcludedFromOmnidoc';
 import { OMNIDOC_AUTOMATED_API_DOCS_COMPONENTS } from './generateApiDoc';
 import { apiCates } from '../www/src/docs/apiCates';
 import { allApiDocs } from '../www/src/docs/api/index';
+import { STORYBOOK_AUTOMATED_ARG_COMPONENTS } from './generateStorybookArgs';
 
 describe('omnidoc - documentation consistency', () => {
   const projectReader = new ProjectDocReader();
@@ -331,7 +332,6 @@ describe('omnidoc - documentation consistency', () => {
      */
     const componentsWithInconsistentCommentsInStorybook = [
       'CartesianAxis',
-      'Pie',
       'PieChart',
       'PolarAngleAxis',
       'PolarGrid',
@@ -360,6 +360,7 @@ describe('omnidoc - documentation consistency', () => {
     test.each(
       storybookReader
         .getPublicComponentNames()
+        .filter(name => !STORYBOOK_AUTOMATED_ARG_COMPONENTS.includes(name))
         .filter(name => !componentsWithInconsistentCommentsInStorybook.includes(name)),
     )('if %s has comments in Storybook, they should match the project comments', component => {
       const allProps = storybookReader.getRechartsPropsOf(component);
