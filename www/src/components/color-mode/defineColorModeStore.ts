@@ -35,7 +35,14 @@ function clearStoredColorMode() {
     console.warn('Failed to clear color mode in localStorage, skipping.');
   }
 }
+const defaultColorModeState: ColorModeState = {
+  mode: 'light',
+  origin: 'system',
+};
 function getColorModeState(): ColorModeState {
+  if (typeof window === 'undefined') {
+    return defaultColorModeState;
+  }
   const storedMode = getStoredColorMode();
   return {
     origin: storedMode != null ? 'storage' : 'system',
@@ -43,21 +50,38 @@ function getColorModeState(): ColorModeState {
   } as const;
 }
 function updateColorModeInDOM() {
-  /**
-   * We avoid polluting the DOM when the feature is disabled.
-   */
-  if (import.meta.env.VITE_IS_DARKMODE_ENABLED !== 'true') {
+  if (typeof document === 'undefined') {
     return;
   }
   document.documentElement.setAttribute('data-mode', getColorModeState().mode);
 }
+function subscribeToStorageAndSystemChanges(onChange: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {};
+  }
+  const handleStoredColorModeChange = (e: StorageEvent) => {
+    if (e.key !== STORAGE_KEY) {
+      return;
+    }
+    onChange();
+  };
+  const handleSystemColorSchemeChange = () => {
+    clearStoredColorMode();
+    onChange();
+  };
+  const mql = window.matchMedia('(prefers-color-scheme: dark)');
+  mql.addEventListener('change', handleSystemColorSchemeChange);
+  window.addEventListener('storage', handleStoredColorModeChange);
+
+  return () => {
+    mql.removeEventListener('change', handleSystemColorSchemeChange);
+    window.removeEventListener('storage', handleStoredColorModeChange);
+  };
+}
 
 export function defineColorModeStore() {
   const listeners = new Set<ColorModeStateListener>();
-  const mql = window.matchMedia('(prefers-color-scheme: dark)');
   let state = getColorModeState();
-
-  updateColorModeInDOM();
 
   const emitStateChange = () => {
     state = getColorModeState();
@@ -66,26 +90,15 @@ export function defineColorModeStore() {
       listener(state);
     });
   };
-  const handleStoredColorModeChange = (e: StorageEvent) => {
-    if (e.key !== STORAGE_KEY) {
-      return;
-    }
-    emitStateChange();
-  };
-  const handleSystemColorSchemeChange = () => {
-    clearStoredColorMode();
-    emitStateChange();
-  };
 
-  mql.addEventListener('change', handleSystemColorSchemeChange);
-  window.addEventListener('storage', handleStoredColorModeChange);
+  updateColorModeInDOM();
 
   return {
-    dispose() {
-      mql.removeEventListener('change', handleSystemColorSchemeChange);
-      window.removeEventListener('storage', handleStoredColorModeChange);
-    },
+    dispose: subscribeToStorageAndSystemChanges(emitStateChange),
     getSnapshot() {
+      return state;
+    },
+    getServerSnapshot() {
       return state;
     },
     subscribe(listener: ColorModeStateListener) {

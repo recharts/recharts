@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
@@ -11,10 +11,6 @@ import {
 } from '../src/components/color-mode';
 
 const STORAGE_KEY = 'recharts-color-mode';
-
-beforeEach(() => {
-  vi.stubEnv('VITE_IS_DARKMODE_ENABLED', 'true');
-});
 
 afterEach(() => {
   localStorage.removeItem(STORAGE_KEY);

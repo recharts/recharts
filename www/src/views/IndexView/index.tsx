@@ -30,6 +30,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
             src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
             width="120px"
             height="22px"
+            data-testid="github-star-btn"
           />
         </div>
 
@@ -64,7 +65,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
 
         <div className="block">
           <h2 className="block-title">Thanks to our sponsors</h2>
-          <p style={{ fontSize: '21px', color: 'black' }}>
+          <p style={{ fontSize: '21px', color: 'var(--color-text-1)' }}>
             Browser testing via{' '}
             <a
               href="https://www.lambdatest.com/?utm_source=recharts&utm_medium=sponsor"
@@ -87,7 +88,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
 
           <ul className="users">
             {users.map(entry => (
-              <li className="user" key={`user-${entry.url}`}>
+              <li className="user" key={`user-${entry.url}`} data-testid="user-item">
                 <a href={entry.url} target="_blank" title={entry.name} rel="noreferrer">
                   <img src={entry.logoImgUrl} alt="" />
                   <span className="user-name">{entry.name}</span>
