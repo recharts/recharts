@@ -14,16 +14,16 @@ import {
   ComposedChart,
   LegendPayload,
 } from '../../../src';
-import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import { AreaChartArgs } from '../API/arg-types/AreaChartArgs';
 
 export default {
   component: AreaChart,
   docs: {
     autodocs: false,
   },
-  argTypes: CategoricalChartProps,
+  argTypes: AreaChartArgs,
 };
 
 export const Simple = {
@@ -42,7 +42,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: pageData,
@@ -73,7 +73,7 @@ export const StackedAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: timeData,
@@ -130,7 +130,7 @@ export const PercentAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: pageData,
@@ -163,7 +163,7 @@ export const CardinalAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: pageData,
@@ -203,7 +203,7 @@ export const AreaChartConnectNulls = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 200,
     data: [
@@ -289,7 +289,7 @@ export const StackedAreaChartConnectNulls = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 200,
     data: [
@@ -383,7 +383,7 @@ export const SynchronisedAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 200,
     data: pageData,
@@ -435,7 +435,7 @@ export const AreaChartFillByValue = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: [
@@ -506,7 +506,7 @@ export const RangedAreaChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: rangeData,
@@ -557,7 +557,7 @@ export const RangedAreaChartWithGradient = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
   },
 };
 
@@ -603,7 +603,7 @@ export const WithChangingDataKeyAndAnimations = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: pageData,
@@ -694,7 +694,7 @@ export const StackedAreaWithCustomLegend = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(AreaChartArgs),
     width: 500,
     height: 400,
     data: pageData,

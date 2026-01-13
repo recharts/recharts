@@ -13,13 +13,14 @@ import {
   YAxis,
 } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { CategoricalChartProps } from '../../API/props/ChartProps';
 import { pageData } from '../../data';
 import { isWellBehavedNumber } from '../../../../src/util/isWellBehavedNumber';
+import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
+import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 
 export default {
   component: LineChart,
-  argTypes: CategoricalChartProps,
+  argTypes: LineChartArgs,
   docs: {
     autodocs: false,
   },
@@ -121,6 +122,7 @@ export const CustomLineShapeChart = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     data: pageData,
