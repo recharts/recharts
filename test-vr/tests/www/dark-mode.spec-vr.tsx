@@ -12,6 +12,6 @@ test('dark mode snapshot', async ({ mount }) => {
 
   await expect(component.getByRole('button', { name: 'system' })).toBeInViewport();
   await expect(component).toHaveScreenshot({
-    mask: [component.getByTestId('github-star-btn')],
+    mask: [component.getByTestId('github-star-btn'), component.getByTestId('user-item')],
   });
 });
