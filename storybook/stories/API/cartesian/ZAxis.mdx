@@ -7,13 +7,22 @@ import * as ComponentStories from './ZAxis.stories';
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
+## Description
+
+<p>Virtual axis, does not render anything itself. Has no ticks, grid lines, or labels.
+Useful for dynamically setting Scatter point size, based on data.</p>
+
+
 ## Parent Component
 
-The ZAxis can be used within `<ScatterChart />`.
-While not shown, it influences the size of the scatter points.
+The ZAxis can be used within the following parent components:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<ScatterChart/>`
 
-## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
+## Props
 
 <Controls of={ComponentStories.API} />

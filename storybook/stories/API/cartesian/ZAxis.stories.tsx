@@ -12,51 +12,11 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { SCALE_TYPES } from '../../../../src/util/ReactUtils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import type { StorybookArgs } from '../../../StorybookArgs';
-
-const ZAxisArgTypes: StorybookArgs = {
-  zAxisId: {
-    description: 'The id of z-axis which is corresponding to the data.',
-    table: {
-      type: { summary: 'string | number' },
-      defaultValue: { summary: 0 },
-      category: 'General',
-    },
-  },
-  unit: {
-    description: 'The unit of data displayed in the axis.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  range: {
-    description: 'The range of axis.',
-    table: {
-      type: { summary: 'number[]' },
-      defaultValue: { summary: '[64,64]' },
-      category: 'General',
-    },
-  },
-  scale: {
-    description: 'If "auto" set, the scale function is decided by the type of chart, and the props type.',
-    options: SCALE_TYPES,
-    control: {
-      type: 'select',
-    },
-    table: {
-      type: { summary: 'ScaleType | Function' },
-      defaultValue: { summary: 'auto' },
-      category: 'General',
-    },
-  },
-  domain: {
-    description: 'The domain of scale in this axis.',
-    table: { type: { summary: 'AxisDomain' }, category: 'General' },
-  },
-};
+import { ZAxisArgs } from '../arg-types/ZAxisArgs';
 
 export default {
-  argTypes: ZAxisArgTypes,
+  argTypes: ZAxisArgs,
   component: ZAxis,
 };
 
@@ -77,7 +37,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(ZAxisArgTypes),
+    ...getStoryArgsFromArgsTypesObject(ZAxisArgs),
     unit: 'km',
     name: 'A name',
     dataKey: 'pv',

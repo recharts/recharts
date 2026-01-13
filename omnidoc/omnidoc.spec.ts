@@ -330,7 +330,7 @@ describe('omnidoc - documentation consistency', () => {
      * This list is temporary - these components have known inconsistencies,
      * and we are fixing them. This list will shrink over time as we fix the comments one component at a time.
      */
-    const componentsWithInconsistentCommentsInStorybook = ['CartesianAxis', 'ZAxis'];
+    const componentsWithInconsistentCommentsInStorybook = ['CartesianAxis'];
 
     test.each(
       storybookReader
