@@ -3,11 +3,11 @@ import { Args } from '@storybook/react-vite';
 import { pageDataWithFillColor } from '../../data';
 import { Legend, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RadialBarArgTypes } from '../props/RadialBarArgTypes';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { RadialBarArgs } from '../arg-types/RadialBarArgs';
 
 export default {
-  argTypes: RadialBarArgTypes,
+  argTypes: RadialBarArgs,
   component: RadialBar,
 };
 
@@ -26,7 +26,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarArgTypes),
+    ...getStoryArgsFromArgsTypesObject(RadialBarArgs),
     legendType: 'circle',
     label: { fill: '#333', fontSize: 15, position: 'insideStart' },
     background: true,
