@@ -332,7 +332,6 @@ describe('omnidoc - documentation consistency', () => {
      */
     const componentsWithInconsistentCommentsInStorybook = [
       'CartesianAxis',
-      'Scatter',
       'Sector',
       'Text',
       'Tooltip',
