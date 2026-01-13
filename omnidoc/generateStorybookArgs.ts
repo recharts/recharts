@@ -61,6 +61,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'Sankey',
   'Scatter',
   'ScatterChart',
+  'Sector',
   'SunburstChart',
 ];
 
