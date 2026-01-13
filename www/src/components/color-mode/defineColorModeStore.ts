@@ -49,7 +49,7 @@ function getColorModeState(): ColorModeState {
     mode: storedMode ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
   } as const;
 }
-function updateColorModeInDOM() {
+export function updateColorModeInDOM() {
   if (typeof document === 'undefined') {
     return;
   }
