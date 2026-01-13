@@ -58,6 +58,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'ReferenceArea',
   'ReferenceDot',
   'ReferenceLine',
+  'Sankey',
   'ScatterChart',
   'SunburstChart',
 ];

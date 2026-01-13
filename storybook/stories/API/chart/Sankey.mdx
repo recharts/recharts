@@ -1,18 +1,28 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as SankeyStories from './Sankey.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Sankey.stories';
 
 # Sankey
 
-<Meta of={SankeyStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={SankeyStories.Simple} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
-## Child component
+## Description
 
-The Sankey can be used with the following child components: `<Tooltip />`.
+<p>Flow diagram in which the width of the arrows is proportional to the flow rate.
+It is typically used to visualize energy or material or cost transfers between processes.</p>
 
-## Properties
 
-Properties in the groups Other and Internal are not recommended to be used.
+## Parent Component
 
-<ArgTypes of={SankeyStories} sort={'requiredFirst'} />
+The Sankey can be used within the following parent components:
+- `<ResponsiveContainer/>`
+
+## Child Components
+
+The Sankey can be used with the following child components:
+- `<Tooltip/>`
+
+## Props
+
+<Controls of={ComponentStories.API} />
