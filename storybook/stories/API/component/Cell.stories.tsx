@@ -1,19 +1,13 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
-import { GeneralStyle } from '../props/Styles';
-import { EventHandlers } from '../props/EventHandlers';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageData } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { CellArgs } from '../arg-types/CellArgs';
 
 export default {
-  argTypes: {
-    ...GeneralStyle,
-    ...EventHandlers,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated', disable: true } },
-  },
+  argTypes: CellArgs,
   component: Cell,
 };
 
@@ -41,8 +35,5 @@ export const API = {
       </ResponsiveContainer>
     );
   },
-  args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralStyle),
-    ...getStoryArgsFromArgsTypesObject(EventHandlers),
-  },
+  args: getStoryArgsFromArgsTypesObject(CellArgs),
 };

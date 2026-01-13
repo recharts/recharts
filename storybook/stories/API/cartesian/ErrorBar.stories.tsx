@@ -4,69 +4,11 @@ import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContaine
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-
-const GeneralProps: Args = {
-  dataKey: {
-    description: `The key of a group of error values in data. The error values can be a single value for
-          symmetric error bars; or an array of a lower and upper error value for asymmetric error
-          bars.`,
-    table: { type: { summary: 'string | number | Function' }, category: 'General' },
-  },
-};
-
-const StyleProps: Args = {
-  stroke: {
-    description: 'Color of the error bar lines',
-    control: { type: 'color' },
-    table: {
-      type: {
-        summary: 'string',
-      },
-      category: 'Style',
-    },
-    defaultValue: 'black',
-  },
-  width: {
-    description: 'Width of the error bar ends',
-    table: {
-      type: {
-        summary: 'string | number',
-      },
-      category: 'Style',
-      defaultValue: {
-        summary: 5,
-      },
-    },
-    defaultValue: 5,
-  },
-  strokeWidth: {
-    description: 'Width of the lines used to make the error bars',
-    table: {
-      type: {
-        summary: 'string | number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 1.5,
-  },
-  direction: {
-    description: `Only used for ScatterChart with error bars in two directions.
-    Only accepts a value of "x" or "y" and makes the error bars lie in that direction.`,
-    table: {
-      type: {
-        summary: 'string',
-      },
-      category: 'Style',
-    },
-  },
-};
+import { ErrorBarArgs } from '../arg-types/ErrorBarArgs';
 
 export default {
   component: ErrorBar,
-  argTypes: {
-    ...GeneralProps,
-    ...StyleProps,
-  },
+  argTypes: ErrorBarArgs,
 };
 
 export const API = {
@@ -95,8 +37,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    ...getStoryArgsFromArgsTypesObject(StyleProps),
+    ...getStoryArgsFromArgsTypesObject(ErrorBarArgs),
     width: 4,
     strokeWidth: 2,
     stroke: 'green',

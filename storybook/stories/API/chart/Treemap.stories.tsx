@@ -2,104 +2,17 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
-import { ChartSizeProps, data } from '../props/ChartProps';
-import { animationBegin, animationDuration, isAnimationActive } from '../props/AnimationProps';
-import { isUpdateAnimationActive } from '../props/RectangleProps';
-import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
-import { dataKey } from '../props/CartesianComponentShared';
-import { GeneralStyle } from '../props/Styles';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { StorybookArgs } from '../../../StorybookArgs';
+import { TreemapArgs } from '../arg-types/TreemapArgs';
 
-const TreemapPropArgTypes: StorybookArgs = {
-  type: {
-    description:
-      'Rendering mode of the Treemap. Options: "flat" (show entire treemap) or "nest" (show depth-1 nodes, allowing click-through).',
-    control: { type: 'select' },
-    options: ['flat', 'nest'],
-    table: {
-      type: {
-        summary: 'String',
-      },
-      defaultValue: 'flat',
-    },
-  },
-  style: {
-    description: 'Custom inline styles for the Treemap component. Accepts a JavaScript object with CSS properties.',
-  },
-  nestIndexContent: {
-    description:
-      'Custom content for the nest index in "nest" mode. Accepts a React element or a function that returns a React element.',
-  },
-  nameKey: {
-    ...dataKey, // The name key is a data key.
-    defaultValue: 'name',
-    description: "The accessor of the treemap's rectangles' name.",
-  },
-  content: {
-    description: "The content of the treemap's rectangles.",
-    table: {
-      type: {
-        summary: 'ReactElement | Function',
-      },
-      defaultValue: null,
-      category: 'General',
-    },
-  },
-  className: {
-    table: {
-      category: 'Internal',
-    },
-  },
-  fill: GeneralStyle.fill,
-  stroke: GeneralStyle.stroke,
-  colorPanel: {
-    description: "The color panel is used to render the color of the treemap's rectangles.",
-  },
-  aspectRatio: {
-    description: "The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.",
-    defaultValue: 1.618033988749895,
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'General',
-    },
-  },
-  animationBegin,
-  ...ChartSizeProps,
-  animationDuration,
-  animationEasing: {
-    defaultValue: 'linear',
-    table: {
-      category: 'Animation',
-    },
-  },
-  data,
-  dataKey: {
-    description: `The key or getter of a group of data.
-      It could be an accessor function such as (row)=>value`,
-    defaultValue: 'value',
-    table: {
-      type: { summary: 'string | number | function' },
-      category: 'General',
-    },
-  },
-  isAnimationActive,
-  isUpdateAnimationActive,
-  onAnimationEnd,
-  onAnimationStart,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
-};
 export default {
-  argTypes: TreemapPropArgTypes,
+  argTypes: TreemapArgs,
   component: Treemap,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -110,7 +23,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TreemapPropArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TreemapArgs),
     data: sizeData,
     dataKey: 'size',
     nameKey: 'name',
@@ -130,7 +43,7 @@ export const WithTooltip = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TreemapPropArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TreemapArgs),
     data: sizeData,
     dataKey: 'size',
     nameKey: 'name',
@@ -187,7 +100,7 @@ export const WithCustomContent = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TreemapPropArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TreemapArgs),
     data: treemapData,
     dataKey: 'size',
     isAnimationActive: false,

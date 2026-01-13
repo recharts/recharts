@@ -3,68 +3,17 @@ import { Args } from '@storybook/react-vite';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';
-import { data, margin } from '../props/ChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { StorybookArgs } from '../../../StorybookArgs';
-
-const SankeyArgTypes: StorybookArgs = {
-  iterations: {
-    table: {
-      defaultValue: { summary: '32' },
-    },
-  },
-  link: { description: 'TODO' },
-  linkCurvature: {
-    table: {
-      defaultValue: { summary: '0.5' },
-    },
-  },
-  nameKey: {
-    table: {
-      defaultValue: { summary: 'name' },
-    },
-  },
-  node: { description: 'TODO' },
-  nodePadding: {
-    table: {
-      defaultValue: { summary: '10' },
-    },
-  },
-  nodeWidth: {
-    table: {
-      defaultValue: { summary: '10' },
-    },
-  },
-  dataKey: {
-    description: `The key or getter of a group of data.
-      It could be an accessor function such as (row)=>value`,
-    table: {
-      type: { summary: 'string | number | function' },
-      defaultValue: { summary: 'value' },
-      category: 'General',
-    },
-  },
-  margin,
-  data,
-  sort: {
-    description: 'Whether to sort the data or not',
-    table: {
-      defaultValue: { summary: true },
-    },
-  },
-  align: {
-    table: {
-      defaultValue: { summary: 'justify' },
-    },
-  },
-};
+import { SankeyArgs } from '../arg-types/SankeyArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: SankeyArgTypes,
+  argTypes: SankeyArgs,
   component: Sankey,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -76,6 +25,7 @@ export const Simple = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(SankeyArgs),
     data: nodeLinkData,
   },
 };
@@ -91,6 +41,7 @@ export const Customized = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(SankeyArgs),
     data: nodeLinkData,
     nodeWidth: 10,
     nodePadding: 60,
@@ -215,6 +166,7 @@ export const CustomNodeAndLink = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(SankeyArgs),
     data: complexNodeLinkData,
     nodeWidth: 16,
     nodePadding: 14,

@@ -1,46 +1,25 @@
-import { Meta, Canvas } from '@storybook/addon-docs/blocks';
-import * as ComponentStories from './usePlotArea.stories.tsx';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './usePlotArea.stories';
+
+# usePlotArea
 
 <Meta of={ComponentStories} />
 
-# `usePlotArea`
+<Canvas of={ComponentStories.API} layout='padded'/>
 
-```jsx
-import { usePlotArea } from 'recharts';
+## Description
 
-function MyChart() {
-  const plotArea = usePlotArea();
-  return; // ...
-}
-```
+<p>Plot area is the area where the actual chart data is rendered.
+This means: bars, lines, scatter points, etc.</p>
+<p>The plot area is calculated based on the chart dimensions and the offset.</p>
+<p>Plot area <code>width</code> and <code>height</code> are the dimensions in pixels;
+<code>x</code> and <code>y</code> are the coordinates of the top-left corner of the plot area relative to the chart container.</p>
+<p>They are also independent of the scale and zoom, meaning that as the user zooms in and out,
+the plot area dimensions will not change as the chart gets visually larger or smaller.</p>
+<p>This hook must be used within a chart context (inside a <code>&lt;LineChart&gt;</code>, <code>&lt;BarChart&gt;</code>, etc.).
+This hook returns <code>undefined</code> if used outside a chart context.</p>
 
-The `usePlotArea` hook returns the dimensions of the plot area in pixels.
 
-The plot area is the area where the data is rendered, and shows the actual data points, bars, lines, etc.
+## Props
 
-Plot area `width` and `height` are the dimensions in pixels;
-`x` and `y` are the coordinates of the top-left corner of the plot area relative to the chart container.
-
-All of these values are independent of the chart's position on the page, meaning they do not change as the chart is scrolled or resized.
-
-They are also independent of the scale and zoom, meaning that as the user zooms in and out,
-the plot area dimensions will not change as the chart gets visually larger or smaller.
-
-<Canvas of={ComponentStories.UsePlotArea} layout="padded" />
-
-## Parent Component
-
-This hook can be used within any chart:
-
-- `<AreaChart/>`
-- `<BarChart/>`
-- `<ComposedChart/>`
-- `<FunnelChart/>`
-- `<LineChart/>`
-- `<PieChart/>`
-- `<RadarChart/>`
-- `<RadialBarChart/>`
-- `<Sankey/>`
-- `<ScatterChart/>`
-- `<SunburstChart/>`
-- `<Treemap/>`
+<Controls of={ComponentStories.API} />

@@ -14,12 +14,12 @@ import {
   Tooltip,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RadialBarChartProps } from '../props/RadialBarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { StorybookArgs } from '../../../StorybookArgs';
+import { RadialBarChartArgs } from '../arg-types/RadialBarChartArgs';
 
 export default {
-  argTypes: RadialBarChartProps,
+  argTypes: RadialBarChartArgs,
   component: RadialBarChart,
 };
 
@@ -34,7 +34,7 @@ export const Simple: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     data: pageData,
     width: 800,
     height: 400,
@@ -85,7 +85,7 @@ export const WithCustomizedClickLegendEvent = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     data: pageDataWithFillColor,
     width: 500,
     height: 300,

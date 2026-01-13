@@ -2,28 +2,28 @@ import React, { useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData, rangeData } from '../../data';
 import {
-  ResponsiveContainer,
   Bar,
   BarChart,
+  Brush,
   CartesianGrid,
+  Cell,
+  ErrorBar,
+  LabelList,
+  Legend,
+  LegendPayload,
+  Rectangle,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
-  ReferenceLine,
-  Cell,
-  Brush,
-  ErrorBar,
-  Rectangle,
-  LegendPayload,
-  LabelList,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { BarChartProps } from '../../API/props/BarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { BarChartArgs } from '../../API/arg-types/BarChartArgs';
 
 export default {
-  argTypes: BarChartProps,
+  argTypes: BarChartArgs,
   component: BarChart,
   docs: {
     autodocs: false,
@@ -48,7 +48,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     margin: {
@@ -120,7 +120,7 @@ export const StackedAndDynamic = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -155,7 +155,7 @@ export const StackedWithErrorBar = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pvErrorData,
@@ -221,7 +221,7 @@ export const Mix = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -267,7 +267,7 @@ export const CustomShape = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -343,7 +343,7 @@ export const PositiveAndNegative = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: positiveAndNegativeData,
@@ -417,7 +417,7 @@ export const WithBrush = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: dataForBrush,
@@ -450,7 +450,7 @@ export const XAxisTickMarginWithBrushDy = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: dataForBrush,
@@ -481,7 +481,7 @@ export const WithCustomizedEvent = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -513,7 +513,7 @@ export const StackedWithBrush = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -545,7 +545,7 @@ export const StackedBySign = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: positiveAndNegativeData,
@@ -578,7 +578,7 @@ export const Biaxial = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -609,7 +609,7 @@ export const HasBackground = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -646,7 +646,7 @@ export const HasLabelBasedOnSeparateDataKey = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -789,7 +789,7 @@ export const WithMultiXAxis = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: dataWithMultiXAxis,
@@ -819,7 +819,7 @@ export const NoPadding = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -874,7 +874,7 @@ export const WithMinPointSize = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: dataWithSmallValuesAndZero,
@@ -903,7 +903,7 @@ export const OneDataPointPercentSize = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: [[4.5, 10]],
@@ -934,7 +934,7 @@ export const RangedBarChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: rangeData,
@@ -970,7 +970,7 @@ export const CustomCursorBarChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -1058,7 +1058,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     margin: {
@@ -1135,7 +1135,7 @@ export const ChangingDataKeyAndStacked = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     margin: {
@@ -1192,7 +1192,7 @@ export const ChangingData = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 100,
     height: 100,
   },
@@ -1215,7 +1215,7 @@ export const VerticalWithLabelLists = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
     width: 500,
     height: 300,
     margin: {

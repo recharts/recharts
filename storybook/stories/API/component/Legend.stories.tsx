@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Args } from '@storybook/react-vite';
-import { ResponsiveContainer, LineChart, Line, Legend, AreaChart, Area, YAxis, Tooltip, XAxis } from '../../../../src';
-import { rechartsPackageDownloads, pageData } from '../../data';
-import { LegendArgTypes } from '../props/Legend';
+import { Area, AreaChart, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
+import { pageData, rechartsPackageDownloads } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { LegendArgs } from '../arg-types/LegendArgs';
 
 export default {
-  argTypes: LegendArgTypes,
+  argTypes: LegendArgs,
   component: Legend,
 };
 
@@ -36,7 +36,7 @@ export const API = {
       </ResponsiveContainer>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(LegendArgTypes),
+  args: getStoryArgsFromArgsTypesObject(LegendArgs),
 };
 
 export const LegendPortal = {
@@ -99,5 +99,5 @@ export const LegendPortal = {
       </div>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(LegendArgTypes),
+  args: getStoryArgsFromArgsTypesObject(LegendArgs),
 };

@@ -12,15 +12,15 @@ import {
   YAxis,
   ZAxis,
 } from '../../../src';
-import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
+import { ScatterChartArgs } from '../API/arg-types/ScatterChartArgs';
 
 export default {
   component: ScatterChart,
-  argTypes: CategoricalChartProps,
+  argTypes: ScatterChartArgs,
   docs: {
     autodocs: false,
   },
@@ -98,7 +98,7 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(ScatterChartArgs),
     width: 800,
     height: 400,
     margin: {
@@ -226,7 +226,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(ScatterChartArgs),
     width: 500,
     height: 300,
     margin: {

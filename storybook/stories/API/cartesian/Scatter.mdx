@@ -3,25 +3,27 @@ import * as ComponentStories from './Scatter.stories';
 
 # Scatter
 
-The Scatter component is different to all other cartesian components in that it does not require a dataKey to be set.
-Without a dataKey, the xAxis and yAxis are used to determine the position of the scatter points, which both require a dataKey.
-
-If the dataKey is set, and no xAxis or yAxis is set, the Scatter will use the dataKey to determine the y-Axis value of the scatter points, and the index of each data point on the xAxis.
-
 <Meta of={ComponentStories} />
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The Scatter can be used within a `<ScatterChart/>` or a `<ComposedChart/>`.
+The Scatter can be used within the following parent components:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<ScatterChart/>`
 
-## Child component
+## Child Components
 
-The Scatter can be used with the following child components: `<Cell />`, `<LabelList/>` or a `<ErrorBar/>`
+The Scatter can be used with the following child components:
+- `<Cell/>`
+- `<ErrorBar/>`
+- `<LabelList/>`
 
-## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
+## Props
 
 <Controls of={ComponentStories.API} />

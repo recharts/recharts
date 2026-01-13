@@ -1,5 +1,5 @@
 import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
-import * as ComponentStories from './Tooltip.stories.tsx';
+import * as ComponentStories from './Tooltip.stories';
 
 # Tooltip
 
@@ -7,19 +7,29 @@ import * as ComponentStories from './Tooltip.stories.tsx';
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
+## Description
+
+<p>The Tooltip component displays a floating box with data values when hovering over or clicking on chart elements.</p>
+<p>It can be configured to show information for individual data points or for all points at a specific axis coordinate.
+The appearance and content of the tooltip can be customized via props.</p>
+
+
 ## Parent Component
 
-The Tooltip can be used within:
-`<AreaChart />`,
-`<BarChart />`,
-`<LineChart />`,
-`<ComposedChart />`,
-`<PieChart />`,
-`<RadarChart />`,
-`<RadialBarChart />`,
-`<ScatterChart />`, or
-`<Treemap />`
+The Tooltip can be used within the following parent components:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
+- `<Sankey/>`
+- `<ScatterChart/>`
+- `<SunburstChart/>`
+- `<Treemap/>`
 
-## Properties
+## Props
 
 <Controls of={ComponentStories.API} />

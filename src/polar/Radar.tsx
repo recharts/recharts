@@ -92,10 +92,13 @@ interface RadarProps extends ZIndexable {
    */
   dataKey?: DataKey<any>;
   /**
-   * If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally.
-   * If object set, dots will be drawn which have the props merged by the internal calculated props and the option.
-   * If ReactElement set, the option can be the custom dot element.
-   * If set a function, the function will be called to render customized dot.
+   * Renders a circle element at each data point. Options:
+   *
+   * - `false`: no dots are drawn;
+   * - `true`: renders the dots with default settings;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `ReactElement`: the custom dot element;
+   * - `function`: a render function of the custom dot.
    *
    * @defaultValue false
    */

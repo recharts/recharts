@@ -1,14 +1,14 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Line, Tooltip } from '../../../../../src';
+import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
 import { pageData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
-import { YAxisProps } from '../../../API/props/YAxisProps';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import { YAxisArgs } from '../../../API/arg-types/YAxisArgs';
 
 export default {
   component: YAxis,
-  argTypes: YAxisProps,
+  argTypes: YAxisArgs,
   title: 'Examples/cartesian/YAxis/WithLeftAndRightAxes',
 };
 
@@ -42,5 +42,5 @@ export const WithLeftAndRightAxes = {
       </article>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(YAxisProps),
+  args: getStoryArgsFromArgsTypesObject(YAxisArgs),
 };

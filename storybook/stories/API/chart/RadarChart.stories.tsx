@@ -3,15 +3,16 @@ import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RadarChartProps } from '../props/RadarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { RadarChartArgs } from '../arg-types/RadarChartArgs';
 
 export default {
-  argTypes: RadarChartProps,
+  argTypes: RadarChartArgs,
   component: RadarChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Args) => {
     return (
       <RadarChart {...args}>
@@ -26,7 +27,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
     data: pageData,
     width: 800,
     height: 300,

@@ -1,20 +1,24 @@
-import { ArgTypes, Canvas } from '@storybook/addon-docs/blocks';
-import * as RadarStories from './Radar.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Radar.stories';
 
 # Radar
 
-<Canvas of={RadarStories.General} layout="padded" />
+<Meta of={ComponentStories} />
+
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The Radar can be used within a `<RadarChart/>`.
+The Radar can be used within the following parent components:
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
 
-## Child component
+## Child Components
 
-The Radar can be used with the following child components: `<LabelList/>`
+The Radar can be used with the following child components:
+- `<LabelList/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={RadarStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />

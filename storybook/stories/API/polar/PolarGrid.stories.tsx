@@ -1,74 +1,17 @@
 import React from 'react';
 import { PolarGrid, Surface } from '../../../../src';
-import { StorybookArgs } from '../../../StorybookArgs';
-
-const PolarGridArgTypes: StorybookArgs = {
-  cx: {
-    description: 'The x-coordinate of center.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  cy: {
-    description: 'The y-coordinate of center.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  innerRadius: {
-    description: 'The radius of the inner polar grid.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  outerRadius: {
-    description: 'The radius of the outer polar grid.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  polarAngles: {
-    description: "The array of every line grid's angle.",
-    table: { type: { summary: 'Array' }, category: 'General' },
-  },
-  polarRadius: {
-    description: "The array of every circle grid's radius",
-    table: { type: { summary: 'Array' }, category: 'General' },
-  },
-  gridType: {
-    description: 'The type of polar grids.',
-    table: {
-      type: { summary: "'polygon' | 'circle'" },
-      defaultValue: 'polygon',
-      category: 'General',
-    },
-  },
-  radialLines: {
-    description: 'Whether to display radial lines.',
-    table: {
-      type: { summary: 'boolean' },
-      defaultValue: true,
-      category: 'General',
-    },
-  },
-  fill: {
-    description: 'Fill color.',
-    table: { type: { summary: 'string' }, category: 'General' },
-  },
-  fillOpacity: {
-    description: 'Fill opacity.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  stroke: {
-    description: 'Stroke color.',
-    table: { type: { summary: 'string' }, category: 'General' },
-  },
-  strokeWidth: {
-    description: 'Stroke width.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-};
+import { PolarGridArgs } from '../arg-types/PolarGridArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: PolarGridArgTypes,
+  argTypes: PolarGridArgs,
   component: PolarGrid,
 };
 
 const [surfaceWidth, surfaceHeight] = [500, 500];
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Record<string, any>) => {
     return (
       <Surface
@@ -86,6 +29,7 @@ export const Simple = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(PolarGridArgs),
     polarAngles: [0, 30, 60, 90, 145, 180, 200, 270, 300],
     polarRadius: [10, 20, 40, 80],
     stroke: '#ccc',

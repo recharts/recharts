@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { pageDataWithFillColor } from '../../data';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { PieChartArgs } from '../arg-types/PieChartArgs';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: PieChartArgs,
   component: PieChart,
 };
 
-export const Simple = {
+export const API = {
+  name: 'Simple',
   render: (args: Record<string, any>) => {
     const { data, activeShape } = args;
     return (
@@ -30,7 +31,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(PieChartArgs),
     data: pageDataWithFillColor,
     activeShape: { fill: 'red' },
     margin: {
@@ -60,7 +61,7 @@ export const Donut = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(PieChartArgs),
     width: 500,
     height: 300,
     data: pageDataWithFillColor,
@@ -138,7 +139,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(PieChartArgs),
     width: 500,
     height: 300,
     margin: {

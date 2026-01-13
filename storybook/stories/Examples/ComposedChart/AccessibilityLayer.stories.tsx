@@ -12,9 +12,9 @@ import {
   CartesianGrid,
 } from '../../../../src';
 import { pageData } from '../../data';
-import { General } from '../../API/props/CartesianComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ComposedChartArgs } from '../../API/arg-types/ComposedChartArgs';
 
 export default {
   component: ComposedChart,
@@ -44,11 +44,8 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
       </ResponsiveContainer>
     );
   },
-  args: {
-    ...getStoryArgsFromArgsTypesObject(General),
-  },
+  args: getStoryArgsFromArgsTypesObject(ComposedChartArgs),
   parameters: {
-    controls: { include: Object.keys(General) },
     docs: {
       description: {
         story: 'You can tab to this chart. From there, you can use the arrow keys to navigate along the chart.',

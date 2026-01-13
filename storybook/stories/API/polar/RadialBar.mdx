@@ -5,18 +5,21 @@ import * as ComponentStories from './RadialBar.stories';
 
 <Meta of={ComponentStories} />
 
-<Canvas of={ComponentStories.API} layout="padded" />
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The RadialBar can be used within a `<RadialBarChart />`.
+The RadialBar can be used within the following parent components:
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
 
-## Child component
+## Child Components
 
-The RadialBar can be used with the following child components: `<Cell />` `<LabelList />`
+The RadialBar can be used with the following child components:
+- `<Cell/>`
+- `<LabelList/>`
 
-## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
+## Props
 
 <Controls of={ComponentStories.API} />

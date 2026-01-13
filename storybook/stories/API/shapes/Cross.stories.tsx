@@ -1,51 +1,12 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Cross, ComposedChart, ResponsiveContainer } from '../../../../src';
-import { GeneralStyle } from '../props/Styles';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { CrossArgs } from '../arg-types/CrossArgs';
 
 export default {
   component: Cross,
-  argTypes: {
-    y: {
-      description: 'The y-coordinate of the horizontal line of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    x: {
-      description: 'The x-coordinate of the vertical line of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    top: {
-      description: 'The y-coordinate of the top left point in the boundary box of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    left: {
-      description: 'The x-coordinate of the top left point in the boundary box of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    height: {
-      description: 'The height of the vertical line of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    width: {
-      description: 'The width of the horizontal line of the cross.',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
-    // TODO: Document further SVGProps as well.
-    ...GeneralStyle,
-  },
+  argTypes: CrossArgs,
 };
 
 export const API = {

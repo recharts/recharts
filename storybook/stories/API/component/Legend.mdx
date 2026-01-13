@@ -3,18 +3,23 @@ import * as ComponentStories from './Legend.stories';
 
 # Legend
 
-The Legend component is used to display legend of the chart.
-
 <Meta of={ComponentStories} />
 
 <Canvas of={ComponentStories.API} layout='padded'/>
 
-## Parent Components
+## Parent Component
 
-The Legend can be used within a `<AreaChart />`, `<BarChart />`, `<LineChart />`, `<ComposedChart />`, `<PieChart />`, `<RadarChart />`, `<RadialBarChart />` or a `<ScatterChart />`
+The Legend can be used within the following parent components:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
+- `<ScatterChart/>`
 
-## Properties
-
-Properties in the groups Other and Internal are not recommended to be used.
+## Props
 
 <Controls of={ComponentStories.API} />

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
-import { RadarChartProps } from '../API/props/RadarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { rangeData } from '../data';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import { RadarChartArgs } from '../API/arg-types/RadarChartArgs';
 
 export default {
-  argTypes: RadarChartProps,
+  argTypes: RadarChartArgs,
   component: RadarChart,
   docs: {
     autodocs: false,
@@ -28,7 +28,7 @@ export const RangedRadarChart: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
     data: rangeData,
     width: 360,
     height: 360,
@@ -83,7 +83,7 @@ export const RadarWithChangingDataKey: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
     data: [
       { name: 'A', key1: 15, key2: 5 },
       { name: 'B', key1: 12, key2: 2 },

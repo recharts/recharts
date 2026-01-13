@@ -12,13 +12,13 @@ import {
   YAxis,
 } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
-import { XAxisProps } from '../props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { XAxisArgs } from '../arg-types/XAxisArgs';
 
 export default {
   component: XAxis,
-  argTypes: XAxisProps,
+  argTypes: XAxisArgs,
 };
 
 export const API = {
@@ -38,7 +38,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(XAxisProps),
+    ...getStoryArgsFromArgsTypesObject(XAxisArgs),
     dataKey: 'x',
     domain: [100, 500],
     type: 'number',
@@ -114,7 +114,7 @@ export const CustomTickWithPadding = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(XAxisProps),
+    ...getStoryArgsFromArgsTypesObject(XAxisArgs),
     dataKey: 'name',
     padding: { left: 30, right: 40 },
     height: 80,
@@ -172,7 +172,7 @@ export const CustomTickFunction = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(XAxisProps),
+    ...getStoryArgsFromArgsTypesObject(XAxisArgs),
     dataKey: 'month',
     padding: { left: 20, right: 30 },
     height: 80,

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { YAxis, XAxis, Line, ResponsiveContainer, LineChart, CartesianGrid, Tooltip, Legend } from '../../../../src';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
-import { YAxisProps } from '../props/YAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { YAxisArgs } from '../arg-types/YAxisArgs';
 
 export default {
   component: YAxis,
-  argTypes: YAxisProps,
+  argTypes: YAxisArgs,
 };
 
 const getWidth = (width: string | number) => {
@@ -39,7 +39,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(YAxisProps),
+    ...getStoryArgsFromArgsTypesObject(YAxisArgs),
     dataKey: 'pv',
     domain: [0, 300],
     type: 'number',
@@ -110,7 +110,7 @@ export const YAxisCustomTickWithPadding = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(YAxisProps),
+    ...getStoryArgsFromArgsTypesObject(YAxisArgs),
     padding: { top: 25, bottom: 35 },
     width: 100,
     tickMargin: 10,

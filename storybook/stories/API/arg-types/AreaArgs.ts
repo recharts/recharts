@@ -7,7 +7,7 @@ import { StorybookArgs } from '../../../StorybookArgs';
 export const AreaArgs: StorybookArgs = {
   activeDot: {
     description:
-      'The dot is shown when user enter an area chart and this chart has tooltip.\nIf false set, no active dot will not be drawn.\nIf true set, active dot will be drawn which have the props calculated internally.\nIf object set, active dot will be drawn which have the props merged by the internal calculated props and the option.\nIf ReactElement set, the option can be the custom active dot element.\nIf set a function, the function will be called to render customized active dot.',
+      'The active dot is rendered on the closest data point when user interacts with the chart. Options:\n\n- `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)\n- `true`: renders the active dot with default settings\n- `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot\n- `ReactElement`: the custom active dot element\n- `function`: a render function of the custom active dot',
     table: {
       type: {
         summary: 'Function | Partial<ActiveDotProps> | ReactNode | false | true',
@@ -141,7 +141,7 @@ export const AreaArgs: StorybookArgs = {
   },
   dot: {
     description:
-      'If false set, dots will not be drawn.\nIf true set, dots will be drawn which have the props calculated internally.\nIf object set, dots will be drawn which have the props merged by the internal calculated props and the option.\nIf ReactElement set, the option can be the custom dot element.\nIf set a function, the function will be called to render customized dot.',
+      'Renders a circle element at each data point. Options:\n\n- `false`: no dots are drawn;\n- `true`: renders the dots with default settings;\n- `object`: the props of the dot. This will be merged with the internal calculated props of each dot;\n- `ReactElement`: the custom dot element;\n- `function`: a render function of the custom dot.',
     table: {
       type: {
         summary: 'Function | Partial<Props> | ReactNode | false | true',

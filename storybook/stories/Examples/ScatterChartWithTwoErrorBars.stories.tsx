@@ -2,24 +2,12 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { XAxisProps } from '../API/props/XAxisProps';
-import { CartesianChartProps } from '../API/props/CartesianChartProps';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-
-const bespokeArgTypes = {
-  layout: {
-    ...CartesianChartProps.layout,
-    table: { ...CartesianChartProps.layout.table, category: 'ScatterChart props' },
-  },
-  allowDataOverflow: {
-    ...XAxisProps.allowDataOverflow,
-    table: { ...XAxisProps.allowDataOverflow.table, category: 'XAxis + YAxis props' },
-  },
-};
+import { ScatterChartArgs } from '../API/arg-types/ScatterChartArgs';
 
 export default {
   component: ScatterChart,
-  argTypes: bespokeArgTypes,
+  argTypes: ScatterChartArgs,
   docs: {
     autodocs: false,
   },
@@ -61,7 +49,7 @@ export const WithErrorBarsAndExtendedDomain = {
       </ScatterChart>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(bespokeArgTypes),
+  args: getStoryArgsFromArgsTypesObject(ScatterChartArgs),
   parameters: {
     controls: { include: ['layout', 'allowDataOverflow'] },
   },

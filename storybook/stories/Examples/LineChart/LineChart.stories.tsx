@@ -1,29 +1,29 @@
 import { expect, userEvent, within } from 'storybook/test';
 import { Args, StoryObj } from '@storybook/react-vite';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
 import {
+  Brush,
+  CartesianGrid,
+  DataKey,
+  Legend,
   Line,
   LineChart,
+  MouseHandlerDataParam,
+  ReferenceArea,
+  ReferenceLine,
   ResponsiveContainer,
-  CartesianGrid,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
-  ReferenceLine,
-  Brush,
-  ReferenceArea,
-  MouseHandlerDataParam,
 } from '../../../../src';
-import { DataKey } from '../../../../src/util/types';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { CategoricalChartProps } from '../../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
+import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
 
 export default {
   component: LineChart,
-  argTypes: CategoricalChartProps,
+  argTypes: LineChartArgs,
   docs: {
     autodocs: false,
   },
@@ -433,7 +433,7 @@ export const ClipDot: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     clipDot: false,
   },
   parameters: {
@@ -483,7 +483,7 @@ export const WithCustomizedLabel = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -624,7 +624,7 @@ export const HighlightAndZoom = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: impressionsData,
     width: 800,
     height: 400,
@@ -650,7 +650,7 @@ export const LineChartHasMultiSeries = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -766,7 +766,7 @@ export const NegativeValuesWithReferenceLines = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     margin: {
@@ -901,7 +901,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
     width: 1300,
     height: 400,
@@ -929,7 +929,7 @@ export const WithBrush: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
   },
 };
@@ -966,7 +966,7 @@ export const HideOnLegendClick: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
   },
 };
@@ -997,7 +997,7 @@ export const LineTrailingIcon: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData.map((entry, index) => ({
       ...entry,
       lastDot: index === pageData.length - 1 ? entry.pv : undefined,
@@ -1023,7 +1023,7 @@ export const ReversedXAxis = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     data: pageData,
@@ -1108,7 +1108,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     width: 500,
     height: 300,
     margin: {

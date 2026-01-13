@@ -15,84 +15,11 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-
-const GeneralProps: Args = {
-  ariaLabel: {
-    description: 'The ARIA label of the brush.',
-    table: { type: { summary: 'string' }, category: 'General' },
-  },
-  dataKey: {
-    description: 'The key of data displayed in Brush.',
-    table: { type: { summary: 'string | number | Function' }, category: 'General' },
-  },
-  x: {
-    description: 'The x-coordinate of brush.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  y: {
-    description: 'The y-coordinate of brush.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  dy: {
-    description: 'Indicates a shift along the y-axis on the position of the Brush and its content.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  width: {
-    description: 'The width of brush.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  height: {
-    description: 'The height of brush.',
-    table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 40,
-  },
-  travellerWidth: {
-    description: 'The width of each traveller.',
-    table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 5,
-  },
-  gap: {
-    description: `The data with gap of refreshing chart. If the option is not set,
-    the chart will be refreshed every time.`,
-    table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 1,
-  },
-  fill: {
-    description: 'Fill color',
-    table: { type: { summary: 'string' }, category: 'SVG properties' },
-    defaultValue: '#ccc',
-  },
-  startIndex: {
-    description: 'The default start index of brush. If the option is not set, the start index will be 0.',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  endIndex: {
-    description: `The default end index of brush. If the option is not set,
-    the end index will be calculated by the length of data`,
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
-  tickFormatter: {
-    description: 'The formatter function of ticks.',
-    table: { type: { summary: 'Function' }, category: 'General' },
-  },
-  onChange: {
-    description: 'The handler of changing the active scope of brush.',
-    table: { type: { summary: 'Function' }, category: 'Event handlers' },
-  },
-  onDragEnd: {
-    description: 'The handler of ending the brush drag.',
-    table: { type: { summary: 'Function' }, category: 'Event handlers' },
-  },
-  alwaysShowText: {
-    control: { type: 'boolean' },
-    table: { type: { summary: 'boolean' }, category: 'General' },
-    defaultValue: false,
-  },
-};
+import { BrushArgs } from '../arg-types/BrushArgs';
 
 export default {
   component: Brush,
-  argTypes: GeneralProps,
+  argTypes: BrushArgs,
 };
 
 export const API = {
@@ -105,7 +32,7 @@ export const API = {
       </ComposedChart>
     </ResponsiveContainer>
   ),
-  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+  args: getStoryArgsFromArgsTypesObject(BrushArgs),
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     const slider = await canvas.findAllByRole('slider');
@@ -133,7 +60,7 @@ export const PanoramaWithLine = {
       </ComposedChart>
     </ResponsiveContainer>
   ),
-  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+  args: getStoryArgsFromArgsTypesObject(BrushArgs),
 };
 
 export const PanoramaWithArea = {
@@ -151,7 +78,7 @@ export const PanoramaWithArea = {
       </ComposedChart>
     </ResponsiveContainer>
   ),
-  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+  args: getStoryArgsFromArgsTypesObject(BrushArgs),
 };
 
 export const PanoramaWithBar = {
@@ -169,7 +96,7 @@ export const PanoramaWithBar = {
       </ComposedChart>
     </ResponsiveContainer>
   ),
-  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+  args: getStoryArgsFromArgsTypesObject(BrushArgs),
 };
 
 export const PanoramaWithScatter = {
@@ -187,5 +114,5 @@ export const PanoramaWithScatter = {
       </ScatterChart>
     </ResponsiveContainer>
   ),
-  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+  args: getStoryArgsFromArgsTypesObject(BrushArgs),
 };

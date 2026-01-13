@@ -20,11 +20,11 @@ import {
   YAxis,
 } from '../../../src';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
-import { TooltipArgTypes } from '../API/props/TooltipArgTypes';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { TooltipArgs } from '../API/arg-types/TooltipArgs';
 
 export default {
-  argTypes: TooltipArgTypes,
+  argTypes: TooltipArgs,
   component: Tooltip,
 };
 
@@ -48,7 +48,7 @@ const SimpleTooltipStory = {
 export const ActiveTooltip = {
   ...SimpleTooltipStory,
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     active: true,
   },
 };
@@ -77,7 +77,7 @@ export const SettingTooltipIndex = {
     </LineChart>
   ),
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     defaultIndex: 2,
   },
 };
@@ -130,7 +130,7 @@ export const LockedByClick = {
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
   },
 };
 
@@ -179,7 +179,7 @@ export const CssScaledParent = {
   },
   description: 'This example shows if Tooltip is shown correctly when parent component use transform:scale styling',
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
   },
 };
 
@@ -217,14 +217,14 @@ export const SeparateDataSetsForChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
   },
 };
 
 export const TriggerTooltipByClick = {
   ...SimpleTooltipStory,
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     trigger: 'click',
   },
 };
@@ -272,7 +272,7 @@ const CustomContent = ({ active, payload }: CustomTooltipProps) => {
 export const CustomContentExample = {
   ...SimpleTooltipStory,
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     content: <CustomContent />,
     trigger: 'hover',
   },
@@ -304,7 +304,7 @@ export const LargeDataArray = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
   },
 };
 
@@ -333,7 +333,7 @@ export const IncludeHidden = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     includeHidden: true,
   },
 };
@@ -352,7 +352,7 @@ export const SharedTooltipInBarChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     shared: false,
     defaultIndex: 2,
     active: true,
@@ -373,7 +373,7 @@ export const SharedTooltipInRadialBarChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     shared: false,
     defaultIndex: 2,
     active: true,
@@ -399,7 +399,7 @@ export const TallTooltipInNarrowChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     defaultIndex: 2,
     active: true,
   },
@@ -437,7 +437,7 @@ export const TooltipWithPortal = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     wrapperStyle: {
       width: '25%',
       marginLeft: 10,
@@ -483,7 +483,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
   },
 };
 
@@ -512,7 +512,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     shared: false,
   },
 };
@@ -551,7 +551,7 @@ export const RechartsTooltipBug5542Repro = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     cursor: false,
   },
 };
@@ -571,7 +571,7 @@ export const TooltipWithNegativeOffset = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     offset: -50,
     wrapperStyle: {
       width: 100,

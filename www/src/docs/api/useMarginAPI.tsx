@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const useMarginAPI: ApiDoc = {
@@ -9,7 +10,8 @@ export const useMarginAPI: ApiDoc = {
         <p>
           Margin is the empty space around the chart. Excludes axes and legend and brushes and the like. This is
           declared by the user in the chart props. If you are interested in the space occupied by axes, legend, or
-          brushes, use <code>useOffset</code> instead.
+          brushes, use <Link to="/api/useOffset/">useOffset</Link> instead, which also includes calculated widths and
+          heights of axes and legends.
         </p>
         <p>
           Returns <code>undefined</code> if used outside a chart context.
