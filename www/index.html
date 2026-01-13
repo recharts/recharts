@@ -13,8 +13,11 @@
         try {
           var storedMode = localStorage.getItem('recharts-color-mode');
           var mode =
-            storedMode ??
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
           document.documentElement.setAttribute('data-mode', mode);
         } catch (e) {
           // Do nothing
