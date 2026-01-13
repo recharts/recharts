@@ -3,11 +3,11 @@ import { Args } from '@storybook/react-vite';
 import { Line, LineChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { TooltipArgTypes } from '../props/TooltipArgTypes';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { TooltipArgs } from '../arg-types/TooltipArgs';
 
 export default {
-  argTypes: TooltipArgTypes,
+  argTypes: TooltipArgs,
   component: Tooltip,
 };
 
@@ -36,8 +36,7 @@ export const API = {
     );
   },
   args: {
-    // This API story should have explicit values for all props
-    ...getStoryArgsFromArgsTypesObject(TooltipArgTypes),
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
     trigger: 'hover',
     shared: false,
     useTranslate3d: false,
