@@ -1,13 +1,6 @@
 import { hydrateRoot, createRoot } from 'react-dom/client';
 
 import { Root } from './containers/Root';
-import { updateColorModeInDOM } from './components/color-mode';
-
-/**
- * To avoid a flash of incorrect color mode on initial load,
- * we update the color mode in the DOM as soon as possible.
- */
-updateColorModeInDOM();
 
 const container = document.getElementById('app');
 if (container == null) {
