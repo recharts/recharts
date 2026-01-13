@@ -54,6 +54,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'RadarChart',
   'RadialBar',
   'RadialBarChart',
+  'Rectangle',
   'ScatterChart',
   'SunburstChart',
 ];
