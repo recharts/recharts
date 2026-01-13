@@ -6,7 +6,7 @@ import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Event
 import { createEventEmitter } from '../state/optionsSlice';
 import { setSyncInteraction, TooltipIndex, TooltipSyncState } from '../state/tooltipSlice';
 import { selectTooltipDataKey } from '../state/selectors/selectors';
-import { ChartCoordinate, Coordinate, TickItem, TooltipEventType } from '../util/types';
+import { Coordinate, TickItem, TooltipEventType } from '../util/types';
 import { TooltipTrigger } from '../chart/types';
 import { selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
 import { selectSynchronisedTooltipState } from './syncSelectors';
@@ -197,7 +197,7 @@ export function useSynchronisedEventsFromOtherCharts() {
 export function useTooltipChartSynchronisation(
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
-  activeCoordinate: ChartCoordinate | undefined,
+  activeCoordinate: Coordinate | undefined,
   activeLabel: ActiveLabel,
   activeIndex: TooltipIndex | undefined,
   isTooltipActive: boolean,

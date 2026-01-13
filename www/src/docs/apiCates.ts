@@ -24,6 +24,8 @@ export const apiCates = [
       'DefaultLegendContent',
       'Tooltip',
       'DefaultTooltipContent',
+      'useIsTooltipActive',
+      'useActiveTooltipCoordinate',
       'useActiveTooltipDataPoints',
       'useActiveTooltipLabel',
       'Cell',

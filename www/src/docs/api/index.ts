@@ -71,6 +71,8 @@ import { getNiceTickValuesAPI } from './getNiceTickValuesAPI';
 import { GlobalAPI } from './GlobalAPI';
 import { useXAxisDomainAPI } from './useXAxisDomainAPI';
 import { useYAxisDomainAPI } from './useYAxisDomainAPI';
+import { useActiveTooltipCoordinateAPI } from './useActiveTooltipCoordinateAPI.tsx';
+import { useIsTooltipActiveAPI } from './useIsTooltipActiveAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
   AreaChart: AreaChartAPI,
@@ -105,8 +107,10 @@ export const allApiDocs: Record<string, ApiDoc> = {
   Legend: LegendAPI,
   DefaultLegendContent: DefaultLegendContentAPI,
   Tooltip: TooltipAPI,
+  useIsTooltipActive: useIsTooltipActiveAPI,
   useActiveTooltipDataPoints: useActiveTooltipDataPointsAPI,
   useActiveTooltipLabel: useActiveTooltipLabelAPI,
+  useActiveTooltipCoordinate: useActiveTooltipCoordinateAPI,
   DefaultTooltipContent: DefaultTooltipContentAPI,
   Cell: CellAPI,
   Text: TextAPI,

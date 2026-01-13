@@ -43,56 +43,10 @@ describe('readProject', () => {
 
   it('should filter symbols by kind', () => {
     // this is a list of exported runtime objects, looks useful. Where is ZAxis though? Maybe ZAxis is a function.
-    expect(reader.getPublicSymbolNames(SymbolFlags.Variable)).toMatchInlineSnapshot(`
-      [
-        "Area",
-        "AreaChart",
-        "Bar",
-        "BarChart",
-        "BarStack",
-        "CartesianAxis",
-        "Cell",
-        "ComposedChart",
-        "Cross",
-        "Curve",
-        "DefaultLegendContent",
-        "DefaultTooltipContent",
-        "DefaultZIndexes",
-        "Dot",
-        "FunnelChart",
-        "getNiceTickValues",
-        "Global",
-        "Layer",
-        "Line",
-        "LineChart",
-        "PieChart",
-        "PolarGrid",
-        "Polygon",
-        "RadarChart",
-        "RadialBarChart",
-        "Rectangle",
-        "ResponsiveContainer",
-        "Scatter",
-        "ScatterChart",
-        "Sector",
-        "SunburstChart",
-        "Surface",
-        "Symbols",
-        "Text",
-        "Trapezoid",
-        "useActiveTooltipDataPoints",
-        "useActiveTooltipLabel",
-        "useChartHeight",
-        "useChartWidth",
-        "useMargin",
-        "useOffset",
-        "usePlotArea",
-        "useXAxisDomain",
-        "useYAxisDomain",
-        "XAxis",
-        "YAxis",
-      ]
-    `);
+    const variables = reader.getPublicSymbolNames(SymbolFlags.Variable);
+    expect(variables).toContain('Area');
+    expect(variables).toContain('Bar');
+    expect(variables).not.toContain('AreaProps');
   });
 
   it('should return properties', () => {

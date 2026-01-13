@@ -2,11 +2,16 @@ import { AxisId, defaultAxisId } from './state/cartesianAxisSlice';
 import { BaseAxisWithScale, selectAxisDomain, selectAxisWithScale } from './state/selectors/axisSelectors';
 import { useAppSelector } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
-import { selectActiveLabel, selectActiveTooltipDataPoints } from './state/selectors/tooltipSelectors';
+import {
+  selectActiveLabel,
+  selectActiveTooltipCoordinate,
+  selectActiveTooltipDataPoints,
+  selectIsTooltipActive,
+} from './state/selectors/tooltipSelectors';
 import { ChartOffset, PlotArea } from './types';
 import { selectChartOffset } from './state/selectors/selectChartOffset';
 import { selectPlotArea } from './state/selectors/selectPlotArea';
-import { CategoricalDomain, NumberDomain } from './util/types';
+import { CategoricalDomain, Coordinate, NumberDomain } from './util/types';
 import { ActiveLabel } from './synchronisation/types';
 
 export const useXAxis = (xAxisId: AxisId): BaseAxisWithScale | undefined => {
@@ -112,4 +117,41 @@ export const useXAxisDomain = (xAxisId: AxisId = defaultAxisId): NumberDomain | 
 export const useYAxisDomain = (yAxisId: AxisId = defaultAxisId): NumberDomain | CategoricalDomain | undefined => {
   const isPanorama = useIsPanorama();
   return useAppSelector(state => selectAxisDomain(state, 'yAxis', yAxisId, isPanorama));
+};
+
+/**
+ * Returns true if the {@link Tooltip} is currently active (visible).
+ *
+ * Returns false if the Tooltip is not active or if used outside a chart context.
+ *
+ * Recharts only allows one Tooltip per chart, so this hook does not take any parameters.
+ * Weird things may happen if you have multiple Tooltip components in the same chart so please don't do that.
+ *
+ * @returns {boolean} True if the Tooltip is active, false otherwise.
+ * @since 3.7
+ */
+export const useIsTooltipActive = (): boolean => {
+  return useAppSelector(selectIsTooltipActive) ?? false;
+};
+
+/**
+ * Returns the Cartesian `x` + `y` coordinates of the active {@link Tooltip}.
+ *
+ * Returns undefined if there is no active user interaction or if used outside a chart context.
+ *
+ * Recharts only allows one Tooltip per chart, so this hook does not take any parameters.
+ * Weird things may happen if you have multiple Tooltip components in the same chart so please don't do that.
+ *
+ * @returns {Coordinate | undefined} The coordinate of the active Tooltip, or undefined.
+ * @since 3.7
+ */
+export const useActiveTooltipCoordinate = (): Coordinate | undefined => {
+  const coordinate = useAppSelector(selectActiveTooltipCoordinate);
+  if (coordinate == null) {
+    return undefined;
+  }
+  return {
+    x: coordinate.x,
+    y: coordinate.y,
+  };
 };
