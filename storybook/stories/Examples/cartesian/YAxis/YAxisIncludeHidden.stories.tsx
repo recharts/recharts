@@ -3,11 +3,11 @@ import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Legend } from '.
 import { pageData } from '../../../data';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
-import { YAxisProps } from '../../../API/props/YAxisProps';
+import { YAxisArgs } from '../../../API/arg-types/YAxisArgs';
 
 export default {
   component: YAxis,
-  argTypes: YAxisProps,
+  argTypes: YAxisArgs,
   title: 'Examples/cartesian/YAxis/WithIncludeHidden',
 };
 
@@ -43,5 +43,5 @@ export const WithIncludeHidden = {
       </>
     );
   },
-  args: getStoryArgsFromArgsTypesObject(YAxisProps),
+  args: getStoryArgsFromArgsTypesObject(YAxisArgs),
 };
