@@ -65,6 +65,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'SunburstChart',
   'Text',
   'Tooltip',
+  'Trapezoid',
 ];
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');
