@@ -82,12 +82,25 @@ export const RadarAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated
-              internally. If object set, dots will be drawn which have the props merged by the internal calculated props
-              and the option. If ReactElement set, the option can be the custom dot element. If set a function, the
-              function will be called to render customized dot.
-            </p>
+            <p>Renders a circle element at each data point. Options:</p>
+            <ul>
+              <li>
+                <code>false</code>: no dots are drawn;
+              </li>
+              <li>
+                <code>true</code>: renders the dots with default settings;
+              </li>
+              <li>
+                <code>object</code>: the props of the dot. This will be merged with the internal calculated props of
+                each dot;
+              </li>
+              <li>
+                <code>ReactElement</code>: the custom dot element;
+              </li>
+              <li>
+                <code>function</code>: a render function of the custom dot.
+              </li>
+            </ul>
           </section>
         ),
       },

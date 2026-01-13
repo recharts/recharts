@@ -4,7 +4,7 @@
  */
 import { StorybookArgs } from '../../../StorybookArgs';
 
-export const AreaArgs: StorybookArgs = {
+export const LineArgs: StorybookArgs = {
   activeDot: {
     description:
       'The active dot is rendered on the closest data point when user interacts with the chart. Options:\n\n- `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)\n- `true`: renders the active dot with default settings\n- `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot\n- `ReactElement`: the custom active dot element\n- `function`: a render function of the custom active dot',
@@ -13,6 +13,21 @@ export const AreaArgs: StorybookArgs = {
         summary: 'Function | Partial<ActiveDotProps> | ReactNode | false | true',
       },
       category: 'General',
+      defaultValue: {
+        summary: 'true',
+      },
+    },
+    defaultValue: true,
+  },
+  animateNewValues: {
+    control: {
+      type: 'boolean',
+    },
+    table: {
+      type: {
+        summary: 'boolean',
+      },
+      category: 'Animation',
       defaultValue: {
         summary: 'true',
       },
@@ -68,24 +83,6 @@ export const AreaArgs: StorybookArgs = {
     },
     defaultValue: 'ease',
   },
-  baseLine: {
-    description:
-      'Baseline of the area:\n- number: uses the corresponding axis value as a flat baseline;\n- an array of coordinates: describes a custom baseline path.',
-    table: {
-      type: {
-        summary: 'Array<readonly NullableCoordinate> | number',
-      },
-      category: 'General',
-    },
-  },
-  baseValue: {
-    table: {
-      type: {
-        summary: '"dataMax" | "dataMin" | number',
-      },
-      category: 'General',
-    },
-  },
   children: {
     table: {
       type: {
@@ -121,6 +118,14 @@ export const AreaArgs: StorybookArgs = {
     },
     defaultValue: false,
   },
+  dangerouslySetInnerHTML: {
+    table: {
+      type: {
+        summary: 'Object',
+      },
+      category: 'General',
+    },
+  },
   data: {
     table: {
       type: {
@@ -131,7 +136,7 @@ export const AreaArgs: StorybookArgs = {
   },
   dataKey: {
     description:
-      'Decides how to extract the value of this Area from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Area.\n\nIf undefined, it will reuse the dataKey of YAxis.',
+      'Decides how to extract the value of this Line from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Line.\n\nIf undefined, it will reuse the dataKey of YAxis.',
     table: {
       type: {
         summary: 'Function | number | string',
@@ -148,10 +153,10 @@ export const AreaArgs: StorybookArgs = {
       },
       category: 'General',
       defaultValue: {
-        summary: 'false',
+        summary: 'true',
       },
     },
-    defaultValue: false,
+    defaultValue: true,
   },
   hide: {
     description:
@@ -185,7 +190,7 @@ export const AreaArgs: StorybookArgs = {
   },
   isAnimationActive: {
     description:
-      'If set false, animation of area will be disabled.\nIf set "auto", the animation will be disabled in SSR and enabled in browser.',
+      'If set false, animation of line will be disabled.\nIf set "auto", the animation will be disabled in SSR and enabled in browser.',
     table: {
       type: {
         summary: '"auto" | false | true',
@@ -197,20 +202,9 @@ export const AreaArgs: StorybookArgs = {
     },
     defaultValue: 'auto',
   },
-  isRange: {
-    control: {
-      type: 'boolean',
-    },
-    table: {
-      type: {
-        summary: 'boolean',
-      },
-      category: 'General',
-    },
-  },
   label: {
     description:
-      'Renders one label for each data point. Options:\n\n- `true`: renders default labels\n- `false`: no labels are rendered\n- `object`: the props of LabelList component\n- `ReactElement`: a custom label element\n- `function`: a render function of custom label',
+      'Renders one label for each data point. Options:\n- `true`: renders default labels;\n- `false`: no labels are rendered;\n- `object`: the props of LabelList component;\n- `ReactElement`: a custom label element;\n- `function`: a render function of custom label.',
     table: {
       type: {
         summary: 'Function | Props | ReactNode | false | true',
@@ -1543,17 +1537,29 @@ export const AreaArgs: StorybookArgs = {
       category: 'Events',
     },
   },
-  stackId: {
-    description: 'When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.',
+  path: {
+    control: {
+      type: 'text',
+    },
     table: {
       type: {
-        summary: 'number | string',
+        summary: 'string',
+      },
+      category: 'General',
+    },
+  },
+  shape: {
+    description:
+      'If set a ReactElement, the shape of line can be customized.\nIf set a function, the function will be called to render customized shape.',
+    table: {
+      type: {
+        summary: '(union of 5 variants)',
       },
       category: 'General',
     },
   },
   stroke: {
-    description: 'The stroke color. If "none", no line will be drawn.',
+    description: 'The stroke color. If `"none"`, no line will be drawn.',
     control: {
       type: 'color',
     },
@@ -1616,7 +1622,7 @@ export const AreaArgs: StorybookArgs = {
     description: 'The unit of data. This option will be used in tooltip.',
     table: {
       type: {
-        summary: 'number | string',
+        summary: 'null | number | string',
       },
       category: 'General',
     },
@@ -1659,9 +1665,9 @@ export const AreaArgs: StorybookArgs = {
       },
       category: 'General',
       defaultValue: {
-        summary: '100',
+        summary: '400',
       },
     },
-    defaultValue: 100,
+    defaultValue: 400,
   },
 };

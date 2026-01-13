@@ -125,12 +125,13 @@ interface InternalLineProps extends ZIndexable {
  */
 interface LineProps extends ZIndexable {
   /**
-   * The dot is shown when user enter a line chart and this chart has tooltip.
-   * If false set, no active dot will not be drawn.
-   * If true set, active dot will be drawn which have the props calculated internally.
-   * If object set, active dot will be drawn which have the props merged by the internal calculated props and the option.
-   * If ReactElement set, the option can be the custom active dot element.
-   * If set a function, the function will be called to render customized active dot.
+   * The active dot is rendered on the closest data point when user interacts with the chart. Options:
+   *
+   * - `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)
+   * - `true`: renders the active dot with default settings
+   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
+   * - `ReactElement`: the custom active dot element
+   * - `function`: a render function of the custom active dot
    *
    * @defaultValue true
    * @example <Line dataKey="value" activeDot={false} />
@@ -178,11 +179,14 @@ interface LineProps extends ZIndexable {
    */
   dataKey?: DataKey<any>;
   /**
-   * If false set, dots will not be drawn.
-   * If true set, dots will be drawn which have the props calculated internally.
-   * If object set, dots will be drawn which have the props merged by the internal calculated props and the option.
-   * If ReactElement set, the option can be the custom dot element.
-   * If set a function, the function will be called to render customized dot.
+   * Renders a circle element at each data point. Options:
+   *
+   * - `false`: no dots are drawn;
+   * - `true`: renders the dots with default settings;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `ReactElement`: the custom dot element;
+   * - `function`: a render function of the custom dot.
+   *
    * @defaultValue true
    *
    * @example <Line dataKey="value" dot={false} />

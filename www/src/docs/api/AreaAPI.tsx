@@ -34,17 +34,38 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              The dot is shown when user enter an area chart and this chart has tooltip. If false set, no active dot
-              will not be drawn. If true set, active dot will be drawn which have the props calculated internally. If
-              object set, active dot will be drawn which have the props merged by the internal calculated props and the
-              option. If ReactElement set, the option can be the custom active dot element. If set a function, the
-              function will be called to render customized active dot.
-            </p>
+            <p>The active dot is rendered on the closest data point when user interacts with the chart. Options:</p>
+            <ul>
+              <li>
+                <code>false</code>: dots do not change on user activity; both active and inactive dots follow the{' '}
+                <code>dot</code> prop (see below)
+              </li>
+              <li>
+                <code>true</code>: renders the active dot with default settings
+              </li>
+              <li>
+                <code>object</code>: the props of the active dot. This will be merged with the internal calculated props
+                of the active dot
+              </li>
+              <li>
+                <code>ReactElement</code>: the custom active dot element
+              </li>
+              <li>
+                <code>function</code>: a render function of the custom active dot
+              </li>
+            </ul>
           </section>
         ),
       },
       defaultVal: true,
+      format: [
+        '<Area dataKey="value" activeDot={false} />',
+        '<Area dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2, r: 10 }} />',
+        '<Area dataKey="value" activeDot={CustomizedActiveDot} />',
+      ],
+      examples: [
+        { name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/', isExternal: false },
+      ],
     },
     {
       name: 'animationBegin',
@@ -137,12 +158,25 @@ export const AreaAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated
-              internally. If object set, dots will be drawn which have the props merged by the internal calculated props
-              and the option. If ReactElement set, the option can be the custom dot element. If set a function, the
-              function will be called to render customized dot.
-            </p>
+            <p>Renders a circle element at each data point. Options:</p>
+            <ul>
+              <li>
+                <code>false</code>: no dots are drawn;
+              </li>
+              <li>
+                <code>true</code>: renders the dots with default settings;
+              </li>
+              <li>
+                <code>object</code>: the props of the dot. This will be merged with the internal calculated props of
+                each dot;
+              </li>
+              <li>
+                <code>ReactElement</code>: the custom dot element;
+              </li>
+              <li>
+                <code>function</code>: a render function of the custom dot.
+              </li>
+            </ul>
           </section>
         ),
       },

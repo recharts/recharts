@@ -1,4 +1,4 @@
-import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
+import { StorybookArg } from '../../../StorybookArgs';
 
 export const tooltipType: StorybookArg = {
   description: `If set to be 'none', no series data is shown in tooltip.`,
@@ -25,9 +25,4 @@ export const activeDot: StorybookArg = {
     defaultValue: true,
     category: 'Tooltip',
   },
-};
-
-export const ResponsiveProps: StorybookArgs = {
-  activeDot,
-  tooltipType,
 };

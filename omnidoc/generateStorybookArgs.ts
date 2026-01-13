@@ -42,6 +42,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'Label',
   'LabelList',
   'Legend',
+  'Line',
   'LineChart',
   'ScatterChart',
   'SunburstChart',

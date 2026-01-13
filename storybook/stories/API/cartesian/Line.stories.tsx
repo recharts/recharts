@@ -1,34 +1,13 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
+import { ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
-import { EventHandlers } from '../props/EventHandlers';
-import { animateNewValues, AnimationProps } from '../props/AnimationProps';
-import { legendType } from '../props/Legend';
-import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { data, General as GeneralProps } from '../props/CartesianComponentShared';
-import { ResponsiveProps } from '../props/Tooltip';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { LineArgs } from '../arg-types/LineArgs';
 
 export default {
-  argTypes: {
-    ...EventHandlers,
-    animateNewValues,
-    ...AnimationProps,
-    legendType,
-    ...GeneralProps,
-    data,
-    ...ResponsiveProps,
-    ...LineStyle,
-    stroke: {
-      control: { type: 'color' },
-      table: { category: 'Style' },
-      defaultValue: '#3182bd',
-    },
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-  },
+  argTypes: LineArgs,
   component: Line,
 };
 
@@ -62,10 +41,7 @@ export const API = {
   },
   args: {
     // This API story should have explicit values for all props
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    ...getStoryArgsFromArgsTypesObject(LineStyle),
-    ...getStoryArgsFromArgsTypesObject(ResponsiveProps),
-    ...getStoryArgsFromArgsTypesObject(AnimationProps),
+    ...getStoryArgsFromArgsTypesObject(LineArgs),
     type: 'linear',
     connectNulls: true,
     stroke: 'red',

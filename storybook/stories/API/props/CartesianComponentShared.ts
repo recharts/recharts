@@ -63,13 +63,3 @@ export const data: StorybookArg = {
     },
   },
 };
-
-export const layout: StorybookArg = {
-  description: 'The layout of line, usually inherited from parent.',
-  table: {
-    type: {
-      summary: 'horizontal | vertical',
-    },
-    category: 'Internal',
-  },
-};
