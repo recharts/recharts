@@ -49,6 +49,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'PolarAngleAxis',
   'PolarGrid',
   'PolarRadiusAxis',
+  'Polygon',
   'ScatterChart',
   'SunburstChart',
 ];
