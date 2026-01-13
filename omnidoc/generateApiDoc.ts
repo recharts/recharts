@@ -150,7 +150,7 @@ async function generateComponentDescription(
     const desc: { [locale: string]: string } = {};
     if (componentJsDoc.text) {
       // Get all component names to resolve internal component references
-      const componentNames = projectReader.getPublicComponentNames();
+      const componentNames = projectReader.getAllRuntimeExportedNames();
       // Process inline {@link} tags before passing to marked
       const textWithLinks = processInlineLinks(componentJsDoc.text, componentNames);
       desc['en-US'] = await marked.parse(textWithLinks);
@@ -269,6 +269,7 @@ async function generateApiDoc(
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
   const componentNames = projectReader.getPublicComponentNames();
+  const allExports = projectReader.getAllRuntimeExportedNames();
 
   for (const propName of rechartsPropNames) {
     const comment = projectReader.getCommentOf(componentName, propName);
@@ -315,7 +316,7 @@ async function generateApiDoc(
 
     // Add description if available
     if (comment) {
-      const textWithLinks = processInlineLinks(comment, componentNames);
+      const textWithLinks = processInlineLinks(comment, allExports);
       prop.desc = {
         'en-US': await marked.parse(textWithLinks),
       };
@@ -403,7 +404,7 @@ async function generateApiDoc(
 
     const returnTag = getTagText(componentJsDoc, 'returns') || getTagText(componentJsDoc, 'return');
     if (returnTag?.text) {
-      const textWithLinks = processInlineLinks(returnTag.text, componentNames);
+      const textWithLinks = processInlineLinks(returnTag.text, allExports);
       apiDoc.returnDesc = {
         'en-US': await marked.parse(textWithLinks),
       };
@@ -579,7 +580,7 @@ async function main() {
 
   // Build context map from all public components, not just the ones we're generating
   // This ensures we can find all providers and consumers even if they're not being generated
-  const allComponentNames = projectReader.getPublicComponentNames();
+  const allComponentNames = projectReader.getAllRuntimeExportedNames();
   const contextMap = buildContextMap(allComponentNames, projectReader);
 
   console.log('Generating API documentation for:', componentsToGenerate);

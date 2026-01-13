@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const useOffsetAPI: ApiDoc = {
@@ -19,7 +20,7 @@ export const useOffsetAPI: ApiDoc = {
           <li>Brush height</li>
         </ul>
         <p>
-          If you are interested in the margin alone, use <a href="useMargin">useMargin</a> instead.
+          If you are interested in the margin alone, use <Link to="/api/useMargin/">useMargin</Link> instead.
         </p>
         <p>
           The offset is independent of charts position on the page, meaning it does not change as the chart is scrolled
