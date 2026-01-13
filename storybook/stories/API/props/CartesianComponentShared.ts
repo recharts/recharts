@@ -19,11 +19,6 @@ export const yAxisId: StorybookArg = {
   defaultValue: 0,
   table: { type: { summary: 'string | number' }, category: 'General' },
 };
-export const zAxisId: StorybookArg = {
-  description: 'The id of z-axis which is corresponding to the data.',
-  defaultValue: 0,
-  table: { type: { summary: 'string | number' }, category: 'General' },
-};
 
 export const General: StorybookArgs = {
   dataKey,
@@ -49,17 +44,4 @@ export const General: StorybookArgs = {
   },
   xAxisId,
   yAxisId,
-};
-
-export const data: StorybookArg = {
-  description: `The source data, in which each element is an object.
-    This can be defined either on the chart element (ScatterChart, LineChart, etc) or on the graphical item (Scatter, Line).
-    The object shape is flexible, with no pre-defined properties;
-    The dataKey props then define which properties from this object render where.`,
-  table: {
-    category: 'General',
-    type: {
-      summary: 'array of objects',
-    },
-  },
 };

@@ -1,7 +1,7 @@
 import { onClick, onMouseDown, onMouseEnter, onMouseLeave, onMouseMove, onMouseUp } from './EventHandlers';
 import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
-export const data: StorybookArg = {
+const data: StorybookArg = {
   description: 'The source data, in which each element is an object.',
   table: {
     type: {
@@ -11,7 +11,7 @@ export const data: StorybookArg = {
   },
 };
 
-export const ChartSizeProps: StorybookArgs = {
+const ChartSizeProps: StorybookArgs = {
   height: {
     description: 'The height of chart container.',
     control: {
@@ -38,23 +38,13 @@ export const ChartSizeProps: StorybookArgs = {
   },
 };
 
-export const margin = {
+const margin = {
   description: 'The sizes of whitespace around the container.',
   table: {
     type: {
       summary: 'Object',
     },
     defaultValue: { top: 5, right: 5, bottom: 5, left: 5 },
-    category: 'General',
-  },
-};
-
-export const dataKey = {
-  description: 'The key or getter of a group of data which should be unique in a chart.',
-  table: {
-    type: {
-      summary: 'string | number | Function',
-    },
     category: 'General',
   },
 };
