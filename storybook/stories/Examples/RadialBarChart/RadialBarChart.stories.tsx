@@ -13,7 +13,7 @@ import { pageData, pageDataWithFillColor } from '../../data';
 import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { RadarChartProps } from '../../API/props/RadarChartProps';
+import { RadarChartArgs } from '../../API/arg-types/RadarChartArgs';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -121,7 +121,7 @@ export const RadialBarChartWithChangingDataKey: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
     data: pageDataWithFillColor,
     width: 360,
     height: 360,

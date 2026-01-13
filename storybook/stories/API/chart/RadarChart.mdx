@@ -1,22 +1,30 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as RadarChartStories from './RadarChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './RadarChart.stories';
 
 # RadarChart
 
-<Meta of={RadarChartStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={RadarChartStories.Simple} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The RadarChart can be used within: `<ResponsiveContainer />`.
+The RadarChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Child component
+## Child Components
 
-The RadarChart can be used with the following child components: `<PolarAngleAxis />`, `<PolarRadiusAxis />`, `<PolarGrid />`, `<Legend />`, `<Tooltip />`, `<Radar />`, `<Customized />` or valid svg elements.
+The RadarChart can be used with the following child components:
+- `<Label/>`
+- `<Legend/>`
+- `<Pie/>`
+- `<PolarAngleAxis/>`
+- `<PolarGrid/>`
+- `<PolarRadiusAxis/>`
+- `<Radar/>`
+- `<RadialBar/>`
+- `<Tooltip/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={RadarChartStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />
