@@ -6,6 +6,9 @@ export interface ColorModeState {
 }
 type ColorModeStateListener = (state: ColorModeState) => void;
 
+/**
+ * @note this is duplicated in the index.html file, to avoid FOUC on initial load. Please keep in sync.
+ */
 const STORAGE_KEY = 'recharts-color-mode';
 
 function getStoredColorMode(): ColorMode | undefined {
@@ -49,6 +52,9 @@ function getColorModeState(): ColorModeState {
     mode: storedMode ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
   } as const;
 }
+/**
+ * @note this is duplicated in the index.html file, to avoid FOUC on initial load. Please keep in sync.
+ */
 function updateColorModeInDOM() {
   if (typeof document === 'undefined') {
     return;
