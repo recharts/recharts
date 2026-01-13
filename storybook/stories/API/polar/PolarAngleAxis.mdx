@@ -1,21 +1,24 @@
-import { ArgTypes, Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
-import * as PolarAngleAxisStories from './PolarAngleAxis.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './PolarAngleAxis.stories';
 
 # PolarAngleAxis
 
-<Meta of={PolarAngleAxisStories} />
+<Meta of={ComponentStories} />
 
-<Canvas>
-  <Story name="API" of={PolarAngleAxisStories} />
-</Canvas>
+<Canvas of={ComponentStories.API} layout='padded'/>
+
 ## Parent Component
 
-The PolarAngleAxis can be used within a `<RadarChart />` or `<RadialBarChart />`.
+The PolarAngleAxis can be used within the following parent components:
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
 
-## Child component
+## Child Components
 
-The PolarAngleAxis can be used with the following child components: `<Label />`
+The PolarAngleAxis can be used with the following child components:
+- `<Label/>`
 
-## Properties
+## Props
 
-<ArgTypes of={PolarAngleAxisStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />
