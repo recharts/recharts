@@ -123,7 +123,7 @@ export const useChartHeight = (): number | undefined => {
  * Margin is the empty space around the chart. Excludes axes and legend and brushes and the like.
  * This is declared by the user in the chart props.
  * If you are interested in the space occupied by axes, legend, or brushes,
- * use `useOffset` instead.
+ * use {@link useOffset} instead, which also includes calculated widths and heights of axes and legends.
  *
  * Returns `undefined` if used outside a chart context.
  *

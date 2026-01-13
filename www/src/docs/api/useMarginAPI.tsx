@@ -9,7 +9,8 @@ export const useMarginAPI: ApiDoc = {
         <p>
           Margin is the empty space around the chart. Excludes axes and legend and brushes and the like. This is
           declared by the user in the chart props. If you are interested in the space occupied by axes, legend, or
-          brushes, use <code>useOffset</code> instead.
+          brushes, use <a href="useOffset">useOffset</a> instead, which also includes calculated widths and heights of
+          axes and legends.
         </p>
         <p>
           Returns <code>undefined</code> if used outside a chart context.

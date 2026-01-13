@@ -32,10 +32,27 @@ export const useActiveTooltipLabel = (): ActiveLabel => {
 };
 
 /**
+ * Returns the offset of the chart in pixels.
+ *
  * Offset defines the blank space between the chart and the plot area.
  * This blank space is occupied by supporting elements like axes, legends, and brushes.
- * This also includes any margins that might be applied to the chart.
- * If you are interested in the margin alone, use `useMargin` instead.
+ *
+ * The offset includes:
+ *
+ * - Margins
+ * - Width and height of the axes
+ * - Width and height of the legend
+ * - Brush height
+ *
+ * If you are interested in the margin alone, use {@link useMargin} instead.
+ *
+ * The offset is independent of charts position on the page, meaning it does not change as the chart is scrolled or resized.
+ *
+ * It is also independent of the scale and zoom, meaning that as the user zooms in and out,
+ * the numbers will not change as the chart gets visually larger or smaller.
+ *
+ * This hook must be used within a chart context (inside a `<LineChart>`, `<BarChart>`, etc.).
+ * This hook returns `undefined` if used outside a chart context.
  *
  * @returns Offset of the chart in pixels, or undefined if used outside a chart context.
  */
@@ -48,6 +65,15 @@ export const useOffset = (): ChartOffset | undefined => {
  * This means: bars, lines, scatter points, etc.
  *
  * The plot area is calculated based on the chart dimensions and the offset.
+ *
+ * Plot area `width` and `height` are the dimensions in pixels;
+ * `x` and `y` are the coordinates of the top-left corner of the plot area relative to the chart container.
+ *
+ * They are also independent of the scale and zoom, meaning that as the user zooms in and out,
+ * the plot area dimensions will not change as the chart gets visually larger or smaller.
+ *
+ * This hook must be used within a chart context (inside a `<LineChart>`, `<BarChart>`, etc.).
+ * This hook returns `undefined` if used outside a chart context.
  *
  * @returns Plot area of the chart in pixels, or undefined if used outside a chart context.
  */
