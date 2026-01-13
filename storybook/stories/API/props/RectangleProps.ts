@@ -5,21 +5,6 @@
 
 import { StorybookArg } from '../../../StorybookArgs';
 
-export const radius: StorybookArg = {
-  description:
-    'If set a value, the option is the radius of all the rounded corners. If set a array, the option' +
-    ' are in turn the radiuses of top-left corner, top-right corner, bottom-right corner, bottom-left' +
-    ' corner.',
-  control: {
-    type: 'number',
-  },
-  table: {
-    type: { summary: 'number | number[]' },
-    defaultValue: 0,
-    category: 'Style',
-  },
-};
-
 export const isUpdateAnimationActive: StorybookArg = {
   description: 'If set false, animation of component updates will be disabled.',
   defaultValue: 'auto',
