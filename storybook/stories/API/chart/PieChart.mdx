@@ -1,22 +1,30 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
-import * as PieChartStories from './PieChart.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './PieChart.stories';
 
 # PieChart
 
-<Meta of={PieChartStories} />
+<Meta of={ComponentStories} />
 
-<Canvas of={PieChartStories.Simple} layout='padded'/>
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The PieChart can be used within: `<ResponsiveContainer />`.
+The PieChart can be used within the following parent components:
+- `<ResponsiveContainer/>`
 
-## Child component
+## Child Components
 
-The PieChart can be used with the following child components: `<PolarAngleAxis />`, `<PolarRadiusAxis />`, `<PolarGrid />`, `<Legend />`, `<Tooltip />`, `<Pie />`, `<Customized />` or valid svg elements.
+The PieChart can be used with the following child components:
+- `<Label/>`
+- `<Legend/>`
+- `<Pie/>`
+- `<PolarAngleAxis/>`
+- `<PolarGrid/>`
+- `<PolarRadiusAxis/>`
+- `<Radar/>`
+- `<RadialBar/>`
+- `<Tooltip/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={PieChartStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />

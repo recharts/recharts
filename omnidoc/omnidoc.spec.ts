@@ -332,7 +332,6 @@ describe('omnidoc - documentation consistency', () => {
      */
     const componentsWithInconsistentCommentsInStorybook = [
       'CartesianAxis',
-      'PieChart',
       'PolarAngleAxis',
       'PolarGrid',
       'PolarRadiusAxis',
