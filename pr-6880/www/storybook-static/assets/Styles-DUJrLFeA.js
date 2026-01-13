@@ -1,0 +1,27 @@
+const e={description:"Hides the component when true, useful when toggling visibility state via legend",type:{name:"boolean"},control:{type:"boolean"},defaultValue:!1,table:{category:"Style"}},l={fill:{control:{type:"color"},table:{category:"Style"}},stroke:{control:{type:"color"},table:{category:"Style"}},strokeDasharray:{description:`The pattern of dashes and gaps used to paint the line.
+      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray`,table:{type:{summary:"string"},category:"Style"}},strokeWidth:{description:"The width of the stroke.",table:{type:{summary:"string | number"},category:"Style"},defaultValue:1},strokeOpacity:{description:"The opacity of the stroke.",table:{type:{summary:"string | number"},category:"Style"},defaultValue:1}},t=`If false set, labels will not be drawn. If true set, labels will be drawn which have
+the props calculated internally. If object set, labels will be drawn which have the props merged
+by the internal calculated props and the option. If ReactElement set, the option can be the custom
+label element. If set a function, the function will be called to render customized label.`,a="Boolean | Object | ReactElement | Function",o={...l,connectNulls:{description:"Whether to connect a graph line across null points.",table:{type:{summary:"boolean"},category:"Style"},defaultValue:!1},dot:{description:`If false set, dots will not be drawn. If true set, dots will be drawn which have the props
+      calculated internally. If object set, dots will be drawn which have the props merged by the internal
+      calculated props and the option. If ReactElement set, the option can be the custom dot element.If set
+      a function, the function will be called to render customized dot.`,table:{type:{summary:"Boolean | Object | ReactElement | Function",detail:`<Line dataKey="value" dot={false} />
+<Line dataKey="value" dot={{ stroke: 'red', strokeWidth: 2 }} />
+<Line dataKey="value" dot={<CustomizedDot />} />
+<Line dataKey="value" dot={renderDot} />`},category:"Style",defaultValue:!0}},hide:e,label:{description:t,table:{type:{summary:a,detail:`<Line dataKey="value" label />
+<Line dataKey="value" label={{ fill: 'red', fontSize: 20 }} />
+<Line dataKey="value" label={<CustomizedLabel />} />
+<Line dataKey="value" label={renderLabel} />`},defaultValue:!1,category:"Style"}},type:{description:`The interpolation type of line. It's the same as type in Area.
+      And customized interpolation function can be set to type. https://d3js.org/d3-shape/curve`,options:["basis","basisClosed","basisOpen","bumpX","bumpY","bump","linear","linearClosed","natural","monotoneX","monotoneY","monotone","step","stepBefore","stepAfter"],defaultValue:"linear",control:{type:"select"},table:{category:"Style"}}},r={minPointSize:{description:"The minimum angle of the radial bar.",table:{type:{summary:"number"},category:"Style"},defaultValue:0},label:{description:t,table:{type:{summary:a,detail:`<Bar dataKey="value" label />
+<Bar dataKey="value" label={{ fill: '#333', fontSize: 15, position: 'insideStart' }} />
+<Bar dataKey="value" label={<CustomizedLabel />} />
+<Bar dataKey="value" label={renderLabel} />`},defaultValue:!1,category:"Style"}},background:{description:`If false set, background of bars will not be drawn. If true set, background of bars will be
+    drawn which have the props calculated internally. If object set, background of bars will be drawn which
+    have the props merged by the internal calculated props and the option. If ReactElement set, the option
+    can be the custom background element. If set a function, the function will be called to render customized
+    background.`,table:{type:{summary:"Boolean | Object | ReactElement | Function",detail:`<Bar dataKey="value" background />
+<Bar dataKey="value" background={<CustomizedBackground />} />
+<Bar dataKey="value" background={renderBackground} />`},defaultValue:!1,category:"Style"}},cornerRadius:{description:"The radius of the corner of the bar.",table:{type:{summary:"number"},defaultValue:0,category:"Style"}},forceCornerRadius:{description:"Whether or not force to render round corner when the angle of sector is very small",table:{type:{summary:"boolean"},defaultValue:!1,category:"Style"}},cornerIsExternal:{description:`If true the rounded corner will lie outside the RadialBar, by default the rounded
+        corner inside the length of the RadialBar`,table:{type:{summary:"boolean"},defaultValue:!1,category:"Style"}},shape:{description:"Custom shape for the bar.",table:{type:{summary:"ReactElement | Function",detail:`<Bar dataKey="value" shape={<CustomizedShape />} />
+<Bar dataKey="value" shape={renderShape} />`},category:"Style"}},hide:e,activeShape:{description:"The custom active shape.",table:{type:{summary:"ReactElement | Function",detail:`<Bar dataKey="value" activeShape={<CustomizedActiveShape />} />
+<Bar dataKey="value" activeShape={renderActiveShape} />`},category:"Style"}},maxBarSize:{description:"The maximum width of the bar.",table:{type:{summary:"number"},category:"Style"}},stroke:{description:"The color of the stroke.",table:{type:{summary:"string"},category:"Style"}},strokeWidth:{description:"The width of the stroke.",table:{type:{summary:"number"},category:"Style"}},strokeOpacity:{description:"The opacity of the stroke.",table:{type:{summary:"number"},category:"Style"}},fillOpacity:{description:"The opacity of the fill.",table:{type:{summary:"number"},category:"Style"}}};export{l as G,o as L,r as R,e as h};
