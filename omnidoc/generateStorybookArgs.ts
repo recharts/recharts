@@ -63,6 +63,7 @@ export const STORYBOOK_AUTOMATED_ARG_COMPONENTS: string[] = [
   'ScatterChart',
   'Sector',
   'SunburstChart',
+  'Text',
 ];
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');

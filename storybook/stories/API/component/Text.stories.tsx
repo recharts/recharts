@@ -1,10 +1,10 @@
 import React from 'react';
 import { Surface, Text } from '../../../../src';
-import { TextProps } from '../props/TextProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { TextArgs } from '../arg-types/TextArgs';
 
 export default {
-  argTypes: TextProps,
+  argTypes: TextArgs,
   component: Text,
 };
 
