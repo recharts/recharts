@@ -10,15 +10,13 @@ import {
   Tooltip,
 } from '../../../../src';
 import { pageData, pageDataWithFillColor } from '../../data';
-import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { RadarChartArgs } from '../../API/arg-types/RadarChartArgs';
+import { RadialBarChartArgs } from '../../API/arg-types/RadialBarChartArgs';
 
 export default {
-  argTypes: RadialBarChartProps,
+  argTypes: RadialBarChartArgs,
   component: RadialBarChart,
-  decorators: [],
 } satisfies Meta<typeof RadialBarChart>;
 
 export const SimpleRadialBarChart = {
@@ -33,7 +31,7 @@ export const SimpleRadialBarChart = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     width: 500,
     height: 500,
     data: pageData,
@@ -52,7 +50,7 @@ export const RadialBarWithColors = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     width: 500,
     height: 500,
     data: pageDataWithFillColor,
@@ -74,7 +72,7 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     width: 500,
     height: 500,
     data: pageDataWithFillColor,
@@ -121,7 +119,7 @@ export const RadialBarChartWithChangingDataKey: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     data: pageDataWithFillColor,
     width: 360,
     height: 360,

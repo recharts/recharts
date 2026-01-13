@@ -1,6 +1,5 @@
 import React from 'react';
 import { Args, Meta, StoryObj } from '@storybook/react-vite';
-import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
 import {
   Legend,
   PolarAngleAxis,
@@ -14,11 +13,11 @@ import { StorybookArgs } from '../../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { pageDataWithFillColor } from '../../data';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { RadialBarChartArgs } from '../../API/arg-types/RadialBarChartArgs';
 
 export default {
-  argTypes: RadialBarChartProps,
+  argTypes: RadialBarChartArgs,
   component: RadialBarChart,
-  decorators: [],
 } satisfies Meta<typeof RadialBarChart>;
 
 export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
@@ -55,7 +54,7 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartArgs),
     width: 500,
     height: 500,
     data: pageDataWithFillColor,
