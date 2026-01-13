@@ -1,16 +1,19 @@
-import { ArgTypes, Canvas } from '@storybook/addon-docs/blocks';
-import * as PolarGridStories from './PolarGrid.stories';
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './PolarGrid.stories';
 
 # PolarGrid
 
-<Canvas of={PolarGridStories.Simple} layout='padded'/>
+<Meta of={ComponentStories} />
+
+<Canvas of={ComponentStories.API} layout='padded'/>
 
 ## Parent Component
 
-The PolarGrid can be used within a `<RadarChart />` or a `<RadialBarChart />`.
+The PolarGrid can be used within the following parent components:
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
 
-## Properties
+## Props
 
-Properties in the groups Other and Internal are not recommended to be used.
-
-<ArgTypes of={PolarGridStories} sort={'requiredFirst'} />
+<Controls of={ComponentStories.API} />
