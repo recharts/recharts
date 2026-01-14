@@ -29,19 +29,21 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
               ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
               : undefined}
           </Link>
-          <ColorModeWatcher
-            render={state => (
-              <GitHubButton
-                href="https://github.com/recharts/recharts"
-                data-color-scheme={state.mode}
-                data-size="large"
-                data-show-count="true"
-                aria-label="Star recharts/recharts on GitHub"
-              >
-                Star
-              </GitHubButton>
-            )}
-          />
+          <div data-testid="github-star-btn">
+            <ColorModeWatcher
+              render={state => (
+                <GitHubButton
+                  href="https://github.com/recharts/recharts"
+                  data-color-scheme={state.mode}
+                  data-size="large"
+                  data-show-count="true"
+                  aria-label="Star recharts/recharts on GitHub"
+                >
+                  Star
+                </GitHubButton>
+              )}
+            />
+          </div>
         </div>
 
         <div className="examples">
