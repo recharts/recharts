@@ -36,7 +36,7 @@
   }
   .props-list {
     .props-item {
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid var(--color-border-3);
       padding: 20px 10px;
 
       > p {
