@@ -1,9 +1,7 @@
-import { IndexView } from './IndexView';
-import { GuideView } from './GuideView';
-import { APIViewNew as APIView } from './APIViewNew';
-import { ExamplesView } from './ExamplesView';
-import { ExamplesIndexView } from './ExamplesIndexView';
-import { Storybook } from './Storybook';
-import { NotFoundView } from './NotFoundView';
-
-export { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook, NotFoundView };
+export { IndexView } from './IndexView';
+export { GuideView } from './GuideView';
+export { APIView } from './APIView';
+export { ExamplesView } from './ExamplesView';
+export { ExamplesIndexView } from './ExamplesIndexView';
+export { Storybook } from './Storybook';
+export { NotFoundView } from './NotFoundView';
