@@ -33,6 +33,9 @@ const LogoLine = (props: LineProps) => (
   <Line
     dataKey="y"
     dot={false}
+    activeDot={{
+      stroke: 'var(--color-surface-base)',
+    }}
     strokeWidth={1.5}
     stroke="var(--color-solid-brand-1, black)"
     isAnimationActive={false}
