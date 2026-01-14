@@ -143,6 +143,10 @@ export function SourceCodeEditor({
         '.cm-scroller': { fontFamily: 'monospace' },
         '.cm-foldGutter': { width: '20px' },
         '.cm-content': { maxWidth: '100%' },
+        '.cm-foldPlaceholder': {
+          backgroundColor: 'var(--color-surface-sunken)',
+          borderColor: 'var(--color-border-3)',
+        },
         '.cm-gutters': {
           backgroundColor: 'var(--color-surface-sunken)',
           borderColor: 'var(--color-border-3)',
