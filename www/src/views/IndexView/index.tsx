@@ -1,13 +1,17 @@
 import { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { LuLayers, LuPuzzle, LuRocket, LuZap } from 'react-icons/lu';
-import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
+import GitHubButton from 'react-github-btn';
+
 import './IndexView.css';
+
+import { getLocaleType, localeGet } from '../../utils/LocaleUtils.ts';
 import { users } from '../../docs/users/users';
 import { RouteComponentProps, withRouter } from '../../routes/withRouter.tsx';
 import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.tsx';
 import IndexLineChart from './IndexLineChart.tsx';
 import IndexLineChartSource from './IndexLineChart.tsx?raw';
+import { ColorModeWatcher } from '../../components/color-mode';
 
 class IndexViewImpl extends PureComponent<RouteComponentProps> {
   render() {
@@ -25,12 +29,18 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
               ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
               : undefined}
           </Link>
-          <iframe
-            title="star"
-            src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
-            width="120px"
-            height="22px"
-            data-testid="github-star-btn"
+          <ColorModeWatcher
+            render={state => (
+              <GitHubButton
+                href="https://github.com/recharts/recharts"
+                data-color-scheme={state.mode}
+                data-size="large"
+                data-show-count="true"
+                aria-label="Star recharts/recharts on GitHub"
+              >
+                Star
+              </GitHubButton>
+            )}
           />
         </div>
 
