@@ -14,7 +14,7 @@ const ScatterChartNavExample = () => {
         { x: 110, y: 280, z: 200 },
       ]}
     >
-      <Scatter dataKey="x" fill="#8884d8" />
+      <Scatter dataKey="x" fill="var(--color-chart-1)" />
       <ZAxis range={[20, 60]} dataKey="z" />
     </ScatterChart>
   );
