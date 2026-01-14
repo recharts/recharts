@@ -55,6 +55,7 @@
   --color-solid-brand-1: #1074b6; /* brand */
   --color-solid-brand-2: #2e96ea;
   --color-solid-info-1: #18828a;
+  --color-solid-neutral-1: var(--color-gray-100);
 
   /* Chart series colors */
   --color-chart-1: #8884d8; /* Indigo */
@@ -100,6 +101,7 @@
   --color-solid-brand-1: #2e96ea; /* brand */
   --color-solid-brand-2: #1074b6;
   --color-solid-info-1: #53b0b8;
+  --color-solid-neutral-1: var(--color-gray-800);
 
   /* Chart series colors */
   --color-chart-1: #8884d8; /* Indigo */
