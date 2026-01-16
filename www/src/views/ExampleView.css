@@ -5,7 +5,7 @@
     flex-direction: row;
     width: 100%;
     gap: 2em;
-    border: 1px solid #f5f5f5;
+    border: 1px solid var(--color-border-3);
   }
 
   .example-link-wrapper {
