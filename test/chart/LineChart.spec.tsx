@@ -1880,7 +1880,7 @@ describe('<LineChart /> with dataKey as a function', () => {
           <button type="button" onClick={() => setUseData2(true)}>
             Use data2
           </button>
-          <LineChart width={300} height={300} data={useData2 ? data2 : data1}>
+          <LineChart<any> width={300} height={300} data={useData2 ? data2 : data1}>
             <Line dataKey={useData2 ? dataKey2Spy : dataKey1Spy} isAnimationActive={false} />
           </LineChart>
         </>

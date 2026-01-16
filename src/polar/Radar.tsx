@@ -25,6 +25,7 @@ import {
   LegendType,
   TooltipType,
   TrapezoidViewBox,
+  TypedDataKey,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
@@ -119,7 +120,7 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue false
    */
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   /**
    * The type of icon in legend.  If set to 'none', no legend item will be rendered.
    * @defaultValue rect
@@ -232,7 +233,13 @@ const SetRadarTooltipEntrySettings = React.memo(
   },
 );
 
-function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: PropsWithDefaults }) {
+function RadarDotsWrapper<DataPointType = unknown, ValueAxisType = unknown>({
+  points,
+  props,
+}: {
+  points: ReadonlyArray<RadarPoint>;
+  props: PropsWithDefaults<DataPointType, ValueAxisType>;
+}) {
   const { dot, dataKey } = props;
   const { id, ...propsWithoutId } = props;
 
@@ -371,7 +378,7 @@ function RadarLabelListProvider({
   );
 }
 
-function StaticPolygon({
+function StaticPolygon<DataPointType = unknown, ValueAxisType = unknown>({
   points,
   baseLinePoints,
   props,
@@ -448,12 +455,12 @@ const interpolatePolarPoint =
     };
   };
 
-function PolygonWithAnimation({
+function PolygonWithAnimation<DataPointType = unknown, ValueAxisType = unknown>({
   props,
   previousPointsRef,
   previousBaseLinePointsRef,
 }: {
-  props: InternalRadarProps;
+  props: InternalRadarProps<DataPointType, ValueAxisType>;
   previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
   previousBaseLinePointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
 }) {
@@ -528,7 +535,9 @@ function PolygonWithAnimation({
   );
 }
 
-function RenderPolygon(props: InternalRadarProps) {
+function RenderPolygon<DataPointType = unknown, ValueAxisType = unknown>(
+  props: InternalProps<DataPointType, ValueAxisType>,
+) {
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
   const previousBaseLinePointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
 
@@ -554,13 +563,21 @@ export const defaultRadarProps = {
   legendType: 'rect',
   radiusAxisId: 0,
   zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props>;
+} as const satisfies Partial<Props<any, any>>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
+type PropsWithDefaults<DataPointType = unknown, ValueAxisType = unknown> = RequiresDefaultProps<
+  Props<DataPointType, ValueAxisType>,
+  typeof defaultRadarProps
+>;
 
-export type InternalRadarProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
+type InternalRadarProps<DataPointType = unknown, ValueAxisType = unknown> = WithIdRequired<
+  PropsWithDefaults<DataPointType, ValueAxisType>
+> &
+  RadarComposedData;
 
-function RadarWithState(props: InternalRadarProps) {
+function RadarWithState<DataPointType = unknown, ValueAxisType = unknown>(
+  props: InternalRadarProps<DataPointType, ValueAxisType>,
+) {
   const { hide, className, points } = props;
 
   if (hide) {
@@ -584,7 +601,9 @@ function RadarWithState(props: InternalRadarProps) {
   );
 }
 
-function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadarImpl<DataPointType = unknown, ValueAxisType = unknown>(
+  props: WithIdRequired<PropsWithDefaults<DataPointType, ValueAxisType>>,
+) {
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
     selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.id),
@@ -618,14 +637,14 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             type="radar"
             id={id}
             data={undefined} // Radar does not have data prop, why?
-            dataKey={props.dataKey}
+            dataKey={props.dataKey as any}
             hide={props.hide}
             angleAxisId={props.angleAxisId}
             radiusAxisId={props.radiusAxisId}
           />
-          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props)} />
+          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props as any)} />
           <SetRadarTooltipEntrySettings
-            dataKey={props.dataKey}
+            dataKey={props.dataKey as any}
             stroke={props.stroke}
             strokeWidth={props.strokeWidth}
             fill={props.fill}

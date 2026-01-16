@@ -360,5 +360,4 @@ export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as <
   props: Props<DataPointType, DataValueType>,
 ) => ReactElement;
 // @ts-expect-error we need to set the displayName for debugging purposes
-
 XAxis.displayName = 'XAxis';

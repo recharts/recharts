@@ -38,6 +38,7 @@ export const map = {
     installation: '安装',
     'getting-started': '起步',
     customize: '组件自定义',
+    typescript: 'TypeScript',
     activeIndex: '活动索引',
     sizes: '图表尺寸',
     zIndex: 'Z-Index 和图层',

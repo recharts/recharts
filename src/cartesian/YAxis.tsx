@@ -420,5 +420,4 @@ export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as <
   props: Props<DataPointType, DataValueType>,
 ) => ReactElement;
 // @ts-expect-error we need to set the displayName for debugging purposes
-
 YAxis.displayName = 'YAxis';

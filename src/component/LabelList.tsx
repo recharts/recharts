@@ -2,13 +2,13 @@ import * as React from 'react';
 import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
-import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
+import { CartesianViewBoxRequired, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
 import { isNullish } from '../util/DataUtils';
 import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getTypedValue } from '../util/getTypedValue';
+import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import { isRenderableText, RenderableText } from './Text';
 
 export interface LabelListEntry<DataPointItem = any> {
@@ -33,7 +33,7 @@ export interface LabelListEntry<DataPointItem = any> {
  *
  * It's not necessary to pass redundant data, but we keep it for backward compatibility.
  */
-export interface CartesianLabelListEntry extends LabelListEntry, TrapezoidViewBox {
+export interface CartesianLabelListEntry<DataPointItem = any> extends LabelListEntry<DataPointItem>, TrapezoidViewBox {
   /**
    * The bounding box of the graphical element that this label is attached to.
    * This will be an individual Bar for example.
@@ -42,13 +42,13 @@ export interface CartesianLabelListEntry extends LabelListEntry, TrapezoidViewBo
   parentViewBox?: CartesianViewBoxRequired;
 }
 
-export interface PolarLabelListEntry extends LabelListEntry {
+export interface PolarLabelListEntry<DataPointItem = any> extends LabelListEntry<DataPointItem> {
   viewBox: PolarViewBoxRequired;
   parentViewBox?: PolarViewBoxRequired;
   clockWise?: boolean;
 }
 
-interface LabelListProps extends ZIndexable {
+interface LabelListProps<DataPointItem> extends ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`.
@@ -59,7 +59,10 @@ interface LabelListProps extends ZIndexable {
    * @param entry
    * @param index
    */
-  valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => RenderableText;
+  valueAccessor?: (
+    entry: CartesianLabelListEntry<DataPointItem> | PolarLabelListEntry<DataPointItem>,
+    index: number,
+  ) => RenderableText;
   /**
    * The parameter to calculate the view box of label in radial charts.
    */
@@ -76,7 +79,7 @@ interface LabelListProps extends ZIndexable {
    * Scatter requires this prop to be set.
    * Other graphical components will show the same value as the dataKey of the component by default.
    */
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointItem>;
   /**
    * If set a React element, the option is the customized React element of rendering each label.
    * If set to a function, the function is called once for each item
@@ -128,7 +131,7 @@ interface LabelListProps extends ZIndexable {
  * LabelList props do not allow refs because the same props are reused in multiple elements so we don't have a good single place to ref to.
  */
 type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
-export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
+export type Props<DataPointItem = unknown> = Omit<SvgTextProps, 'children'> & LabelListProps<DataPointItem>;
 
 /**
  * This is the type accepted for the `label` prop on various graphical items.
@@ -146,7 +149,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  *
  * @inline
  */
-export type ImplicitLabelListType = boolean | LabelContentType | Props;
+export type ImplicitLabelListType<DataPointItem = unknown> = boolean | LabelContentType | Props<DataPointItem>;
 
 const defaultAccessor = (entry: LabelListEntry): RenderableText => {
   const val = Array.isArray(entry.value) ? entry.value[entry.value.length - 1] : entry.value;
@@ -154,7 +157,7 @@ const defaultAccessor = (entry: LabelListEntry): RenderableText => {
     return val;
   }
   return undefined;
-};
+}
 
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
@@ -175,7 +178,7 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 /**
  * @consumes LabelListContext
  */
-export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
+export function LabelList<DataPointItem>({ valueAccessor = defaultAccessor, ...restProps }: Props<DataPointItem>) {
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
@@ -232,7 +235,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
 LabelList.displayName = 'LabelList';
 
-export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListType }) {
+export function LabelListFromLabelProp<DataPointItem>({ label }: { label?: ImplicitLabelListType<DataPointItem> }) {
   if (!label) {
     return null;
   }

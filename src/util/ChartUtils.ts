@@ -32,6 +32,7 @@ import {
   StackOffsetType,
   TickItem,
   AxisDomainTypeInput,
+  AxisDataType,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { LegendSettings } from '../state/legendSlice';
