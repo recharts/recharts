@@ -70,7 +70,7 @@ export const selectFunnelTrapezoids: (
 
     return computeFunnelTrapezoids({
       dataKey,
-      nameKey,
+      nameKey: nameKey as any,
       displayedData,
       tooltipType,
       lastShapeType,

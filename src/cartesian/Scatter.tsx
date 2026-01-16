@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentType,
-  MutableRefObject,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -41,6 +32,7 @@ import {
   SymbolType,
   TickItem,
   TrapezoidViewBox,
+  TypedDataKey,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
@@ -133,13 +125,13 @@ export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps, SVGPathEleme
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface ScatterInternalProps extends ZIndexable {
+interface ScatterInternalProps<DataPointType = unknown, ValueAxisType = unknown> extends ZIndexable {
   data?: ChartData;
   xAxisId: string | number;
   yAxisId: string | number;
   zAxisId: string | number;
 
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointType, ValueAxisType>;
 
   line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
   lineType: 'fitting' | 'joint';
@@ -153,7 +145,7 @@ interface ScatterInternalProps extends ZIndexable {
   shape: ScatterCustomizedShape;
   points: ReadonlyArray<ScatterPointItem>;
   hide: boolean;
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -345,9 +337,11 @@ type BaseScatterSvgProps = Omit<
   'points' | 'ref' | 'children' | 'dangerouslySetInnerHTML'
 >;
 
-type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
+type InternalProps<DataPointType = unknown, ValueAxisType = unknown> = BaseScatterSvgProps &
+  ScatterInternalProps<DataPointType, ValueAxisType>;
 
-export type Props = BaseScatterSvgProps & ScatterProps;
+export type Props<DataPointType = unknown, ValueAxisType = unknown> = BaseScatterSvgProps &
+  ScatterProps<DataPointType, ValueAxisType>;
 
 const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -408,13 +402,19 @@ const SetScatterTooltipEntrySettings = React.memo(
   },
 );
 
-type ScatterSymbolsProps = {
+type ScatterSymbolsProps<DataPointType = unknown, ValueAxisType = unknown> = {
   points: ReadonlyArray<ScatterPointItem>;
   showLabels: boolean;
-  allOtherScatterProps: InternalProps;
+  allOtherScatterProps: InternalProps<DataPointType, ValueAxisType>;
 };
 
-function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem>; props: WithoutId<InternalProps> }) {
+function ScatterLine<DataPointType = unknown, ValueAxisType = unknown>({
+  points,
+  props,
+}: {
+  points: NonEmptyArray<ScatterPointItem>;
+  props: WithoutId<InternalProps<DataPointType, ValueAxisType>>;
+}) {
   const { line, lineType, lineJointType } = props;
 
   if (!line) {
@@ -448,7 +448,7 @@ function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem
   };
 
   if (React.isValidElement(line)) {
-    lineItem = React.cloneElement(line as any, lineProps);
+    lineItem = React.cloneElement(line, lineProps);
   } else if (typeof line === 'function') {
     lineItem = line(lineProps);
   } else {
@@ -513,7 +513,9 @@ function ScatterLabelListProvider({
   );
 }
 
-function ScatterSymbols(props: ScatterSymbolsProps) {
+function ScatterSymbols<DataPointType = unknown, ValueAxisType = unknown>(
+  props: ScatterSymbolsProps<DataPointType, ValueAxisType>,
+) {
   const { points, allOtherScatterProps } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
@@ -575,12 +577,12 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-function SymbolsWithAnimation({
+function SymbolsWithAnimation<DataPointType = unknown, ValueAxisType = unknown>({
   previousPointsRef,
   props,
 }: {
   previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem> | null>;
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
 }) {
   const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
   const prevPoints = previousPointsRef.current;
@@ -710,7 +712,6 @@ export function computeScatterPoints({
 
     if (z !== '-' && zAxis != null) {
       tooltipPayload.push({
-        // @ts-expect-error name prop should not have dataKey in it
         name: zAxis.name || zAxis.dataKey,
         unit: zAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
@@ -774,7 +775,9 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<ScatterPointItem> =
   };
 };
 
-function ScatterWithId(props: InternalProps) {
+function ScatterWithId<DataPointType = unknown, ValueAxisType = unknown>(
+  props: InternalProps<DataPointType, ValueAxisType>,
+) {
   const { hide, points, className, needClip, xAxisId, yAxisId, id } = props;
   const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
   if (hide) {
@@ -824,9 +827,11 @@ export const defaultScatterProps = {
   animationDuration: 400,
   animationEasing: 'linear',
   zIndex: DefaultZIndexes.scatter,
-} as const satisfies Partial<Props>;
+} as const satisfies Partial<Props<any, any>>;
 
-function ScatterImpl(props: WithIdRequired<Props>) {
+function ScatterImpl<DataPointType = unknown, ValueAxisType = unknown>(
+  props: WithIdRequired<Props<DataPointType, ValueAxisType>>,
+) {
   const {
     animationBegin,
     animationDuration,
@@ -841,7 +846,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
     yAxisId,
     zAxisId,
     ...everythingElse
-  } = resolveDefaultProps(props, defaultScatterProps);
+  } = resolveDefaultProps(props, defaultScatterProps) as ScatterInternalProps<DataPointType, ValueAxisType>;
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
@@ -869,7 +874,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
         tooltipType={props.tooltipType}
         id={props.id}
       />
-      <ScatterWithId
+      <ScatterWithId<DataPointType, ValueAxisType>
         {...everythingElse}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
@@ -890,8 +895,8 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   );
 }
 
-function ScatterFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultScatterProps);
+function ScatterFn(outsideProps: Props<any, any>) {
+  const props = resolveDefaultProps(outsideProps, defaultScatterProps) as ScatterInternalProps<any, any>;
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="scatter">
@@ -924,6 +929,9 @@ function ScatterFn(outsideProps: Props) {
  * @provides CellReader
  * @consumes CartesianChartContext
  */
-export const Scatter: ComponentType<Props> = React.memo(ScatterFn, propsAreEqual);
+export const Scatter = React.memo(ScatterFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => React.ReactElement;
 
+// @ts-expect-error we need to set the displayName for debugging purposes
 Scatter.displayName = 'Scatter';

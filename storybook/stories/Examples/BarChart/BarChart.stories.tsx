@@ -372,10 +372,10 @@ export const OneDataPointPercentSize = {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
-          <XAxis dataKey={v => v[0]} type="number" domain={[0, 10]} />
+          <XAxis dataKey={(v: any) => v[0]} type="number" domain={[0, 10]} />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Bar dataKey={v => v[1]} />
+          <Bar dataKey={(v: any) => v[1]} />
           <Tooltip />
           <RechartsHookInspector />
         </BarChart>
@@ -523,7 +523,7 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <BarChart {...args} data={useData2 ? data2 : data1}>
+        <BarChart<any> {...args} data={useData2 ? data2 : data1}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />

@@ -35,6 +35,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   TickItem,
   TooltipType,
+  TypedDataKey,
 } from '../util/types';
 import {
   TooltipTriggerInfo,
@@ -76,9 +77,9 @@ export type RadialBarDataItem = SectorProps &
 
 type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);
 
-type RadialBarSectorsProps = {
+type RadialBarSectorsProps<DataPointType = unknown, ValueAxisType = unknown> = {
   sectors: ReadonlyArray<RadialBarDataItem>;
-  allOtherRadialBarProps: InternalProps;
+  allOtherRadialBarProps: InternalProps<DataPointType, ValueAxisType>;
   showLabels: boolean;
 };
 
@@ -117,7 +118,11 @@ function RadialBarLabelListProvider({
   );
 }
 
-function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
+function RadialBarSectors<DataPointType = unknown, ValueAxisType = unknown>({
+  sectors,
+  allOtherRadialBarProps,
+  showLabels,
+}: RadialBarSectorsProps<DataPointType, ValueAxisType>) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
@@ -185,11 +190,11 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   );
 }
 
-function SectorsWithAnimation({
+function SectorsWithAnimation<DataPointType = unknown, ValueAxisType = unknown>({
   props,
   previousSectorsRef,
 }: {
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem> | null>;
 }) {
   const {
@@ -267,7 +272,9 @@ function SectorsWithAnimation({
   );
 }
 
-function RenderSectors(props: InternalProps) {
+function RenderSectors<DataPointType = unknown, ValueAxisType = unknown>(
+  props: InternalProps<DataPointType, ValueAxisType>,
+) {
   const previousSectorsRef = useRef<ReadonlyArray<RadialBarDataItem> | null>(null);
 
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
@@ -347,7 +354,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue false
    */
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   /**
    * The type of icon in legend.  If set to 'none', no legend item will be rendered.
    * @defaultValue rect
@@ -420,7 +427,10 @@ export type RadialBarProps = Omit<
 > &
   Omit<InternalRadialBarProps, 'sectors'>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
+type InternalProps<DataPointType = unknown, ValueAxisType = unknown> = WithIdRequired<
+  PropsWithDefaults<DataPointType, ValueAxisType>
+> &
+  Pick<InternalRadialBarProps<DataPointType, ValueAxisType>, 'sectors'>;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
@@ -463,7 +473,9 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   },
 );
 
-class RadialBarWithState extends PureComponent<InternalProps> {
+class RadialBarWithState<DataPointType = unknown, ValueAxisType = unknown> extends PureComponent<
+  InternalProps<DataPointType, ValueAxisType>
+> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
     if (sectors == null) {
       return null;
@@ -526,7 +538,9 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 }
 
-function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadialBarImpl<DataPointType = unknown, ValueAxisType = unknown>(
+  props: WithIdRequired<PropsWithDefaults<DataPointType, ValueAxisType>>,
+) {
   const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const radialBarSettings: RadialBarSettings = React.useMemo(
@@ -561,7 +575,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
   return (
     <>
       <SetRadialBarTooltipEntrySettings
-        dataKey={props.dataKey}
+        dataKey={props.dataKey as any}
         sectors={sectors}
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
@@ -592,9 +606,12 @@ export const defaultRadialBarProps = {
   minPointSize: 0,
   radiusAxisId: 0,
   zIndex: DefaultZIndexes.bar,
-} as const satisfies Partial<RadialBarProps>;
+} as const satisfies Partial<RadialBarProps<any, any>>;
 
-type PropsWithDefaults = RequiresDefaultProps<RadialBarProps, typeof defaultRadialBarProps>;
+type PropsWithDefaults<DataPointType = unknown, ValueAxisType = unknown> = RequiresDefaultProps<
+  RadialBarProps<DataPointType, ValueAxisType>,
+  typeof defaultRadialBarProps
+>;
 
 export function computeRadialBarDataItems({
   displayedData,
@@ -742,8 +759,13 @@ export function computeRadialBarDataItems({
  * @provides LabelListContext
  * @provides CellReader
  */
-export function RadialBar(outsideProps: RadialBarProps) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadialBarProps);
+export function RadialBar<DataPointType = unknown, ValueAxisType = unknown>(
+  outsideProps: RadialBarProps<DataPointType, ValueAxisType>,
+) {
+  const props: PropsWithDefaults<DataPointType, ValueAxisType> = resolveDefaultProps(
+    outsideProps,
+    defaultRadialBarProps,
+  );
   return (
     <RegisterGraphicalItemId id={props.id} type="radialBar">
       {id => (
@@ -752,7 +774,7 @@ export function RadialBar(outsideProps: RadialBarProps) {
             type="radialBar"
             id={id}
             data={undefined} // why does RadialBar not allow data defined on the item?
-            dataKey={props.dataKey}
+            dataKey={props.dataKey as any}
             hide={props.hide ?? defaultRadialBarProps.hide}
             angleAxisId={props.angleAxisId ?? defaultRadialBarProps.angleAxisId}
             radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId}
@@ -761,7 +783,7 @@ export function RadialBar(outsideProps: RadialBarProps) {
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
           />
-          <SetRadialBarPayloadLegend {...props} />
+          <SetRadialBarPayloadLegend {...(props as any)} />
           <RadialBarImpl {...props} id={id} />
         </>
       )}

@@ -20,4 +20,4 @@ export const defaultPolarRadiusAxisProps = {
   tickLine: true,
   type: 'auto',
   zIndex: DefaultZIndexes.axis,
-} as const satisfies Props;
+} as const satisfies Props<unknown>;

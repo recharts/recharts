@@ -56,7 +56,7 @@ export type BaseCartesianAxis = {
   domain: AxisDomain | undefined;
 };
 
-export type TicksSettings = {
+export type TicksSettings<DataPointType = unknown> = {
   allowDecimals: boolean;
   /**
    * We pass the suggested number of ticks to d3 https://d3js.org/d3-scale/linear#linear_ticks
@@ -72,7 +72,7 @@ export type TicksSettings = {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
-  tick: TickProp<any>;
+  tick: TickProp<DataPointType>;
 };
 
 /**

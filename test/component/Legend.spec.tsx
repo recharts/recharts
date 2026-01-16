@@ -566,8 +566,8 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
-          <Line dataKey={row => row.value} name="My Line Data" />
-          <Line dataKey={row => row.color} name="My Other Line Data" />
+          <Line dataKey={(row: any) => row.value} name="My Line Data" />
+          <Line dataKey={(row: any) => row.color} name="My Other Line Data" />
         </LineChart>,
       );
 
@@ -581,8 +581,8 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
-          <Line dataKey={row => row.value} name="My Line Data" />
-          <Line dataKey={row => row.color} name="My Other Line Data" />
+          <Line dataKey={(row: any) => row.value} name="My Line Data" />
+          <Line dataKey={(row: any) => row.color} name="My Other Line Data" />
         </LineChart>,
       );
 
@@ -909,12 +909,12 @@ describe('<Legend />', () => {
           <Line
             type="monotone"
             data={categoricalData}
-            dataKey="pv"
+            dataKey={"pv" as any}
             stroke="#8884d8"
             activeDot={{ r: 8 }}
             strokeDasharray="5 5"
           />
-          <Line data={categoricalData} type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Line data={categoricalData} type="monotone" dataKey={"uv" as any} stroke="#82ca9d" />
         </LineChart>,
       );
 

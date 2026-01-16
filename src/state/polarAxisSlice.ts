@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { AxisId, BaseCartesianAxis, TicksSettings } from './cartesianAxisSlice';
 
-export type RadiusAxisSettings = BaseCartesianAxis & TicksSettings;
+export type RadiusAxisSettings<DataPointType = any> = BaseCartesianAxis & TicksSettings<DataPointType>;
 
 export type AngleAxisSettings = BaseCartesianAxis & TicksSettings;
 

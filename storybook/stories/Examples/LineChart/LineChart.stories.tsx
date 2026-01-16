@@ -1094,7 +1094,7 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <LineChart {...args} data={useData2 ? data2 : data1}>
+        <LineChart<any> {...args} data={useData2 ? data2 : data1}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
