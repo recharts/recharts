@@ -21,16 +21,16 @@ import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectChartBaseValue } from './rootPropsSelectors';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 
-export interface AreaPointItem extends NullableCoordinate {
+export interface AreaPointItem<DataPointType> extends NullableCoordinate {
   x: number | null;
   y: number | null;
   value?: ReadonlyArray<unknown>;
-  payload?: any;
+  payload?: DataPointType;
 }
 
-export type ComputedArea = {
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: number | ReadonlyArray<AreaPointItem>;
+export type ComputedArea<DataPointType> = {
+  points: ReadonlyArray<AreaPointItem<DataPointType>>;
+  baseLine: number | ReadonlyArray<AreaPointItem<DataPointType>>;
   isRange: boolean;
 };
 
@@ -71,7 +71,7 @@ const selectSynchronisedAreaSettings: (
   state: RechartsRootState,
   id: GraphicalItemId,
   isPanorama: boolean,
-) => AreaSettings | undefined = createSelector(
+) => AreaSettings<any, any> | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickAreaId],
   (graphicalItems, id: GraphicalItemId) =>
     graphicalItems.filter(item => item.type === 'area').find(item => item.id === id),
@@ -112,7 +112,10 @@ export const selectGraphicalItemStackedData: (
   isPanorama: boolean,
 ) => ReadonlyArray<StackDataPoint> | undefined = createSelector(
   [selectSynchronisedAreaSettings, selectNumericalAxisStackGroups],
-  (areaSettings: AreaSettings | undefined, stackGroups: Record<StackId, StackGroup> | undefined) => {
+  <DataPointType>(
+    areaSettings: AreaSettings<DataPointType, any> | undefined,
+    stackGroups: Record<StackId, StackGroup> | undefined,
+  ) => {
     if (areaSettings == null || stackGroups == null) {
       return undefined;
     }
@@ -134,7 +137,7 @@ export const selectArea: (
   state: RechartsRootState,
   id: GraphicalItemId,
   isPanorama: boolean,
-) => ComputedArea | undefined = createSelector(
+) => ComputedArea<unknown> | undefined = createSelector(
   [
     selectChartLayout,
     selectXAxisWithScale,

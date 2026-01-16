@@ -29,6 +29,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   TooltipType,
   TrapezoidViewBox,
+  TypedDataKey,
 } from '../util/types';
 import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
@@ -65,7 +66,10 @@ export type FunnelTrapezoidItem = TrapezoidProps &
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunnelProps> & {
+type InternalFunnelProps<DataPointType = unknown, ValueAxisType = unknown> = RequiresDefaultProps<
+  FunnelProps<DataPointType, ValueAxisType>,
+  typeof defaultFunnelProps
+> & {
   id: GraphicalItemId;
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
 };
@@ -73,7 +77,7 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
 /**
  * External props, intended for end users to fill in
  */
-interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointType> {
+interface FunnelProps<DataPointType = unknown, ValueAxisType = unknown> extends DataProvider<DataPointType> {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -101,7 +105,7 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Funnel.
    */
-  dataKey: DataKey<any>;
+  dataKey: DataKey<DataPointType, ValueAxisType>;
   /**
    * Hides the whole graphical element when true.
    *
@@ -126,7 +130,7 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   /**
    * @defaultValue triangle
    */
@@ -146,7 +150,7 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
    *
    * @defaultValue name
    */
-  nameKey?: DataKey<any>;
+  nameKey?: TypedDataKey<DataPointType, string>;
   /**
    * The customized event handler of animation end
    */
@@ -198,15 +202,17 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
 
 type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'ref'>;
 
-type InternalProps = FunnelSvgProps & InternalFunnelProps;
+type InternalProps<DataPointType = unknown, ValueAxisType = unknown> = FunnelSvgProps &
+  InternalFunnelProps<DataPointType, ValueAxisType>;
 
-export type Props = FunnelSvgProps & FunnelProps;
+export type Props<DataPointType = unknown, ValueAxisType = unknown> = FunnelSvgProps &
+  FunnelProps<DataPointType, ValueAxisType>;
 
 type RealFunnelData = unknown;
 
-type FunnelTrapezoidsProps = {
+type FunnelTrapezoidsProps<DataPointType = unknown, ValueAxisType = unknown> = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  allOtherFunnelProps: InternalProps;
+  allOtherFunnelProps: InternalProps<DataPointType, ValueAxisType>;
 };
 
 const SetFunnelTooltipEntrySettings = React.memo(
@@ -279,7 +285,9 @@ function FunnelLabelListProvider({
   return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
 }
 
-function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
+function FunnelTrapezoids<DataPointType = unknown, ValueAxisType = unknown>(
+  props: FunnelTrapezoidsProps<DataPointType, ValueAxisType>,
+) {
   const { trapezoids, allOtherFunnelProps } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
@@ -337,11 +345,11 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
-function TrapezoidsWithAnimation({
+function TrapezoidsWithAnimation<DataPointType = unknown, ValueAxisType = unknown>({
   previousTrapezoidsRef,
   props,
 }: {
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
   previousTrapezoidsRef: MutableRefObject<ReadonlyArray<FunnelTrapezoidItem> | undefined>;
 }) {
   const {
@@ -431,7 +439,9 @@ function TrapezoidsWithAnimation({
   );
 }
 
-function RenderTrapezoids(props: InternalProps) {
+function RenderTrapezoids<DataPointType = unknown, ValueAxisType = unknown>(
+  props: InternalProps<DataPointType, ValueAxisType>,
+) {
   const previousTrapezoidsRef = useRef<ReadonlyArray<FunnelTrapezoidItem> | undefined>(undefined);
 
   return <TrapezoidsWithAnimation props={props} previousTrapezoidsRef={previousTrapezoidsRef} />;
@@ -450,6 +460,10 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
   };
 };
 
+const defaultNameKey: TypedDataKey<unknown> = 'name' as const;
+
+type DataPointWithMaybeName = { name?: unknown } & Record<string, unknown>;
+
 export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
@@ -464,7 +478,9 @@ export const defaultFunnelProps = {
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 
-function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>>) {
+function FunnelImpl<DataPointType = DataPointWithMaybeName, ValueAxisType = unknown>(
+  props: WithIdRequired<RequiresDefaultProps<Props<DataPointType, ValueAxisType>, typeof defaultFunnelProps>>,
+) {
   const plotArea = usePlotArea();
 
   const {
@@ -695,7 +711,9 @@ export function computeFunnelTrapezoids({
  * @provides LabelListContext
  * @provides CellReader
  */
-export function Funnel(outsideProps: Props) {
+export function Funnel<DataPointType = unknown, ValueAxisType = unknown>(
+  outsideProps: Props<DataPointType, ValueAxisType>,
+) {
   const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">

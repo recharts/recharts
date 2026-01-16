@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
+import { ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import minBy from 'es-toolkit/compat/minBy';
 
@@ -39,9 +39,9 @@ import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
-export interface PolarRadiusAxisProps
+export interface PolarRadiusAxisProps<DataPointType>
   extends
-    Omit<RenderableAxisProps, 'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale' | 'tick'>,
+    Omit<RenderableAxisProps<DataPointType>, 'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale' | 'tick'>,
     ZIndexable {
   /**
    * Determines how the axis line is drawn. Options:
@@ -200,21 +200,23 @@ export interface PolarRadiusAxisProps
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
 
-export type Props = AxisSvgProps & PolarRadiusAxisProps;
+export type Props<DataPointType> = AxisSvgProps & PolarRadiusAxisProps<DataPointType>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarRadiusAxisProps>;
+type PropsWithDefaults<DataPointType> = RequiresDefaultProps<Props<DataPointType>, typeof defaultPolarRadiusAxisProps>;
 
-type InsideProps = Omit<PropsWithDefaults, 'scale'> &
+type InsideProps<DataPointType> = Omit<PropsWithDefaults<DataPointType>, 'scale'> &
   PolarViewBoxRequired & {
     scale: RechartsScale;
   };
 
 const AXIS_TYPE = 'radiusAxis';
 
-function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
+function SetRadiusAxisSettings<DataPointType>(
+  props: Omit<RadiusAxisSettings<DataPointType>, 'type'> & { type: AxisDomainTypeInput },
+): null {
   const dispatch = useAppDispatch();
   const layout = usePolarChartLayout();
-  const settings: RadiusAxisSettings | undefined = useMemo(() => {
+  const settings: RadiusAxisSettings<DataPointType> | undefined = useMemo(() => {
     const { type: typeFromProps, ...rest } = props;
     const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(
       layout,
@@ -283,7 +285,10 @@ const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<
   };
 };
 
-const renderAxisLine = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactElement => {
+function renderAxisLine<DataPointType>(
+  props: InsideProps<DataPointType>,
+  ticks: ReadonlyArray<TickItem>,
+): ReactElement {
   const { cx, cy, angle, axisLine, ...others } = props;
   const extent: [number, number] = ticks.reduce(
     (result: [number, number], entry: TickItem): [number, number] => [
@@ -307,9 +312,13 @@ const renderAxisLine = (props: InsideProps, ticks: ReadonlyArray<TickItem>): Rea
 
   // @ts-expect-error wrong SVG element type
   return <line className="recharts-polar-radius-axis-line" {...axisLineProps} />;
-};
+}
 
-const renderTickItem = (option: Props['tick'], tickProps: any, value: string | number): ReactNode => {
+function renderTickItem<DataPointType>(
+  option: TickProp<DataPointType>,
+  tickProps: any,
+  value: string | number,
+): ReactNode {
   let tickItem;
 
   if (React.isValidElement(option)) {
@@ -325,9 +334,9 @@ const renderTickItem = (option: Props['tick'], tickProps: any, value: string | n
   }
 
   return tickItem;
-};
+}
 
-const renderTicks = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactElement => {
+function renderTicks<DataPointType>(props: InsideProps<DataPointType>, ticks: ReadonlyArray<TickItem>): ReactElement {
   const { angle, tickFormatter, stroke, tick, ...others } = props;
   const textAnchor = getTickTextAnchor(props.orientation);
   const axisProps = svgPropertiesNoEvents(others);
@@ -359,9 +368,9 @@ const renderTicks = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactE
   });
 
   return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
-};
+}
 
-export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (defaultsAndInputs: PropsWithDefaults) => {
+export function PolarRadiusAxisWrapper<DataPointType>(defaultsAndInputs: PropsWithDefaults<DataPointType>) {
   const { radiusAxisId } = defaultsAndInputs;
 
   const viewBox = useAppSelector(selectPolarViewBox);
@@ -372,7 +381,7 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
     return null;
   }
 
-  const props: InsideProps = {
+  const props: InsideProps<DataPointType> = {
     ...defaultsAndInputs,
     scale,
     ...viewBox,
@@ -392,14 +401,14 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
       </Layer>
     </ZIndexLayer>
   );
-};
+}
 
 /**
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
  */
-export function PolarRadiusAxis(outsideProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultPolarRadiusAxisProps);
+export function PolarRadiusAxis<DataPointType = any>(outsideProps: Props<DataPointType>) {
+  const props: PropsWithDefaults<DataPointType> = resolveDefaultProps(outsideProps, defaultPolarRadiusAxisProps);
   return (
     <>
       <SetRadiusAxisSettings

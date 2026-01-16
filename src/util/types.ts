@@ -38,6 +38,8 @@ import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
 import { TypedDataKey } from './getTypedValue';
 
+export { TypedDataKey };
+
 /**
  * Determines how values are stacked:
  *
@@ -93,7 +95,10 @@ export type EvaluatedAxisDomainType = 'number' | 'category';
  *
  * @inline
  */
-export type DataKey<T> = TypedDataKey<T>;
+export type DataKey<DataPointType = unknown, ResultType = unknown> =
+  | string
+  | number
+  | ((input: DataPointType) => ResultType);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
@@ -792,9 +797,28 @@ export type YAxisTickContentProps = BaseTickContentProps & {
   padding: YAxisPadding | undefined;
 };
 
-export type TickProp<T> = SVGProps<SVGTextElement> | ReactElement | ((props: T) => ReactNode) | boolean;
+export type TickProp<DataPointType> =
+  | SVGProps<SVGTextElement>
+  | ReactElement
+  | ((props: DataPointType) => ReactNode)
+  | boolean;
 
-export interface BaseAxisProps {
+/**
+ * The type of axis.
+ *
+ * `category`: Treats data as distinct values.
+ * Each value is in the same distance from its neighbors, regardless of their actual numeric difference.
+ *
+ * `number`: Treats data as continuous range.
+ * Values that are numerically closer are placed closer together on the axis.
+ *
+ * `auto`: the type is inferred based on the chart layout.
+ *
+ * @inline
+ */
+export type AxisDataType = 'category' | 'number' | 'auto';
+
+export interface BaseAxisProps<DataPointType> {
   /**
    * The type of axis.
    *
@@ -806,7 +830,7 @@ export interface BaseAxisProps {
    *
    * `auto`: the type is inferred based on the chart layout.
    */
-  type?: 'category' | 'number' | 'auto';
+  type?: AxisDataType;
   /**
    * The name of data.
    * This option will be used in tooltip.
@@ -825,7 +849,7 @@ export interface BaseAxisProps {
    *
    * If undefined, it will reuse the dataKey of graphical items.
    */
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointType>;
   /**
    * Specify the domain of axis when the axis is a number axis.
    *
@@ -876,7 +900,7 @@ export interface BaseAxisProps {
  * Props shared in all renderable axes - meaning the ones that are drawn on the chart,
  * can have ticks, axis line, etc.
  */
-export interface RenderableAxisProps extends BaseAxisProps {
+export interface RenderableAxisProps<DataPointType> extends BaseAxisProps<DataPointType> {
   /**
    * Tick text rotation angle in degrees.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
@@ -905,7 +929,7 @@ export interface RenderableAxisProps extends BaseAxisProps {
    *
    * @defaultValue true
    */
-  tick?: TickProp<unknown>;
+  tick?: TickProp<DataPointType>;
 
   /**
    * The count of axis ticks. Not used if 'type' is 'category'.

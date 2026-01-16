@@ -26,6 +26,7 @@ import {
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TooltipType,
+  TypedDataKey,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
 import {
@@ -221,7 +222,7 @@ interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPoi
   rootTabIndex?: number;
 }
 
-interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
+interface PieProps<DataPointType = unknown, ValueAxisType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -255,7 +256,7 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
    *
    * @defaultValue value
    */
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointType, ValueAxisType>;
   /**
    * Hides the whole graphical element when true.
    *
@@ -327,7 +328,7 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
    *
    * @defaultValue name
    */
-  nameKey?: DataKey<any>;
+  nameKey?: TypedDataKey<DataPointType, string>;
   /**
    * The customized event handler of animation end.
    */
@@ -390,7 +391,8 @@ type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGEleme
 
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
-export type Props = PieSvgAttributes & PieProps;
+export type Props<DataPointType = unknown, ValueAxisType = unknown> = PieSvgAttributes &
+  PieProps<DataPointType, ValueAxisType>;
 
 type RealPieData = Record<string, unknown>;
 
@@ -931,7 +933,7 @@ export const defaultPieProps = {
   animationEasing: 'ease',
   cx: '50%',
   cy: '50%',
-  dataKey: 'value',
+  dataKey: 'value' as any,
   endAngle: 360,
   fill: '#808080',
   hide: false,
@@ -941,14 +943,14 @@ export const defaultPieProps = {
   labelLine: true,
   legendType: 'rect',
   minAngle: 0,
-  nameKey: 'name',
+  nameKey: 'name' as any,
   outerRadius: '80%',
   paddingAngle: 0,
   rootTabIndex: 0,
   startAngle: 0,
   stroke: '#fff',
   zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props>;
+} as const satisfies Partial<Props<any, any>>;
 
 function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   const { id, ...propsWithoutId } = props;
@@ -988,15 +990,23 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
   );
 }
 
-type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPieProps>;
+type PropsWithResolvedDefaults<DataPointType = unknown, ValueAxisType = unknown> = RequiresDefaultProps<
+  Props<DataPointType, ValueAxisType>,
+  typeof defaultPieProps
+>;
 
 /**
  * @consumes PolarChartContext
  * @provides LabelListContext
  * @provides CellReader
  */
-export function Pie(outsideProps: Props) {
-  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
+export function Pie<DataPointType = unknown, ValueAxisType = unknown>(
+  outsideProps: Props<DataPointType, ValueAxisType>,
+) {
+  const props: PropsWithResolvedDefaults<DataPointType, ValueAxisType> = resolveDefaultProps(
+    outsideProps,
+    defaultPieProps,
+  );
   const { id: externalId, ...propsWithoutId } = props;
   const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
 
@@ -1008,7 +1018,7 @@ export function Pie(outsideProps: Props) {
             type="pie"
             id={id}
             data={propsWithoutId.data}
-            dataKey={propsWithoutId.dataKey}
+            dataKey={propsWithoutId.dataKey as any}
             hide={propsWithoutId.hide}
             angleAxisId={0}
             radiusAxisId={0}

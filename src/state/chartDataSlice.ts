@@ -2,6 +2,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 
+export type BaseDataPointType = { [key: PropertyKey]: unknown };
+
 /**
  * This is the data that's coming through main chart `data` prop
  * Recharts is very flexible in what it accepts so the type is very flexible too.
@@ -23,8 +25,8 @@ export type ChartData<DataPointType = unknown> = ReadonlyArray<DataPointType>;
  */
 export type AppliedChartData = ReadonlyArray<{ value: unknown }>;
 
-export type ChartDataState = {
-  chartData: ChartData | undefined;
+export type ChartDataState<DataPointType = unknown> = {
+  chartData: ChartData<DataPointType> | undefined;
   /**
    * store a copy of chart data after it has been processed by each chart's specific
    * compute functions. TODO: add other charts besides Sankey
@@ -42,7 +44,7 @@ export type ChartDataState = {
   dataEndIndex: number;
 };
 
-export const initialChartDataState: ChartDataState = {
+export const initialChartDataState: ChartDataState<unknown> = {
   chartData: undefined,
   computedData: undefined,
   dataStartIndex: 0,

@@ -178,3 +178,5 @@ export type { MouseHandlerDataParam, ActiveLabel } from './synchronisation/types
 
 export type { AxisId } from './state/cartesianAxisSlice';
 export type { AxisRange } from './state/selectors/axisSelectors';
+export { createTypedComponents } from './util/createTypedComponents';
+export type { TypedComponents } from './util/createTypedComponents';

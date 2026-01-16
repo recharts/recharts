@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentType, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
+import { isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import {
   AxisDomainTypeInput,
@@ -42,7 +42,10 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
-interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | 'scale' | 'tick'> {
+interface YAxisProps<DataPointType = unknown> extends Omit<
+  RenderableAxisProps<DataPointType>,
+  'axisLine' | 'domain' | 'scale' | 'tick'
+> {
   /**
    * Determines how the axis line is drawn. Options:
    * - `true`: the axis line is drawn with default props;
@@ -182,7 +185,11 @@ interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | '
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
+export type Props<DataPointType = unknown> = Omit<
+  PresentationAttributesAdaptChildEvent<any, SVGElement>,
+  'scale' | 'ref'
+> &
+  YAxisProps<DataPointType>;
 
 function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
@@ -375,6 +382,9 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
-export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual);
+export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as <DataPointType = any>(
+  props: Props<DataPointType>,
+) => React.ReactElement;
 
+// @ts-expect-error we need to set the displayName for debugging purposes
 YAxis.displayName = 'YAxis';

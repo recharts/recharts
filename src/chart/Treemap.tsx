@@ -19,6 +19,7 @@ import {
   Margin,
   Percent,
   RectanglePosition,
+  TypedDataKey,
 } from '../util/types';
 import { ReportChartMargin, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -41,6 +42,7 @@ import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { getTypedValue } from '../util/getTypedValue';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -57,8 +59,8 @@ export interface TreemapDataType {
  * This is what is returned from `squarify`, the final treemap data structure
  * that gets rendered and is stored in
  */
-export interface TreemapNode {
-  children: ReadonlyArray<TreemapNode> | null;
+export type TreemapNode<DataPointType = TreemapDataType> = DataPointType & {
+  children: ReadonlyArray<TreemapNode<DataPointType>> | null;
   value: number;
   depth: number;
   index: number;
@@ -68,10 +70,8 @@ export interface TreemapNode {
   height: number;
   name: string;
   tooltipIndex: TooltipIndex;
-  root: TreemapNode;
-
-  [k: string]: unknown;
-}
+  root: TreemapNode<DataPointType>;
+};
 
 function isTreemapNode(value: unknown): value is TreemapNode {
   return (
@@ -113,7 +113,7 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
-export const computeNode = ({
+export const computeNode = <DataPointType extends TreemapDataType>({
   depth,
   node,
   index,
@@ -122,18 +122,18 @@ export const computeNode = ({
   nestedActiveTooltipIndex,
 }: {
   depth: number;
-  node: TreemapNode;
+  node: TreemapNode<DataPointType>;
   index: number;
-  dataKey: DataKey<unknown>;
-  nameKey: DataKey<unknown>;
+  dataKey: DataKey<DataPointType>;
+  nameKey: TypedDataKey<DataPointType, string>;
   nestedActiveTooltipIndex: TooltipIndex | undefined;
-}): TreemapNode => {
+}): TreemapNode<DataPointType> => {
   const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(index, nestedActiveTooltipIndex);
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren =
     children && children.length
-      ? children.map((child: TreemapNode, i: number) =>
+      ? children.map((child: TreemapNode<DataPointType>, i: number) =>
           computeNode({
             depth: childDepth,
             node: child,
@@ -147,7 +147,7 @@ export const computeNode = ({
   let nodeValue: number;
 
   if (computedChildren && computedChildren.length) {
-    nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child.value, 0);
+    nodeValue = computedChildren.reduce((result: number, child: TreemapNode<DataPointType>) => result + child.value, 0);
   } else {
     // TODO need to verify dataKey
     const rawNodeValue = node[dataKey as string];
@@ -158,8 +158,7 @@ export const computeNode = ({
   return {
     ...node,
     children: computedChildren,
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    name: getValueByDataKey(node, nameKey, ''),
+    name: getTypedValue(node, nameKey, ''),
     [NODE_VALUE_KEY]: nodeValue,
     depth,
     index,
@@ -174,16 +173,16 @@ const filterRect = (node: TreemapNode): RectanglePosition => ({
   height: node.height,
 });
 
-type TreemapNodeWithArea = TreemapNode & { area: number };
+type TreemapNodeWithArea<DataPointType = TreemapDataType> = TreemapNode<DataPointType> & { area: number };
 
 // Compute the area for each child based on value & scale.
-const getAreaOfChildren = (
-  children: ReadonlyArray<TreemapNode>,
+const getAreaOfChildren = <DataPointType extends TreemapDataType>(
+  children: ReadonlyArray<TreemapNode<DataPointType>>,
   areaValueRatio: number,
-): ReadonlyArray<TreemapNodeWithArea> => {
+): ReadonlyArray<TreemapNodeWithArea<DataPointType>> => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
-  return children.map((child: TreemapNode) => {
+  return children.map((child: TreemapNode<DataPointType>) => {
     const area = child[NODE_VALUE_KEY] * ratio;
 
     return {
@@ -299,13 +298,16 @@ const position = (
 type AreaArray<T> = Array<T> & { area: number };
 
 // Recursively arranges the specified node's children into squarified rows.
-const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
+const squarify = <DataPointType extends TreemapDataType>(
+  node: TreemapNode<DataPointType>,
+  aspectRatio: number,
+): TreemapNode<DataPointType> => {
   const { children } = node;
 
   if (children && children.length) {
     let rect: RectanglePosition = filterRect(node);
     // @ts-expect-error we can't create an array with static property on a single line so typescript will complain.
-    const row: AreaArray<TreemapNodeWithArea> = [];
+    const row: AreaArray<TreemapNodeWithArea<DataPointType>> = [];
     let best = Infinity; // the best row score so far
     let child, score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
@@ -353,9 +355,11 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   return node;
 };
 
-export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
+export type TreemapContentType<DataPointType = TreemapDataType> =
+  | ReactNode
+  | ((props: TreemapNode<DataPointType>) => React.ReactElement);
 
-export interface Props {
+export interface Props<DataPointType extends TreemapDataType = TreemapDataType> {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -376,7 +380,7 @@ export interface Props {
    *
    * If the `children` property is present on an element, it will be treated as a nested treemap.
    */
-  data?: ReadonlyArray<TreemapDataType>;
+  data?: ReadonlyArray<DataPointType>;
 
   /**
    * @deprecated unused prop, doesn't do anything, use `key` instead
@@ -395,7 +399,7 @@ export interface Props {
    * If set to a React element, the option is the customized React element of rendering the content.
    * If set to a function, the function will be called to render the content.
    */
-  content?: TreemapContentType;
+  content?: TreemapContentType<DataPointType>;
 
   fill?: string;
 
@@ -413,7 +417,7 @@ export interface Props {
    *
    * @defaultValue name
    */
-  nameKey?: DataKey<any>;
+  nameKey?: DataKey<DataPointType>;
 
   /**
    * Decides how to extract the value of this Treemap from the data:
@@ -422,7 +426,7 @@ export interface Props {
    * - `function`: a function that receives the data object and returns the value of this Treemap.
    * @default 'value'
    */
-  dataKey?: DataKey<any>;
+  dataKey?: DataKey<DataPointType>;
 
   children?: ReactNode;
 
@@ -440,7 +444,7 @@ export interface Props {
   colorPanel?: ReadonlyArray<string>;
 
   // customize nest index content
-  nestIndexContent?: React.ReactElement | ((item: TreemapNode, i: number) => ReactNode);
+  nestIndexContent?: React.ReactElement | ((item: TreemapNode<DataPointType>, i: number) => ReactNode);
 
   /**
    * The customized event handler of animation start
@@ -452,11 +456,11 @@ export interface Props {
    */
   onAnimationEnd?: () => void;
 
-  onMouseEnter?: (node: TreemapNode, e: React.MouseEvent) => void;
+  onMouseEnter?: (node: TreemapNode<DataPointType>, e: React.MouseEvent) => void;
 
-  onMouseLeave?: (node: TreemapNode, e: React.MouseEvent) => void;
+  onMouseLeave?: (node: TreemapNode<DataPointType>, e: React.MouseEvent) => void;
 
-  onClick?: (node: TreemapNode) => void;
+  onClick?: (node: TreemapNode<DataPointType>) => void;
 
   /**
    * If set false, animation of treemap will be disabled.
@@ -488,12 +492,12 @@ export interface Props {
   id?: string;
 }
 
-interface State {
+interface State<DataPointType = TreemapDataType> {
   isAnimationFinished: boolean;
-  formatRoot: TreemapNode | null;
-  currentRoot: TreemapNode | undefined;
-  nestIndex: Array<TreemapNode>;
-  prevData?: ReadonlyArray<TreemapDataType>;
+  formatRoot: TreemapNode<DataPointType> | null;
+  currentRoot: TreemapNode<DataPointType> | undefined;
+  nestIndex: Array<TreemapNode<DataPointType>>;
+  prevData?: ReadonlyArray<DataPointType>;
   prevType?: 'flat' | 'nest';
   prevWidth?: number;
   prevHeight?: number;
@@ -503,8 +507,8 @@ interface State {
 
 export const defaultTreeMapProps = {
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
-  dataKey: 'value',
-  nameKey: 'name',
+  dataKey: 'value' as any,
+  nameKey: 'name' as any,
   type: 'flat',
   isAnimationActive: 'auto',
   isUpdateAnimationActive: 'auto',
@@ -633,17 +637,17 @@ function ContentItemWithEvents(props: ContentItemProps) {
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
-const SetTreemapTooltipEntrySettings = React.memo(
-  ({
-    dataKey,
-    nameKey,
-    stroke,
-    fill,
-    currentRoot,
-    id,
-  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
-    currentRoot: TreemapNode | undefined;
-  }) => {
+type TreemapTooltipEntrySettingsProps<DataPointType extends TreemapDataType> = Pick<
+  InternalTreemapProps<DataPointType>,
+  'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'
+> & {
+  currentRoot: TreemapNode | undefined;
+};
+
+const SetTreemapTooltipEntrySettings: <DataPointType extends TreemapDataType>(
+  props: TreemapTooltipEntrySettingsProps<DataPointType>,
+) => ReactNode = React.memo(
+  ({ dataKey, nameKey, stroke, fill, currentRoot, id }: TreemapTooltipEntrySettingsProps<TreemapDataType>) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
       getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
@@ -673,7 +677,7 @@ const defaultTreemapMargin: Margin = {
   left: 0,
 };
 
-function TreemapItem({
+function TreemapItem<DataPointType>({
   content,
   nodeProps,
   isLeaf,
@@ -683,7 +687,7 @@ function TreemapItem({
   content: TreemapContentType;
   nodeProps: TreemapNode;
   isLeaf: boolean;
-  treemapProps: InternalTreemapProps;
+  treemapProps: InternalTreemapProps<DataPointType>;
   onNestClick: (node: TreemapNode) => void;
 }): ReactNode {
   const {
@@ -781,21 +785,30 @@ function TreemapItem({
   );
 }
 
-type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapProps> & {
+type InternalTreemapProps<DataPointType extends TreemapDataType> = RequiresDefaultProps<
+  Props<DataPointType>,
+  typeof defaultTreeMapProps
+> & {
   width: number;
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
 };
 
-class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
+class TreemapWithState<DataPointType extends TreemapDataType> extends PureComponent<
+  InternalTreemapProps<DataPointType>,
+  State<DataPointType>
+> {
   static displayName = 'Treemap';
 
   state = {
     ...defaultState,
-  };
+  } as State<DataPointType>;
 
-  static getDerivedStateFromProps(nextProps: InternalTreemapProps, prevState: State): State | null {
+  static getDerivedStateFromProps<DataPointType extends TreemapDataType>(
+    nextProps: InternalTreemapProps<DataPointType>,
+    prevState: State<DataPointType>,
+  ): State<DataPointType> | null {
     if (
       nextProps.data !== prevState.prevData ||
       nextProps.type !== prevState.prevType ||
@@ -804,15 +817,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nextProps.dataKey !== prevState.prevDataKey ||
       nextProps.aspectRatio !== prevState.prevAspectRatio
     ) {
-      const root: TreemapNode = computeNode({
+      const root: TreemapNode<DataPointType> = computeNode({
         depth: 0,
         // @ts-expect-error missing properties
         node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height },
         index: 0,
         dataKey: nextProps.dataKey,
         nameKey: nextProps.nameKey,
+        nestedActiveTooltipIndex: undefined,
       });
-      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio);
+      const formatRoot: TreemapNode<any> = squarify(root, nextProps.aspectRatio);
 
       return {
         ...prevState,
@@ -831,7 +845,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     return null;
   }
 
-  handleClick = (node: TreemapNode) => {
+  handleClick = (node: TreemapNode<DataPointType>) => {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
       const { width, height, dataKey, nameKey, aspectRatio } = this.props;
@@ -861,7 +875,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
   };
 
-  handleNestIndex(node: TreemapNode, i: number) {
+  handleNestIndex(node: TreemapNode<DataPointType>, i: number) {
     let { nestIndex } = this.state;
     const { width, height, dataKey, nameKey, aspectRatio } = this.props;
     const root = computeNode({
@@ -884,14 +898,14 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     });
   }
 
-  renderNode(root: TreemapNode, node: TreemapNode): ReactNode {
+  renderNode(root: TreemapNode<DataPointType>, node: TreemapNode<DataPointType>): ReactNode {
     const { content, type } = this.props;
     const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
     const isCurrentRootChild = (currentRoot?.children || []).filter(
-      (item: TreemapNode) => item.depth === node.depth && item.name === node.name,
+      (item: TreemapNode<DataPointType>) => item.depth === node.depth && item.name === node.name,
     );
 
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
@@ -911,7 +925,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           onNestClick={this.handleClick}
         />
         {node.children && node.children.length
-          ? node.children.map((child: TreemapNode) => this.renderNode(node, child))
+          ? node.children.map((child: TreemapNode<DataPointType>) => this.renderNode(node, child))
           : null}
       </Layer>
     );
@@ -934,7 +948,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
     return (
       <div className="recharts-treemap-nest-index-wrapper" style={{ marginTop: '8px', textAlign: 'center' }}>
-        {nestIndex.map((item: TreemapNode, i: number) => {
+        {nestIndex.map((item: TreemapNode<DataPointType>, i: number) => {
           // TODO need to verify nameKey type
           const rawName = get(item, nameKey as string, 'root');
           const name: string = typeof rawName === 'string' ? rawName : 'root';
@@ -1035,7 +1049,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   }
 }
 
-function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof defaultTreeMapProps>) {
+function TreemapDispatchInject<DataPointType extends TreemapDataType>(
+  props: RequiresDefaultProps<Props<DataPointType>, typeof defaultTreeMapProps>,
+) {
   const dispatch = useAppDispatch();
   const width = useChartWidth();
   const height = useChartHeight();
@@ -1045,7 +1061,7 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
   const { id: externalId } = props;
   return (
     <RegisterGraphicalItemId id={externalId} type="treemap">
-      {id => <TreemapWithState {...props} id={id} width={width} height={height} dispatch={dispatch} />}
+      {id => <TreemapWithState<DataPointType> {...props} id={id} width={width} height={height} dispatch={dispatch} />}
     </RegisterGraphicalItemId>
   );
 }
@@ -1056,8 +1072,8 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
  */
-export function Treemap(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
+export function Treemap<DataPointType extends TreemapDataType = TreemapDataType>(outsideProps: Props<DataPointType>) {
+  const props = resolveDefaultProps(outsideProps, defaultTreeMapProps) as InternalTreemapProps<DataPointType>;
   const { className, style, width, height } = props;
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
@@ -1095,7 +1111,7 @@ export function Treemap(outsideProps: Props) {
         onTouchEnd={undefined}
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
-          <TreemapDispatchInject {...props} />
+          <TreemapDispatchInject<DataPointType> {...(props as any)} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

@@ -35,7 +35,7 @@ type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) =>
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
-interface BrushProps {
+interface BrushProps<DataPointType> {
   /**
    * The x-coordinate of brush.
    * If left undefined, it will be computed from the chart's offset and margins.
@@ -83,7 +83,7 @@ interface BrushProps {
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Brush.
    */
-  dataKey?: DataKey<any>;
+  dataKey?: DataKey<DataPointType>;
   /**
    * The default start index of brush.
    * If the option is not set, the start index will be 0.
@@ -115,10 +115,11 @@ interface BrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
+export type Props<DataPointType = any> = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
+  BrushProps<DataPointType>;
 
-type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
-  RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
+type InternalProps<DataPointType = any> = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
+  RequiresDefaultProps<BrushProps<DataPointType>, typeof defaultBrushProps>;
 
 type PropertiesFromContext = {
   x: number;
@@ -528,11 +529,11 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-type BrushWithStateProps = InternalProps &
+type BrushWithStateProps<DataPointType = any> = InternalProps<DataPointType> &
   PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
 
-class BrushWithState extends PureComponent<BrushWithStateProps, State> {
-  constructor(props: BrushWithStateProps) {
+class BrushWithState<DataPointType = any> extends PureComponent<BrushWithStateProps<DataPointType>, State> {
+  constructor(props: BrushWithStateProps<DataPointType>) {
     super(props);
 
     this.travellerDragStartHandlers = {
@@ -547,7 +548,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   travellerDragStartHandlers: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
-  static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): Partial<State> | null {
+  static getDerivedStateFromProps(nextProps: BrushWithStateProps<any>, prevState: State): Partial<State> | null {
     const {
       data,
       width,
@@ -990,7 +991,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 }
 
-function BrushInternal(props: InternalProps) {
+function BrushInternal<DataPointType = any>(props: InternalProps<DataPointType>) {
   const dispatch = useAppDispatch();
   const chartData = useChartData();
   const dataIndexes = useDataIndex();
@@ -1038,7 +1039,7 @@ function BrushInternal(props: InternalProps) {
     onChange,
   };
   return (
-    <BrushWithState
+    <BrushWithState<DataPointType>
       {...props}
       {...contextProperties}
       startIndexControlledFromProps={startIndexFromProps ?? undefined}
@@ -1082,7 +1083,7 @@ export const defaultBrushProps = {
  *
  * @consumes CartesianChartContext
  */
-export function Brush(outsideProps: Props) {
+export function Brush<DataPointType = any>(outsideProps: Props<DataPointType>) {
   const props = resolveDefaultProps(outsideProps, defaultBrushProps);
   return (
     <>
@@ -1093,7 +1094,7 @@ export function Brush(outsideProps: Props) {
         width={props.width}
         padding={props.padding}
       />
-      <BrushInternal {...props} />
+      <BrushInternal<DataPointType> {...props} />
     </>
   );
 }

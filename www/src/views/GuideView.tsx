@@ -1,6 +1,7 @@
 import { ComponentType, PureComponent } from 'react';
 import Helmet from 'react-helmet';
 import { Installation, GettingStarted, Customize, ZIndex } from '../components/GuideView';
+import { TypeScript } from '../components/GuideView/TypeScript';
 import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -16,6 +17,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
   'getting-started': GettingStarted,
   customize: Customize,
+  typescript: TypeScript,
   activeIndex: ActiveIndex,
   domainAndTicks: DomainAndTicks,
   sizes: ChartSizing,

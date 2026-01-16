@@ -38,6 +38,7 @@ import {
   TickItem,
   TooltipType,
   TrapezoidViewBox,
+  TypedDataKey,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
@@ -83,7 +84,7 @@ export interface LinePointItem {
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalLineProps extends ZIndexable {
+interface InternalLineProps<DataPointType = unknown, ValueAxisType = unknown> extends ZIndexable {
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -93,13 +94,13 @@ interface InternalLineProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: any;
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointType, ValueAxisType>;
   dot: DotType;
   height: number;
   hide: boolean;
   id: GraphicalItemId;
   isAnimationActive: boolean | 'auto';
-  label: ImplicitLabelListType;
+  label: ImplicitLabelListType<DataPointType>;
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
@@ -124,7 +125,7 @@ interface InternalLineProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>, ZIndexable {
+interface LineProps<DataPointType = unknown, ValueAxisType = unknown> extends DataProvider<DataPointType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -175,7 +176,7 @@ interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Line.
    */
-  dataKey?: DataKey<any>;
+  dataKey?: TypedDataKey<DataPointType, ValueAxisType>;
   /**
    * Renders a circle element at each data point. Options:
    *
@@ -235,7 +236,7 @@ interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomizedLabelLineChart/ A line chart with customized label}
    */
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   /**
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
@@ -326,9 +327,11 @@ interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>
  */
 type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine'>;
 
-type InternalProps = LineSvgProps & InternalLineProps;
+type InternalProps<DataPointType = unknown, ValueAxisType = unknown> = LineSvgProps &
+  InternalLineProps<DataPointType, ValueAxisType>;
 
-export type Props = LineSvgProps & LineProps;
+export type Props<DataPointType = unknown, ValueAxisType = unknown> = LineSvgProps &
+  LineProps<DataPointType, ValueAxisType>;
 
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
@@ -422,14 +425,14 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
   return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
 };
 
-function LineDotsWrapper({
+function LineDotsWrapper<DataPointType = unknown, ValueAxisType = unknown>({
   clipPathId,
   points,
   props,
 }: {
   points: ReadonlyArray<LinePointItem>;
   clipPathId: string;
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
 }) {
   const { dot, dataKey, needClip } = props;
 
@@ -495,7 +498,7 @@ function LineLabelListProvider({
   );
 }
 
-function StaticCurve({
+function StaticCurve<DataPointType = unknown, ValueAxisType = unknown>({
   clipPathId,
   pathRef,
   points,
@@ -505,7 +508,7 @@ function StaticCurve({
   clipPathId: string;
   pathRef: Ref<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
   strokeDasharray?: string;
 }) {
   const { type, layout, connectNulls, needClip, shape, ...others } = props;
@@ -537,7 +540,7 @@ function getTotalLength(mainCurve: SVGPathElement | null): number {
   }
 }
 
-function CurveWithAnimation({
+function CurveWithAnimation<DataPointType = unknown, ValueAxisType = unknown>({
   clipPathId,
   props,
   pathRef,
@@ -545,7 +548,7 @@ function CurveWithAnimation({
   longestAnimatedLengthRef,
 }: {
   clipPathId: string;
-  props: InternalProps;
+  props: InternalProps<DataPointType, ValueAxisType>;
   pathRef: MutableRefObject<SVGPathElement | null>;
   longestAnimatedLengthRef: MutableRefObject<number>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
@@ -741,7 +744,13 @@ function CurveWithAnimation({
   );
 }
 
-function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
+function RenderCurve<DataPointType = unknown, ValueAxisType = unknown>({
+  clipPathId,
+  props,
+}: {
+  clipPathId: string;
+  props: InternalProps<DataPointType, ValueAxisType>;
+}) {
   const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
   const longestAnimatedLengthRef = useRef<number>(0);
   const pathRef = useRef<SVGPathElement | null>(null);
@@ -771,7 +780,9 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<LinePointItem> = (
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
-class LineWithState extends Component<InternalProps> {
+class LineWithState<DataPointType = unknown, ValueAxisType = unknown> extends Component<
+  InternalProps<DataPointType, ValueAxisType>
+> {
   render() {
     const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, zIndex } =
       this.props;
@@ -846,9 +857,11 @@ export const defaultLineProps = {
   yAxisId: 0,
   zIndex: DefaultZIndexes.line,
   type: 'linear',
-} as const satisfies Partial<Props>;
+} as const satisfies Partial<Props<any, any>>;
 
-function LineImpl(props: WithIdRequired<Props>) {
+function LineImpl<DataPointType = unknown, ValueAxisType = unknown>(
+  props: WithIdRequired<Props<DataPointType, ValueAxisType>>,
+) {
   const {
     activeDot,
     animateNewValues,
@@ -934,7 +947,7 @@ export function computeLinePoints({
       const value: number = getValueByDataKey(entry, dataKey);
 
       if (layout === 'horizontal') {
-        const x = getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index });
+        const x = getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry: entry as any, index });
         const y = isNullish(value) ? null : yAxis.scale.map(value);
         return {
           x,
@@ -945,7 +958,7 @@ export function computeLinePoints({
       }
 
       const x = isNullish(value) ? null : xAxis.scale.map(value);
-      const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index });
+      const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry: entry as any, index });
       if (x == null || y == null) {
         return null;
       }
@@ -959,16 +972,18 @@ export function computeLinePoints({
     .filter(Boolean);
 }
 
-function LineFn(outsideProps: Props) {
+function LineFn<DataPointType = unknown, ValueAxisType = unknown>(
+  outsideProps: Props<DataPointType, ValueAxisType>,
+) {
   const props = resolveDefaultProps(outsideProps, defaultLineProps);
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props as any)} />
           <SetLineTooltipEntrySettings
-            dataKey={props.dataKey}
+            dataKey={props.dataKey as any}
             data={props.data}
             stroke={props.stroke}
             strokeWidth={props.strokeWidth}
@@ -986,7 +1001,7 @@ function LineFn(outsideProps: Props) {
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
-            dataKey={props.dataKey}
+            dataKey={props.dataKey as any}
             hide={props.hide}
             isPanorama={isPanorama}
           />
@@ -1002,5 +1017,10 @@ function LineFn(outsideProps: Props) {
  * @provides ErrorBarContext
  * @consumes CartesianChartContext
  */
-export const Line: ComponentType<Props> = React.memo(LineFn, propsAreEqual);
+export const Line = React.memo(LineFn, propsAreEqual) as (<
+  DataPointType = unknown,
+  ValueAxisType = unknown,
+>(
+  props: Props<DataPointType, ValueAxisType>,
+) => React.JSX.Element) & { displayName?: string };
 Line.displayName = 'Line';

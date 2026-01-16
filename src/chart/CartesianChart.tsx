@@ -22,22 +22,22 @@ export const defaultCartesianChartProps = {
   reverseStackOrder: false,
   stackOffset: 'none',
   syncMethod: 'index',
-} as const satisfies Partial<CartesianChartProps>;
+} as const satisfies Partial<CartesianChartProps<any>>;
 
 /**
  * These are one-time, immutable options that decide the chart's behavior.
  * Users who wish to call CartesianChart may decide to pass these options explicitly,
  * but usually we would expect that they use one of the convenience components like BarChart, LineChart, etc.
  */
-export type CartesianChartOptions = {
+export type CartesianChartOptions<DataPointType = unknown> = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: CartesianChartProps;
+  categoricalChartProps: CartesianChartProps<DataPointType>;
 };
 
-export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(function CartesianChart(
+export const CartesianChart = forwardRef(function CartesianChart(
   props: CartesianChartOptions,
   ref,
 ) {
@@ -76,7 +76,9 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         className={rootChartProps.className}
         reverseStackOrder={rootChartProps.reverseStackOrder}
       />
-      <CategoricalChart {...rootChartProps} ref={ref} />
+      <CategoricalChart {...rootChartProps} ref={ref as any} />
     </RechartsStoreProvider>
   );
-});
+}) as <DataPointType = unknown>(
+  props: CartesianChartOptions<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

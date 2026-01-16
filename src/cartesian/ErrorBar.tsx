@@ -44,7 +44,7 @@ export type ErrorBarDataPointFormatter<T extends BarRectangleItem | LinePointIte
 /**
  * External ErrorBar props, visible for users of the library
  */
-interface ErrorBarProps extends ZIndexable {
+interface ErrorBarProps<DataPointType> extends ZIndexable {
   /**
    * Decides how to extract the value of this ErrorBar from the data:
    * - `string`: the name of the field in the data object;
@@ -54,7 +54,7 @@ interface ErrorBarProps extends ZIndexable {
    * The error values can be a single value for symmetric error bars;
    * or an array of a lower and upper error value for asymmetric error bars.
    */
-  dataKey: DataKey<any>;
+  dataKey: DataKey<DataPointType>;
   /**
    * Width of the error bar ends (the serifs) in pixels.
    * This is not the total width of the error bar, but just the width of the little lines at the ends.
@@ -101,13 +101,13 @@ interface ErrorBarProps extends ZIndexable {
   zIndex?: number;
 }
 
-export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
+export type Props<DataPointType = any> = SVGProps<SVGLineElement> & ErrorBarProps<DataPointType>;
 
 /**
  * Props after defaults, and required props have been applied.
  */
-type ErrorBarInternalProps = SVGProps<SVGLineElement> & {
-  dataKey: DataKey<any>;
+type ErrorBarInternalProps<DataPointType = any> = SVGProps<SVGLineElement> & {
+  dataKey: DataKey<DataPointType>;
   /** the width of the error bar ends */
   width: number;
   /**
@@ -121,7 +121,7 @@ type ErrorBarInternalProps = SVGProps<SVGLineElement> & {
   animationEasing: AnimationTiming;
 };
 
-function ErrorBarImpl(props: ErrorBarInternalProps) {
+function ErrorBarImpl<DataPointType>(props: ErrorBarInternalProps<DataPointType>) {
   const {
     direction,
     width,
@@ -285,7 +285,7 @@ export const errorBarDefaultProps = {
  *
  * @consumes ErrorBarContext
  */
-export function ErrorBar(outsideProps: Props) {
+export function ErrorBar<DataPointType = any>(outsideProps: Props<DataPointType>) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);
   const props = resolveDefaultProps(outsideProps, errorBarDefaultProps);
   const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = props;
@@ -294,7 +294,7 @@ export function ErrorBar(outsideProps: Props) {
     <>
       <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
       <ZIndexLayer zIndex={zIndex}>
-        <ErrorBarImpl
+        <ErrorBarImpl<DataPointType>
           {...props}
           direction={realDirection}
           width={width}

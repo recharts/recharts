@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useRef } from 'react';
+import { memo, ReactNode, useLayoutEffect, useRef } from 'react';
 import { useAppDispatch } from './hooks';
 import {
   addCartesianGraphicalItem,
@@ -10,7 +10,7 @@ import {
   replaceCartesianGraphicalItem,
 } from './graphicalItemsSlice';
 
-const SetCartesianGraphicalItemImpl = <T extends CartesianGraphicalItemSettings>(props: T): null => {
+const SetCartesianGraphicalItemImpl = <T extends CartesianGraphicalItemSettings<any>>(props: T): null => {
   const dispatch = useAppDispatch();
   const prevPropsRef = useRef<T | null>(null);
 
@@ -48,7 +48,9 @@ const SetCartesianGraphicalItemImpl = <T extends CartesianGraphicalItemSettings>
   return null;
 };
 
-export const SetCartesianGraphicalItem = memo(SetCartesianGraphicalItemImpl);
+export const SetCartesianGraphicalItem: <DataPointType, ValueAxisType>(
+  props: CartesianGraphicalItemSettings<DataPointType, ValueAxisType>,
+) => ReactNode = memo(SetCartesianGraphicalItemImpl);
 
 export function SetPolarGraphicalItem(props: PolarGraphicalItemSettings): null {
   const dispatch = useAppDispatch();
