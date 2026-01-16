@@ -11,15 +11,19 @@ const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
  */
-export const FunnelChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
-  return (
-    <CartesianChart
-      chartName="FunnelChart"
-      defaultTooltipEventType="item"
-      validateTooltipEventTypes={allowedTooltipTypes}
-      tooltipPayloadSearcher={arrayTooltipSearcher}
-      categoricalChartProps={props}
-      ref={ref}
-    />
-  );
-});
+export const FunnelChart = forwardRef<SVGSVGElement, CartesianChartProps<unknown>>(
+  (props: CartesianChartProps<unknown>, ref) => {
+    return (
+      <CartesianChart
+        chartName="FunnelChart"
+        defaultTooltipEventType="item"
+        validateTooltipEventTypes={allowedTooltipTypes}
+        tooltipPayloadSearcher={arrayTooltipSearcher}
+        categoricalChartProps={props}
+        ref={ref}
+      />
+    );
+  },
+) as <DataPointType>(
+  props: CartesianChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

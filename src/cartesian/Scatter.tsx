@@ -168,7 +168,7 @@ interface ScatterInternalProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps extends DataProvider, ZIndexable {
+interface ScatterProps<DataPointType = unknown> extends DataProvider<DataPointType>, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.

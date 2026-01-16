@@ -73,7 +73,7 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
 /**
  * External props, intended for end users to fill in
  */
-interface FunnelProps extends DataProvider {
+interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointType> {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).

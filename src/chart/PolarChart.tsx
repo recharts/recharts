@@ -30,7 +30,7 @@ export const defaultPolarChartProps = {
   cy: '50%',
   innerRadius: 0,
   outerRadius: '80%',
-} as const satisfies Partial<PolarChartProps>;
+} as const satisfies Partial<PolarChartProps<never>>;
 
 /**
  * These props are required for the PolarChart to function correctly.
