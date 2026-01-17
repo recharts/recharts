@@ -10,7 +10,6 @@ import {
   FormEvent,
   FunctionComponent,
   isValidElement,
-  JSX,
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
@@ -1275,8 +1274,7 @@ export type DotType =
 
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
-  | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
-  | ((props: unknown) => JSX.Element)
+  | ((props: PropsType) => ReactElement | null | undefined)
   | SVGProps<ElementType>
   | boolean;
 

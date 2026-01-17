@@ -25,6 +25,7 @@ describe('Documentation Examples Coverage', () => {
     'AxisInterval',
     'AxisRange',
     'Bar',
+    'BarProps',
     'BarChart',
     'BarStack',
     'BarStackProps',

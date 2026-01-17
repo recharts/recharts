@@ -1,4 +1,4 @@
-import { Bar, BarChart, BarProps, CartesianGrid, Rectangle, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, BarShapeProps, CartesianGrid, Rectangle, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Data and helper functions
@@ -80,12 +80,13 @@ const getBarColor = (outcome: TimelineDataType['outcome']) => {
   }
 };
 
-const CustomFillRectangle = (props: BarProps) => {
+const CustomFillRectangle = (props: BarShapeProps) => {
   // @ts-expect-error props.outcome is injected from the data array which Recharts doesn't know about
-  return <Rectangle {...props} fill={getBarColor(props.outcome)} />;
+  const { outcome } = props;
+  return <Rectangle {...props} fill={getBarColor(outcome)} />;
 };
 
-const ActiveRectangle = (props: BarProps) => {
+const ActiveRectangle = (props: BarShapeProps) => {
   return <CustomFillRectangle {...props} stroke="orange" strokeWidth={3} />;
 };
 

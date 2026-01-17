@@ -2,12 +2,12 @@ import * as React from 'react';
 import invariant from 'tiny-invariant';
 import { ActiveShape, DataKey } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';
-import { BarProps } from '../cartesian/Bar';
+import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
 import { isNullish, isNumber } from './DataUtils';
 
 export type BarRectangleProps = {
-  option: ActiveShape<BarProps, SVGPathElement> | undefined;
+  option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
   isActive: boolean;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;

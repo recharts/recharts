@@ -1,4 +1,4 @@
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarProps } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarShapeProps } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
@@ -57,7 +57,7 @@ const getPath = (x: number, y: number, width: number, height: number) => {
   Z`;
 };
 
-const TriangleBar = (props: BarProps) => {
+const TriangleBar = (props: BarShapeProps) => {
   const { fill, x, y, width, height } = props;
 
   return <path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke="none" fill={fill} />;
