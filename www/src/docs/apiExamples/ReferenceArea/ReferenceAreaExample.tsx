@@ -32,14 +32,20 @@ const ReferenceAreaExample = ({ isAnimationActive = true }) => (
       left: 0,
     }}
   >
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
+    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+    <XAxis dataKey="x" type="number" name="stature" unit="cm" stroke="var(--color-text-3)" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" stroke="var(--color-text-3)" />
     <ZAxis dataKey="z" type="number" range={[16, 100]} name="score" unit="km" />
-    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+    <Tooltip
+      cursor={{ strokeDasharray: '3 3', stroke: 'var(--color-border-2)' }}
+      contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      itemStyle={{
+        color: 'var(--color-text-3)',
+      }}
+    />
     <Legend />
-    <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
-    <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
+    <Scatter name="A school" data={data01} fill="var(--color-chart-1)" isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} fill="var(--color-chart-2)" isAnimationActive={isAnimationActive} />
     <ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke="red" strokeOpacity={0.3} />
     <RechartsDevtools />
   </ScatterChart>

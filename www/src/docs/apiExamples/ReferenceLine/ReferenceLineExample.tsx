@@ -60,31 +60,39 @@ const ReferenceLineExample = ({ isAnimationActive = true }: { isAnimationActive?
       bottom: 0,
     }}
   >
-    <XAxis dataKey="name" />
-    <YAxis width="auto" />
-    <CartesianGrid strokeDasharray="3 3" />
-    <Tooltip />
+    <XAxis dataKey="name" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
+    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+    <Tooltip
+      contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      cursor={{ stroke: 'var(--color-border-2)' }}
+    />
     <Area
       type="monotone"
       dataKey="uv"
-      stroke="#8884d8"
-      fill="#8884d8"
+      stroke="var(--color-chart-1)"
+      fill="var(--color-chart-1)"
       fillOpacity={0.3}
       isAnimationActive={isAnimationActive}
     />
     <ReferenceLine
       x="Page C"
       stroke="green"
-      label={{ value: 'prop `x` creates vertical lines', fill: 'black', position: 'insideTop', offset: 70 }}
+      label={{
+        value: 'prop `x` creates vertical lines',
+        fill: 'var(--color-text-3)',
+        position: 'insideTop',
+        offset: 70,
+      }}
     />
     <ReferenceLine
       y={4000}
-      label={{ value: 'prop `y` creates horizontal lines', fill: 'black', position: 'insideTopRight' }}
+      label={{ value: 'prop `y` creates horizontal lines', fill: 'var(--color-text-3)', position: 'insideTopRight' }}
       stroke="red"
       strokeDasharray="3 3"
     />
     <ReferenceLine
-      label={{ value: 'prop `segment` connects two arbitrary points', fill: 'black', position: 'middle' }}
+      label={{ value: 'prop `segment` connects two arbitrary points', fill: 'var(--color-text-3)', position: 'middle' }}
       stroke="green"
       strokeDasharray="3 3"
       segment={[

@@ -60,13 +60,43 @@ const LineChartExample = ({ isAnimationActive = true }) => (
       bottom: 5,
     }}
   >
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name" />
-    <YAxis width="auto" />
-    <Tooltip />
+    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+    <XAxis dataKey="name" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
+    <Tooltip
+      cursor={{
+        stroke: 'var(--color-border-2)',
+      }}
+      contentStyle={{
+        backgroundColor: 'var(--color-surface-raised)',
+        borderColor: 'var(--color-border-2)',
+      }}
+    />
     <Legend />
-    <Line type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={isAnimationActive} />
-    <Line type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={isAnimationActive} />
+    <Line
+      type="monotone"
+      dataKey="pv"
+      stroke="var(--color-chart-1)"
+      isAnimationActive={isAnimationActive}
+      dot={{
+        fill: 'var(--color-surface-base)',
+      }}
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
+    />
+    <Line
+      type="monotone"
+      dataKey="uv"
+      stroke="var(--color-chart-2)"
+      isAnimationActive={isAnimationActive}
+      dot={{
+        fill: 'var(--color-surface-base)',
+      }}
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
+    />
     <RechartsDevtools />
   </LineChart>
 );

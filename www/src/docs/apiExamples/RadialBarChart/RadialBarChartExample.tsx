@@ -61,13 +61,19 @@ export const RadialBarChartExample = ({ isAnimationActive = true }: { isAnimatio
     endAngle={0}
   >
     <RadialBar
-      label={{ fill: '#666', position: 'insideStart' }}
-      background
+      label={{ fill: 'var(--color-text-1)', position: 'insideStart' }}
+      background={{
+        fill: 'var(--color-solid-6a)',
+      }}
       dataKey="uv"
       isAnimationActive={isAnimationActive}
     />
     <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" align="right" />
-    <Tooltip />
+    <Tooltip
+      contentStyle={{ backgroundColor: 'var(--color-surface-raised)', borderColor: 'var(--color-border-2)' }}
+      itemStyle={{ color: 'var(--color-text-1)' }}
+      cursor={{ stroke: 'var(--color-border-2)' }}
+    />
     <RechartsDevtools />
   </RadialBarChart>
 );

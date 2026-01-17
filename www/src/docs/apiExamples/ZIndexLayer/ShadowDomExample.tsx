@@ -62,11 +62,15 @@ export default function ShadowDomExample({ isAnimationActive = true }: { isAnima
           labelLine={false}
           label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
           outerRadius={100}
-          fill="#8884d8"
+          fill="var(--color-chart-1)"
+          stroke="var(--color-surface-base)"
           dataKey="value"
           isAnimationActive={isAnimationActive}
         />
-        <Tooltip />
+        <Tooltip
+          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+          itemStyle={{ color: 'var(--color-text-3)' }}
+        />
         <Legend />
         <RechartsDevtools />
       </PieChart>

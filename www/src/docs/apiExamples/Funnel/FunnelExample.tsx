@@ -3,26 +3,47 @@ import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
-  { value: 100, name: 'Impression', fill: '#8884d8' },
-  { value: 80, name: 'Click', fill: '#83a6ed' },
-  { value: 50, name: 'Visit', fill: '#8dd1e1' },
-  { value: 40, name: 'Consult', fill: '#82ca9d' },
-  { value: 26, name: 'Order', fill: '#a4de6c' },
+  { value: 100, name: 'Impression', fill: 'var(--color-chart-1)' },
+  { value: 80, name: 'Click', fill: 'var(--color-chart-7)' },
+  { value: 50, name: 'Visit', fill: 'var(--color-chart-4)' },
+  { value: 40, name: 'Consult', fill: 'var(--color-chart-2)' },
+  { value: 26, name: 'Order', fill: 'var(--color-chart-5)' },
 ];
 
 const FunnelWithDimensions = (props: FunnelTrapezoidItem) => {
   return (
     <>
-      <Trapezoid {...props} stroke="red" fill="orange" fillOpacity={0.2} />
+      <Trapezoid {...props} stroke="var(--color-chart-8)" fill="var(--color-chart-8)" fillOpacity={0.2} />
       <Label
         position="insideBottom"
         value={`lowerWidth: ${Math.round(props.lowerWidth)}`}
         viewBox={props.labelViewBox}
+        fill="var(--color-text-3)"
       />
-      <Label position="insideTop" value={`upperWidth: ${Math.round(props.upperWidth)}`} viewBox={props.labelViewBox} />
-      <Label position="insideTopLeft" value={`x: ${Math.round(props.x)}`} viewBox={props.labelViewBox} />
-      <Label position="insideTopRight" value={`y: ${Math.round(props.y)}`} viewBox={props.labelViewBox} />
-      <Label position="middle" value={`width: ${Math.round(props.width)}`} viewBox={props.labelViewBox} />
+      <Label
+        position="insideTop"
+        value={`upperWidth: ${Math.round(props.upperWidth)}`}
+        viewBox={props.labelViewBox}
+        fill="var(--color-text-3)"
+      />
+      <Label
+        position="insideTopLeft"
+        value={`x: ${Math.round(props.x)}`}
+        viewBox={props.labelViewBox}
+        fill="var(--color-text-3)"
+      />
+      <Label
+        position="insideTopRight"
+        value={`y: ${Math.round(props.y)}`}
+        viewBox={props.labelViewBox}
+        fill="var(--color-text-3)"
+      />
+      <Label
+        position="middle"
+        value={`width: ${Math.round(props.width)}`}
+        viewBox={props.labelViewBox}
+        fill="var(--color-text-3)"
+      />
     </>
   );
 };
@@ -43,8 +64,9 @@ const FunnelExample = ({ isAnimationActive = true }: { isAnimationActive?: boole
         isAnimationActive={isAnimationActive}
         activeShape={FunnelWithDimensions}
         reversed
+        stroke="var(--color-surface-base)"
       >
-        <LabelList position="right" fill="#000" stroke="none" dataKey="name" offset={20} />
+        <LabelList position="right" fill="var(--color-text-3)" stroke="none" dataKey="name" offset={20} />
       </Funnel>
       <RechartsDevtools />
     </FunnelChart>
