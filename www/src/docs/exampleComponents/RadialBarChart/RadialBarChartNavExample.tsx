@@ -14,7 +14,7 @@ const RadialBarChartNavExample = () => {
       <RadialBar
         dataKey="uv"
         background={{
-          fill: 'var(--color-border-3)',
+          fill: 'var(--color-border-4)',
         }}
       />
       <PolarAngleAxis domain={[0, 44]} type="number" dataKey="uv" />
