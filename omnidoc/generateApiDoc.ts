@@ -257,7 +257,10 @@ export function getLinksFromProp(
   // In case of multiple (overloading), we merge tags.
   const allExamples = meta.map(propMeta => propMeta.jsDoc).flatMap(getAllLinksFromJsDoc);
 
-  const scannedExamples = exampleReader.getExamples(componentName, propName).map(makePropExample);
+  const scannedExamples = exampleReader
+    .getExamples(componentName, propName)
+    .filter(ex => ex.url !== `/api/${componentName}/`)
+    .map(makePropExample);
 
   // Some components and props have dozens of examples, so let's show the top 10 only
   const scannedLimitedExamples = scannedExamples.slice(0, 10);
@@ -276,7 +279,10 @@ function getLinksFromComponent(
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   const jsDocExamples = componentJsDoc ? getAllLinksFromJsDoc(componentJsDoc) : [];
 
-  const scannedExamples = exampleReader.getExamples(componentName).map(makePropExample);
+  const scannedExamples = exampleReader
+    .getExamples(componentName)
+    .filter(ex => ex.url !== `/api/${componentName}/`)
+    .map(makePropExample);
 
   // Some components and props have dozens of examples, so let's show the top 10 only
   const scannedLimitedExamples = scannedExamples.slice(0, 10);

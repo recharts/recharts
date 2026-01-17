@@ -18,11 +18,6 @@ export const LabelListAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     {
       name: 'clockWise',
@@ -90,10 +85,6 @@ export const LabelListAPI: ApiDoc = {
       examples: [
         { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
       ],
     },
     {
@@ -139,7 +130,6 @@ export const LabelListAPI: ApiDoc = {
         ),
       },
       defaultVal: 5,
-      examples: [{ name: 'Funnel Example', url: '/api/Funnel/', isExternal: false }],
     },
     {
       name: 'position',
@@ -155,12 +145,6 @@ export const LabelListAPI: ApiDoc = {
       defaultVal: 'middle',
       examples: [
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
@@ -175,11 +159,6 @@ export const LabelListAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     {
       name: 'zIndex',
@@ -204,12 +183,6 @@ export const LabelListAPI: ApiDoc = {
     { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
     { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
     { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-    { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-    { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
-    { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-    { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-    { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-    { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
   ],
   parentComponents: ['Area', 'Bar', 'Funnel', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],
 };

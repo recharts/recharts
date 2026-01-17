@@ -88,8 +88,6 @@ export const ScatterChartAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -167,8 +165,6 @@ export const ScatterChartAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {
@@ -218,8 +214,6 @@ export const ScatterChartAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {
@@ -293,8 +287,6 @@ export const ScatterChartAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {
@@ -503,8 +495,6 @@ export const ScatterChartAPI: ApiDoc = {
       url: '/examples/ScatterChartPerformance/',
       isExternal: false,
     },
-    { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-    { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

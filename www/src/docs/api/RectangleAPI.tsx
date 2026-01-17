@@ -20,7 +20,6 @@ export const RectangleAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     { name: 'isAnimationActive', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'isUpdateAnimationActive', type: 'boolean', isOptional: true, defaultVal: false },
@@ -54,7 +53,6 @@ export const RectangleAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'x',
@@ -68,7 +66,6 @@ export const RectangleAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'y',
@@ -82,7 +79,6 @@ export const RectangleAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'onClick',
@@ -199,6 +195,5 @@ export const RectangleAPI: ApiDoc = {
   links: [
     { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
     { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
-    { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
   ],
 };

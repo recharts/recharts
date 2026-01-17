@@ -85,7 +85,6 @@ export const AreaChartAPI: ApiDoc = {
         { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
         { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
         { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -118,7 +117,6 @@ export const AreaChartAPI: ApiDoc = {
         { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
         { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
         { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
       ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
@@ -172,7 +170,6 @@ export const AreaChartAPI: ApiDoc = {
         { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
         { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
         { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
       ],
     },
     {
@@ -218,8 +215,6 @@ export const AreaChartAPI: ApiDoc = {
         { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
         { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
         { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
-        { name: 'Reference Line Example', url: '/api/ReferenceLine/', isExternal: false },
       ],
     },
     {
@@ -290,8 +285,6 @@ export const AreaChartAPI: ApiDoc = {
         { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
         { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
         { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
-        { name: 'Reference Line Example', url: '/api/ReferenceLine/', isExternal: false },
       ],
     },
     {
@@ -497,7 +490,6 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
     { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
     { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
-    { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

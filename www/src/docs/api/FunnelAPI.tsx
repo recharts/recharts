@@ -25,11 +25,6 @@ export const FunnelAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
     },
     {
       name: 'activeShape',
@@ -45,7 +40,6 @@ export const FunnelAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Funnel Example', url: '/api/Funnel/', isExternal: false }],
     },
     {
       name: 'animationBegin',
@@ -86,16 +80,7 @@ export const FunnelAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -116,10 +101,6 @@ export const FunnelAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
-      examples: [
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
     },
     {
       name: 'hide',
@@ -170,11 +151,6 @@ export const FunnelAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
     },
     { name: 'label', type: 'Function | Props | ReactNode | false | true', isOptional: true },
     { name: 'lastShapeType', type: '"rectangle" | "triangle"', isOptional: true, defaultVal: 'triangle' },
@@ -215,16 +191,7 @@ export const FunnelAPI: ApiDoc = {
       },
       defaultVal: 'name',
     },
-    {
-      name: 'reversed',
-      type: 'boolean',
-      isOptional: true,
-      defaultVal: false,
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-      ],
-    },
+    { name: 'reversed', type: 'boolean', isOptional: true, defaultVal: false },
     {
       name: 'shape',
       type: '(union of 5 variants)',
@@ -511,11 +478,6 @@ export const FunnelAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
-  ],
-  links: [
-    { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-    { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-    { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Cell', 'LabelList'],

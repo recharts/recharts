@@ -23,30 +23,64 @@ export class ExampleReader {
       this.initialize();
     }
 
-    const examples = new Map<string, ExampleResult>();
+    const explicitExamples = new Map<string, ExampleResult>();
+    const implicitExamples = new Map<string, ExampleResult>();
 
     this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
       if (!sourceFile) return;
 
       // Check for component usage
-      const isExplicitApiExample = exList.some(ex => ex.url === `/api/${componentName}/`);
+      const explicitMatches = exList.filter(ex => ex.url === `/api/${componentName}/`);
+      const isExplicitApiExample = explicitMatches.length > 0;
 
-      if (isExplicitApiExample || this.isComponentUsed(sourceFile, componentName)) {
-        // If propName is specified, check for prop usage
+      if (isExplicitApiExample) {
         if (propName) {
-          // For explicit API examples, we can't easily verify prop usage if the component isn't imported.
-          // We default to requiring explicit usage for props.
           if (this.isPropUsed(sourceFile, componentName, propName)) {
-            exList.forEach(ex => examples.set(ex.url, ex));
+            explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
           }
         } else {
-          exList.forEach(ex => examples.set(ex.url, ex));
+          explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
+        }
+      }
+
+      if (this.isComponentUsed(sourceFile, componentName)) {
+        // Implicit usage - add to implicit examples
+        // But filter out API examples that are NOT for this component
+        // i.e. if ex.url starts with /api/, it must match /api/${componentName}/
+
+        const filteredList = exList.filter(ex => {
+          if (ex.url.startsWith('/api/')) {
+            return ex.url === `/api/${componentName}/`;
+          }
+          return true; // Keep non-API examples (e.g. /examples/...)
+        });
+
+        // If propName is specified, check for prop usage
+        if (propName) {
+          if (this.isPropUsed(sourceFile, componentName, propName)) {
+            filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
+          }
+        } else {
+          filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
         }
       }
     });
 
-    return Array.from(examples.values());
+    if (explicitExamples.size > 0) {
+      // Merge explicit and implicit, preferring explicit
+      // Actually, we want to return BOTH, but explicit ones should override implicit ones if they are same URL (handled by Map)
+      // We want to return explicit matches AND implicit matches (like /examples/...)
+      // But we DONT want to return implicit matches that are actually API examples for OTHER components.
+
+      // The implicit logic above already filtered out irrelevant API examples.
+      // So we just merge.
+
+      implicitExamples.forEach((ex, url) => explicitExamples.set(url, ex));
+      return Array.from(explicitExamples.values());
+    }
+
+    return Array.from(implicitExamples.values());
   }
 
   private initialize() {

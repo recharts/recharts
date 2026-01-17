@@ -133,7 +133,6 @@ export const BarAPI: ApiDoc = {
         { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
         { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
         { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
       ],
     },
     {
@@ -145,9 +144,6 @@ export const BarAPI: ApiDoc = {
         { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
         { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
-        { name: 'Cell Bar Example', url: '/api/Cell/', isExternal: false },
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -239,14 +235,7 @@ export const BarAPI: ApiDoc = {
       defaultVal: 'auto',
       examples: [
         { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-        { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
         { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
-        { name: 'Ranged Bar Chart Example', url: '/api/BarChart/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
-        { name: 'Cell Bar Example', url: '/api/Cell/', isExternal: false },
-        { name: 'Reference Line Position Example', url: '/api/ReferenceLine/', isExternal: false },
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
       ],
     },
     {
@@ -312,10 +301,7 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-        { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
-      ],
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'minPointSize',

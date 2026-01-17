@@ -65,7 +65,6 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       defaultVal: 0,
       examples: [
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     {
@@ -170,7 +169,6 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       ],
       examples: [
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     {
@@ -683,7 +681,6 @@ export const PolarRadiusAxisAPI: ApiDoc = {
   links: [
     { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
     { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-    { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Label'],

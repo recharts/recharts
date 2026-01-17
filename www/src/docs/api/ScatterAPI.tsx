@@ -74,7 +74,6 @@ export const ScatterAPI: ApiDoc = {
       examples: [
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
         { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -109,8 +108,6 @@ export const ScatterAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {
@@ -196,10 +193,6 @@ export const ScatterAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -380,8 +373,6 @@ export const ScatterAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {

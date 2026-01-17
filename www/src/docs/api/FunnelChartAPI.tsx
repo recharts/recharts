@@ -71,16 +71,7 @@ export const FunnelChartAPI: ApiDoc = {
         ),
       },
     },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'compact', type: 'boolean', isOptional: true },
     {
@@ -101,7 +92,6 @@ export const FunnelChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
-      examples: [{ name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false }],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
@@ -144,11 +134,6 @@ export const FunnelChartAPI: ApiDoc = {
         ),
       },
       defaultVal: { top: 5, right: 5, bottom: 5, left: 5 },
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
     },
     {
       name: 'maxBarSize',
@@ -183,12 +168,7 @@ export const FunnelChartAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [
-        { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
     },
     {
       name: 'reverseStackOrder',
@@ -244,16 +224,7 @@ export const FunnelChartAPI: ApiDoc = {
         },
       ],
     },
-    {
-      name: 'style',
-      type: 'React.CSSProperties',
-      isOptional: true,
-      examples: [
-        { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-        { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
-      ],
-    },
+    { name: 'style', type: 'React.CSSProperties', isOptional: true },
     {
       name: 'syncId',
       type: 'number | string',
@@ -446,11 +417,6 @@ export const FunnelChartAPI: ApiDoc = {
         ),
       },
     },
-  ],
-  links: [
-    { name: 'Label Funnel Positions Example', url: '/api/Label/', isExternal: false },
-    { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
-    { name: 'Funnel Chart Example', url: '/api/FunnelChart/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

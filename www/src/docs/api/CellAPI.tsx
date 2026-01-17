@@ -18,7 +18,6 @@ export const CellAPI: ApiDoc = {
     { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
     { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
     { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
-    { name: 'Cell Bar Example', url: '/api/Cell/', isExternal: false },
   ],
   parentComponents: ['Bar', 'Funnel', 'Pie', 'RadialBar', 'Scatter'],
 };

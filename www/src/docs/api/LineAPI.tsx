@@ -43,8 +43,6 @@ export const LineAPI: ApiDoc = {
         { name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/', isExternal: false },
         { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
         { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     { name: 'animateNewValues', type: 'boolean', isOptional: true, defaultVal: true },
@@ -93,8 +91,6 @@ export const LineAPI: ApiDoc = {
       isOptional: true,
       examples: [
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -201,8 +197,6 @@ export const LineAPI: ApiDoc = {
         { name: 'A line chart with customized dot', url: '/examples/CustomizedDotLineChart/', isExternal: false },
         { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     {
@@ -256,15 +250,6 @@ export const LineAPI: ApiDoc = {
       defaultVal: 'auto',
       examples: [
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/LineChart/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useIsTooltipActive/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipCoordinate/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipDataPoints/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipLabel/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useMargin/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useOffset/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/usePlotArea/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useChartWidth/', isExternal: false },
       ],
     },
     {
@@ -335,7 +320,6 @@ export const LineAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Legend Example', url: '/api/Legend/', isExternal: false }],
     },
     { name: 'path', type: 'string', isOptional: true },
     {
@@ -381,7 +365,6 @@ export const LineAPI: ApiDoc = {
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
         { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/LineChart/', isExternal: false },
       ],
     },
     {
@@ -422,10 +405,6 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: 1,
-      examples: [
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     {
@@ -453,10 +432,6 @@ export const LineAPI: ApiDoc = {
         { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
         { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
         { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/LineChart/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useIsTooltipActive/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipCoordinate/', isExternal: false },
-        { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipDataPoints/', isExternal: false },
       ],
     },
     {

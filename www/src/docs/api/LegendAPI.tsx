@@ -29,10 +29,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'center',
-      examples: [
-        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -89,10 +86,6 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-        { name: 'Legend Example', url: '/api/Legend/', isExternal: false },
-      ],
     },
     {
       name: 'iconSize',
@@ -106,10 +99,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 14,
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     {
       name: 'iconType',
@@ -168,10 +158,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'horizontal',
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     { name: 'payloadUniqBy', type: 'UniqueFunc<LegendPayload> | false | true', isOptional: true },
     {
@@ -223,8 +210,6 @@ export const LegendAPI: ApiDoc = {
         { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
         { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
         { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-        { name: 'Legend Example', url: '/api/Legend/', isExternal: false },
       ],
     },
     {
@@ -241,7 +226,6 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'wrapperStyle',

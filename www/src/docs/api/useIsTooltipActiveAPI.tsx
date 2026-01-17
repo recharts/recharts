@@ -19,18 +19,6 @@ export const useIsTooltipActiveAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [
-    { name: 'Simple Line Chart Example', url: '/api/LineChart/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useIsTooltipActive/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipCoordinate/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipDataPoints/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipLabel/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useMargin/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useOffset/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/usePlotArea/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useChartWidth/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useChartHeight/', isExternal: false },
-  ],
   returnValue: 'boolean',
   returnDesc: {
     'en-US': (

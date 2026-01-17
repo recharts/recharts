@@ -64,7 +64,6 @@ export const RadarChartAPI: ApiDoc = {
       examples: [
         { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -121,7 +120,6 @@ export const RadarChartAPI: ApiDoc = {
       examples: [
         { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
@@ -242,7 +240,6 @@ export const RadarChartAPI: ApiDoc = {
         { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
         { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
@@ -273,7 +270,6 @@ export const RadarChartAPI: ApiDoc = {
       examples: [
         { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     {
@@ -472,7 +468,6 @@ export const RadarChartAPI: ApiDoc = {
   links: [
     { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
     { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-    { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

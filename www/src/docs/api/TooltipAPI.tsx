@@ -149,9 +149,6 @@ export const TooltipAPI: ApiDoc = {
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
         { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
         { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {

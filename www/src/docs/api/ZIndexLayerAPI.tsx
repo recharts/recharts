@@ -21,10 +21,6 @@ export const ZIndexLayerAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     {
       name: 'children',
@@ -40,10 +36,6 @@ export const ZIndexLayerAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
   ],
   desc: {
@@ -59,8 +51,4 @@ export const ZIndexLayerAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [
-    { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
-    { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-  ],
 };

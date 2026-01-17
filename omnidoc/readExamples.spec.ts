@@ -49,4 +49,13 @@ describe('ExampleReader', () => {
       url: '/examples/MultiXAxisExample/',
     });
   });
+
+  it('should find examples for useChartWidth', () => {
+    const examples = reader.getExamples('useChartWidth');
+    expect(examples).toHaveLength(1);
+    expect(examples).toContainEqual({
+      url: '/api/useChartWidth/',
+      name: 'useChartWidth API Example',
+    });
+  });
 });

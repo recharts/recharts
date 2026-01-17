@@ -3,12 +3,7 @@ import { ApiDoc } from './types';
 export const LayerAPI: ApiDoc = {
   name: 'Layer',
   props: [
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
   ],
   desc: {
@@ -28,6 +23,5 @@ export const LayerAPI: ApiDoc = {
       url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/g',
       isExternal: true,
     },
-    { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
   ],
 };

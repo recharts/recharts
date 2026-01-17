@@ -143,10 +143,7 @@ export const BarChartAPI: ApiDoc = {
       name: 'id',
       type: 'string',
       isOptional: true,
-      examples: [
-        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-        { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
-      ],
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'layout',

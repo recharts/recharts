@@ -71,7 +71,6 @@ export const PieAPI: ApiDoc = {
       isOptional: true,
       examples: [
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
-        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -104,11 +103,9 @@ export const PieAPI: ApiDoc = {
       defaultVal: '50%',
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -128,11 +125,9 @@ export const PieAPI: ApiDoc = {
       defaultVal: '50%',
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
@@ -156,7 +151,6 @@ export const PieAPI: ApiDoc = {
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
@@ -168,7 +162,6 @@ export const PieAPI: ApiDoc = {
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
-        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
       ],
     },
     {
@@ -196,7 +189,6 @@ export const PieAPI: ApiDoc = {
       defaultVal: 'value',
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
@@ -208,7 +200,6 @@ export const PieAPI: ApiDoc = {
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -277,7 +268,6 @@ export const PieAPI: ApiDoc = {
       defaultVal: 0,
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         {
           name: 'Pie Chart with gap and rounded corners',
@@ -305,7 +295,6 @@ export const PieAPI: ApiDoc = {
       defaultVal: 'auto',
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
@@ -315,8 +304,6 @@ export const PieAPI: ApiDoc = {
           isExternal: false,
         },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
-        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -362,12 +349,9 @@ export const PieAPI: ApiDoc = {
       ],
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
-        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -393,7 +377,6 @@ export const PieAPI: ApiDoc = {
       ],
       examples: [
         { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -479,7 +462,6 @@ export const PieAPI: ApiDoc = {
       defaultVal: '80%',
       examples: [
         { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
         { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
         { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
         {
@@ -489,7 +471,6 @@ export const PieAPI: ApiDoc = {
         },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -830,7 +811,6 @@ export const PieAPI: ApiDoc = {
   ],
   links: [
     { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
-    { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
     { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
     { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
     { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
@@ -838,7 +818,6 @@ export const PieAPI: ApiDoc = {
     { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
     { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
     { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
-    { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Cell', 'LabelList'],

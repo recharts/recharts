@@ -29,10 +29,7 @@ export const ErrorBarAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
-      ],
+      examples: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
     },
     { name: 'animationBegin', type: 'number', isOptional: true, defaultVal: 0 },
     { name: 'animationDuration', type: 'number', isOptional: true, defaultVal: 400 },
@@ -56,15 +53,8 @@ export const ErrorBarAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false }],
     },
-    {
-      name: 'isAnimationActive',
-      type: 'boolean',
-      isOptional: true,
-      defaultVal: true,
-      examples: [{ name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false }],
-    },
+    { name: 'isAnimationActive', type: 'boolean', isOptional: true, defaultVal: true },
     {
       name: 'stroke',
       type: 'string',
@@ -77,7 +67,6 @@ export const ErrorBarAPI: ApiDoc = {
         ),
       },
       defaultVal: 'black',
-      examples: [{ name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false }],
     },
     {
       name: 'strokeWidth',
@@ -91,7 +80,6 @@ export const ErrorBarAPI: ApiDoc = {
         ),
       },
       defaultVal: 1.5,
-      examples: [{ name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false }],
     },
     {
       name: 'width',
@@ -109,10 +97,7 @@ export const ErrorBarAPI: ApiDoc = {
         ),
       },
       defaultVal: 5,
-      examples: [
-        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
-      ],
+      examples: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
     },
     {
       name: 'zIndex',
@@ -151,9 +136,6 @@ export const ErrorBarAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [
-    { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
-    { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
-  ],
+  links: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
   parentComponents: ['Bar', 'Line', 'Scatter'],
 };

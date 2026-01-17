@@ -60,10 +60,7 @@ export const TreemapAPI: ApiDoc = {
         ),
       },
       defaultVal: 1.618033988749895,
-      examples: [
-        { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false }],
     },
     {
       name: 'children',
@@ -72,7 +69,6 @@ export const TreemapAPI: ApiDoc = {
       examples: [
         { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
         { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -116,7 +112,6 @@ export const TreemapAPI: ApiDoc = {
       examples: [
         { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
         { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
       ],
     },
     {
@@ -145,7 +140,6 @@ export const TreemapAPI: ApiDoc = {
       examples: [
         { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
         { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
       ],
     },
     {
@@ -155,7 +149,6 @@ export const TreemapAPI: ApiDoc = {
       examples: [
         { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
         { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
       ],
     },
     {
@@ -169,7 +162,6 @@ export const TreemapAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Treemap Example', url: '/api/Treemap/', isExternal: false }],
     },
     { name: 'id', type: 'string', isOptional: true },
     {
@@ -187,7 +179,6 @@ export const TreemapAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
-      examples: [{ name: 'Treemap Example', url: '/api/Treemap/', isExternal: false }],
     },
     { name: 'isUpdateAnimationActive', type: '"auto" | false | true', isOptional: true, defaultVal: 'auto' },
     {
@@ -222,7 +213,6 @@ export const TreemapAPI: ApiDoc = {
       examples: [
         { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
         { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
       ],
     },
     {
@@ -266,7 +256,6 @@ export const TreemapAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Treemap Example', url: '/api/Treemap/', isExternal: false }],
     },
     {
       name: 'onAnimationEnd',
@@ -306,7 +295,6 @@ export const TreemapAPI: ApiDoc = {
   links: [
     { name: 'Simple Treemap', url: '/examples/SimpleTreemap/', isExternal: false },
     { name: 'Custom Content Treemap', url: '/examples/CustomContentTreemap/', isExternal: false },
-    { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: ['Tooltip'],

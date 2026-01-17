@@ -22,14 +22,8 @@ export const SunburstChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12, fill: '#8884d8' }, { name: 'b', value: 5, fill: '#83a6ed' }]}"],
-      examples: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
     },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'cx',
@@ -80,7 +74,6 @@ export const SunburstChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 360,
-      examples: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
     },
     { name: 'fill', type: 'string', isOptional: true, defaultVal: '#333' },
     {
@@ -209,7 +202,6 @@ export const SunburstChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
     },
     { name: 'stroke', type: 'string', isOptional: true, defaultVal: '#FFF' },
     { name: 'style', type: 'React.CSSProperties', isOptional: true },
@@ -263,7 +255,6 @@ export const SunburstChartAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: ['Tooltip'],
 };

@@ -77,7 +77,6 @@ export const RadarAPI: ApiDoc = {
       examples: [
         { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
         { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-        { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
       ],
     },
     {
@@ -127,7 +126,6 @@ export const RadarAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
-      examples: [{ name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false }],
     },
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
@@ -235,7 +233,6 @@ export const RadarAPI: ApiDoc = {
   links: [
     { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
     { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
-    { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['LabelList'],

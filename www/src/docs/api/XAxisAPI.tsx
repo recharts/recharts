@@ -89,15 +89,7 @@ export const XAxisAPI: ApiDoc = {
       defaultVal: true,
       examples: [{ name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false }],
     },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
-      ],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     {
       name: 'className',
       type: 'string',
@@ -188,8 +180,6 @@ export const XAxisAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     {
@@ -223,10 +213,6 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     {
       name: 'includeHidden',
@@ -359,9 +345,6 @@ export const XAxisAPI: ApiDoc = {
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
         { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
         { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {
@@ -620,9 +603,6 @@ export const XAxisAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {

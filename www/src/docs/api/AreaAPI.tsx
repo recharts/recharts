@@ -256,10 +256,6 @@ export const AreaAPI: ApiDoc = {
       defaultVal: 'auto',
       examples: [
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Ranged Area Chart Example', url: '/api/AreaChart/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
-        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
-        { name: 'Reference Line Example', url: '/api/ReferenceLine/', isExternal: false },
       ],
     },
     { name: 'isRange', type: 'boolean', isOptional: true },

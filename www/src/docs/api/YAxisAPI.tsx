@@ -180,8 +180,6 @@ export const YAxisAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
       ],
     },
     {
@@ -196,10 +194,6 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [
-        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
-        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
-      ],
     },
     {
       name: 'includeHidden',
@@ -278,8 +272,6 @@ export const YAxisAPI: ApiDoc = {
         { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
         { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
-        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
-        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
       ],
     },
     {
@@ -333,8 +325,6 @@ export const YAxisAPI: ApiDoc = {
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
         { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
         { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {
@@ -583,8 +573,6 @@ export const YAxisAPI: ApiDoc = {
           url: '/examples/ScatterChartPerformance/',
           isExternal: false,
         },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
       ],
     },
     {

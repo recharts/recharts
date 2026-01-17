@@ -62,10 +62,7 @@ export const RadialBarChartAPI: ApiDoc = {
       name: 'children',
       type: 'ReactNode',
       isOptional: true,
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -83,10 +80,7 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: '50%',
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     {
       name: 'cy',
@@ -103,7 +97,6 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: '50%',
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'data',
@@ -123,10 +116,7 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
@@ -142,7 +132,6 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 360,
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'height',
@@ -173,7 +162,6 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'layout',
@@ -217,7 +205,6 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: '80%',
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'responsive',
@@ -243,7 +230,6 @@ export const RadialBarChartAPI: ApiDoc = {
       examples: [
         { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
         { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
       ],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
@@ -266,16 +252,12 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'style',
       type: 'React.CSSProperties',
       isOptional: true,
-      examples: [
-        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-      ],
+      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
     },
     {
       name: 'syncId',
@@ -470,10 +452,7 @@ export const RadialBarChartAPI: ApiDoc = {
       },
     },
   ],
-  links: [
-    { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
-    { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
-  ],
+  links: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
     'Label',

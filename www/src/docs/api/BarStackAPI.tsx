@@ -7,10 +7,7 @@ export const BarStackAPI: ApiDoc = {
       name: 'children',
       type: 'ReactNode',
       isOptional: true,
-      examples: [
-        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-        { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
-      ],
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'radius',
@@ -42,10 +39,7 @@ export const BarStackAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [
-        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-        { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
-      ],
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'stackId',
@@ -75,9 +69,6 @@ export const BarStackAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [
-    { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
-    { name: 'Ranged Stacked Bar Chart', url: '/api/BarStack/', isExternal: false },
-  ],
+  links: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
   childrenComponents: ['Bar'],
 };

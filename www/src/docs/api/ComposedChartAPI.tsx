@@ -84,7 +84,6 @@ export const ComposedChartAPI: ApiDoc = {
         { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -116,7 +115,6 @@ export const ComposedChartAPI: ApiDoc = {
         { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
       ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
@@ -224,7 +222,6 @@ export const ComposedChartAPI: ApiDoc = {
         { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
         { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
       ],
     },
     {
@@ -293,7 +290,6 @@ export const ComposedChartAPI: ApiDoc = {
         { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
         { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
-        { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
       ],
     },
     {
@@ -507,7 +503,6 @@ export const ComposedChartAPI: ApiDoc = {
     { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
     { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
     { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
-    { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

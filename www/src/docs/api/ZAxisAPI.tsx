@@ -30,8 +30,6 @@ export const ZAxisAPI: ApiDoc = {
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {
@@ -83,11 +81,7 @@ export const ZAxisAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-      ],
+      examples: [{ name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false }],
     },
     {
       name: 'range',
@@ -106,8 +100,6 @@ export const ZAxisAPI: ApiDoc = {
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {
@@ -162,8 +154,6 @@ export const ZAxisAPI: ApiDoc = {
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
       ],
     },
     {
@@ -177,11 +167,7 @@ export const ZAxisAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [
-        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
-        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-      ],
+      examples: [{ name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false }],
     },
     {
       name: 'zAxisId',
@@ -212,8 +198,6 @@ export const ZAxisAPI: ApiDoc = {
     { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
     { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
     { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-    { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-    { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
 };
