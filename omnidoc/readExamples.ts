@@ -64,19 +64,9 @@ export class ExampleReader {
       }
     });
 
-    if (explicitExamples.size > 0) {
-      // Merge explicit and implicit, preferring explicit
-      // Actually, we want to return BOTH, but explicit ones should override implicit ones if they are same URL (handled by Map)
-      // We want to return explicit matches AND implicit matches (like /examples/...)
-      // But we DONT want to return implicit matches that are actually API examples for OTHER components.
-
-      // The implicit logic above already filtered out irrelevant API examples.
-      // So we just merge.
-
-      implicitExamples.forEach((ex, url) => explicitExamples.set(url, ex));
-      return Array.from(explicitExamples.values());
-    }
-
+    // Merge implicit into explicit, preferring explicit when URLs collide
+    // (explicit examples are set first, then we only add implicit if URL not present)
+    explicitExamples.forEach((ex, url) => implicitExamples.set(url, ex));
     return Array.from(implicitExamples.values());
   }
 

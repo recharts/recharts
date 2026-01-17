@@ -324,10 +324,7 @@ export const BarAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [
-        { name: 'Chart with min bar height', url: '/examples/BarChartWithMinHeight', isExternal: false },
-        { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
-      ],
+      examples: [{ name: 'Chart with min bar height', url: '/examples/BarChartWithMinHeight/', isExternal: false }],
     },
     {
       name: 'name',
