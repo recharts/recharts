@@ -71,13 +71,30 @@ export default function BandedChart() {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
       <Legend content={renderLegendWithoutRange} />
       <Tooltip content={renderTooltipWithoutRange} />
-      <Line type="natural" dataKey="b" stroke="#ff00ff" connectNulls />
-      <Area type="monotone" dataKey="a" stroke="none" fill="#cccccc" connectNulls dot={false} activeDot={false} />
+      <Line
+        type="natural"
+        dataKey="b"
+        stroke="var(--color-chart-11)"
+        connectNulls
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{ stroke: 'var(--color-surface-base)' }}
+      />
+      <Area
+        type="monotone"
+        dataKey="a"
+        stroke="none"
+        fill="var(--color-solid-6a)"
+        connectNulls
+        dot={false}
+        activeDot={false}
+      />
       <RechartsDevtools />
     </ComposedChart>
   );

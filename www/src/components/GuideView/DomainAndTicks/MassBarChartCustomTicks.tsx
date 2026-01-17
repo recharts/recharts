@@ -103,16 +103,34 @@ export default function MassBarChartCustomTicks() {
       responsive
       data={solarSystem}
     >
-      <XAxis dataKey="name" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
       <YAxis
         scale="log"
         domain={[1e22, 3e30]}
         tickFormatter={kgToYottagram}
         width={100}
-        label={{ value: 'Mass log10[yottagram]', position: 'insideLeft', dx: 0, dy: 60, angle: -90 }}
+        stroke="var(--color-text-3)"
+        label={{
+          value: 'Mass log10[yottagram]',
+          position: 'insideLeft',
+          dx: 0,
+          dy: 60,
+          angle: -90,
+          fill: 'var(--color-text-3)',
+        }}
       />
-      <Bar dataKey="massKg" name="mass" unit=" yottagram" />
-      <Tooltip formatter={kgToYottagram} />
+      <Bar dataKey="massKg" name="mass" unit="yottagram" stroke="var(--color-border-2)" />
+      <Tooltip
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        cursor={{ fill: 'var(--color-solid-7a)' }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+        formatter={kgToYottagram}
+      />
       <RechartsDevtools />
     </BarChart>
   );

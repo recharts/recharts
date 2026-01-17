@@ -9,7 +9,15 @@ export default function ChartWithoutSize() {
         { x: 2, y: 4 },
       ]}
     >
-      <Line dataKey="y" />
+      <Line
+        dataKey="y"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </LineChart>
   );

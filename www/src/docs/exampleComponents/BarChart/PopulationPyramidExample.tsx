@@ -74,7 +74,9 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         label={{
           value: '% of total population',
           position: 'insideBottom',
+          fill: 'var(--color-text-3)',
         }}
+        stroke="var(--color-text-3)"
       />
       <YAxis
         width="auto"
@@ -86,13 +88,15 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
           angle: -90,
           position: 'insideLeft',
           offset: 10,
+          fill: 'var(--color-text-3)',
         }}
+        stroke="var(--color-text-3)"
       />
       <Bar
         stackId="age"
         name="Female"
         dataKey="female"
-        fill="#ed7485"
+        fill="var(--color-chart-11)"
         radius={[0, 5, 5, 0]}
         label={{ position: 'right', formatter: formatPercent }}
       />
@@ -100,11 +104,21 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         stackId="age"
         name="Male"
         dataKey="male"
-        fill="#6ea1c7"
+        fill="var(--color-chart-10)"
         radius={[0, 5, 5, 0]}
         label={{ position: 'right', formatter: formatPercent }}
       />
-      <Tooltip<number, string> formatter={formatPercent} defaultIndex={defaultIndex} />
+      <Tooltip<number, string>
+        formatter={formatPercent}
+        defaultIndex={defaultIndex}
+        cursor={{
+          fill: 'var(--color-solid-7a)',
+        }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
       <Legend itemSorter={itemSorter} verticalAlign="top" align="right" />
       <RechartsDevtools />
     </BarChart>

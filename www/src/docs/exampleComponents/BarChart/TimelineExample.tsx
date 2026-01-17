@@ -87,7 +87,7 @@ const CustomFillRectangle = (props: BarShapeProps) => {
 };
 
 const ActiveRectangle = (props: BarShapeProps) => {
-  return <CustomFillRectangle {...props} stroke="orange" strokeWidth={3} />;
+  return <CustomFillRectangle {...props} stroke="var(--color-chart-8)" strokeWidth={3} />;
 };
 
 // #endregion
@@ -100,9 +100,24 @@ export default function TimelineExample({ defaultIndex }: { defaultIndex?: numbe
       data={data}
       margin={{ bottom: 20 }}
     >
-      <CartesianGrid strokeDasharray="2 2" />
-      <Tooltip shared={false} defaultIndex={defaultIndex} />
-      <XAxis type="number" height={50} label={{ value: 'Time (s)', position: 'insideBottomRight' }} />
+      <CartesianGrid strokeDasharray="2 2" stroke="var(--color-border-3)" />
+      <Tooltip
+        shared={false}
+        defaultIndex={defaultIndex}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
+      <XAxis
+        type="number"
+        height={50}
+        label={{ value: 'Time (s)', position: 'insideBottomRight', fill: 'var(--color-text-3)' }}
+        stroke="var(--color-text-3)"
+      />
       <YAxis
         type="category"
         dataKey="name"
@@ -112,7 +127,9 @@ export default function TimelineExample({ defaultIndex }: { defaultIndex?: numbe
           angle: -90,
           position: 'insideTopLeft',
           textAnchor: 'end',
+          fill: 'var(--color-text-3)',
         }}
+        stroke="var(--color-text-3)"
       />
       <Bar dataKey="firstCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
       <Bar dataKey="secondCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
