@@ -112,7 +112,11 @@ export interface BarRectangleItem extends RectangleProps {
   stackedBarStart: number;
 }
 
-export type BarShapeProps = BarRectangleItem & { isActive: boolean; index: number; option?: any };
+export type BarShapeProps = BarRectangleItem & {
+  isActive: boolean;
+  index: number;
+  option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+};
 
 export interface BarProps extends ZIndexable {
   className?: string;
