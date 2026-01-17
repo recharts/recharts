@@ -82,12 +82,39 @@ const getIntroOfPage = (label: string | number | undefined) => {
 const CustomTooltip = ({ active, payload, label }: TooltipContentProps<string | number, string>) => {
   const isVisible = active && payload && payload.length;
   return (
-    <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
+    <div
+      className="custom-tooltip"
+      style={{
+        visibility: isVisible ? 'visible' : 'hidden',
+        backgroundColor: 'var(--color-surface-raised)',
+        border: '1px solid var(--color-chart-1)',
+        borderRadius: '8px',
+      }}
+    >
       {isVisible && (
         <>
-          <p className="label">{`${label} : ${payload[0].value}`}</p>
-          <p className="intro">{getIntroOfPage(label)}</p>
-          <p className="desc">Anything you want can be displayed here.</p>
+          <p
+            className="label"
+            style={{
+              marginBlock: 0,
+            }}
+          >{`${label} : ${payload[0].value}`}</p>
+          <p
+            className="intro"
+            style={{
+              marginBlock: 0,
+            }}
+          >
+            {getIntroOfPage(label)}
+          </p>
+          <p
+            className="desc"
+            style={{
+              marginBlock: 0,
+            }}
+          >
+            Anything you want can be displayed here.
+          </p>
         </>
       )}
     </div>
@@ -113,12 +140,19 @@ const CustomContentOfTooltip = ({
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        content={CustomTooltip}
+        isAnimationActive={isAnimationActive}
+        defaultIndex={defaultIndex}
+        cursor={{
+          fill: 'var(--color-solid-7a)',
+        }}
+      />
       <Legend />
-      <Bar dataKey="pv" barSize={20} fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <Bar dataKey="pv" barSize={20} fill="var(--color-chart-1)" isAnimationActive={isAnimationActive} />
     </BarChart>
   );
 };

@@ -130,7 +130,7 @@
           transition: all 0.3s ease;
 
           &:hover {
-            background-color: var(--color-solid-1);
+            background-color: var(--color-solid-7a);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
             .user-name {
