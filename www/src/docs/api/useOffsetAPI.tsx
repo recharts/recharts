@@ -49,8 +49,6 @@ export const useOffsetAPI: ApiDoc = {
     { name: 'Simple Line Chart Example', url: '/api/usePlotArea/', isExternal: false },
     { name: 'Simple Line Chart Example', url: '/api/useChartWidth/', isExternal: false },
     { name: 'Simple Line Chart Example', url: '/api/useChartHeight/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useXAxisDomain/', isExternal: false },
-    { name: 'Simple Line Chart Example', url: '/api/useYAxisDomain/', isExternal: false },
   ],
   returnValue: 'ChartOffset | undefined',
   returnDesc: {

@@ -259,7 +259,10 @@ export function getLinksFromProp(
 
   const scannedExamples = exampleReader.getExamples(componentName, propName).map(makePropExample);
 
-  return deduplicatePropExamples([...allExamples, ...scannedExamples]);
+  // Some components and props have dozens of examples, so let's show the top 10 only
+  const scannedLimitedExamples = scannedExamples.slice(0, 10);
+
+  return deduplicatePropExamples([...allExamples, ...scannedLimitedExamples]);
 }
 
 /**
@@ -275,7 +278,10 @@ function getLinksFromComponent(
 
   const scannedExamples = exampleReader.getExamples(componentName).map(makePropExample);
 
-  return deduplicatePropExamples([...jsDocExamples, ...scannedExamples]);
+  // Some components and props have dozens of examples, so let's show the top 10 only
+  const scannedLimitedExamples = scannedExamples.slice(0, 10);
+
+  return deduplicatePropExamples([...jsDocExamples, ...scannedLimitedExamples]);
 }
 
 /**

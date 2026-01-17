@@ -169,7 +169,6 @@ export const PieAPI: ApiDoc = {
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
         { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
-        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -840,7 +839,6 @@ export const PieAPI: ApiDoc = {
     { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
     { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
     { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
-    { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Cell', 'LabelList'],

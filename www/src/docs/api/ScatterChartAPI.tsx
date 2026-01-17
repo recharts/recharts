@@ -90,8 +90,6 @@ export const ScatterChartAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
@@ -171,8 +169,6 @@ export const ScatterChartAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -224,8 +220,6 @@ export const ScatterChartAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -301,8 +295,6 @@ export const ScatterChartAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -513,8 +505,6 @@ export const ScatterChartAPI: ApiDoc = {
     },
     { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
     { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-    { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-    { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

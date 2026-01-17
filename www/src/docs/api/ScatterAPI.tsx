@@ -111,8 +111,6 @@ export const ScatterAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -384,8 +382,6 @@ export const ScatterAPI: ApiDoc = {
         },
         { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
         { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
       ],
     },
     {
@@ -652,10 +648,6 @@ export const ScatterAPI: ApiDoc = {
       url: '/examples/ScatterChartPerformance/',
       isExternal: false,
     },
-    { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
-    { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
-    { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
-    { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Cell', 'ErrorBar', 'LabelList'],
