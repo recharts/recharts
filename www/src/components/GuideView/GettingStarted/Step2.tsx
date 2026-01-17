@@ -45,10 +45,16 @@ const data = [
 export default function Step2() {
   return (
     <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }} responsive data={data}>
-      <CartesianGrid />
-      <Line dataKey="uv" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <Line
+        dataKey="uv"
+        dot={{ fill: 'var(--color-surface-base)' }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis stroke="var(--color-text-3)" />
       <Legend />
       <RechartsDevtools />
     </LineChart>

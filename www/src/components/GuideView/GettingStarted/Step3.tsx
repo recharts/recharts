@@ -1,5 +1,6 @@
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from '../../recharts';
 
 // #region Sample data
 const data = [
@@ -55,10 +56,22 @@ export default function Step3() {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
-      <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} />
+      <CartesianGrid strokeDasharray="5 5" stroke="var(--color-border-3)" />
+      <Line
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-11)"
+        strokeWidth={2}
+        name="My data series name"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} stroke="var(--color-text-3)" />
       <Legend align="right" />
       <RechartsDevtools />
     </LineChart>
