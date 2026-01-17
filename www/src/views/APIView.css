@@ -65,7 +65,7 @@
 
         .type {
           padding-left: 20px;
-          color: #bf2a5c;
+          color: var(--color-text-emphasis-1);
         }
         .optional {
           margin-left: 10px;

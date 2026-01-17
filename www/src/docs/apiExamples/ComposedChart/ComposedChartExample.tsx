@@ -54,14 +54,40 @@ const ComposedChartExample = ({ isAnimationActive = true }: { isAnimationActive?
     responsive
     data={data}
   >
-    <CartesianGrid stroke="#f5f5f5" />
-    <XAxis dataKey="name" />
-    <YAxis width="auto" />
+    <CartesianGrid stroke="var(--color-border-3)" />
+    <XAxis dataKey="name" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
     <Legend />
-    <Tooltip />
-    <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" isAnimationActive={isAnimationActive} />
-    <Bar dataKey="pv" barSize={20} fill="#413ea0" isAnimationActive={isAnimationActive} />
-    <Line type="monotone" dataKey="uv" stroke="#ff7300" isAnimationActive={isAnimationActive} />
+    <Tooltip
+      cursor={{
+        stroke: 'var(--color-border-2)',
+      }}
+      contentStyle={{
+        backgroundColor: 'var(--color-surface-raised)',
+        borderColor: 'var(--color-border-2)',
+      }}
+    />
+    <Area
+      type="monotone"
+      dataKey="amt"
+      fill="var(--color-chart-1)"
+      stroke="var(--color-chart-1)"
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
+      isAnimationActive={isAnimationActive}
+    />
+    <Bar dataKey="pv" barSize={20} fill="var(--color-chart-9)" isAnimationActive={isAnimationActive} />
+    <Line
+      type="monotone"
+      dataKey="uv"
+      stroke="var(--color-chart-8)"
+      isAnimationActive={isAnimationActive}
+      dot={{
+        fill: 'var(--color-surface-base)',
+      }}
+      activeDot={{ stroke: 'var(--color-surface-base)' }}
+    />
     <RechartsDevtools />
   </ComposedChart>
 );

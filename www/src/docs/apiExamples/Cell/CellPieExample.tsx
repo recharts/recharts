@@ -10,18 +10,25 @@ const data = [
   { name: 'Group E', value: 278 },
   { name: 'Group F', value: 189 },
 ];
-const colors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 'url(#pattern-checkers)'];
+const colors = [
+  'var(--color-chart-1)',
+  'var(--color-chart-7)',
+  'var(--color-chart-4)',
+  'var(--color-chart-2)',
+  'var(--color-chart-5)',
+  'url(#pattern-checkers)',
+];
 
 // #endregion
 const CellPieExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive>
     <defs>
       <pattern id="pattern-checkers" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-        <rect className="checker" x="0" width="5" height="5" y="0" />
-        <rect className="checker" x="10" width="5" height="5" y="10" />
+        <rect className="checker" x="0" width="5" height="5" y="0" fill="var(--color-solid-1a)" />
+        <rect className="checker" x="10" width="5" height="5" y="10" fill="var(--color-solid-1a)" />
       </pattern>
     </defs>
-    <Pie data={data} label isAnimationActive={isAnimationActive}>
+    <Pie data={data} label isAnimationActive={isAnimationActive} stroke="var(--color-surface-base)">
       {data.map((_entry, index) => (
         <Cell key={`cell-${index}`} fill={colors[index]} />
       ))}

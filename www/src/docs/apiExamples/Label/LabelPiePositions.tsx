@@ -10,12 +10,12 @@ const LabelPiePositions = ({ isAnimationActive = true }: { isAnimationActive?: b
       cornerRadius={9}
       dataKey="x"
       fill="none"
-      stroke="black"
+      stroke="var(--color-border-1)"
       isAnimationActive={isAnimationActive}
     >
-      <LabelList fill="black" position="center" valueAccessor={() => 'center'} />
-      <LabelList fill="black" position="inside" valueAccessor={() => 'inside'} />
-      <LabelList fill="black" position="outside" valueAccessor={() => 'outside'} />
+      <LabelList fill="var(--color-text-3)" position="center" valueAccessor={() => 'center'} />
+      <LabelList fill="var(--color-text-3)" position="inside" valueAccessor={() => 'inside'} />
+      <LabelList fill="var(--color-text-3)" position="outside" valueAccessor={() => 'outside'} />
     </Pie>
     <RechartsDevtools />
   </PieChart>

@@ -27,13 +27,13 @@ function MyCustomSankeyNode({ x, y, width, height, index, payload }: SankeyNodeP
   const isOut = x + width + 6 > containerWidth;
   return (
     <Layer key={`CustomNode${index}`}>
-      <Rectangle x={x} y={y} width={width} height={height} fill="#5192ca" fillOpacity="1" />
+      <Rectangle x={x} y={y} width={width} height={height} fill="var(--color-chart-4)" fillOpacity="1" />
       <text
         textAnchor={isOut ? 'end' : 'start'}
         x={isOut ? x - 6 : x + width + 6}
         y={y + height / 2}
         fontSize="14"
-        stroke="#333"
+        stroke="var(--color-text-3)"
       >
         {payload.name}
       </text>
@@ -42,7 +42,7 @@ function MyCustomSankeyNode({ x, y, width, height, index, payload }: SankeyNodeP
         x={isOut ? x - 6 : x + width + 6}
         y={y + height / 2 + 13}
         fontSize="12"
-        stroke="#333"
+        stroke="var(--color-text-3)"
         strokeOpacity="0.5"
       >
         {`${payload.value}k`}
@@ -60,9 +60,12 @@ const SankeyCustomNodeExample = () => (
       margin={{
         bottom: 30,
       }}
-      link={{ stroke: '#77c878' }}
+      link={{ stroke: 'var(--color-chart-5)' }}
     >
-      <Tooltip />
+      <Tooltip
+        contentStyle={{ backgroundColor: 'var(--color-surface-raised)', borderColor: 'var(--color-border-2)' }}
+        itemStyle={{ color: 'var(--color-text-3)' }}
+      />
       <RechartsDevtools />
     </Sankey>
   </ResponsiveContainer>
