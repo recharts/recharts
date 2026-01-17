@@ -16,13 +16,10 @@ export class ExampleReader {
     this.project = new Project({
       tsConfigFilePath: 'tsconfig.json',
     });
+    this.initialize();
   }
 
   public getExamples(componentName: string, propName?: string): ExampleResult[] {
-    if (!this.initialized) {
-      this.initialize();
-    }
-
     const explicitExamples = new Map<string, ExampleResult>();
     const implicitExamples = new Map<string, ExampleResult>();
 
@@ -84,6 +81,9 @@ export class ExampleReader {
   }
 
   private initialize() {
+    if (this.initialized) {
+      return;
+    }
     // Add all relevant files
     this.project.addSourceFilesAtPaths([
       'www/src/docs/exampleComponents/**/*.{ts,tsx}',
