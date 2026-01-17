@@ -80,6 +80,7 @@ const SimpleRadialBarChart = () => {
         itemStyle={{
           color: 'var(--color-text-1)',
         }}
+        cursor={{ stroke: 'var(--color-border-2)' }}
       />
       <RechartsDevtools />
     </RadialBarChart>
