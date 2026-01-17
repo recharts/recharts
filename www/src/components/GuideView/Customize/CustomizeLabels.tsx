@@ -64,9 +64,13 @@ export default function CustomizeLabels() {
         dataKey="name"
         tickFormatter={formatAxisTick}
         label={{ position: 'insideBottomRight', value: 'XAxis title', offset: -10 }}
+        stroke="var(--color-text-3)"
       />
-      <YAxis label={{ position: 'insideTopLeft', value: 'YAxis title', angle: -90, dy: 60 }} />
-      <Bar dataKey="uv" fill="#8884d8" label={renderCustomBarLabel} />
+      <YAxis
+        label={{ position: 'insideTopLeft', value: 'YAxis title', angle: -90, dy: 60 }}
+        stroke="var(--color-text-3)"
+      />
+      <Bar dataKey="uv" fill="var(--color-chart-1)" label={renderCustomBarLabel} />
       <RechartsDevtools />
     </BarChart>
   );

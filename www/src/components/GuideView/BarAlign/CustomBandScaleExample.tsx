@@ -24,10 +24,10 @@ export default function CustomBandScaleExample(props: Partial<ControlsType>) {
       barCategoryGap={props.barCategoryGap == null ? undefined : `${props.barCategoryGap * 100}%`}
       barGap={props.barGap == null ? undefined : `${props.barGap * 100}%`}
     >
-      <Bar dataKey="x" fill="#12978f" isAnimationActive={false} />
-      <Bar dataKey="y" fill="#804351" isAnimationActive={false} />
-      <Bar dataKey="z" fill="#a16712" isAnimationActive={false} />
-      <XAxis dataKey="label" scale={customScale} />
+      <Bar dataKey="x" fill="var(--color-chart-1)" isAnimationActive={false} />
+      <Bar dataKey="y" fill="var(--color-chart-2)" isAnimationActive={false} />
+      <Bar dataKey="z" fill="var(--color-chart-3)" isAnimationActive={false} />
+      <XAxis dataKey="label" scale={customScale} stroke="var(--color-text-3)" />
       <RechartsDevtools />
     </BarChart>
   );
