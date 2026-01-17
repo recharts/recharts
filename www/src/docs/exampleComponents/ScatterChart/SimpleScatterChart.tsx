@@ -24,11 +24,21 @@ const SimpleScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) =
         left: 0,
       }}
     >
-      <CartesianGrid />
-      <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-      <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
-      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} fill="#8884d8" />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <XAxis type="number" dataKey="x" name="stature" unit="cm" stroke="var(--color-text-3)" />
+      <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ strokeDasharray: '3 3', stroke: 'var(--color-border-2)' }}
+        defaultIndex={defaultIndex}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        itemStyle={{
+          color: 'var(--color-text-1)',
+        }}
+      />
+      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} fill="var(--color-chart-1)" />
       <RechartsDevtools />
     </ScatterChart>
   );
