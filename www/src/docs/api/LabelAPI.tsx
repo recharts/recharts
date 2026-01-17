@@ -33,6 +33,7 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       format: ['<Label>foo</Label>'],
+      examples: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
     },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -99,6 +100,10 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       defaultVal: 5,
+      examples: [
+        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
+        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
+      ],
     },
     { name: 'parentViewBox', type: 'Required<CartesianViewBox> | Required<PolarViewBox>', isOptional: true },
     {
@@ -113,6 +118,12 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       defaultVal: 'middle',
+      examples: [
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
+        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
+        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
+      ],
     },
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
@@ -129,6 +140,11 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       format: ['<Label value="foo" />'],
+      examples: [
+        { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
+        { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
+        { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
+      ],
     },
     {
       name: 'viewBox',
@@ -144,6 +160,7 @@ export const LabelAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Funnel Example', url: '/api/Funnel/', isExternal: false }],
     },
     {
       name: 'zIndex',
@@ -163,6 +180,12 @@ export const LabelAPI: ApiDoc = {
       defaultVal: 2000,
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
+  ],
+  links: [
+    { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+    { name: 'Label Bar Chart Example', url: '/api/Label/', isExternal: false },
+    { name: 'Label List Chart Example', url: '/api/LabelList/', isExternal: false },
+    { name: 'Funnel Example', url: '/api/Funnel/', isExternal: false },
   ],
   parentComponents: [
     'AreaChart',

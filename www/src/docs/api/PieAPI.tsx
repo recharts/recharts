@@ -21,6 +21,9 @@ export const PieAPI: ApiDoc = {
         '<Pie activeShape={<CustomActiveShape />} />',
         'https://recharts.github.io/examples/CustomActiveShapePieChart',
       ],
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
       deprecated: 'Use the `shape` prop to create each sector. `isActive` designates the "active" shape.',
     },
     {
@@ -62,9 +65,28 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'cornerRadius', type: 'number | string', isOptional: true },
+    {
+      name: 'cornerRadius',
+      type: 'number | string',
+      isOptional: true,
+      examples: [
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+      ],
+    },
     {
       name: 'cx',
       type: 'number | string',
@@ -80,6 +102,14 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: '50%',
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'cy',
@@ -96,6 +126,14 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: '50%',
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -116,6 +154,23 @@ export const PieAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'dataKey',
@@ -140,6 +195,22 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 'value',
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'endAngle',
@@ -153,6 +224,10 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 360,
+      examples: [
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+      ],
     },
     {
       name: 'hide',
@@ -201,6 +276,18 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+      ],
     },
     {
       name: 'isAnimationActive',
@@ -217,6 +304,21 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'label',
@@ -259,6 +361,15 @@ export const PieAPI: ApiDoc = {
         '<Pie label={<CustomizedLabel />} />',
         'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
       ],
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+        { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'labelLine',
@@ -280,6 +391,10 @@ export const PieAPI: ApiDoc = {
       format: [
         '<Pie labelLine={<CustomizedLabelLine />} />',
         'https://recharts.github.io/examples/PieChartWithCustomizedLabel',
+      ],
+      examples: [
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
       ],
     },
     {
@@ -345,6 +460,7 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 'name',
+      examples: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
     },
     {
       name: 'outerRadius',
@@ -362,6 +478,20 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: '80%',
+      examples: [
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+        { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+        { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
+      ],
     },
     {
       name: 'paddingAngle',
@@ -376,6 +506,13 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 0,
       format: ['<Pie paddingAngle={5} />', 'https://recharts.github.io/examples/PieChartWithPaddingAngle'],
+      examples: [
+        {
+          name: 'Pie Chart with gap and rounded corners',
+          url: '/examples/PieChartWithPaddingAngle/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'rootTabIndex',
@@ -414,6 +551,10 @@ export const PieAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+      ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 100 },
@@ -687,6 +828,19 @@ export const PieAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+    { name: 'Pie Chart Example', url: '/api/PieChart/', isExternal: false },
+    { name: 'Straight Angle Pie Chart', url: '/examples/StraightAnglePieChart/', isExternal: false },
+    { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+    { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+    { name: 'Pie Chart with gap and rounded corners', url: '/examples/PieChartWithPaddingAngle/', isExternal: false },
+    { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+    { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+    { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+    { name: 'Cell Pie Example', url: '/api/Cell/', isExternal: false },
+    { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Cell', 'LabelList'],

@@ -17,6 +17,15 @@ export const ResponsiveContainerAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+        { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
+        { name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false },
+      ],
     },
     {
       name: 'aspect',
@@ -29,6 +38,11 @@ export const ResponsiveContainerAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
+      ],
     },
     {
       name: 'className',
@@ -67,6 +81,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
         ),
       },
       defaultVal: '100%',
+      examples: [{ name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false }],
     },
     {
       name: 'id',
@@ -106,6 +121,7 @@ export const ResponsiveContainerAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false }],
     },
     {
       name: 'minHeight',
@@ -156,6 +172,12 @@ export const ResponsiveContainerAPI: ApiDoc = {
         ),
       },
       defaultVal: '100%',
+      examples: [
+        { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
+        { name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false },
+      ],
     },
     {
       name: 'onResize',
@@ -186,7 +208,16 @@ export const ResponsiveContainerAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [{ name: 'Chart size guide', url: '/guide/sizes/', isExternal: false }],
+  links: [
+    { name: 'Chart size guide', url: '/guide/sizes/', isExternal: false },
+    { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
+    { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+    { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+    { name: 'Treemap Example', url: '/api/Treemap/', isExternal: false },
+    { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+    { name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false },
+    { name: 'Sunburst Chart Example', url: '/api/SunburstChart/', isExternal: false },
+  ],
   childrenComponents: [
     'AreaChart',
     'BarChart',

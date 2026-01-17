@@ -1,9 +1,14 @@
 import { Project, SyntaxKind, Node, SourceFile, JsxOpeningElement, JsxSelfClosingElement } from 'ts-morph';
 
+export interface ExampleResult {
+  name: string;
+  url: string;
+}
+
 export class ExampleReader {
   private project: Project;
 
-  private fileToUrls: Map<string, string[]> = new Map();
+  private fileToExamples: Map<string, ExampleResult[]> = new Map();
 
   private initialized = false;
 
@@ -13,19 +18,19 @@ export class ExampleReader {
     });
   }
 
-  public getExamples(componentName: string, propName?: string): string[] {
+  public getExamples(componentName: string, propName?: string): ExampleResult[] {
     if (!this.initialized) {
       this.initialize();
     }
 
-    const examples = new Set<string>();
+    const examples = new Map<string, ExampleResult>();
 
-    this.fileToUrls.forEach((urls, filePath) => {
+    this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
       if (!sourceFile) return;
 
       // Check for component usage
-      const isExplicitApiExample = urls.some(url => url === `/api/${componentName}`);
+      const isExplicitApiExample = exList.some(ex => ex.url === `/api/${componentName}/`);
 
       if (isExplicitApiExample || this.isComponentUsed(sourceFile, componentName)) {
         // If propName is specified, check for prop usage
@@ -33,15 +38,15 @@ export class ExampleReader {
           // For explicit API examples, we can't easily verify prop usage if the component isn't imported.
           // We default to requiring explicit usage for props.
           if (this.isPropUsed(sourceFile, componentName, propName)) {
-            urls.forEach(url => examples.add(url));
+            exList.forEach(ex => examples.set(ex.url, ex));
           }
         } else {
-          urls.forEach(url => examples.add(url));
+          exList.forEach(ex => examples.set(ex.url, ex));
         }
       }
     });
 
-    return Array.from(examples);
+    return Array.from(examples.values());
   }
 
   private initialize() {
@@ -147,11 +152,22 @@ export class ExampleReader {
 
                 if (componentSourceFile) {
                   const filePath = componentSourceFile.getFilePath();
-                  const url = `/examples/${exampleName}`;
-                  if (!this.fileToUrls.has(filePath)) {
-                    this.fileToUrls.set(filePath, []);
+                  const url = `/examples/${exampleName}/`;
+
+                  // Try to find 'name' property in the object literal
+                  let name = exampleName;
+                  const nameProp = exampleObj.getProperty('name');
+                  if (nameProp && Node.isPropertyAssignment(nameProp)) {
+                    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
+                    if (nameInitializer) {
+                      name = nameInitializer.getLiteralValue();
+                    }
                   }
-                  this.fileToUrls.get(filePath)!.push(url);
+
+                  if (!this.fileToExamples.has(filePath)) {
+                    this.fileToExamples.set(filePath, []);
+                  }
+                  this.fileToExamples.get(filePath)!.push({ name, url });
                 }
               }
             }
@@ -171,7 +187,7 @@ export class ExampleReader {
     initializer.getProperties().forEach(prop => {
       if (Node.isPropertyAssignment(prop)) {
         const componentName = prop.getName(); // e.g. AreaChart
-        const url = `/api/${componentName}`;
+        const url = `/api/${componentName}/`;
 
         const examplesIdentifier = prop.getInitializerIfKind(SyntaxKind.Identifier);
         if (examplesIdentifier) {
@@ -227,10 +243,23 @@ export class ExampleReader {
 
               if (componentSourceFile) {
                 const filePath = componentSourceFile.getFilePath();
-                if (!this.fileToUrls.has(filePath)) {
-                  this.fileToUrls.set(filePath, []);
+
+                // Try to find 'name' property in the object literal
+                let name = 'Example';
+                if (Node.isObjectLiteralExpression(element)) {
+                  const nameProp = element.getProperty('name');
+                  if (nameProp && Node.isPropertyAssignment(nameProp)) {
+                    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
+                    if (nameInitializer) {
+                      name = nameInitializer.getLiteralValue();
+                    }
+                  }
                 }
-                this.fileToUrls.get(filePath)!.push(url);
+
+                if (!this.fileToExamples.has(filePath)) {
+                  this.fileToExamples.set(filePath, []);
+                }
+                this.fileToExamples.get(filePath)!.push({ name, url });
               }
             }
           }

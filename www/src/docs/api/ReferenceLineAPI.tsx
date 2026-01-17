@@ -63,6 +63,8 @@ export const ReferenceLineAPI: ApiDoc = {
       defaultVal: false,
       examples: [
         { name: 'Reference elements with a label', url: '/examples/LineChartWithReferenceLines/', isExternal: false },
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Reference Line Position Example', url: '/api/ReferenceLine/', isExternal: false },
       ],
     },
     {
@@ -80,6 +82,7 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       defaultVal: 'middle',
+      examples: [{ name: 'Reference Line Position Example', url: '/api/ReferenceLine/', isExternal: false }],
     },
     {
       name: 'segment',
@@ -92,6 +95,7 @@ export const ReferenceLineAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Reference Line Example', url: '/api/ReferenceLine/', isExternal: false }],
     },
     { name: 'shape', type: 'Function | ReactNode', isOptional: true },
     {
@@ -123,6 +127,10 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       format: ['<ReferenceLine x="Monday" />'],
+      examples: [
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Reference Line Position Example', url: '/api/ReferenceLine/', isExternal: false },
+      ],
     },
     {
       name: 'xAxisId',
@@ -153,6 +161,13 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       format: ['<ReferenceLine y="Page D" />'],
+      examples: [
+        { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+        { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+        { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+        { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+        { name: 'Reference Line Example', url: '/api/ReferenceLine/', isExternal: false },
+      ],
     },
     {
       name: 'yAxisId',
@@ -204,6 +219,13 @@ export const ReferenceLineAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+    { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+    { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+    { name: 'Responsive Container Example', url: '/api/ResponsiveContainer/', isExternal: false },
+    { name: 'Reference Line Position Example', url: '/api/ReferenceLine/', isExternal: false },
+  ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };

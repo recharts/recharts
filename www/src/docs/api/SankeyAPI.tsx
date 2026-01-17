@@ -22,6 +22,7 @@ export const SankeyAPI: ApiDoc = {
       format: [
         "nodes: [\n  { name: 'Visit' },\n  { name: 'Direct-Favourite' },\n  { name: 'Page-Click' },\n  { name: 'Detail-Favourite' },\n  { name: 'Lost' },\n],\nlinks: [\n  { source: 0, target: 1, value: 3728.3 },\n  { source: 0, target: 2, value: 354170 },\n  { source: 2, target: 3, value: 62429 },\n  { source: 2, target: 4, value: 291741 },\n],",
       ],
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'align',
@@ -40,7 +41,12 @@ export const SankeyAPI: ApiDoc = {
       },
       defaultVal: 'justify',
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
+    },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'dataKey',
@@ -103,6 +109,7 @@ export const SankeyAPI: ApiDoc = {
         ),
       },
       format: ['<Sankey link={MyCustomComponent} />', '<Sankey link={{ fill: #77c878 }} />'],
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'linkCurvature',
@@ -129,6 +136,7 @@ export const SankeyAPI: ApiDoc = {
         ),
       },
       defaultVal: { top: 5, right: 5, bottom: 5, left: 5 },
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'nameKey',
@@ -169,6 +177,7 @@ export const SankeyAPI: ApiDoc = {
         ),
       },
       format: ['<Sankey node={MyCustomComponent} />', '<Sankey node={{stroke: #77c878, strokeWidth: 2}} />'],
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'nodePadding',
@@ -182,6 +191,7 @@ export const SankeyAPI: ApiDoc = {
         ),
       },
       defaultVal: 10,
+      examples: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
     },
     {
       name: 'nodeWidth',
@@ -286,6 +296,7 @@ export const SankeyAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Sankey Custom Node Example', url: '/api/Sankey/', isExternal: false }],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: ['Tooltip'],
 };

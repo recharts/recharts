@@ -29,6 +29,10 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'center',
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -51,6 +55,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       format: ['<Legend content={CustomizedLegend} />', '<Legend content={renderLegend} />'],
+      examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -84,6 +89,10 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+        { name: 'Legend Example', url: '/api/Legend/', isExternal: false },
+      ],
     },
     {
       name: 'iconSize',
@@ -97,6 +106,10 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 14,
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
     },
     {
       name: 'iconType',
@@ -141,6 +154,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'value',
+      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
     },
     {
       name: 'layout',
@@ -154,6 +168,10 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'horizontal',
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
     },
     { name: 'payloadUniqBy', type: 'UniqueFunc<LegendPayload> | false | true', isOptional: true },
     {
@@ -201,6 +219,13 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'bottom',
+      examples: [
+        { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+        { name: 'Legend Example', url: '/api/Legend/', isExternal: false },
+      ],
     },
     {
       name: 'width',
@@ -216,6 +241,7 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'wrapperStyle',
@@ -230,6 +256,11 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+      ],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -343,6 +374,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
+      examples: [{ name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false }],
     },
     {
       name: 'onMouseLeave',
@@ -356,6 +388,7 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
+      examples: [{ name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false }],
     },
     { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
@@ -427,6 +460,53 @@ export const LegendAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+    { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+    { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+    { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+    { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+    { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+    { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+    { name: 'Biaxial Bar Chart', url: '/examples/BiaxialBarChart/', isExternal: false },
+    { name: 'Bar Chart with background', url: '/examples/BarChartHasBackground/', isExternal: false },
+    { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+    { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+    { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+    { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+    { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+    { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+    { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+    { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+    { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+    { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+    { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+    { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+    { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
+    { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+    { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+    { name: 'Simple Bar Chart Example', url: '/api/BarChart/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/LineChart/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useIsTooltipActive/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipCoordinate/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipDataPoints/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useActiveTooltipLabel/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useMargin/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useOffset/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/usePlotArea/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useChartWidth/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useChartHeight/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useXAxisDomain/', isExternal: false },
+    { name: 'Simple Line Chart Example', url: '/api/useYAxisDomain/', isExternal: false },
+    { name: 'Composed Chart Example', url: '/api/ComposedChart/', isExternal: false },
+    { name: 'Radar Chart Example', url: '/api/RadarChart/', isExternal: false },
+    { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
+    { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+    { name: 'Legend Example', url: '/api/Legend/', isExternal: false },
+    { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
+    { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
+    { name: 'Rendering into Shadow DOM', url: '/api/ZIndexLayer/', isExternal: false },
   ],
   parentComponents: [
     'AreaChart',

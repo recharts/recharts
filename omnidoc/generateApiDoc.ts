@@ -14,6 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { marked } from 'marked';
 import { getAllTagTexts, getTagText, JSDocMeta, ProjectDocReader } from './readProject';
+import { ExampleReader, ExampleResult } from './readExamples';
 import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
@@ -235,27 +236,46 @@ function deduplicatePropExamples(examples: ReadonlyArray<PropExample>): Readonly
   return examples.filter((ex, index, self) => index === self.findIndex(t => t.url === ex.url));
 }
 
+function makePropExample(example: ExampleResult): PropExample {
+  const { url, name } = example;
+  const isExternal = url.startsWith('http');
+  return {
+    name,
+    url,
+    isExternal,
+  };
+}
+
 export function getLinksFromProp(
   componentName: string,
   propName: string,
   projectReader: ProjectDocReader,
+  exampleReader: ExampleReader,
 ): ReadonlyArray<PropExample> {
   const meta = projectReader.getPropMeta(componentName, propName);
   // getPropMeta returns an array, but standard props usually map to one definition.
   // In case of multiple (overloading), we merge tags.
   const allExamples = meta.map(propMeta => propMeta.jsDoc).flatMap(getAllLinksFromJsDoc);
 
-  return deduplicatePropExamples(allExamples);
+  const scannedExamples = exampleReader.getExamples(componentName, propName).map(makePropExample);
+
+  return deduplicatePropExamples([...allExamples, ...scannedExamples]);
 }
 
 /**
  * Get links from component-level JSDoc (@see and @link tags)
  */
-function getLinksFromComponent(componentName: string, projectReader: ProjectDocReader): ReadonlyArray<PropExample> {
+function getLinksFromComponent(
+  componentName: string,
+  projectReader: ProjectDocReader,
+  exampleReader: ExampleReader,
+): ReadonlyArray<PropExample> {
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
-  if (!componentJsDoc) return [];
+  const jsDocExamples = componentJsDoc ? getAllLinksFromJsDoc(componentJsDoc) : [];
 
-  return deduplicatePropExamples(getAllLinksFromJsDoc(componentJsDoc));
+  const scannedExamples = exampleReader.getExamples(componentName).map(makePropExample);
+
+  return deduplicatePropExamples([...jsDocExamples, ...scannedExamples]);
 }
 
 /**
@@ -264,6 +284,7 @@ function getLinksFromComponent(componentName: string, projectReader: ProjectDocR
 async function generateApiDoc(
   componentName: string,
   projectReader: ProjectDocReader,
+  exampleReader: ExampleReader,
   contextMap: Map<string, { providers: string[]; consumers: string[] }>,
 ): Promise<ApiDoc> {
   const props: ApiProps[] = [];
@@ -340,7 +361,7 @@ async function generateApiDoc(
     }
 
     // Add links/see tags as examples
-    const links = getLinksFromProp(componentName, propName, projectReader);
+    const links = getLinksFromProp(componentName, propName, projectReader, exampleReader);
     if (links.length > 0) {
       prop.examples = links;
     }
@@ -416,7 +437,7 @@ async function generateApiDoc(
     }
 
     // Get links from component JSDoc
-    const links = getLinksFromComponent(componentName, projectReader);
+    const links = getLinksFromComponent(componentName, projectReader, exampleReader);
     if (links.length > 0) {
       apiDoc.links = links;
     }
@@ -575,6 +596,7 @@ export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
  */
 async function main() {
   const projectReader = new ProjectDocReader();
+  const exampleReader = new ExampleReader();
 
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
@@ -587,7 +609,7 @@ async function main() {
 
   for (const componentName of componentsToGenerate) {
     try {
-      const apiDoc = await generateApiDoc(componentName, projectReader, contextMap);
+      const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);
       writeApiDocFile(apiDoc, outputPath);
     } catch (error) {

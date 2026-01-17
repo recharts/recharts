@@ -2,10 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { SymbolFlags } from 'ts-morph';
 import { getTagText, ProjectDocReader } from './readProject';
 import { getLinksFromProp, processType } from './generateApiDoc';
+import { ExampleReader } from './readExamples';
 import { assertNotNull } from '../test/helper/assertNotNull';
 
 describe('readProject', () => {
   const reader = new ProjectDocReader();
+  const exampleReader = new ExampleReader();
   it('should identify all exported symbols', () => {
     /*
      * Let's assert a few known symbols to make sure the reader is working.
@@ -1026,19 +1028,27 @@ describe('readProject', () => {
     // both Line and Curve have examples for 'type' prop but we should not display duplicates
     expect(propMeta).toHaveLength(2);
 
-    const examples = getLinksFromProp('Line', 'type', reader);
-    expect(examples).toEqual([
-      {
-        isExternal: false,
-        name: 'An AreaChart which has two area with different interpolation.',
-        url: '/examples/CardinalAreaChart/',
-      },
-      {
-        isExternal: true,
-        name: 'https://d3js.org/d3-shape/curve',
-        url: 'https://d3js.org/d3-shape/curve',
-      },
-    ]);
+    const examples = getLinksFromProp('Line', 'type', reader, exampleReader);
+
+    // Verify deduplication: CardinalAreaChart should appear exactly once
+    // (it is present in JSDoc and also likely found by ExampleReader)
+    const cardinalExamples = examples.filter(e => e.url === '/examples/CardinalAreaChart/');
+    expect(cardinalExamples).toHaveLength(1);
+
+    expect(examples).toEqual(
+      expect.arrayContaining([
+        {
+          isExternal: false,
+          name: 'An AreaChart which has two area with different interpolation.',
+          url: '/examples/CardinalAreaChart/',
+        },
+        {
+          isExternal: true,
+          name: 'https://d3js.org/d3-shape/curve',
+          url: 'https://d3js.org/d3-shape/curve',
+        },
+      ]),
+    );
   });
 
   it('should get links from jsdoc tags', () => {

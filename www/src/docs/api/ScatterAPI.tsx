@@ -24,6 +24,8 @@ export const ScatterAPI: ApiDoc = {
           url: 'http://recharts.github.io/en-US/examples/SimpleScatterChart/',
           isExternal: true,
         },
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
       ],
     },
     {
@@ -65,7 +67,16 @@ export const ScatterAPI: ApiDoc = {
       },
       defaultVal: 'linear',
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'data',
@@ -85,6 +96,24 @@ export const ScatterAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
+      examples: [
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
+        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
+        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
+      ],
     },
     {
       name: 'dataKey',
@@ -109,6 +138,10 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+      ],
     },
     {
       name: 'hide',
@@ -159,6 +192,17 @@ export const ScatterAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
+        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
+        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
+      ],
     },
     {
       name: 'label',
@@ -241,7 +285,14 @@ export const ScatterAPI: ApiDoc = {
         '<Scatter line={CustomizedLineComponent} />',
         "<Scatter line={{ strokeDasharray: '5 5' }} />",
       ],
-      examples: [{ name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/', isExternal: false }],
+      examples: [
+        { name: 'Scatter chart with joint line', url: '/examples/JointLineScatterChart/', isExternal: false },
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'lineJointType',
@@ -267,6 +318,7 @@ export const ScatterAPI: ApiDoc = {
           url: 'http://recharts.github.io/en-US/examples/JointLineScatterChart/',
           isExternal: true,
         },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
       ],
     },
     {
@@ -317,6 +369,24 @@ export const ScatterAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+        { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
+        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+        { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
+        { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
+      ],
     },
     {
       name: 'shape',
@@ -337,6 +407,7 @@ export const ScatterAPI: ApiDoc = {
       format: ['<Scatter shape={CustomizedShapeComponent} />', '<Scatter shape="diamond" />'],
       examples: [
         { name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
       ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
@@ -365,6 +436,9 @@ export const ScatterAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+      ],
     },
     {
       name: 'zAxisId',
@@ -562,6 +636,26 @@ export const ScatterAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+    { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+    { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+    { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+    { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+    { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+    { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+    { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+    { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+    {
+      name: 'Scatter Chart with many points (performance test)',
+      url: '/examples/ScatterChartPerformance/',
+      isExternal: false,
+    },
+    { name: 'Scatter Chart Example', url: '/api/ScatterChart/', isExternal: false },
+    { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+    { name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false },
+    { name: 'Error Bar Example', url: '/api/ErrorBar/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Cell', 'ErrorBar', 'LabelList'],

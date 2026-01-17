@@ -120,6 +120,7 @@ export const ReferenceAreaAPI: ApiDoc = {
         '<ReferenceArea x1={10} x2={50} />',
         '<ReferenceArea x1="Page C" />',
       ],
+      examples: [{ name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false }],
     },
     {
       name: 'x2',
@@ -141,6 +142,7 @@ export const ReferenceAreaAPI: ApiDoc = {
         '<ReferenceArea x1={10} x2={50} />',
         '<ReferenceArea x2="Page C" />',
       ],
+      examples: [{ name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false }],
     },
     {
       name: 'xAxisId',
@@ -175,6 +177,7 @@ export const ReferenceAreaAPI: ApiDoc = {
         '<ReferenceArea y1="low" y2="high" />',
         '<ReferenceArea y1={200} />',
       ],
+      examples: [{ name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false }],
     },
     {
       name: 'y2',
@@ -196,6 +199,7 @@ export const ReferenceAreaAPI: ApiDoc = {
         '<ReferenceArea y1="low" y2="high" />',
         '<ReferenceArea y2={400} />',
       ],
+      examples: [{ name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false }],
     },
     {
       name: 'yAxisId',
@@ -342,6 +346,7 @@ export const ReferenceAreaAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Reference Area Example', url: '/api/ReferenceArea/', isExternal: false }],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };

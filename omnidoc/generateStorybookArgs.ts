@@ -15,6 +15,7 @@ import { glob } from 'glob';
 import { ReactNode } from 'react';
 import { getTagText, ProjectDocReader } from './readProject';
 import { processType, generateApiDoc, buildContextMap } from './generateApiDoc';
+import { ExampleReader } from './readExamples';
 import { StorybookArg, StorybookArgs } from '../storybook/StorybookArgs';
 import { defaultLocale } from '../www/src/utils/LocaleUtils';
 
@@ -274,6 +275,7 @@ ${childrenComponents.map(c => `- \`<${c}/>\``).join('\n')}
  */
 async function main() {
   const projectReader = new ProjectDocReader();
+  const exampleReader = new ExampleReader();
 
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
@@ -306,7 +308,7 @@ async function main() {
       writeStorybookArgsFile(componentName, args, argsOutputPath);
 
       // Generate MDX
-      const apiDoc = await generateApiDoc(componentName, projectReader, contextMap);
+      const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
       const descriptionRaw = typeof apiDoc.desc === 'string' ? apiDoc.desc : apiDoc.desc?.[defaultLocale];
       const description = descriptionRaw ? stripLinks(descriptionRaw) : descriptionRaw;
 

@@ -3,7 +3,15 @@ import { ApiDoc } from './types';
 export const RadialBarAPI: ApiDoc = {
   name: 'RadialBar',
   props: [
-    { name: 'dataKey', type: 'Function | number | string', isOptional: false },
+    {
+      name: 'dataKey',
+      type: 'Function | number | string',
+      isOptional: false,
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
+    },
     { name: 'activeShape', type: '(union of 5 variants)', isOptional: true },
     { name: 'angleAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
     {
@@ -74,6 +82,10 @@ export const RadialBarAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
     },
     {
       name: 'barSize',
@@ -112,6 +124,7 @@ export const RadialBarAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [{ name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false }],
     },
     {
       name: 'label',
@@ -142,6 +155,10 @@ export const RadialBarAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
+      ],
     },
     {
       name: 'legendType',
@@ -433,6 +450,10 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+    { name: 'Radial Bar Chart Example', url: '/api/RadialBarChart/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Cell', 'LabelList'],

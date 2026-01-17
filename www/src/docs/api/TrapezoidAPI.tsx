@@ -187,4 +187,5 @@ export const TrapezoidAPI: ApiDoc = {
       },
     },
   ],
+  links: [{ name: 'Funnel Example', url: '/api/Funnel/', isExternal: false }],
 };

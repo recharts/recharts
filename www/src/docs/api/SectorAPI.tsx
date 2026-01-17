@@ -30,6 +30,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'cy',
@@ -43,6 +46,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'endAngle',
@@ -56,6 +62,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'forceCornerRadius',
@@ -82,6 +91,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'outerRadius',
@@ -95,6 +107,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'startAngle',
@@ -108,6 +123,9 @@ export const SectorAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+      ],
     },
     {
       name: 'onClick',
@@ -206,4 +224,5 @@ export const SectorAPI: ApiDoc = {
       },
     },
   ],
+  links: [{ name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false }],
 };

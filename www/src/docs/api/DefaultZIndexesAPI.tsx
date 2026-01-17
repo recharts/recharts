@@ -11,4 +11,9 @@ export const DefaultZIndexesAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+    { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+    { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+  ],
 };

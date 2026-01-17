@@ -63,6 +63,10 @@ export const ReferenceDotAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [
+        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+      ],
     },
     {
       name: 'r',
@@ -76,6 +80,11 @@ export const ReferenceDotAPI: ApiDoc = {
         ),
       },
       defaultVal: 10,
+      examples: [
+        { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+      ],
     },
     {
       name: 'shape',
@@ -108,6 +117,10 @@ export const ReferenceDotAPI: ApiDoc = {
         ),
       },
       format: ['<ReferenceDot x="January" y="2026" />'],
+      examples: [
+        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+      ],
     },
     {
       name: 'xAxisId',
@@ -138,6 +151,10 @@ export const ReferenceDotAPI: ApiDoc = {
         ),
       },
       format: ['<ReferenceDot x="January" y="2026" />'],
+      examples: [
+        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+      ],
     },
     {
       name: 'yAxisId',
@@ -168,7 +185,11 @@ export const ReferenceDotAPI: ApiDoc = {
         ),
       },
       defaultVal: 600,
-      examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
+      examples: [
+        { name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+        { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+      ],
     },
     { name: 'onAbort', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
@@ -436,6 +457,11 @@ export const ReferenceDotAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Reference Dot Example', url: '/api/ReferenceDot/', isExternal: false },
+    { name: 'Using Z-Index to Layer Elements', url: '/api/ZIndexLayer/', isExternal: false },
+    { name: 'Using Z-Index to Layer Elements', url: '/api/DefaultZIndexes/', isExternal: false },
+  ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };
