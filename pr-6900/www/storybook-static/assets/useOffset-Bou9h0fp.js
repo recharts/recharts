@@ -1,0 +1,17 @@
+import{j as e}from"./jsx-runtime-YCrlmJle.js";import{useMDXComponents as n}from"./index-n7pFOlMz.js";import{M as r,C as s,a as p}from"./blocks-CnqJXs60.js";import{C as h}from"./useOffset.stories-BQlSKZBK.js";import"./iframe-CLIMsGOZ.js";import"./preload-helper-Dp1pzeXC.js";import"./index-8YxDhDRV.js";import"./OffsetShower-CTodD9i0.js";import"./ChartSizeDimensions-4XerZwXh.js";import"./arrayEqualityCheck-CbYFkYA0.js";import"./resolveDefaultProps-E8mWkwf6.js";import"./PolarUtils-BIAYT_Jm.js";import"./hooks-DenE5nGN.js";import"./axisSelectors-GOM-QLi6.js";import"./ComposedChart-CdyWcK0I.js";import"./RechartsWrapper-lPK7Cxev.js";import"./zIndexSlice-DazYr2Iy.js";import"./CartesianChart-q3xsLMrE.js";import"./chartDataContext-B4asjYes.js";import"./CategoricalChart-DAMhxPe3.js";import"./Line-CzJhKYEj.js";import"./Layer-l9L2Sb8o.js";import"./ReactUtils-Bk0OFjED.js";import"./Label-QzDxpC8q.js";import"./Text-BeJ5iM47.js";import"./DOMUtils-BnxK2rS8.js";import"./ZIndexLayer-5xiPbIim.js";import"./ActivePoints-CDJdQAvR.js";import"./Dot-TT6qKL70.js";import"./types-HWBumAOZ.js";import"./RegisterGraphicalItemId-46GsKK8-.js";import"./ErrorBarContext-D97KkegB.js";import"./GraphicalItemClipPath-D_8sBR8P.js";import"./SetGraphicalItem-C8e1XdZ2.js";import"./useAnimationId-wMl1lWMr.js";import"./getRadiusAndStrokeWidthFromDot-B1AObu-M.js";import"./ActiveShapeUtils-YEQ3f73b.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-JG6TvpVB.js";import"./Trapezoid-D79jjH6v.js";import"./Sector-C08coEZ4.js";import"./Symbols-DbV1O1CF.js";import"./Curve-DXQteT8k.js";import"./XAxis-D0rBjGgi.js";import"./CartesianAxis-tT7FqCIW.js";import"./YAxis-BCedXT45.js";import"./Legend-CAXkYAPU.js";import"./useElementOffset-CLqe_5PL.js";import"./iteratee-Bt0H2n0P.js";import"./Page-Cj8EiXz7.js";function o(t){const i={h1:"h1",h2:"h2",...n(),...t.components};return e.jsxs(e.Fragment,{children:[e.jsx(i.h1,{id:"useoffset",children:"useOffset"}),`
+`,e.jsx(r,{of:h}),`
+`,e.jsx(s,{of:void 0,layout:"padded"}),`
+`,e.jsx(i.h2,{id:"description",children:"Description"}),`
+`,e.jsx("p",{children:"Returns the offset of the chart in pixels."}),`
+`,e.jsx("p",{children:`Offset defines the blank space between the chart and the plot area.
+This blank space is occupied by supporting elements like axes, legends, and brushes.`}),`
+`,e.jsx("p",{children:"The offset includes:"}),`
+`,e.jsxs("ul",{children:[e.jsx("li",{children:"Margins"}),e.jsx("li",{children:"Width and height of the axes"}),e.jsx("li",{children:"Width and height of the legend"}),e.jsx("li",{children:"Brush height"})]}),`
+`,e.jsx("p",{children:"If you are interested in the margin alone, use useMargin instead."}),`
+`,e.jsx("p",{children:"The offset is independent of charts position on the page, meaning it does not change as the chart is scrolled or resized."}),`
+`,e.jsx("p",{children:`It is also independent of the scale and zoom, meaning that as the user zooms in and out,
+the numbers will not change as the chart gets visually larger or smaller.`}),`
+`,e.jsxs("p",{children:["This hook must be used within a chart context (inside a ",e.jsx("code",{children:"<LineChart>"}),", ",e.jsx("code",{children:"<BarChart>"}),`, etc.).
+This hook returns `,e.jsx("code",{children:"undefined"})," if used outside a chart context."]}),`
+`,e.jsx(i.h2,{id:"props",children:"Props"}),`
+`,e.jsx(p,{of:void 0})]})}function re(t={}){const{wrapper:i}={...n(),...t.components};return i?e.jsx(i,{...t,children:e.jsx(o,{...t})}):o(t)}export{re as default};
