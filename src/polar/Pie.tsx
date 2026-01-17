@@ -674,11 +674,8 @@ function PieSectors(props: PieSectorsProps) {
             tabIndex={-1}
             className="recharts-pie-sector"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
             <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />

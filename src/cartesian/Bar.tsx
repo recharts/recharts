@@ -470,7 +470,7 @@ type BarBackgroundProps = {
   background?: ActiveShape<BarShapeProps, SVGPathElement>;
   data: ReadonlyArray<BarRectangleItem> | undefined;
   dataKey: DataKey<any> | undefined;
-  allOtherBarProps: Props;
+  allOtherBarProps: InternalProps;
 };
 
 function BarBackground(props: BarBackgroundProps) {
@@ -485,11 +485,8 @@ function BarBackground(props: BarBackgroundProps) {
     ...restOfAllOtherProps
   } = allOtherBarProps;
 
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, allOtherBarProps.id);
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, allOtherBarProps.id);
   if (!backgroundFromProps || data == null) {
     return null;
@@ -506,11 +503,8 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
         const onMouseEnter = onMouseEnterFromContext(entry, i);
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
         const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
         const onClick = onClickFromContext(entry, i);
 
         const barRectangleProps: BarRectangleProps = {
@@ -710,11 +704,8 @@ function BarRectangles({
     ...restOfAllOtherProps
   } = props;
 
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey, id);
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, id);
 
   if (!data) {
@@ -731,11 +722,8 @@ function BarRectangles({
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
             onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
             onClick={onClickFromContext(entry, i)}
           >
             {activeBar ? (
