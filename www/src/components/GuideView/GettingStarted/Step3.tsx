@@ -1,6 +1,5 @@
 import { RechartsDevtools } from '@recharts/devtools';
-
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from '../../recharts';
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 // #region Sample data
 const data = [
@@ -71,7 +70,11 @@ export default function Step3() {
         }}
       />
       <XAxis dataKey="name" stroke="var(--color-text-3)" />
-      <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} stroke="var(--color-text-3)" />
+      <YAxis
+        width="auto"
+        label={{ value: 'UV', position: 'insideLeft', angle: -90, fill: 'var(--color-text-3)' }}
+        stroke="var(--color-text-3)"
+      />
       <Legend align="right" />
       <RechartsDevtools />
     </LineChart>
