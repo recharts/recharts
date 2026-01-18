@@ -58,6 +58,8 @@ export const barChartExamples: Record<string, ChartExample> = {
     Component: MixBarChart,
     sourceCode: mixBarChartSource,
     name: 'Mix Bar Chart',
+    description:
+      'This example shows stacked and non-stacked bars in the same chart. Also includes live Legend: mouse hover on legend items to highlight corresponding bars, and click to lock the highlight.',
   },
   CustomShapeBarChart: {
     Component: CustomShapeBarChart,
