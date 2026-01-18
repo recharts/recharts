@@ -1657,7 +1657,8 @@ export const PieArgs: StorybookArgs = {
     defaultValue: 0,
   },
   shape: {
-    description: 'The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.',
+    description:
+      'The custom shape of a Pie Sector.\nCan also be used to render active sector by checking isActive.\nIf undefined, renders {@link Sector} shape.',
     table: {
       type: {
         summary: '(union of 8 variants)',

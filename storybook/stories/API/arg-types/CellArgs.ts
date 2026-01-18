@@ -4,4 +4,29 @@
  */
 import { StorybookArgs } from '../../../StorybookArgs';
 
-export const CellArgs: StorybookArgs = {};
+export const CellArgs: StorybookArgs = {
+  fill: {
+    description: 'The fill color.',
+    control: {
+      type: 'color',
+    },
+    table: {
+      type: {
+        summary: 'string',
+      },
+      category: 'Style',
+    },
+  },
+  stroke: {
+    description: 'The stroke color.',
+    control: {
+      type: 'color',
+    },
+    table: {
+      type: {
+        summary: 'string',
+      },
+      category: 'Style',
+    },
+  },
+};

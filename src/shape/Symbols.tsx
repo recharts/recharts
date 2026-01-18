@@ -75,7 +75,7 @@ export interface InnerSymbolsProp {
   sizeType?: SizeType;
 }
 
-export type SymbolsProps = SVGProps<SVGPathElement> & InnerSymbolsProp;
+export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type'> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${upperFirst(key)}`] = factory;

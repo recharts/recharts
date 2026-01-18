@@ -45,6 +45,7 @@ export const map = {
     performance: 'Performance',
     roundedBars: 'Rounded Bar corners',
     barAlignment: 'Bar Alignment',
+    cell: 'Migrate from Cell component to shape prop',
   },
   installation: {
     installation: 'Installation',
@@ -81,9 +82,8 @@ export const map = {
     'step-3-title': '3. The content of tooltip can be customized',
     'step-3-desc': 'Sometime we may want tooltip to display much more information.',
     'step-4-title': '4. The style of each chart element can be customized',
-    'step-4-desc': `Except tooltip and legend, all the element in a chart is drawn by svg element.
-      So you can change the attributes of each chart element conveniently.`,
-    'step-5-title': '5. The style of tooltip, legend can be customized',
+    'step-4-desc': `Change the attributes of each chart element conveniently. Tooltip and Legend are HTML elements, everything else is an SVG element.`,
+    'step-5-title': '5. Customize Legend and Tooltip',
     'step-5-desc': `Though tooltip, legend are drawn by svg elements, you may change the style of tooltip,
       legend by the apis we offer. Of course, you can change the style in css too.`,
   },

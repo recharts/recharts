@@ -1517,7 +1517,7 @@ export const ScatterArgs: StorybookArgs = {
   },
   shape: {
     description:
-      'Determines the shape of individual data points.\nCan be one of the predefined shapes as a string.\nIf set a ReactElement, the shape of line can be customized.\nIf set a function, the function will be called to render customized shape.',
+      'Determines the shape of individual data points.\n- Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.\n- If set a ReactElement, the shape of line can be customized.\n- If set a function, the function will be called to render customized shape.',
     table: {
       type: {
         summary: '(union of 12 variants)',
