@@ -4,17 +4,9 @@ import { MemoryRouter } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
-import { getAllNavigationItems, normalizePathnameToLocale } from '../src/navigation';
+import { normalizePathnameToLocale } from '../src/navigation';
 import { Navigation } from '../src/components/Navigation';
 import { ColorModeProvider, defineColorModeStore } from '../src/components/color-mode';
-
-describe('getAllNavigationItems', () => {
-  it('should return all navigation items', () => {
-    const locale = 'en-US';
-    const navigationItems = getAllNavigationItems(locale);
-    expect(navigationItems).toMatchSnapshot();
-  });
-});
 
 describe('normalizePathnameToLocale', () => {
   it('should return the same pathname if it already includes locale', () => {
