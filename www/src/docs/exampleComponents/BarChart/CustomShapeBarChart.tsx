@@ -1,7 +1,7 @@
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarShapeProps } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, BarShapeProps, LabelList, Label, LabelProps } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
-const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
+const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink', 'black'];
 
 // #region Sample data
 const data = [
@@ -58,9 +58,16 @@ const getPath = (x: number, y: number, width: number, height: number) => {
 };
 
 const TriangleBar = (props: BarShapeProps) => {
-  const { fill, x, y, width, height } = props;
+  const { x, y, width, height, index } = props;
+
+  const fill = colors[index % colors.length];
 
   return <path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke="none" fill={fill} />;
+};
+
+const CustomColorLabel = (props: LabelProps) => {
+  const fill = colors[(props.index ?? 0) % colors.length];
+  return <Label {...props} fill={fill} />;
 };
 
 export default function CustomShapeBarChart() {
@@ -79,10 +86,8 @@ export default function CustomShapeBarChart() {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} label={{ position: 'top' }}>
-        {data.map((_entry, index) => (
-          <Cell key={`cell-${index}`} fill={colors[index % 20]} />
-        ))}
+      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar}>
+        <LabelList content={CustomColorLabel} position="top" />
       </Bar>
       <RechartsDevtools />
     </BarChart>

@@ -1,4 +1,14 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import {
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ScatterShapeProps,
+  Symbols,
+  SymbolType,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -12,6 +22,16 @@ const data = [
 ];
 // #endregion
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
+const SYMBOLS: ReadonlyArray<SymbolType> = ['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye'];
+
+const MyCustomSymbol = (props: ScatterShapeProps) => (
+  <Symbols
+    {...props}
+    size={300}
+    fill={COLORS[props.index % COLORS.length]}
+    type={SYMBOLS[props.index % SYMBOLS.length]}
+  />
+);
 
 export default function ScatterChartWithCells() {
   return (
@@ -29,11 +49,7 @@ export default function ScatterChartWithCells() {
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-      <Scatter name="A school" data={data} fill="#8884d8">
-        {data.map((_entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Scatter>
+      <Scatter name="A school" data={data} shape={MyCustomSymbol} />
       <RechartsDevtools />
     </ScatterChart>
   );
