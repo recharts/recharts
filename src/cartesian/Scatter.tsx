@@ -42,7 +42,7 @@ import {
   TrapezoidViewBox,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
-import { ScatterSymbol } from '../util/ScatterUtils';
+import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import {
@@ -61,7 +61,7 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -127,7 +127,7 @@ export interface ScatterPointItem {
   tooltipPosition: Coordinate;
 }
 
-export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
+export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -548,10 +548,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const hasActiveShape = activeShape != null && activeShape !== false;
         const isActive: boolean = hasActiveShape && activeIndex === String(i);
         const option = hasActiveShape && isActive ? activeShape : shape;
-        const symbolProps = {
+        const symbolProps: ScatterShapeProps = {
           ...baseProps,
           ...entry,
-          [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
+          index: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
