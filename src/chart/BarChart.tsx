@@ -11,15 +11,19 @@ const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis', 'item'];
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
  */
-export const BarChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
-  return (
-    <CartesianChart
-      chartName="BarChart"
-      defaultTooltipEventType="axis"
-      validateTooltipEventTypes={allowedTooltipTypes}
-      tooltipPayloadSearcher={arrayTooltipSearcher}
-      categoricalChartProps={props}
-      ref={ref}
-    />
-  );
-});
+export const BarChart = forwardRef<SVGSVGElement, CartesianChartProps<unknown>>(
+  (props: CartesianChartProps<unknown>, ref) => {
+    return (
+      <CartesianChart
+        chartName="BarChart"
+        defaultTooltipEventType="axis"
+        validateTooltipEventTypes={allowedTooltipTypes}
+        tooltipPayloadSearcher={arrayTooltipSearcher}
+        categoricalChartProps={props}
+        ref={ref}
+      />
+    );
+  },
+) as <DataPointType>(
+  props: CartesianChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

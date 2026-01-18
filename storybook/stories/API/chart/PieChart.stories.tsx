@@ -4,6 +4,7 @@ import { pageDataWithFillColor } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { PieChartArgs } from '../arg-types/PieChartArgs';
+import { assertNotNull } from '../../../../test/helper/assertNotNull';
 
 export default {
   argTypes: PieChartArgs,
@@ -70,21 +71,29 @@ export const Donut = {
 
 export const ChangingDataKey = {
   render: (args: Record<string, any>) => {
-    const data1 = [
+    type MockDataType = {
+      x?: { value: number };
+      y?: { value: number };
+      name: string;
+      fill: string;
+    };
+    const data1: ReadonlyArray<MockDataType> = [
       { x: { value: 1 }, name: 'x1', fill: 'blue' },
       { x: { value: 2 }, name: 'x2', fill: 'red' },
       { x: { value: 3 }, name: 'x3', fill: 'green' },
     ];
-    const data2 = [
+    const data2: ReadonlyArray<MockDataType> = [
       { y: { value: 3 }, name: 'y1', fill: 'blue' },
       { y: { value: 2 }, name: 'y2', fill: 'red' },
       { y: { value: 1 }, name: 'y3', fill: 'green' },
     ];
 
-    const dataKey1 = (d: any) => {
+    const dataKey1 = (d: MockDataType) => {
+      assertNotNull(d.x);
       return d.x.value;
     };
-    const dataKey2 = (d: any) => {
+    const dataKey2 = (d: MockDataType) => {
+      assertNotNull(d.y);
       return d.y.value;
     };
 

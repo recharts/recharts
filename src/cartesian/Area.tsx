@@ -34,6 +34,7 @@ import {
   AnimationTiming,
   CartesianLayout,
   DataKey,
+  DataProvider,
   DotType,
   LegendType,
   NullableCoordinate,
@@ -133,7 +134,7 @@ interface InternalAreaProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface AreaProps extends ZIndexable {
+interface AreaProps<DataPointType = any> extends DataProvider<DataPointType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -182,7 +183,6 @@ interface AreaProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/examples/AreaChartConnectNulls/ AreaChart with connectNull true and false}
    */
   connectNulls?: boolean;
-  data?: ChartData;
   /**
    * Decides how to extract the value of this Area from the data:
    * - `string`: the name of the field in the data object;

@@ -20,6 +20,7 @@ import {
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
+import { assertNotNull } from '../../../../test/helper/assertNotNull';
 
 export default {
   component: LineChart,
@@ -1038,20 +1039,27 @@ export const ReversedXAxis = {
 
 export const ChangingDataKey = {
   render: (args: Args) => {
-    const data1 = [
+    type MockDataType = {
+      x?: { value: number };
+      y?: { value: number };
+      name: string;
+    };
+    const data1: ReadonlyArray<MockDataType> = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
       { x: { value: 3 }, name: 'x3' },
     ];
-    const data2 = [
+    const data2: ReadonlyArray<MockDataType> = [
       { y: { value: 3 }, name: 'y1' },
       { y: { value: 2 }, name: 'y2' },
     ];
 
-    const dataKey1 = (d: any) => {
+    const dataKey1 = (d: MockDataType) => {
+      assertNotNull(d.x);
       return d.x.value;
     };
-    const dataKey2 = (d: any) => {
+    const dataKey2 = (d: MockDataType) => {
+      assertNotNull(d.y);
       return d.y.value;
     };
 

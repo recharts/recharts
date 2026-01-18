@@ -12,14 +12,14 @@ export const defaultPieChartProps = {
   layout: 'centric',
   startAngle: 0,
   endAngle: 360,
-} as const satisfies Partial<PolarChartProps>;
+} as const satisfies Partial<PolarChartProps<never>>;
 
 /**
  * @consumes ResponsiveContainerContext
  * @provides PolarViewBoxContext
  * @provides PolarChartContext
  */
-export const PieChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
+export const PieChart = forwardRef<SVGSVGElement, PolarChartProps<unknown>>((props: PolarChartProps<unknown>, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultPieChartProps);
   return (
     <PolarChart
@@ -31,4 +31,4 @@ export const PieChart = forwardRef<SVGSVGElement, PolarChartProps>((props: Polar
       ref={ref}
     />
   );
-});
+}) as <DataPointType>(props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> }) => React.ReactElement;

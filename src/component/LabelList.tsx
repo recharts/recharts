@@ -77,7 +77,7 @@ interface LabelListProps extends ZIndexable {
    * Scatter requires this prop to be set.
    * Other graphical components will show the same value as the dataKey of the component by default.
    */
-  dataKey?: DataKey<Record<string, unknown>>;
+  dataKey?: DataKey<any>;
   /**
    * If set a React element, the option is the customized React element of rendering each label.
    * If set to a function, the function is called once for each item
