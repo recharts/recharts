@@ -24,7 +24,7 @@ import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } fr
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
   y: number | null;
-  value?: [number, number];
+  value?: ReadonlyArray<unknown>;
   payload?: any;
 }
 
