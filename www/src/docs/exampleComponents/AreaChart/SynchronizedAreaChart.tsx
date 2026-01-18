@@ -50,9 +50,10 @@ const data = [
 // #endregion
 const SynchronizedAreaChart = () => {
   return (
-    <>
+    <div
+      style={{ width: '100%', display: 'grid', gridTemplateColumns: '30% 70%', gridTemplateRows: 'repeat(2, 20vh)' }}
+    >
       <AreaChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
         responsive
         data={data}
         syncId="anyId"
@@ -72,7 +73,6 @@ const SynchronizedAreaChart = () => {
       </AreaChart>
 
       <AreaChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
         responsive
         data={data}
         syncId="anyId"
@@ -87,10 +87,46 @@ const SynchronizedAreaChart = () => {
         <XAxis dataKey="name" />
         <YAxis width="auto" />
         <Tooltip />
-        <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+        <Area
+          type="monotone"
+          dataKey="pv"
+          stroke="#82ca9d"
+          fill="#82ca9d"
+          animationBegin={200}
+          animationDuration={1300}
+        />
         <RechartsDevtools />
       </AreaChart>
-    </>
+
+      <AreaChart
+        style={{ gridColumn: '1/span 2' }}
+        responsive
+        data={data}
+        syncId="anyId"
+        margin={{
+          top: 10,
+          right: 0,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis width="auto" />
+        <Tooltip />
+        <Area
+          type="monotone"
+          dataKey="pv"
+          stroke="#82ca9d"
+          strokeWidth={4}
+          strokeDasharray="16 16"
+          fill="#82ca9d"
+          animationBegin={400}
+          animationDuration={1100}
+        />
+        <RechartsDevtools />
+      </AreaChart>
+    </div>
   );
 };
 

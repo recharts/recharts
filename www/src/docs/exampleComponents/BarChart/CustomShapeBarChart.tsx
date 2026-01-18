@@ -1,4 +1,4 @@
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarShapeProps } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarShapeProps, Tooltip } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
@@ -77,6 +77,7 @@ export default function CustomShapeBarChart() {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip cursor={{ fillOpacity: 0.5 }} />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} label={{ position: 'top' }}>
