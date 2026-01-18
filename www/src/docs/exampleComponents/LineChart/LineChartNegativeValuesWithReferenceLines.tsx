@@ -65,7 +65,7 @@ export default function LineChartNegativeValuesWithReferenceLines() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
 
       <YAxis
         dataKey="y"
@@ -78,10 +78,12 @@ export default function LineChartNegativeValuesWithReferenceLines() {
           angle: -90,
           position: 'left',
           offset: 0,
+          fill: 'var(--color-text-3)',
         }}
         allowDataOverflow
         strokeWidth={minX < 0 ? 0 : 1}
         width="auto"
+        stroke="var(--color-text-3)"
       />
 
       <XAxis
@@ -93,15 +95,28 @@ export default function LineChartNegativeValuesWithReferenceLines() {
           key: 'xAxisLabel',
           value: 'x',
           position: 'bottom',
+          fill: 'var(--color-text-3)',
         }}
         allowDataOverflow
         strokeWidth={minY < 0 ? 0 : 1}
+        stroke="var(--color-text-3)"
       />
 
-      {minY < 0 && <ReferenceLine y={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
-      {minX < 0 && <ReferenceLine x={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
+      {minY < 0 && <ReferenceLine y={0} stroke="var(--color-text-3)" strokeWidth={1.5} strokeOpacity={0.65} />}
+      {minX < 0 && <ReferenceLine x={0} stroke="var(--color-text-3)" strokeWidth={1.5} strokeOpacity={0.65} />}
 
-      <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" stroke="black" tooltipType="none" />
+      <Line
+        strokeWidth={2}
+        data={data}
+        dot={false}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+        type="monotone"
+        dataKey="y"
+        stroke="var(--color-solid-1)"
+        tooltipType="none"
+      />
       <RechartsDevtools />
     </LineChart>
   );
