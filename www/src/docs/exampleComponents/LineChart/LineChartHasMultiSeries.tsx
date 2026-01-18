@@ -33,13 +33,28 @@ const series = [
 export default function LineChartHasMultiSeries() {
   return (
     <LineChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
-      <YAxis dataKey="value" width="auto" />
-      <Tooltip />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} stroke="var(--color-text-3)" />
+      <YAxis dataKey="value" width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      />
       <Legend />
       {series.map(s => (
-        <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
+        <Line
+          dataKey="value"
+          data={s.data}
+          name={s.name}
+          key={s.name}
+          stroke="var(--color-chart-1)"
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
       ))}
       <RechartsDevtools />
     </LineChart>

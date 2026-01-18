@@ -47,6 +47,18 @@ const data = [
   },
 ];
 
+const common = (
+  <>
+    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+    <XAxis dataKey="name" stroke="var(--color-text-3)" />
+    <YAxis stroke="var(--color-text-3)" />
+    <Tooltip
+      cursor={{ stroke: 'var(--color-border-2)' }}
+      contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+    />
+  </>
+);
+
 // #endregion
 export default function Example() {
   return (
@@ -63,11 +75,16 @@ export default function Example() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        {common}
+        <Line
+          type="monotone"
+          dataKey="uv"
+          stroke="var(--color-chart-1)"
+          fill="var(--color-chart-1)"
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
         <RechartsDevtools />
       </LineChart>
 
@@ -83,12 +100,17 @@ export default function Example() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
-        <Brush />
+        {common}
+        <Line
+          type="monotone"
+          dataKey="pv"
+          stroke="var(--color-chart-2)"
+          fill="var(--color-chart-2)"
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
+        <Brush stroke="var(--color-border-1)" fill="var(--color-surface-base)" />
         <RechartsDevtools />
       </LineChart>
 
@@ -104,11 +126,16 @@ export default function Example() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+        {common}
+        <Area
+          type="monotone"
+          dataKey="pv"
+          stroke="var(--color-chart-3)"
+          fill="var(--color-chart-3)"
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
         <RechartsDevtools />
       </AreaChart>
     </>
