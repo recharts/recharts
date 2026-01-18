@@ -1,4 +1,4 @@
-import { Cell, Pie, PieChart, PieLabelRenderProps } from 'recharts';
+import { Pie, PieChart, PieLabelRenderProps, PieSectorShapeProps, Sector } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -30,6 +30,10 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
+const MyCustomPie = (props: PieSectorShapeProps) => {
+  return <Sector {...props} fill={COLORS[props.index % COLORS.length]} />;
+};
+
 export default function PieChartWithCustomizedLabel({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (
     <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }} responsive>
@@ -40,11 +44,8 @@ export default function PieChartWithCustomizedLabel({ isAnimationActive = true }
         fill="#8884d8"
         dataKey="value"
         isAnimationActive={isAnimationActive}
-      >
-        {data.map((entry, index) => (
-          <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Pie>
+        shape={MyCustomPie}
+      />
       <RechartsDevtools />
     </PieChart>
   );
