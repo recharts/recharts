@@ -120,6 +120,7 @@ describe('Documentation Examples Coverage', () => {
     'Scatter',
     'ScatterChart',
     'ScatterProps',
+    'ScatterPointNode',
     'Sector',
     'SectorProps',
     'SunburstChart',

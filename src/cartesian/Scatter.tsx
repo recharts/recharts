@@ -77,7 +77,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { ChartData } from '../state/chartDataSlice';
 
-interface ScatterPointNode {
+export interface ScatterPointNode {
   x?: number | string;
   y?: number | string;
   z?: number | string;

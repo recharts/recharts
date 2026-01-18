@@ -93,7 +93,7 @@ export type { Props as BarProps, BarRectangleItem, BarShapeProps } from './carte
 export { BarStack } from './cartesian/BarStack';
 export type { BarStackProps } from './cartesian/BarStack';
 export { Scatter } from './cartesian/Scatter';
-export type { Props as ScatterProps } from './cartesian/Scatter';
+export type { Props as ScatterProps, ScatterPointNode } from './cartesian/Scatter';
 export type { ScatterShapeProps } from './util/ScatterUtils';
 export { XAxis } from './cartesian/XAxis';
 export type { Props as XAxisProps } from './cartesian/XAxis';
