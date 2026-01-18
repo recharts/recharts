@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import CustomActiveShapePieChart from './CustomActiveShapePieChart';
 import PieChartWithCustomizedLabel from './PieChartWithCustomizedLabel';
 import PieChartWithPaddingAngle from './PieChartWithPaddingAngle';
@@ -16,6 +17,9 @@ import pieChartInFlexboxSource from './PieChartInFlexbox?raw';
 import PieChartInGrid from './PieChartInGrid.tsx';
 import pieChartInGridSource from './PieChartInGrid?raw';
 import PieChartNavExample from './PieChartNavExample';
+import PieWithGradient from './PieWithGradient';
+import pieWithGradientSource from './PieWithGradient?raw';
+import { TargetBlankLink } from '../../../components/Shared/TargetBlankLink.tsx';
 
 export { PieChartNavExample };
 
@@ -67,5 +71,37 @@ export const pieChartExamples: Record<string, ChartExample> = {
     Component: PieChartInGrid,
     sourceCode: pieChartInGridSource,
     name: 'Pie Chart in Grid',
+  },
+  PieWithGradient: {
+    Component: PieWithGradient,
+    sourceCode: pieWithGradientSource,
+    name: 'Pie Chart with Gradient',
+    description: (
+      <>
+        <p>
+          This example demonstrates the use of{' '}
+          <TargetBlankLink href="https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/gradientUnits">
+            gradientUnits SVG attribute
+          </TargetBlankLink>{' '}
+          to create a radial gradient effect on pie sectors.
+        </p>
+        <p>
+          This example uses two different gradients:
+          <ol>
+            <li>
+              <code>{`gradientUnits="userSpaceOnUse"`}</code> creates a gradient that is centered on the whole chart
+              element. It uses the entire SVG canvas as the reference for the gradient position and size. This is used
+              as the inactive fill background.
+            </li>
+            <li>
+              <code>{`gradientUnits="objectBoundingBox"`}</code> (the default) with center at each{' '}
+              <Link to="/api/Sector">Sector&apos;s</Link> center coordinates. This makes the gradient appear to radiate
+              out from the center of each individual Sector. This is used for fill on hover.
+            </li>
+          </ol>
+        </p>
+        <p>Also uses a custom clipPath so that the thick stroke on mouse hover does not overlay other Sectors.</p>
+      </>
+    ),
   },
 };

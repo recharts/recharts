@@ -1,7 +1,12 @@
-import React from 'react';
+import { CSSProperties } from 'react';
 import { LuExternalLink } from 'react-icons/lu';
 
-import styles from './TargetBlankLink.module.css';
+const styles: CSSProperties = {
+  whiteSpace: 'nowrap',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.25rem',
+};
 
 type TargetBlankLinkProps = {
   href: string;
@@ -11,7 +16,7 @@ type TargetBlankLinkProps = {
 
 export function TargetBlankLink({ href, children, onClick }: TargetBlankLinkProps) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={styles.anchor}>
+    <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} style={styles}>
       {children}
       <LuExternalLink />
     </a>
