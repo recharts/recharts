@@ -55,12 +55,30 @@ export default function Step4() {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
-      <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} />
+      <CartesianGrid strokeDasharray="5 5" stroke="var(--color-border-3)" />
+      <Line
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-11)"
+        strokeWidth={2}
+        name="My data series name"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} stroke="var(--color-text-3)" />
       <Legend align="right" />
-      <Tooltip />
+      <Tooltip
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        cursor={{ stroke: 'var(--color-border-2)' }}
+      />
       <RechartsDevtools />
     </LineChart>
   );

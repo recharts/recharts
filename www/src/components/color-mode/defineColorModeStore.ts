@@ -1,5 +1,5 @@
-type ColorMode = 'light' | 'dark';
-type ColorModeOrigin = 'system' | 'storage';
+export type ColorMode = 'light' | 'dark';
+export type ColorModeOrigin = 'system' | 'storage';
 export interface ColorModeState {
   mode: ColorMode;
   origin: ColorModeOrigin;

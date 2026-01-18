@@ -79,7 +79,13 @@ const solarSystem = [
     massKg: 1.3e22,
     fill: '#968570',
   },
-];
+] satisfies Array<{
+  name: string;
+  orbitalDistanceKm: number;
+  radiusKm: number;
+  massKg: number;
+  fill: string;
+}>;
 // #endregion
 
 export default function MassBarChart() {
@@ -94,10 +100,25 @@ export default function MassBarChart() {
       responsive
       data={solarSystem}
     >
-      <XAxis dataKey="name" />
-      <YAxis width="auto" label={{ value: 'Mass [kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90 }} />
-      <Bar dataKey="massKg" unit="kg" />
-      <Tooltip />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis
+        width="auto"
+        stroke="var(--color-text-3)"
+        label={{ value: 'Mass [kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90, fill: 'var(--color-text-3)' }}
+      />
+      <Bar dataKey="massKg" unit="kg" stroke="var(--color-border-2)" />
+      <Tooltip
+        cursor={{
+          fill: 'var(--color-solid-7a)',
+        }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
       <RechartsDevtools />
     </BarChart>
   );

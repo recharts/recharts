@@ -54,15 +54,69 @@ export default function MultiXAxisExample() {
       responsive
       data={data}
     >
-      <XAxis dataKey="name" xAxisId="a" orientation="top" height={40} />
-      <XAxis mirror dataKey="uv" xAxisId="b" height={50} />
-      <XAxis dataKey="pv" type="number" xAxisId="c" height={60} />
-      <XAxis mirror dataKey="amt" type="number" orientation="top" xAxisId="d" height={20} />
-      <Tooltip defaultIndex={2} axisId="a" />
-      <Line dataKey="name" xAxisId="a" />
-      <Line dataKey="uv" xAxisId="b" />
-      <Line dataKey="pv" xAxisId="c" />
-      <Line dataKey="amt" xAxisId="d" />
+      <XAxis dataKey="name" xAxisId="a" orientation="top" height={40} stroke="var(--color-text-3)" />
+      <XAxis mirror dataKey="uv" xAxisId="b" height={50} stroke="var(--color-text-3)" />
+      <XAxis dataKey="pv" type="number" xAxisId="c" height={60} stroke="var(--color-text-3)" />
+      <XAxis
+        mirror
+        dataKey="amt"
+        type="number"
+        orientation="top"
+        xAxisId="d"
+        height={20}
+        stroke="var(--color-text-3)"
+      />
+      <Tooltip
+        defaultIndex={2}
+        axisId="a"
+        cursor={{
+          stroke: 'var(--color-border-2)',
+        }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
+      <Line
+        dataKey="name"
+        xAxisId="a"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Line
+        dataKey="uv"
+        xAxisId="b"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Line
+        dataKey="pv"
+        xAxisId="c"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Line
+        dataKey="amt"
+        xAxisId="d"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
     </LineChart>
   );
 }

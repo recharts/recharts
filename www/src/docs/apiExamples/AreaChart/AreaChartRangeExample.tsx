@@ -27,10 +27,26 @@ const AreaChartRangeExample = ({ isAnimationActive = true }) => (
       left: 0,
     }}
   >
-    <XAxis dataKey="day" />
-    <YAxis width="auto" />
-    <Area dataKey="temperature" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
-    <Tooltip />
+    <XAxis dataKey="day" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
+    <Area
+      dataKey="temperature"
+      stroke="var(--color-chart-1)"
+      fill="var(--color-chart-1)"
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
+      isAnimationActive={isAnimationActive}
+    />
+    <Tooltip
+      cursor={{
+        stroke: 'var(--color-border-2)',
+      }}
+      contentStyle={{
+        backgroundColor: 'var(--color-surface-raised)',
+        borderColor: 'var(--color-border-2)',
+      }}
+    />
     <RechartsDevtools />
   </AreaChart>
 );

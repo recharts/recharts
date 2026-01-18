@@ -48,12 +48,18 @@ export const ReferenceDotExample = ({ isAnimationActive = true }: { isAnimationA
         left: 0,
       }}
     >
-      <CartesianGrid />
-      <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-      <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
-      <Scatter name="A school" data={data} fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <XAxis dataKey="x" type="number" name="stature" unit="cm" stroke="var(--color-text-3)" />
+      <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" stroke="var(--color-text-3)" />
+      <Scatter name="A school" data={data} fill="var(--color-chart-1)" isAnimationActive={isAnimationActive} />
       {mean && <ReferenceDot {...mean} r={20} fill="red" stroke="none" />}
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <Tooltip
+        cursor={{ strokeDasharray: '3 3', stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
       <RechartsDevtools />
     </ScatterChart>
   );

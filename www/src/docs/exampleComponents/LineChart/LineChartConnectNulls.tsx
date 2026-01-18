@@ -27,11 +27,25 @@ export default function Example() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+        <XAxis dataKey="name" stroke="var(--color-text-3)" />
+        <YAxis stroke="var(--color-text-3)" />
+        <Tooltip
+          cursor={{ stroke: 'var(--color-border-2)' }}
+          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+        />
+        <Line
+          type="monotone"
+          dataKey="uv"
+          stroke="var(--color-chart-1)"
+          fill="var(--color-chart-1)"
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
         <RechartsDevtools />
       </LineChart>
 
@@ -46,11 +60,26 @@ export default function Example() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+        <XAxis dataKey="name" stroke="var(--color-text-3)" />
+        <YAxis stroke="var(--color-text-3)" />
+        <Tooltip
+          cursor={{ stroke: 'var(--color-border-2)' }}
+          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+        />
+        <Line
+          connectNulls
+          type="monotone"
+          dataKey="uv"
+          stroke="var(--color-chart-1)"
+          fill="var(--color-chart-1)"
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
         <RechartsDevtools />
       </LineChart>
     </div>

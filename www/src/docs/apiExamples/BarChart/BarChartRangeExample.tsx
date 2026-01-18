@@ -27,10 +27,18 @@ const BarChartRangeExample = ({ isAnimationActive = true }) => (
       left: 20,
     }}
   >
-    <XAxis dataKey="day" />
-    <YAxis width="auto" />
-    <Tooltip />
-    <Bar dataKey="temperature" fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <XAxis dataKey="day" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
+    <Tooltip
+      cursor={{
+        fill: 'var(--color-solid-7a)',
+      }}
+      contentStyle={{
+        backgroundColor: 'var(--color-surface-raised)',
+        borderColor: 'var(--color-border-2)',
+      }}
+    />
+    <Bar dataKey="temperature" fill="var(--color-chart-1)" isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </BarChart>
 );

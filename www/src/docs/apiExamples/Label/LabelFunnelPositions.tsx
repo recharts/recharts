@@ -14,21 +14,33 @@ const LabelFunnelPositions = ({ isAnimationActive = true }: { isAnimationActive?
         bottom: 20,
       }}
     >
-      <Funnel dataKey="value" fill="none" stroke="black" width="80%" reversed isAnimationActive={isAnimationActive}>
-        <LabelList fill="black" position={{ x: 120, y: 120 }} valueAccessor={() => 'custom'} className="custom" />
-        <LabelList position="center" fill="black" valueAccessor={() => 'center'} />
-        <LabelList position="right" fill="black" valueAccessor={() => 'right'} />
-        <LabelList position="insideRight" fill="black" valueAccessor={() => 'insideRight'} />
-        <LabelList position="left" fill="black" valueAccessor={() => 'left'} />
-        <LabelList position="insideLeft" fill="black" valueAccessor={() => 'insideLeft'} />
-        <LabelList position="insideTopLeft" fill="black" valueAccessor={() => 'insideTopLeft'} />
-        <LabelList position="insideBottomLeft" fill="black" valueAccessor={() => 'insideBottomLeft'} />
-        <LabelList position="top" fill="black" valueAccessor={() => 'top'} />
-        <LabelList position="insideTop" fill="black" valueAccessor={() => 'insideTop'} />
-        <LabelList position="insideTopRight" fill="black" valueAccessor={() => 'insideTopRight'} />
-        <LabelList position="insideBottomRight" fill="black" valueAccessor={() => 'insideBottomRight'} />
-        <LabelList position="bottom" fill="black" valueAccessor={() => 'bottom'} />
-        <LabelList position="insideBottom" fill="black" valueAccessor={() => 'insideBottom'} />
+      <Funnel
+        dataKey="value"
+        fill="none"
+        stroke="var(--color-border-1)"
+        width="80%"
+        reversed
+        isAnimationActive={isAnimationActive}
+      >
+        <LabelList
+          fill="var(--color-text-3)"
+          position={{ x: 120, y: 120 }}
+          valueAccessor={() => 'custom'}
+          className="custom"
+        />
+        <LabelList position="center" fill="var(--color-text-3)" valueAccessor={() => 'center'} />
+        <LabelList position="right" fill="var(--color-text-3)" valueAccessor={() => 'right'} />
+        <LabelList position="insideRight" fill="var(--color-text-3)" valueAccessor={() => 'insideRight'} />
+        <LabelList position="left" fill="var(--color-text-3)" valueAccessor={() => 'left'} />
+        <LabelList position="insideLeft" fill="var(--color-text-3)" valueAccessor={() => 'insideLeft'} />
+        <LabelList position="insideTopLeft" fill="var(--color-text-3)" valueAccessor={() => 'insideTopLeft'} />
+        <LabelList position="insideBottomLeft" fill="var(--color-text-3)" valueAccessor={() => 'insideBottomLeft'} />
+        <LabelList position="top" fill="var(--color-text-3)" valueAccessor={() => 'top'} />
+        <LabelList position="insideTop" fill="var(--color-text-3)" valueAccessor={() => 'insideTop'} />
+        <LabelList position="insideTopRight" fill="var(--color-text-3)" valueAccessor={() => 'insideTopRight'} />
+        <LabelList position="insideBottomRight" fill="var(--color-text-3)" valueAccessor={() => 'insideBottomRight'} />
+        <LabelList position="bottom" fill="var(--color-text-3)" valueAccessor={() => 'bottom'} />
+        <LabelList position="insideBottom" fill="var(--color-text-3)" valueAccessor={() => 'insideBottom'} />
       </Funnel>
       <RechartsDevtools />
     </FunnelChart>

@@ -44,24 +44,28 @@ const data = [
 // #endregion
 export const RadarChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <RadarChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive data={data}>
-    <PolarGrid />
-    <PolarAngleAxis dataKey="subject" />
-    <PolarRadiusAxis angle={30} domain={[0, 150]} />
+    <PolarGrid stroke="var(--color-border-3)" />
+    <PolarAngleAxis dataKey="subject" stroke="var(--color-text-3)" />
+    <PolarRadiusAxis angle={30} domain={[0, 150]} stroke="var(--color-text-3)" />
     <Radar
       name="Mike"
       dataKey="A"
-      stroke="#8884d8"
-      fill="#8884d8"
+      stroke="var(--color-chart-1)"
+      fill="var(--color-chart-1)"
       fillOpacity={0.6}
       isAnimationActive={isAnimationActive}
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
     />
     <Radar
       name="Lily"
       dataKey="B"
-      stroke="#82ca9d"
-      fill="#82ca9d"
+      stroke="var(--color-chart-2)"
+      fill="var(--color-chart-2)"
       fillOpacity={0.6}
       isAnimationActive={isAnimationActive}
+      activeDot={{ stroke: 'var(--color-surface-base)' }}
     />
     <Legend />
     <RechartsDevtools />

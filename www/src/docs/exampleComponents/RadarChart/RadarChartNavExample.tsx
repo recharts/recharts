@@ -14,8 +14,17 @@ const data = [
 const RadarChartNavExample = () => {
   return (
     <RadarChart responsive outerRadius="120%" data={data} style={{ aspectRatio: 1 }}>
-      <PolarGrid />
-      <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <PolarGrid stroke="var(--color-border-3)" />
+      <Radar
+        name="Mike"
+        dataKey="A"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        fillOpacity={0.6}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
     </RadarChart>
   );
 };

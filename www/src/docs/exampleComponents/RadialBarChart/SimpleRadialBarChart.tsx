@@ -64,9 +64,24 @@ const SimpleRadialBarChart = () => {
       barSize={14}
       data={data}
     >
-      <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="uv" />
+      <RadialBar
+        label={{ position: 'insideStart', fill: 'var(--color-text-1)' }}
+        background={{
+          fill: 'var(--color-border-4)',
+        }}
+        dataKey="uv"
+      />
       <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
-      <Tooltip />
+      <Tooltip
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        itemStyle={{
+          color: 'var(--color-text-1)',
+        }}
+        cursor={{ stroke: 'var(--color-border-2)' }}
+      />
       <RechartsDevtools />
     </RadialBarChart>
   );

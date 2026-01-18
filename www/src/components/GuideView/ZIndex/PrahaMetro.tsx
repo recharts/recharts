@@ -61,7 +61,7 @@ const skalka = { name: 'Skalka', yPos: bottomRow, xPos: strasnicka.xPos + gapA }
 const depohostivar = { name: 'Depo Hostivař', yPos: bottomRow, xPos: skalka.xPos + gapA };
 const lineA = {
   name: 'A',
-  color: '#1aa300',
+  color: 'var(--color-chart-1)',
   stations: [
     motol,
     petriny,
@@ -114,7 +114,7 @@ const rajskazahrada = { name: 'Rajská zahrada', yPos: midRow, xPos: hloubetin.x
 const cernak = { name: 'Černý Most', yPos: midRow, xPos: rajskazahrada.xPos + gapB };
 const lineB = {
   name: 'B',
-  color: '#fed330',
+  color: 'var(--color-chart-2)',
   stations: [
     zlicin,
     stodulky,
@@ -164,7 +164,7 @@ const strizkov = { name: 'Střížkov', yPos: topRow, xPos: letnany.xPos + gapC 
 const prosek = { name: 'Prosek', yPos: topRow, xPos: strizkov.xPos + gapC };
 const lineC = {
   name: 'C',
-  color: '#ff242e',
+  color: 'var(--color-chart-8)',
   stations: [
     haje,
     opatov,
@@ -198,7 +198,7 @@ function MetroLine(props: LineProps) {
       type="monotone"
       dataKey="yPos"
       strokeWidth={15}
-      dot={{ strokeWidth: 3, stroke: '#fff', r: 10, fill: props.stroke }}
+      dot={{ strokeWidth: 3, stroke: 'var(--color-surface-base)', r: 10, fill: props.stroke }}
       isAnimationActive={false}
       activeDot={false}
       {...props}
@@ -248,7 +248,7 @@ export default function PrahaMetro() {
         y={mustek.yPos}
         label={{
           value: mustek.name,
-          fill: '#000',
+          fill: 'var(--color-text-1)',
           angle: -65,
           textAnchor: 'start',
           fontWeight: 'bold',
@@ -257,6 +257,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineA.color}
+        stroke="var(--color-surface-base)"
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -265,7 +266,7 @@ export default function PrahaMetro() {
         y={muzeum.yPos}
         label={{
           value: muzeum.name,
-          fill: '#000',
+          fill: 'var(--color-text-1)',
           angle: -65,
           textAnchor: 'end',
           fontWeight: 'bold',
@@ -273,6 +274,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineC.color}
+        stroke="var(--color-surface-base)"
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -281,7 +283,7 @@ export default function PrahaMetro() {
         y={florenc.yPos}
         label={{
           value: florenc.name,
-          fill: '#000',
+          fill: 'var(--color-text-1)',
           angle: -65,
           textAnchor: 'start',
           fontWeight: 'bold',
@@ -290,6 +292,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineC.color}
+        stroke="var(--color-surface-base)"
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -298,7 +301,7 @@ export default function PrahaMetro() {
         y={hlavak.yPos}
         label={{
           value: hlavak.name,
-          fill: '#000',
+          fill: 'var(--color-text-1)',
           angle: -73,
           textAnchor: 'start',
           fontWeight: 'bold',
@@ -309,7 +312,7 @@ export default function PrahaMetro() {
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineC.color}
-        stroke="#fff"
+        stroke="var(--color-surface-base)"
         strokeWidth={3}
       />
       <ReferenceDot
@@ -328,7 +331,7 @@ export default function PrahaMetro() {
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineA.color}
-        stroke="#fff"
+        stroke="var(--color-surface-base)"
         strokeWidth={3}
       />
       {/* Position the Airplane icon on top of the dot */}

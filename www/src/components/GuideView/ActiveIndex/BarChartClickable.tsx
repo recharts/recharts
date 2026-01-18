@@ -1,5 +1,5 @@
-import { Bar, BarChart, Tooltip } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { Bar, BarChart, Tooltip } from 'recharts';
 
 export default function BarChartClickable() {
   return (
@@ -13,7 +13,7 @@ export default function BarChartClickable() {
       ]}
     >
       <Tooltip trigger="click" content={() => null} cursor={false} shared={false} />
-      <Bar dataKey="uv" stackId="a" fill="green" activeBar={{ stroke: 'black', strokeWidth: 7 }} />
+      <Bar dataKey="uv" stackId="a" fill="green" activeBar={{ stroke: 'var(--color-solid-1)', strokeWidth: 7 }} />
       <RechartsDevtools />
     </BarChart>
   );
