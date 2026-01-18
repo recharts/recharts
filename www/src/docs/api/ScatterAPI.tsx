@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const ScatterAPI: ApiDoc = {
@@ -381,11 +382,15 @@ export const ScatterAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Determines the shape of individual data points. Can be one of the predefined shapes as a string. If set a
-              ReactElement, the shape of line can be customized. If set a function, the function will be called to
-              render customized shape.
-            </p>
+            <p>Determines the shape of individual data points.</p>
+            <ul>
+              <li>
+                Can be one of the predefined shapes as a string, which will be passed to{' '}
+                <Link to="/api/Symbols/">Symbols</Link> component.
+              </li>
+              <li>If set a ReactElement, the shape of line can be customized.</li>
+              <li>If set a function, the function will be called to render customized shape.</li>
+            </ul>
           </section>
         ),
       },

@@ -274,9 +274,9 @@ interface ScatterProps extends DataProvider, ZIndexable {
   activeShape?: ScatterCustomizedShape;
   /**
    * Determines the shape of individual data points.
-   * Can be one of the predefined shapes as a string.
-   * If set a ReactElement, the shape of line can be customized.
-   * If set a function, the function will be called to render customized shape.
+   * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
+   * - If set a ReactElement, the shape of line can be customized.
+   * - If set a function, the function will be called to render customized shape.
    * @defaultValue circle
    *
    * @example <Scatter shape={CustomizedShapeComponent} />

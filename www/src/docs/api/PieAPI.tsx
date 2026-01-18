@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const PieAPI: ApiDoc = {
@@ -518,7 +519,10 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
+            <p>
+              The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive. If
+              undefined, renders <Link to="/api/Sector/">Sector</Link> shape.
+            </p>
           </section>
         ),
       },

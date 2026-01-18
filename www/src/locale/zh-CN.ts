@@ -45,6 +45,7 @@ export const map = {
     performance: '性能优化',
     roundedBars: '圆角柱状图',
     barAlignment: '柱子对齐方式',
+    cell: '从 Cell 组件迁移到 shape 属性',
   },
   installation: {
     installation: '安装',

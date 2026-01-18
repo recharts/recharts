@@ -53,11 +53,12 @@ export const SymbolsArgs: StorybookArgs = {
   },
   type: {
     control: {
-      type: 'text',
+      type: 'select',
     },
+    options: ['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye'],
     table: {
       type: {
-        summary: 'string',
+        summary: '"circle" | "cross" | "diamond" | "square" | "star" | "triangle" | "wye"',
       },
       category: 'General',
     },
