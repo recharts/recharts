@@ -36,6 +36,7 @@ describe('Documentation Examples Coverage', () => {
     'CartesianGrid',
     'CartesianGridProps',
     'CartesianViewBox',
+    'Cell',
     'CellProps',
     'ChartOffset',
     'ComposedChart',

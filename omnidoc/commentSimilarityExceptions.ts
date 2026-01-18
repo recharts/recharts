@@ -295,4 +295,9 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     props: ['data'],
     reason: 'Treemap data structure allows `children` properties for nested nodes',
   },
+  {
+    components: ['Cell'],
+    props: ['fill', 'stroke'],
+    reason: 'Cell is a generic component used to override attributes of children, so its description is more abstract.',
+  },
 ];
