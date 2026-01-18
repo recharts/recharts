@@ -29,6 +29,7 @@ export const BrushAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false }],
     },
     { name: 'dy', type: 'number | string', isOptional: true },
     {
@@ -71,6 +72,7 @@ export const BrushAPI: ApiDoc = {
         ),
       },
       defaultVal: 40,
+      examples: [{ name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false }],
     },
     { name: 'leaveTimeOut', type: 'number', isOptional: true, defaultVal: 1000 },
     { name: 'padding', type: 'Padding', isOptional: true, defaultVal: { top: 1, right: 1, bottom: 1, left: 1 } },

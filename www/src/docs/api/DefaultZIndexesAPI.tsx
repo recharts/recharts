@@ -11,4 +11,5 @@ export const DefaultZIndexesAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
 };

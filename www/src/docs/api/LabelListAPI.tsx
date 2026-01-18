@@ -52,6 +52,7 @@ export const LabelListAPI: ApiDoc = {
           url: '/examples/BarChartWithMinHeight/',
           isExternal: false,
         },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
       ],
     },
     {
@@ -81,6 +82,10 @@ export const LabelListAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+      ],
     },
     {
       name: 'formatter',
@@ -138,6 +143,9 @@ export const LabelListAPI: ApiDoc = {
         ),
       },
       defaultVal: 'middle',
+      examples: [
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
     },
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
@@ -170,6 +178,11 @@ export const LabelListAPI: ApiDoc = {
       defaultVal: 2000,
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
+  ],
+  links: [
+    { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+    { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+    { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
   ],
   parentComponents: ['Area', 'Bar', 'Funnel', 'Line', 'Pie', 'Radar', 'RadialBar', 'Scatter'],
 };

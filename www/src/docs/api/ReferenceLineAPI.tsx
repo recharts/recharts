@@ -153,6 +153,11 @@ export const ReferenceLineAPI: ApiDoc = {
         ),
       },
       format: ['<ReferenceLine y="Page D" />'],
+      examples: [
+        { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+        { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+        { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+      ],
     },
     {
       name: 'yAxisId',
@@ -204,6 +209,11 @@ export const ReferenceLineAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+    { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+    { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+  ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],
 };

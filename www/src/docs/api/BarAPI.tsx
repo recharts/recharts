@@ -34,7 +34,10 @@ export const BarAPI: ApiDoc = {
       },
       defaultVal: false,
       format: ["<Bar activeBar={{ fill: 'red' }} />", '<Bar activeBar={CustomActiveBarFn} />'],
-      examples: [{ name: 'activeBar example', url: '/examples/SimpleBarChart/', isExternal: false }],
+      examples: [
+        { name: 'activeBar example', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+      ],
     },
     {
       name: 'animationBegin',
@@ -106,6 +109,7 @@ export const BarAPI: ApiDoc = {
       defaultVal: false,
       examples: [
         { name: 'BarChart with background example', url: '/examples/BarChartHasBackground/', isExternal: false },
+        { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
       ],
     },
     {
@@ -122,8 +126,26 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+      ],
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
+        { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -148,6 +170,18 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Tiny Bar Chart', url: '/examples/TinyBarChart/', isExternal: false },
+        { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+        { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+        { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+        { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
+        { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+        { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+      ],
     },
     {
       name: 'hide',
@@ -199,6 +233,10 @@ export const BarAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [
+        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
+        { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
+      ],
     },
     {
       name: 'label',
@@ -234,6 +272,10 @@ export const BarAPI: ApiDoc = {
         "<Bar label={{ position: 'top', fontSize: 20 }} />",
         '<Bar label={CustomizedLabelFn} />',
       ],
+      examples: [
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+      ],
     },
     {
       name: 'legendType',
@@ -259,6 +301,7 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'minPointSize',
@@ -281,7 +324,7 @@ export const BarAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
-      examples: [{ name: 'Chart with min bar height', url: '/examples/BarChartWithMinHeight', isExternal: false }],
+      examples: [{ name: 'Chart with min bar height', url: '/examples/BarChartWithMinHeight/', isExternal: false }],
     },
     {
       name: 'name',
@@ -297,6 +340,7 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
     },
     {
       name: 'radius',
@@ -313,7 +357,12 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Guide: Rounded bar corners', url: '/guide/roundedBars/', isExternal: false }],
+      examples: [
+        { name: 'Guide: Rounded bar corners', url: '/guide/roundedBars/', isExternal: false },
+        { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+      ],
     },
     {
       name: 'shape',
@@ -329,7 +378,11 @@ export const BarAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Custom shape bar chart example', url: '/examples/CustomShapeBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Custom shape bar chart example', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+      ],
     },
     {
       name: 'stackId',
@@ -346,6 +399,9 @@ export const BarAPI: ApiDoc = {
         { name: 'Stacked bar chart example', url: '/examples/StackedBarChart/', isExternal: false },
         { name: 'Chart with both stacked and non-stacked bars', url: '/examples/MixBarChart/', isExternal: false },
         { name: 'BarStack', url: '/api/BarStack', isExternal: false },
+        { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
       ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
@@ -386,6 +442,7 @@ export const BarAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Biaxial Bar Chart', url: '/examples/BiaxialBarChart/', isExternal: false }],
     },
     {
       name: 'zIndex',
@@ -682,6 +739,18 @@ export const BarAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Tiny Bar Chart', url: '/examples/TinyBarChart/', isExternal: false },
+    { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+    { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+    { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+    { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+    { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+    { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
+    { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
+    { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
+    { name: 'Bar Chart Stacked By Sign', url: '/examples/BarChartStackedBySign/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'BarStack', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Cell', 'ErrorBar', 'LabelList'],

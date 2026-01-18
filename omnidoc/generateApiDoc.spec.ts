@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateApiDoc, processInlineLinks } from './generateApiDoc';
 import { ProjectDocReader } from './readProject';
+import { ExampleReader } from './readExamples';
 
 describe('processInlineLinks', () => {
   it('should convert {@link url} to HTML anchor tag', () => {
@@ -53,10 +54,11 @@ describe('processInlineLinks', () => {
 
 describe('generateApiDoc', () => {
   const reader = new ProjectDocReader();
+  const exampleReader = new ExampleReader();
   const contextMap = new Map();
 
   it('should include component-level links from @see tags', async () => {
-    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, contextMap);
+    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, exampleReader, contextMap);
 
     expect(apiDoc.links).toBeDefined();
     expect(apiDoc.links?.length).toBeGreaterThan(0);
@@ -71,7 +73,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should not include links for components without @see or @link tags', async () => {
-    const apiDoc = await generateApiDoc('Text', reader, contextMap);
+    const apiDoc = await generateApiDoc('Text', reader, exampleReader, contextMap);
 
     // Text component may or may not have links, so just check it doesn't error
     expect(apiDoc).toBeDefined();
@@ -79,7 +81,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should convert inline {@link} tags to HTML anchor tags in component description', async () => {
-    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, contextMap);
+    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, exampleReader, contextMap);
 
     expect(apiDoc.desc).toBeDefined();
     // @ts-expect-error locale fetching is not well typed
@@ -98,7 +100,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should convert inline {@link} tags to HTML anchor tags in prop description', async () => {
-    const apiDoc = await generateApiDoc('Tooltip', reader, contextMap);
+    const apiDoc = await generateApiDoc('Tooltip', reader, exampleReader, contextMap);
     const contentProp = apiDoc.props.find(p => p.name === 'content');
     expect(contentProp).toBeDefined();
     // @ts-expect-error locale fetching is not well typed
@@ -107,18 +109,26 @@ describe('generateApiDoc', () => {
   });
 
   it('should include return value in API doc for hooks', async () => {
-    const apiDoc = await generateApiDoc('useChartHeight', reader, contextMap);
+    const apiDoc = await generateApiDoc('useChartHeight', reader, exampleReader, contextMap);
     expect(apiDoc.returnValue).toBeDefined();
     expect(apiDoc.returnValue).toBe('number | undefined');
   });
 
   it('should include arguments as props for useXAxisDomain', async () => {
-    const apiDoc = await generateApiDoc('useXAxisDomain', reader, contextMap);
+    const apiDoc = await generateApiDoc('useXAxisDomain', reader, exampleReader, contextMap);
     expect(apiDoc.props).toBeDefined();
     expect(apiDoc.props.length).toBeGreaterThan(0);
     const xAxisId = apiDoc.props.find(p => p.name === 'xAxisId');
     expect(xAxisId).toBeDefined();
     expect(xAxisId?.isOptional).toBe(true);
     expect(xAxisId?.type).toContain('string');
+  });
+
+  it('should include examples from ExampleReader', async () => {
+    const apiDoc = await generateApiDoc('AreaChart', reader, exampleReader, contextMap);
+    expect(apiDoc.links).toBeDefined();
+    const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/SimpleAreaChart/');
+    expect(simpleAreaChart).toBeDefined();
+    expect(simpleAreaChart?.name).toBe('Simple Area Chart');
   });
 });

@@ -155,6 +155,16 @@ export const CartesianGridAPI: ApiDoc = {
           url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
           isExternal: true,
         },
+        { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+        { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+        { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+        { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+        { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
       ],
     },
     {
@@ -186,6 +196,10 @@ export const CartesianGridAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
+      examples: [
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
     },
     {
       name: 'verticalCoordinatesGenerator',
@@ -340,5 +354,17 @@ export const CartesianGridAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+    { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+    { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+    { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+    { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+    { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+    { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+    { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+    { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+    { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+  ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
 };

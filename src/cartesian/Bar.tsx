@@ -182,7 +182,7 @@ export interface BarProps extends ZIndexable {
    *
    * @defaultValue 0
    *
-   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithMinHeight Chart with min bar height}
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithMinHeight/ Chart with min bar height}
    */
   minPointSize?: MinPointSize;
   /**

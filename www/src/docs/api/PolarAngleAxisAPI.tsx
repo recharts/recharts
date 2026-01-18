@@ -160,6 +160,10 @@ export const PolarAngleAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
     },
     {
       name: 'domain',
@@ -738,6 +742,10 @@ export const PolarAngleAxisAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+    { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Label'],

@@ -63,6 +63,9 @@ export const PolarRadiusAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
     },
     {
       name: 'axisLine',
@@ -163,6 +166,9 @@ export const PolarRadiusAxisAPI: ApiDoc = {
         '<PolarRadiusAxis type="number" domain={[dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)]} />',
         '<PolarRadiusAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
         '<PolarRadiusAxis type="number" domain={[0, 100]} allowDataOverflow />',
+      ],
+      examples: [
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
       ],
     },
     {
@@ -671,6 +677,10 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+    { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Label'],

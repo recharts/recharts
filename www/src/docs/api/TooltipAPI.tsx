@@ -19,6 +19,7 @@ export const TooltipAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false }],
     },
     {
       name: 'allowEscapeViewBox',
@@ -80,6 +81,7 @@ export const TooltipAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false }],
     },
     {
       name: 'content',
@@ -100,7 +102,16 @@ export const TooltipAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Example with custom content', url: '/examples/CustomContentOfTooltip/', isExternal: false }],
+      examples: [
+        { name: 'Example with custom content', url: '/examples/CustomContentOfTooltip/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+        { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
+      ],
     },
     {
       name: 'contentStyle',
@@ -130,8 +141,33 @@ export const TooltipAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
+      examples: [
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+      ],
     },
-    { name: 'defaultIndex', type: 'null | number | string', isOptional: true },
+    {
+      name: 'defaultIndex',
+      type: 'null | number | string',
+      isOptional: true,
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
+      ],
+    },
     {
       name: 'filterNull',
       type: 'boolean',
@@ -159,6 +195,7 @@ export const TooltipAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
     },
     {
       name: 'includeHidden',
@@ -191,6 +228,7 @@ export const TooltipAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [{ name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false }],
     },
     {
       name: 'itemSorter',
@@ -347,6 +385,7 @@ export const TooltipAPI: ApiDoc = {
           url: 'https://github.com/recharts/recharts/wiki/Tooltip-event-type-and-shared-prop',
           isExternal: true,
         },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
       ],
     },
     {
@@ -383,6 +422,7 @@ export const TooltipAPI: ApiDoc = {
         ),
       },
       defaultVal: {},
+      examples: [{ name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false }],
     },
   ],
   desc: {
@@ -410,6 +450,16 @@ export const TooltipAPI: ApiDoc = {
       url: '/guide/activeIndex/',
       isExternal: false,
     },
+    { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+    { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+    { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+    { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+    { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+    { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+    { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+    { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+    { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+    { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
   ],
   parentComponents: [
     'AreaChart',

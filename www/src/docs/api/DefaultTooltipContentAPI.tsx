@@ -23,7 +23,12 @@ export const DefaultTooltipContentAPI: ApiDoc = {
     { name: 'labelClassName', type: 'string', isOptional: true },
     { name: 'labelFormatter', type: 'Function', isOptional: true },
     { name: 'labelStyle', type: 'React.CSSProperties', isOptional: true, defaultVal: {} },
-    { name: 'payload', type: 'Array<readonly Payload<TValue, TName>>', isOptional: true },
+    {
+      name: 'payload',
+      type: 'Array<readonly Payload<TValue, TName>>',
+      isOptional: true,
+      examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
+    },
     { name: 'separator', type: 'string', isOptional: true, defaultVal: ' : ' },
     { name: 'wrapperClassName', type: 'string', isOptional: true },
   ],
@@ -41,4 +46,5 @@ export const DefaultTooltipContentAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
 };

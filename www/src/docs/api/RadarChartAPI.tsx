@@ -57,7 +57,15 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'cx',
@@ -109,6 +117,10 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
+      examples: [
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
@@ -180,6 +192,7 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: { top: 5, right: 5, bottom: 5, left: 5 },
+      examples: [{ name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false }],
     },
     { name: 'maxBarSize', type: 'number', isOptional: true },
     {
@@ -197,6 +210,10 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: '80%',
+      examples: [
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
     },
     {
       name: 'responsive',
@@ -219,7 +236,11 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
+      examples: [
+        { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'role', type: 'string', isOptional: true },
@@ -242,7 +263,15 @@ export const RadarChartAPI: ApiDoc = {
       },
       defaultVal: 90,
     },
-    { name: 'style', type: 'React.CSSProperties', isOptional: true },
+    {
+      name: 'style',
+      type: 'React.CSSProperties',
+      isOptional: true,
+      examples: [
+        { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+        { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+      ],
+    },
     {
       name: 'syncId',
       type: 'number | string',
@@ -435,6 +464,10 @@ export const RadarChartAPI: ApiDoc = {
         ),
       },
     },
+  ],
+  links: [
+    { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+    { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

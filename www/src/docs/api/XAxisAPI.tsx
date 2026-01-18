@@ -87,6 +87,7 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
+      examples: [{ name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false }],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -125,6 +126,18 @@ export const XAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+        { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+        { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+        { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+        { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+      ],
     },
     {
       name: 'domain',
@@ -159,6 +172,15 @@ export const XAxisAPI: ApiDoc = {
         '<XAxis type="number" domain={([dataMin, dataMax]) => { const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax)); return [-absMax, absMax]; }} />',
         '<XAxis type="number" domain={[0, 100]} allowDataOverflow />',
       ],
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'height',
@@ -172,6 +194,12 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 30,
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     {
       name: 'hide',
@@ -216,6 +244,11 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 'preserveEnd',
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+      ],
     },
     {
       name: 'label',
@@ -254,6 +287,12 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+      ],
     },
     {
       name: 'minTickGap',
@@ -282,6 +321,7 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [{ name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false }],
     },
     {
       name: 'name',
@@ -297,6 +337,15 @@ export const XAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+      ],
     },
     {
       name: 'orientation',
@@ -310,6 +359,7 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 'bottom',
+      examples: [{ name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false }],
     },
     {
       name: 'padding',
@@ -371,6 +421,14 @@ export const XAxisAPI: ApiDoc = {
         '<XAxis scale="log" />',
         "import { scaleLog } from 'd3-scale';\nconst scale = scaleLog().base(Math.E);\n<XAxis scale={scale} />",
       ],
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+      ],
     },
     {
       name: 'tick',
@@ -389,6 +447,10 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+      ],
     },
     {
       name: 'tickCount',
@@ -414,6 +476,12 @@ export const XAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
     },
     {
       name: 'tickLine',
@@ -431,6 +499,10 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+      ],
     },
     {
       name: 'tickMargin',
@@ -495,6 +567,18 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 'category',
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+      ],
     },
     {
       name: 'unit',
@@ -507,6 +591,19 @@ export const XAxisAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
+        { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
+        { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
+        {
+          name: 'Scatter Chart with many points (performance test)',
+          url: '/examples/ScatterChartPerformance/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'xAxisId',
@@ -520,6 +617,10 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [
+        { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     { name: 'onAbort', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onAbortCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
@@ -681,6 +782,18 @@ export const XAxisAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'AdaptChildReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+    { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+    { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+    { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+    { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+    { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+    { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+    { name: 'Simple Bar Chart', url: '/examples/SimpleBarChart/', isExternal: false },
+    { name: 'Stacked Bar Chart', url: '/examples/StackedBarChart/', isExternal: false },
+    { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['Label'],

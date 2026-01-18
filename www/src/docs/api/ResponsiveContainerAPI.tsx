@@ -17,6 +17,11 @@ export const ResponsiveContainerAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+        { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+      ],
     },
     {
       name: 'aspect',
@@ -186,7 +191,12 @@ export const ResponsiveContainerAPI: ApiDoc = {
       </section>
     ),
   },
-  links: [{ name: 'Chart size guide', url: '/guide/sizes/', isExternal: false }],
+  links: [
+    { name: 'Chart size guide', url: '/guide/sizes/', isExternal: false },
+    { name: 'Area Responsive Container', url: '/examples/AreaResponsiveContainer/', isExternal: false },
+    { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+    { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
+  ],
   childrenComponents: [
     'AreaChart',
     'BarChart',

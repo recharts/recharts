@@ -71,7 +71,15 @@ export const LineChartAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'compact', type: 'boolean', isOptional: true },
     {
@@ -92,6 +100,10 @@ export const LineChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
+      examples: [
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
@@ -134,6 +146,7 @@ export const LineChartAPI: ApiDoc = {
         ),
       },
       defaultVal: { top: 5, right: 5, bottom: 5, left: 5 },
+      examples: [{ name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false }],
     },
     {
       name: 'maxBarSize',
@@ -168,7 +181,11 @@ export const LineChartAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false }],
+      examples: [
+        { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     {
       name: 'reverseStackOrder',
@@ -224,7 +241,15 @@ export const LineChartAPI: ApiDoc = {
         },
       ],
     },
-    { name: 'style', type: 'React.CSSProperties', isOptional: true },
+    {
+      name: 'style',
+      type: 'React.CSSProperties',
+      isOptional: true,
+      examples: [
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
+    },
     {
       name: 'syncId',
       type: 'number | string',
@@ -417,6 +442,10 @@ export const LineChartAPI: ApiDoc = {
         ),
       },
     },
+  ],
+  links: [
+    { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+    { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
   ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [

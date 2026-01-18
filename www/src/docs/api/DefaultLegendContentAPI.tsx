@@ -114,6 +114,7 @@ export const DefaultLegendContentAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
     },
     {
       name: 'verticalAlign',
@@ -351,4 +352,5 @@ export const DefaultLegendContentAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
 };

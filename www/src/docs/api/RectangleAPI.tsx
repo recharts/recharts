@@ -192,4 +192,8 @@ export const RectangleAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [
+    { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+    { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+  ],
 };

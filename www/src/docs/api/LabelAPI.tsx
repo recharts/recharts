@@ -33,6 +33,7 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       format: ['<Label>foo</Label>'],
+      examples: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
     },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -113,6 +114,7 @@ export const LabelAPI: ApiDoc = {
         ),
       },
       defaultVal: 'middle',
+      examples: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
     },
     { name: 'textBreakAll', type: 'boolean', isOptional: true, defaultVal: false },
     {
@@ -164,6 +166,7 @@ export const LabelAPI: ApiDoc = {
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
+  links: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
   parentComponents: [
     'AreaChart',
     'BarChart',

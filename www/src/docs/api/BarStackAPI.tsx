@@ -3,7 +3,12 @@ import { ApiDoc } from './types';
 export const BarStackAPI: ApiDoc = {
   name: 'BarStack',
   props: [
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
+    },
     {
       name: 'radius',
       type: '[number, number, number, number] | number',
@@ -34,6 +39,7 @@ export const BarStackAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
     },
     {
       name: 'stackId',
@@ -63,5 +69,6 @@ export const BarStackAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false }],
   childrenComponents: ['Bar'],
 };

@@ -41,6 +41,8 @@ export const LineAPI: ApiDoc = {
       ],
       examples: [
         { name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
       ],
     },
     { name: 'animateNewValues', type: 'boolean', isOptional: true, defaultVal: true },
@@ -83,7 +85,14 @@ export const LineAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'connectNulls',
@@ -108,6 +117,7 @@ export const LineAPI: ApiDoc = {
           url: '/examples/AreaChartConnectNulls/',
           isExternal: false,
         },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
       ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
@@ -135,6 +145,18 @@ export const LineAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     {
       name: 'dot',
@@ -173,6 +195,8 @@ export const LineAPI: ApiDoc = {
       ],
       examples: [
         { name: 'A line chart with customized dot', url: '/examples/CustomizedDotLineChart/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
       ],
     },
     {
@@ -224,6 +248,9 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
     },
     {
       name: 'label',
@@ -275,6 +302,9 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: 'line',
+      examples: [
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+      ],
     },
     {
       name: 'name',
@@ -325,6 +355,17 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: '#3182bd',
+      examples: [
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+      ],
     },
     {
       name: 'strokeDasharray',
@@ -385,6 +426,12 @@ export const LineAPI: ApiDoc = {
           isExternal: false,
         },
         { name: 'https://d3js.org/d3-shape/curve', url: 'https://d3js.org/d3-shape/curve', isExternal: true },
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+        { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
       ],
     },
     {
@@ -411,6 +458,7 @@ export const LineAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false }],
     },
     {
       name: 'yAxisId',
@@ -713,6 +761,18 @@ export const LineAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+    { name: 'Same Data Composed Chart', url: '/examples/SameDataComposedChart/', isExternal: false },
+    { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+    { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
+    { name: 'Scatter And Line Of Best Fit', url: '/examples/ScatterAndLineOfBestFit/', isExternal: false },
+    { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+    { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+    { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+    { name: 'Composed Responsive Container', url: '/examples/ComposedResponsiveContainer/', isExternal: false },
+    { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['ErrorBar', 'LabelList'],

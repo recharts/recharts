@@ -26,6 +26,18 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+        { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+        { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
+        { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+      ],
     },
     {
       name: 'activeDot',
@@ -65,6 +77,7 @@ export const AreaAPI: ApiDoc = {
       ],
       examples: [
         { name: 'A line chart with customized active dot', url: '/examples/SimpleLineChart/', isExternal: false },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
       ],
     },
     {
@@ -123,7 +136,14 @@ export const AreaAPI: ApiDoc = {
       },
     },
     { name: 'baseValue', type: '"dataMax" | "dataMin" | number', isOptional: true },
-    { name: 'children', type: 'ReactNode', isOptional: true },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      isOptional: true,
+      examples: [
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
+    },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'connectNulls',
@@ -148,6 +168,8 @@ export const AreaAPI: ApiDoc = {
           url: '/examples/AreaChartConnectNulls/',
           isExternal: false,
         },
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
       ],
     },
     { name: 'data', type: 'ReadonlyArray<unknown>', isOptional: true },
@@ -181,6 +203,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
     },
     {
       name: 'hide',
@@ -231,6 +254,9 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 'auto',
+      examples: [
+        { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
+      ],
     },
     { name: 'isRange', type: 'boolean', isOptional: true },
     {
@@ -302,6 +328,10 @@ export const AreaAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+      ],
     },
     {
       name: 'stroke',
@@ -315,6 +345,18 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: '#3182bd',
+      examples: [
+        { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+        { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+        { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
+        { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
+      ],
     },
     {
       name: 'strokeDasharray',
@@ -369,6 +411,15 @@ export const AreaAPI: ApiDoc = {
           isExternal: false,
         },
         { name: 'https://d3js.org/d3-shape/curve', url: 'https://d3js.org/d3-shape/curve', isExternal: true },
+        { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+        { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+        { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+        { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+        { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
+        { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+        { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+        { name: 'Composed Chart With Axis Labels', url: '/examples/ComposedChartWithAxisLabels/', isExternal: false },
       ],
     },
     {
@@ -697,6 +748,18 @@ export const AreaAPI: ApiDoc = {
     { name: 'onWaitingCapture', type: 'ReactEventHandler<P, T>', isOptional: true },
     { name: 'onWheel', type: 'WheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'WheelEventHandler<P, T>', isOptional: true },
+  ],
+  links: [
+    { name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false },
+    { name: 'Stacked Area Chart', url: '/examples/StackedAreaChart/', isExternal: false },
+    { name: 'Area Chart Connect Nulls', url: '/examples/AreaChartConnectNulls/', isExternal: false },
+    { name: 'Cardinal Area Chart', url: '/examples/CardinalAreaChart/', isExternal: false },
+    { name: 'Percent Area Chart', url: '/examples/PercentAreaChart/', isExternal: false },
+    { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
+    { name: 'Tiny Area Chart', url: '/examples/TinyAreaChart/', isExternal: false },
+    { name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false },
+    { name: 'Line Bar Area Composed Chart', url: '/examples/LineBarAreaComposedChart/', isExternal: false },
+    { name: 'Vertical Composed Chart', url: '/examples/VerticalComposedChart/', isExternal: false },
   ],
   parentComponents: ['AreaChart', 'BarChart', 'ComposedChart', 'FunnelChart', 'LineChart', 'ScatterChart'],
   childrenComponents: ['LabelList'],

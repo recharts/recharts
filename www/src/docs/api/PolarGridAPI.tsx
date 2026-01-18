@@ -126,5 +126,9 @@ export const PolarGridAPI: ApiDoc = {
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
+  links: [
+    { name: 'Simple Radar Chart', url: '/examples/SimpleRadarChart/', isExternal: false },
+    { name: 'Specified Domain Radar Chart', url: '/examples/SpecifiedDomainRadarChart/', isExternal: false },
+  ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
 };

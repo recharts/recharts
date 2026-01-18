@@ -29,6 +29,7 @@ export const ErrorBarAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
     },
     { name: 'animationBegin', type: 'number', isOptional: true, defaultVal: 0 },
     { name: 'animationDuration', type: 'number', isOptional: true, defaultVal: 400 },
@@ -96,8 +97,15 @@ export const ErrorBarAPI: ApiDoc = {
         ),
       },
       defaultVal: 5,
+      examples: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
     },
-    { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 400 },
+    {
+      name: 'zIndex',
+      type: 'number',
+      isOptional: true,
+      defaultVal: 400,
+      examples: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
+    },
   ],
   desc: {
     'en-US': (
@@ -128,5 +136,6 @@ export const ErrorBarAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false }],
   parentComponents: ['Bar', 'Line', 'Scatter'],
 };

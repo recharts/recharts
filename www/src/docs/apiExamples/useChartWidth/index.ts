@@ -6,7 +6,7 @@ export const useChartWidthAndHeightApiExamples: ReadonlyArray<ChartExample> = [
   {
     Component: LineChartExample,
     sourceCode: LineChartExampleSource,
-    name: 'Simple Line Chart Example',
+    name: 'useChartWidth API Example',
     defaultTool: 'devtools',
     defaultToolTab: 'useChartWidth | useChartHeight',
   },
