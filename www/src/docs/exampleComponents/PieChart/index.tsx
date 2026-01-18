@@ -90,17 +90,15 @@ export const pieChartExamples: Record<string, ChartExample> = {
           <ol>
             <li>
               <code>{`gradientUnits="userSpaceOnUse"`}</code> creates a gradient that is centered on the whole chart
-              element. This is used as the inactive fill background.
+              element. It uses the entire SVG canvas as the reference for the gradient position and size. This is used
+              as the inactive fill background.
             </li>
             <li>
-              <code>{`gradientUnits="userSpaceOnUse"`}</code> (the default) with center at each Sector&apos;s center
-              coordinates. This makes the gradient appear to radiate out from the center of each individual Sector. This
-              is used for fill on hover.
+              <code>{`gradientUnits="objectBoundingBox"`}</code> (the default) with center at each{' '}
+              <Link to="/api/Sector">Sector&apos;s</Link> center coordinates. This makes the gradient appear to radiate
+              out from the center of each individual Sector. This is used for fill on hover.
             </li>
           </ol>
-          <code>{`gradientUnits="objectBoundingBox"`}</code> (the default value) scales the gradient relative to the{' '}
-          <Link to="/api/Sector">Sector</Link> shape, while uses the entire SVG canvas as the reference for the gradient
-          position and size.
         </p>
         <p>Also uses a custom clipPath so that the thick stroke on mouse hover does not overlay other Sectors.</p>
       </>
