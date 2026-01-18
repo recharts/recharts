@@ -9,6 +9,7 @@ import PieChartWithPaddingAngle from '../../../www/src/docs/exampleComponents/Pi
 import PieChartWithNeedle from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithNeedle';
 import PieChartInFlexbox from '../../../www/src/docs/exampleComponents/PieChart/PieChartInFlexbox';
 import PieChartNavExample from '../../../www/src/docs/exampleComponents/PieChart/PieChartNavExample';
+import PieWithGradient from '../../../www/src/docs/exampleComponents/PieChart/PieWithGradient';
 // import PieChartInGrid from '../../../www/src/docs/exampleComponents/PieChart/PieChartInGrid';
 
 test('PieChartNavExample', async ({ mount }) => {
@@ -54,5 +55,10 @@ test('StraightAnglePieChart', async ({ mount }) => {
 
 test('TwoLevelPieChart', async ({ mount }) => {
   const component = await mount(<TwoLevelPieChart isAnimationActive={false} defaultIndex="1" />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('PieWithGradient', async ({ mount }) => {
+  const component = await mount(<PieWithGradient isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
