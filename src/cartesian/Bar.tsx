@@ -112,6 +112,12 @@ export interface BarRectangleItem extends RectangleProps {
   stackedBarStart: number;
 }
 
+export type BarShapeProps = BarRectangleItem & {
+  isActive: boolean;
+  index: number;
+  option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+};
+
 export interface BarProps extends ZIndexable {
   className?: string;
   index?: Key;
@@ -201,7 +207,7 @@ export interface BarProps extends ZIndexable {
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomShapeBarChart/ Custom shape bar chart example}
    */
-  shape?: ActiveShape<BarProps, SVGPathElement>;
+  shape?: ActiveShape<BarShapeProps, SVGPathElement>;
 
   /**
    * The active bar is shown when a user enters a bar chart and this chart has tooltip. Options:
@@ -218,7 +224,7 @@ export interface BarProps extends ZIndexable {
    * @example <Bar activeBar={{ fill: 'red' }} />
    * @example <Bar activeBar={CustomActiveBarFn} />
    */
-  activeBar?: ActiveShape<BarProps, SVGPathElement>;
+  activeBar?: ActiveShape<BarShapeProps, SVGPathElement>;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;
@@ -231,7 +237,7 @@ export interface BarProps extends ZIndexable {
    *
    * @see {@link https://recharts.github.io/en-US/examples/BarChartHasBackground/ BarChart with background example}
    */
-  background?: ActiveShape<BarProps, SVGPathElement> & ZIndexable;
+  background?: ActiveShape<BarShapeProps, SVGPathElement> & ZIndexable;
   /**
    * The radius of corners.
    *
@@ -367,7 +373,7 @@ type InternalBarProps = {
   hide: boolean;
   legendType: LegendType;
   minPointSize: MinPointSize;
-  activeBar: ActiveShape<BarProps, SVGPathElement>;
+  activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -386,8 +392,8 @@ type InternalBarProps = {
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   maxBarSize?: number;
-  shape?: ActiveShape<BarProps, SVGPathElement>;
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  shape?: ActiveShape<BarShapeProps, SVGPathElement>;
+  background?: ActiveShape<BarShapeProps, SVGPathElement>;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
@@ -460,7 +466,7 @@ const SetBarTooltipEntrySettings = React.memo(
 );
 
 type BarBackgroundProps = {
-  background?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarShapeProps, SVGPathElement>;
   data: ReadonlyArray<BarRectangleItem> | undefined;
   dataKey: DataKey<any> | undefined;
   allOtherBarProps: Props;
@@ -571,8 +577,8 @@ function BarLabelListProvider({
 }
 
 function BarRectangleWithActiveState(props: {
-  shape: ActiveShape<BarProps, SVGPathElement> | undefined;
-  activeBar: ActiveShape<BarProps, SVGPathElement>;
+  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
   index: number;
@@ -622,7 +628,7 @@ function BarRectangleWithActiveState(props: {
 }
 
 function BarRectangleNeverActive(props: {
-  shape: ActiveShape<BarProps, SVGPathElement> | undefined;
+  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
   index: number;

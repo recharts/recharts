@@ -6,7 +6,6 @@ import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import {
   Bar,
   BarChart,
-  BarProps,
   Brush,
   ComposedChart,
   Customized,
@@ -43,7 +42,7 @@ import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSe
 import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { BarRectangleItem } from '../../src/cartesian/Bar';
+import { BarRectangleItem, BarShapeProps } from '../../src/cartesian/Bar';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
@@ -173,8 +172,7 @@ describe('<BarChart />', () => {
               dataKey="uv"
               stackId="test"
               fill="#ff7300"
-              activeBar={(props: BarProps) => {
-                // @ts-expect-error this should work but it doesn't because of the events injected into BarProps
+              activeBar={(props: BarShapeProps) => {
                 return <Rectangle {...props} name={String(props.name)} />;
               }}
             />
@@ -275,14 +273,14 @@ describe('<BarChart />', () => {
     });
 
     test('Render customized shape when shape is set to be a function', () => {
-      const renderShape = (props: BarProps): React.ReactElement => {
+      const renderShape = (props: BarShapeProps): React.ReactElement => {
         const { x, y } = props;
 
         return <circle className="customized-shape" cx={x} cy={y} r={8} />;
       };
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
-          <Bar dataKey="uv" label fill="#ff7300" shape={(props: BarProps) => renderShape(props)} />
+          <Bar dataKey="uv" label fill="#ff7300" shape={(props: BarShapeProps) => renderShape(props)} />
         </BarChart>,
       );
       expect(container.querySelectorAll('.customized-shape')).toHaveLength(4);
@@ -1071,7 +1069,7 @@ describe('<BarChart />', () => {
     });
 
     test('Stacked bars are actually stacked', () => {
-      let seriesOneBarOneEntry: BarRectangleItem, seriesTwoBarOneEntry: BarRectangleItem;
+      let seriesOneBarOneEntry: BarRectangleItem | undefined, seriesTwoBarOneEntry: BarRectangleItem | undefined;
       const Spy = () => {
         const seriesOneResult = useAppSelector(state => selectBarRectangles(state, 'bar-uv', false, []));
         const seriesTwoResult = useAppSelector(state => selectBarRectangles(state, 'bar-pv', false, []));
@@ -1094,14 +1092,10 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      // @ts-expect-error variable used before assigned?
       expect(seriesOneBarOneEntry).toBeDefined();
-      // @ts-expect-error variable used before assigned?
       expect(seriesTwoBarOneEntry).toBeDefined();
-      // @ts-expect-error variable used before assigned?
-      expect(seriesOneBarOneEntry.value).toEqual([0, 400]);
-      // @ts-expect-error variable used before assigned?
-      expect(seriesTwoBarOneEntry.value).toEqual([400, 2800]);
+      expect(seriesOneBarOneEntry!.value).toEqual([0, 400]);
+      expect(seriesTwoBarOneEntry!.value).toEqual([400, 2800]);
 
       expectBars(container, [
         {

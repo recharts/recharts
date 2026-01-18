@@ -2,7 +2,7 @@ import { generateMockMarketData, RechartsDevtools } from '@recharts/devtools';
 import {
   Bar,
   BarChart,
-  BarProps,
+  BarShapeProps,
   CartesianGrid,
   DefaultZIndexes,
   ErrorBar,
@@ -34,10 +34,9 @@ const timestampToMinutes = (timestamp: number) => {
 
 const formatDollars = (value: number) => `$${value.toFixed(2)}`;
 
-const Candlestick = (props: BarProps) => {
+const Candlestick = (props: BarShapeProps) => {
   // @ts-expect-error Recharts does spread MarketCandle on the props but the types don't reflect that
   const color = props.open < props.close ? 'green' : 'red';
-  // @ts-expect-error Recharts own types are incompatible with itself, we should fix this
   return <Rectangle {...props} fill={color} />;
 };
 

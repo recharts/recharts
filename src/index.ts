@@ -88,7 +88,7 @@ export type { Props as LineProps } from './cartesian/Line';
 export { Area } from './cartesian/Area';
 export type { Props as AreaProps } from './cartesian/Area';
 export { Bar } from './cartesian/Bar';
-export type { Props as BarProps, BarRectangleItem } from './cartesian/Bar';
+export type { Props as BarProps, BarRectangleItem, BarShapeProps } from './cartesian/Bar';
 export { BarStack } from './cartesian/BarStack';
 export type { BarStackProps } from './cartesian/BarStack';
 export { Scatter } from './cartesian/Scatter';
