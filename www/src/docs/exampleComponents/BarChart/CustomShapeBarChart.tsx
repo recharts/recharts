@@ -1,7 +1,15 @@
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, BarShapeProps, Tooltip } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
-const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
+const colors = [
+  'var(--color-chart-1)',
+  'var(--color-chart-2)',
+  'var(--color-chart-3)',
+  'var(--color-chart-4)',
+  'var(--color-chart-8)',
+  'var(--color-chart-11)',
+  'var(--color-chart-9)',
+];
 
 // #region Sample data
 const data = [
@@ -76,11 +84,17 @@ export default function CustomShapeBarChart() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip cursor={{ fillOpacity: 0.5 }} />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} label={{ position: 'top' }}>
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <Tooltip
+        cursor={{ fillOpacity: 0.5, fill: 'var(--color-solid-7a)' }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Bar dataKey="uv" fill="var(--color-chart-1)" shape={TriangleBar} label={{ position: 'top' }}>
         {data.map((_entry, index) => (
           <Cell key={`cell-${index}`} fill={colors[index % 20]} />
         ))}
