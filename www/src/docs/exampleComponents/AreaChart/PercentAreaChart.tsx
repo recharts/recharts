@@ -64,8 +64,8 @@ const renderTooltipContent = (o: TooltipContentProps<number | string, string>) =
     <div
       className="customized-tooltip-content"
       style={{
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
+        backgroundColor: 'var(--color-surface-raised)',
+        border: '1px solid var(--color-border-2)',
         padding: '10px',
         borderRadius: '10px',
         boxShadow: '0 0 10px rgba(0,0,0,0.2)',
@@ -97,13 +97,40 @@ const PercentAreaChart = () => {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="month" />
-      <YAxis tickFormatter={toPercent} width="auto" />
-      <Tooltip content={renderTooltipContent} />
-      <Area type="monotone" dataKey="a" stackId="1" stroke="#8884d8" fill="#8884d8" />
-      <Area type="monotone" dataKey="b" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-      <Area type="monotone" dataKey="c" stackId="1" stroke="#ffc658" fill="#ffc658" />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="month" stroke="var(--color-text-3)" />
+      <YAxis tickFormatter={toPercent} width="auto" stroke="var(--color-text-3)" />
+      <Tooltip cursor={{ stroke: 'var(--color-border-2)' }} content={renderTooltipContent} />
+      <Area
+        type="monotone"
+        dataKey="a"
+        stackId="1"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Area
+        type="monotone"
+        dataKey="b"
+        stackId="1"
+        stroke="var(--color-chart-2)"
+        fill="var(--color-chart-2)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Area
+        type="monotone"
+        dataKey="c"
+        stackId="1"
+        stroke="var(--color-chart-3)"
+        fill="var(--color-chart-3)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </AreaChart>
   );

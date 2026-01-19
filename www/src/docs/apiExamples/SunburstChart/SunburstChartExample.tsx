@@ -86,8 +86,11 @@ const hierarchy: SunburstData = {
 export default function SunburstChartExample() {
   return (
     <ResponsiveContainer width="100%" height={450}>
-      <SunburstChart startAngle={90} endAngle={270} data={hierarchy}>
-        <Tooltip />
+      <SunburstChart startAngle={90} endAngle={270} data={hierarchy} stroke="var(--color-surface-base)">
+        <Tooltip
+          contentStyle={{ backgroundColor: 'var(--color-surface-raised)', borderColor: 'var(--color-border-2)' }}
+          itemStyle={{ color: 'var(--color-text-3)' }}
+        />
         <RechartsDevtools />
       </SunburstChart>
     </ResponsiveContainer>

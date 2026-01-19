@@ -66,11 +66,17 @@ const ErrorBarExample = ({ isAnimationActive = true }) => (
       left: 0,
     }}
   >
-    <CartesianGrid />
-    <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
-    <Tooltip />
-    <Scatter name="A school" data={data} fill="#ff7300" isAnimationActive={isAnimationActive}>
+    <CartesianGrid stroke="var(--color-border-3)" />
+    <XAxis dataKey="x" type="number" name="stature" unit="cm" stroke="var(--color-text-3)" />
+    <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" stroke="var(--color-text-3)" />
+    <Tooltip
+      contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      cursor={{ strokeDasharray: '3 3', stroke: 'var(--color-border-2)' }}
+      itemStyle={{
+        color: 'var(--color-text-3)',
+      }}
+    />
+    <Scatter name="A school" data={data} fill="var(--color-chart-8)" isAnimationActive={isAnimationActive}>
       <ErrorBar
         dataKey="errorY"
         width={4}

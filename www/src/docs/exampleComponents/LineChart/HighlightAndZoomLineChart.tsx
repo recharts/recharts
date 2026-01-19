@@ -146,16 +146,67 @@ const HighlightAndZoomLineChart = () => {
         onMouseMove={onMouseMove}
         onMouseUp={zoom}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" />
-        <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" width="auto" />
-        <YAxis orientation="right" allowDataOverflow domain={[bottom2, top2]} type="number" yAxisId="2" width="auto" />
-        <Tooltip />
-        <Line yAxisId="1" type="natural" dataKey="cost" stroke="#8884d8" animationDuration={300} />
-        <Line yAxisId="2" type="natural" dataKey="impression" stroke="#82ca9d" animationDuration={300} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+        <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" stroke="var(--color-text-3)" />
+        <YAxis
+          allowDataOverflow
+          domain={[bottom, top]}
+          type="number"
+          yAxisId="1"
+          width="auto"
+          stroke="var(--color-text-3)"
+        />
+        <YAxis
+          orientation="right"
+          allowDataOverflow
+          domain={[bottom2, top2]}
+          type="number"
+          yAxisId="2"
+          width="auto"
+          stroke="var(--color-text-3)"
+        />
+        <Tooltip
+          cursor={{
+            stroke: 'var(--color-border-2)',
+          }}
+          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+        />
+        <Line
+          yAxisId="1"
+          type="natural"
+          dataKey="cost"
+          stroke="#8884d8"
+          animationDuration={300}
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
+        <Line
+          yAxisId="2"
+          type="natural"
+          dataKey="impression"
+          stroke="#82ca9d"
+          animationDuration={300}
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{
+            stroke: 'var(--color-surface-base)',
+          }}
+        />
 
         {refAreaLeft && refAreaRight ? (
-          <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
+          <ReferenceArea
+            yAxisId="1"
+            x1={refAreaLeft}
+            x2={refAreaRight}
+            strokeOpacity={0.3}
+            stroke="var(--color-border-2)"
+            fill="var(--color-solid-7a)"
+          />
         ) : null}
         <RechartsDevtools />
       </LineChart>

@@ -65,7 +65,11 @@ const BarChartWithCustomizedEvent = () => {
       >
         <Bar dataKey="uv" onClick={handleClick}>
           {data.map((_entry, index) => (
-            <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
+            <Cell
+              cursor="pointer"
+              fill={index === activeIndex ? 'var(--color-chart-2)' : 'var(--color-chart-1)'}
+              key={`cell-${index}`}
+            />
           ))}
         </Bar>
         <RechartsDevtools />

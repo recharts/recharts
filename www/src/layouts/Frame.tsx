@@ -1,9 +1,11 @@
 import { ReactNode } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { useLocale } from '../utils/LocaleUtils.ts';
+
 import '../styles/app.css';
 import './frame.css';
+
+import { useLocale } from '../utils/LocaleUtils.ts';
 import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
 import { RechartsLogo } from './RechartsLogo.tsx';

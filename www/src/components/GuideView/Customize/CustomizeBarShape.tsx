@@ -68,9 +68,9 @@ export function TriangleBar(props: BarShapeProps) {
 export default function CustomizeBarShape() {
   return (
     <BarChart width={600} height={300} data={data} margin={margin}>
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis stroke="var(--color-text-3)" />
+      <Bar dataKey="uv" fill="var(--color-chart-1)" shape={TriangleBar} />
       <RechartsDevtools />
     </BarChart>
   );

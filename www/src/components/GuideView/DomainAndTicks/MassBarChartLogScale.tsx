@@ -94,15 +94,32 @@ export default function MassBarChartLogScale() {
       responsive
       data={solarSystem}
     >
-      <XAxis dataKey="name" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
       <YAxis
         scale="log"
         domain={[1e22, 3e30]}
         width={100}
-        label={{ value: 'Mass log10[kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90 }}
+        stroke="var(--color-text-3)"
+        label={{
+          value: 'Mass log10[kg]',
+          position: 'insideLeft',
+          dx: 0,
+          dy: 20,
+          angle: -90,
+          fill: 'var(--color-text-3)',
+        }}
       />
-      <Bar dataKey="massKg" unit="kg" />
-      <Tooltip />
+      <Bar dataKey="massKg" unit="kg" stroke="var(--color-border-2)" />
+      <Tooltip
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        cursor={{ fill: 'var(--color-solid-7a)' }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
       <RechartsDevtools />
     </BarChart>
   );

@@ -61,13 +61,43 @@ const StackedAreaChart = () => {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Tooltip />
-      <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-      <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-      <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      />
+      <Area
+        type="monotone"
+        dataKey="uv"
+        stackId="1"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Area
+        type="monotone"
+        dataKey="pv"
+        stackId="1"
+        stroke="var(--color-chart-2)"
+        fill="var(--color-chart-2)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Area
+        type="monotone"
+        dataKey="amt"
+        stackId="1"
+        stroke="var(--color-chart-3)"
+        fill="var(--color-chart-3)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </AreaChart>
   );

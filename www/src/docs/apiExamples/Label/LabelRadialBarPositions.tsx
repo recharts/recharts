@@ -8,10 +8,10 @@ const LabelRadialBarPositions = ({ isAnimationActive = true }: { isAnimationActi
     responsive
     innerRadius="30%"
   >
-    <RadialBar dataKey="x" fill="none" stroke="black" isAnimationActive={isAnimationActive}>
-      <LabelList fill="black" position="insideStart" valueAccessor={() => 'insideStart'} />
-      <LabelList fill="black" position="insideEnd" valueAccessor={() => 'insideEnd'} />
-      <LabelList fill="black" position="end" valueAccessor={() => 'end'} />
+    <RadialBar dataKey="x" fill="none" stroke="var(--color-border-1)" isAnimationActive={isAnimationActive}>
+      <LabelList fill="var(--color-text-3)" position="insideStart" valueAccessor={() => 'insideStart'} />
+      <LabelList fill="var(--color-text-3)" position="insideEnd" valueAccessor={() => 'insideEnd'} />
+      <LabelList fill="var(--color-text-3)" position="end" valueAccessor={() => 'end'} />
     </RadialBar>
     <PolarAngleAxis type="number" domain={[0, 250]} tick={false} />
     <RechartsDevtools />

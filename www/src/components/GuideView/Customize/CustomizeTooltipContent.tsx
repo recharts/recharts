@@ -77,18 +77,18 @@ function CustomTooltip({ payload, label, active }: any) {
       <div
         className="custom-tooltip"
         style={{
-          border: '1px solid #d88488',
-          backgroundColor: '#fff',
+          border: '1px solid var(--color-chart-11)',
+          backgroundColor: 'var(--color-surface-raised)',
           padding: '10px',
           borderRadius: '5px',
-          boxShadow: '1px 1px 2px #d88488',
+          boxShadow: '1px 1px 2px var(--color-chart-11)',
         }}
       >
         <p className="label" style={{ margin: '0', fontWeight: '700' }}>{`${label} : ${payload[0].value}`}</p>
         <p className="intro" style={{ margin: '0' }}>
           {getIntroOfPage(label)}
         </p>
-        <p className="desc" style={{ margin: '0', borderTop: '1px dashed #f5f5f5' }}>
+        <p className="desc" style={{ margin: '0', borderTop: '1px dashed var(--color-border-3)' }}>
           Anything you want can be displayed here.
         </p>
       </div>
@@ -101,10 +101,17 @@ function CustomTooltip({ payload, label, active }: any) {
 export default function CustomizeTooltipContent() {
   return (
     <BarChart width={600} height={300} data={data} margin={margin}>
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip content={CustomTooltip} defaultIndex={2} active />
-      <Bar dataKey="uv" fill="#8884d8" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis stroke="var(--color-text-3)" />
+      <Tooltip
+        content={CustomTooltip}
+        defaultIndex={2}
+        active
+        cursor={{
+          fill: 'var(--color-solid-7a)',
+        }}
+      />
+      <Bar dataKey="uv" fill="var(--color-chart-1)" />
       <RechartsDevtools />
     </BarChart>
   );

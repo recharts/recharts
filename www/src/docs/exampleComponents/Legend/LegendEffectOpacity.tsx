@@ -84,13 +84,39 @@ const LegendEffectOpacity = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis width="auto" />
-        <Tooltip />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+        <XAxis dataKey="name" stroke="var(--color-text-3)" />
+        <YAxis width="auto" stroke="var(--color-text-3)" />
+        <Tooltip
+          cursor={{
+            stroke: 'var(--color-border-2)',
+          }}
+          contentStyle={{
+            backgroundColor: 'var(--color-surface-raised)',
+            borderColor: 'var(--color-border-2)',
+          }}
+        />
         <Legend onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
-        <Line type="monotone" dataKey="pv" strokeOpacity={pvOpacity} stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line type="monotone" dataKey="uv" strokeOpacity={uvOpacity} stroke="#82ca9d" />
+        <Line
+          type="monotone"
+          dataKey="pv"
+          strokeOpacity={pvOpacity}
+          stroke="var(--color-chart-2)"
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{ r: 8, stroke: 'var(--color-surface-base)' }}
+        />
+        <Line
+          type="monotone"
+          dataKey="uv"
+          strokeOpacity={uvOpacity}
+          stroke="var(--color-chart-1)"
+          dot={{
+            fill: 'var(--color-surface-base)',
+          }}
+          activeDot={{ stroke: 'var(--color-surface-base)' }}
+        />
         <RechartsDevtools />
       </LineChart>
       <p className="notes">Tips: Hover the legend !</p>

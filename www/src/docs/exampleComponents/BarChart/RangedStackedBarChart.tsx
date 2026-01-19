@@ -29,31 +29,32 @@ const RangedStackedBarChart = ({
       left: 20,
     }}
   >
-    <XAxis dataKey="name" />
-    <YAxis width="auto" />
-    <Tooltip defaultIndex={defaultIndex} />
+    <XAxis dataKey="name" stroke="var(--color-text-3)" />
+    <YAxis width="auto" stroke="var(--color-text-3)" />
+    <Tooltip
+      defaultIndex={defaultIndex}
+      cursor={{ fill: 'var(--color-solid-7a)' }}
+      contentStyle={{
+        backgroundColor: 'var(--color-surface-raised)',
+        borderColor: 'var(--color-border-2)',
+      }}
+    />
     <BarStack radius={25}>
       <Bar
         dataKey="value1"
         maxBarSize={50}
-        fill="#8884d8"
+        fill="var(--color-chart-1)"
         isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#5550bd' }}
+        activeBar={{ fill: 'var(--color-chart-9)' }}
       />
       <Bar
         dataKey="value2"
         maxBarSize={50}
-        fill="#82ca9d"
+        fill="var(--color-chart-2)"
         isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#55bd50' }}
+        activeBar={{ fill: 'var(--color-chart-5)' }}
       />
-      <Bar
-        dataKey="value3"
-        maxBarSize={50}
-        fill="#ffc658"
-        isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#ffc658' }}
-      />
+      <Bar dataKey="value3" maxBarSize={50} fill="var(--color-chart-3)" isAnimationActive={isAnimationActive} />
     </BarStack>
     <RechartsDevtools />
   </BarChart>

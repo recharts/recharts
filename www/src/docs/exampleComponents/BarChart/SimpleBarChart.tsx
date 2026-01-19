@@ -61,13 +61,26 @@ const SimpleBarChart = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Tooltip />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ fill: 'var(--color-solid-7a)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-raised)', borderColor: 'var(--color-border-2)' }}
+      />
       <Legend />
-      <Bar dataKey="pv" fill="#8884d8" activeBar={{ fill: 'pink', stroke: 'blue' }} radius={[10, 10, 0, 0]} />
-      <Bar dataKey="uv" fill="#82ca9d" activeBar={{ fill: 'gold', stroke: 'purple' }} radius={[10, 10, 0, 0]} />
+      <Bar
+        dataKey="pv"
+        fill="var(--color-chart-1)"
+        activeBar={{ fill: 'var(--color-chart-11)', stroke: 'var(--color-text-1)' }}
+        radius={[10, 10, 0, 0]}
+      />
+      <Bar
+        dataKey="uv"
+        fill="var(--color-chart-2)"
+        activeBar={{ fill: 'var(--color-chart-3)', stroke: 'var(--color-text-1)' }}
+        radius={[10, 10, 0, 0]}
+      />
       <RechartsDevtools />
     </BarChart>
   );

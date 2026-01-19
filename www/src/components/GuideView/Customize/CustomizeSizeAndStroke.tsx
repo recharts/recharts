@@ -54,8 +54,14 @@ export default function CustomizeSizeAndStroke() {
     <BarChart width={600} height={300} data={data} margin={margin}>
       <XAxis dataKey="name" stroke="red" />
       <YAxis stroke="red" />
-      <Tooltip />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+      <Tooltip
+        cursor={{ fill: 'var(--color-solid-7a)' }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
+      <CartesianGrid stroke="var(--color-border-3)" strokeDasharray="5 5" />
       <Bar dataKey="uv" fill="green" barSize={30} />
       <RechartsDevtools />
     </BarChart>

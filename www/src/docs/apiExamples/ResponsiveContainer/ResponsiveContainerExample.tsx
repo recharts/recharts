@@ -59,13 +59,22 @@ export const ResponsiveContainerExample = ({ isAnimationActive = true }: { isAni
         bottom: 0,
       }}
     >
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <Tooltip
+        contentStyle={{ backgroundColor: 'var(--color-surface-raised)', borderColor: 'var(--color-border-2)' }}
+        cursor={{ stroke: 'var(--color-border-2)' }}
+      />
       <ReferenceLine x="Page C" stroke="green" label="Min PAGE" />
       <ReferenceLine y={4000} label="Max" stroke="red" strokeDasharray="3 3" />
-      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <Area
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        isAnimationActive={isAnimationActive}
+      />
       <RechartsDevtools />
     </AreaChart>
   </ResponsiveContainer>

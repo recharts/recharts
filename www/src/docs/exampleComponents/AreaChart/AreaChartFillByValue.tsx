@@ -82,10 +82,16 @@ const AreaChartFillByValue = () => {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Tooltip />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
       <defs>
         <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="green" stopOpacity={1} />
@@ -94,7 +100,15 @@ const AreaChartFillByValue = () => {
           <stop offset="1" stopColor="red" stopOpacity={1} />
         </linearGradient>
       </defs>
-      <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+      <Area
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-text-1)"
+        fill="url(#splitColor)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </AreaChart>
   );

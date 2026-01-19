@@ -61,7 +61,13 @@ const TinyAreaChart = () => {
         bottom: 5,
       }}
     >
-      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      <Area
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        activeDot={{ stroke: 'var(--color-surface-base)' }}
+      />
       <RechartsDevtools />
     </AreaChart>
   );

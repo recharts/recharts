@@ -1,10 +1,12 @@
 import { PureComponent } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
+
+import './ExamplesIndexView.css';
+
 import { allExamples } from '../docs/exampleComponents';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { getLocaleType } from '../utils/LocaleUtils.ts';
-import './ExamplesIndexView.css';
 
 type ExamplesIndexViewProps = RouteComponentProps;
 

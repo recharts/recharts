@@ -1,14 +1,16 @@
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { allApiDocs as API } from '../docs/api';
-import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
+
 import './APIView.css';
-import { SupportedLocale } from '../locale';
+
+import { allApiDocs as API } from '../docs/api/index.ts';
+import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
+import { SupportedLocale } from '../locale/index.ts';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ApiDoc, ApiProps, PropExample } from '../docs/api/types.ts';
 import { ChartExample } from '../docs/exampleComponents/types.ts';
 import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview.tsx';
-import { allApiExamples } from '../docs/apiExamples';
+import { allApiExamples } from '../docs/apiExamples/index.tsx';
 
 type APIViewNewImplProps = RouteComponentProps;
 
@@ -250,4 +252,4 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
   );
 }
 
-export const APIViewNew = withRouter(APIViewNewImpl);
+export const APIView = withRouter(APIViewNewImpl);

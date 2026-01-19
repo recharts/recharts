@@ -47,8 +47,8 @@ const TooltipContent = (props: TooltipContentProps<number, string>) => {
     return (
       <div
         style={{
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
+          backgroundColor: 'var(--color-surface-raised)',
+          border: '1px solid var(--color-border-2)',
           padding: '0 1em',
         }}
       >
@@ -70,13 +70,13 @@ export default function CandlestickExample({ defaultIndex }: { defaultIndex?: To
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
     >
-      <XAxis dataKey="time" tickFormatter={timestampToMinutes} />
-      <YAxis domain={['dataMin - 1', 'dataMax + 1']} tickFormatter={formatDollars} />
-      <CartesianGrid vertical={false} />
+      <CartesianGrid vertical={false} stroke="var(--color-border-3)" />
+      <XAxis dataKey="time" tickFormatter={timestampToMinutes} stroke="var(--color-text-3)" />
+      <YAxis domain={['dataMin - 1', 'dataMax + 1']} tickFormatter={formatDollars} stroke="var(--color-text-3)" />
       <Bar dataKey={barDataKey} shape={Candlestick}>
-        <ErrorBar dataKey={whiskerDataKey} width={0} zIndex={DefaultZIndexes.bar - 1} />
+        <ErrorBar dataKey={whiskerDataKey} width={0} zIndex={DefaultZIndexes.bar - 1} stroke="var(--color-text-1)" />
       </Bar>
-      <Tooltip content={TooltipContent} defaultIndex={defaultIndex} />
+      <Tooltip content={TooltipContent} defaultIndex={defaultIndex} cursor={{ fill: 'var(--color-solid-7a)' }} />
       <RechartsDevtools />
     </BarChart>
   );

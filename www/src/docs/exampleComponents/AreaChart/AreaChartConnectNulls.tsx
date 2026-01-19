@@ -45,48 +45,48 @@ const data = [
     amt: 2100,
   },
 ];
-
 // #endregion
+
+function MyChart(props: { connectNulls?: boolean }) {
+  return (
+    <AreaChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      />
+      <Area
+        connectNulls={props.connectNulls}
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-1)"
+        fill="var(--color-chart-1)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <RechartsDevtools />
+    </AreaChart>
+  );
+}
+
 const AreaChartConnectNulls = () => {
   return (
     <>
-      <AreaChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        margin={{
-          top: 20,
-          right: 0,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis width="auto" />
-        <Tooltip />
-        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        <RechartsDevtools />
-      </AreaChart>
-
-      <AreaChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        margin={{
-          top: 20,
-          right: 0,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis width="auto" />
-        <Tooltip />
-        <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        <RechartsDevtools />
-      </AreaChart>
+      <MyChart connectNulls={false} />
+      <MyChart connectNulls />
     </>
   );
 };
