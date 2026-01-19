@@ -278,6 +278,7 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false }],
     },
     { name: 'onClickCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onCompositionEnd', type: 'AdaptChildCompositionEventHandler<P, T>', isOptional: true },
@@ -358,7 +359,10 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       format: ['https://recharts.github.io/examples/LegendEffectOpacity'],
-      examples: [{ name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false }],
+      examples: [
+        { name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false },
+        { name: 'Legend with Opacity', url: '/examples/LegendEffectOpacity/', isExternal: false },
+      ],
     },
     {
       name: 'onMouseLeave',
@@ -376,7 +380,12 @@ export const LegendAPI: ApiDoc = {
     },
     { name: 'onMouseMove', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseMoveCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
-    { name: 'onMouseOut', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
+    {
+      name: 'onMouseOut',
+      type: 'AdaptChildMouseEventHandler<P, T>',
+      isOptional: true,
+      examples: [{ name: 'Mix Bar Chart', url: '/examples/MixBarChart/', isExternal: false }],
+    },
     { name: 'onMouseOutCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOver', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },
     { name: 'onMouseOverCapture', type: 'AdaptChildMouseEventHandler<P, T>', isOptional: true },

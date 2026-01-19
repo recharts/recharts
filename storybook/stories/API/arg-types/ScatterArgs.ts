@@ -95,7 +95,7 @@ export const ScatterArgs: StorybookArgs = {
   },
   dataKey: {
     description:
-      'Decides how to extract the numerical value of this Scatter from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Scatter.\n\nIf undefined, it will reuse the dataKey of YAxis.',
+      'Decides how to extract the numerical value of this Scatter from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Scatter.',
     table: {
       type: {
         summary: 'Function | number | string',

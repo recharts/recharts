@@ -129,7 +129,6 @@ export const ScatterAPI: ApiDoc = {
                 <code>function</code>: a function that receives the data object and returns the value of this Scatter.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },

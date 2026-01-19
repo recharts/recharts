@@ -224,5 +224,8 @@ export const SectorAPI: ApiDoc = {
       },
     },
   ],
-  links: [{ name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false }],
+  links: [
+    { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
+    { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
+  ],
 };
