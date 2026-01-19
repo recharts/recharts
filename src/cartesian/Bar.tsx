@@ -602,15 +602,17 @@ function BarRectangleWithActiveState(props: {
   if (isActive) {
     return (
       <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
-        <BarRectangle
-          {...baseProps}
-          name={String(baseProps.name)}
-          {...entry}
-          isActive={isActive}
-          option={option}
-          index={index}
-          dataKey={dataKey}
-        />
+        <BarStackClipLayer index={index}>
+          <BarRectangle
+            {...baseProps}
+            name={String(baseProps.name)}
+            {...entry}
+            isActive={isActive}
+            option={option}
+            index={index}
+            dataKey={dataKey}
+          />
+        </BarStackClipLayer>
       </ZIndexLayer>
     );
   }
