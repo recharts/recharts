@@ -49,7 +49,16 @@ const data = [
 
 const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps<string | number, string>) => {
   const newPayload = payload.filter(x => x.dataKey !== 'a');
-  return <DefaultTooltipContent payload={newPayload} {...rest} />;
+  return (
+    <DefaultTooltipContent
+      payload={newPayload}
+      {...rest}
+      contentStyle={{
+        borderColor: 'var(--color-border-2)',
+        backgroundColor: 'var(--color-surface-base)',
+      }}
+    />
+  );
 };
 
 const renderLegendWithoutRange = ({ payload, ref, ...rest }: DefaultLegendContentProps) => {
@@ -75,7 +84,7 @@ export default function BandedChart() {
       <XAxis dataKey="name" stroke="var(--color-text-3)" />
       <YAxis width="auto" stroke="var(--color-text-3)" />
       <Legend content={renderLegendWithoutRange} />
-      <Tooltip content={renderTooltipWithoutRange} />
+      <Tooltip cursor={{ stroke: 'var(--color-border-2)' }} content={renderTooltipWithoutRange} />
       <Line
         type="natural"
         dataKey="b"

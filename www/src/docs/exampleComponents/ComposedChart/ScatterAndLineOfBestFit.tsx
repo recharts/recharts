@@ -3,15 +3,21 @@ import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
-  { index: 10000, red: 1643, blue: 790 },
-  { index: 1666, red: 182, blue: 42 },
-  { index: 625, red: 56, blue: 11 },
+  { index: 10000, alphaDot: 1643, betaDot: 790 },
+  { index: 1666, alphaDot: 182, betaDot: 42 },
+  { index: 625, alphaDot: 56, betaDot: 11 },
   // Calculation of line of best fit is not included in this demo
-  { index: 300, redLine: 0 },
-  { index: 10000, redLine: 1522 },
-  { index: 600, blueLine: 0 },
-  { index: 10000, blueLine: 678 },
-];
+  { index: 300, alphaLine: 0 },
+  { index: 10000, alphaLine: 1522 },
+  { index: 600, betaLine: 0 },
+  { index: 10000, betaLine: 678 },
+] satisfies Array<{
+  index: number;
+  alphaDot?: number;
+  betaDot?: number;
+  alphaLine?: number;
+  betaLine?: number;
+}>;
 
 // #endregion
 const ScatterAndLineOfBestFit = () => {
@@ -27,16 +33,36 @@ const ScatterAndLineOfBestFit = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
-      <Tooltip />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <XAxis
+        dataKey="index"
+        type="number"
+        label={{ value: 'Index', position: 'insideBottomRight', offset: 0 }}
+        stroke="var(--color-text-3)"
+      />
+      <YAxis
+        unit="ms"
+        type="number"
+        label={{ value: 'Time', angle: -90, position: 'insideLeft' }}
+        width="auto"
+        stroke="var(--color-text-3)"
+      />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+        itemStyle={{
+          color: 'var(--color-text-3)',
+        }}
+      />
       <Legend />
 
-      <XAxis dataKey="index" type="number" label={{ value: 'Index', position: 'insideBottomRight', offset: 0 }} />
-      <YAxis unit="ms" type="number" label={{ value: 'Time', angle: -90, position: 'insideLeft' }} width="auto" />
-      <Scatter name="red" dataKey="red" fill="red" />
-      <Scatter name="blue" dataKey="blue" fill="blue" />
-      <Line dataKey="blueLine" stroke="blue" dot={false} activeDot={false} legendType="none" />
-      <Line dataKey="redLine" stroke="red" dot={false} activeDot={false} legendType="none" />
+      <Scatter name="alpha" dataKey="alphaDot" fill="var(--color-chart-1)" />
+      <Scatter name="beta" dataKey="betaDot" fill="var(--color-chart-2)" />
+      <Line dataKey="alphaLine" stroke="var(--color-chart-1)" dot={false} activeDot={false} legendType="none" />
+      <Line dataKey="betaLine" stroke="var(--color-chart-2)" dot={false} activeDot={false} legendType="none" />
       <RechartsDevtools />
     </ComposedChart>
   );

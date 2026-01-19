@@ -55,14 +55,43 @@ const ComposedChartWithAxisLabels = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
-      <XAxis dataKey="name" label={{ value: 'Pages', position: 'insideBottomRight', offset: 0 }} scale="band" />
-      <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} width="auto" />
-      <Tooltip />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <XAxis
+        dataKey="name"
+        label={{ value: 'Pages', position: 'insideBottomRight', offset: 0 }}
+        scale="band"
+        stroke="var(--color-text-3)"
+      />
+      <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
       <Legend />
-      <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-      <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-      <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Area
+        type="monotone"
+        dataKey="amt"
+        fill="var(--color-chart-1)"
+        stroke="var(--color-chart-1)"
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
+      <Bar dataKey="pv" barSize={20} fill="var(--color-chart-9)" />
+      <Line
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-8)"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </ComposedChart>
   );

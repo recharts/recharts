@@ -122,7 +122,7 @@ function ActiveLabel(props: LabelProps) {
     return null;
   }
   return (
-    <text x={Number(props.x) + 10} y={Number(props.y) + 5}>
+    <text x={Number(props.x) + 10} y={Number(props.y) + 5} fill="var(--color-text-1)">
       {props.value}
     </text>
   );
@@ -152,6 +152,30 @@ function useActiveIndexState(defaultValue?: number) {
 
 const showNothing = () => null;
 
+function TargetPriceLine(props: {
+  dataKey: string;
+  stroke: string;
+  isAnimationActive: boolean;
+  activeIndex: number | undefined;
+}) {
+  return (
+    <Line
+      dataKey={props.dataKey}
+      stroke={props.stroke}
+      dot={false}
+      activeDot={{
+        stroke: 'var(--color-surface-base)',
+      }}
+      isAnimationActive={props.isAnimationActive}
+    >
+      <LabelList
+        position="center"
+        // eslint-disable-next-line react/no-unstable-nested-components
+        content={labelProps => props.activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
+      />
+    </Line>
+  );
+}
 export default function TargetPriceChart({
   isAnimationActive = true,
   defaultIndex,
@@ -171,7 +195,7 @@ export default function TargetPriceChart({
       onMouseMove={setActiveIndex}
       onMouseLeave={clearActiveIndex}
     >
-      <CartesianGrid vertical />
+      <CartesianGrid vertical stroke="var(--color-border-3)" />
       <XAxis
         type="number"
         scale="time"
@@ -179,14 +203,18 @@ export default function TargetPriceChart({
         interval="preserveStartEnd"
         domain={['dataMin', 'dataMax']}
         tickFormatter={tickFormatter}
+        stroke="var(--color-text-3)"
       />
-      <YAxis interval="preserveStartEnd" orientation="right" />
+      <YAxis interval="preserveStartEnd" orientation="right" stroke="var(--color-text-3)" />
       <Area
         connectNulls
         dataKey="lowHigh"
-        fill="orange"
-        stroke="orange"
+        fill="var(--color-chart-3)"
+        stroke="var(--color-chart-3)"
         fillOpacity={0.12}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
         isAnimationActive={isAnimationActive}
       >
         <LabelList
@@ -195,27 +223,19 @@ export default function TargetPriceChart({
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Area>
-      <Line dataKey="low" stroke="none" dot={false} isAnimationActive={isAnimationActive}>
-        <LabelList
-          position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
-        />
-      </Line>
-      <Line dataKey="price" stroke="darkslateblue" dot={false} isAnimationActive={isAnimationActive}>
-        <LabelList
-          position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
-        />
-      </Line>
-      <Line dataKey="targetPrice" stroke="darkorange" dot={false} isAnimationActive={isAnimationActive}>
-        <LabelList
-          position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
-          content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
-        />
-      </Line>
+      <TargetPriceLine activeIndex={activeIndex} dataKey="low" stroke="none" isAnimationActive={isAnimationActive} />
+      <TargetPriceLine
+        activeIndex={activeIndex}
+        dataKey="price"
+        stroke="var(--color-chart-9)"
+        isAnimationActive={isAnimationActive}
+      />
+      <TargetPriceLine
+        activeIndex={activeIndex}
+        dataKey="targetPrice"
+        stroke="var(--color-chart-8)"
+        isAnimationActive={isAnimationActive}
+      />
       <Tooltip content={showNothing} defaultIndex={defaultIndex} />
       <RechartsDevtools />
     </ComposedChart>

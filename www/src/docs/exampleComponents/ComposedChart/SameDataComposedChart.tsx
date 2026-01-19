@@ -55,13 +55,29 @@ const SameDataComposedChart = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
-      <XAxis dataKey="name" scale="band" />
-      <YAxis width="auto" />
-      <Tooltip />
+      <CartesianGrid stroke="var(--color-border-3)" />
+      <XAxis dataKey="name" scale="band" stroke="var(--color-text-3)" />
+      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderColor: 'var(--color-border-2)',
+        }}
+      />
       <Legend />
-      <Bar dataKey="uv" barSize={20} fill="#413ea0" />
-      <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Bar dataKey="uv" barSize={20} fill="var(--color-chart-9)" />
+      <Line
+        type="monotone"
+        dataKey="uv"
+        stroke="var(--color-chart-8)"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+      />
       <RechartsDevtools />
     </ComposedChart>
   );
