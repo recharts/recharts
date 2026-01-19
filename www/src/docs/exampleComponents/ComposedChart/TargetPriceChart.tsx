@@ -236,7 +236,13 @@ export default function TargetPriceChart({
         stroke="var(--color-chart-8)"
         isAnimationActive={isAnimationActive}
       />
-      <Tooltip content={showNothing} defaultIndex={defaultIndex} />
+      <Tooltip
+        cursor={{
+          stroke: 'var(--color-border-2)',
+        }}
+        content={showNothing}
+        defaultIndex={defaultIndex}
+      />
       <RechartsDevtools />
     </ComposedChart>
   );
