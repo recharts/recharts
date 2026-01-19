@@ -121,6 +121,6 @@ test('BarChartRangeExample', async ({ mount }) => {
 });
 
 test('RangedStackedBarChart', async ({ mount }) => {
-  const component = await mount(<RangedStackedBarChart isAnimationActive={false} />);
+  const component = await mount(<RangedStackedBarChart isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });

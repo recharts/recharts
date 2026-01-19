@@ -1,4 +1,4 @@
-import { BarChart, XAxis, YAxis, Tooltip, Bar, BarStack } from 'recharts';
+import { BarChart, XAxis, YAxis, Tooltip, Bar, BarStack, TooltipIndex } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -10,7 +10,13 @@ const rangedStackedBarData = [
 ];
 // #endregion
 
-const RangedStackedBarChart = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
+const RangedStackedBarChart = ({
+  isAnimationActive = true,
+  defaultIndex,
+}: {
+  isAnimationActive?: boolean;
+  defaultIndex?: TooltipIndex;
+}) => (
   <BarChart
     style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
     responsive
@@ -25,11 +31,29 @@ const RangedStackedBarChart = ({ isAnimationActive = true }: { isAnimationActive
   >
     <XAxis dataKey="name" />
     <YAxis width="auto" />
-    <Tooltip />
+    <Tooltip defaultIndex={defaultIndex} />
     <BarStack radius={25}>
-      <Bar dataKey="value1" maxBarSize={50} fill="#8884d8" isAnimationActive={isAnimationActive} />
-      <Bar dataKey="value2" maxBarSize={50} fill="#82ca9d" isAnimationActive={isAnimationActive} />
-      <Bar dataKey="value3" maxBarSize={50} fill="#ffc658" isAnimationActive={isAnimationActive} />
+      <Bar
+        dataKey="value1"
+        maxBarSize={50}
+        fill="#8884d8"
+        isAnimationActive={isAnimationActive}
+        activeBar={{ fill: '#5550bd' }}
+      />
+      <Bar
+        dataKey="value2"
+        maxBarSize={50}
+        fill="#82ca9d"
+        isAnimationActive={isAnimationActive}
+        activeBar={{ fill: '#55bd50' }}
+      />
+      <Bar
+        dataKey="value3"
+        maxBarSize={50}
+        fill="#ffc658"
+        isAnimationActive={isAnimationActive}
+        activeBar={{ fill: '#ffc658' }}
+      />
     </BarStack>
     <RechartsDevtools />
   </BarChart>
