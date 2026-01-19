@@ -163,9 +163,7 @@ function TargetPriceLine(props: {
       dataKey={props.dataKey}
       stroke={props.stroke}
       dot={false}
-      activeDot={{
-        stroke: 'var(--color-surface-base)',
-      }}
+      activeDot={props.stroke === 'none' ? false : { stroke: 'var(--color-surface-base)' }}
       isAnimationActive={props.isAnimationActive}
     >
       <LabelList

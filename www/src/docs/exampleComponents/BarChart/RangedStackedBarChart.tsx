@@ -54,13 +54,7 @@ const RangedStackedBarChart = ({
         isAnimationActive={isAnimationActive}
         activeBar={{ fill: 'var(--color-chart-5)' }}
       />
-      <Bar
-        dataKey="value3"
-        maxBarSize={50}
-        fill="var(--color-chart-3)"
-        isAnimationActive={isAnimationActive}
-        activeBar={{ fill: 'var(--color-chart-3)' }}
-      />
+      <Bar dataKey="value3" maxBarSize={50} fill="var(--color-chart-3)" isAnimationActive={isAnimationActive} />
     </BarStack>
     <RechartsDevtools />
   </BarChart>

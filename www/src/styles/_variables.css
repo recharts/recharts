@@ -110,7 +110,7 @@
   --color-solid-1: var(--color-gray-100);
   --color-solid-1a: color-mix(in srgb, var(--color-solid-1) 80%, transparent);
   --color-solid-6: var(--color-gray-700);
-  --color-solid-6a: color-mix(in srgb, var(--color-solid-7) 80%, transparent);
+  --color-solid-6a: color-mix(in srgb, var(--color-solid-6) 80%, transparent);
   --color-solid-7: var(--color-gray-800);
   --color-solid-7a: color-mix(in srgb, var(--color-solid-7) 80%, transparent);
   --color-solid-brand-1: #2e96ea; /* brand */

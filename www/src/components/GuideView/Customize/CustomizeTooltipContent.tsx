@@ -111,7 +111,7 @@ export default function CustomizeTooltipContent() {
           fill: 'var(--color-solid-7a)',
         }}
       />
-      <Bar dataKey="uv" fill="var(--color-chart-1" />
+      <Bar dataKey="uv" fill="var(--color-chart-1)" />
       <RechartsDevtools />
     </BarChart>
   );
