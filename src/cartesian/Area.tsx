@@ -188,8 +188,6 @@ interface AreaProps extends ZIndexable {
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Area.
-   *
-   * If undefined, it will reuse the dataKey of YAxis.
    */
   dataKey: DataKey<any>;
   /**

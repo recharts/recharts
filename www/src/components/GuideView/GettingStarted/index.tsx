@@ -65,6 +65,25 @@ export function GettingStarted({ locale }: { locale: SupportedLocale }) {
           stackBlitzTitle="Recharts Getting Started - Step 5"
         />
       </div>
+
+      <h4 className="sub-title">Recharts devtools</h4>
+      <p className="paragraph-title">
+        In all examples on this website, you will see the use of Recharts Devtools component:{' '}
+        <code>{`import { RechartsDevtools } from '@recharts/devtools';`}</code>. Recharts devtools are the integration
+        that enables the hook inspector. You can access the hook inspector using the dropdown in toolbar. That way, you
+        can see a preview of what Recharts hooks are returning.
+      </p>
+      <p className="paragraph-title">
+        You can choose to include Recharts devtools in your own projects, but it is not required to use Recharts. It is
+        only there to help you debug and understand your charts better during development. This component is entirely
+        optional, feel free to erase it from the examples, your charts will continue working the same.
+      </p>
+      <CodeEditorWithPreview
+        Component={Step5}
+        sourceCode={step5Source}
+        stackBlitzTitle="Recharts Getting Started - Step 5"
+        defaultTool="devtools"
+      />
     </div>
   );
 }

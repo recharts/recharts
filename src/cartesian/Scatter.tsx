@@ -202,8 +202,6 @@ interface ScatterProps extends DataProvider, ZIndexable {
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Scatter.
-   *
-   * If undefined, it will reuse the dataKey of YAxis.
    */
   dataKey?: DataKey<any>;
 

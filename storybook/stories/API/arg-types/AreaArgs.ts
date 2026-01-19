@@ -131,7 +131,7 @@ export const AreaArgs: StorybookArgs = {
   },
   dataKey: {
     description:
-      'Decides how to extract the value of this Area from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Area.\n\nIf undefined, it will reuse the dataKey of YAxis.',
+      'Decides how to extract the value of this Area from the data:\n- `string`: the name of the field in the data object;\n- `number`: the index of the field in the data;\n- `function`: a function that receives the data object and returns the value of this Area.',
     table: {
       type: {
         summary: 'Function | number | string',

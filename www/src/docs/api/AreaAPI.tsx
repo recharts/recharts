@@ -22,7 +22,6 @@ export const AreaAPI: ApiDoc = {
                 <code>function</code>: a function that receives the data object and returns the value of this Area.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
@@ -92,6 +91,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 0,
+      examples: [{ name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false }],
     },
     {
       name: 'animationDuration',
@@ -105,6 +105,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 1500,
+      examples: [{ name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false }],
     },
     {
       name: 'animationEasing',
@@ -376,6 +377,7 @@ export const AreaAPI: ApiDoc = {
           url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
           isExternal: true,
         },
+        { name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false },
       ],
     },
     {
@@ -390,6 +392,7 @@ export const AreaAPI: ApiDoc = {
         ),
       },
       defaultVal: 1,
+      examples: [{ name: 'Synchronized Area Chart', url: '/examples/SynchronizedAreaChart/', isExternal: false }],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     {

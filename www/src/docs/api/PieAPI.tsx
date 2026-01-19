@@ -161,6 +161,7 @@ export const PieAPI: ApiDoc = {
         },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
       ],
     },
@@ -199,6 +200,7 @@ export const PieAPI: ApiDoc = {
         },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
         { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
       ],
     },
@@ -276,6 +278,7 @@ export const PieAPI: ApiDoc = {
         },
         { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
       ],
     },
     {
@@ -304,6 +307,7 @@ export const PieAPI: ApiDoc = {
           isExternal: false,
         },
         { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+        { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
       ],
     },
     {
@@ -518,6 +522,7 @@ export const PieAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false }],
     },
     {
       name: 'startAngle',
@@ -817,6 +822,7 @@ export const PieAPI: ApiDoc = {
     { name: 'Pie Chart with gap and rounded corners', url: '/examples/PieChartWithPaddingAngle/', isExternal: false },
     { name: 'Pie Chart With Needle', url: '/examples/PieChartWithNeedle/', isExternal: false },
     { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+    { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
     { name: 'Pie Responsive Container', url: '/examples/PieResponsiveContainer/', isExternal: false },
   ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],

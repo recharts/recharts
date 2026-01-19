@@ -142,6 +142,7 @@ export const TooltipAPI: ApiDoc = {
       },
       defaultVal: true,
       examples: [
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
         { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },

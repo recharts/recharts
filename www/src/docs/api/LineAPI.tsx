@@ -141,7 +141,6 @@ export const LineAPI: ApiDoc = {
                 <code>function</code>: a function that receives the data object and returns the value of this Line.
               </li>
             </ul>
-            <p>If undefined, it will reuse the dataKey of YAxis.</p>
           </section>
         ),
       },
