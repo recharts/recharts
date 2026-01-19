@@ -43,10 +43,6 @@ npm run omnidoc CartesianGrid
 npm run omnidoc XAxis YAxis ZAxis
 ```
 
-#### Allow-listed Components
-
-The `ALLOWLISTED_COMPONENTS` array in `generateApiDoc.ts` contains components that are ready for auto-generation. You can still generate documentation for components not in this list by passing them as command-line arguments.
-
 #### After Generation
 
 After generating API documentation:
