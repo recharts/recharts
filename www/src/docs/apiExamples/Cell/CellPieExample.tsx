@@ -12,7 +12,7 @@ const data = [
 ];
 const colors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 'url(#pattern-checkers)'];
 
-const MyCustomPie = (props: PieSectorShapeProps) => <Sector {...props} fill={colors[props.index]} />;
+const MyCustomPie = (props: PieSectorShapeProps) => <Sector {...props} fill={colors[props.index % colors.length]} />;
 
 const MyCustomLabel = (props: LabelProps) => (
   <Label {...props} fill={colors[(props.index ?? 0) % colors.length]} position="outside" offset={20} />

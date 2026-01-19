@@ -44,7 +44,7 @@ export function CellDeprecationNotice() {
       </p>
       <p>
         If you find that this new approach does not support your use-case, please{' '}
-        <TargetBlankLink href="github.com/recharts/recharts/issues">let us know.</TargetBlankLink>
+        <TargetBlankLink href="https://github.com/recharts/recharts/issues">let us know.</TargetBlankLink>
       </p>
       <h2>Examples</h2>
       <p>

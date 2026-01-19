@@ -84,8 +84,7 @@ export const map = {
     'step-4-title': '4. The style of each chart element can be customized',
     'step-4-desc': `Change the attributes of each chart element conveniently. Tooltip and Legend are HTML elements, everything else is an SVG element.`,
     'step-5-title': '5. Customize Legend and Tooltip',
-    'step-5-desc': `Though tooltip, legend are drawn by svg elements, you may change the style of tooltip,
-      legend by the apis we offer. Of course, you can change the style in css too.`,
+    'step-5-desc': `Tooltip and legend are HTML elements. They accept several Recharts-specific props, and the usual style and className props too.`,
   },
   api: {
     charts: 'Charts',
