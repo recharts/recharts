@@ -1,4 +1,5 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -49,6 +50,35 @@ const data = [
 
 // #endregion
 const MixBarChart = () => {
+  const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
+  const [locked, setLocked] = useState<boolean>(false);
+
+  const onLegendMouseEnter = (payload: LegendPayload) => {
+    if (!locked) {
+      setFocusedDataKey(String(payload.dataKey));
+    }
+  };
+
+  const onLegendMouseOut = () => {
+    if (!locked) {
+      setFocusedDataKey(null);
+    }
+  };
+
+  const onLegendClick = (payload: LegendPayload) => {
+    if (focusedDataKey === String(payload.dataKey)) {
+      if (locked) {
+        setFocusedDataKey(null);
+        setLocked(false);
+      } else {
+        setLocked(true);
+      }
+    } else {
+      setFocusedDataKey(String(payload.dataKey));
+      setLocked(true);
+    }
+  };
+
   return (
     <BarChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
@@ -65,10 +95,10 @@ const MixBarChart = () => {
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Tooltip />
-      <Legend />
-      <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-      <Bar dataKey="amt" stackId="a" fill="#82ca9d" />
-      <Bar dataKey="uv" fill="#ffc658" />
+      <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
+      <Bar dataKey="pv" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'pv' ? '#8884d8' : '#eee'} />
+      <Bar dataKey="amt" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'} />
+      <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
       <RechartsDevtools />
     </BarChart>
   );
