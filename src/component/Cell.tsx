@@ -1,10 +1,27 @@
 import type { FunctionComponent, SVGProps } from 'react';
 
-export type Props = SVGProps<SVGElement>;
+export interface Props extends SVGProps<SVGElement> {
+  /**
+   * The fill color.
+   */
+  fill?: string;
+  /**
+   * The stroke color.
+   */
+  stroke?: string;
+}
 
 /**
- * Cell can be wrapped by Pie, Bar, or RadialBar to specify attributes of each child. In Pie , for example, we can specify the attributes of each child node through data, but the props of Cell have higher priority
+ * Cell component used to define colors and styles of chart elements.
  *
+ * This component is now deprecated and will be removed in Recharts 4.0.
+ *
+ * Please use the `shape` prop or `content` prop on the respective chart components
+ * to customize the rendering of chart elements instead of using `Cell`.
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/cell/ Guide: Migrate from Cell component to shape prop}
+ *
+ * @deprecated
  * @consumes CellReader
  */
 export const Cell: FunctionComponent<Props> = (_props: Props) => null;

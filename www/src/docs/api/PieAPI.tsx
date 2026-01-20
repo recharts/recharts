@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const PieAPI: ApiDoc = {
@@ -65,14 +66,7 @@ export const PieAPI: ApiDoc = {
       },
       defaultVal: 'ease',
     },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      isOptional: true,
-      examples: [
-        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
-      ],
-    },
+    { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'cornerRadius',
@@ -518,11 +512,17 @@ export const PieAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.</p>
+            <p>
+              The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive. If
+              undefined, renders <Link to="/api/Sector/">Sector</Link> shape.
+            </p>
           </section>
         ),
       },
-      examples: [{ name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false }],
+      examples: [
+        { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
+        { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
+      ],
     },
     {
       name: 'startAngle',

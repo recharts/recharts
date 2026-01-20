@@ -52,6 +52,7 @@ export const LabelListAPI: ApiDoc = {
           url: '/examples/BarChartWithMinHeight/',
           isExternal: false,
         },
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
       ],
     },
@@ -144,6 +145,7 @@ export const LabelListAPI: ApiDoc = {
       },
       defaultVal: 'middle',
       examples: [
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
       ],
     },
@@ -180,6 +182,7 @@ export const LabelListAPI: ApiDoc = {
     },
   ],
   links: [
+    { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
     { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
     { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
     { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },

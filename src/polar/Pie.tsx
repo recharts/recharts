@@ -372,7 +372,9 @@ interface PieProps extends DataProvider, PieDef, ZIndexable {
    */
   rootTabIndex?: number;
   /**
-   * The custom shape of a Pie Sector. Can also be used to render active sector by checking isActive.
+   * The custom shape of a Pie Sector.
+   * Can also be used to render active sector by checking isActive.
+   * If undefined, renders {@link Sector} shape.
    */
   shape?: PieShape;
   tooltipType?: TooltipType;

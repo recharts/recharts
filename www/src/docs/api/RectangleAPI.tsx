@@ -91,6 +91,9 @@ export const RectangleAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
+      ],
     },
     {
       name: 'onMouseDown',
@@ -193,6 +196,7 @@ export const RectangleAPI: ApiDoc = {
     ),
   },
   links: [
+    { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
     { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
     { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
   ],

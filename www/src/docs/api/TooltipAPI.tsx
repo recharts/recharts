@@ -157,6 +157,7 @@ export const TooltipAPI: ApiDoc = {
       type: 'null | number | string',
       isOptional: true,
       examples: [
+        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
         { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
@@ -166,7 +167,6 @@ export const TooltipAPI: ApiDoc = {
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
         { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-        { name: 'Two Level Pie Chart', url: '/examples/TwoLevelPieChart/', isExternal: false },
       ],
     },
     {

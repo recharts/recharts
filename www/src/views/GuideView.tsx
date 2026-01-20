@@ -10,6 +10,7 @@ import { DomainAndTicks } from '../components/GuideView/DomainAndTicks';
 import { Performance } from '../components/GuideView/Performance';
 import { RoundedBars } from '../components/GuideView/RoundedBars';
 import { BarAlign } from '../components/GuideView/BarAlign';
+import { CellDeprecationNotice } from '../components/GuideView/CellDeprecationNotice';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -22,6 +23,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   performance: Performance,
   roundedBars: RoundedBars,
   barAlignment: BarAlign,
+  cell: CellDeprecationNotice,
 };
 
 export const allGuides = Object.keys(guideMap);

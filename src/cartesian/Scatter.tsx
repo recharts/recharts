@@ -42,7 +42,7 @@ import {
   TrapezoidViewBox,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
-import { ScatterSymbol } from '../util/ScatterUtils';
+import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import {
@@ -61,7 +61,7 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -77,7 +77,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { ChartData } from '../state/chartDataSlice';
 
-interface ScatterPointNode {
+export interface ScatterPointNode {
   x?: number | string;
   y?: number | string;
   z?: number | string;
@@ -127,7 +127,7 @@ export interface ScatterPointItem {
   tooltipPosition: Coordinate;
 }
 
-export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
+export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -274,9 +274,9 @@ interface ScatterProps extends DataProvider, ZIndexable {
   activeShape?: ScatterCustomizedShape;
   /**
    * Determines the shape of individual data points.
-   * Can be one of the predefined shapes as a string.
-   * If set a ReactElement, the shape of line can be customized.
-   * If set a function, the function will be called to render customized shape.
+   * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
+   * - If set a ReactElement, the shape of point can be customized.
+   * - If set a function, the function will be called to render customized shape.
    * @defaultValue circle
    *
    * @example <Scatter shape={CustomizedShapeComponent} />
@@ -548,10 +548,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const hasActiveShape = activeShape != null && activeShape !== false;
         const isActive: boolean = hasActiveShape && activeIndex === String(i);
         const option = hasActiveShape && isActive ? activeShape : shape;
-        const symbolProps = {
+        const symbolProps: ScatterShapeProps = {
           ...baseProps,
           ...entry,
-          [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
+          index: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 

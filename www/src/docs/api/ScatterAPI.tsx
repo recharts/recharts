@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ApiDoc } from './types';
 
 export const ScatterAPI: ApiDoc = {
@@ -71,10 +72,7 @@ export const ScatterAPI: ApiDoc = {
       name: 'children',
       type: 'ReactNode',
       isOptional: true,
-      examples: [
-        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
-        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
-      ],
+      examples: [{ name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false }],
     },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -381,11 +379,15 @@ export const ScatterAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
-            <p>
-              Determines the shape of individual data points. Can be one of the predefined shapes as a string. If set a
-              ReactElement, the shape of line can be customized. If set a function, the function will be called to
-              render customized shape.
-            </p>
+            <p>Determines the shape of individual data points.</p>
+            <ul>
+              <li>
+                Can be one of the predefined shapes as a string, which will be passed to{' '}
+                <Link to="/api/Symbols/">Symbols</Link> component.
+              </li>
+              <li>If set a ReactElement, the shape of point can be customized.</li>
+              <li>If set a function, the function will be called to render customized shape.</li>
+            </ul>
           </section>
         ),
       },
@@ -394,6 +396,7 @@ export const ScatterAPI: ApiDoc = {
       examples: [
         { name: 'Scatter chart with custom shapes', url: '/examples/JointLineScatterChart/', isExternal: false },
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
+        { name: 'Scatter Chart With Cells', url: '/examples/ScatterChartWithCells/', isExternal: false },
       ],
     },
     { name: 'tooltipType', type: '"none"', isOptional: true },

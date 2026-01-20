@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell } from 'recharts';
+import { PieChart, Pie, Sector, PieSectorShapeProps, Label, LabelList, LabelProps } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -12,6 +12,12 @@ const data = [
 ];
 const colors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 'url(#pattern-checkers)'];
 
+const MyCustomPie = (props: PieSectorShapeProps) => <Sector {...props} fill={colors[props.index % colors.length]} />;
+
+const MyCustomLabel = (props: LabelProps) => (
+  <Label {...props} fill={colors[(props.index ?? 0) % colors.length]} position="outside" offset={20} />
+);
+
 // #endregion
 const CellPieExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
   <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '70vh', aspectRatio: 1 }} responsive>
@@ -21,10 +27,8 @@ const CellPieExample = ({ isAnimationActive = true }: { isAnimationActive?: bool
         <rect className="checker" x="10" width="5" height="5" y="10" />
       </pattern>
     </defs>
-    <Pie data={data} label isAnimationActive={isAnimationActive}>
-      {data.map((_entry, index) => (
-        <Cell key={`cell-${index}`} fill={colors[index]} />
-      ))}
+    <Pie data={data} isAnimationActive={isAnimationActive} shape={MyCustomPie}>
+      <LabelList content={MyCustomLabel} />
     </Pie>
     <RechartsDevtools />
   </PieChart>
