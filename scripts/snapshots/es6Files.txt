@@ -230,6 +230,7 @@
   "es6/util/getActiveCoordinate.js",
   "es6/util/getAxisTypeBasedOnLayout.js",
   "es6/util/getChartPointer.js",
+  "es6/util/getClassNameFromUnknown.js",
   "es6/util/getEveryNth.js",
   "es6/util/getRadiusAndStrokeWidthFromDot.js",
   "es6/util/getSliced.js",

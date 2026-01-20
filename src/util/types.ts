@@ -33,6 +33,9 @@ import { BaseValue } from '../cartesian/Area';
 import { ImplicitLabelType } from '../component/Label';
 import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 import { ChartData } from '../state/chartDataSlice';
+import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
+import { TextAnchor, TextVerticalAnchor } from '../component/Text';
+import { TickFormatter } from '../cartesian/CartesianAxis';
 
 /**
  * Determines how values are stacked:
@@ -760,7 +763,35 @@ export type CategoricalDomainItem = number | string | Date;
 
 export type CategoricalDomain = ReadonlyArray<CategoricalDomainItem>;
 
-export type TickProp = SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactNode) | boolean;
+export type BaseTickContentProps = {
+  angle: number;
+  className?: string;
+  fill: string | undefined;
+  height?: number | string;
+  index: number;
+  name?: string;
+  stroke: string;
+  payload: CartesianTickItem;
+  textAnchor: TextAnchor;
+  tickFormatter: TickFormatter | undefined;
+  verticalAnchor: TextVerticalAnchor;
+  visibleTicksCount: number;
+  width?: number | string;
+  x: number | string;
+  y: number | string;
+};
+
+export type XAxisTickContentProps = BaseTickContentProps & {
+  orientation: XAxisOrientation;
+  padding: XAxisPadding | undefined;
+};
+
+export type YAxisTickContentProps = BaseTickContentProps & {
+  orientation: YAxisOrientation;
+  padding: YAxisPadding | undefined;
+};
+
+export type TickProp<T> = SVGProps<SVGTextElement> | ReactElement | ((props: T) => ReactNode) | boolean;
 
 export interface BaseAxisProps {
   /**
@@ -859,13 +890,21 @@ export interface RenderableAxisProps extends BaseAxisProps {
    */
   hide?: boolean;
   /**
-   * If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.
-   * If object set, ticks will be drawn which have the props merged by the internal calculated props and the option.
-   * If ReactElement set, the option can be the custom tick element.
-   * If set a function, the function will be called to render customized ticks.
+   * Defines how the individual label text is rendered.
+   * This controls the settings for individual ticks; on a typical axis, there are multiple ticks, depending on your data.
+   *
+   * If you want to customize the overall axis label, use the `label` prop instead.
+   *
+   * Options:
+   * - `false`: Do not render any tick labels.
+   * - `true`: Render tick labels with default settings.
+   * - `object`: An object of props to be merged into the internally calculated tick props.
+   * - `ReactElement`: A custom React element to be used as the tick label.
+   * - `function`: A function that returns a React element for custom rendering of tick labels.
+   *
    * @defaultValue true
    */
-  tick?: TickProp;
+  tick?: TickProp<unknown>;
 
   /**
    * The count of axis ticks. Not used if 'type' is 'category'.

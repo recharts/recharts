@@ -63,6 +63,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
+import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 interface PieDef {
   /**
@@ -505,13 +506,6 @@ const parseDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
-function getClassNamePropertyIfExists(u: unknown): string {
-  if (u && typeof u === 'object' && 'className' in u && typeof u.className === 'string') {
-    return u.className;
-  }
-  return '';
-}
-
 const renderLabelLineItem = (option: PieLabelLine, props: CurveProps) => {
   if (React.isValidElement(option)) {
     // @ts-expect-error we can't know if the type of props matches the element
@@ -540,7 +534,7 @@ const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: un
     }
   }
 
-  const className = clsx('recharts-pie-label-text', getClassNamePropertyIfExists(option));
+  const className = clsx('recharts-pie-label-text', getClassNameFromUnknown(option));
   return (
     <Text {...props} alignmentBaseline="middle" className={className}>
       {/* @ts-expect-error we pass unknown but Text expects string | number */}

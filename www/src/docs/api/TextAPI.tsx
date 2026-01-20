@@ -52,6 +52,9 @@ export const TextAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+      ],
     },
     {
       name: 'lineHeight',
@@ -221,5 +224,8 @@ export const TextAPI: ApiDoc = {
         ),
       },
     },
+  ],
+  links: [
+    { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
   ],
 };

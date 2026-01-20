@@ -1,21 +1,23 @@
 import * as React from 'react';
-import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
+import { FunctionComponent, ReactNode, SVGProps, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
-import { Props as TextProps, Text, TextAnchor, TextVerticalAnchor } from '../component/Text';
+import { Text, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import {
   adaptEventsOfChild,
   AxisDomain,
   AxisDomainTypeInput,
+  BaseTickContentProps,
   EvaluatedAxisDomainType,
   PresentationAttributesAdaptChildEvent,
   RenderableAxisProps,
   ScaleType,
   TickItem,
+  TickProp,
 } from '../util/types';
-import { degreeToRadian, getTickClassName, polarToCartesian } from '../util/PolarUtils';
+import { degreeToRadian, polarToCartesian } from '../util/PolarUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAngleAxisTicks, selectPolarAxisScale } from '../state/selectors/polarScaleSelectors';
@@ -30,12 +32,13 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
 export interface PolarAngleAxisProps
-  extends Omit<RenderableAxisProps, 'axisLine' | 'tickCount' | 'domain' | 'scale'>, ZIndexable {
+  extends Omit<RenderableAxisProps, 'axisLine' | 'tickCount' | 'domain' | 'scale' | 'tick'>, ZIndexable {
   /**
    * Controls axis line element. These are be passed as props to SVG `<line>` element representing the axis line.
    * If `true` then the axis line is drawn using props of the PolarAngleAxis component.
@@ -139,17 +142,21 @@ export interface PolarAngleAxisProps
    */
   radius?: number | string;
   /**
-   * If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.
-   * If object set, ticks will be drawn which have the props merged by the internal calculated props and the option.
-   * If ReactElement set, the option can be the custom tick element.
-   * If set a function, the function will be called to render customized ticks.
+   * Defines how the individual label text is rendered.
+   * This controls the settings for individual ticks; on a typical axis, there are multiple ticks, depending on your data.
+   *
+   * If you want to customize the overall axis label, use the `label` prop instead.
+   *
+   * Options:
+   * - `false`: Do not render any tick labels.
+   * - `true`: Render tick labels with default settings.
+   * - `object`: An object of props to be merged into the internally calculated tick props.
+   * - `ReactElement`: A custom React element to be used as the tick label.
+   * - `function`: A function that returns a React element for custom rendering of tick labels.
+   *
    * @defaultValue true
    */
-  tick?:
-    | SVGProps<SVGTextElement>
-    | ReactElement<SVGElement>
-    | ((props: TickItemTextProps) => ReactElement<SVGElement>)
-    | boolean;
+  tick?: TickProp<BaseTickContentProps>;
 
   /**
    * The count of axis ticks. Not used if 'type' is 'category'.
@@ -366,14 +373,9 @@ const AxisLine = (props: InsideProps) => {
 };
 
 type TickItemProps = {
-  tick: PolarAngleAxisProps['tick'];
-  tickProps: TickItemTextProps;
+  tick: TickProp<BaseTickContentProps>;
+  tickProps: BaseTickContentProps;
   value: string | number;
-};
-
-export type TickItemTextProps = TextProps & {
-  index: number;
-  payload: any;
 };
 
 const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactNode => {
@@ -381,7 +383,6 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactNode => {
     return null;
   }
   if (React.isValidElement(tick)) {
-    // @ts-expect-error element cloning makes TypeScript unhappy and me too
     return React.cloneElement(tick, tickProps);
   }
   if (typeof tick === 'function') {
@@ -408,7 +409,7 @@ const Ticks = (props: InsideProps) => {
     const lineCoord = getTickLineCoord(entry, props);
     const textAnchor: TextAnchor = getTickTextAnchor(entry, props.orientation);
     const verticalAnchor: TextVerticalAnchor = getTickTextVerticalAnchor(entry);
-    const tickProps: TickItemTextProps = {
+    const tickProps: BaseTickContentProps = {
       ...axisProps,
       // @ts-expect-error customTickProps is contributing unknown props
       textAnchor,
@@ -426,7 +427,7 @@ const Ticks = (props: InsideProps) => {
 
     return (
       <Layer
-        className={clsx('recharts-polar-angle-axis-tick', getTickClassName(tick))}
+        className={clsx('recharts-polar-angle-axis-tick', getClassNameFromUnknown(tick))}
         key={`tick-${entry.coordinate}`}
         {...adaptEventsOfChild(props, entry, i)}
       >

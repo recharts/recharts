@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, XAxisTickContentProps } from 'recharts';
 import { ReactNode } from 'react';
 import { RechartsDevtools } from '@recharts/devtools';
 
@@ -85,9 +85,12 @@ const monthTickFormatter = (tick: string | number | Date): string => {
   return String(date.getMonth() + 1);
 };
 
-const renderQuarterTick = (tickProps: any): ReactNode => {
-  const { x, y, payload, width, visibleTicksCount } = tickProps;
-  const { value, offset } = payload;
+const renderQuarterTick = (tickProps: XAxisTickContentProps): ReactNode => {
+  const { x: xProp, y: yProp, payload, width: widthProp, visibleTicksCount } = tickProps;
+  const x = Number(xProp);
+  const y = Number(yProp);
+  const width = Number(widthProp);
+  const { value, offset = 0 } = payload;
   const date = new Date(value);
   const month = date.getMonth();
   const quarterNo = Math.floor(month / 3) + 1;

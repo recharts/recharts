@@ -1,8 +1,18 @@
 import React, { ReactNode } from 'react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Bar, BarChart, ComposedChart, Line, LineChart, XAxisTickContentProps, XAxis, YAxis } from '../../../src';
-import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
+import {
+  Bar,
+  BarChart,
+  ComposedChart,
+  Customized,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  YAxisTickContentProps,
+} from '../../../src';
+import { ExpectAxisDomain, expectYAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith, expectNthCalledWith } from '../../helper/expectLastCalledWith';
 import { dateWithValueData } from '../../../storybook/stories/data';
 
@@ -25,48 +35,48 @@ const lineData = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-describe('XAxis tick', () => {
-  it('Render duplicated ticks of XAxis', () => {
+describe('YAxis tick', () => {
+  it('Render duplicated ticks of YAxis', () => {
     const spy = vi.fn();
     const { container } = render(
       <LineChart width={600} height={300} data={lineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-        <XAxis dataKey="name" interval={0} />
-        <YAxis />
+        <XAxis />
+        <YAxis type="category" dataKey="name" interval={0} />
         <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <ExpectAxisDomain assert={spy} axisType="xAxis" />
+        <ExpectAxisDomain assert={spy} axisType="yAxis" />
       </LineChart>,
     );
 
-    expectXAxisTicks(container, [
+    expectYAxisTicks(container, [
       {
         textContent: 'Page A',
-        x: '80',
-        y: '273',
+        x: '72',
+        y: '265',
       },
       {
         textContent: 'Page B',
-        x: '178',
-        y: '273',
+        x: '72',
+        y: '213',
       },
       {
         textContent: 'Page C',
-        x: '276',
-        y: '273',
+        x: '72',
+        y: '161',
       },
       {
         textContent: 'Page D',
-        x: '374',
-        y: '273',
+        x: '72',
+        y: '109',
       },
       {
         textContent: 'Page E',
-        x: '472',
-        y: '273',
+        x: '72',
+        y: '57',
       },
       {
         textContent: 'Page F',
-        x: '570',
-        y: '273',
+        x: '72',
+        y: '5',
       },
     ]);
     expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
@@ -77,9 +87,9 @@ describe('XAxis tick', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)}>
         <Bar dataKey="y" isAnimationActive={false} />
-        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} />
-        <YAxis dataKey="y" />
-        <ExpectAxisDomain assert={spy} axisType="xAxis" />
+        <YAxis dataKey="y" type="number" domain={['dataMin', 'dataMax']} />
+        <XAxis dataKey="x" />
+        <ExpectAxisDomain assert={spy} axisType="yAxis" />
       </BarChart>,
     );
 
@@ -88,11 +98,11 @@ describe('XAxis tick', () => {
     const bar = container.querySelector('.recharts-rectangle');
     expect(bar).not.toBeInTheDocument();
 
-    expectXAxisTicks(container, [
+    expectYAxisTicks(container, [
       {
         textContent: '90',
-        x: '180',
-        y: '273',
+        x: '57',
+        y: '135',
       },
     ]);
     expectLastCalledWith(spy, [90, 90]);
@@ -104,29 +114,29 @@ describe('XAxis tick', () => {
       <BarChart width={300} height={300} data={[]}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" />
-        <YAxis dataKey="y" />
-        <ExpectAxisDomain assert={spy} axisType="xAxis" />
+        <YAxis type="category" dataKey="y" />
+        <ExpectAxisDomain assert={spy} axisType="yAxis" />
       </BarChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(0);
-    expectXAxisTicks(container, []);
+    expect(container.querySelectorAll('.recharts-yAxis .recharts-cartesian-axis-tick')).toHaveLength(0);
+    expectYAxisTicks(container, []);
     expectLastCalledWith(spy, undefined);
   });
 
   describe('custom tick components', () => {
     it('should pass object padding to custom tick component', () => {
-      const expectedPadding = { left: 20, right: 30 };
-      expect.assertions(6);
+      const expectedPadding = { top: 20, bottom: 30 };
+      expect.assertions(5);
 
-      const CustomXAxisTick = (props: any) => {
+      const CustomYAxisTick = (props: any) => {
         expect(props.padding).toEqual(expectedPadding);
         return <text>Custom Tick</text>;
       };
 
       render(
         <LineChart width={400} height={400} data={lineData}>
-          <XAxis padding={expectedPadding} tick={<CustomXAxisTick />} />
+          <YAxis padding={expectedPadding} tick={<CustomYAxisTick />} />
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
@@ -134,150 +144,146 @@ describe('XAxis tick', () => {
 
     it('should pass string padding to custom tick component', () => {
       const expectedPadding = 'gap';
-      expect.assertions(6);
+      expect.assertions(5);
 
-      const CustomXAxisTick = (props: any) => {
+      const CustomYAxisTick = (props: any) => {
         expect(props.padding).toBe(expectedPadding);
         return <text>Custom Tick</text>;
       };
 
       render(
         <LineChart width={400} height={400} data={lineData}>
-          <XAxis padding={expectedPadding} tick={<CustomXAxisTick />} />
+          <YAxis padding={expectedPadding} tick={<CustomYAxisTick />} />
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
     });
 
     it('should pass padding to function-based custom tick', () => {
-      const expectedPadding = { left: 15, right: 25 };
-      expect.assertions(6);
+      const expectedPadding = { top: 15, bottom: 25 };
+      expect.assertions(5);
 
-      const customTickFunction = (props: XAxisTickContentProps) => {
+      const customTickFunction = (props: YAxisTickContentProps) => {
         expect(props.padding).toEqual(expectedPadding);
         return <text>Function Tick</text>;
       };
 
       render(
         <LineChart width={400} height={400} data={lineData}>
-          <XAxis padding={expectedPadding} tick={customTickFunction} />
+          <YAxis padding={expectedPadding} tick={customTickFunction} />
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
     });
 
     it('should pass default padding when no padding is specified', () => {
-      expect.assertions(6);
+      expect.assertions(5);
 
-      const CustomXAxisTick = (props: any) => {
-        expect(props.padding).toEqual({ left: 0, right: 0 });
+      const CustomYAxisTick = (props: any) => {
+        expect(props.padding).toEqual({ top: 0, bottom: 0 });
         return <text>Custom Tick</text>;
       };
 
       render(
         <LineChart width={400} height={400} data={lineData}>
-          <XAxis tick={<CustomXAxisTick />} />
+          <YAxis tick={<CustomYAxisTick />} />
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
     });
 
     it('should pass all TextProps and index and payload to custom tick component', () => {
-      const myCustomTick: Mock<(props: XAxisTickContentProps) => ReactNode> = vi.fn();
+      const myCustomTick: Mock<(props: YAxisTickContentProps) => ReactNode> = vi.fn();
 
       render(
         <LineChart width={400} height={400} data={lineData}>
-          <XAxis tick={myCustomTick} />
+          <YAxis tick={myCustomTick} />
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         </LineChart>,
       );
 
-      expect(myCustomTick).toHaveBeenCalledTimes(6);
-      expectNthCalledWith<XAxisTickContentProps>(myCustomTick, 1, {
+      expect(myCustomTick).toHaveBeenCalledTimes(5);
+      expectNthCalledWith<YAxisTickContentProps>(myCustomTick, 1, {
         angle: 0,
-        className: 'recharts-xAxis xAxis recharts-cartesian-axis-tick-value',
+        className: 'recharts-yAxis yAxis recharts-cartesian-axis-tick-value',
         fill: '#666',
-        height: 30,
+        height: 390,
         index: 0,
         name: undefined,
-        orientation: 'bottom',
+        orientation: 'left',
         padding: {
-          left: 0,
-          right: 0,
+          top: 0,
+          bottom: 0,
         },
         payload: {
-          coordinate: 5,
+          coordinate: 395,
           index: 0,
           isShow: true,
           offset: 0,
-          tickCoord: 5,
+          tickCoord: 395,
           value: 0,
         },
         stroke: 'none',
-        textAnchor: 'middle',
+        textAnchor: 'end',
         tickFormatter: undefined,
-        verticalAnchor: 'start',
-        visibleTicksCount: 6,
-        width: 390,
-        x: 5,
-        y: 373,
+        verticalAnchor: 'middle',
+        visibleTicksCount: 5,
+        width: 60,
+        x: 57,
+        y: 395,
       });
 
       expectNthCalledWith(myCustomTick, 2, {
         angle: 0,
-        className: 'recharts-xAxis xAxis recharts-cartesian-axis-tick-value',
+        className: 'recharts-yAxis yAxis recharts-cartesian-axis-tick-value',
         fill: '#666',
-        height: 30,
+        height: 390,
         index: 1,
         name: undefined,
-        orientation: 'bottom',
+        orientation: 'left',
         padding: {
-          left: 0,
-          right: 0,
+          bottom: 0,
+          top: 0,
         },
         payload: {
-          coordinate: 83,
+          coordinate: 297.5,
           index: 1,
           isShow: true,
           offset: 0,
-          tickCoord: 83,
-          value: 1,
+          tickCoord: 297.5,
+          value: 100,
         },
         stroke: 'none',
-        textAnchor: 'middle',
+        textAnchor: 'end',
         tickFormatter: undefined,
-        verticalAnchor: 'start',
-        visibleTicksCount: 6,
-        width: 390,
-        x: 83,
-        y: 373,
+        verticalAnchor: 'middle',
+        visibleTicksCount: 5,
+        width: 60,
+        x: 57,
+        y: 297.5,
       });
     });
   });
 
-  it('Render ticks of XAxis when specify ticks', () => {
+  it('Render ticks of YAxis when specify ticks', () => {
     const axisDomainSpy = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis ticks={[0, 4]} />
+        <YAxis ticks={[0, 4]} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="yAxis" />
       </LineChart>,
     );
 
-    expectXAxisTicks(container, [
-      {
-        textContent: '0',
-        x: '20',
-        y: '358',
-      },
+    // So despite explicitly specifying two ticks, only one is rendered, why?
+    expectYAxisTicks(container, [
       {
         textContent: '4',
-        x: '308',
-        y: '358',
+        x: '72',
+        y: '376.4',
       },
     ]);
-    expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 400]);
   });
 
   it('Should render the axis line without any ticks', () => {
@@ -286,8 +292,8 @@ describe('XAxis tick', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={barData}>
         <Bar dataKey="y" isAnimationActive={false} />
-        <XAxis dataKey="y" type="number" />
-        <ExpectAxisDomain assert={spy} axisType="xAxis" />
+        <YAxis dataKey="y" type="number" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="yAxis" />} />
       </BarChart>,
     );
     const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-line');
@@ -295,7 +301,7 @@ describe('XAxis tick', () => {
 
     const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
     expect(axisLine).toHaveLength(1);
-    expectXAxisTicks(container, []);
+    expectYAxisTicks(container, []);
     expectLastCalledWith(spy, undefined);
   });
 
@@ -303,23 +309,23 @@ describe('XAxis tick', () => {
     const onClickFn = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData}>
-        <XAxis ticks={[0, 4]} onClick={onClickFn} />
+        <YAxis ticks={[0, 4]} onClick={onClickFn} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
 
     const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-label');
-    expect(ticksGroup).toHaveLength(2);
+    expect(ticksGroup).toHaveLength(1);
 
     const firstTick = ticksGroup[0];
 
     const eventData = {
-      coordinate: 5,
+      coordinate: 391.1,
       isShow: true,
       offset: 0,
-      tickCoord: 5,
-      value: 0,
-      index: 0,
+      tickCoord: 391.1,
+      value: 4,
+      index: 1,
     };
     const eventIndex = 0;
     const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
@@ -340,76 +346,31 @@ describe('XAxis tick', () => {
 
     const { container } = render(
       <ComposedChart width={600} height={50} data={dateWithValueData}>
-        <XAxis dataKey="time" type="number" scale="time" domain={['auto', 'auto']} tickFormatter={tickFormatter} />
+        <YAxis dataKey="time" type="number" scale="time" domain={['auto', 'auto']} tickFormatter={tickFormatter} />
         <Line dataKey="value" />
       </ComposedChart>,
     );
 
-    expectXAxisTicks(container, [
+    expectYAxisTicks(container, [
       {
         textContent: '12/31/2016, 12:00 AM',
-        x: '5',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 1:00 AM',
-        x: '64',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 1:30 AM',
-        x: '93.5',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 2:00 AM',
-        x: '123',
-        y: '23',
+        x: '57',
+        y: '45',
       },
       {
         textContent: '12/31/2016, 3:00 AM',
-        x: '182',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 3:30 AM',
-        x: '211.5',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 4:00 AM',
-        x: '241',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 5:00 AM',
-        x: '300',
-        y: '23',
+        x: '57',
+        y: '33',
       },
       {
         textContent: '12/31/2016, 6:00 AM',
-        x: '359',
-        y: '23',
+        x: '57',
+        y: '21',
       },
       {
-        textContent: '12/31/2016, 7:00 AM',
-        x: '418',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 8:00 AM',
-        x: '477',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 8:30 AM',
-        x: '506.5',
-        y: '23',
-      },
-      {
-        textContent: '12/31/2016, 10:00 AM',
-        x: '595',
-        y: '23',
+        textContent: '12/31/2016, 9:00 AM',
+        x: '57',
+        y: '9',
       },
     ]);
   });

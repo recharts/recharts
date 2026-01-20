@@ -230,6 +230,7 @@
   "lib/util/getActiveCoordinate.js",
   "lib/util/getAxisTypeBasedOnLayout.js",
   "lib/util/getChartPointer.js",
+  "lib/util/getClassNameFromUnknown.js",
   "lib/util/getEveryNth.js",
   "lib/util/getRadiusAndStrokeWidthFromDot.js",
   "lib/util/getSliced.js",

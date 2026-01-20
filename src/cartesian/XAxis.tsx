@@ -14,6 +14,8 @@ import {
   ScaleType,
   AxisDomainTypeInput,
   EvaluatedAxisDomainType,
+  TickProp,
+  XAxisTickContentProps,
 } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -39,7 +41,7 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
-interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
+interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale' | 'tick'> {
   /**
    * The type of axis.
    *
@@ -121,6 +123,22 @@ interface XAxisProps extends Omit<RenderableAxisProps, 'domain' | 'scale'> {
     | CustomScaleDefinition<string>
     | CustomScaleDefinition<number>
     | CustomScaleDefinition<Date>;
+  /**
+   * Defines how the individual label text is rendered.
+   * This controls the settings for individual ticks; on a typical axis, there are multiple ticks, depending on your data.
+   *
+   * If you want to customize the overall axis label, use the `label` prop instead.
+   *
+   * Options:
+   * - `false`: Do not render any tick labels.
+   * - `true`: Render tick labels with default settings.
+   * - `object`: An object of props to be merged into the internally calculated tick props.
+   * - `ReactElement`: A custom React element to be used as the tick label.
+   * - `function`: A function that returns a React element for custom rendering of tick labels.
+   *
+   * @defaultValue true
+   */
+  tick?: TickProp<XAxisTickContentProps>;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
