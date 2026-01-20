@@ -36,6 +36,8 @@ import { ChartData } from '../state/chartDataSlice';
 import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
+import { TextProps } from '../index';
+
 /**
  * Determines how values are stacked:
  *
@@ -790,7 +792,7 @@ export type YAxisTickContentProps = BaseTickContentProps & {
   padding: YAxisPadding | undefined;
 };
 
-export type TickProp<T> = SVGProps<SVGTextElement> | ReactElement | ((props: T) => ReactNode) | boolean;
+export type TickProp<T> = TextProps | ReactElement | ((props: T) => ReactNode) | boolean;
 
 export interface BaseAxisProps {
   /**

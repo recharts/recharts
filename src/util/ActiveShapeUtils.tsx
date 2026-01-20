@@ -30,6 +30,7 @@ export type ShapeProps<OptionType, ExtraProps> = {
   isActive?: boolean;
   index?: string | number;
   activeClassName?: string;
+  inActiveClassName?: string;
 } & ExtraProps;
 
 function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
@@ -84,10 +85,10 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
   option,
   shapeType,
   activeClassName = 'recharts-active-shape',
+  inActiveClassName = 'recharts-shape',
   ...props
 }: ShapeProps<OptionType, ExtraProps>) {
   let shape: React.JSX.Element;
-
   if (isValidElement(option)) {
     // @ts-expect-error we can't know the type of cloned element props
     shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
@@ -105,5 +106,5 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
     return <Layer className={activeClassName}>{shape}</Layer>;
   }
 
-  return shape;
+  return <Layer className={inActiveClassName}>{shape}</Layer>;
 }

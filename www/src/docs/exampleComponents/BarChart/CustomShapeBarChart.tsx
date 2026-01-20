@@ -71,9 +71,19 @@ const getPath = (x: number, y: number, width: number, height: number) => {
 const TriangleBar = (props: BarShapeProps) => {
   const { x, y, width, height, index } = props;
 
-  const fill = colors[index % colors.length];
+  const color = colors[index % colors.length];
 
-  return <path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke="none" fill={fill} />;
+  return (
+    <path
+      strokeWidth={props.isActive ? 5 : 0}
+      d={getPath(Number(x), Number(y), Number(width), Number(height))}
+      stroke={color}
+      fill={color}
+      style={{
+        transition: 'stroke-width 0.3s ease-out',
+      }}
+    />
+  );
 };
 
 const CustomColorLabel = (props: LabelProps) => {
@@ -98,7 +108,7 @@ export default function CustomShapeBarChart() {
       <Tooltip cursor={{ fillOpacity: 0.5 }} />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar}>
+      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} activeBar>
         <LabelList content={CustomColorLabel} position="top" />
       </Bar>
       <RechartsDevtools />

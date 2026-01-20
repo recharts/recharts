@@ -199,5 +199,6 @@ export const RectangleAPI: ApiDoc = {
     { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
     { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
     { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+    { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
   ],
 };

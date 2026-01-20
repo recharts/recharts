@@ -7,6 +7,7 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -598,35 +599,77 @@ function BarRectangleWithActiveState(props: {
    */
   const isActive: boolean =
     activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
-  const option = isActive ? activeBar : shape;
+
+  const [stayInLayer, setStayInLayer] = useState(false);
+  const [hasMountedActive, setHasMountedActive] = useState(false);
+
+  useEffect(() => {
+    let rafId: number;
+    if (isActive) {
+      // 1. Enter the layer immediately
+      setStayInLayer(true);
+
+      // 2. Wait for the browser to paint the "inactive" state in the new layer,
+      // then switch to active to trigger the CSS transition (width grow).
+      rafId = requestAnimationFrame(() => {
+        setHasMountedActive(true);
+      });
+    } else {
+      setHasMountedActive(false);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
+  }, [isActive]);
+
+  const handleTransitionEnd = useCallback(() => {
+    // 4. Leave the layer only when the exit transition finishes
+    if (!isActive) {
+      setStayInLayer(false);
+    }
+  }, [isActive]);
+
+  // Determine props:
+  // - If entering (isActive=true) but not mounted yet (hasMountedActive=false), pass isActive=false (inactive size).
+  // - If exiting (isActive=false), pass isActive=false (inactive size).
+  const isVisuallyActive = isActive && hasMountedActive;
+
+  // Render in ZIndexLayer if active OR if we are waiting for exit transition
+  const shouldRenderInLayer = isActive || stayInLayer;
+
+  let option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
   if (isActive) {
-    return (
-      <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
-        <BarStackClipLayer index={index}>
-          <BarRectangle
-            {...baseProps}
-            name={String(baseProps.name)}
-            {...entry}
-            isActive={isActive}
-            option={option}
-            index={index}
-            dataKey={dataKey}
-          />
-        </BarStackClipLayer>
-      </ZIndexLayer>
-    );
+    if (activeBar === true) {
+      option = shape;
+    } else {
+      option = activeBar;
+    }
+  } else {
+    option = shape;
   }
-  return (
+
+  const content = (
     <BarRectangle
       {...baseProps}
       name={String(baseProps.name)}
       {...entry}
-      isActive={isActive}
+      isActive={isVisuallyActive}
       option={option}
       index={index}
       dataKey={dataKey}
+      onTransitionEnd={handleTransitionEnd}
     />
   );
+
+  if (shouldRenderInLayer) {
+    return (
+      <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
+        <BarStackClipLayer index={index}>{content}</BarStackClipLayer>
+      </ZIndexLayer>
+    );
+  }
+  return content;
 }
 
 function BarRectangleNeverActive(props: {

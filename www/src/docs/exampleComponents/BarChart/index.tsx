@@ -34,7 +34,9 @@ import TimelineExample from './TimelineExample';
 import timelineExampleSource from './TimelineExample?raw';
 import CandlestickExample from './CandlestickExample';
 import candlestickExampleSource from './CandlestickExample?raw';
-import { RechartsLink } from '../../../components/Shared/RechartsLink.tsx';
+import { RechartsLink } from '../../../components/Shared/RechartsLink';
+import AnimatedBarWidthExample from './AnimatedBarWidthExample';
+import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
 
 export { BarChartNavExample };
 
@@ -157,5 +159,10 @@ export const barChartExamples: Record<string, ChartExample> = {
         <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
       </>
     ),
+  },
+  AnimatedBarWidthExample: {
+    Component: AnimatedBarWidthExample,
+    sourceCode: animatedBarWidthSource,
+    name: 'Animated Bar Width Example',
   },
 };

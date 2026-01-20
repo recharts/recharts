@@ -246,6 +246,7 @@ export const XAxisAPI: ApiDoc = {
       defaultVal: 'preserveEnd',
       examples: [
         { name: 'Bar Chart With Multi X Axis', url: '/examples/BarChartWithMultiXAxis/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
       ],
@@ -321,7 +322,10 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false }],
+      examples: [
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
+        { name: 'Multiple X Axes', url: '/examples/MultiXAxisExample/', isExternal: false },
+      ],
     },
     {
       name: 'name',
@@ -373,6 +377,7 @@ export const XAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: { left: 0, right: 0 },
+      examples: [{ name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false }],
     },
     {
       name: 'range',

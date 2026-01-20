@@ -301,6 +301,7 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
+      examples: [{ name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false }],
     },
     {
       name: 'name',
@@ -341,6 +342,7 @@ export const YAxisAPI: ApiDoc = {
       defaultVal: 'left',
       examples: [
         { name: 'Biaxial Bar Chart', url: '/examples/BiaxialBarChart/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Multiple Y Axes Scatter Chart', url: '/examples/MultipleYAxesScatterChart/', isExternal: false },
       ],
@@ -357,6 +359,7 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: { top: 0, bottom: 0 },
+      examples: [{ name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false }],
     },
     {
       name: 'range',
@@ -445,6 +448,7 @@ export const YAxisAPI: ApiDoc = {
       defaultVal: true,
       examples: [
         { name: 'Positive and Negative Bar Chart', url: '/examples/PositiveAndNegativeBarChart/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
       ],
     },
@@ -493,7 +497,10 @@ export const YAxisAPI: ApiDoc = {
         ),
       },
       defaultVal: true,
-      examples: [{ name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false }],
+      examples: [
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
+        { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
+      ],
     },
     {
       name: 'tickMargin',

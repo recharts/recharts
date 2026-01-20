@@ -64,6 +64,11 @@ function assertActiveBarInteractions(container: HTMLElement) {
 
   fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
   act(() => {
+    // First timer is to clear the mouse event handler
+    vi.runOnlyPendingTimers();
+  });
+  act(() => {
+    // Second timer is to show the active bar after it had the first inactive render so that it could start its CSS transition
     vi.runOnlyPendingTimers();
   });
 
@@ -103,7 +108,7 @@ describe('<BarChart />', () => {
       expect(container.querySelectorAll('.recharts-label')).toHaveLength(4);
     });
 
-    test('Renders 4 bar labels when label is set to be a react element', () => {
+    test('Renders 4 bar labels when label is a react element', () => {
       const Label = (props: CustomLabelProps) => {
         const { x, y, index } = props;
 
@@ -164,7 +169,7 @@ describe('<BarChart />', () => {
       expect(bar).toHaveLength(0);
     });
 
-    test('Renders customized active bar when activeBar set to be a function', () => {
+    test('Renders customized active bar when activeBar is a function', () => {
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -185,7 +190,7 @@ describe('<BarChart />', () => {
       assertActiveBarInteractions(container);
     });
 
-    test('Renders customized active bar when activeBar set to be a ReactElement', () => {
+    test('Renders customized active bar when activeBar is a ReactElement', () => {
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -199,7 +204,7 @@ describe('<BarChart />', () => {
       assertActiveBarInteractions(container);
     });
 
-    test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
+    test('Renders customized active bar when activeBar is a truthy boolean', () => {
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -213,7 +218,7 @@ describe('<BarChart />', () => {
       assertActiveBarInteractions(container);
     });
 
-    test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
+    test('Does not render customized active bar when activeBar is a falsy boolean', () => {
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -234,7 +239,7 @@ describe('<BarChart />', () => {
       expect(bar).toHaveLength(0);
     });
 
-    test('Renders customized active bar when activeBar set to be an object', () => {
+    test('Renders customized active bar when activeBar is an object', () => {
       const { container } = render(
         <div style={{ height: 200, width: 700 }}>
           <BarChart width={700} height={200} data={data}>
@@ -258,7 +263,7 @@ describe('<BarChart />', () => {
   });
 
   describe('shape', () => {
-    test('Render customized shape when shape is set to be a react element', () => {
+    test('Render customized shape when shape is a react element', () => {
       const Shape = (props: any) => {
         const { x, y } = props;
 
@@ -272,7 +277,7 @@ describe('<BarChart />', () => {
       expect(container.querySelectorAll('.customized-shape')).toHaveLength(4);
     });
 
-    test('Render customized shape when shape is set to be a function', () => {
+    test('Render customized shape when shape is a function', () => {
       const renderShape = (props: BarShapeProps): React.ReactElement => {
         const { x, y } = props;
 
