@@ -36,6 +36,7 @@ export const BarAPI: ApiDoc = {
       format: ["<Bar activeBar={{ fill: 'red' }} />", '<Bar activeBar={CustomActiveBarFn} />'],
       examples: [
         { name: 'activeBar example', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
       ],
     },
@@ -141,7 +142,6 @@ export const BarAPI: ApiDoc = {
       isOptional: true,
       examples: [
         { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
-        { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
         { name: 'Bar Chart With Min Height', url: '/examples/BarChartWithMinHeight/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
       ],
@@ -272,10 +272,7 @@ export const BarAPI: ApiDoc = {
         "<Bar label={{ position: 'top', fontSize: 20 }} />",
         '<Bar label={CustomizedLabelFn} />',
       ],
-      examples: [
-        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
-        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
-      ],
+      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
     },
     {
       name: 'legendType',
@@ -380,6 +377,7 @@ export const BarAPI: ApiDoc = {
       },
       examples: [
         { name: 'Custom shape bar chart example', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
       ],

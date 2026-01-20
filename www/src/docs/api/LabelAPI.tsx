@@ -166,7 +166,10 @@ export const LabelAPI: ApiDoc = {
       examples: [{ name: 'Z-Index and layers guide', url: '/guide/zIndex/', isExternal: false }],
     },
   ],
-  links: [{ name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false }],
+  links: [
+    { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+    { name: 'Pie Chart in Grid', url: '/examples/PieChartInGrid/', isExternal: false },
+  ],
   parentComponents: [
     'AreaChart',
     'BarChart',
