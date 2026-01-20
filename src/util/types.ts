@@ -35,8 +35,7 @@ import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 import { ChartData } from '../state/chartDataSlice';
 import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { TextAnchor, TextVerticalAnchor } from '../component/Text';
-import { TickFormatter } from '../cartesian/CartesianAxis';
-
+import type { TickFormatter } from '../cartesian/CartesianAxis';
 /**
  * Determines how values are stacked:
  *
