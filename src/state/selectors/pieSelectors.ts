@@ -92,7 +92,6 @@ export const selectPieLegend: (
       return {
         value: getTooltipNameProp(name, pieSettings.dataKey),
         color,
-        // @ts-expect-error we need a better typing for our data inputs
         payload: entry,
         type: pieSettings.legendType,
       };
