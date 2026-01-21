@@ -137,7 +137,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   return (
     <RadialBarLabelListProvider showLabels={showLabels} sectors={sectors}>
       {sectors.map((entry: RadialBarDataItem, i: number) => {
-        const isActive = activeShape && activeIndex === String(i);
+        const isActive: boolean = Boolean(activeShape && activeIndex === String(i));
         // @ts-expect-error the types need a bit of attention
         const onMouseEnter = onMouseEnterFromContext(entry, i);
         // @ts-expect-error the types need a bit of attention
@@ -158,6 +158,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           cornerIsExternal: others.cornerIsExternal,
           isActive,
           option: isActive ? activeShape : shape,
+          index: i,
         };
 
         if (isActive) {
@@ -275,7 +276,7 @@ function RenderSectors(props: InternalProps) {
 }
 
 interface InternalRadialBarProps extends ZIndexable {
-  activeShape?: ActiveShape<SectorProps, SVGPathElement>;
+  activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
    */
@@ -403,7 +404,7 @@ interface InternalRadialBarProps extends ZIndexable {
    * @defaultValue 0
    */
   radiusAxisId?: AxisId;
-  shape?: ActiveShape<SectorProps, SVGPathElement>;
+  shape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   stackId?: string | number;
   tooltipType?: TooltipType;
   /**

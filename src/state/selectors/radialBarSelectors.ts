@@ -460,7 +460,6 @@ export const selectRadialBarLegendPayload: (
         value: entry.name,
         // @ts-expect-error we need a better typing for our data inputs
         color: entry.fill,
-        // @ts-expect-error we need a better typing for our data inputs
         payload: entry,
       };
     });
