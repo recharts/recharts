@@ -1,0 +1,16 @@
+import{e as t}from"./iframe-Dt2-Rn2T.js";import{R as n}from"./arrayEqualityCheck-e3rdG8sZ.js";import{C as c}from"./ComposedChart-CpKIk9zm.js";import{A as d}from"./Area-D3SF1HRK.js";import{R as h}from"./RechartsHookInspector-5aSdxu_t.js";import{c as l}from"./Coordinate-geWwP0Ct.js";import"./preload-helper-Dp1pzeXC.js";import"./resolveDefaultProps-BoKEDzkZ.js";import"./PolarUtils-DdS5KPsI.js";import"./RechartsWrapper-CBGhND_r.js";import"./hooks-DJKBhfj1.js";import"./axisSelectors-B_oLlWSB.js";import"./zIndexSlice-C1nzEFYS.js";import"./CartesianChart-B7uV6D3o.js";import"./chartDataContext-DW1Hpk6b.js";import"./CategoricalChart-Dpdb76Jr.js";import"./Curve-Ff2ksW4t.js";import"./types-BU6HIYaW.js";import"./Layer-Cy-kS3Tn.js";import"./ReactUtils-OtSSiA15.js";import"./Label-C32CYHoq.js";import"./Text-Bi0muiqL.js";import"./DOMUtils-ngjC_q0v.js";import"./ZIndexLayer-RqzvM65R.js";import"./ActivePoints-DYpwLrvq.js";import"./Dot-yws4r2HM.js";import"./RegisterGraphicalItemId-BHPtgntX.js";import"./GraphicalItemClipPath-DzB0Slfu.js";import"./SetGraphicalItem-C72JWaDt.js";import"./useAnimationId-C5m05tY7.js";import"./getRadiusAndStrokeWidthFromDot-9ys3gSvC.js";import"./graphicalItemSelectors-CxiBt8fS.js";import"./index-DBIfqZnx.js";import"./ChartSizeDimensions-CGKu1G21.js";import"./OffsetShower-Cg1AihHI.js";import"./PlotAreaShower-Byk-bE4C.js";const Z={title:"Examples/cartesian/Area/Customised Dot"},[u,i]=[600,300],f=p=>{const{cx:r,cy:o}=p;return r==null||o==null?null:t.createElement("svg",{x:r-10,y:o-10,width:20,height:20,fill:"green",viewBox:"0 0 1024 1024"},t.createElement("path",{d:"M512 1009.984c-274.912 0-497.76-222.848-497.76-497.76s222.848-497.76 497.76-497.76c274.912 0 497.76 222.848 497.76 497.76s-222.848 497.76-497.76 497.76zM340.768 295.936c-39.488 0-71.52 32.8-71.52 73.248s32.032 73.248 71.52 73.248c39.488 0 71.52-32.8 71.52-73.248s-32.032-73.248-71.52-73.248zM686.176 296.704c-39.488 0-71.52 32.8-71.52 73.248s32.032 73.248 71.52 73.248c39.488 0 71.52-32.8 71.52-73.248s-32.032-73.248-71.52-73.248zM772.928 555.392c-18.752-8.864-40.928-0.576-49.632 18.528-40.224 88.576-120.256 143.552-208.832 143.552-85.952 0-164.864-52.64-205.952-137.376-9.184-18.912-31.648-26.592-50.08-17.28-18.464 9.408-21.216 21.472-15.936 32.64 52.8 111.424 155.232 186.784 269.76 186.784 117.984 0 217.12-70.944 269.76-186.784 8.672-19.136 9.568-31.2-9.12-40.096z"}))},e={id:"test",render:()=>t.createElement(n,{width:"100%",height:i},t.createElement(c,{width:u,height:i,margin:{top:20,right:20,bottom:20,left:20},data:l},t.createElement(d,{dataKey:"y",isAnimationActive:!1,dot:f}),t.createElement(h,null)))};var m,a,s;e.parameters={...e.parameters,docs:{...(m=e.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  id: 'test',
+  render: () => {
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={coordinateWithValueData}>
+          <Area dataKey="y" isAnimationActive={false} dot={renderDot} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  }
+}`,...(s=(a=e.parameters)==null?void 0:a.docs)==null?void 0:s.source}}};const $=["CustomizedDot"];export{e as CustomizedDot,$ as __namedExportsOrder,Z as default};
