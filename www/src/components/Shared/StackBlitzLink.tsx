@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
 import { sendEvent } from '../analytics.ts';
+import cssVariables from '../../styles/_variables.css?raw';
 
 type StackBlitzLinkProps = Readonly<{
   /**
@@ -25,6 +26,8 @@ const indexTsxCode = (title: string) =>
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
+
+import './index.css';
 import Example from './Example';
 
 const container = document.getElementById('root');
@@ -48,7 +51,7 @@ root.render(<AppWithDevtools />);
 // language=HTML
 const indexHtmlCode = (title: string) => `
   <!doctype html>
-  <html lang="en">
+  <html lang="en" data-mode="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -157,6 +160,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
                */
               'src/index.tsx': indexTsxCode(title),
+              'src/index.css': cssVariables,
               'src/Example.tsx': code,
               'tsconfig.json': tsconfigJsonCode,
               'package.json': JSON.stringify(packageJson, null, 2),
