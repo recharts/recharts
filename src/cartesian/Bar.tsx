@@ -86,6 +86,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
+import { getTypedValue } from '../util/getTypedValue';
 
 type BarRectangleType = {
   x: number | null;
@@ -991,14 +992,13 @@ export function computeBarRectangles({
   dataStartIndex: number;
 }): ReadonlyArray<BarRectangleItem> | undefined {
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-  // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
-  const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
+  const stackedDomain: ReadonlyArray<unknown> | null = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
   const stackedBarStart: number | undefined = numericAxis.scale.map(baseValue);
 
   return displayedData
     .map((entry: unknown, index): BarRectangleItem | null => {
-      let value, x: number | null, y, width, height, background: BarRectangleType;
+      let value: ReadonlyArray<unknown>, x: number | null, y, width, height, background: BarRectangleType;
 
       if (stackedData) {
         // Use dataStartIndex to access the correct element in the full stackedData array
@@ -1006,12 +1006,18 @@ export function computeBarRectangles({
         if (untruncatedValue == null) {
           return null;
         }
-        value = truncateByDomain(untruncatedValue, stackedDomain);
+        const truncated = truncateByDomain(untruncatedValue, stackedDomain);
+        if (truncated == null) {
+          return null;
+        }
+        value = truncated;
       } else {
-        value = getValueByDataKey(entry, dataKey);
+        const rawValue = getTypedValue(entry, dataKey);
 
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
+        if (Array.isArray(rawValue)) {
+          value = rawValue;
+        } else {
+          value = [baseValue, rawValue];
         }
       }
 

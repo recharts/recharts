@@ -33,6 +33,7 @@ import { BaseValue } from '../cartesian/Area';
 import { ImplicitLabelType } from '../component/Label';
 import { CustomScaleDefinition } from './scale/CustomScaleDefinition';
 import { ChartData } from '../state/chartDataSlice';
+import { TypedDataKey } from './getTypedValue';
 
 /**
  * Determines how values are stacked:
@@ -89,7 +90,7 @@ export type EvaluatedAxisDomainType = 'number' | 'category';
  *
  * @inline
  */
-export type DataKey<T> = string | number | ((obj: T) => any);
+export type DataKey<T> = TypedDataKey<T>;
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;

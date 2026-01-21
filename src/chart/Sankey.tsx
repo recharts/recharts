@@ -31,6 +31,7 @@ import { isNotNil, noop } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { getTypedValue } from '../util/getTypedValue';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -487,13 +488,13 @@ const getPayloadOfTooltip = (
   if (type === 'node') {
     return {
       payload,
-      name: getValueByDataKey(payload, nameKey, ''),
-      value: getValueByDataKey(payload, 'value'),
+      name: getTypedValue(payload, nameKey, ''),
+      value: getTypedValue(payload, 'value'),
     };
   }
   if ('source' in payload && payload.source && payload.target) {
-    const sourceName = getValueByDataKey(payload.source, nameKey, '');
-    const targetName = getValueByDataKey(payload.target, nameKey, '');
+    const sourceName = getTypedValue(payload.source, nameKey, '');
+    const targetName = getTypedValue(payload.target, nameKey, '');
 
     return {
       payload,
