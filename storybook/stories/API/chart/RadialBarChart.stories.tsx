@@ -23,7 +23,8 @@ export default {
   component: RadialBarChart,
 };
 
-export const Simple: StoryObj = {
+export const API: StoryObj = {
+  name: 'Simple',
   render: (args: StorybookArgs) => {
     return (
       <RadialBarChart {...args}>
