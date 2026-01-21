@@ -1,7 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
-import { Customized, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
+import {
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  RadialBar,
+  RadialBarChart,
+  BaseTickContentProps,
+} from '../../src';
 import { exampleRadarData, PageData, pageDataWithFillColor } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
 import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
@@ -23,8 +31,7 @@ import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
-import { TickItemTextProps } from '../../src/polar/PolarAngleAxis';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { expectLastCalledWith, expectNthCalledWith } from '../helper/expectLastCalledWith';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -838,7 +845,7 @@ describe('<PolarAngleAxis />', () => {
         <RadarChart width={500} height={500} data={data}>
           <PolarAngleAxis dataKey="angle" type="number" domain={[0, 360]} tickCount={9} />
           <Radar dataKey="value" />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 
@@ -1040,7 +1047,7 @@ describe('<PolarAngleAxis />', () => {
     });
 
     test('Renders ticks when tick is set to be a function', () => {
-      const Tick = (props: TickItemTextProps) => {
+      const Tick = (props: BaseTickContentProps) => {
         const { x, y } = props;
         return (
           <text x={x} y={y} className="customized-tick">
@@ -1067,7 +1074,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(tick).toHaveBeenCalledTimes(exampleRadarData.length);
-      expect(tick).toHaveBeenNthCalledWith(1, {
+      expectNthCalledWith(tick, 1, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1087,7 +1094,7 @@ describe('<PolarAngleAxis />', () => {
         x: 250,
         y: 46,
       });
-      expect(tick).toHaveBeenNthCalledWith(2, {
+      expectNthCalledWith(tick, 2, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1107,7 +1114,7 @@ describe('<PolarAngleAxis />', () => {
         x: 394.2497833620557,
         y: 105.7502166379443,
       });
-      expect(tick).toHaveBeenNthCalledWith(3, {
+      expectNthCalledWith(tick, 3, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1127,7 +1134,7 @@ describe('<PolarAngleAxis />', () => {
         x: 454,
         y: 250,
       });
-      expect(tick).toHaveBeenNthCalledWith(4, {
+      expectNthCalledWith(tick, 4, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1147,7 +1154,7 @@ describe('<PolarAngleAxis />', () => {
         x: 394.2497833620557,
         y: 394.2497833620557,
       });
-      expect(tick).toHaveBeenNthCalledWith(5, {
+      expectNthCalledWith(tick, 5, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1167,7 +1174,7 @@ describe('<PolarAngleAxis />', () => {
         x: 250,
         y: 454,
       });
-      expect(tick).toHaveBeenNthCalledWith(6, {
+      expectNthCalledWith(tick, 6, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1187,7 +1194,7 @@ describe('<PolarAngleAxis />', () => {
         x: 105.7502166379443,
         y: 394.2497833620557,
       });
-      expect(tick).toHaveBeenNthCalledWith(7, {
+      expectNthCalledWith(tick, 7, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1207,7 +1214,7 @@ describe('<PolarAngleAxis />', () => {
         x: 46,
         y: 250.00000000000003,
       });
-      expect(tick).toHaveBeenNthCalledWith(8, {
+      expectNthCalledWith(tick, 8, {
         angle: 0,
         cx: 250,
         cy: 250,
@@ -1440,7 +1447,7 @@ describe('<PolarAngleAxis />', () => {
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <Radar dataKey="value" />
           <PolarAngleAxis dataKey="value" type="number" />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 
@@ -1556,7 +1563,7 @@ describe('<PolarAngleAxis />', () => {
         <RadarChart width={500} height={500} data={PageData}>
           <Radar dataKey="uv" />
           <PolarAngleAxis dataKey="uv" type={axisType} />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 

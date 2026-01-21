@@ -29,6 +29,7 @@ describe('Documentation Examples Coverage', () => {
     'BarChart',
     'BarStack',
     'BarStackProps',
+    'BaseTickContentProps',
     'Brush',
     'BrushProps',
     'CartesianAxis',
@@ -147,6 +148,13 @@ describe('Documentation Examples Coverage', () => {
     'ZAxis',
     'ZAxisProps',
     'getNiceTickValues',
+    'TextVerticalAnchor',
+    'XAxisOrientation',
+    'YAxisOrientation',
+    'XAxisPadding',
+    'YAxisPadding',
+    'CartesianTickItem',
+    'TextAnchor',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

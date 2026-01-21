@@ -1549,7 +1549,7 @@ export const PolarRadiusAxisArgs: StorybookArgs = {
   },
   tick: {
     description:
-      'If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated internally.\nIf object set, ticks will be drawn which have the props merged by the internal calculated props and the option.\nIf ReactElement set, the option can be the custom tick element.\nIf set a function, the function will be called to render customized ticks.',
+      'Defines how the individual label text is rendered.\nThis controls the settings for individual ticks; on a typical axis, there are multiple ticks, depending on your data.\n\nIf you want to customize the overall axis label, use the `label` prop instead.\n\nOptions:\n- `false`: Do not render any tick labels.\n- `true`: Render tick labels with default settings.\n- `object`: An object of props to be merged into the internally calculated tick props.\n- `ReactElement`: A custom React element to be used as the tick label.\n- `function`: A function that returns a React element for custom rendering of tick labels.',
     table: {
       type: {
         summary: '(union of 5 variants)',

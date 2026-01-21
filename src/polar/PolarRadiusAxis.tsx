@@ -7,7 +7,7 @@ import { clsx } from 'clsx';
 import { Text } from '../component/Text';
 import { PolarLabelContextProvider, PolarLabelFromLabelProp } from '../component/Label';
 import { Layer } from '../container/Layer';
-import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
+import { polarToCartesian } from '../util/PolarUtils';
 import {
   adaptEventsOfChild,
   RenderableAxisProps,
@@ -19,6 +19,8 @@ import {
   ScaleType,
   AxisDomainTypeInput,
   EvaluatedAxisDomainType,
+  TickProp,
+  BaseTickContentProps,
 } from '../util/types';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -33,11 +35,14 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
 export interface PolarRadiusAxisProps
-  extends Omit<RenderableAxisProps, 'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale'>, ZIndexable {
+  extends
+    Omit<RenderableAxisProps, 'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale' | 'tick'>,
+    ZIndexable {
   /**
    * Determines how the axis line is drawn. Options:
    * - `true`: the axis line is drawn with default props;
@@ -163,6 +168,22 @@ export interface PolarRadiusAxisProps
    * @defaultValue 0
    */
   radiusAxisId?: string | number;
+  /**
+   * Defines how the individual label text is rendered.
+   * This controls the settings for individual ticks; on a typical axis, there are multiple ticks, depending on your data.
+   *
+   * If you want to customize the overall axis label, use the `label` prop instead.
+   *
+   * Options:
+   * - `false`: Do not render any tick labels.
+   * - `true`: Render tick labels with default settings.
+   * - `object`: An object of props to be merged into the internally calculated tick props.
+   * - `ReactElement`: A custom React element to be used as the tick label.
+   * - `function`: A function that returns a React element for custom rendering of tick labels.
+   *
+   * @defaultValue true
+   */
+  tick?: TickProp<BaseTickContentProps>;
   ticks?: ReadonlyArray<TickItem>;
   /**
    * Z-Index of this component and its children. The higher the value,
@@ -328,7 +349,7 @@ const renderTicks = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactE
 
     return (
       <Layer
-        className={clsx('recharts-polar-radius-axis-tick', getTickClassName(tick))}
+        className={clsx('recharts-polar-radius-axis-tick', getClassNameFromUnknown(tick))}
         key={`tick-${entry.coordinate}`}
         {...adaptEventsOfChild(props, entry, i)}
       >

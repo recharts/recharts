@@ -1,5 +1,4 @@
-import { isValidElement } from 'react';
-import { ChartOffsetInternal, ChartPointer, Coordinate, PolarViewBoxRequired, RangeObj, TickProp } from './types';
+import { ChartOffsetInternal, ChartPointer, Coordinate, PolarViewBoxRequired, RangeObj } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -116,8 +115,3 @@ export const inRangeOfSector = (
 
   return null;
 };
-
-export const getTickClassName = (tick?: TickProp) =>
-  !isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' && tick != null
-    ? tick.className
-    : '';

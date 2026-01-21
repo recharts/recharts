@@ -1,4 +1,15 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ReferenceLine,
+  YAxisTickContentProps,
+  Text,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -47,6 +58,30 @@ const data = [
   },
 ];
 
+const CustomYAxisTick = (props: YAxisTickContentProps) => {
+  const {
+    payload: { value },
+  } = props;
+
+  let fill: string;
+  switch (Math.sign(value)) {
+    case -1:
+      fill = 'red';
+      break;
+    case 1:
+      fill = 'green';
+      break;
+    default:
+      fill = 'black';
+  }
+
+  return (
+    <Text {...props} fill={fill} fontWeight={value === 0 ? 'bold' : 'normal'}>
+      {value}
+    </Text>
+  );
+};
+
 // #endregion
 const PositiveAndNegativeBarChart = () => {
   return (
@@ -63,7 +98,7 @@ const PositiveAndNegativeBarChart = () => {
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
-      <YAxis width="auto" />
+      <YAxis width="auto" tick={CustomYAxisTick} />
       <Tooltip />
       <Legend />
       <ReferenceLine y={0} stroke="#000" />

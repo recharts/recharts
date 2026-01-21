@@ -32,3 +32,16 @@ export function expectLastCalledWith<T1, T2, T3, T4>(
   }
   expect(spy).toHaveBeenLastCalledWith(expected1);
 }
+
+/**
+ * Same as calling `expect(spy).toHaveBeenNthCalledWith(N, expected)` but this time it has correct typescript types.
+ * This function will check that the type of `expected` is the same as the type of the argument of the spy.
+ * @param spy vi.fn()
+ * @param n the call number (1-based)
+ * @param expected1 the expected argument
+ * @throws if the spy was not called with the expected argument
+ * @return void
+ */
+export function expectNthCalledWith<T1>(spy: Mock<(arg1: T1) => void>, n: number, expected1: T1): void {
+  expect(spy).toHaveBeenNthCalledWith(n, expected1);
+}

@@ -19,17 +19,21 @@ import {
   Coordinate,
   RectangleCoordinate,
   TickProp,
+  BaseTickContentProps,
+  XAxisTickContentProps,
+  YAxisTickContentProps,
 } from '../util/types';
 import { getTicks } from './getTicks';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { XAxisPadding, YAxisPadding } from '../state/cartesianAxisSlice';
+import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 /** The orientation of the axis in correspondence to the chart */
-export type Orientation = 'top' | 'bottom' | 'left' | 'right';
+export type Orientation = XAxisOrientation | YAxisOrientation;
 /** A unit to be appended to a value */
 export type Unit = string | number;
 /** The formatter function of tick */
@@ -46,7 +50,7 @@ export interface CartesianAxisProps extends ZIndexable {
   orientation?: Orientation;
   // The viewBox of svg
   viewBox?: CartesianViewBox;
-  tick?: TickProp;
+  tick?: TickProp<unknown>;
   /**
    * Additional props to spread to each tick Text element.
    * Optional, the CartesianAxis component will provide its own defaults calculated from other props.
@@ -280,7 +284,7 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
     let className = 'recharts-cartesian-axis-tick-value';
 
     if (typeof option !== 'boolean') {
-      className = clsx(className, option?.className);
+      className = clsx(className, getClassNameFromUnknown(option));
     }
 
     tickItem = (
@@ -343,8 +347,8 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
-  const textAnchor = getTickTextAnchor(orientation, mirror);
-  const verticalAnchor = getTickVerticalAnchor(orientation, mirror);
+  const textAnchor: TextAnchor = getTickTextAnchor(orientation, mirror);
+  const verticalAnchor: TextVerticalAnchor = getTickVerticalAnchor(orientation, mirror);
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   let tickLinePropsObject: SVGProps<SVGLineElement> = {};
@@ -380,16 +384,13 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   });
 
   const tickLabels = tickLineCoords.map(({ entry, tick: tickCoord }, i) => {
-    const tickProps: TextProps = {
-      // @ts-expect-error textAnchor from axisProps is typed as `string` but Text wants type `TextAnchor`
-      textAnchor,
+    // @ts-expect-error we're not checking that padding and orientation types are in sync
+    const tickProps: XAxisTickContentProps | YAxisTickContentProps = {
       verticalAnchor,
       ...axisProps,
-      // @ts-expect-error customTickProps is contributing unknown props
+      textAnchor,
       stroke: 'none',
-      // @ts-expect-error customTickProps is contributing unknown props
       fill: stroke,
-      ...customTickProps,
       ...tickCoord,
       index: i,
       payload: entry,
@@ -397,6 +398,13 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
       tickFormatter,
       padding,
       ...tickTextProps,
+      angle: tickTextProps?.angle ?? axisProps.angle ?? 0,
+    };
+
+    // @ts-expect-error customTickProps is contributing unknown props which we don't type properly
+    const finalTickProps: BaseTickContentProps = {
+      ...tickProps,
+      ...customTickProps,
     };
     return (
       <Layer
@@ -407,7 +415,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
         {tick && (
           <TickItem
             option={tick}
-            tickProps={tickProps}
+            tickProps={finalTickProps}
             value={`${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`}
           />
         )}

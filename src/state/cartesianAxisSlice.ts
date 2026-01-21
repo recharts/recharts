@@ -72,7 +72,7 @@ export type TicksSettings = {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
-  tick: TickProp;
+  tick: TickProp<any>;
 };
 
 /**

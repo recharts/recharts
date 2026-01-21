@@ -322,11 +322,30 @@ export const PolarRadiusAxisAPI: ApiDoc = {
         'en-US': (
           <section>
             <p>
-              If false set, ticks will not be drawn. If true set, ticks will be drawn which have the props calculated
-              internally. If object set, ticks will be drawn which have the props merged by the internal calculated
-              props and the option. If ReactElement set, the option can be the custom tick element. If set a function,
-              the function will be called to render customized ticks.
+              Defines how the individual label text is rendered. This controls the settings for individual ticks; on a
+              typical axis, there are multiple ticks, depending on your data.
             </p>
+            <p>
+              If you want to customize the overall axis label, use the <code>label</code> prop instead.
+            </p>
+            <p>Options:</p>
+            <ul>
+              <li>
+                <code>false</code>: Do not render any tick labels.
+              </li>
+              <li>
+                <code>true</code>: Render tick labels with default settings.
+              </li>
+              <li>
+                <code>object</code>: An object of props to be merged into the internally calculated tick props.
+              </li>
+              <li>
+                <code>ReactElement</code>: A custom React element to be used as the tick label.
+              </li>
+              <li>
+                <code>function</code>: A function that returns a React element for custom rendering of tick labels.
+              </li>
+            </ul>
           </section>
         ),
       },
