@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { test, expect } from './fixtures';
 import LineChartExample from '../../../www/src/docs/apiExamples/LineChart/LineChartExample';
 import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart';
 import TinyLineChart from '../../../www/src/docs/exampleComponents/LineChart/TinyLineChart';
