@@ -47,11 +47,19 @@
   --color-text-1: var(--color-gray-900);
   --color-text-2: var(--color-gray-700);
   --color-text-3: var(--color-gray-600);
+  --color-text-emphasis-1: #bf2a5c;
 
   --color-border-1: var(--color-gray-500);
   --color-border-2: var(--color-gray-400);
   --color-border-3: var(--color-gray-300);
+  --color-border-4: var(--color-gray-200);
 
+  --color-solid-1: var(--color-gray-800);
+  --color-solid-1a: color-mix(in srgb, var(--color-solid-1) 80%, transparent);
+  --color-solid-6: var(--color-gray-300);
+  --color-solid-6a: color-mix(in srgb, var(--color-solid-6) 80%, transparent);
+  --color-solid-7: var(--color-gray-200);
+  --color-solid-7a: color-mix(in srgb, var(--color-solid-7) 80%, transparent);
   --color-solid-brand-1: #1074b6; /* brand */
   --color-solid-brand-2: #2e96ea;
   --color-solid-info-1: #18828a;
@@ -92,11 +100,19 @@
   --color-text-1: var(--color-gray-100);
   --color-text-2: var(--color-gray-200);
   --color-text-3: var(--color-gray-300);
+  --color-text-emphasis-1: #ff6f97;
 
   --color-border-1: var(--color-gray-400);
-  --color-border-2: var(--color-gray-700);
-  --color-border-3: var(--color-gray-800);
+  --color-border-2: var(--color-gray-600);
+  --color-border-3: var(--color-gray-700);
+  --color-border-4: var(--color-gray-800);
 
+  --color-solid-1: var(--color-gray-100);
+  --color-solid-1a: color-mix(in srgb, var(--color-solid-1) 80%, transparent);
+  --color-solid-6: var(--color-gray-700);
+  --color-solid-6a: color-mix(in srgb, var(--color-solid-6) 80%, transparent);
+  --color-solid-7: var(--color-gray-800);
+  --color-solid-7a: color-mix(in srgb, var(--color-solid-7) 80%, transparent);
   --color-solid-brand-1: #2e96ea; /* brand */
   --color-solid-brand-2: #1074b6;
   --color-solid-info-1: #53b0b8;
