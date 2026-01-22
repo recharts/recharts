@@ -1,0 +1,18 @@
+import{j as e}from"./jsx-runtime-Dg0pAL7i.js";import{useMDXComponents as s}from"./index-lu-_WLVA.js";import"./iframe-DZKc3wlS.js";import"./preload-helper-Dp1pzeXC.js";function r(t){const a={a:"a",h2:"h2",p:"p",...s(),...t.components};return e.jsxs(e.Fragment,{children:[e.jsx(a.h2,{id:"awesome-react-charts-tips-gradients-overlays-and-responsive-ssr-in-recharts",children:"Awesome React Charts Tips: Gradients, Overlays and Responsive SSR in Recharts"}),`
+`,e.jsx(a.p,{children:e.jsx(a.a,{href:"https://leanylabs.com/blog/awesome-react-charts-tips/",rel:"nofollow",children:"https://leanylabs.com/blog/awesome-react-charts-tips/"})}),`
+`,e.jsx(a.p,{children:"Apply these advanced Recharts library tips to improve your chart`s design and make them SEO-friendly."}),`
+`,e.jsx(a.h2,{id:"building-a-recharts-dashboard-with-cubejs",children:"Building a Recharts Dashboard with Cube.js"}),`
+`,e.jsx(a.p,{children:e.jsx(a.a,{href:"https://cube.dev/blog/building-a-recharts-dashboard-with-cube",rel:"nofollow",children:"https://cube.dev/blog/building-a-recharts-dashboard-with-cube"})}),`
+`,e.jsx(a.p,{children:"This tutorial will show you how to build a dashboard using Recharts, a React library that offers you a set of chart components to speed up the creation of a dashboard, and Cube, a Headless BI tool."}),`
+`,e.jsx(a.h2,{id:"creating-a-football-heat-map-react-component-with-recharts",children:"Creating a Football Heat Map React Component with Recharts"}),`
+`,e.jsxs(a.p,{children:[e.jsx(a.a,{href:"https://medium.com/swlh/creating-a-football-heat-map-react-component-with-recharts-ff310162cee0",rel:"nofollow",children:"https://medium.com/swlh/creating-a-football-heat-map-react-component-with-recharts-ff310162cee0"}),`
+Sep 18, 2019`]}),`
+`,e.jsx(a.p,{children:"Heat maps are a great visualisation to start with when exploring sports event data that includes coordinates, allowing viewers to immediately focus on areas of the field that matter most."}),`
+`,e.jsx(a.h2,{id:"11-javascript-data-visualization-libraries-for-2018",children:"11 Javascript Data Visualization Libraries for 2018"}),`
+`,e.jsxs(a.p,{children:[e.jsx(a.a,{href:"https://blog.bitsrc.io/11-javascript-charts-and-data-visualization-libraries-for-2018-f01a283a5727?gi=e58122fbdcde",rel:"nofollow",children:"https://blog.bitsrc.io/11-javascript-charts-and-data-visualization-libraries-for-2018-f01a283a5727?gi=e58122fbdcde"}),`
+Sep 11, 2018`]}),`
+`,e.jsx(a.p,{children:"we can use neat data visualization methods that leverage the brain’s ability to identify and process data in a visual way. To help you get started and easily add beautiful data visualization to your favorite application, here are some of the best Javascript data visualization libraries around in 2018 (unranked). Feel free to comment and add your own suggestions and insights!"}),`
+`,e.jsx(a.h2,{id:"re-designed-chart-for-react",children:"Re-designed Chart for React"}),`
+`,e.jsxs(a.p,{children:[e.jsx(a.a,{href:"https://medium.com/@arcthur/re-designed-chart-for-react-fbb31cf78415#.gc1k19sdv",rel:"nofollow",children:"https://medium.com/@arcthur/re-designed-chart-for-react-fbb31cf78415#.gc1k19sdv"}),`
+Jan 29, 2016`]}),`
+`,e.jsx(a.p,{children:"Over the past few years, our team were satisfied with React and Redux in some projects, which are almost web applications involved to data presentation or operation. The projects need use a lot of charts which is so painful that we decided to create new chart library for React..."})]})}function h(t={}){const{wrapper:a}={...s(),...t.components};return a?e.jsx(a,{...t,children:e.jsx(r,{...t})}):r(t)}export{h as default};
