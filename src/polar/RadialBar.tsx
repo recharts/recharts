@@ -256,13 +256,11 @@ function SectorsWithAnimation({
         }
 
         return (
-          <Layer>
-            <RadialBarSectors
-              sectors={stepData ?? STABLE_EMPTY_ARRAY}
-              allOtherRadialBarProps={props}
-              showLabels={!isAnimating}
-            />
-          </Layer>
+          <RadialBarSectors
+            sectors={stepData ?? STABLE_EMPTY_ARRAY}
+            allOtherRadialBarProps={props}
+            showLabels={!isAnimating}
+          />
         );
       }}
     </JavascriptAnimate>
@@ -523,20 +521,33 @@ class RadialBarWithState extends PureComponent<InternalProps> {
 }
 
 function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
-  const cells = findAllByType(props.children, Cell);
-  const radialBarSettings: RadialBarSettings = {
-    data: undefined,
-    hide: false,
-    id: props.id,
-    dataKey: props.dataKey,
-    minPointSize: props.minPointSize,
-    stackId: getNormalizedStackId(props.stackId),
-    maxBarSize: props.maxBarSize,
-    barSize: props.barSize,
-    type: 'radialBar',
-    angleAxisId: props.angleAxisId,
-    radiusAxisId: props.radiusAxisId,
-  };
+  const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
+
+  const radialBarSettings: RadialBarSettings = React.useMemo(
+    () => ({
+      data: undefined,
+      hide: false,
+      id: props.id,
+      dataKey: props.dataKey,
+      minPointSize: props.minPointSize,
+      stackId: getNormalizedStackId(props.stackId),
+      maxBarSize: props.maxBarSize,
+      barSize: props.barSize,
+      type: 'radialBar',
+      angleAxisId: props.angleAxisId,
+      radiusAxisId: props.radiusAxisId,
+    }),
+    [
+      props.id,
+      props.dataKey,
+      props.minPointSize,
+      props.stackId,
+      props.maxBarSize,
+      props.barSize,
+      props.angleAxisId,
+      props.radiusAxisId,
+    ],
+  );
   const sectors: ReadonlyArray<RadialBarDataItem> =
     useAppSelector(state =>
       selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),

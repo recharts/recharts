@@ -14,8 +14,17 @@ type PolarChartState = PolarChartOptions | null;
 const initialState: PolarChartState = null;
 
 const reducers = {
-  updatePolarOptions: (_state: PolarChartState, action: PayloadAction<PolarChartOptions>): PolarChartOptions => {
-    return action.payload;
+  updatePolarOptions: (state: PolarChartState, action: PayloadAction<PolarChartOptions>): PolarChartOptions => {
+    if (state === null) {
+      return action.payload;
+    }
+    state.startAngle = action.payload.startAngle;
+    state.endAngle = action.payload.endAngle;
+    state.cx = action.payload.cx;
+    state.cy = action.payload.cy;
+    state.innerRadius = action.payload.innerRadius;
+    state.outerRadius = action.payload.outerRadius;
+    return state;
   },
 };
 
