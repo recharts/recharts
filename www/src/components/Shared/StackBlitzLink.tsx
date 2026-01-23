@@ -3,6 +3,7 @@ import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
 
 import cssVars from '../../styles/_variables.css?raw';
 import { sendEvent } from '../analytics.ts';
+import { ColorMode, ColorModeWatcher } from '../color-mode';
 
 type StackBlitzLinkProps = Readonly<{
   /**
@@ -50,13 +51,13 @@ root.render(<AppWithDevtools />);
 `.trim();
 
 // language=HTML
-const indexHtmlCode = (title: string) => `
+const indexHtmlCode = (args: { title: string; mode: ColorMode }) => `
   <!doctype html>
-  <html lang="en" data-mode="light">
+  <html lang="en" data-mode="${args.mode}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
+    <title>${args.title}</title>
   </head>
   <body>
   <div id="root" style="width: 100vw; height: 100vh;"></div>
@@ -135,58 +136,65 @@ export default defineConfig({
  */
 export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
   return (
-    <button
-      type="button"
-      className="codemirror-toolbar-item"
-      onClick={e => {
-        e.preventDefault();
-        sendEvent({
-          category: 'StackBlitz',
-          action: 'Open Project',
-          label: title,
-        });
-        /*
-         * https://developer.stackblitz.com/guides/integration/create-with-sdk#creating-a-new-project
-         */
-        stackblitzSdk.openProject(
-          /*
-           * https://developer.stackblitz.com/platform/api/javascript-sdk-options
-           */
-          {
-            template: 'node',
-            title,
-            files: {
-              'index.html': indexHtmlCode(title),
-              'src/index.css': cssVars,
+    <ColorModeWatcher
+      render={state => {
+        return (
+          <button
+            type="button"
+            className="codemirror-toolbar-item"
+            onClick={e => {
+              e.preventDefault();
+              sendEvent({
+                category: 'StackBlitz',
+                action: 'Open Project',
+                label: title,
+              });
               /*
-               * This file has tsx in it, and create-react-app supports TypeScript out of the box.
+               * https://developer.stackblitz.com/guides/integration/create-with-sdk#creating-a-new-project
                */
-              'src/index.tsx': indexTsxCode(title),
-              'src/Example.tsx': code,
-              'tsconfig.json': tsconfigJsonCode,
-              'package.json': JSON.stringify(packageJson, null, 2),
-              'vite.config.ts': viteConfigTs,
-            },
-          },
-          {
-            newWindow: true,
-            openFile: 'src/Example.tsx',
-            /*
-             * In this simple case, there is really only one interesting file to look at,
-             * so let's hide the sidebar by default.
-             * People interested in browsing package.json or other files can always open the sidebar with a click.
-             */
-            showSidebar: false,
-            /*
-             * The only interesting message in the terminal is "Vite dev server running at..."
-             * so it doesn't need to be very tall.
-             */
-            terminalHeight: 10,
-          },
+              stackblitzSdk.openProject(
+                /*
+                 * https://developer.stackblitz.com/platform/api/javascript-sdk-options
+                 */
+                {
+                  template: 'node',
+                  title,
+                  files: {
+                    'index.html': indexHtmlCode({ title, mode: state.mode }),
+                    'src/index.css': cssVars,
+                    /*
+                     * This file has tsx in it, and create-react-app supports TypeScript out of the box.
+                     */
+                    'src/index.tsx': indexTsxCode(title),
+                    'src/Example.tsx': code,
+                    'tsconfig.json': tsconfigJsonCode,
+                    'package.json': JSON.stringify(packageJson, null, 2),
+                    'vite.config.ts': viteConfigTs,
+                  },
+                },
+                {
+                  newWindow: true,
+                  openFile: 'src/Example.tsx',
+                  /*
+                   * In this simple case, there is really only one interesting file to look at,
+                   * so let's hide the sidebar by default.
+                   * People interested in browsing package.json or other files can always open the sidebar with a click.
+                   */
+                  showSidebar: false,
+                  theme: state.origin === 'system' ? 'default' : state.mode,
+                  /*
+                   * The only interesting message in the terminal is "Vite dev server running at..."
+                   * so it doesn't need to be very tall.
+                   */
+                  terminalHeight: 10,
+                },
+              );
+            }}
+          >
+            {children}
+          </button>
         );
       }}
-    >
-      {children}
-    </button>
+    />
   );
 }
