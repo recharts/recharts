@@ -1,0 +1,5 @@
+import{j as o}from"./jsx-runtime-Dt_k-8Jd.js";import{useMDXComponents as m}from"./index-C4KwUtgz.js";import{M as s,C as p,a as e}from"./blocks-BoEDorPv.js";import{C as a,A as n}from"./CartesianAxis.stories-C0UtLCqJ.js";import"./iframe-CT4QuQ5L.js";import"./preload-helper-Dp1pzeXC.js";import"./index-DDx2nU6r.js";import"./CartesianAxis-ByfjT7H_.js";import"./resolveDefaultProps-CTWHIHtK.js";import"./Layer-BIxjtyeO.js";import"./Text-ZzNZJtBS.js";import"./DOMUtils-CDXEyiOj.js";import"./arrayEqualityCheck-CUEtHgfA.js";import"./PolarUtils-DdS5KPsI.js";import"./Label-CFlrJOC9.js";import"./ZIndexLayer-B4whtcRw.js";import"./zIndexSlice-BbZ3gLFC.js";import"./types-CGMRlxY8.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./Tick-DyycEu3I.js";function i(t){const r={h1:"h1",h2:"h2",...m(),...t.components};return o.jsxs(o.Fragment,{children:[o.jsx(r.h1,{id:"cartesianaxis",children:"CartesianAxis"}),`
+`,o.jsx(s,{of:a}),`
+`,o.jsx(p,{of:n,layout:"padded"}),`
+`,o.jsx(r.h2,{id:"props",children:"Props"}),`
+`,o.jsx(e,{of:n})]})}function F(t={}){const{wrapper:r}={...m(),...t.components};return r?o.jsx(r,{...t,children:o.jsx(i,{...t})}):i(t)}export{F as default};
