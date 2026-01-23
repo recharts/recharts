@@ -21,12 +21,14 @@ import {
 } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { ChartCoordinate, DataKey, Margin, Percent } from '../util/types';
+import { ReportEventSettings } from '../state/ReportEventSettings';
+import { ChartCoordinate, DataKey, EventThrottlingProps, Margin, Percent } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 export interface SunburstData {
   [key: string]: any;
@@ -45,7 +47,7 @@ interface SunburstNode extends SunburstData {
   tooltipIndex: TooltipIndex;
 }
 
-export interface SunburstChartProps {
+export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
   /**
    * The source data. Each element should be an object.
@@ -255,6 +257,7 @@ export const defaultSunburstChartProps = {
   startAngle: 0,
   endAngle: 360,
   responsive: false,
+  ...initialEventSettingsState,
 } as const satisfies Partial<SunburstChartProps>;
 
 type InternalSunburstChartProps = WithIdRequired<
@@ -424,12 +427,13 @@ const SunburstChartImpl = ({
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
   const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);
-  const { className, width, height, responsive, style, id: externalId } = props;
+  const { className, width, height, responsive, style, id: externalId, throttleDelay, throttledEvents } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   return (
     <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={className ?? 'SunburstChart'}>
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={defaultSunburstMargin} />
+      <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
       <TooltipPortalContext.Provider value={tooltipPortal}>
         <RechartsWrapper
           className={className}

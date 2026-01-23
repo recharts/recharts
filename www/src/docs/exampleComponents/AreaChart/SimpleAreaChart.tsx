@@ -60,6 +60,7 @@ const SimpleAreaChart = () => {
         left: 0,
         bottom: 0,
       }}
+      onContextMenu={(_, e) => e.preventDefault()}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />

@@ -1358,7 +1358,11 @@ export interface DataProvider<DataPointType> {
 }
 
 /**
- * Props shared with all charts.
+ * Props shared with all Cartesian and Polar charts.
+ * There are three charts that do not use these base props, and define their own:
+ * - Treemap
+ * - Sunburst
+ * - Sankey
  */
 interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, ExternalMouseEvents {
   /**
@@ -1425,7 +1429,33 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
   responsive?: boolean;
 }
 
-export interface CartesianChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType> {
+export interface EventThrottlingProps {
+  /**
+   * Decides the time interval to throttle events.
+   * Only events defined in `throttledEvents` prop are throttled.
+   * All other events are executed immediately/synchronously.
+   *
+   * Options:
+   * - `number`: the time interval in milliseconds
+   * - `'raf'`: use requestAnimationFrame to schedule updates.
+   *
+   * @defaultValue 'raf'
+   */
+  throttleDelay?: number | 'raf';
+  /**
+   * Defines which events should be throttled when listening to container size changes.
+   * Events not in this list will not be throttled.
+   *
+   * If an event is on this list, then you lose the opportunity to access the event synchronously.
+   * Which means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,
+   * then that event handler must not be in this list.
+   *
+   * @defaultValue ["mousemove","touchmove","pointermove","scroll","wheel"]
+   */
+  throttledEvents?: ReadonlyArray<keyof GlobalEventHandlersEventMap> | 'all';
+}
+
+export interface CartesianChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType>, EventThrottlingProps {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
@@ -1488,11 +1518,10 @@ export interface CartesianChartProps<DataPointType = unknown> extends BaseChartP
    * @defaultValue none
    */
   stackOffset?: StackOffsetType;
-  throttleDelay?: number;
   title?: string;
 }
 
-export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType> {
+export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType>, EventThrottlingProps {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
@@ -1549,7 +1578,6 @@ export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps
    * Angle in degrees from which the chart should start.
    */
   startAngle?: number;
-  throttleDelay?: number;
   title?: string;
 }
 

@@ -16,6 +16,7 @@ import {
   AnimationTiming,
   Coordinate,
   DataKey,
+  EventThrottlingProps,
   Margin,
   Percent,
   RectanglePosition,
@@ -33,6 +34,7 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
+import { ReportEventSettings } from '../state/ReportEventSettings';
 import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
@@ -41,6 +43,7 @@ import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -355,7 +358,7 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
 
 export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
-export interface Props {
+export interface Props extends EventThrottlingProps {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -511,6 +514,7 @@ export const defaultTreeMapProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear',
+  ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
 const defaultState: State = {
@@ -1058,13 +1062,14 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
  */
 export function Treemap(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
-  const { className, style, width, height } = props;
+  const { className, style, width, height, throttleDelay, throttledEvents } = props;
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
       <ReportChartMargin margin={defaultTreemapMargin} />
+      <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
       <RechartsWrapper
         dispatchTouchEvents={false}
         className={className}

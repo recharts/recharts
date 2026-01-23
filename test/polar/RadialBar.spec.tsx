@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
-import { describe, it, test, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import {
-  Customized,
+  DefaultZIndexes,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
@@ -40,7 +40,6 @@ import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
@@ -1091,7 +1090,7 @@ describe('<RadialBar />', () => {
     const onClick = vi.fn();
 
     const { container } = render(
-      <RadialBarChart width={500} height={500} data={PageData}>
+      <RadialBarChart width={500} height={500} data={PageData} throttledEvents={[]}>
         <RadialBar
           isAnimationActive={false}
           cx={250}
@@ -1217,7 +1216,7 @@ describe('<RadialBar />', () => {
     const onTouchEnd = vi.fn();
 
     const { container } = render(
-      <RadialBarChart width={500} height={500} data={PageData}>
+      <RadialBarChart width={500} height={500} data={PageData} throttledEvents={[]}>
         <RadialBar
           isAnimationActive={false}
           cx={250}
@@ -1277,7 +1276,7 @@ describe('<RadialBar />', () => {
       const { rerender } = render(
         <RadialBarChart width={100} height={100} data={PageData}>
           <RadialBar dataKey="value" />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadialBarChart>,
       );
 
@@ -1299,7 +1298,7 @@ describe('<RadialBar />', () => {
 
       rerender(
         <RadialBarChart width={100} height={100} data={PageData}>
-          <Customized component={<Comp />} />
+          <Comp />
         </RadialBarChart>,
       );
 

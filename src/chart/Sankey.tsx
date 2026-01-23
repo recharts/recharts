@@ -7,7 +7,7 @@ import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Coordinate, DataKey, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
+import { Coordinate, DataKey, EventThrottlingProps, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -23,6 +23,7 @@ import {
 } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
+import { ReportEventSettings } from '../state/ReportEventSettings';
 import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -31,6 +32,7 @@ import { isNotNil, noop } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -613,7 +615,7 @@ type SankeyLinkOptions =
   | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
   | SVGProps<SVGPathElement>;
 
-interface SankeyProps {
+interface SankeyProps extends EventThrottlingProps {
   /**
    * Name represents each sector in the tooltip.
    * This allows you to extract the name from the data:
@@ -1072,6 +1074,7 @@ export const sankeyDefaultProps = {
   nodeWidth: 10,
   sort: true,
   verticalAlign: 'justify',
+  ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
@@ -1230,13 +1233,14 @@ function SankeyImpl(props: InternalSankeyProps) {
  */
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
-  const { width, height, style, className, id: externalId } = props;
+  const { width, height, style, className, id: externalId, throttleDelay, throttledEvents } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={props.margin} />
+      <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
 
       <RechartsWrapper
         className={className}

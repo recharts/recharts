@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { CartesianLayout, PolarChartProps } from '../../src/util/types';
+import { CartesianLayout, EventThrottlingProps, PolarChartProps } from '../../src/util/types';
 import {
   AreaChart,
   BarChart,
@@ -30,22 +30,24 @@ import { TooltipIndex } from '../../src/state/tooltipSlice';
  * then you probably want to write bespoke tests for that.
  */
 export type CartesianChartTestCase = {
-  ChartElement: ComponentType<{
-    children?: ReactNode;
-    width?: number;
-    height?: number;
-    data?: any[];
-    layout?: CartesianLayout;
-    compact?: boolean;
-    className?: string;
-    onClick?: (param: unknown) => void;
-    onMouseEnter?: (param: unknown) => void;
-    onMouseMove?: (param: unknown) => void;
-    onMouseLeave?: (param: unknown) => void;
-    onTouchStart?: (param: unknown) => void;
-    onTouchMove?: (param: unknown) => void;
-    onTouchEnd?: (param: unknown) => void;
-  }>;
+  ChartElement: ComponentType<
+    EventThrottlingProps & {
+      children?: ReactNode;
+      width?: number;
+      height?: number;
+      data?: any[];
+      layout?: CartesianLayout;
+      compact?: boolean;
+      className?: string;
+      onClick?: (param: unknown) => void;
+      onMouseEnter?: (param: unknown) => void;
+      onMouseMove?: (param: unknown) => void;
+      onMouseLeave?: (param: unknown) => void;
+      onTouchStart?: (param: unknown) => void;
+      onTouchMove?: (param: unknown) => void;
+      onTouchEnd?: (param: unknown) => void;
+    }
+  >;
   testName: string;
   tooltipIndex: NonNullable<TooltipIndex>;
 };

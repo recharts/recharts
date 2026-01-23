@@ -227,7 +227,13 @@ describe('chart wrapper event data', () => {
 
   describe.each(['hover', undefined] as const)('when Tooltip has trigger=%s', trigger => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
-      <BarChart width={400} height={400} data={PageData} {...spies}>
+      <BarChart
+        width={400}
+        height={400}
+        data={PageData}
+        {...spies}
+        throttledEvents={['mouseenter', 'mousemove', 'mouseleave']}
+      >
         <Bar dataKey="uv" />
         <Tooltip trigger={trigger} />
         <XAxis dataKey="name" />

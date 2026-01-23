@@ -475,7 +475,7 @@ describe('<PieChart />', () => {
   describe('mouse events', () => {
     const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
       return (
-        <PieChart width={800} height={400} {...eventProps}>
+        <PieChart width={800} height={400} {...eventProps} throttledEvents={['mouseenter']}>
           <Pie
             dataKey="value"
             isAnimationActive={false}

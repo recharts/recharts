@@ -5,11 +5,13 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
+import { ReportEventSettings } from '../state/ReportEventSettings';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { Margin, PolarChartProps, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -30,6 +32,7 @@ export const defaultPolarChartProps = {
   cy: '50%',
   innerRadius: 0,
   outerRadius: '80%',
+  ...initialEventSettingsState,
 } as const satisfies Partial<PolarChartProps<never>>;
 
 /**
@@ -84,6 +87,10 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={polarChartProps.data} />
       <ReportMainChartProps layout={layout} margin={polarChartProps.margin} />
+      <ReportEventSettings
+        throttleDelay={polarChartProps.throttleDelay}
+        throttledEvents={polarChartProps.throttledEvents}
+      />
       <ReportChartProps
         baseValue={undefined}
         accessibilityLayer={polarChartProps.accessibilityLayer}

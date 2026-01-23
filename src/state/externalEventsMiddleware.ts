@@ -28,6 +28,7 @@ export const externalEventsMiddleware = createListenerMiddleware<RechartsRootSta
  * This is different from mouseMoveMiddleware which only handles one event type and uses a single rafId.
  */
 const rafIdMap = new Map<string, number>();
+const timeoutIdMap = new Map<string, ReturnType<typeof setTimeout>>();
 
 externalEventsMiddleware.startListening({
   actionCreator: externalEventAction,
@@ -43,36 +44,78 @@ externalEventsMiddleware.startListening({
 
     const eventType = reactEvent.type;
 
-    // Cancel any pending animation frame for this event type
+    // Cancel any pending execution for this event type
     const existingRafId = rafIdMap.get(eventType);
     if (existingRafId !== undefined) {
       cancelAnimationFrame(existingRafId);
+      rafIdMap.delete(eventType);
+    }
+    const existingTimeoutId = timeoutIdMap.get(eventType);
+    if (existingTimeoutId !== undefined) {
+      clearTimeout(existingTimeoutId);
+      timeoutIdMap.delete(eventType);
     }
 
-    const rafId = requestAnimationFrame(() => {
+    const state = listenerApi.getState();
+    const { throttleDelay, throttledEvents } = state.eventSettings;
+
+    /*
+     * reactEvent.type gives us the event type as a string, e.g., 'click', 'mousemove', etc.
+     * which is the same as the names used in throttledEvents array
+     * but that array is strictly typed as ReadonlyArray<keyof GlobalEventHandlersEventMap> | 'all' | undefined
+     * so that we can have relevant autocomplete and type checking elsewhere.
+     * This makes TypeScript panic because it refuses to call .includes() on ReadonlyArray<keyof GlobalEventHandlersEventMap>
+     * with a string argument.
+     * To satisfy TypeScript, we need to explicitly typecast throttledEvents here.
+     */
+    const eventListAsString: 'all' | ReadonlyArray<string> | undefined = throttledEvents;
+
+    // Check if this event type should be throttled
+    // throttledEvents can be 'all' or an array of event names
+    const isThrottled = eventListAsString === 'all' || eventListAsString?.includes(eventType);
+
+    if (!isThrottled) {
+      // Execute immediately
+      const nextState: MouseHandlerDataParam = {
+        activeCoordinate: selectActiveTooltipCoordinate(state),
+        activeDataKey: selectActiveTooltipDataKey(state),
+        activeIndex: selectActiveTooltipIndex(state),
+        activeLabel: selectActiveLabel(state),
+        activeTooltipIndex: selectActiveTooltipIndex(state),
+        isTooltipActive: selectIsTooltipActive(state),
+      };
+      handler(nextState, reactEvent);
+      return;
+    }
+
+    const callback = () => {
       try {
-        /*
-         * Here it is important that we get the latest state inside the animation frame callback,
-         * not from the outer scope, because there may have been other actions dispatched
-         * between the time the event was fired and the animation frame callback is executed.
-         * One of those actions is the one that actually sets the active tooltip state!
-         */
-        const state: RechartsRootState = listenerApi.getState();
+        const currentState: RechartsRootState = listenerApi.getState();
         const nextState: MouseHandlerDataParam = {
-          activeCoordinate: selectActiveTooltipCoordinate(state),
-          activeDataKey: selectActiveTooltipDataKey(state),
-          activeIndex: selectActiveTooltipIndex(state),
-          activeLabel: selectActiveLabel(state),
-          activeTooltipIndex: selectActiveTooltipIndex(state),
-          isTooltipActive: selectIsTooltipActive(state),
+          activeCoordinate: selectActiveTooltipCoordinate(currentState),
+          activeDataKey: selectActiveTooltipDataKey(currentState),
+          activeIndex: selectActiveTooltipIndex(currentState),
+          activeLabel: selectActiveLabel(currentState),
+          activeTooltipIndex: selectActiveTooltipIndex(currentState),
+          isTooltipActive: selectIsTooltipActive(currentState),
         };
 
         handler(nextState, reactEvent);
       } finally {
         rafIdMap.delete(eventType);
+        timeoutIdMap.delete(eventType);
       }
-    });
+    };
 
-    rafIdMap.set(eventType, rafId);
+    if (throttleDelay === 'raf') {
+      const rafId = requestAnimationFrame(callback);
+      rafIdMap.set(eventType, rafId);
+    } else if (typeof throttleDelay === 'number') {
+      const timeoutId = setTimeout(callback, throttleDelay);
+      timeoutIdMap.set(eventType, timeoutId);
+    } else {
+      // Should not happen based on type, but fallback to immediate
+      callback();
+    }
   },
 });

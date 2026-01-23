@@ -24,6 +24,7 @@ export const areaChartExamples: Record<string, ChartExample> = {
     Component: SimpleAreaChart,
     sourceCode: simpleAreaChartSource,
     name: 'Simple Area Chart',
+    description: 'This chart also demonstrates preventing the context menu on right mouse click.',
   },
   StackedAreaChart: {
     Component: StackedAreaChart,

@@ -12,9 +12,10 @@ describe('externalEventsMiddleware', () => {
     store = createRechartsStore();
     mockHandler = vi.fn();
     mockEvent = {
-      type: 'click',
+      type: 'mousemove',
       persist: vi.fn(),
     } as unknown as SyntheticEvent;
+    vi.clearAllTimers();
   });
 
   it('should not call handler when handler is undefined', () => {
@@ -77,7 +78,7 @@ describe('externalEventsMiddleware', () => {
 
   it('should cancel previous animation frame when dispatched multiple times with same event type', () => {
     const firstEvent = {
-      type: 'click',
+      type: 'touchmove',
       persist: vi.fn(),
     } as unknown as SyntheticEvent;
 
@@ -93,7 +94,7 @@ describe('externalEventsMiddleware', () => {
 
     // Second dispatch with same event type should cancel the first
     const secondMockEvent = {
-      type: 'click',
+      type: 'touchmove',
       persist: vi.fn(),
     } as unknown as SyntheticEvent;
 
@@ -108,8 +109,8 @@ describe('externalEventsMiddleware', () => {
   });
 
   it('should NOT cancel animation frames for different event types', () => {
-    const clickEvent = {
-      type: 'click',
+    const touchEvent = {
+      type: 'touchmove',
       persist: vi.fn(),
     } as unknown as SyntheticEvent;
 
@@ -121,17 +122,19 @@ describe('externalEventsMiddleware', () => {
     const handler1 = vi.fn();
     const handler2 = vi.fn();
 
-    // Dispatch click event
+    expect(vi.getTimerCount()).toBe(0);
+
+    // Dispatch touchmove event
     store.dispatch(
       externalEventAction({
-        reactEvent: clickEvent,
+        reactEvent: touchEvent,
         handler: handler1,
       }),
     );
 
     expect(vi.getTimerCount()).toBe(1);
 
-    // Dispatch mousemove event - should NOT cancel click event
+    // Dispatch mousemove event - should NOT cancel touchmove event
     store.dispatch(
       externalEventAction({
         reactEvent: mouseMoveEvent,
@@ -154,7 +157,7 @@ describe('externalEventsMiddleware', () => {
   it('should handle multiple handlers with different events', () => {
     const handler1 = vi.fn();
     const handler2 = vi.fn();
-    const event1 = { type: 'click', persist: vi.fn() } as unknown as SyntheticEvent;
+    const event1 = { type: 'touchmove', persist: vi.fn() } as unknown as SyntheticEvent;
     const event2 = { type: 'mousemove', persist: vi.fn() } as unknown as SyntheticEvent;
 
     store.dispatch(

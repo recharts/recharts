@@ -5,10 +5,12 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
+import { ReportEventSettings } from '../state/ReportEventSettings';
 import { CartesianChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -22,6 +24,7 @@ export const defaultCartesianChartProps = {
   reverseStackOrder: false,
   stackOffset: 'none',
   syncMethod: 'index',
+  ...initialEventSettingsState,
 } as const satisfies Partial<CartesianChartProps>;
 
 /**
@@ -63,6 +66,10 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={categoricalChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={categoricalChartProps.data} />
       <ReportMainChartProps layout={rootChartProps.layout} margin={rootChartProps.margin} />
+      <ReportEventSettings
+        throttleDelay={rootChartProps.throttleDelay}
+        throttledEvents={rootChartProps.throttledEvents}
+      />
       <ReportChartProps
         baseValue={rootChartProps.baseValue}
         accessibilityLayer={rootChartProps.accessibilityLayer}

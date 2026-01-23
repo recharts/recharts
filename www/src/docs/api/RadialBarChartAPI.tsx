@@ -304,7 +304,52 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'throttleDelay', type: 'number', isOptional: true },
+    {
+      name: 'throttleDelay',
+      type: '"raf" | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Decides the time interval to throttle events. Only events defined in <code>throttledEvents</code> prop are
+              throttled. All other events are executed immediately/synchronously.
+            </p>
+            <p>Options:</p>
+            <ul>
+              <li>
+                <code>number</code>: the time interval in milliseconds
+              </li>
+              <li>
+                <code>&#39;raf&#39;</code>: use requestAnimationFrame to schedule updates.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+      defaultVal: 'raf',
+    },
+    {
+      name: 'throttledEvents',
+      type: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Defines which events should be throttled when listening to container size changes. Events not in this list
+              will not be throttled.
+            </p>
+            <p>
+              If an event is on this list, then you lose the opportunity to access the event synchronously. Which means
+              that if you want to call <code>e.preventDefault()</code> or <code>e.stopPropagation()</code> inside the
+              event handler, then that event handler must not be in this list.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: ['mousemove', 'touchmove', 'pointermove', 'scroll', 'wheel'],
+    },
     { name: 'title', type: 'string', isOptional: true },
     {
       name: 'width',

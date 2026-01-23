@@ -104,6 +104,7 @@ type TooltipVisibilityTestCase = {
 };
 
 const commonChartProps = {
+  throttledEvents: [],
   width: 400,
   height: 400,
   data: PageData,
@@ -226,7 +227,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
 const FunnelChartTestCase: TooltipVisibilityTestCase = {
   name: 'FunnelChart',
   Wrapper: ({ children }) => (
-    <FunnelChart width={700} height={500}>
+    <FunnelChart width={700} height={500} throttledEvents={[]}>
       <Funnel isAnimationActive={false} dataKey="uv" nameKey="name" data={PageData} id="my-item-id" />
       {children}
     </FunnelChart>
@@ -252,7 +253,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
 const RadarChartTestCase: TooltipVisibilityTestCase = {
   name: 'RadarChart',
   Wrapper: ({ children }) => (
-    <RadarChart height={600} width={600} data={PageData}>
+    <RadarChart height={600} width={600} data={PageData} throttledEvents={[]}>
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
@@ -268,7 +269,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
 const RadialBarChartTestCase: TooltipVisibilityTestCase = {
   name: 'RadialBarChart',
   Wrapper: ({ children }) => (
-    <RadialBarChart height={600} width={600} data={PageData}>
+    <RadialBarChart height={600} width={600} data={PageData} throttledEvents={[]}>
       <PolarGrid />
       <PolarAngleAxis />
       <PolarRadiusAxis dataKey="name" />
@@ -284,7 +285,13 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
 const SankeyTestCase: TooltipVisibilityTestCase = {
   name: 'Sankey',
   Wrapper: ({ children }) => (
-    <Sankey width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} data={exampleSankeyData}>
+    <Sankey
+      width={400}
+      height={400}
+      margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      data={exampleSankeyData}
+      throttledEvents={[]}
+    >
       {children}
     </Sankey>
   ),
@@ -296,7 +303,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
 const ScatterChartTestCase: TooltipVisibilityTestCase = {
   name: 'ScatterChart',
   Wrapper: ({ children }) => (
-    <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} throttledEvents={[]}>
       <XAxis dataKey="uv" name="stature" unit="cm" />
       <YAxis dataKey="pv" name="weight" unit="kg" />
       <Scatter line name="A school" data={PageData} fill="#ff7300" id="my-item-id" />
@@ -311,7 +318,7 @@ const ScatterChartTestCase: TooltipVisibilityTestCase = {
 const SunburstChartTestCase: TooltipVisibilityTestCase = {
   name: 'SunburstChart',
   Wrapper: ({ children }) => (
-    <SunburstChart width={400} height={400} data={exampleSunburstData}>
+    <SunburstChart width={400} height={400} data={exampleSunburstData} throttledEvents={[]}>
       {children}
     </SunburstChart>
   ),
@@ -330,6 +337,7 @@ const TreemapTestCase: TooltipVisibilityTestCase = {
       isAnimationActive={false}
       nameKey="name"
       dataKey="value"
+      throttledEvents={[]}
     >
       {children}
     </Treemap>
