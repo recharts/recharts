@@ -92,6 +92,7 @@ export const selectPieLegend: (
       return {
         value: getTooltipNameProp(name, pieSettings.dataKey),
         color,
+        // @ts-expect-error Legend payload.payload says it wants objects but our data can be unknown
         payload: entry,
         type: pieSettings.legendType,
       };

@@ -28,7 +28,11 @@ export interface LegendPayload {
   value: string | undefined;
   type?: LegendType;
   color?: string;
-  payload?: unknown;
+  /**
+   * Different graphical items put different information in the payload object
+   * so double check in runtime what are you getting here.
+   */
+  payload?: object;
   formatter?: Formatter;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
