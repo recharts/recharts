@@ -47,7 +47,7 @@ const data = [
   },
 ];
 
-const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps<string | number, string>) => {
+const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps) => {
   const newPayload = payload.filter(x => x.dataKey !== 'a');
   return <DefaultTooltipContent payload={newPayload} {...rest} />;
 };

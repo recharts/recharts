@@ -14,11 +14,13 @@ export { DefaultLegendContent } from './component/DefaultLegendContent';
 export type { Props as DefaultLegendContentProps, LegendPayload } from './component/DefaultLegendContent';
 export { Tooltip } from './component/Tooltip';
 export type { TooltipProps, TooltipContentProps } from './component/Tooltip';
-export type { TooltipIndex } from './state/tooltipSlice';
+export type { TooltipIndex, TooltipPayload } from './state/tooltipSlice';
 export { DefaultTooltipContent } from './component/DefaultTooltipContent';
 export type {
   Props as DefaultTooltipContentProps,
   Payload as TooltipPayloadEntry,
+  TooltipItemSorter,
+  ValueType as TooltipValueType,
 } from './component/DefaultTooltipContent';
 export { ResponsiveContainer } from './component/ResponsiveContainer';
 export type { Props as ResponsiveContainerProps } from './component/ResponsiveContainer';

@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, TooltipContentProps } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, TooltipContentProps, TooltipValueType } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -47,18 +47,36 @@ const data = [
   },
 ];
 
-// #endregion
 const toPercent = (decimal: number): string => `${(decimal * 100).toFixed(0)}%`;
 
-const getPercent = (value: number, total: number): string => {
-  const ratio = total > 0 ? value / total : 0;
+const toNumber = (value: TooltipValueType | undefined): number => {
+  if (typeof value === 'number') {
+    return value;
+  }
+  let v;
+  if (typeof value === 'string') {
+    v = value;
+  }
+  if (Array.isArray(value)) {
+    [, v] = value;
+  }
+  const parsed = parseFloat(v);
+  if (!Number.isNaN(parsed)) {
+    return parsed;
+  }
+  return 0;
+};
+
+const getPercent = (value: TooltipValueType | undefined, total: number): string => {
+  const ratio = total > 0 ? toNumber(value) / total : 0;
 
   return toPercent(ratio);
 };
 
-const renderTooltipContent = (o: TooltipContentProps<number | string, string>) => {
+// #endregion
+const renderTooltipContent = (o: TooltipContentProps) => {
   const { payload, label } = o;
-  const total = payload.reduce((result, entry) => result + entry.value, 0);
+  const total = payload.reduce((result, entry) => result + Number(entry.value), 0);
 
   return (
     <div

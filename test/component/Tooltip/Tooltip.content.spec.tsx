@@ -14,7 +14,7 @@ const commonChartProps = {
 };
 
 describe('Tooltip.content', () => {
-  const spy: Mock<(props: TooltipContentProps<number, string>) => ReactNode> = vi.fn();
+  const spy: Mock<(props: TooltipContentProps) => ReactNode> = vi.fn();
 
   beforeEach(() => {
     mockGetBoundingClientRect({ width: 100, height: 100 });

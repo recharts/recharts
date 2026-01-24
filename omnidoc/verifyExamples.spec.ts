@@ -155,6 +155,8 @@ describe('Documentation Examples Coverage', () => {
     'YAxisPadding',
     'CartesianTickItem',
     'TextAnchor',
+    'TooltipItemSorter',
+    'TooltipPayload',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

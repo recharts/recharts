@@ -6,6 +6,7 @@ import {
   NameType,
   Payload,
   Props as DefaultTooltipContentProps,
+  TooltipItemSorter,
   ValueType,
 } from './DefaultTooltipContent';
 import { TooltipBoundingBox } from './TooltipBoundingBox';
@@ -31,7 +32,7 @@ import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynch
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
-export type ContentType<TValue extends ValueType, TName extends NameType> =
+export type ContentType<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
   | ReactElement
   | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
@@ -39,9 +40,12 @@ function defaultUniqBy(entry: Payload<ValueType, NameType>) {
   return entry.dataKey;
 }
 
-export type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
+export type TooltipContentProps<TValue extends ValueType = ValueType, TName extends NameType = NameType> = TooltipProps<
+  TValue,
+  TName
+> & {
   label?: string | number;
-  payload: ReadonlyArray<any>;
+  payload: TooltipPayload;
   coordinate: Coordinate | undefined;
   active: boolean;
   accessibilityLayer: boolean;
@@ -50,7 +54,7 @@ export type TooltipContentProps<TValue extends ValueType, TName extends NameType
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName> | undefined,
-  props: TooltipContentProps<TValue, TName>,
+  props: TooltipContentProps,
 ): ReactNode {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
@@ -64,7 +68,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 
 type PropertiesReadFromContext = 'viewBox' | 'active' | 'payload' | 'coordinate' | 'label' | 'accessibilityLayer';
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omit<
+export type TooltipProps<TValue extends ValueType = ValueType, TName extends NameType = NameType> = Omit<
   DefaultTooltipContentProps<TValue, TName>,
   PropertiesReadFromContext
 > & {
@@ -138,9 +142,9 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   formatter?: (
     value: TValue,
     name: TName,
-    item: Payload<TValue, TName>,
+    item: TooltipPayloadEntry,
     index: number,
-    payload: Payload<TValue, TName>[],
+    payload: TooltipPayload,
   ) => ReactNode | [ReactNode, ReactNode];
   /**
    * If true, the tooltip will display information about hidden series.
@@ -161,7 +165,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * Defaults to 'name' which means it sorts alphabetically by graphical item `name` property.
    * @defaultValue name
    */
-  itemSorter?: 'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
+  itemSorter?: TooltipItemSorter;
   /**
    * The style of default tooltip content item which is a li element.
    * @defaultValue {}
@@ -170,7 +174,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   /**
    * The formatter function of label in tooltip.
    */
-  labelFormatter?: (label: any, payload: Payload<TValue, TName>[]) => ReactNode;
+  labelFormatter?: (label: any, payload: TooltipPayload) => ReactNode;
   /**
    * The style of default tooltip label which is a p element.
    * @defaultValue {}
@@ -275,7 +279,7 @@ export const defaultTooltipProps = {
  * @consumes PolarChartContext
  * @consumes TooltipEntrySettings
  */
-export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
+export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);
   const {
     active: activeFromProps,
@@ -365,6 +369,16 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
   }
   const hasPayload = finalPayload.length > 0;
 
+  const tooltipContentProps: TooltipContentProps = {
+    ...props,
+    payload: finalPayload,
+    label: finalLabel,
+    active: finalIsActive,
+    activeIndex,
+    coordinate,
+    accessibilityLayer,
+  };
+
   const tooltipElement = (
     <TooltipBoundingBox
       allowEscapeViewBox={allowEscapeViewBox}
@@ -384,15 +398,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
       innerRef={updateBoundingBox}
       hasPortalFromProps={Boolean(portalFromProps)}
     >
-      {renderContent(content, {
-        ...props,
-        payload: finalPayload,
-        label: finalLabel,
-        active: finalIsActive,
-        activeIndex,
-        coordinate,
-        accessibilityLayer,
-      })}
+      {renderContent(content, tooltipContentProps)}
     </TooltipBoundingBox>
   );
 
