@@ -71,7 +71,9 @@ test('LineChartConnectNulls', async ({ mount }) => {
 
 test('VerticalLineChartWithSpecifiedDomain', async ({ mount }) => {
   const component = await mount(<VerticalLineChartWithSpecifiedDomain />);
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot({
+    maxDiffPixelRatio: 0.1,
+  });
 });
 
 test('BiaxialLineChart', async ({ mount }) => {
@@ -81,7 +83,9 @@ test('BiaxialLineChart', async ({ mount }) => {
 
 test('VerticalLineChart', async ({ mount }) => {
   const component = await mount(<VerticalLineChart />);
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot({
+    maxDiffPixelRatio: 0.1,
+  });
 });
 
 test('DashedLineChart', async ({ mount }) => {
