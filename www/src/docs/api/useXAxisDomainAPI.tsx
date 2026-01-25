@@ -37,6 +37,7 @@ export const useXAxisDomainAPI: ApiDoc = {
           If the chart has a Brush, the domain will be filtered to the brushed indexes if the hook is used outside a
           Brush context, and the full domain will be returned if the hook is used inside a Brush context.
         </p>
+        <p>Available since Recharts 3.2</p>
       </section>
     ),
   },

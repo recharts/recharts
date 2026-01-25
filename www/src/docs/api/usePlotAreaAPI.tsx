@@ -24,6 +24,7 @@ export const usePlotAreaAPI: ApiDoc = {
           <code>&lt;BarChart&gt;</code>, etc.). This hook returns <code>undefined</code> if used outside a chart
           context.
         </p>
+        <p>Available since Recharts 3.1</p>
       </section>
     ),
   },
