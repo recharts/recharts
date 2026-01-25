@@ -31,6 +31,7 @@ export const useYAxis = (yAxisId: AxisId): BaseAxisWithScale | undefined => {
  * Returns undefined if there is no active user interaction or if used outside a chart context
  *
  * @returns ActiveLabel
+ * @since 3.0
  */
 export const useActiveTooltipLabel = (): ActiveLabel => {
   return useAppSelector(selectActiveLabel);
@@ -60,6 +61,7 @@ export const useActiveTooltipLabel = (): ActiveLabel => {
  * This hook returns `undefined` if used outside a chart context.
  *
  * @returns Offset of the chart in pixels, or undefined if used outside a chart context.
+ * @since 3.1
  */
 export const useOffset = (): ChartOffset | undefined => {
   return useAppSelector(selectChartOffset);
@@ -81,6 +83,7 @@ export const useOffset = (): ChartOffset | undefined => {
  * This hook returns `undefined` if used outside a chart context.
  *
  * @returns Plot area of the chart in pixels, or undefined if used outside a chart context.
+ * @since 3.1
  */
 export const usePlotArea = (): PlotArea | undefined => {
   return useAppSelector(selectPlotArea);
@@ -120,6 +123,7 @@ export const useActiveTooltipDataPoints = <T = unknown>(): ReadonlyArray<T> | un
  *
  * @param xAxisId The `xAxisId` of the X-axis. Defaults to `0` if not provided.
  * @returns The domain of the X-axis, or `undefined` if it cannot be calculated or if used outside a chart context.
+ * @since 3.2
  */
 export const useXAxisDomain = (xAxisId: AxisId = defaultAxisId): NumberDomain | CategoricalDomain | undefined => {
   const isPanorama = useIsPanorama();
@@ -139,6 +143,7 @@ export const useXAxisDomain = (xAxisId: AxisId = defaultAxisId): NumberDomain | 
  *
  * @param yAxisId The `yAxisId` of the Y-axis. Defaults to `0` if not provided.
  * @returns The domain of the Y-axis, or `undefined` if it cannot be calculated or if used outside a chart context.
+ * @since 3.2
  */
 export const useYAxisDomain = (yAxisId: AxisId = defaultAxisId): NumberDomain | CategoricalDomain | undefined => {
   const isPanorama = useIsPanorama();

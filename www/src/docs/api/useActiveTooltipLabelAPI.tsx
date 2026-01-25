@@ -11,6 +11,7 @@ export const useActiveTooltipLabelAPI: ApiDoc = {
           in the tooltip content.
         </p>
         <p>Returns undefined if there is no active user interaction or if used outside a chart context</p>
+        <p>Available since Recharts 3.0</p>
       </section>
     ),
   },

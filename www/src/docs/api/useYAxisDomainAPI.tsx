@@ -34,6 +34,7 @@ export const useYAxisDomainAPI: ApiDoc = {
           The values of the domain are calculated based on the data and the <code>dataKey</code> of the axis.
         </p>
         <p>Does not interact with Brushes, as Y-axes do not support brushing.</p>
+        <p>Available since Recharts 3.2</p>
       </section>
     ),
   },
