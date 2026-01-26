@@ -1342,7 +1342,7 @@ export interface ChartPointer {
   chartY: number;
 }
 
-export interface DataProvider {
+export interface DataProvider<DataPointType> {
   /**
    * The source data. Each element should be an object.
    * The properties of each object represent the values of different data dimensions.
@@ -1352,13 +1352,13 @@ export interface DataProvider {
    * @example data={[{ name: 'a', value: 12 }]}
    * @example data={[{ label: 'foo', measurements: [5, 12] }]}
    */
-  data?: ChartData;
+  data?: ChartData<DataPointType>;
 }
 
 /**
  * Props shared with all charts.
  */
-interface BaseChartProps extends DataProvider, ExternalMouseEvents {
+interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, ExternalMouseEvents {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -1423,7 +1423,7 @@ interface BaseChartProps extends DataProvider, ExternalMouseEvents {
   responsive?: boolean;
 }
 
-export interface CartesianChartProps extends BaseChartProps {
+export interface CartesianChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType> {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
@@ -1490,7 +1490,7 @@ export interface CartesianChartProps extends BaseChartProps {
   title?: string;
 }
 
-export interface PolarChartProps extends BaseChartProps {
+export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType> {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *

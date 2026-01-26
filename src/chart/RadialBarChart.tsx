@@ -12,23 +12,25 @@ export const defaultRadialBarChartProps = {
   layout: 'radial',
   startAngle: 0,
   endAngle: 360,
-} as const satisfies Partial<PolarChartProps>;
+} as const satisfies Partial<PolarChartProps<never>>;
 
 /**
  * @consumes ResponsiveContainerContext
  * @provides PolarViewBoxContext
  * @provides PolarChartContext
  */
-export const RadialBarChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
-  const propsWithDefaults = resolveDefaultProps(props, defaultRadialBarChartProps);
-  return (
-    <PolarChart
-      chartName="RadialBarChart"
-      defaultTooltipEventType="axis"
-      validateTooltipEventTypes={allowedTooltipTypes}
-      tooltipPayloadSearcher={arrayTooltipSearcher}
-      categoricalChartProps={propsWithDefaults}
-      ref={ref}
-    />
-  );
-});
+export const RadialBarChart = forwardRef<SVGSVGElement, PolarChartProps<unknown>>(
+  (props: PolarChartProps<unknown>, ref) => {
+    const propsWithDefaults = resolveDefaultProps(props, defaultRadialBarChartProps);
+    return (
+      <PolarChart
+        chartName="RadialBarChart"
+        defaultTooltipEventType="axis"
+        validateTooltipEventTypes={allowedTooltipTypes}
+        tooltipPayloadSearcher={arrayTooltipSearcher}
+        categoricalChartProps={propsWithDefaults}
+        ref={ref}
+      />
+    );
+  },
+) as <DataPointType>(props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> }) => React.ReactElement;

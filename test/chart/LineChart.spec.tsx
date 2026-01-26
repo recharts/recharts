@@ -1802,20 +1802,27 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 });
 
 describe('<LineChart /> with dataKey as a function', () => {
-  const data1 = [
+  type MockDataPointType = {
+    x?: { value: number };
+    y?: { value: number };
+    name: string;
+  };
+  const data1: ReadonlyArray<MockDataPointType> = [
     { x: { value: 1 }, name: 'x1' },
     { x: { value: 2 }, name: 'x2' },
     { x: { value: 3 }, name: 'x3' },
   ];
-  const data2 = [
+  const data2: ReadonlyArray<MockDataPointType> = [
     { y: { value: 3 }, name: 'y1' },
     { y: { value: 2 }, name: 'y2' },
     { y: { value: 1 }, name: 'y3' },
   ];
-  const dataKey1 = (d: any) => {
+  const dataKey1 = (d: MockDataPointType) => {
+    assertNotNull(d.x);
     return d.x.value;
   };
-  const dataKey2 = (d: any) => {
+  const dataKey2 = (d: MockDataPointType) => {
+    assertNotNull(d.y);
     return d.y.value;
   };
 

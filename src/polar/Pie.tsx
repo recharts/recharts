@@ -188,7 +188,7 @@ export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps extends DataProvider, PieDef, ZIndexable {
+interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
   id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
@@ -220,7 +220,7 @@ interface InternalPieProps extends DataProvider, PieDef, ZIndexable {
   rootTabIndex?: number;
 }
 
-interface PieProps extends DataProvider, PieDef, ZIndexable {
+interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
