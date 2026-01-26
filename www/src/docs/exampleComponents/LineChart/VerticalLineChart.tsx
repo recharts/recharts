@@ -48,7 +48,7 @@ const data = [
 ];
 
 // #endregion
-export default function Example() {
+export default function Example(props: { isAnimationActive?: boolean }) {
   return (
     <LineChart
       layout="vertical"
@@ -79,6 +79,7 @@ export default function Example() {
         activeDot={{
           stroke: 'var(--color-surface-base)',
         }}
+        isAnimationActive={props.isAnimationActive}
       />
       <Line
         dataKey="uv"
@@ -89,6 +90,7 @@ export default function Example() {
         activeDot={{
           stroke: 'var(--color-surface-base)',
         }}
+        isAnimationActive={props.isAnimationActive}
       />
       <RechartsDevtools />
     </LineChart>
