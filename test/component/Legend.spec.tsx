@@ -7,7 +7,7 @@ import {
   Bar,
   BarChart,
   ComposedChart,
-  Customized,
+  DefaultZIndexes,
   Legend,
   LegendProps,
   LegendType,
@@ -36,7 +36,6 @@ import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -980,7 +979,7 @@ describe('<Legend />', () => {
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar isAnimationActive={false} dataKey="percent" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -1042,7 +1041,7 @@ describe('<Legend />', () => {
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
           <Bar isAnimationActive={false} dataKey="percent" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
 
@@ -1861,7 +1860,6 @@ describe('<Legend />', () => {
             color: '#3182bd',
             value: '%',
             payload: {
-              // @ts-expect-error extra properties not expected in the type
               dataKey: 'percent',
               name: '%',
               activeDot: true,
@@ -3088,7 +3086,7 @@ describe('<Legend />', () => {
       const { rerender } = rechartsTestRender(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
 
@@ -3101,7 +3099,7 @@ describe('<Legend />', () => {
 
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
 

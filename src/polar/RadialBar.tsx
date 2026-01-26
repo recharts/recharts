@@ -137,7 +137,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   return (
     <RadialBarLabelListProvider showLabels={showLabels} sectors={sectors}>
       {sectors.map((entry: RadialBarDataItem, i: number) => {
-        const isActive = activeShape && activeIndex === String(i);
+        const isActive: boolean = Boolean(activeShape && activeIndex === String(i));
         // @ts-expect-error the types need a bit of attention
         const onMouseEnter = onMouseEnterFromContext(entry, i);
         // @ts-expect-error the types need a bit of attention
@@ -158,6 +158,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           cornerIsExternal: others.cornerIsExternal,
           isActive,
           option: isActive ? activeShape : shape,
+          index: i,
         };
 
         if (isActive) {
@@ -255,13 +256,11 @@ function SectorsWithAnimation({
         }
 
         return (
-          <Layer>
-            <RadialBarSectors
-              sectors={stepData ?? STABLE_EMPTY_ARRAY}
-              allOtherRadialBarProps={props}
-              showLabels={!isAnimating}
-            />
-          </Layer>
+          <RadialBarSectors
+            sectors={stepData ?? STABLE_EMPTY_ARRAY}
+            allOtherRadialBarProps={props}
+            showLabels={!isAnimating}
+          />
         );
       }}
     </JavascriptAnimate>
@@ -275,7 +274,7 @@ function RenderSectors(props: InternalProps) {
 }
 
 interface InternalRadialBarProps extends ZIndexable {
-  activeShape?: ActiveShape<SectorProps, SVGPathElement>;
+  activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
    */
@@ -403,7 +402,7 @@ interface InternalRadialBarProps extends ZIndexable {
    * @defaultValue 0
    */
   radiusAxisId?: AxisId;
-  shape?: ActiveShape<SectorProps, SVGPathElement>;
+  shape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   stackId?: string | number;
   tooltipType?: TooltipType;
   /**
@@ -522,20 +521,33 @@ class RadialBarWithState extends PureComponent<InternalProps> {
 }
 
 function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
-  const cells = findAllByType(props.children, Cell);
-  const radialBarSettings: RadialBarSettings = {
-    data: undefined,
-    hide: false,
-    id: props.id,
-    dataKey: props.dataKey,
-    minPointSize: props.minPointSize,
-    stackId: getNormalizedStackId(props.stackId),
-    maxBarSize: props.maxBarSize,
-    barSize: props.barSize,
-    type: 'radialBar',
-    angleAxisId: props.angleAxisId,
-    radiusAxisId: props.radiusAxisId,
-  };
+  const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
+
+  const radialBarSettings: RadialBarSettings = React.useMemo(
+    () => ({
+      data: undefined,
+      hide: false,
+      id: props.id,
+      dataKey: props.dataKey,
+      minPointSize: props.minPointSize,
+      stackId: getNormalizedStackId(props.stackId),
+      maxBarSize: props.maxBarSize,
+      barSize: props.barSize,
+      type: 'radialBar',
+      angleAxisId: props.angleAxisId,
+      radiusAxisId: props.radiusAxisId,
+    }),
+    [
+      props.id,
+      props.dataKey,
+      props.minPointSize,
+      props.stackId,
+      props.maxBarSize,
+      props.barSize,
+      props.angleAxisId,
+      props.radiusAxisId,
+    ],
+  );
   const sectors: ReadonlyArray<RadialBarDataItem> =
     useAppSelector(state =>
       selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),

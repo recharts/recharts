@@ -28,10 +28,11 @@ export interface LegendPayload {
   value: string | undefined;
   type?: LegendType;
   color?: string;
-  payload?: {
-    strokeDasharray?: number | string;
-    value?: any;
-  };
+  /**
+   * Different graphical items put different information in the payload object
+   * so double check in runtime what are you getting here.
+   */
+  payload?: object;
   formatter?: Formatter;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
@@ -126,6 +127,13 @@ type InternalProps = RequiresDefaultProps<Props, typeof defaultLegendContentDefa
   payload: ReadonlyArray<LegendPayload>;
 };
 
+function getStrokeDasharray(input: unknown): string | undefined {
+  if (typeof input === 'object' && input !== null && 'strokeDasharray' in input) {
+    return String(input.strokeDasharray);
+  }
+  return undefined;
+}
+
 function Icon({
   data,
   iconType,
@@ -150,7 +158,7 @@ function Icon({
         strokeWidth={4}
         fill="none"
         stroke={color}
-        strokeDasharray={data.payload?.strokeDasharray}
+        strokeDasharray={getStrokeDasharray(data.payload)}
         x1={0}
         y1={halfSize}
         x2={SIZE}

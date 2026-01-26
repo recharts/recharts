@@ -261,7 +261,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group A',
             value: 0,
           },
@@ -271,7 +270,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group B',
             value: 0,
           },
@@ -281,7 +279,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group C',
             value: 0,
           },
@@ -291,7 +288,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group D',
             value: 0,
           },
@@ -301,7 +297,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group E',
             value: 0,
           },
@@ -311,7 +306,6 @@ describe('<PieChart />', () => {
         {
           color: '#808080',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group F',
             value: 0,
           },
@@ -383,7 +377,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group A',
             v: 89,
             value: 400,
@@ -394,7 +387,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group B',
             v: 100,
             value: 300,
@@ -405,7 +397,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group C',
             v: 200,
             value: 200,
@@ -416,7 +407,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group D',
             v: 20,
             value: 200,
@@ -427,7 +417,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group E',
             v: 40,
             value: 278,
@@ -438,7 +427,6 @@ describe('<PieChart />', () => {
         {
           color: '#ff7300',
           payload: {
-            // @ts-expect-error extra properties not expected in the type
             name: 'Group F',
             v: 60,
             value: 189,

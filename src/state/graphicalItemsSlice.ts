@@ -138,6 +138,16 @@ const graphicalItemsSlice = createSlice({
       },
       prepare: prepareAutoBatched<PolarGraphicalItemSettings>(),
     },
+    replacePolarGraphicalItem: {
+      reducer(state, action: PayloadAction<ReplacePayload<PolarGraphicalItemSettings>>) {
+        const { prev, next } = action.payload;
+        const index = current(state).polarItems.indexOf(castDraft(prev));
+        if (index > -1) {
+          state.polarItems[index] = castDraft(next);
+        }
+      },
+      prepare: prepareAutoBatched<ReplacePayload<PolarGraphicalItemSettings>>(),
+    },
   },
 });
 
@@ -147,6 +157,7 @@ export const {
   removeCartesianGraphicalItem,
   addPolarGraphicalItem,
   removePolarGraphicalItem,
+  replacePolarGraphicalItem,
 } = graphicalItemsSlice.actions;
 
 export const graphicalItemsReducer = graphicalItemsSlice.reducer;
