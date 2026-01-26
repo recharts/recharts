@@ -19,7 +19,14 @@ export type BarRectangleProps = {
 } & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 export function BarRectangle(props: BarRectangleProps) {
-  return <Shape shapeType="rectangle" activeClassName="recharts-active-bar" {...props} />;
+  return (
+    <Shape
+      shapeType="rectangle"
+      activeClassName="recharts-active-bar"
+      inActiveClassName="recharts-inactive-bar"
+      {...props}
+    />
+  );
 }
 
 export type MinPointSize = number | ((value: number | undefined | null, index: number) => number);

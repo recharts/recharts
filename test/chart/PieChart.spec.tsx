@@ -566,18 +566,19 @@ describe('<PieChart />', () => {
       // need to hover first to make the sector active because active shapes have an extra layer that events
       // don't seem to bubble through in tests
       await user.hover(sector);
+      expect(onMouseLeave).toHaveBeenCalledTimes(0);
       await user.hover(container.querySelector('.recharts-layer .recharts-active-shape')!);
       act(() => {
         vi.runOnlyPendingTimers();
       });
 
-      expect(onMouseLeave).toHaveBeenCalledTimes(0);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
       await user.unhover(sector);
       act(() => {
         vi.runOnlyPendingTimers();
       });
 
-      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onMouseLeave).toHaveBeenCalledTimes(2);
       expect(onMouseLeave).toHaveBeenLastCalledWith(
         {
           activeCoordinate: { x: 165.08751071020006, y: 207.64446567223055 },

@@ -28,6 +28,7 @@ export const usePlotAreaAPI: ApiDoc = {
       </section>
     ),
   },
+  links: [{ name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false }],
   returnValue: 'PlotArea | undefined',
   returnDesc: {
     'en-US': (

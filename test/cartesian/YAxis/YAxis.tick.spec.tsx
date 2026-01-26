@@ -203,7 +203,7 @@ describe('YAxis tick', () => {
       );
 
       expect(myCustomTick).toHaveBeenCalledTimes(5);
-      expectNthCalledWith<YAxisTickContentProps>(myCustomTick, 1, {
+      expectNthCalledWith(myCustomTick, 1, {
         angle: 0,
         className: 'recharts-yAxis yAxis recharts-cartesian-axis-tick-value',
         fill: '#666',

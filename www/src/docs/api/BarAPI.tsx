@@ -36,8 +36,10 @@ export const BarAPI: ApiDoc = {
       format: ["<Bar activeBar={{ fill: 'red' }} />", '<Bar activeBar={CustomActiveBarFn} />'],
       examples: [
         { name: 'activeBar example', url: '/examples/SimpleBarChart/', isExternal: false },
+        { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
         { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
       ],
     },
     {
@@ -235,6 +237,7 @@ export const BarAPI: ApiDoc = {
       defaultVal: 'auto',
       examples: [
         { name: 'Ranged Stacked Bar Chart', url: '/examples/RangedStackedBarChart/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Custom Content Of Tooltip', url: '/examples/CustomContentOfTooltip/', isExternal: false },
       ],
     },
@@ -272,7 +275,10 @@ export const BarAPI: ApiDoc = {
         "<Bar label={{ position: 'top', fontSize: 20 }} />",
         '<Bar label={CustomizedLabelFn} />',
       ],
-      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
+      ],
     },
     {
       name: 'legendType',
@@ -380,6 +386,7 @@ export const BarAPI: ApiDoc = {
         { name: 'Bar Chart With Customized Event', url: '/examples/BarChartWithCustomizedEvent/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
       ],
     },
     {

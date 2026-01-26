@@ -143,6 +143,7 @@ export const TooltipAPI: ApiDoc = {
       defaultVal: true,
       examples: [
         { name: 'Custom Shape Bar Chart', url: '/examples/CustomShapeBarChart/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
@@ -161,12 +162,12 @@ export const TooltipAPI: ApiDoc = {
         { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
         { name: 'Timeline', url: '/examples/TimelineExample/', isExternal: false },
         { name: 'Candlestick', url: '/examples/Candlestick/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
         { name: 'Target Price Chart with active Label', url: '/examples/TargetPriceChart/', isExternal: false },
         { name: 'Simple Scatter Chart', url: '/examples/SimpleScatterChart/', isExternal: false },
         { name: 'Three Dim Scatter Chart', url: '/examples/ThreeDimScatterChart/', isExternal: false },
         { name: 'Joint Line Scatter Chart', url: '/examples/JointLineScatterChart/', isExternal: false },
         { name: 'Bubble Chart', url: '/examples/BubbleChart/', isExternal: false },
-        { name: 'Scatter Chart With Labels', url: '/examples/ScatterChartWithLabels/', isExternal: false },
       ],
     },
     {
@@ -342,6 +343,7 @@ export const TooltipAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [{ name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false }],
     },
     { name: 'reverseDirection', type: 'AllowInDimension', isOptional: true, defaultVal: { x: false, y: false } },
     {

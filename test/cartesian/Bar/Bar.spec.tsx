@@ -1,19 +1,8 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { act, fireEvent } from '@testing-library/react';
-import { renderWithStrictMode } from '../helper/renderWithStrictMode';
-import {
-  Bar,
-  BarChart,
-  BarProps,
-  Customized,
-  DefaultZIndexes,
-  Legend,
-  LegendType,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from '../../src';
+import { renderWithStrictMode } from '../../helper/renderWithStrictMode';
+import { Bar, BarChart, BarProps, DefaultZIndexes, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../../src';
 import {
   allCartesianChartsExcept,
   AreaChartCase,
@@ -23,27 +12,27 @@ import {
   FunnelChartCase,
   includingCompact,
   LineChartCase,
-} from '../helper/parameterizedTestCases';
-import { useAppSelector } from '../../src/state/hooks';
-import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { expectActiveBars, expectBars, getAllBars } from '../helper/expectBars';
-import { expectLabels } from '../helper/expectLabel';
-import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
+} from '../../helper/parameterizedTestCases';
+import { useAppSelector } from '../../../src/state/hooks';
+import { CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
+import { expectActiveBars, expectBars, getAllBars } from '../../helper/expectBars';
+import { expectLabels } from '../../helper/expectLabel';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import {
   expectTooltipCoordinate,
   expectTooltipPayload,
   showTooltipOnCoordinate,
-} from '../component/Tooltip/tooltipTestHelpers';
-import { selectActiveTooltipIndex, selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
-import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
-import { assertNotNull } from '../helper/assertNotNull';
-import { BarSettings } from '../../src/state/types/BarSettings';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { userEventSetup } from '../helper/userEventSetup';
-import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
-import { noop } from '../../src/util/DataUtils';
+} from '../../component/Tooltip/tooltipTestHelpers';
+import { selectActiveTooltipIndex, selectTooltipAxisTicks } from '../../../src/state/selectors/tooltipSelectors';
+import { barChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { noInteraction, TooltipState } from '../../../src/state/tooltipSlice';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { BarSettings } from '../../../src/state/types/BarSettings';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { userEventSetup } from '../../helper/userEventSetup';
+import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
+import { noop } from '../../../src/util/DataUtils';
 
 type TestCase = CartesianChartTestCase;
 
@@ -1306,7 +1295,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       const { rerender } = renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" xAxisId={7} yAxisId={9} stackId="q" hide minPointSize={3} maxBarSize={90} barSize={13} />
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
       const expected: ReadonlyArray<BarSettings> = [
@@ -1503,6 +1492,11 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       expectActiveBars(container, []);
 
       showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+      act(() => {
+        // Second timer is to show the active bar after it had the first inactive render so that it could start its CSS transition
+        vi.runOnlyPendingTimers();
+      });
 
       expectActiveBars(container, [
         {

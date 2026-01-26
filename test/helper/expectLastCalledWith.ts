@@ -39,9 +39,19 @@ export function expectLastCalledWith<T1, T2, T3, T4>(
  * @param spy vi.fn()
  * @param n the call number (1-based)
  * @param expected1 the expected argument
+ * @param expected2 the second expected argument
  * @throws if the spy was not called with the expected argument
  * @return void
  */
-export function expectNthCalledWith<T1>(spy: Mock<(arg1: T1) => void>, n: number, expected1: T1): void {
+export function expectNthCalledWith<T1, T2>(
+  spy: Mock<(arg1: T1, arg2: T2) => void>,
+  n: number,
+  expected1: T1,
+  expected2?: T2,
+): void {
+  if (expected2 !== undefined) {
+    expect(spy).toHaveBeenNthCalledWith(n, expected1, expected2);
+    return;
+  }
   expect(spy).toHaveBeenNthCalledWith(n, expected1);
 }

@@ -31,6 +31,7 @@ export const BarChartAPI: ApiDoc = {
       examples: [
         { name: 'Bar Alignment Guide', url: '/guide/barAlignment/', isExternal: false },
         { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        { name: 'Animated Bar Width Example', url: '/examples/AnimatedBarWidthExample/', isExternal: false },
       ],
     },
     {

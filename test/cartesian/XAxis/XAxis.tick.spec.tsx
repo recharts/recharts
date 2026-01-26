@@ -193,7 +193,7 @@ describe('XAxis tick', () => {
       );
 
       expect(myCustomTick).toHaveBeenCalledTimes(6);
-      expectNthCalledWith<XAxisTickContentProps>(myCustomTick, 1, {
+      expectNthCalledWith(myCustomTick, 1, {
         angle: 0,
         className: 'recharts-xAxis xAxis recharts-cartesian-axis-tick-value',
         fill: '#666',
