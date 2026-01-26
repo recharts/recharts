@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
 import { getAngledRectangleWidth, normalizeAngle } from '../../../src/util/CartesianUtils';
-import { d3ScaleToRechartsScale } from '../../../src/util/scale/RechartsScale';
+import { rechartsScaleFactory } from '../../../src/util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../../../src/util/scale/CartesianScaleHelper';
 
 describe('ScaleHelper', () => {
   describe.each(['start', 'middle', 'end'] as const)('with linear scales and position %s', position => {
     const scale = new CartesianScaleHelperImpl<number, number>({
-      x: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([10, 110])),
-      y: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([10, 110])),
+      x: rechartsScaleFactory<number>(scaleLinear().domain([0, 10]).range([10, 110])),
+      y: rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([10, 110])),
     });
 
     describe('map', () => {
@@ -94,8 +94,8 @@ describe('ScaleHelper', () => {
 
   describe('with band scales', () => {
     const scale = new CartesianScaleHelperImpl<string, string>({
-      x: d3ScaleToRechartsScale(scaleBand().domain(['A', 'B', 'C', 'D']).range([10, 110])),
-      y: d3ScaleToRechartsScale(scaleBand().domain(['0', '1', '2', '3']).range([10, 200])),
+      x: rechartsScaleFactory(scaleBand().domain(['A', 'B', 'C', 'D']).range([10, 110])),
+      y: rechartsScaleFactory(scaleBand().domain(['0', '1', '2', '3']).range([10, 200])),
     });
 
     describe('map', () => {

@@ -1,8 +1,5 @@
-import * as d3Scales from 'victory-vendor/d3-scale';
 import { CustomScaleDefinition } from './CustomScaleDefinition';
-import { CategoricalDomainItem, D3ScaleType } from '../types';
-import { AxisRange } from '../../state/selectors/axisSelectors';
-import { upperFirst } from '../DataUtils';
+import { CategoricalDomainItem } from '../types';
 
 /**
  * This is internal representation of scale used in Recharts.
@@ -80,24 +77,18 @@ export interface RechartsScale<Domain extends CategoricalDomainItem = Categorica
  */
 export type BandPosition = 'start' | 'middle' | 'end';
 
-function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  realScaleType: D3ScaleType,
-): CustomScaleDefinition<Domain> | undefined {
-  if (realScaleType in d3Scales) {
-    // @ts-expect-error we should do better type verification here
-    return d3Scales[realScaleType]();
-  }
-  const name = `scale${upperFirst(realScaleType)}`;
-  if (name in d3Scales) {
-    // @ts-expect-error we should do better type verification here
-    return d3Scales[name]();
-  }
-  return undefined;
-}
-
-export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
+export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
   d3Scale: CustomScaleDefinition<Domain>,
-): RechartsScale<Domain> {
+): RechartsScale<Domain>;
+export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
+  d3Scale: CustomScaleDefinition<Domain> | undefined,
+): RechartsScale<Domain> | undefined;
+export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
+  d3Scale: CustomScaleDefinition<Domain> | undefined,
+): RechartsScale<Domain> | undefined {
+  if (d3Scale == null) {
+    return undefined;
+  }
   const ticksFn = d3Scale.ticks;
   const bandwidthFn = d3Scale.bandwidth;
   const d3Range: ReadonlyArray<number> = d3Scale.range();
@@ -136,53 +127,4 @@ export function d3ScaleToRechartsScale<Domain extends CategoricalDomainItem = Ca
       return baseValue;
     },
   };
-}
-
-/**
- * Converts external scale definition into internal RechartsScale definition.
- * @param scale custom function scale - if you have the string, use `combineRealScaleType` first
- * @param axisDomain
- * @param axisRange
- */
-export function rechartsScaleFactory(
-  scale:
-    | CustomScaleDefinition
-    | CustomScaleDefinition<string>
-    | CustomScaleDefinition<number>
-    | CustomScaleDefinition<Date>,
-  axisDomain: ReadonlyArray<CategoricalDomainItem>,
-  axisRange: AxisRange,
-): RechartsScale;
-export function rechartsScaleFactory(
-  scale: D3ScaleType,
-  axisDomain: ReadonlyArray<CategoricalDomainItem>,
-  axisRange: AxisRange,
-): RechartsScale;
-export function rechartsScaleFactory(
-  scale: D3ScaleType | undefined,
-  axisDomain: ReadonlyArray<CategoricalDomainItem>,
-  axisRange: AxisRange,
-): RechartsScale | undefined;
-export function rechartsScaleFactory(
-  scale: undefined,
-  axisDomain: ReadonlyArray<CategoricalDomainItem>,
-  axisRange: AxisRange,
-): undefined;
-export function rechartsScaleFactory<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  scale: D3ScaleType | CustomScaleDefinition<Domain> | undefined,
-  axisDomain: ReadonlyArray<Domain>,
-  axisRange: AxisRange,
-): RechartsScale<Domain> | undefined {
-  if (typeof scale === 'function') {
-    return d3ScaleToRechartsScale(scale.copy().domain(axisDomain).range(axisRange));
-  }
-  if (scale == null) {
-    return undefined;
-  }
-  const d3ScaleFunction: CustomScaleDefinition<Domain> | undefined = getD3ScaleFromType(scale);
-  if (d3ScaleFunction == null) {
-    return undefined;
-  }
-  d3ScaleFunction.domain(axisDomain).range(axisRange);
-  return d3ScaleToRechartsScale(d3ScaleFunction);
 }

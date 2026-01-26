@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import range from 'es-toolkit/compat/range';
-import * as d3Scales from 'victory-vendor/d3-scale';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
@@ -44,7 +43,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -87,6 +86,9 @@ import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selec
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
 import { combineCheckedDomain } from './combiners/combineCheckedDomain';
+import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
+import { combineConfiguredScale } from './combiners/combineConfiguredScale';
+import { combineRealScaleType } from './combiners/combineRealScaleType';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1085,64 +1087,11 @@ export const selectAxisDomain: (
   combineAxisDomain,
 );
 
-function isSupportedScaleName(name: string): name is D3ScaleType {
-  return name in d3Scales;
-}
-
-export const combineRealScaleType = (
-  axisConfig: BaseCartesianAxis | undefined,
-  hasBar: boolean,
-  chartType: string,
-): D3ScaleType | undefined => {
-  if (axisConfig == null) {
-    return undefined;
-  }
-  const { scale, type } = axisConfig;
-  if (scale === 'auto') {
-    if (
-      type === 'category' &&
-      chartType &&
-      (chartType.indexOf('LineChart') >= 0 ||
-        chartType.indexOf('AreaChart') >= 0 ||
-        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
-    ) {
-      return 'point';
-    }
-    if (type === 'category') {
-      return 'band';
-    }
-
-    return 'linear';
-  }
-  if (typeof scale === 'string') {
-    const name = `scale${upperFirst(scale)}`;
-
-    return isSupportedScaleName(name) ? name : 'point';
-  }
-  return undefined;
-};
-
 export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
 ) => D3ScaleType | undefined = createSelector([selectBaseAxis, selectHasBar, selectChartName], combineRealScaleType);
-
-export function combineScaleFunction(
-  axis: BaseCartesianAxis,
-  realScaleType: D3ScaleType | undefined,
-  axisDomain: NumberDomain | CategoricalDomain | undefined,
-  axisRange: AxisRange | undefined,
-): RechartsScale | undefined {
-  if (axisDomain == null || axisRange == null) {
-    return undefined;
-  }
-
-  if (typeof axis.scale === 'function') {
-    return rechartsScaleFactory(axis.scale, axisDomain, axisRange);
-  }
-  return rechartsScaleFactory(realScaleType, axisDomain, axisRange);
-}
 
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
@@ -1176,6 +1125,7 @@ export const combineNiceTicks = (
 
   return undefined;
 };
+
 export const selectNiceTicks: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
@@ -1471,15 +1421,22 @@ const selectCheckedAxisDomain: (
   combineCheckedDomain,
 );
 
+const selectConfiguredScale: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => CustomScaleDefinition | undefined = createSelector(
+  [selectBaseAxis, selectRealScaleType, selectCheckedAxisDomain, selectAxisRangeWithReverse],
+  combineConfiguredScale,
+);
+
 export const selectAxisScale: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
-) => RechartsScale | undefined = createSelector(
-  [selectBaseAxis, selectRealScaleType, selectCheckedAxisDomain, selectAxisRangeWithReverse],
-  combineScaleFunction,
-);
+) => RechartsScale | undefined = createSelector([selectConfiguredScale], rechartsScaleFactory);
 
 export const selectErrorBarsSettings: (
   state: RechartsRootState,
@@ -2074,15 +2031,22 @@ export const selectAxisWithScale: (
   },
 );
 
+const selectZAxisConfiguredScale: (
+  state: RechartsRootState,
+  axisType: 'zAxis',
+  axisId: AxisId,
+  isPanorama: false,
+) => CustomScaleDefinition | undefined = createSelector(
+  [selectBaseAxis, selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse],
+  combineConfiguredScale,
+);
+
 const selectZAxisScale: (
   state: RechartsRootState,
   axisType: 'zAxis',
   axisId: AxisId,
   isPanorama: false,
-) => RechartsScale | undefined = createSelector(
-  [selectBaseAxis, selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse],
-  combineScaleFunction,
-);
+) => RechartsScale | undefined = createSelector([selectZAxisConfiguredScale], rechartsScaleFactory);
 
 export type ZAxisWithScale = Omit<ZAxisSettings, 'scale'> & { scale: RechartsScale };
 

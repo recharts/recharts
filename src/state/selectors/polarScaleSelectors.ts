@@ -5,7 +5,6 @@ import {
   combineAxisTicks,
   combineCategoricalDomain,
   combineGraphicalItemTicks,
-  combineScaleFunction,
   selectRenderableAxisSettings,
   selectDuplicateDomain,
   selectRealScaleType,
@@ -20,7 +19,9 @@ import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectPolarAppliedValues, selectPolarAxisCheckedDomain, selectPolarNiceTicks } from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
-import { RechartsScale } from '../../util/scale/RechartsScale';
+import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
+import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
+import { combineConfiguredScale } from './combiners/combineConfiguredScale';
 
 export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {
@@ -54,14 +55,20 @@ const selectPolarAxisRangeWithReversed = (
   }
 };
 
+const selectPolarConfiguredScale: (
+  state: RechartsRootState,
+  axisType: 'angleAxis' | 'radiusAxis',
+  polarAxisId: AxisId,
+) => CustomScaleDefinition | undefined = createSelector(
+  [selectPolarAxis, selectRealScaleType, selectPolarAxisCheckedDomain, selectPolarAxisRangeWithReversed],
+  combineConfiguredScale,
+);
+
 export const selectPolarAxisScale: (
   state: RechartsRootState,
   axisType: 'angleAxis' | 'radiusAxis',
   polarAxisId: AxisId,
-) => RechartsScale | undefined = createSelector(
-  [selectPolarAxis, selectRealScaleType, selectPolarAxisCheckedDomain, selectPolarAxisRangeWithReversed],
-  combineScaleFunction,
-);
+) => RechartsScale | undefined = createSelector([selectPolarConfiguredScale], rechartsScaleFactory);
 
 export const selectPolarCategoricalDomain: (
   state: RechartsRootState,

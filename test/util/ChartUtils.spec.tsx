@@ -14,11 +14,11 @@ import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
 import { calculateActiveTickIndex } from '../../src/util/getActiveCoordinate';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 import { CustomScaleDefinition } from '../../src';
-import { d3ScaleToRechartsScale } from '../../src/util/scale/RechartsScale';
+import { rechartsScaleFactory } from '../../src/util/scale/RechartsScale';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
-    scale: d3ScaleToRechartsScale<number>(scaleLinear()),
+    scale: rechartsScaleFactory<number>(scaleLinear()),
     tickCount: 5,
     type: 'number' as const,
     axisType: 'yAxis' as const,
@@ -37,7 +37,7 @@ describe('getTicksForAxis', () => {
       .domain(['13', '14', '15', '16', '17'])
       .range([5, 866]);
     const XAxisWithActiveBrush: AxisPropsNeededForTicksGenerator = {
-      scale: d3ScaleToRechartsScale(stringScalePoint),
+      scale: rechartsScaleFactory(stringScalePoint),
       ticks: ['12', '13', '14', '15', '16', '17', '18', '19'] as const,
       tickCount: 5,
       type: 'category' as const,
@@ -93,7 +93,7 @@ describe('getTicksForAxis', () => {
   it('Tick coordinates depend on scale', () => {
     const axis: AxisPropsNeededForTicksGenerator = {
       ...Y_AXIS_EXAMPLE,
-      scale: d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 1600]).range([0, 1000])),
+      scale: rechartsScaleFactory<number>(scaleLinear().domain([0, 1600]).range([0, 1000])),
     };
 
     expect(getTicksOfAxis(axis, true, undefined)).toEqual([
@@ -123,7 +123,7 @@ describe('getBandSizeOfAxis', () => {
       reversed: false,
       unit: undefined,
       type: 'category',
-      scale: d3ScaleToRechartsScale<string>(scaleBand().domain(['0', '1', '2', '3']).range([0, 100])),
+      scale: rechartsScaleFactory<string>(scaleBand().domain(['0', '1', '2', '3']).range([0, 100])),
     };
     expect(getBandSizeOfAxis(axis)).toBe(25);
   });
@@ -140,7 +140,7 @@ describe('getBandSizeOfAxis', () => {
       reversed: false,
       unit: undefined,
       type: 'number',
-      scale: d3ScaleToRechartsScale<number>(scaleLinear()),
+      scale: rechartsScaleFactory<number>(scaleLinear()),
     };
     const ticks: ReadonlyArray<TickItem> = [
       { coordinate: 13, index: 0, value: 'a' },
