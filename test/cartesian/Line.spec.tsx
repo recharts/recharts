@@ -410,7 +410,7 @@ describe('<Line />', () => {
       const handleTouchEnd = vi.fn();
 
       const { container } = render(
-        <LineChart width={500} height={500} data={data}>
+        <LineChart width={500} height={500} data={data} throttledEvents={[]}>
           <Line isAnimationActive={false} dataKey="y" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
         </LineChart>,
       );

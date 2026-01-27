@@ -328,7 +328,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const handleTouchEnd: Mock<(curveProps: CurveProps, e: React.TouchEvent<SVGPathElement>) => void> = vi.fn();
 
       const { container } = render(
-        <ChartElement data={data}>
+        <ChartElement data={data} throttledEvents={[]}>
           <Area dataKey="value" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
         </ChartElement>,
       );

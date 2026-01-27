@@ -22,6 +22,7 @@ const propsToShallowCompare = new Set<string>([
   'wrapperStyle',
   // radius can be an array of 4 numbers, easy to compare shallowly
   'radius',
+  'throttledEvents',
 ]);
 
 /**

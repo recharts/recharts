@@ -42,25 +42,38 @@ export const mouseMoveMiddleware = createListenerMiddleware<RechartsRootState>()
  * (click, mouseenter, mouseleave, etc.) that should NOT cancel each other.
  */
 let rafId: number | null = null;
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
 
-    // Cancel any pending animation frame
+    // Cancel any pending execution
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
+      rafId = null;
     }
-    const chartPointer = getChartPointer(mousePointer);
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
 
-    // Schedule the dispatch for the next animation frame
-    rafId = requestAnimationFrame(() => {
-      const state = listenerApi.getState();
-      const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+    const state = listenerApi.getState();
+    const { throttleDelay, throttledEvents } = state.eventSettings;
+    const isThrottled = throttledEvents === 'all' || throttledEvents?.includes('mousemove');
+
+    const chartPointer = getChartPointer(mousePointer);
+    const callback = () => {
+      /*
+       * Here we read a fresh state inside the callback to ensure we have the latest state values
+       * after any potential actions that may have been dispatched between the original event and this callback.
+       */
+      const currentState = listenerApi.getState();
+      const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
       // this functionality only applies to charts that have axes
       if (tooltipEventType === 'axis') {
-        const activeProps = selectActivePropsFromChartPointer(state, chartPointer);
+        const activeProps = selectActivePropsFromChartPointer(currentState, chartPointer);
         if (activeProps?.activeIndex != null) {
           listenerApi.dispatch(
             setMouseOverAxisIndex({
@@ -74,8 +87,19 @@ mouseMoveMiddleware.startListening({
           listenerApi.dispatch(mouseLeaveChart());
         }
       }
-
       rafId = null;
-    });
+      timeoutId = null;
+    };
+
+    if (!isThrottled) {
+      callback();
+      return;
+    }
+
+    if (throttleDelay === 'raf') {
+      rafId = requestAnimationFrame(callback);
+    } else if (typeof throttleDelay === 'number') {
+      timeoutId = setTimeout(callback, throttleDelay);
+    }
   },
 });

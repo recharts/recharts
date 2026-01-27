@@ -301,6 +301,34 @@ export const SunburstChartArgs: StorybookArgs = {
       pointerEvents: 'none',
     },
   },
+  throttleDelay: {
+    description:
+      "Decides the time interval to throttle events.\nOnly events defined in `throttledEvents` prop are throttled.\nAll other events are executed immediately/synchronously.\n\nOptions:\n- `number`: the time interval in milliseconds\n- `'raf'`: use requestAnimationFrame to schedule updates.",
+    table: {
+      type: {
+        summary: '"raf" | number',
+      },
+      category: 'General',
+      defaultValue: {
+        summary: 'raf',
+      },
+    },
+    defaultValue: 'raf',
+  },
+  throttledEvents: {
+    description:
+      "Defines which events should be throttled.\nEvents not in this list will not be throttled.\n\nUse the special value `'all'` to throttle all events. Empty array means no events are throttled.\n\nUse the prop `throttleDelay` to define the throttling interval.\n\nIf an event is on this list, then you lose the opportunity to access the event synchronously.\nWhich means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,\nthen that event handler must not be in this list.",
+    table: {
+      type: {
+        summary: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+      },
+      category: 'General',
+      defaultValue: {
+        summary: '["mousemove","touchmove","pointermove","scroll","wheel"]',
+      },
+    },
+    defaultValue: ['mousemove', 'touchmove', 'pointermove', 'scroll', 'wheel'],
+  },
   width: {
     description: 'The width of chart container.\nCan be a number or a percent string like "100%".',
     table: {

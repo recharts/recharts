@@ -62,7 +62,14 @@ export const RadialBarChartAPI: ApiDoc = {
       name: 'children',
       type: 'ReactNode',
       isOptional: true,
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'className', type: 'string', isOptional: true },
     {
@@ -100,7 +107,7 @@ export const RadialBarChartAPI: ApiDoc = {
     },
     {
       name: 'data',
-      type: 'ReadonlyArray<unknown>',
+      type: 'ReadonlyArray<DataPointType>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -116,7 +123,14 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
       format: ["data={[{ name: 'a', value: 12 }]}", "data={[{ label: 'foo', measurements: [5, 12] }]}"],
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'dataKey', type: 'Function | number | string', isOptional: true },
     { name: 'desc', type: 'string', isOptional: true },
@@ -206,6 +220,7 @@ export const RadialBarChartAPI: ApiDoc = {
       },
       defaultVal: '80%',
     },
+    { name: 'ref', type: 'Function | React.RefObject<SVGSVGElement> | null', isOptional: true },
     {
       name: 'responsive',
       type: 'boolean',
@@ -230,6 +245,11 @@ export const RadialBarChartAPI: ApiDoc = {
       examples: [
         { name: 'Chart sizing guide', url: '/guide/sizes/', isExternal: false },
         { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
       ],
     },
     { name: 'reverseStackOrder', type: 'boolean', isOptional: true, defaultVal: false },
@@ -257,7 +277,14 @@ export const RadialBarChartAPI: ApiDoc = {
       name: 'style',
       type: 'React.CSSProperties',
       isOptional: true,
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'syncId',
@@ -304,7 +331,56 @@ export const RadialBarChartAPI: ApiDoc = {
         ),
       },
     },
-    { name: 'throttleDelay', type: 'number', isOptional: true },
+    {
+      name: 'throttleDelay',
+      type: '"raf" | number',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>
+              Decides the time interval to throttle events. Only events defined in <code>throttledEvents</code> prop are
+              throttled. All other events are executed immediately/synchronously.
+            </p>
+            <p>Options:</p>
+            <ul>
+              <li>
+                <code>number</code>: the time interval in milliseconds
+              </li>
+              <li>
+                <code>&#39;raf&#39;</code>: use requestAnimationFrame to schedule updates.
+              </li>
+            </ul>
+          </section>
+        ),
+      },
+      defaultVal: 'raf',
+    },
+    {
+      name: 'throttledEvents',
+      type: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+      isOptional: true,
+      desc: {
+        'en-US': (
+          <section>
+            <p>Defines which events should be throttled. Events not in this list will not be throttled.</p>
+            <p>
+              Use the special value <code>&#39;all&#39;</code> to throttle all events. Empty array means no events are
+              throttled.
+            </p>
+            <p>
+              Use the prop <code>throttleDelay</code> to define the throttling interval.
+            </p>
+            <p>
+              If an event is on this list, then you lose the opportunity to access the event synchronously. Which means
+              that if you want to call <code>e.preventDefault()</code> or <code>e.stopPropagation()</code> inside the
+              event handler, then that event handler must not be in this list.
+            </p>
+          </section>
+        ),
+      },
+      defaultVal: ['mousemove', 'touchmove', 'pointermove', 'scroll', 'wheel'],
+    },
     { name: 'title', type: 'string', isOptional: true },
     {
       name: 'width',
@@ -452,7 +528,14 @@ export const RadialBarChartAPI: ApiDoc = {
       },
     },
   ],
-  links: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+  links: [
+    { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+    {
+      name: 'Radial Bar Chart with Click to Focus Legend',
+      url: '/examples/RadialBarChartClickToFocusLegendExample/',
+      isExternal: false,
+    },
+  ],
   parentComponents: ['ResponsiveContainer'],
   childrenComponents: [
     'Label',

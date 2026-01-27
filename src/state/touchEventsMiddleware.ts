@@ -14,6 +14,9 @@ export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('
 
 export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
 
+let rafId: number | null = null;
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
 touchEventMiddleware.startListening({
   actionCreator: touchEventAction,
   effect: (
@@ -24,56 +27,85 @@ touchEventMiddleware.startListening({
     if (touchEvent.touches == null || touchEvent.touches.length === 0) {
       return;
     }
+
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+
     const state = listenerApi.getState();
-    const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
-    if (tooltipEventType === 'axis') {
-      const touch = touchEvent.touches[0];
-      if (touch == null) {
-        return;
-      }
-      const activeProps = selectActivePropsFromChartPointer(
-        state,
-        getChartPointer({
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-          currentTarget: touchEvent.currentTarget,
-        }),
-      );
-      if (activeProps?.activeIndex != null) {
+    const { throttleDelay, throttledEvents } = state.eventSettings;
+    const isThrottled = throttledEvents === 'all' || throttledEvents.includes('touchmove');
+
+    const callback = () => {
+      const currentState = listenerApi.getState();
+      const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
+      if (tooltipEventType === 'axis') {
+        const touch = touchEvent.touches[0];
+        if (touch == null) {
+          return;
+        }
+        const activeProps = selectActivePropsFromChartPointer(
+          currentState,
+          getChartPointer({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            currentTarget: touchEvent.currentTarget,
+          }),
+        );
+        if (activeProps?.activeIndex != null) {
+          listenerApi.dispatch(
+            setMouseOverAxisIndex({
+              activeIndex: activeProps.activeIndex,
+              activeDataKey: undefined,
+              activeCoordinate: activeProps.activeCoordinate,
+            }),
+          );
+        }
+      } else if (tooltipEventType === 'item') {
+        const touch = touchEvent.touches[0];
+        if (document.elementFromPoint == null || touch == null) {
+          return;
+        }
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (!target || !target.getAttribute) {
+          return;
+        }
+        const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+        const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+        const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
+        if (itemIndex == null || settings == null || graphicalItemId == null) {
+          return;
+        }
+        const { dataKey } = settings;
+        const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
+
         listenerApi.dispatch(
-          setMouseOverAxisIndex({
-            activeIndex: activeProps.activeIndex,
-            activeDataKey: undefined,
-            activeCoordinate: activeProps.activeCoordinate,
+          setActiveMouseOverItemIndex({
+            activeDataKey: dataKey,
+            activeIndex: itemIndex,
+            activeCoordinate: coordinate,
+            activeGraphicalItemId: graphicalItemId,
           }),
         );
       }
-    } else if (tooltipEventType === 'item') {
-      const touch = touchEvent.touches[0];
-      if (document.elementFromPoint == null || touch == null) {
-        return;
-      }
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      if (!target || !target.getAttribute) {
-        return;
-      }
-      const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-      const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
-      const settings = selectAllGraphicalItemsSettings(state).find(item => item.id === graphicalItemId);
-      if (itemIndex == null || settings == null || graphicalItemId == null) {
-        return;
-      }
-      const { dataKey } = settings;
-      const coordinate = selectTooltipCoordinate(state, itemIndex, graphicalItemId);
+      rafId = null;
+      timeoutId = null;
+    };
 
-      listenerApi.dispatch(
-        setActiveMouseOverItemIndex({
-          activeDataKey: dataKey,
-          activeIndex: itemIndex,
-          activeCoordinate: coordinate,
-          activeGraphicalItemId: graphicalItemId,
-        }),
-      );
+    if (!isThrottled) {
+      callback();
+      return;
+    }
+
+    if (throttleDelay === 'raf') {
+      rafId = requestAnimationFrame(callback);
+    } else if (typeof throttleDelay === 'number') {
+      timeoutId = setTimeout(callback, throttleDelay);
     }
   },
 });

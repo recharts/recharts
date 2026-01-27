@@ -19,12 +19,14 @@ import { touchEventMiddleware } from './touchEventsMiddleware';
 import { errorBarReducer } from './errorBarSlice';
 import { Global } from '../util/Global';
 import { zIndexReducer } from './zIndexSlice';
+import { eventSettingsReducer } from './eventSettingsSlice';
 
 export type RechartsRootState = {
   brush: ReturnType<typeof brushReducer>;
   cartesianAxis: ReturnType<typeof cartesianAxisReducer>;
   chartData: ReturnType<typeof chartDataReducer>;
   errorBars: ReturnType<typeof errorBarReducer>;
+  eventSettings: ReturnType<typeof eventSettingsReducer>;
   graphicalItems: ReturnType<typeof graphicalItemsReducer>;
   layout: ReturnType<typeof chartLayoutReducer>;
   legend: ReturnType<typeof legendReducer>;
@@ -42,6 +44,7 @@ const rootReducer: Reducer<RechartsRootState> = combineReducers({
   cartesianAxis: cartesianAxisReducer,
   chartData: chartDataReducer,
   errorBars: errorBarReducer,
+  eventSettings: eventSettingsReducer,
   graphicalItems: graphicalItemsReducer,
   layout: chartLayoutReducer,
   legend: legendReducer,

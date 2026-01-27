@@ -122,9 +122,11 @@ export const AreaArgs: StorybookArgs = {
     defaultValue: false,
   },
   data: {
+    description:
+      'The source data. Each element should be an object.\nThe properties of each object represent the values of different data dimensions.\n\nUse the `dataKey` prop to specify which properties to use.',
     table: {
       type: {
-        summary: 'ReadonlyArray<unknown>',
+        summary: 'ReadonlyArray<DataPointType>',
       },
       category: 'General',
     },

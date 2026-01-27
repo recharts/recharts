@@ -77,7 +77,7 @@ export const ScatterAPI: ApiDoc = {
     { name: 'className', type: 'string', isOptional: true },
     {
       name: 'data',
-      type: 'ReadonlyArray<unknown>',
+      type: 'ReadonlyArray<DataPointType>',
       isOptional: true,
       desc: {
         'en-US': (

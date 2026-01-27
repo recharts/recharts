@@ -138,6 +138,13 @@ export const SectorAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'onMouseDown',
@@ -228,5 +235,10 @@ export const SectorAPI: ApiDoc = {
     { name: 'Custom Active Shape Pie Chart', url: '/examples/CustomActiveShapePieChart/', isExternal: false },
     { name: 'Pie Chart With Customized Label', url: '/examples/PieChartWithCustomizedLabel/', isExternal: false },
     { name: 'Pie Chart with Gradient', url: '/examples/PieWithGradient/', isExternal: false },
+    {
+      name: 'Radial Bar Chart with Click to Focus Legend',
+      url: '/examples/RadialBarChartClickToFocusLegendExample/',
+      isExternal: false,
+    },
   ],
 };

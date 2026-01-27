@@ -1916,7 +1916,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       const handleTouchEnd = vi.fn();
 
       const { container } = renderWithStrictMode(
-        <BarChart width={200} height={200} layout="horizontal" data={data}>
+        <BarChart width={200} height={200} layout="horizontal" data={data} throttledEvents={[]}>
           <Bar isAnimationActive={false} dataKey="value" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} />
         </BarChart>,
       );
