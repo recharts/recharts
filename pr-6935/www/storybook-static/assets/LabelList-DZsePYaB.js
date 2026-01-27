@@ -1,0 +1,17 @@
+import{j as i}from"./jsx-runtime-UIXbJy2p.js";import{useMDXComponents as e}from"./index-Cse-BH3X.js";import{M as p,C as m,a as s}from"./blocks-Dbn4BluL.js";import{C as l,A as t}from"./LabelList.stories-CWn7A_MX.js";import"./iframe-IlsB_rJq.js";import"./preload-helper-Dp1pzeXC.js";import"./index-Bb2whpql.js";import"./utils-ePvtT4un.js";import"./ReactUtils-Pssbr3N2.js";import"./arrayEqualityCheck-DRku3AZG.js";import"./resolveDefaultProps-B3pOdsrQ.js";import"./PolarUtils-DdS5KPsI.js";import"./Label-DZIMKlIj.js";import"./Text-_vyUeh1U.js";import"./DOMUtils-C0sVJTg_.js";import"./ZIndexLayer-9CrWluzk.js";import"./zIndexSlice-CKbt9tj5.js";import"./Layer-vBbFq665.js";import"./RechartsWrapper-C3UkR7qf.js";import"./hooks-DcodrmVZ.js";import"./axisSelectors-DKjWCzWL.js";import"./LineChart-DEh2todd.js";import"./CartesianChart-KFcBxL2h.js";import"./chartDataContext-CrRgJL1Z.js";import"./CategoricalChart-Bh-A6rTf.js";import"./Line-CDm7gB2t.js";import"./ActivePoints-Cr8soWVC.js";import"./Dot-BxXnrLYt.js";import"./types-tqXwELcn.js";import"./RegisterGraphicalItemId-jN59e1bG.js";import"./ErrorBarContext-XG0EPrx-.js";import"./GraphicalItemClipPath-C9Or-tsl.js";import"./SetGraphicalItem-Aa6pLrW9.js";import"./useAnimationId-Bms0uFs7.js";import"./getRadiusAndStrokeWidthFromDot-De11iLXV.js";import"./ActiveShapeUtils-Cv3IrxQk.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-DxgUhFQy.js";import"./Trapezoid-CcrDALRL.js";import"./Sector-D5hYxMFM.js";import"./Symbols-DKmDvY-C.js";import"./Curve-BktJTjWe.js";import"./RechartsHookInspector-HlZdM34s.js";import"./ChartSizeDimensions-B6V8cLcI.js";import"./OffsetShower-CdxkHZVP.js";import"./PlotAreaShower-BGz_VUd3.js";import"./Page-Cj8EiXz7.js";function n(r){const o={code:"code",h1:"h1",h2:"h2",li:"li",p:"p",ul:"ul",...e(),...r.components};return i.jsxs(i.Fragment,{children:[i.jsx(o.h1,{id:"labellist",children:"LabelList"}),`
+`,i.jsx(p,{of:l}),`
+`,i.jsx(m,{of:t,layout:"padded"}),`
+`,i.jsx(o.h2,{id:"parent-component",children:"Parent Component"}),`
+`,i.jsx(o.p,{children:"The LabelList can be used within the following parent components:"}),`
+`,i.jsxs(o.ul,{children:[`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Area/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Bar/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Funnel/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Line/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Pie/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Radar/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<RadialBar/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<Scatter/>"})}),`
+`]}),`
+`,i.jsx(o.h2,{id:"props",children:"Props"}),`
+`,i.jsx(s,{of:t})]})}function ti(r={}){const{wrapper:o}={...e(),...r.components};return o?i.jsx(o,{...r,children:i.jsx(n,{...r})}):n(r)}export{ti as default};
