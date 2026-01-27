@@ -797,7 +797,7 @@ export type YAxisTickContentProps = BaseTickContentProps & {
   padding: YAxisPadding | undefined;
 };
 
-export type TickProp<DataPointType> =
+export type TickProp<DataPointType = unknown> =
   | SVGProps<SVGTextElement>
   | ReactElement
   | ((props: DataPointType) => ReactNode)

@@ -32,7 +32,7 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
   return null;
 }
 
-export interface Props extends Omit<BaseAxisProps, 'domain'> {
+export interface Props<DataPointType = unknown> extends Omit<BaseAxisProps<DataPointType>, 'domain'> {
   /**
    * The type of axis.
    *

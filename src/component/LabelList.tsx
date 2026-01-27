@@ -11,7 +11,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import { isRenderableText, RenderableText } from './Text';
 
-export interface LabelListEntry<DataPointItem> {
+export interface LabelListEntry<DataPointItem = any> {
   /**
    * Value is what renders in the UI as the label content.
    * If undefined, then the LabelList will pull it from the payload using the dataKey.

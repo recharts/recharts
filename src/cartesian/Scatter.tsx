@@ -160,7 +160,8 @@ interface ScatterInternalProps<DataPointType = unknown, ValueAxisType = unknown>
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps<DataPointType = unknown, ValueAxisType = unknown> extends DataProvider<DataPointType>, ZIndexable {
+interface ScatterProps<DataPointType = unknown, ValueAxisType = unknown>
+  extends DataProvider<DataPointType>, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.
@@ -454,6 +455,7 @@ function ScatterLine<DataPointType = unknown, ValueAxisType = unknown>({
   };
 
   if (React.isValidElement(line)) {
+    // @ts-expect-error element cloning
     lineItem = React.cloneElement(line, lineProps);
   } else if (typeof line === 'function') {
     lineItem = line(lineProps);
@@ -719,7 +721,7 @@ export function computeScatterPoints({
 
     if (z !== '-' && zAxis != null) {
       tooltipPayload.push({
-        name: zAxis.name || zAxis.dataKey,
+        name: getTooltipNameProp(zAxis.name, zAxis.dataKey),
         unit: zAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: z,

@@ -8,6 +8,8 @@ import {
   EvaluatedAxisDomainType,
   ScaleType,
   TickProp,
+  XAxisTickContentProps,
+  YAxisTickContentProps,
 } from '../util/types';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import type { AxisRange } from './selectors/axisSelectors';
@@ -81,8 +83,8 @@ export type TicksSettings<DataPointType = unknown> = {
  *
  * Properties shared between X and Y axes
  */
-export type CartesianAxisSettings = BaseCartesianAxis &
-  TicksSettings & {
+export type CartesianAxisSettings<TickPayload = any> = BaseCartesianAxis &
+  TicksSettings<TickPayload> & {
     interval: AxisInterval;
     mirror: boolean;
     minTickGap: number;
@@ -91,7 +93,7 @@ export type CartesianAxisSettings = BaseCartesianAxis &
     tickFormatter: TickFormatter | undefined;
   };
 
-export type XAxisSettings = CartesianAxisSettings & {
+export type XAxisSettings = CartesianAxisSettings<XAxisTickContentProps> & {
   padding: XAxisPadding;
   height: number;
   orientation: XAxisOrientation;
@@ -99,7 +101,7 @@ export type XAxisSettings = CartesianAxisSettings & {
 
 export type YAxisWidth = number | 'auto';
 
-export type YAxisSettings = CartesianAxisSettings & {
+export type YAxisSettings = CartesianAxisSettings<YAxisTickContentProps> & {
   padding: YAxisPadding;
   width: YAxisWidth;
   orientation: YAxisOrientation;

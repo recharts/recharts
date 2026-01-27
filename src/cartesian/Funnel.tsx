@@ -23,7 +23,6 @@ import {
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
-  DataKey,
   DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -105,7 +104,7 @@ interface FunnelProps<DataPointType = unknown, ValueAxisType = unknown> extends 
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Funnel.
    */
-  dataKey: DataKey<DataPointType, ValueAxisType>;
+  dataKey: TypedDataKey<DataPointType, ValueAxisType>;
   /**
    * Hides the whole graphical element when true.
    *
@@ -150,7 +149,7 @@ interface FunnelProps<DataPointType = unknown, ValueAxisType = unknown> extends 
    *
    * @defaultValue name
    */
-  nameKey?: TypedDataKey<DataPointType, string>;
+  nameKey?: TypedDataKey<DataPointType>;
   /**
    * The customized event handler of animation end
    */
@@ -229,7 +228,7 @@ const SetFunnelTooltipEntrySettings = React.memo(
     trapezoids,
     id,
   }: Pick<
-    InternalProps,
+    InternalProps<any, any>,
     'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data' | 'id'
   > & {
     trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
@@ -459,8 +458,6 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
     offsetY: top,
   };
 };
-
-const defaultNameKey: TypedDataKey<unknown> = 'name' as const;
 
 type DataPointWithMaybeName = { name?: unknown } & Record<string, unknown>;
 

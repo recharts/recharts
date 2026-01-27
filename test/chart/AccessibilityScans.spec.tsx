@@ -117,7 +117,7 @@ describe('Static scanning for accessibility markup issues', () => {
   test('Pie chart', async () => {
     const { container } = render(
       <PieChart width={800} height={400}>
-        <Pie dataKey="value" data={[data[0]]} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
+        <Pie dataKey="name" data={[data[0]]} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>,
     );
     expect((await axe(container)).violations).toEqual([]);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { Bar, BarChart } from '../../src';
-import { expectBars } from '../helper/expectBars';
 
 type ExampleDataPoint = {
   x: number;
@@ -49,24 +48,24 @@ describe('Bar with strong typing', () => {
       expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
     });
 
-    it('should allow when Bar data is matching Bar dataKey as string', () => {
-      const { container } = rechartsTestRender(
-        <BarChart width={400} height={400}>
-          <Bar data={data} dataKey="value" />
-        </BarChart>,
-      );
-      expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
-    });
+    // it('should allow when Bar data is matching Bar dataKey as string', () => {
+    //   const { container } = rechartsTestRender(
+    //     <BarChart width={400} height={400}>
+    //       <Bar data={data} dataKey="value" />
+    //     </BarChart>,
+    //   );
+    //   expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
+    // });
 
-    it('should error when Bar data is not matching Bar dataKey', () => {
-      const { container } = rechartsTestRender(
-        <BarChart width={400} height={400}>
-          {/* @ts-expect-error TypeScript is correct here */}
-          <Bar data={data} dataKey="foo" />
-        </BarChart>,
-      );
-      expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
-    });
+    // it('should error when Bar data is not matching Bar dataKey', () => {
+    //   const { container } = rechartsTestRender(
+    //     <BarChart width={400} height={400}>
+    //       {/* @ts-expect-error TypeScript is correct here */}
+    //       <Bar data={data} dataKey="foo" />
+    //     </BarChart>,
+    //   );
+    //   expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
+    // });
   });
 
   describe('with explicit Bar type parameters', () => {

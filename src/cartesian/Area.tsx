@@ -122,7 +122,7 @@ interface InternalAreaProps<DataPointType> extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface AreaProps<DataPointType = any, ValueAxisType> extends DataProvider<DataPointType>, ZIndexable {
+interface AreaProps<DataPointType = any, ValueAxisType = any> extends DataProvider<DataPointType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
