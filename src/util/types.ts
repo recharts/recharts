@@ -1443,8 +1443,12 @@ export interface EventThrottlingProps {
    */
   throttleDelay?: number | 'raf';
   /**
-   * Defines which events should be throttled when listening to container size changes.
+   * Defines which events should be throttled.
    * Events not in this list will not be throttled.
+   *
+   * Use the special value `'all'` to throttle all events. Empty array means no events are throttled.
+   *
+   * Use the prop `throttleDelay` to define the throttling interval.
    *
    * If an event is on this list, then you lose the opportunity to access the event synchronously.
    * Which means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,
@@ -1455,7 +1459,8 @@ export interface EventThrottlingProps {
   throttledEvents?: ReadonlyArray<keyof GlobalEventHandlersEventMap> | 'all';
 }
 
-export interface CartesianChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType>, EventThrottlingProps {
+export interface CartesianChartProps<DataPointType = unknown>
+  extends BaseChartProps<DataPointType>, EventThrottlingProps {
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *
