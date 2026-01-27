@@ -74,6 +74,10 @@ export type TextVerticalAnchor = 'start' | 'middle' | 'end';
  */
 export type RenderableText = string | number | boolean | null | undefined;
 
+export function isRenderableText(val: unknown): val is RenderableText {
+  return isNullish(val) || typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean';
+}
+
 interface TextProps {
   /**
    * When true, scales the text to fit within the specified width.

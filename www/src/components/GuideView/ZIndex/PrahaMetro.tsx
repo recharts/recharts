@@ -213,7 +213,6 @@ function MetroLine(props: LineProps) {
         dy={-15}
         dx={5}
         valueAccessor={(entry: LabelListEntry) => {
-          // @ts-expect-error Recharts does not have types for the payload property
           const label: string | undefined = entry.payload?.name;
           if (label != null && customLabels.includes(label)) {
             return undefined;

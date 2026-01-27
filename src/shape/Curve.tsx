@@ -4,33 +4,33 @@
 import * as React from 'react';
 import { Ref } from 'react';
 import {
-  line as shapeLine,
   area as shapeArea,
-  CurveFactory,
+  Area as D3AreaCurve,
+  curveBasis,
   curveBasisClosed,
   curveBasisOpen,
-  curveBasis,
   curveBumpX,
   curveBumpY,
-  curveLinearClosed,
+  CurveFactory,
   curveLinear,
+  curveLinearClosed,
   curveMonotoneX,
   curveMonotoneY,
   curveNatural,
   curveStep,
   curveStepAfter,
   curveStepBefore,
-  Area as D3AreaCurve,
+  line as shapeLine,
   Line as D3LineCurve,
 } from 'victory-vendor/d3-shape';
 
 import { clsx } from 'clsx';
 import {
-  LayoutType,
-  PresentationAttributesWithProps,
   adaptEventHandlers,
-  NullableCoordinate,
   Coordinate,
+  LayoutType,
+  NullableCoordinate,
+  PresentationAttributesWithProps,
   RechartsMouseEventHandler,
 } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
@@ -83,6 +83,11 @@ type AreaPoint = Coordinate & { base: Coordinate };
 
 type NullableAreaPoint = NullableCoordinate & { base?: NullableCoordinate };
 
+/**
+ * @inline
+ */
+export type BaseLineType = number | ReadonlyArray<NullableCoordinate>;
+
 const defined = (p: NullableCoordinate): p is Coordinate => isWellBehavedNumber(p.x) && isWellBehavedNumber(p.y);
 const areaDefined = (d: NullableAreaPoint): d is AreaPoint => d.base != null && defined(d.base) && defined(d);
 const getX = (p: Coordinate) => p.x;
@@ -124,7 +129,7 @@ interface CurveProps {
    * - number: uses the corresponding axis value as a flat baseline;
    * - an array of coordinates: describes a custom baseline path.
    */
-  baseLine?: number | ReadonlyArray<NullableCoordinate>;
+  baseLine?: BaseLineType;
   /**
    * The coordinates of all the points in the curve, like an array of objects with x and y coordinates.
    */

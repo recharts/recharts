@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { clsx } from 'clsx';
-import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
+import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -82,7 +82,7 @@ export type BaseValue = number | 'dataMin' | 'dataMax';
 /**
  * Our base value array has payload in it, and we expose it externally too.
  */
-type BaseValueCoordinate = NullableCoordinate & { payload: any };
+type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: DataPointType | undefined };
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -92,7 +92,7 @@ interface InternalAreaProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
-  baseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
+  baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
   className?: string;
@@ -172,7 +172,7 @@ interface AreaProps<DataPointType = any> extends DataProvider<DataPointType>, ZI
    * - number: uses the corresponding axis value as a flat baseline;
    * - an array of coordinates: describes a custom baseline path.
    */
-  baseLine?: number | ReadonlyArray<NullableCoordinate>;
+  baseLine?: BaseLineType;
   baseValue?: BaseValue;
   className?: string;
 
@@ -448,7 +448,7 @@ function StaticArea({
   props,
 }: {
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: Props['baseLine'];
+  baseLine: BaseLineType | undefined;
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
@@ -485,7 +485,7 @@ function StaticArea({
               points={points}
             />
           )}
-          {stroke !== 'none' && isRange && (
+          {stroke !== 'none' && isRange && Array.isArray(baseLine) && (
             <Curve
               {...allOtherProps}
               className="recharts-area-curve"
@@ -493,7 +493,7 @@ function StaticArea({
               type={type}
               connectNulls={connectNulls}
               fill="none"
-              points={baseLine as NullableCoordinate[]}
+              points={baseLine}
             />
           )}
         </Layer>
@@ -511,7 +511,7 @@ function VerticalRect({
 }: {
   alpha: number;
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: Props['baseLine'];
+  baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
   const startY = points[0]?.y;
@@ -550,7 +550,7 @@ function HorizontalRect({
 }: {
   alpha: number;
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: Props['baseLine'];
+  baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
   const startX = points[0]?.x;
@@ -591,7 +591,7 @@ function ClipRect({
   alpha: number;
   layout: CartesianLayout;
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: Props['baseLine'];
+  baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
   if (layout === 'vertical') {
@@ -612,7 +612,7 @@ function AreaWithAnimation({
   clipPathId: string;
   props: InternalProps;
   previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem> | null>;
-  previousBaselineRef: MutableRefObject<InternalProps['baseLine'] | null>;
+  previousBaselineRef: MutableRefObject<BaseLineType | undefined>;
 }) {
   const {
     points,
@@ -687,7 +687,7 @@ function AreaWithAnimation({
 
                     return entry;
                   });
-            let stepBaseLine: number | ReadonlyArray<NullableCoordinate>;
+            let stepBaseLine: BaseLineType;
 
             if (isNumber(baseLine)) {
               stepBaseLine = interpolate(prevBaseLine, baseLine, t);
@@ -783,7 +783,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
    * So, useRef it is.
    */
   const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
-  const previousBaselineRef = useRef<InternalProps['baseLine'] | null>();
+  const previousBaselineRef = useRef<InternalProps['baseLine'] | undefined>();
 
   return (
     <AreaWithAnimation
@@ -1020,7 +1020,7 @@ export function computeArea({
   let isRange = false;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
-    let valueAsArray: [number, number] | undefined;
+    let valueAsArray: ReadonlyArray<unknown> | undefined;
 
     if (hasStack) {
       valueAsArray = stackedData[dataStartIndex + index];
@@ -1028,10 +1028,8 @@ export function computeArea({
       const rawValue = getValueByDataKey(entry, dataKey);
 
       if (!Array.isArray(rawValue)) {
-        // @ts-expect-error getValueByDataKey is not checking its return value
         valueAsArray = [baseValue, rawValue];
       } else {
-        // @ts-expect-error getValueByDataKey is not checking its return value
         valueAsArray = rawValue;
         isRange = true;
       }
