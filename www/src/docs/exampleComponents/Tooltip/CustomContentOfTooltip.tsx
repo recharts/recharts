@@ -79,7 +79,7 @@ const getIntroOfPage = (label: string | number | undefined) => {
   return '';
 };
 
-const CustomTooltip = ({ active, payload, label }: TooltipContentProps<string | number, string>) => {
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   const isVisible = active && payload && payload.length;
   return (
     <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>

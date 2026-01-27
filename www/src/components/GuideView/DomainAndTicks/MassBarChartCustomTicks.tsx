@@ -1,4 +1,4 @@
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Tooltip, TooltipValueType, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Solar System Data
@@ -82,12 +82,12 @@ const solarSystem = [
 ];
 // #endregion
 
-function kgToYottagram(value: number | undefined): string {
+function kgToYottagram(value: TooltipValueType | undefined): string {
   if (value == null) {
     return '';
   }
   // the data is defined in kg
-  const yottagram = value / 1e24;
+  const yottagram = Number(value) / 1e24;
   return `${yottagram.toFixed(2)}`;
 }
 

@@ -40,7 +40,7 @@ const Candlestick = (props: BarShapeProps) => {
   return <Rectangle {...props} fill={color} />;
 };
 
-const TooltipContent = (props: TooltipContentProps<number, string>) => {
+const TooltipContent = (props: TooltipContentProps) => {
   const { active, payload } = props;
   if (active && payload && payload.length) {
     const entry: MarketCandle = payload[0].payload;

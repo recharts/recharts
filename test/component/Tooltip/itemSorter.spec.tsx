@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import React from 'react';
 import { Selector } from '@reduxjs/toolkit';
 import {
@@ -18,7 +18,7 @@ import {
   RadialBarChart,
   Scatter,
   Tooltip,
-  TooltipProps,
+  TooltipItemSorter,
   XAxis,
   YAxis,
 } from '../../../src';
@@ -45,7 +45,7 @@ describe('itemSorter in ComposedChart', () => {
 
   describe('without name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -480,14 +480,14 @@ describe('itemSorter in ComposedChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
           'area : 200',
           'line : 2400',
           'bar : 9800',
-          'name : Page D',
           'pv : 9800',
+          'name : Page D',
         ]);
       });
 
@@ -603,7 +603,7 @@ describe('itemSorter in ComposedChart', () => {
 
   describe('with name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -785,14 +785,14 @@ describe('itemSorter in ComposedChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
           'Area : 200',
           'Line : 2400',
           'Bar : 9800',
-          'XAxis : Page D',
           'YAxis : 9800',
+          'XAxis : Page D',
         ]);
       });
 
@@ -913,7 +913,7 @@ describe('itemSorter in PieChart', () => {
   });
 
   function renderTestCase<T>(
-    itemSorter: TooltipProps<number, string>['itemSorter'],
+    itemSorter: TooltipItemSorter | undefined,
     selector?: Selector<RechartsRootState, T, never>,
   ) {
     return createSelectorTestCase(({ children }) => (
@@ -967,7 +967,7 @@ describe('itemSorter in RadarChart', () => {
 
   describe('without name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -1083,7 +1083,7 @@ describe('itemSorter in RadarChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, radarChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page F', ['uv : 189', 'amt : 2400', 'pv : 4800']);
       });
@@ -1160,7 +1160,7 @@ describe('itemSorter in RadarChart', () => {
 
   describe('with name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -1283,7 +1283,7 @@ describe('itemSorter in RadialBarChart', () => {
 
   describe('without name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -1462,7 +1462,7 @@ describe('itemSorter in RadialBarChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', ['uv : 200', 'amt : 2400', 'pv : 9800']);
       });
@@ -1602,7 +1602,7 @@ describe('itemSorter in RadialBarChart', () => {
 
   describe('with name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -1797,7 +1797,7 @@ describe('itemSorter in RadialBarChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, radialBarChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
           'RadialBar-uv : 200',
@@ -1949,7 +1949,7 @@ describe('itemSorter in stacked BarChart', () => {
 
   describe('without name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -2065,7 +2065,7 @@ describe('itemSorter in stacked BarChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, barChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', ['uv : 200', 'amt : 2400', 'pv : 9800']);
       });
@@ -2142,7 +2142,7 @@ describe('itemSorter in stacked BarChart', () => {
 
   describe('with name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -2258,7 +2258,7 @@ describe('itemSorter in stacked BarChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, barChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', ['Bar-uv : 200', 'Bar-amt : 2400', 'Bar-pv : 9800']);
       });
@@ -2341,7 +2341,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
   describe('without name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -2457,7 +2457,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, barChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', ['uv : 200', 'amt : 2400', 'pv : 9800']);
       });
@@ -2534,7 +2534,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
   describe('with name prop', () => {
     function renderTestCase<T>(
-      itemSorter: TooltipProps<number, string>['itemSorter'],
+      itemSorter: TooltipItemSorter | undefined,
       selector?: Selector<RechartsRootState, T, never>,
     ) {
       return createSelectorTestCase(({ children }) => (
@@ -2650,7 +2650,7 @@ describe('itemSorter in stacked AreaChart', () => {
 
     describe('when itemSorter is a function', () => {
       it('should render sorted payload', () => {
-        const { container } = renderTestCase(item => item.value);
+        const { container } = renderTestCase(item => String(item.value));
         showTooltip(container, barChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', ['Area-uv : 200', 'Area-amt : 2400', 'Area-pv : 9800']);
       });

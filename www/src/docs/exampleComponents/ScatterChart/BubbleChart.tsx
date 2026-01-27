@@ -76,7 +76,7 @@ const domain = parseDomain();
 const range = [16, 225] as const;
 const margin = { top: 10, right: 0, bottom: 0, left: 0 };
 
-const renderTooltip = (props: TooltipContentProps<string | number, string>) => {
+const renderTooltip = (props: TooltipContentProps) => {
   const { active, payload } = props;
 
   if (active && payload && payload.length) {

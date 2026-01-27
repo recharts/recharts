@@ -3,37 +3,12 @@ import { render } from '@testing-library/react';
 import { DefaultTooltipContent, DefaultTooltipContentProps } from '../../src';
 
 describe('DefaultTooltipContent', () => {
-  const mockProps: DefaultTooltipContentProps<number, string> = {
+  const mockProps: DefaultTooltipContentProps = {
     accessibilityLayer: true,
-    allowEscapeViewBox: { x: false, y: false },
-    animationDuration: 400,
-    animationEasing: 'ease',
     contentStyle: {},
-    coordinate: { x: 200, y: 200 },
-    cursor: true,
-    cursorStyle: {},
-    filterNull: true,
-    isAnimationActive: true,
     itemStyle: {},
     labelStyle: {},
-    offset: 10,
-    reverseDirection: { x: false, y: false },
     separator: ' : ',
-    trigger: 'hover',
-    useTranslate3d: false,
-    viewBox: {
-      brushBottom: 5,
-      top: 5,
-      bottom: 5,
-      left: 5,
-      right: 5,
-      width: 390,
-      height: 390,
-      x: 5,
-      y: 5,
-    },
-    wrapperStyle: {},
-    active: true,
     label: 2,
     payload: [
       {
@@ -47,8 +22,7 @@ describe('DefaultTooltipContent', () => {
         graphicalItemId: 'recharts-area-0',
       },
     ],
-    // @ts-expect-error itemSorter type is challenging
-    itemSorter: (d: { name: string }) => d.name,
+    itemSorter: d => d.name,
     labelFormatter: () => `mock labelFormatter`,
   };
 

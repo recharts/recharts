@@ -1,4 +1,14 @@
-import { Bar, BarChart, Legend, LegendPayload, Tooltip, XAxis, YAxis, RenderableText } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  LegendPayload,
+  Tooltip,
+  XAxis,
+  YAxis,
+  RenderableText,
+  TooltipValueType,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Data and helper functions
@@ -46,7 +56,7 @@ const percentageData = rawData.map(entry => {
   };
 });
 
-function formatPercent(val: RenderableText): string {
+function formatPercent(val: RenderableText | TooltipValueType): string {
   return `${Math.abs(Number(val)).toFixed(1)}%`;
 }
 
@@ -104,7 +114,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         radius={[0, 5, 5, 0]}
         label={{ position: 'right', formatter: formatPercent }}
       />
-      <Tooltip<number, string> formatter={formatPercent} defaultIndex={defaultIndex} />
+      <Tooltip formatter={formatPercent} defaultIndex={defaultIndex} />
       <Legend itemSorter={itemSorter} verticalAlign="top" align="right" />
       <RechartsDevtools />
     </BarChart>
