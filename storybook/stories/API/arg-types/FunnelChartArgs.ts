@@ -101,7 +101,7 @@ export const FunnelChartArgs: StorybookArgs = {
       'The source data. Each element should be an object.\nThe properties of each object represent the values of different data dimensions.\n\nUse the `dataKey` prop to specify which properties to use.',
     table: {
       type: {
-        summary: 'ReadonlyArray<unknown>',
+        summary: 'ReadonlyArray<DataPointType>',
       },
       category: 'General',
     },
@@ -288,6 +288,14 @@ export const FunnelChartArgs: StorybookArgs = {
       category: 'Events',
     },
   },
+  ref: {
+    table: {
+      type: {
+        summary: 'Function | React.RefObject<SVGSVGElement> | null',
+      },
+      category: 'General',
+    },
+  },
   responsive: {
     description:
       'If true, then it will listen to container size changes and adapt the SVG chart accordingly.\nIf false, then it renders the chart at the specified width and height and will stay that way\neven if the container size changes.\n\nThis is similar to ResponsiveContainer but without the need for an extra wrapper component.\nThe `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).',
@@ -411,7 +419,7 @@ export const FunnelChartArgs: StorybookArgs = {
   },
   throttledEvents: {
     description:
-      'Defines which events should be throttled when listening to container size changes.\nEvents not in this list will not be throttled.\n\nIf an event is on this list, then you lose the opportunity to access the event synchronously.\nWhich means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,\nthen that event handler must not be in this list.',
+      "Defines which events should be throttled.\nEvents not in this list will not be throttled.\n\nUse the special value `'all'` to throttle all events. Empty array means no events are throttled.\n\nUse the prop `throttleDelay` to define the throttling interval.\n\nIf an event is on this list, then you lose the opportunity to access the event synchronously.\nWhich means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,\nthen that event handler must not be in this list.",
     table: {
       type: {
         summary: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',

@@ -91,7 +91,7 @@ export const AreaChartAPI: ApiDoc = {
     { name: 'compact', type: 'boolean', isOptional: true },
     {
       name: 'data',
-      type: 'ReadonlyArray<unknown>',
+      type: 'ReadonlyArray<DataPointType>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -184,6 +184,7 @@ export const AreaChartAPI: ApiDoc = {
         ),
       },
     },
+    { name: 'ref', type: 'Function | React.RefObject<SVGSVGElement> | null', isOptional: true },
     {
       name: 'responsive',
       type: 'boolean',
@@ -364,9 +365,13 @@ export const AreaChartAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>Defines which events should be throttled. Events not in this list will not be throttled.</p>
             <p>
-              Defines which events should be throttled when listening to container size changes. Events not in this list
-              will not be throttled.
+              Use the special value <code>&#39;all&#39;</code> to throttle all events. Empty array means no events are
+              throttled.
+            </p>
+            <p>
+              Use the prop <code>throttleDelay</code> to define the throttling interval.
             </p>
             <p>
               If an event is on this list, then you lose the opportunity to access the event synchronously. Which means
@@ -415,7 +420,7 @@ export const AreaChartAPI: ApiDoc = {
           </section>
         ),
       },
-      examples: [{ name: 'Area Chart Fill By Value', url: '/examples/AreaChartFillByValue/', isExternal: false }],
+      examples: [{ name: 'Simple Area Chart', url: '/examples/SimpleAreaChart/', isExternal: false }],
     },
     {
       name: 'onDoubleClick',

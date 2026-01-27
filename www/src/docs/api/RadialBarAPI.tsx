@@ -7,7 +7,14 @@ export const RadialBarAPI: ApiDoc = {
       name: 'dataKey',
       type: 'Function | number | string',
       isOptional: false,
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'activeShape', type: '(union of 5 variants)', isOptional: true },
     { name: 'angleAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
@@ -79,7 +86,14 @@ export const RadialBarAPI: ApiDoc = {
         ),
       },
       defaultVal: false,
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'barSize',
@@ -99,7 +113,19 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'children', type: 'ReactNode', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'cornerIsExternal', type: 'boolean', isOptional: true, defaultVal: false },
-    { name: 'cornerRadius', type: 'number | string', isOptional: true, defaultVal: 0 },
+    {
+      name: 'cornerRadius',
+      type: 'number | string',
+      isOptional: true,
+      defaultVal: 0,
+      examples: [
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
+    },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     { name: 'forceCornerRadius', type: 'boolean', isOptional: true, defaultVal: false },
     { name: 'hide', type: 'boolean', isOptional: true, defaultVal: false },
@@ -166,7 +192,18 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'maxBarSize', type: 'number', isOptional: true },
     { name: 'minPointSize', type: 'number', isOptional: true, defaultVal: 0 },
     { name: 'radiusAxisId', type: 'number | string', isOptional: true, defaultVal: 0 },
-    { name: 'shape', type: '(union of 5 variants)', isOptional: true },
+    {
+      name: 'shape',
+      type: '(union of 5 variants)',
+      isOptional: true,
+      examples: [
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
+    },
     { name: 'stackId', type: 'number | string', isOptional: true },
     { name: 'tooltipType', type: '"none"', isOptional: true },
     { name: 'zIndex', type: 'number', isOptional: true, defaultVal: 300 },
@@ -441,7 +478,14 @@ export const RadialBarAPI: ApiDoc = {
     { name: 'onWheel', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
     { name: 'onWheelCapture', type: 'AdaptChildWheelEventHandler<P, T>', isOptional: true },
   ],
-  links: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+  links: [
+    { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+    {
+      name: 'Radial Bar Chart with Click to Focus Legend',
+      url: '/examples/RadialBarChartClickToFocusLegendExample/',
+      isExternal: false,
+    },
+  ],
   parentComponents: ['PieChart', 'RadarChart', 'RadialBarChart'],
   childrenComponents: ['Cell', 'LabelList'],
 };

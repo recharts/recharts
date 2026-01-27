@@ -85,7 +85,7 @@ export const FunnelAPI: ApiDoc = {
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
       name: 'data',
-      type: 'ReadonlyArray<unknown>',
+      type: 'ReadonlyArray<DataPointType>',
       isOptional: true,
       desc: {
         'en-US': (

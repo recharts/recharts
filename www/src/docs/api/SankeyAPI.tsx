@@ -242,9 +242,13 @@ export const SankeyAPI: ApiDoc = {
       desc: {
         'en-US': (
           <section>
+            <p>Defines which events should be throttled. Events not in this list will not be throttled.</p>
             <p>
-              Defines which events should be throttled when listening to container size changes. Events not in this list
-              will not be throttled.
+              Use the special value <code>&#39;all&#39;</code> to throttle all events. Empty array means no events are
+              throttled.
+            </p>
+            <p>
+              Use the prop <code>throttleDelay</code> to define the throttling interval.
             </p>
             <p>
               If an event is on this list, then you lose the opportunity to access the event synchronously. Which means

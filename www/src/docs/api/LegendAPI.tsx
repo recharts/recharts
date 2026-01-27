@@ -29,7 +29,14 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'center',
-      examples: [{ name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false }],
+      examples: [
+        { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'children', type: 'ReactNode', isOptional: true },
     {
@@ -52,7 +59,14 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       format: ['<Legend content={CustomizedLegend} />', '<Legend content={renderLegend} />'],
-      examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
+      examples: [
+        { name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'dangerouslySetInnerHTML', type: 'Object', isOptional: true },
     {
@@ -86,6 +100,13 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'iconSize',
@@ -99,7 +120,14 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 14,
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'iconType',
@@ -158,7 +186,14 @@ export const LegendAPI: ApiDoc = {
         ),
       },
       defaultVal: 'horizontal',
-      examples: [{ name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false }],
+      examples: [
+        { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     { name: 'payloadUniqBy', type: 'UniqueFunc<LegendPayload> | false | true', isOptional: true },
     {
@@ -210,6 +245,11 @@ export const LegendAPI: ApiDoc = {
         { name: 'Brush Bar Chart', url: '/examples/BrushBarChart/', isExternal: false },
         { name: 'Population Pyramid', url: '/examples/PopulationPyramid/', isExternal: false },
         { name: 'Simple Radial Bar Chart', url: '/examples/SimpleRadialBarChart/', isExternal: false },
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
       ],
     },
     {
@@ -226,6 +266,13 @@ export const LegendAPI: ApiDoc = {
           </section>
         ),
       },
+      examples: [
+        {
+          name: 'Radial Bar Chart with Click to Focus Legend',
+          url: '/examples/RadialBarChartClickToFocusLegendExample/',
+          isExternal: false,
+        },
+      ],
     },
     {
       name: 'wrapperStyle',
