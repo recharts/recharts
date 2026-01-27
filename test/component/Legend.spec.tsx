@@ -30,7 +30,7 @@ import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
-import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
+import { dataWithSpecialNameAndFillProperties, numericalData, PageData } from '../_data';
 import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { CartesianLayout, Size } from '../../src/util/types';
 import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
@@ -937,13 +937,13 @@ describe('<Legend />', () => {
           <Legend iconType="plainline" />
           <Line
             type="monotone"
-            data={categoricalData}
-            dataKey={"pv" as any}
+            data={PageData}
+            dataKey="pv"
             stroke="#8884d8"
             activeDot={{ r: 8 }}
             strokeDasharray="5 5"
           />
-          <Line data={categoricalData} type="monotone" dataKey={"uv" as any} stroke="#82ca9d" />
+          <Line data={PageData} type="monotone" dataKey="uv" stroke="#82ca9d" />
         </LineChart>,
       );
 
@@ -2272,6 +2272,7 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <PieChart width={500} height={500}>
           <Legend />
+          {/* @ts-expect-error Indeed Typescript is correct, dataKey does not exist in the data */}
           <Pie data={numericalData} dataKey="unknown" />
         </PieChart>,
       );
@@ -2474,7 +2475,7 @@ describe('<Legend />', () => {
       rerender(
         <PieChart width={500} height={500}>
           <Legend />
-          <Pie data={numericalData} dataKey="percent" nameKey="percent" />
+          <Pie data={numericalData} dataKey="percent" nameKey={'percent' as any} />
         </PieChart>,
       );
       expectLegendLabels(container, [

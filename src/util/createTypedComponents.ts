@@ -24,30 +24,30 @@ export type TypedComponents<T, D, V = any, C = any> = {
   [K in keyof T]: T[K] extends ComponentType<AreaProps<any, any>>
     ? ComponentType<AreaProps<D, V>>
     : T[K] extends ComponentType<BarProps<any, any>>
-    ? ComponentType<BarProps<D, V>>
-    : T[K] extends ComponentType<LineProps<any, any>>
-    ? ComponentType<LineProps<D, V>>
-    : T[K] extends ComponentType<ScatterProps<any, any>>
-    ? ComponentType<ScatterProps<D, V>>
-    : T[K] extends ComponentType<XAxisProps<any>>
-    ? ComponentType<XAxisProps<D>>
-    : T[K] extends ComponentType<YAxisProps<any>>
-    ? ComponentType<YAxisProps<D>>
-    : T[K] extends ComponentType<ZAxisProps>
-    ? ComponentType<ZAxisProps>
-    : T[K] extends ComponentType<FunnelProps<any, any>>
-    ? ComponentType<FunnelProps<D, V>>
-    : T[K] extends ComponentType<PieProps<any, any>>
-    ? ComponentType<PieProps<D, V>>
-    : T[K] extends ComponentType<RadarProps<any, any>>
-    ? ComponentType<RadarProps<D, V>>
-    : T[K] extends ComponentType<RadialBarProps<any, any>>
-    ? ComponentType<RadialBarProps<D, V>>
-    : T[K] extends ComponentType<CartesianChartProps<any>>
-    ? ComponentType<CartesianChartProps<D>>
-    : T[K] extends ComponentType<PolarChartProps<any>>
-    ? ComponentType<PolarChartProps<D>>
-    : T[K]; // Fallback to original if no match
+      ? ComponentType<BarProps<D, V>>
+      : T[K] extends ComponentType<LineProps<any, any>>
+        ? ComponentType<LineProps<D, V>>
+        : T[K] extends ComponentType<ScatterProps<any, any>>
+          ? ComponentType<ScatterProps<D, V>>
+          : T[K] extends ComponentType<XAxisProps<any>>
+            ? ComponentType<XAxisProps<D>>
+            : T[K] extends ComponentType<YAxisProps<any>>
+              ? ComponentType<YAxisProps<D>>
+              : T[K] extends ComponentType<ZAxisProps>
+                ? ComponentType<ZAxisProps>
+                : T[K] extends ComponentType<FunnelProps<any, any>>
+                  ? ComponentType<FunnelProps<D, V>>
+                  : T[K] extends ComponentType<PieProps<any, any>>
+                    ? ComponentType<PieProps<D, V>>
+                    : T[K] extends ComponentType<RadarProps<any, any>>
+                      ? ComponentType<RadarProps<D, V>>
+                      : T[K] extends ComponentType<RadialBarProps<any, any>>
+                        ? ComponentType<RadialBarProps<D, V>>
+                        : T[K] extends ComponentType<CartesianChartProps<any>>
+                          ? ComponentType<CartesianChartProps<D>>
+                          : T[K] extends ComponentType<PolarChartProps<any>>
+                            ? ComponentType<PolarChartProps<D>>
+                            : T[K]; // Fallback to original if no match
 };
 
 /**

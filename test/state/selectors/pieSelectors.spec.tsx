@@ -20,7 +20,7 @@ describe('selectPieSectors', () => {
 
   describe('after interaction', () => {
     const TestCase = ({ children }: { children: ReactNode }) => {
-      const [dataKey, setDataKey] = useState('uv');
+      const [dataKey, setDataKey] = useState<'uv' | 'pv'>('uv');
       return (
         <>
           {dataKey === 'uv' ? (

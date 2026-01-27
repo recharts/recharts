@@ -448,6 +448,7 @@ function ScatterLine<DataPointType = unknown, ValueAxisType = unknown>({
   };
 
   if (React.isValidElement(line)) {
+    // @ts-expect-error element cloning
     lineItem = React.cloneElement(line, lineProps);
   } else if (typeof line === 'function') {
     lineItem = line(lineProps);
@@ -712,7 +713,7 @@ export function computeScatterPoints({
 
     if (z !== '-' && zAxis != null) {
       tooltipPayload.push({
-        name: zAxis.name || zAxis.dataKey,
+        name: getTooltipNameProp(zAxis.name, zAxis.dataKey),
         unit: zAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: z,

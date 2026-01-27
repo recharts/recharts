@@ -54,7 +54,7 @@ export interface CartesianAxisProps extends ZIndexable {
   orientation?: Orientation;
   // The viewBox of svg
   viewBox?: CartesianViewBox;
-  tick?: TickProp<unknown>;
+  tick?: TickProp<any>;
   /**
    * Additional props to spread to each tick Text element.
    * Optional, the CartesianAxis component will provide its own defaults calculated from other props.

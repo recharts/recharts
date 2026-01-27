@@ -224,7 +224,7 @@ const SetFunnelTooltipEntrySettings = React.memo(
     trapezoids,
     id,
   }: Pick<
-    InternalProps,
+    InternalProps<any, any>,
     'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data' | 'id'
   > & {
     trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
@@ -451,8 +451,6 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
     offsetY: top,
   };
 };
-
-const defaultNameKey: TypedDataKey<unknown> = 'name' as const;
 
 type DataPointWithMaybeName = { name?: unknown } & Record<string, unknown>;
 
