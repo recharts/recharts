@@ -80,7 +80,7 @@ test('BiaxialLineChart', async ({ mount }) => {
 });
 
 test('VerticalLineChart', async ({ mount }) => {
-  const component = await mount(<VerticalLineChart />);
+  const component = await mount(<VerticalLineChart isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
