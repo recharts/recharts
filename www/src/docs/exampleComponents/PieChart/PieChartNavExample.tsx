@@ -11,14 +11,7 @@ const data = [
 const PieChartNavExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => {
   return (
     <PieChart style={{ aspectRatio: 1 }} responsive>
-      <Pie
-        data={data}
-        dataKey="value"
-        nameKey="name"
-        outerRadius="120%"
-        stroke="black"
-        isAnimationActive={isAnimationActive}
-      />
+      <Pie data={data} dataKey="value" outerRadius="120%" stroke="black" isAnimationActive={isAnimationActive} />
     </PieChart>
   );
 };

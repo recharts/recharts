@@ -335,7 +335,7 @@ describe('Pie animation', () => {
 
   describe('when changing dataKey prop', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
-      const [dataKey, setDataKey] = useState('amt');
+      const [dataKey, setDataKey] = useState<'amt' | 'pv'>('amt');
       const changeDataKey = () => {
         setDataKey(prev => (prev === 'amt' ? 'pv' : 'amt'));
       };
@@ -444,7 +444,7 @@ describe('Pie animation', () => {
 
   describe('when the Pie has a key prop to force re-animation', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
-      const [dataKey, setDataKey] = useState('amt');
+      const [dataKey, setDataKey] = useState<'amt' | 'pv'>('amt');
       const changeDataKey = () => {
         setDataKey(prev => (prev === 'amt' ? 'pv' : 'amt'));
       };

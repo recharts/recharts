@@ -533,10 +533,10 @@ const defaultState: State = {
   prevDataKey: defaultTreeMapProps.dataKey,
 };
 
-type ContentItemProps = {
+type ContentItemProps<DataPointType> = {
   id: GraphicalItemId;
-  content: TreemapContentType;
-  nodeProps: TreemapNode;
+  content: TreemapContentType<DataPointType>;
+  nodeProps: TreemapNode<DataPointType>;
   type: string;
   colorPanel: ReadonlyArray<string> | undefined;
   dataKey: DataKey<any>;
@@ -545,7 +545,7 @@ type ContentItemProps = {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
 };
 
-function ContentItem({
+function ContentItem<DataPointType>({
   content,
   nodeProps,
   type,
@@ -553,7 +553,7 @@ function ContentItem({
   onMouseEnter,
   onMouseLeave,
   onClick,
-}: ContentItemProps): React.ReactElement {
+}: ContentItemProps<DataPointType>): React.ReactElement {
   if (React.isValidElement(content)) {
     return (
       <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
@@ -610,7 +610,7 @@ function ContentItem({
   );
 }
 
-function ContentItemWithEvents(props: ContentItemProps) {
+function ContentItemWithEvents<DataPointType>(props: ContentItemProps<DataPointType>) {
   const dispatch = useAppDispatch();
   const activeCoordinate: Coordinate = {
     x: props.nodeProps.x + props.nodeProps.width / 2,
@@ -651,9 +651,7 @@ type TreemapTooltipEntrySettingsProps<DataPointType extends TreemapDataType> = P
   currentRoot: TreemapNode | undefined;
 };
 
-const SetTreemapTooltipEntrySettings: <DataPointType extends TreemapDataType>(
-  props: TreemapTooltipEntrySettingsProps<DataPointType>,
-) => ReactNode = React.memo(
+const SetTreemapTooltipEntrySettings = React.memo(
   ({ dataKey, nameKey, stroke, fill, currentRoot, id }: TreemapTooltipEntrySettingsProps<TreemapDataType>) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
@@ -674,7 +672,7 @@ const SetTreemapTooltipEntrySettings: <DataPointType extends TreemapDataType>(
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
   },
-);
+) as <DataPointType extends TreemapDataType>(props: TreemapTooltipEntrySettingsProps<DataPointType>) => ReactNode;
 
 // Why is margin not a treemap prop? No clue. Probably it should be
 const defaultTreemapMargin: Margin = {
@@ -684,18 +682,18 @@ const defaultTreemapMargin: Margin = {
   left: 0,
 };
 
-function TreemapItem<DataPointType>({
+function TreemapItem<DataPointType extends TreemapDataType>({
   content,
   nodeProps,
   isLeaf,
   treemapProps,
   onNestClick,
 }: {
-  content: TreemapContentType;
-  nodeProps: TreemapNode;
+  content: TreemapContentType<DataPointType>;
+  nodeProps: TreemapNode<DataPointType>;
   isLeaf: boolean;
   treemapProps: InternalTreemapProps<DataPointType>;
-  onNestClick: (node: TreemapNode) => void;
+  onNestClick: (node: TreemapNode<DataPointType>) => void;
 }): ReactNode {
   const {
     id,
