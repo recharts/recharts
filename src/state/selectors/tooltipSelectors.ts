@@ -18,8 +18,6 @@ import {
   combineLinesDomain,
   combineNiceTicks,
   combineNumericalDomain,
-  combineRealScaleType,
-  combineScaleFunction,
   combineStackGroups,
   filterGraphicalNotStackedItems,
   filterReferenceElements,
@@ -91,8 +89,11 @@ import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomai
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { ActiveLabel } from '../../synchronisation/types';
-import { RechartsScale } from '../../util/scale/RechartsScale';
+import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
+import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
+import { combineConfiguredScale } from './combiners/combineConfiguredScale';
+import { combineRealScaleType } from './combiners/combineRealScaleType';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => D3ScaleType | undefined = createSelector(
   [selectTooltipAxis, selectHasBar, selectChartName],
@@ -301,14 +302,19 @@ export const selectTooltipAxisRangeWithReverse: (state: RechartsRootState) => Ax
   combineAxisRangeWithReverse,
 );
 
-export const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale | undefined = createSelector(
+const selectTooltipConfiguredScale: (state: RechartsRootState) => CustomScaleDefinition | undefined = createSelector(
   [
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
     selectTooltipAxisDomainIncludingNiceTicks,
     selectTooltipAxisRangeWithReverse,
   ],
-  combineScaleFunction,
+  combineConfiguredScale,
+);
+
+export const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale | undefined = createSelector(
+  [selectTooltipConfiguredScale],
+  rechartsScaleFactory,
 );
 
 const selectTooltipDuplicateDomain: (state: RechartsRootState) => ReadonlyArray<unknown> | undefined = createSelector(

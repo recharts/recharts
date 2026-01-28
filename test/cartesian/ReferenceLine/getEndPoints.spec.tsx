@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { getEndPoints, ReferenceLineSegment } from '../../../src/cartesian/ReferenceLine';
 import { CartesianViewBoxRequired } from '../../../src/util/types';
-import { BandPosition, d3ScaleToRechartsScale, RechartsScale } from '../../../src/util/scale/RechartsScale';
+import { BandPosition, rechartsScaleFactory, RechartsScale } from '../../../src/util/scale/RechartsScale';
 
 describe('getEndPoints', () => {
   const throwingScale: RechartsScale = {
@@ -41,7 +41,7 @@ describe('getEndPoints', () => {
   describe('fixed Y location when out of range', () => {
     const position = 'start';
     const lineLocationY = 9;
-    const yScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 5]).range([0, 50]));
+    const yScale = rechartsScaleFactory<number>(scaleLinear().domain([0, 5]).range([0, 50]));
 
     it('should return null when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
@@ -114,7 +114,7 @@ describe('getEndPoints', () => {
   describe('fixed Y location when in range', () => {
     const position = 'start';
     const lineLocationY = 9;
-    const yScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 15]).range([0, 150]));
+    const yScale = rechartsScaleFactory<number>(scaleLinear().domain([0, 15]).range([0, 150]));
     const coord = Symbol('coord');
     const scales = {
       y: {
@@ -190,7 +190,7 @@ describe('getEndPoints', () => {
   describe('fixed X location when out of range', () => {
     const position = 'start';
     const lineLocationX = 9;
-    const xScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 5]).range([0, 50]));
+    const xScale = rechartsScaleFactory<number>(scaleLinear().domain([0, 5]).range([0, 50]));
 
     it('should return null when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
@@ -248,7 +248,7 @@ describe('getEndPoints', () => {
   describe('fixed X location when in range', () => {
     const position = 'start';
     const lineLocationX = 9;
-    const xScale = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 15]).range([0, 150]));
+    const xScale = rechartsScaleFactory<number>(scaleLinear().domain([0, 15]).range([0, 150]));
 
     it('should return coordinates when set to discard overflow', () => {
       const viewBox: CartesianViewBoxRequired = {
@@ -326,8 +326,8 @@ describe('getEndPoints', () => {
     it('should pass every segment into scales function', () => {
       const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
       const position: BandPosition = 'middle';
-      const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
-      const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+      const scaleX = rechartsScaleFactory<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+      const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
       const result = getEndPoints(scaleX, scaleY, viewBox, position, undefined, undefined, {
         segment,
         ifOverflow: 'visible',
@@ -340,8 +340,8 @@ describe('getEndPoints', () => {
 
     it('should return null if outside of range and overflow = discard', () => {
       const segment: ReferenceLineSegment = [{ x: 11 }, { x: 21 }];
-      const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
-      const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+      const scaleX = rechartsScaleFactory<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+      const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
       const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
         segment,
         ifOverflow: 'discard',
@@ -353,8 +353,8 @@ describe('getEndPoints', () => {
       'should return point if outside of range and overflow = %s',
       ifOverflow => {
         const segment: ReferenceLineSegment = [{ x: 11 }, { x: 21 }];
-        const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
-        const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+        const scaleX = rechartsScaleFactory<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+        const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
         const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
           segment,
           ifOverflow,
@@ -370,8 +370,8 @@ describe('getEndPoints', () => {
       'should return whatever scales returned if in range and ifOverflow = %s',
       ifOverflow => {
         const segment: ReferenceLineSegment = [{ x: 1 }, { x: 2 }];
-        const scaleX = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 10]).range([0, 100]));
-        const scaleY = d3ScaleToRechartsScale<number>(scaleLinear().domain([0, 20]).range([0, 100]));
+        const scaleX = rechartsScaleFactory<number>(scaleLinear().domain([0, 10]).range([0, 100]));
+        const scaleY = rechartsScaleFactory<number>(scaleLinear().domain([0, 20]).range([0, 100]));
         const result = getEndPoints(scaleX, scaleY, viewBox, undefined, undefined, undefined, {
           segment,
           ifOverflow,
