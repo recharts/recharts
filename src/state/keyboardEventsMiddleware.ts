@@ -42,64 +42,67 @@ keyboardEventsMiddleware.startListening({
     }
 
     const callback = () => {
-      const currentState = listenerApi.getState();
-      const accessibilityLayerIsActive = currentState.rootProps.accessibilityLayer !== false;
-      if (!accessibilityLayerIsActive) {
-        return;
-      }
-      const { keyboardInteraction } = currentState.tooltip;
-      const key = latestKeyboardActionPayload;
-      if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
-        return;
-      }
+      try {
+        const currentState = listenerApi.getState();
+        const accessibilityLayerIsActive = currentState.rootProps.accessibilityLayer !== false;
+        if (!accessibilityLayerIsActive) {
+          return;
+        }
+        const { keyboardInteraction } = currentState.tooltip;
+        const key = latestKeyboardActionPayload;
+        if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
+          return;
+        }
 
-      // TODO this is lacking index for charts that do not support numeric indexes
-      const resolvedIndex = combineActiveTooltipIndex(
-        keyboardInteraction,
-        selectTooltipDisplayedData(currentState),
-        selectTooltipAxisDataKey(currentState),
-        selectTooltipAxisDomain(currentState),
-      );
-      const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
-      if (!Number.isFinite(currentIndex) || currentIndex < 0) {
-        return;
-      }
-      const tooltipTicks = selectTooltipAxisTicks(currentState);
-      if (key === 'Enter') {
-        const coordinate = selectCoordinateForDefaultIndex(
-          currentState,
-          'axis',
-          'hover',
-          String(keyboardInteraction.index),
+        // TODO this is lacking index for charts that do not support numeric indexes
+        const resolvedIndex = combineActiveTooltipIndex(
+          keyboardInteraction,
+          selectTooltipDisplayedData(currentState),
+          selectTooltipAxisDataKey(currentState),
+          selectTooltipAxisDomain(currentState),
         );
+        const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
+        if (!Number.isFinite(currentIndex) || currentIndex < 0) {
+          return;
+        }
+        const tooltipTicks = selectTooltipAxisTicks(currentState);
+        if (key === 'Enter') {
+          const coordinate = selectCoordinateForDefaultIndex(
+            currentState,
+            'axis',
+            'hover',
+            String(keyboardInteraction.index),
+          );
+          listenerApi.dispatch(
+            setKeyboardInteraction({
+              active: !keyboardInteraction.active,
+              activeIndex: keyboardInteraction.index,
+              activeCoordinate: coordinate,
+            }),
+          );
+          return;
+        }
+
+        const direction = selectChartDirection(currentState);
+        const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
+        const movement = key === 'ArrowRight' ? 1 : -1;
+        const nextIndex = currentIndex + movement * directionMultiplier;
+        if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
+          return;
+        }
+        const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
+
         listenerApi.dispatch(
           setKeyboardInteraction({
-            active: !keyboardInteraction.active,
-            activeIndex: keyboardInteraction.index,
+            active: true,
+            activeIndex: nextIndex.toString(),
             activeCoordinate: coordinate,
           }),
         );
-        return;
+      } finally {
+        rafId = null;
+        timeoutId = null;
       }
-
-      const direction = selectChartDirection(currentState);
-      const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
-      const movement = key === 'ArrowRight' ? 1 : -1;
-      const nextIndex = currentIndex + movement * directionMultiplier;
-      if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
-        return;
-      }
-      const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
-
-      listenerApi.dispatch(
-        setKeyboardInteraction({
-          active: true,
-          activeIndex: nextIndex.toString(),
-          activeCoordinate: coordinate,
-        }),
-      );
-      rafId = null;
-      timeoutId = null;
     };
 
     if (!isThrottled) {
