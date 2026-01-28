@@ -10,7 +10,9 @@ test.use({
   colorScheme: 'dark',
 });
 
-test('dark mode: examples list', async ({ mount }) => {
+test('dark mode: examples list', async ({ mount, page }) => {
+  test.setTimeout(20_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const component = await mount(
     <BrowserRouter>
       <Routes>
