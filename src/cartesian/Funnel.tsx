@@ -322,11 +322,8 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
             key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
             className="recharts-funnel-trapezoid"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
           >
             <FunnelTrapezoid {...trapezoidProps} />

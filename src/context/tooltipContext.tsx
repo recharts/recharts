@@ -1,30 +1,35 @@
 import * as React from 'react';
 import { Coordinate, DataKey } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
-import { mouseLeaveItem, setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
+import {
+  mouseLeaveItem,
+  setActiveClickItemIndex,
+  setActiveMouseOverItemIndex,
+  TooltipPayload,
+} from '../state/tooltipSlice';
 
-export type TooltipPayloadType = any[];
-
-type TooltipTriggerInfo<T extends TooltipPayloadType> = {
-  tooltipPayload: T;
-  tooltipPosition: Coordinate;
-  cx: number;
-  cy: number;
+/**
+ * Some graphical items choose to provide more information to the tooltip
+ * and some do not.
+ */
+type TooltipTriggerInfo = {
+  tooltipPayload?: TooltipPayload;
+  tooltipPosition?: Coordinate;
 };
 
-export type ActivateTooltipAction<T extends TooltipPayloadType> = (
-  tooltipInfo: TooltipTriggerInfo<T>,
+export type MouseEnterLeaveEvent<T, E extends SVGElement = SVGElement> = (
+  data: T,
   index: number,
-  event: React.MouseEvent<SVGElement>,
+  event: React.MouseEvent<E>,
 ) => void;
 
-export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
-  onMouseEnterFromProps: ActivateTooltipAction<T> | undefined,
+export const useMouseEnterItemDispatch = <T extends TooltipTriggerInfo, E extends SVGElement = SVGElement>(
+  onMouseEnterFromProps: MouseEnterLeaveEvent<T, E> | undefined,
   dataKey: DataKey<any> | undefined,
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
+  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
     onMouseEnterFromProps?.(data, index, event);
     dispatch(
       setActiveMouseOverItemIndex({
@@ -37,23 +42,23 @@ export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
   };
 };
 
-export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
-  onMouseLeaveFromProps: undefined | ActivateTooltipAction<T>,
+export const useMouseLeaveItemDispatch = <T extends TooltipTriggerInfo, E extends SVGElement = SVGElement>(
+  onMouseLeaveFromProps: undefined | MouseEnterLeaveEvent<T, E>,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
+  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
     onMouseLeaveFromProps?.(data, index, event);
     dispatch(mouseLeaveItem());
   };
 };
 
-export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
-  onMouseClickFromProps: ActivateTooltipAction<T> | undefined,
+export const useMouseClickItemDispatch = <T extends TooltipTriggerInfo, E extends SVGElement = SVGElement>(
+  onMouseClickFromProps: MouseEnterLeaveEvent<T, E> | undefined,
   dataKey: DataKey<any> | undefined,
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
+  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
     onMouseClickFromProps?.(data, index, event);
     dispatch(
       setActiveClickItemIndex({
