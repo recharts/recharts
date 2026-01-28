@@ -85,13 +85,6 @@ describe('Throttling Middleware', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
-    it('should execute first mousemove event immediately (leading edge) when throttleDelay is a number', () => {
-      // We can't easily check execution for mouseMove without extensive state setup,
-      // but we can assume if externalEventsMiddleware works, the logic is sound.
-      // Or we can try to mock the console.log I added?
-      // Let's rely on externalEventsMiddleware test for logic verification.
-    });
-
     it('should throttle mousemove events (not debounce) when throttleDelay is a number', () => {
       store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
       const move1 = createMockMousePointer(50, 50);
