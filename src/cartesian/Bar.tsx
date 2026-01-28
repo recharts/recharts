@@ -1101,7 +1101,8 @@ export function computeBarRectangles({
         }
       }
 
-      if (x == null || y == null || width == null || height == null) {
+      // Filter out 0-dimension rectangles early to avoid creating unnecessary component trees
+      if (x == null || y == null || width == null || height == null || width === 0 || height === 0) {
         return null;
       }
 
