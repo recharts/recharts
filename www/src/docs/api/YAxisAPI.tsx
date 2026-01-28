@@ -142,7 +142,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
+      type: 'Array<number> | Array<string> | Function | [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -516,7 +516,7 @@ export const YAxisAPI: ApiDoc = {
     },
     {
       name: 'ticks',
-      type: 'Array<readonly AxisTick>',
+      type: 'Array<AxisTick>',
       isOptional: true,
       desc: {
         'en-US': (

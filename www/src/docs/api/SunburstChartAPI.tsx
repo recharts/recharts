@@ -252,7 +252,7 @@ export const SunburstChartAPI: ApiDoc = {
     },
     {
       name: 'throttledEvents',
-      type: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+      type: '"all" | Array<keyof GlobalEventHandlersEventMap>',
       isOptional: true,
       desc: {
         'en-US': (

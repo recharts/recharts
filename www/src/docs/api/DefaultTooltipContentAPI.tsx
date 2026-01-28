@@ -25,7 +25,7 @@ export const DefaultTooltipContentAPI: ApiDoc = {
     { name: 'labelStyle', type: 'React.CSSProperties', isOptional: true, defaultVal: {} },
     {
       name: 'payload',
-      type: 'Array<readonly Payload<TValue, TName>>',
+      type: 'Array<Payload<TValue, TName>>',
       isOptional: true,
       examples: [{ name: 'Banded Chart', url: '/examples/BandedChart/', isExternal: false }],
     },

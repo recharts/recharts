@@ -102,7 +102,7 @@ export const DefaultLegendContentAPI: ApiDoc = {
     },
     {
       name: 'payload',
-      type: 'Array<readonly LegendPayload>',
+      type: 'Array<LegendPayload>',
       isOptional: true,
       desc: {
         'en-US': (

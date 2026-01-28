@@ -3,12 +3,12 @@ import { ApiDoc } from './types';
 export const PolygonAPI: ApiDoc = {
   name: 'Polygon',
   props: [
-    { name: 'baseLinePoints', type: 'Array<readonly Coordinate>', isOptional: true },
+    { name: 'baseLinePoints', type: 'Array<Coordinate>', isOptional: true },
     { name: 'className', type: 'string', isOptional: true },
     { name: 'connectNulls', type: 'boolean', isOptional: true },
     {
       name: 'points',
-      type: 'Array<readonly Coordinate>',
+      type: 'Array<Coordinate>',
       isOptional: true,
       desc: {
         'en-US': (

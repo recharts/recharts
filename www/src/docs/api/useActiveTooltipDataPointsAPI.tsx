@@ -25,7 +25,7 @@ export const useActiveTooltipDataPointsAPI: ApiDoc = {
       </section>
     ),
   },
-  returnValue: 'Array<readonly T> | undefined',
+  returnValue: 'Array<T> | undefined',
   returnDesc: {
     'en-US': (
       <section>

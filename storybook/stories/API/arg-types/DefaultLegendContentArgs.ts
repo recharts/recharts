@@ -1392,7 +1392,7 @@ export const DefaultLegendContentArgs: StorybookArgs = {
       'DefaultLegendContent.payload is omitted from Legend props.\nA custom payload can be passed here if desired, or it can be passed from the Legend "content" callback.',
     table: {
       type: {
-        summary: 'Array<readonly LegendPayload>',
+        summary: 'Array<LegendPayload>',
       },
       category: 'General',
     },
