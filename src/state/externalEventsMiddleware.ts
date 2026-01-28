@@ -29,6 +29,7 @@ export const externalEventsMiddleware = createListenerMiddleware<RechartsRootSta
  */
 const rafIdMap = new Map<string, number>();
 const timeoutIdMap = new Map<string, ReturnType<typeof setTimeout>>();
+const latestEventMap = new Map<string, ExternalEventActionPayload>();
 
 externalEventsMiddleware.startListening({
   actionCreator: externalEventAction,
@@ -43,17 +44,13 @@ externalEventsMiddleware.startListening({
     reactEvent.persist();
 
     const eventType = reactEvent.type;
+    latestEventMap.set(eventType, action.payload);
 
     // Cancel any pending execution for this event type
     const existingRafId = rafIdMap.get(eventType);
     if (existingRafId !== undefined) {
       cancelAnimationFrame(existingRafId);
       rafIdMap.delete(eventType);
-    }
-    const existingTimeoutId = timeoutIdMap.get(eventType);
-    if (existingTimeoutId !== undefined) {
-      clearTimeout(existingTimeoutId);
-      timeoutIdMap.delete(eventType);
     }
 
     const state = listenerApi.getState();
@@ -74,22 +71,22 @@ externalEventsMiddleware.startListening({
     // throttledEvents can be 'all' or an array of event names
     const isThrottled = eventListAsString === 'all' || eventListAsString?.includes(eventType);
 
-    if (!isThrottled) {
-      // Execute immediately
-      const nextState: MouseHandlerDataParam = {
-        activeCoordinate: selectActiveTooltipCoordinate(state),
-        activeDataKey: selectActiveTooltipDataKey(state),
-        activeIndex: selectActiveTooltipIndex(state),
-        activeLabel: selectActiveLabel(state),
-        activeTooltipIndex: selectActiveTooltipIndex(state),
-        isTooltipActive: selectIsTooltipActive(state),
-      };
-      handler(nextState, reactEvent);
-      return;
+    const existingTimeoutId = timeoutIdMap.get(eventType);
+    if (existingTimeoutId !== undefined && (typeof throttleDelay !== 'number' || !isThrottled)) {
+      clearTimeout(existingTimeoutId);
+      timeoutIdMap.delete(eventType);
     }
 
     const callback = () => {
+      const latestAction = latestEventMap.get(eventType);
+
       try {
+        if (!latestAction) {
+          // This happens if the event was consumed by the leading edge and no new event came in
+          return;
+        }
+
+        const { handler: latestHandler, reactEvent: latestEvent } = latestAction;
         const currentState: RechartsRootState = listenerApi.getState();
         const nextState: MouseHandlerDataParam = {
           activeCoordinate: selectActiveTooltipCoordinate(currentState),
@@ -100,19 +97,37 @@ externalEventsMiddleware.startListening({
           isTooltipActive: selectIsTooltipActive(currentState),
         };
 
-        handler(nextState, reactEvent);
+        if (latestHandler) {
+          latestHandler(nextState, latestEvent);
+        }
       } finally {
         rafIdMap.delete(eventType);
         timeoutIdMap.delete(eventType);
+        latestEventMap.delete(eventType);
       }
     };
+
+    if (!isThrottled) {
+      // Execute immediately
+      callback();
+      return;
+    }
 
     if (throttleDelay === 'raf') {
       const rafId = requestAnimationFrame(callback);
       rafIdMap.set(eventType, rafId);
     } else if (typeof throttleDelay === 'number') {
-      const timeoutId = setTimeout(callback, throttleDelay);
-      timeoutIdMap.set(eventType, timeoutId);
+      if (!timeoutIdMap.has(eventType)) {
+        /*
+         * Leading edge execution - execute immediately on the first event
+         * and then start the cooldown period to throttle subsequent events.
+         */
+        callback();
+
+        // Start cooldown
+        const timeoutId = setTimeout(callback, throttleDelay);
+        timeoutIdMap.set(eventType, timeoutId);
+      }
     } else {
       // Should not happen based on type, but fallback to immediate
       callback();

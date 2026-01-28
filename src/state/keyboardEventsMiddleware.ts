@@ -17,6 +17,7 @@ export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootSta
 
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let latestKeyboardActionPayload: KeyboardEvent['key'] | null = null;
 
 keyboardEventsMiddleware.startListening({
   actionCreator: keyDownAction,
@@ -24,18 +25,21 @@ keyboardEventsMiddleware.startListening({
     action: ReturnType<typeof keyDownAction>,
     listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>,
   ) => {
+    latestKeyboardActionPayload = action.payload;
+
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
-    }
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
     }
 
     const state: RechartsRootState = listenerApi.getState();
     const { throttleDelay, throttledEvents } = state.eventSettings;
     const isThrottled = throttledEvents === 'all' || throttledEvents.includes('keydown');
+
+    if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
 
     const callback = () => {
       const currentState = listenerApi.getState();
@@ -44,7 +48,7 @@ keyboardEventsMiddleware.startListening({
         return;
       }
       const { keyboardInteraction } = currentState.tooltip;
-      const key = action.payload;
+      const key = latestKeyboardActionPayload;
       if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
         return;
       }
@@ -106,7 +110,19 @@ keyboardEventsMiddleware.startListening({
     if (throttleDelay === 'raf') {
       rafId = requestAnimationFrame(callback);
     } else if (typeof throttleDelay === 'number') {
-      timeoutId = setTimeout(callback, throttleDelay);
+      if (timeoutId === null) {
+        callback();
+        latestKeyboardActionPayload = null;
+
+        timeoutId = setTimeout(() => {
+          if (latestKeyboardActionPayload) {
+            callback();
+          } else {
+            timeoutId = null;
+            rafId = null;
+          }
+        }, throttleDelay);
+      }
     }
   },
 });

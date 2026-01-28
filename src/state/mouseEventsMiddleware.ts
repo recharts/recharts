@@ -5,7 +5,7 @@ import { selectActivePropsFromChartPointer } from './selectors/selectActiveProps
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
 import { getChartPointer } from '../util/getChartPointer';
-import { MousePointer } from '../util/types';
+import { ChartPointer, MousePointer } from '../util/types';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 
@@ -43,37 +43,52 @@ export const mouseMoveMiddleware = createListenerMiddleware<RechartsRootState>()
  */
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let latestChartPointer: ChartPointer | null = null;
 
 mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
 
+    const state = listenerApi.getState();
+    const { throttleDelay, throttledEvents } = state.eventSettings;
+    const isThrottled = throttledEvents === 'all' || throttledEvents?.includes('mousemove');
+
     // Cancel any pending execution
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
     }
-    if (timeoutId !== null) {
+    if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
       clearTimeout(timeoutId);
       timeoutId = null;
     }
 
-    const state = listenerApi.getState();
-    const { throttleDelay, throttledEvents } = state.eventSettings;
-    const isThrottled = throttledEvents === 'all' || throttledEvents?.includes('mousemove');
-
-    const chartPointer = getChartPointer(mousePointer);
+    /*
+     * Here it is important to resolve the chart pointer _before_ the callback,
+     * because once we leave the current event loop, the mousePointer event object will lose
+     * reference to currentTarget which getChartPointer uses.
+     */
+    latestChartPointer = getChartPointer(mousePointer);
     const callback = () => {
       /*
-       * Here we read a fresh state inside the callback to ensure we have the latest state values
+       * Here we read a fresh state again inside the callback to ensure we have the latest state values
        * after any potential actions that may have been dispatched between the original event and this callback.
        */
       const currentState = listenerApi.getState();
       const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
-      // this functionality only applies to charts that have axes
+      if (!latestChartPointer) {
+        rafId = null;
+        timeoutId = null;
+        return;
+      }
+
+      /*
+       * This functionality only applies to charts that have axes.
+       * Graphical items have its own mouse events handling mechanism where they attach events directly to the items.
+       */
       if (tooltipEventType === 'axis') {
-        const activeProps = selectActivePropsFromChartPointer(currentState, chartPointer);
+        const activeProps = selectActivePropsFromChartPointer(currentState, latestChartPointer);
         if (activeProps?.activeIndex != null) {
           listenerApi.dispatch(
             setMouseOverAxisIndex({
@@ -99,7 +114,9 @@ mouseMoveMiddleware.startListening({
     if (throttleDelay === 'raf') {
       rafId = requestAnimationFrame(callback);
     } else if (typeof throttleDelay === 'number') {
-      timeoutId = setTimeout(callback, throttleDelay);
+      if (timeoutId === null) {
+        timeoutId = setTimeout(callback, throttleDelay);
+      }
     }
   },
 });

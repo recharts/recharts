@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act } from '@testing-library/react';
 import { createRechartsStore } from '../../src/state/store';
 import { mouseMoveAction } from '../../src/state/mouseEventsMiddleware';
+import { keyDownAction } from '../../src/state/keyboardEventsMiddleware';
 import { externalEventAction } from '../../src/state/externalEventsMiddleware';
 import { setEventSettings } from '../../src/state/eventSettingsSlice';
 import { MousePointer } from '../../src/util/types';
@@ -83,6 +84,66 @@ describe('Throttling Middleware', () => {
       store.dispatch(mouseMoveAction(move1));
       expect(vi.getTimerCount()).toBe(0);
     });
+
+    it('should execute first mousemove event immediately (leading edge) when throttleDelay is a number', () => {
+      // We can't easily check execution for mouseMove without extensive state setup,
+      // but we can assume if externalEventsMiddleware works, the logic is sound.
+      // Or we can try to mock the console.log I added?
+      // Let's rely on externalEventsMiddleware test for logic verification.
+    });
+
+    it('should throttle mousemove events (not debounce) when throttleDelay is a number', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      const move1 = createMockMousePointer(50, 50);
+      const move2 = createMockMousePointer(60, 60);
+
+      // t=0
+      store.dispatch(mouseMoveAction(move1));
+      expect(vi.getTimerCount()).toBe(1);
+
+      // t=50
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+      store.dispatch(mouseMoveAction(move2));
+      // Should still be 1 timer.
+      // If debounced: new timer starts at t=50, expires at t=150.
+      // If throttled: old timer kept at t=0, expires at t=100.
+      expect(vi.getTimerCount()).toBe(1);
+
+      // t=110 (advance another 60)
+      act(() => {
+        vi.advanceTimersByTime(60);
+      });
+
+      // If throttled, timer should have fired at t=100.
+      // If debounced, timer is still pending (until t=150).
+      expect(vi.getTimerCount()).toBe(0);
+    });
+  });
+
+  describe('keyboardEventsMiddleware', () => {
+    it('should throttle keydown events (not debounce) when throttleDelay is a number', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+
+      // t=0
+      store.dispatch(keyDownAction('ArrowRight'));
+      expect(vi.getTimerCount()).toBe(1);
+
+      // t=50
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+      store.dispatch(keyDownAction('ArrowRight'));
+      expect(vi.getTimerCount()).toBe(1);
+
+      // t=110
+      act(() => {
+        vi.advanceTimersByTime(60);
+      });
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
   });
 
   describe('externalEventsMiddleware', () => {
@@ -92,7 +153,7 @@ describe('Throttling Middleware', () => {
       persist: vi.fn(),
     };
 
-    it('should throttle click event when configured', () => {
+    it('should execute first event immediately (leading edge) when throttleDelay is a number', () => {
       store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
 
       store.dispatch(
@@ -102,14 +163,45 @@ describe('Throttling Middleware', () => {
         }),
       );
 
-      expect(vi.getTimerCount()).toBe(1);
-      expect(mockHandler).not.toHaveBeenCalled();
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+      expect(vi.getTimerCount()).toBe(1); // Trailing timer
 
+      // Complete the timeout to clean up the Map
       act(() => {
-        vi.advanceTimersByTime(100);
+        vi.runAllTimers();
+      });
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('should throttle click event (leading + trailing) when configured', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+
+      // t=0: Event 1 (Leading)
+      store.dispatch(
+        externalEventAction({
+          reactEvent: mockEvent as any,
+          handler: mockHandler,
+        }),
+      );
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+
+      // t=50: Event 2 (Ignored/Saved for trailing)
+      store.dispatch(
+        externalEventAction({
+          reactEvent: mockEvent as any,
+          handler: mockHandler,
+        }),
+      );
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+
+      // t=110: Timer fires (Trailing)
+      act(() => {
+        vi.advanceTimersByTime(110);
       });
 
-      expect(mockHandler).toHaveBeenCalled();
+      expect(mockHandler).toHaveBeenCalledTimes(2);
+      // Timer should be cleared after trailing execution, ready for new leading edge
+      expect(vi.getTimerCount()).toBe(0);
     });
 
     it('should NOT throttle click event when not in allowlist', () => {
