@@ -973,6 +973,15 @@ describe('readProject', () => {
     });
   });
 
+  it('should return "readonly" modifier in props if they are defined in Readonly<>', () => {
+    const typeOfProp = reader.getTypeOf('AreaChart', 'throttledEvents');
+    assertNotNull(typeOfProp);
+    expect(typeOfProp).toEqual({
+      isInline: false,
+      names: ['"all"', 'readonly (keyof GlobalEventHandlersEventMap)[]'],
+    });
+  });
+
   it('should return comment for component itself', () => {
     const comment = reader.getComponentJsDocMeta('Customized')?.text;
     assertNotNull(comment);

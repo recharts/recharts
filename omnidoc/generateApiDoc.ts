@@ -27,6 +27,27 @@ export function simplifyOneType(originalText: string, isInline: boolean = false)
   // Remove import paths - extract just the type name
   simplifiedText = simplifiedText.replace(/import\([^)]+\)\.(\w+)/g, '$1');
 
+  // Remove readonly modifier
+  simplifiedText = simplifiedText.replace(/^readonly\s+/, '');
+
+  // Remove outer parentheses if they wrap the whole type
+  if (simplifiedText.startsWith('(') && simplifiedText.endsWith(')')) {
+    let depth = 0;
+    let wrapsWhole = true;
+    for (let i = 0; i < simplifiedText.length; i++) {
+      if (simplifiedText[i] === '(') depth++;
+      else if (simplifiedText[i] === ')') depth--;
+
+      if (depth === 0 && i < simplifiedText.length - 1) {
+        wrapsWhole = false;
+        break;
+      }
+    }
+    if (wrapsWhole && depth === 0) {
+      return simplifyOneType(simplifiedText.slice(1, -1), isInline);
+    }
+  }
+
   // Array types
   if (simplifiedText.endsWith('[]')) {
     const elementType = simplifyOneType(simplifiedText.slice(0, -2), isInline);
@@ -40,7 +61,7 @@ export function simplifyOneType(originalText: string, isInline: boolean = false)
   }
 
   // Function types
-  if (simplifiedText.includes('=>') || (simplifiedText.startsWith('(') && simplifiedText.includes(')'))) {
+  if (simplifiedText.includes('=>')) {
     return 'Function';
   }
 
