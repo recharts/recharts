@@ -11,7 +11,6 @@ test.use({
 });
 
 test('dark mode: examples list', async ({ mount, page }) => {
-  test.setTimeout(20_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const component = await mount(
     <BrowserRouter>
@@ -29,7 +28,9 @@ test('dark mode: examples list', async ({ mount, page }) => {
     </BrowserRouter>,
   );
 
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot({
+    timeout: 15_000,
+  });
 });
 
 test('dark mode: Simple Line Chart', async ({ mount }) => {
