@@ -136,7 +136,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
     },
     {
       name: 'domain',
-      type: 'Array<readonly number> | Array<readonly string> | Function | readonly [AxisDomainItem, AxisDomainItem]',
+      type: 'Array<number> | Array<string> | Function | [AxisDomainItem, AxisDomainItem]',
       isOptional: true,
       desc: {
         'en-US': (
@@ -393,7 +393,7 @@ export const PolarRadiusAxisAPI: ApiDoc = {
       },
       defaultVal: true,
     },
-    { name: 'ticks', type: 'Array<readonly TickItem>', isOptional: true },
+    { name: 'ticks', type: 'Array<TickItem>', isOptional: true },
     {
       name: 'type',
       type: '"auto" | "category" | "number"',

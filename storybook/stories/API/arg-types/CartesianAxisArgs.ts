@@ -1470,7 +1470,7 @@ export const CartesianAxisArgs: StorybookArgs = {
     description: 'Careful - this is the same name as XAxis + YAxis `ticks` but completely different object!',
     table: {
       type: {
-        summary: 'Array<readonly CartesianTickItem>',
+        summary: 'Array<CartesianTickItem>',
       },
       category: 'General',
     },

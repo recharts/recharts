@@ -5,7 +5,7 @@ export const CurveAPI: ApiDoc = {
   props: [
     {
       name: 'baseLine',
-      type: 'Array<readonly NullableCoordinate> | number',
+      type: 'Array<NullableCoordinate> | number',
       isOptional: true,
       desc: {
         'en-US': (
@@ -66,7 +66,7 @@ export const CurveAPI: ApiDoc = {
     { name: 'pathRef', type: 'Function | React.RefObject<SVGPathElement> | null', isOptional: true },
     {
       name: 'points',
-      type: 'Array<readonly NullableCoordinate>',
+      type: 'Array<NullableCoordinate>',
       isOptional: true,
       desc: {
         'en-US': (

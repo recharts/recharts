@@ -122,7 +122,7 @@ export const AreaAPI: ApiDoc = {
     },
     {
       name: 'baseLine',
-      type: 'Array<readonly NullableCoordinate> | number',
+      type: 'Array<NullableCoordinate> | number',
       isOptional: true,
       desc: {
         'en-US': (

@@ -26,4 +26,11 @@ describe('processType', () => {
   it('should filter undefined strings', () => {
     expect(processType(['string', 'undefined'], false)).toBe('string');
   });
+
+  it('should remove the readonly modified because it is not useful in the docs', () => {
+    expect(processType(['readonly string[]', 'number'], false)).toBe('Array<string> | number');
+    expect(processType(['"all"', 'readonly (keyof GlobalEventHandlersEventMap)[]'], false)).toBe(
+      '"all" | Array<keyof GlobalEventHandlersEventMap>',
+    );
+  });
 });

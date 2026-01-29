@@ -72,7 +72,7 @@ export const TreemapAPI: ApiDoc = {
       ],
     },
     { name: 'className', type: 'string', isOptional: true },
-    { name: 'colorPanel', type: 'Array<readonly string>', isOptional: true },
+    { name: 'colorPanel', type: 'Array<string>', isOptional: true },
     {
       name: 'content',
       type: '(union of 8 variants)',
@@ -91,7 +91,7 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'data',
-      type: 'Array<readonly TreemapDataType>',
+      type: 'Array<TreemapDataType>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -251,7 +251,7 @@ export const TreemapAPI: ApiDoc = {
     },
     {
       name: 'throttledEvents',
-      type: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+      type: '"all" | Array<keyof GlobalEventHandlersEventMap>',
       isOptional: true,
       desc: {
         'en-US': (

@@ -80,7 +80,7 @@ export const PolarGridArgs: StorybookArgs = {
     description: "The array of every line grid's angle.",
     table: {
       type: {
-        summary: 'Array<readonly number>',
+        summary: 'Array<number>',
       },
       category: 'General',
     },
@@ -89,7 +89,7 @@ export const PolarGridArgs: StorybookArgs = {
     description: "The array of every circle grid's radius.",
     table: {
       type: {
-        summary: 'Array<readonly number>',
+        summary: 'Array<number>',
       },
       category: 'General',
     },

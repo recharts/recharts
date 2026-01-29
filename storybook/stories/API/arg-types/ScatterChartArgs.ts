@@ -422,7 +422,7 @@ export const ScatterChartArgs: StorybookArgs = {
       "Defines which events should be throttled.\nEvents not in this list will not be throttled.\n\nUse the special value `'all'` to throttle all events. Empty array means no events are throttled.\n\nUse the prop `throttleDelay` to define the throttling interval.\n\nIf an event is on this list, then you lose the opportunity to access the event synchronously.\nWhich means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,\nthen that event handler must not be in this list.",
     table: {
       type: {
-        summary: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+        summary: '"all" | Array<keyof GlobalEventHandlersEventMap>',
       },
       category: 'General',
       defaultValue: {

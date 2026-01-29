@@ -113,7 +113,7 @@ export const DefaultTooltipContentArgs: StorybookArgs = {
   payload: {
     table: {
       type: {
-        summary: 'Array<readonly Payload<TValue, TName>>',
+        summary: 'Array<Payload<TValue, TName>>',
       },
       category: 'General',
     },

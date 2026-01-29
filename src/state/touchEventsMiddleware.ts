@@ -16,6 +16,7 @@ export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>(
 
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let latestTouchEvent: React.TouchEvent<HTMLDivElement> | null = null;
 
 touchEventMiddleware.startListening({
   actionCreator: touchEventAction,
@@ -28,25 +29,33 @@ touchEventMiddleware.startListening({
       return;
     }
 
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
+    latestTouchEvent = touchEvent;
 
     const state = listenerApi.getState();
     const { throttleDelay, throttledEvents } = state.eventSettings;
     const isThrottled = throttledEvents === 'all' || throttledEvents.includes('touchmove');
 
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+
     const callback = () => {
+      if (!latestTouchEvent) {
+        return;
+      }
+
       const currentState = listenerApi.getState();
       const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
       if (tooltipEventType === 'axis') {
-        const touch = touchEvent.touches[0];
+        const touch = latestTouchEvent.touches[0];
         if (touch == null) {
+          rafId = null;
+          timeoutId = null;
           return;
         }
         const activeProps = selectActivePropsFromChartPointer(
@@ -54,7 +63,7 @@ touchEventMiddleware.startListening({
           getChartPointer({
             clientX: touch.clientX,
             clientY: touch.clientY,
-            currentTarget: touchEvent.currentTarget,
+            currentTarget: latestTouchEvent.currentTarget,
           }),
         );
         if (activeProps?.activeIndex != null) {
@@ -67,7 +76,7 @@ touchEventMiddleware.startListening({
           );
         }
       } else if (tooltipEventType === 'item') {
-        const touch = touchEvent.touches[0];
+        const touch = latestTouchEvent.touches[0];
         if (document.elementFromPoint == null || touch == null) {
           return;
         }
@@ -105,7 +114,19 @@ touchEventMiddleware.startListening({
     if (throttleDelay === 'raf') {
       rafId = requestAnimationFrame(callback);
     } else if (typeof throttleDelay === 'number') {
-      timeoutId = setTimeout(callback, throttleDelay);
+      if (timeoutId === null) {
+        callback();
+        latestTouchEvent = null;
+
+        timeoutId = setTimeout(() => {
+          if (latestTouchEvent) {
+            callback();
+          } else {
+            timeoutId = null;
+            rafId = null;
+          }
+        }, throttleDelay);
+      }
     }
   },
 });

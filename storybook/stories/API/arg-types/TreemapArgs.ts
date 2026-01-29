@@ -107,7 +107,7 @@ export const TreemapArgs: StorybookArgs = {
     },
     table: {
       type: {
-        summary: 'Array<readonly string>',
+        summary: 'Array<string>',
       },
       category: 'General',
     },
@@ -127,7 +127,7 @@ export const TreemapArgs: StorybookArgs = {
       'The source data. Each element should be an object.\nThe properties of each object represent the values of different data dimensions.\n\nUse the `dataKey` prop to specify which properties to use.\n\nIf the `children` property is present on an element, it will be treated as a nested treemap.',
     table: {
       type: {
-        summary: 'Array<readonly TreemapDataType>',
+        summary: 'Array<TreemapDataType>',
       },
       category: 'General',
     },
@@ -305,7 +305,7 @@ export const TreemapArgs: StorybookArgs = {
       "Defines which events should be throttled.\nEvents not in this list will not be throttled.\n\nUse the special value `'all'` to throttle all events. Empty array means no events are throttled.\n\nUse the prop `throttleDelay` to define the throttling interval.\n\nIf an event is on this list, then you lose the opportunity to access the event synchronously.\nWhich means that if you want to call `e.preventDefault()` or `e.stopPropagation()` inside the event handler,\nthen that event handler must not be in this list.",
     table: {
       type: {
-        summary: '"all" | Array<readonly (keyof GlobalEventHandlersEventMap)>',
+        summary: '"all" | Array<keyof GlobalEventHandlersEventMap>',
       },
       category: 'General',
       defaultValue: {

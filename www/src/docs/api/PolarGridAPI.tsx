@@ -83,7 +83,7 @@ export const PolarGridAPI: ApiDoc = {
     },
     {
       name: 'polarAngles',
-      type: 'Array<readonly number>',
+      type: 'Array<number>',
       isOptional: true,
       desc: {
         'en-US': (
@@ -95,7 +95,7 @@ export const PolarGridAPI: ApiDoc = {
     },
     {
       name: 'polarRadius',
-      type: 'Array<readonly number>',
+      type: 'Array<number>',
       isOptional: true,
       desc: {
         'en-US': (

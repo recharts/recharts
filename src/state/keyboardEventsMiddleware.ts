@@ -17,6 +17,7 @@ export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootSta
 
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let latestKeyboardActionPayload: KeyboardEvent['key'] | null = null;
 
 keyboardEventsMiddleware.startListening({
   actionCreator: keyDownAction,
@@ -24,78 +25,84 @@ keyboardEventsMiddleware.startListening({
     action: ReturnType<typeof keyDownAction>,
     listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>,
   ) => {
+    latestKeyboardActionPayload = action.payload;
+
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
-    }
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
     }
 
     const state: RechartsRootState = listenerApi.getState();
     const { throttleDelay, throttledEvents } = state.eventSettings;
     const isThrottled = throttledEvents === 'all' || throttledEvents.includes('keydown');
 
-    const callback = () => {
-      const currentState = listenerApi.getState();
-      const accessibilityLayerIsActive = currentState.rootProps.accessibilityLayer !== false;
-      if (!accessibilityLayerIsActive) {
-        return;
-      }
-      const { keyboardInteraction } = currentState.tooltip;
-      const key = action.payload;
-      if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
-        return;
-      }
+    if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
 
-      // TODO this is lacking index for charts that do not support numeric indexes
-      const resolvedIndex = combineActiveTooltipIndex(
-        keyboardInteraction,
-        selectTooltipDisplayedData(currentState),
-        selectTooltipAxisDataKey(currentState),
-        selectTooltipAxisDomain(currentState),
-      );
-      const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
-      if (!Number.isFinite(currentIndex) || currentIndex < 0) {
-        return;
-      }
-      const tooltipTicks = selectTooltipAxisTicks(currentState);
-      if (key === 'Enter') {
-        const coordinate = selectCoordinateForDefaultIndex(
-          currentState,
-          'axis',
-          'hover',
-          String(keyboardInteraction.index),
+    const callback = () => {
+      try {
+        const currentState = listenerApi.getState();
+        const accessibilityLayerIsActive = currentState.rootProps.accessibilityLayer !== false;
+        if (!accessibilityLayerIsActive) {
+          return;
+        }
+        const { keyboardInteraction } = currentState.tooltip;
+        const key = latestKeyboardActionPayload;
+        if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
+          return;
+        }
+
+        // TODO this is lacking index for charts that do not support numeric indexes
+        const resolvedIndex = combineActiveTooltipIndex(
+          keyboardInteraction,
+          selectTooltipDisplayedData(currentState),
+          selectTooltipAxisDataKey(currentState),
+          selectTooltipAxisDomain(currentState),
         );
+        const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
+        if (!Number.isFinite(currentIndex) || currentIndex < 0) {
+          return;
+        }
+        const tooltipTicks = selectTooltipAxisTicks(currentState);
+        if (key === 'Enter') {
+          const coordinate = selectCoordinateForDefaultIndex(
+            currentState,
+            'axis',
+            'hover',
+            String(keyboardInteraction.index),
+          );
+          listenerApi.dispatch(
+            setKeyboardInteraction({
+              active: !keyboardInteraction.active,
+              activeIndex: keyboardInteraction.index,
+              activeCoordinate: coordinate,
+            }),
+          );
+          return;
+        }
+
+        const direction = selectChartDirection(currentState);
+        const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
+        const movement = key === 'ArrowRight' ? 1 : -1;
+        const nextIndex = currentIndex + movement * directionMultiplier;
+        if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
+          return;
+        }
+        const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
+
         listenerApi.dispatch(
           setKeyboardInteraction({
-            active: !keyboardInteraction.active,
-            activeIndex: keyboardInteraction.index,
+            active: true,
+            activeIndex: nextIndex.toString(),
             activeCoordinate: coordinate,
           }),
         );
-        return;
+      } finally {
+        rafId = null;
+        timeoutId = null;
       }
-
-      const direction = selectChartDirection(currentState);
-      const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
-      const movement = key === 'ArrowRight' ? 1 : -1;
-      const nextIndex = currentIndex + movement * directionMultiplier;
-      if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
-        return;
-      }
-      const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
-
-      listenerApi.dispatch(
-        setKeyboardInteraction({
-          active: true,
-          activeIndex: nextIndex.toString(),
-          activeCoordinate: coordinate,
-        }),
-      );
-      rafId = null;
-      timeoutId = null;
     };
 
     if (!isThrottled) {
@@ -106,7 +113,19 @@ keyboardEventsMiddleware.startListening({
     if (throttleDelay === 'raf') {
       rafId = requestAnimationFrame(callback);
     } else if (typeof throttleDelay === 'number') {
-      timeoutId = setTimeout(callback, throttleDelay);
+      if (timeoutId === null) {
+        callback();
+        latestKeyboardActionPayload = null;
+
+        timeoutId = setTimeout(() => {
+          if (latestKeyboardActionPayload) {
+            callback();
+          } else {
+            timeoutId = null;
+            rafId = null;
+          }
+        }, throttleDelay);
+      }
     }
   },
 });

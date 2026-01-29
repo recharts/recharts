@@ -83,7 +83,7 @@ export const ReferenceLineAPI: ApiDoc = {
     },
     {
       name: 'segment',
-      type: 'readonly [\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n]',
+      type: '[\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n]',
       isOptional: true,
       desc: {
         'en-US': (

@@ -10,7 +10,7 @@ export const CurveArgs: StorybookArgs = {
       'Baseline of the area:\n- number: uses the corresponding axis value as a flat baseline;\n- an array of coordinates: describes a custom baseline path.',
     table: {
       type: {
-        summary: 'Array<readonly NullableCoordinate> | number',
+        summary: 'Array<NullableCoordinate> | number',
       },
       category: 'General',
     },
@@ -1379,7 +1379,7 @@ export const CurveArgs: StorybookArgs = {
     description: 'The coordinates of all the points in the curve, like an array of objects with x and y coordinates.',
     table: {
       type: {
-        summary: 'Array<readonly NullableCoordinate>',
+        summary: 'Array<NullableCoordinate>',
       },
       category: 'General',
     },

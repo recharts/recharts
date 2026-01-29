@@ -59,7 +59,7 @@ export const CartesianAxisAPI: ApiDoc = {
     { name: 'tickMargin', type: 'number', isOptional: true },
     {
       name: 'ticks',
-      type: 'Array<readonly CartesianTickItem>',
+      type: 'Array<CartesianTickItem>',
       isOptional: true,
       desc: {
         'en-US': (

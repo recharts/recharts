@@ -8,7 +8,7 @@ export const PolygonArgs: StorybookArgs = {
   baseLinePoints: {
     table: {
       type: {
-        summary: 'Array<readonly Coordinate>',
+        summary: 'Array<Coordinate>',
       },
       category: 'General',
     },
@@ -112,7 +112,7 @@ export const PolygonArgs: StorybookArgs = {
       'The coordinates of all the vertexes of the polygon, like an array of objects with x and y coordinates.',
     table: {
       type: {
-        summary: 'Array<readonly Coordinate>',
+        summary: 'Array<Coordinate>',
       },
       category: 'General',
     },

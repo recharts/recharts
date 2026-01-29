@@ -67,7 +67,7 @@ export const ReferenceLineArgs: StorybookArgs = {
     table: {
       type: {
         summary:
-          'readonly [\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n]',
+          '[\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n  {\n    x?: number | string;\n    y?: number | string;\n  },\n]',
       },
       category: 'General',
     },
