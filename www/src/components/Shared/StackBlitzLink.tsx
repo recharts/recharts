@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
+
+import cssVars from '../../styles/_variables.css?raw';
 import { sendEvent } from '../analytics.ts';
+import { ColorMode } from '../color-mode';
 
 type StackBlitzLinkProps = Readonly<{
   /**
@@ -25,6 +28,8 @@ const indexTsxCode = (title: string) =>
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
+
+import './index.css';
 import Example from './Example';
 
 const container = document.getElementById('root');
@@ -46,13 +51,13 @@ root.render(<AppWithDevtools />);
 `.trim();
 
 // language=HTML
-const indexHtmlCode = (title: string) => `
+const indexHtmlCode = (args: { title: string; mode: ColorMode }) => `
   <!doctype html>
-  <html lang="en">
+  <html lang="en" data-mode="${args.mode}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
+    <title>${args.title}</title>
   </head>
   <body>
   <div id="root" style="width: 100vw; height: 100vh;"></div>
@@ -152,7 +157,8 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
             template: 'node',
             title,
             files: {
-              'index.html': indexHtmlCode(title),
+              'index.html': indexHtmlCode({ title, mode: 'light' }),
+              'src/index.css': cssVars,
               /*
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
                */
@@ -172,6 +178,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
              * People interested in browsing package.json or other files can always open the sidebar with a click.
              */
             showSidebar: false,
+            theme: 'light',
             /*
              * The only interesting message in the terminal is "Vite dev server running at..."
              * so it doesn't need to be very tall.
