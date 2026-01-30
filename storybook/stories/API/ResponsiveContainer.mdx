@@ -5,19 +5,23 @@ import * as ComponentStories from './ResponsiveContainer.stories';
 
 <Meta of={ComponentStories} />
 
-<Canvas of={ComponentStories.API} layout='padded'/>
+<Canvas of={ComponentStories.API} layout="padded" />
 
 ## Description
 
-<p>The <code>ResponsiveContainer</code> component is a container that adjusts its width and height based on the size of its parent element.
-It is used to create responsive charts that adapt to different screen sizes.</p>
-<p>This component uses the ResizeObserver API to monitor changes to the size of its parent element.
-If you need to support older browsers that do not support this API, you may need to include a polyfill.</p>
-
+<p>
+  The <code>ResponsiveContainer</code> component is a container that adjusts its width and height based on the size of
+  its parent element. It is used to create responsive charts that adapt to different screen sizes.
+</p>
+<p>
+  This component uses the ResizeObserver API to monitor changes to the size of its parent element. If you need to
+  support older browsers that do not support this API, you may need to include a polyfill.
+</p>
 
 ## Child Components
 
 The ResponsiveContainer can be used with the following child components:
+
 - `<AreaChart/>`
 - `<BarChart/>`
 - `<ComposedChart/>`

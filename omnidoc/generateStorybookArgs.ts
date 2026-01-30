@@ -11,6 +11,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import * as prettier from 'prettier';
 import { glob } from 'glob';
 import { ReactNode } from 'react';
 import { getTagText, ProjectDocReader } from './readProject';
@@ -18,8 +19,10 @@ import { processType, generateApiDoc, buildContextMap } from './generateApiDoc';
 import { ExampleReader } from './readExamples';
 import { StorybookArg, StorybookArgs } from '../storybook/StorybookArgs';
 import { defaultLocale } from '../www/src/utils/LocaleUtils';
+import { writeFormattedFile } from './writerUtils';
 
 const ARGS_OUTPUT_DIR = path.join(__dirname, '../storybook/stories/API/arg-types');
+const PRETTIER_CONFIG_PATH = path.join(__dirname, '../.prettierrc');
 
 /**
  * Determines the Storybook control type based on the TypeScript type
@@ -198,7 +201,12 @@ function generateStorybookArgs(componentName: string, projectReader: ProjectDocR
 /**
  * Writes the Storybook args to a TypeScript file
  */
-function writeStorybookArgsFile(componentName: string, args: StorybookArgs, outputPath: string): void {
+async function writeStorybookArgsFile(
+  componentName: string,
+  args: StorybookArgs,
+  outputPath: string,
+  prettierConfig: prettier.Options | null,
+): Promise<void> {
   const varName = `${componentName}Args`;
 
   const fileContent = `/**
@@ -210,8 +218,7 @@ import { StorybookArgs } from '../../../StorybookArgs';
 export const ${varName}: StorybookArgs = ${JSON.stringify(args, null, 2)};
 `;
 
-  fs.writeFileSync(outputPath, fileContent, 'utf-8');
-  console.log(`✓ Generated ${outputPath}`);
+  await writeFormattedFile(outputPath, fileContent, prettierConfig);
 }
 
 /**
@@ -288,6 +295,8 @@ async function main() {
   const allComponentNames = projectReader.getPublicComponentNames();
   const contextMap = buildContextMap(allComponentNames, projectReader);
 
+  const prettierConfig = await prettier.resolveConfig(PRETTIER_CONFIG_PATH);
+
   // Find all stories files
   const storiesFiles = await glob('storybook/stories/API/**/*.stories.tsx');
 
@@ -305,7 +314,7 @@ async function main() {
       // Generate Args
       const args = generateStorybookArgs(componentName, projectReader);
       const argsOutputPath = path.join(ARGS_OUTPUT_DIR, `${componentName}Args.ts`);
-      writeStorybookArgsFile(componentName, args, argsOutputPath);
+      await writeStorybookArgsFile(componentName, args, argsOutputPath, prettierConfig);
 
       // Generate MDX
       const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
@@ -320,8 +329,7 @@ async function main() {
         const mdxContent = generateMdx(componentName, description, apiDoc.parentComponents, apiDoc.childrenComponents);
         // Overwrite MDX in-place (next to the stories file)
         const mdxOutputPath = absoluteStoriesPath.replace(/\.stories\.tsx$/, '.mdx');
-        fs.writeFileSync(mdxOutputPath, mdxContent, 'utf-8');
-        console.log(`✓ Generated ${mdxOutputPath}`);
+        await writeFormattedFile(mdxOutputPath, mdxContent, prettierConfig, 'mdx');
       } else {
         console.warn(`⚠ Could not find stories file for ${componentName}, skipping MDX generation.`);
       }
@@ -330,10 +338,7 @@ async function main() {
     }
   }
 
-  console.log('\nDone! Remember to:');
-  console.log('1. Review the generated files');
-  console.log('2. Import the generated args in your stories');
-  console.log('3. Run prettier to format the files');
+  console.log('\nDone! Remember to review the generated files.');
 }
 
 if (require.main === module) {

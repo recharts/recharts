@@ -5,20 +5,24 @@ import * as ComponentStories from './Brush.stories';
 
 <Meta of={ComponentStories} />
 
-<Canvas of={ComponentStories.API} layout='padded'/>
+<Canvas of={ComponentStories.API} layout="padded" />
 
 ## Description
 
-<p>Renders a scrollbar that allows the user to zoom and pan in the chart along its XAxis.
-It also allows you to render a small overview of the chart inside the brush that is always visible
-and shows the full data set so that the user can see where they are zoomed in.</p>
-<p>If a chart is synchronized with other charts using the <code>syncId</code> prop on the chart,
-the brush will also synchronize the zooming and panning between all synchronized charts.</p>
-
+<p>
+  Renders a scrollbar that allows the user to zoom and pan in the chart along its XAxis. It also allows you to render a
+  small overview of the chart inside the brush that is always visible and shows the full data set so that the user can
+  see where they are zoomed in.
+</p>
+<p>
+  If a chart is synchronized with other charts using the <code>syncId</code> prop on the chart, the brush will also
+  synchronize the zooming and panning between all synchronized charts.
+</p>
 
 ## Parent Component
 
 The Brush can be used within the following parent components:
+
 - `<AreaChart/>`
 - `<BarChart/>`
 - `<ComposedChart/>`
