@@ -4,7 +4,7 @@ import { Area, ComposedChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { AreaArgs } from '../arg-types';
+import { AreaArgs } from '../arg-types/AreaArgs';
 
 export default {
   component: Area,

@@ -76,6 +76,15 @@ You can check the status of your code styling by running: `npm run lint`
 
 However, there are still some styles that the linter cannot pick up. If you are unsure about something, looking at [Airbnb's Style Guide](https://github.com/airbnb/javascript) will guide you in the right direction.
 
+## Documentation
+
+We use `omnidoc` to auto-generate API documentation from TypeScript types and JSDoc comments.
+
+- **Do not edit files in `www/src/docs/api/` or `storybook/stories/API/arg-types/` manually.** These files are auto-generated and ignored by git.
+- To update documentation, update the TypeScript interfaces and JSDoc comments in the source code (`src/`).
+- Run `npm run omnidoc` to regenerate the documentation files locally and verify your changes.
+- Documentation is also regenerated automatically when running `npm run build`.
+
 ## Types
 
 We use TypeScript for type safety. Some rules to follow:
