@@ -625,6 +625,29 @@ export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 }
 
 /**
+ * Generates the index.ts file that exports all API docs
+ */
+function generateIndexFile(componentNames: string[]): void {
+  const sortedNames = [...componentNames].sort();
+
+  const imports = sortedNames.map(name => `import { ${name}API } from './${name}API';`).join('\n');
+  const exports = sortedNames.map(name => `  ${name}: ${name}API,`).join('\n');
+
+  const content = `import { ApiDoc } from './types';
+
+${imports}
+
+export const allApiDocs: Record<string, ApiDoc> = {
+${exports}
+};
+`;
+
+  const outputPath = path.join(OUTPUT_DIR, 'index.ts');
+  fs.writeFileSync(outputPath, content, 'utf-8');
+  console.log(`✓ Generated ${outputPath}`);
+}
+
+/**
  * Main function
  */
 async function main() {
@@ -640,20 +663,24 @@ async function main() {
 
   console.log('Generating API documentation for:', componentsToGenerate);
 
+  const generatedComponents: string[] = [];
+
   for (const componentName of componentsToGenerate) {
     try {
       const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);
       writeApiDocFile(apiDoc, outputPath);
+      generatedComponents.push(componentName);
     } catch (error) {
       console.error(`✗ Failed to generate documentation for ${componentName}:`, error);
     }
   }
 
+  generateIndexFile(generatedComponents);
+
   console.log('\nDone! Remember to:');
   console.log('1. Review the generated files');
-  console.log('2. Add imports to www/src/docs/api/index.ts if needed');
-  console.log('3. Run tests to verify consistency');
+  console.log('2. Run tests to verify consistency');
 }
 
 if (require.main === module) {

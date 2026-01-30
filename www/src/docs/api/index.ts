@@ -1,153 +1,143 @@
-import type { ApiDoc } from './types';
-
-import { AreaChartAPI } from './AreaChartAPI';
-import { BarChartAPI } from './BarChartAPI';
-import { ComposedChartAPI } from './ComposedChartAPI';
-import { FunnelChartAPI } from './FunnelChartAPI';
-import { LineChartAPI } from './LineChartAPI';
-import { PieChartAPI } from './PieChartAPI';
-import { ScatterChartAPI } from './ScatterChartAPI';
-import { RadarChartAPI } from './RadarChartAPI';
-import { SankeyAPI } from './SankeyAPI';
-import { RadialBarChartAPI } from './RadialBarChartAPI';
-import { TreemapAPI } from './TreemapAPI';
-import { SunburstChartAPI } from './SunburstChartAPI';
+import { ApiDoc } from './types';
 
 import { AreaAPI } from './AreaAPI';
+import { AreaChartAPI } from './AreaChartAPI';
 import { BarAPI } from './BarAPI';
-import { LineAPI } from './LineAPI';
-import { ScatterAPI } from './ScatterAPI';
-import { XAxisAPI } from './XAxisAPI';
-import { YAxisAPI } from './YAxisAPI';
-import { ZAxisAPI } from './ZAxisAPI';
-import { ReferenceLineAPI } from './ReferenceLineAPI';
-import { ReferenceDotAPI } from './ReferenceDotAPI';
-import { ReferenceAreaAPI } from './ReferenceAreaAPI';
-import { ErrorBarAPI } from './ErrorBarAPI';
+import { BarChartAPI } from './BarChartAPI';
+import { BarStackAPI } from './BarStackAPI';
+import { BrushAPI } from './BrushAPI';
 import { CartesianAxisAPI } from './CartesianAxisAPI';
 import { CartesianGridAPI } from './CartesianGridAPI';
-import { FunnelAPI } from './FunnelAPI';
-
-import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
-import { LegendAPI } from './LegendAPI';
-import { TooltipAPI } from './TooltipAPI';
 import { CellAPI } from './CellAPI';
-import { TextAPI } from './TextAPI';
-
+import { ComposedChartAPI } from './ComposedChartAPI';
+import { CrossAPI } from './CrossAPI';
+import { CurveAPI } from './CurveAPI';
+import { CustomizedAPI } from './CustomizedAPI';
+import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
+import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
+import { DefaultZIndexesAPI } from './DefaultZIndexesAPI';
+import { DotAPI } from './DotAPI';
+import { ErrorBarAPI } from './ErrorBarAPI';
+import { FunnelAPI } from './FunnelAPI';
+import { FunnelChartAPI } from './FunnelChartAPI';
+import { GlobalAPI } from './GlobalAPI';
+import { LabelAPI } from './LabelAPI';
+import { LabelListAPI } from './LabelListAPI';
+import { LayerAPI } from './LayerAPI';
+import { LegendAPI } from './LegendAPI';
+import { LineAPI } from './LineAPI';
+import { LineChartAPI } from './LineChartAPI';
 import { PieAPI } from './PieAPI';
-import { RadarAPI } from './RadarAPI';
-import { RadialBarAPI } from './RadialBarAPI';
+import { PieChartAPI } from './PieChartAPI';
 import { PolarAngleAxisAPI } from './PolarAngleAxisAPI';
 import { PolarGridAPI } from './PolarGridAPI';
 import { PolarRadiusAxisAPI } from './PolarRadiusAxisAPI';
-
-import { CurveAPI } from './CurveAPI';
 import { PolygonAPI } from './PolygonAPI';
+import { RadarAPI } from './RadarAPI';
+import { RadarChartAPI } from './RadarChartAPI';
+import { RadialBarAPI } from './RadialBarAPI';
+import { RadialBarChartAPI } from './RadialBarChartAPI';
 import { RectangleAPI } from './RectangleAPI';
+import { ReferenceAreaAPI } from './ReferenceAreaAPI';
+import { ReferenceDotAPI } from './ReferenceDotAPI';
+import { ReferenceLineAPI } from './ReferenceLineAPI';
+import { ResponsiveContainerAPI } from './ResponsiveContainerAPI';
+import { SankeyAPI } from './SankeyAPI';
+import { ScatterAPI } from './ScatterAPI';
+import { ScatterChartAPI } from './ScatterChartAPI';
 import { SectorAPI } from './SectorAPI';
-import { TrapezoidAPI } from './TrapezoidAPI';
-import { BarStackAPI } from './BarStackAPI';
-import { LabelAPI } from './LabelAPI';
-import { ZIndexLayerAPI } from './ZIndexLayerAPI';
-import { CustomizedAPI } from './CustomizedAPI';
-import { LabelListAPI } from './LabelListAPI';
-import { BrushAPI } from './BrushAPI';
-import { CrossAPI } from './CrossAPI';
-import { DotAPI } from './DotAPI';
-import { DefaultLegendContentAPI } from './DefaultLegendContentAPI';
-import { DefaultTooltipContentAPI } from './DefaultTooltipContentAPI';
-import { LayerAPI } from './LayerAPI';
+import { SunburstChartAPI } from './SunburstChartAPI';
 import { SurfaceAPI } from './SurfaceAPI';
 import { SymbolsAPI } from './SymbolsAPI';
-import { DefaultZIndexesAPI } from './DefaultZIndexesAPI';
+import { TextAPI } from './TextAPI';
+import { TooltipAPI } from './TooltipAPI';
+import { TrapezoidAPI } from './TrapezoidAPI';
+import { TreemapAPI } from './TreemapAPI';
+import { XAxisAPI } from './XAxisAPI';
+import { YAxisAPI } from './YAxisAPI';
+import { ZAxisAPI } from './ZAxisAPI';
+import { ZIndexLayerAPI } from './ZIndexLayerAPI';
+import { getNiceTickValuesAPI } from './getNiceTickValuesAPI';
+import { useActiveTooltipCoordinateAPI } from './useActiveTooltipCoordinateAPI';
 import { useActiveTooltipDataPointsAPI } from './useActiveTooltipDataPointsAPI';
 import { useActiveTooltipLabelAPI } from './useActiveTooltipLabelAPI';
+import { useChartHeightAPI } from './useChartHeightAPI';
+import { useChartWidthAPI } from './useChartWidthAPI';
+import { useIsTooltipActiveAPI } from './useIsTooltipActiveAPI';
 import { useMarginAPI } from './useMarginAPI';
 import { useOffsetAPI } from './useOffsetAPI';
 import { usePlotAreaAPI } from './usePlotAreaAPI';
-import { useChartWidthAPI } from './useChartWidthAPI';
-import { useChartHeightAPI } from './useChartHeightAPI';
-import { getNiceTickValuesAPI } from './getNiceTickValuesAPI';
-import { GlobalAPI } from './GlobalAPI';
 import { useXAxisDomainAPI } from './useXAxisDomainAPI';
 import { useYAxisDomainAPI } from './useYAxisDomainAPI';
-import { useActiveTooltipCoordinateAPI } from './useActiveTooltipCoordinateAPI.tsx';
-import { useIsTooltipActiveAPI } from './useIsTooltipActiveAPI.tsx';
 
 export const allApiDocs: Record<string, ApiDoc> = {
-  AreaChart: AreaChartAPI,
-  BarChart: BarChartAPI,
-  LineChart: LineChartAPI,
-  ComposedChart: ComposedChartAPI,
-  PieChart: PieChartAPI,
-  RadarChart: RadarChartAPI,
-  ScatterChart: ScatterChartAPI,
-  RadialBarChart: RadialBarChartAPI,
-  FunnelChart: FunnelChartAPI,
-  Sankey: SankeyAPI,
-  Treemap: TreemapAPI,
-  SunburstChart: SunburstChartAPI,
-
   Area: AreaAPI,
+  AreaChart: AreaChartAPI,
   Bar: BarAPI,
+  BarChart: BarChartAPI,
   BarStack: BarStackAPI,
-  Line: LineAPI,
-  Scatter: ScatterAPI,
-  XAxis: XAxisAPI,
-  useXAxisDomain: useXAxisDomainAPI,
-  YAxis: YAxisAPI,
-  useYAxisDomain: useYAxisDomainAPI,
-  ZAxis: ZAxisAPI,
   Brush: BrushAPI,
   CartesianAxis: CartesianAxisAPI,
   CartesianGrid: CartesianGridAPI,
-  Funnel: FunnelAPI,
-
-  ResponsiveContainer: ResponsiveContainerAPI,
-  Legend: LegendAPI,
-  DefaultLegendContent: DefaultLegendContentAPI,
-  Tooltip: TooltipAPI,
-  useIsTooltipActive: useIsTooltipActiveAPI,
-  useActiveTooltipDataPoints: useActiveTooltipDataPointsAPI,
-  useActiveTooltipLabel: useActiveTooltipLabelAPI,
-  useActiveTooltipCoordinate: useActiveTooltipCoordinateAPI,
-  DefaultTooltipContent: DefaultTooltipContentAPI,
   Cell: CellAPI,
-  Text: TextAPI,
+  ComposedChart: ComposedChartAPI,
+  Cross: CrossAPI,
+  Curve: CurveAPI,
+  Customized: CustomizedAPI,
+  DefaultLegendContent: DefaultLegendContentAPI,
+  DefaultTooltipContent: DefaultTooltipContentAPI,
+  DefaultZIndexes: DefaultZIndexesAPI,
+  Dot: DotAPI,
+  ErrorBar: ErrorBarAPI,
+  Funnel: FunnelAPI,
+  FunnelChart: FunnelChartAPI,
+  Global: GlobalAPI,
   Label: LabelAPI,
   LabelList: LabelListAPI,
-  Customized: CustomizedAPI,
   Layer: LayerAPI,
-  Surface: SurfaceAPI,
-
-  useMargin: useMarginAPI,
-  useOffset: useOffsetAPI,
-  usePlotArea: usePlotAreaAPI,
-  useChartWidth: useChartWidthAPI,
-  useChartHeight: useChartHeightAPI,
-  getNiceTickValues: getNiceTickValuesAPI,
-  Global: GlobalAPI,
-
+  Legend: LegendAPI,
+  Line: LineAPI,
+  LineChart: LineChartAPI,
   Pie: PieAPI,
-  RadialBar: RadialBarAPI,
-  Radar: RadarAPI,
+  PieChart: PieChartAPI,
   PolarAngleAxis: PolarAngleAxisAPI,
   PolarGrid: PolarGridAPI,
   PolarRadiusAxis: PolarRadiusAxisAPI,
-  ReferenceLine: ReferenceLineAPI,
-  ReferenceDot: ReferenceDotAPI,
-  ReferenceArea: ReferenceAreaAPI,
-  ErrorBar: ErrorBarAPI,
-
-  Cross: CrossAPI,
-  Curve: CurveAPI,
-  Dot: DotAPI,
   Polygon: PolygonAPI,
+  Radar: RadarAPI,
+  RadarChart: RadarChartAPI,
+  RadialBar: RadialBarAPI,
+  RadialBarChart: RadialBarChartAPI,
   Rectangle: RectangleAPI,
+  ReferenceArea: ReferenceAreaAPI,
+  ReferenceDot: ReferenceDotAPI,
+  ReferenceLine: ReferenceLineAPI,
+  ResponsiveContainer: ResponsiveContainerAPI,
+  Sankey: SankeyAPI,
+  Scatter: ScatterAPI,
+  ScatterChart: ScatterChartAPI,
   Sector: SectorAPI,
-  Trapezoid: TrapezoidAPI,
+  SunburstChart: SunburstChartAPI,
+  Surface: SurfaceAPI,
   Symbols: SymbolsAPI,
-
+  Text: TextAPI,
+  Tooltip: TooltipAPI,
+  Trapezoid: TrapezoidAPI,
+  Treemap: TreemapAPI,
+  XAxis: XAxisAPI,
+  YAxis: YAxisAPI,
+  ZAxis: ZAxisAPI,
   ZIndexLayer: ZIndexLayerAPI,
-  DefaultZIndexes: DefaultZIndexesAPI,
+  getNiceTickValues: getNiceTickValuesAPI,
+  useActiveTooltipCoordinate: useActiveTooltipCoordinateAPI,
+  useActiveTooltipDataPoints: useActiveTooltipDataPointsAPI,
+  useActiveTooltipLabel: useActiveTooltipLabelAPI,
+  useChartHeight: useChartHeightAPI,
+  useChartWidth: useChartWidthAPI,
+  useIsTooltipActive: useIsTooltipActiveAPI,
+  useMargin: useMarginAPI,
+  useOffset: useOffsetAPI,
+  usePlotArea: usePlotAreaAPI,
+  useXAxisDomain: useXAxisDomainAPI,
+  useYAxisDomain: useYAxisDomainAPI,
 };
