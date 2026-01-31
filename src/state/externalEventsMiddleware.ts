@@ -41,6 +41,7 @@ externalEventsMiddleware.startListening({
     if (handler == null) {
       return;
     }
+    console.log('Mouse move event sync:', event.currentTarget);
     reactEvent.persist();
 
     const eventType = reactEvent.type;
@@ -79,6 +80,7 @@ externalEventsMiddleware.startListening({
 
     const callback = () => {
       const latestAction = latestEventMap.get(eventType);
+      console.log('Mouse move event async:', latestAction?.reactEvent?.currentTarget);
 
       try {
         if (!latestAction) {
