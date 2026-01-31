@@ -11,6 +11,7 @@ import {
   SymbolFlags,
   Type,
 } from 'ts-morph';
+import { isReactComponent } from './isReactComponent';
 import { DefaultValue, DocReader } from './DocReader';
 import { componentMetaMap } from './componentsAndDefaultPropsMap';
 
@@ -128,17 +129,7 @@ export class ProjectDocReader implements DocReader {
     if (this.componentNamesCache) {
       return this.componentNamesCache;
     }
-    const result = this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function).filter(name => {
-      // Exclude hooks (start with 'use')
-      if (name.startsWith('use')) {
-        return false;
-      }
-      // Exclude known utilities
-      if (['getNiceTickValues', 'DefaultZIndexes', 'Global'].includes(name)) {
-        return false;
-      }
-      return true;
-    });
+    const result = this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function).filter(isReactComponent);
     this.componentNamesCache = result;
     return result;
   }
@@ -382,7 +373,7 @@ export class ProjectDocReader implements DocReader {
       return this.propCache.get(component)!;
     }
 
-    if (component.startsWith('use')) {
+    if (!isReactComponent(component)) {
       const props = this.collectArgumentsFromHook(component);
       this.propCache.set(component, props);
       return props;
@@ -678,7 +669,7 @@ export class ProjectDocReader implements DocReader {
 
   getTypeOf(component: string, prop: string): { names: string[]; isInline: boolean } | undefined {
     try {
-      if (component.startsWith('use')) {
+      if (!isReactComponent(component)) {
         const declaration = this.getComponentDeclaration(component);
         const type = declaration.getType();
         const signature = type.getCallSignatures()[0];

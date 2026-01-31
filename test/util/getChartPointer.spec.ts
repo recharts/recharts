@@ -1,62 +1,170 @@
 import { describe, it, expect } from 'vitest';
-import { getChartPointer } from '../../src/util/getChartPointer';
+import { getChartPointer } from '../../src';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
-import { ChartPointer, MousePointer } from '../../src/util/types';
+import { ChartPointer, HTMLMousePointer, SVGMousePointer } from '../../src/util/types';
 
 describe('getChartPointer', () => {
-  it('should return chart coordinates relative to the top-left corner of the chart', () => {
-    const event: MousePointer = {
-      clientX: 100,
-      clientY: 100,
-      currentTarget: {
-        getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 100, height: 100 }),
-        offsetWidth: 100,
-        offsetHeight: 100,
-      },
-    };
-    const actual = getChartPointer(event);
+  describe('with HTML elements', () => {
+    it('should return chart coordinates relative to the top-left corner of the chart', () => {
+      const event: HTMLMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 100, height: 100 }),
+          offsetWidth: 100,
+          offsetHeight: 100,
+        },
+      };
+      const actual = getChartPointer(event);
 
-    const expected: ChartPointer = {
-      chartX: 50,
-      chartY: 50,
-    };
+      const expected: ChartPointer = {
+        chartX: 50,
+        chartY: 50,
+      };
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return chart coordinates relative to the top-left corner of the chart with scale', () => {
+      const event: HTMLMousePointer = {
+        /*
+         * clientX and clientY are the mouse position relative to the viewport, including scroll.
+         * These ignore scale on whatever is being hovered over,
+         * so while we hover over the same position relative to the viewport,
+         * the chart below has moved because it's now scaled 2x.
+         */
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          /*
+           * As one zooms in and out, the rect.width and rect.height will change,
+           * but the offsetWidth and offsetHeight will remain the same.
+           *
+           * So this mock target represents a chart that's been scaled by 2x.
+           */
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 200, height: 200 }),
+          offsetWidth: 100,
+          offsetHeight: 100,
+        },
+      };
+      const actual = getChartPointer(event);
+
+      const expected: ChartPointer = {
+        /*
+         * Since we hover over the same position relative to the viewport,
+         * but the chart is now twice as big, the chart coordinates should be half.
+         */
+        chartX: 25,
+        chartY: 25,
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should handle zero offsetWidth/offsetHeight gracefully', () => {
+      const event: HTMLMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 100, height: 100 }),
+          offsetWidth: 0,
+          offsetHeight: 0,
+        },
+      };
+      const actual = getChartPointer(event);
+
+      // When offsetWidth/offsetHeight is 0, scale defaults to 1
+      const expected: ChartPointer = {
+        chartX: 50,
+        chartY: 50,
+      };
+
+      expect(actual).toEqual(expected);
+    });
   });
 
-  it('should return chart coordinates relative to the top-left corner of the chart with scale', () => {
-    const event: MousePointer = {
-      /*
-       * clientX and clientY are the mouse position relative to the viewport, including scroll.
-       * These ignore scale on whatever is being hovered over,
-       * so while we hover over the same position relative to the viewport,
-       * the chart below has moved because it's now scaled 2x.
-       */
-      clientX: 100,
-      clientY: 100,
-      currentTarget: {
-        /*
-         * As one zooms in and out, the rect.width and rect.height will change,
-         * but the offsetWidth and offsetHeight will remain the same.
-         *
-         * So this mock target represents a chart that's been scaled by 2x.
-         */
-        getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 200, height: 200 }),
-        offsetWidth: 100,
-        offsetHeight: 100,
-      },
-    };
-    const actual = getChartPointer(event);
+  describe('with SVG elements', () => {
+    it('should return chart coordinates relative to the top-left corner of the SVG', () => {
+      const event: SVGMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 100, height: 100 }),
+          getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
+        },
+      };
+      const actual = getChartPointer(event);
 
-    const expected: ChartPointer = {
-      /*
-       * Since we hover over the same position relative to the viewport,
-       * but the chart is now twice as big, the chart coordinates should be half.
-       */
-      chartX: 25,
-      chartY: 25,
-    };
+      const expected: ChartPointer = {
+        chartX: 50,
+        chartY: 50,
+      };
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return chart coordinates with SVG scale (CSS transform)', () => {
+      const event: SVGMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          /*
+           * The bounding client rect represents the visual size on screen (affected by CSS transform).
+           * getBBox returns the intrinsic SVG coordinate space size (not affected by CSS transform).
+           */
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 200, height: 200 }),
+          getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
+        },
+      };
+      const actual = getChartPointer(event);
+
+      const expected: ChartPointer = {
+        // SVG is scaled 2x, so coordinates should be halved
+        chartX: 25,
+        chartY: 25,
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should handle zero getBBox width/height gracefully', () => {
+      const event: SVGMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          getBoundingClientRect: () => getMockDomRect({ left: 50, top: 50, width: 100, height: 100 }),
+          getBBox: () => getMockDomRect({ x: 0, y: 0, width: 0, height: 0 }),
+        },
+      };
+      const actual = getChartPointer(event);
+
+      // When getBBox returns 0, scale defaults to 1
+      const expected: ChartPointer = {
+        chartX: 50,
+        chartY: 50,
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should handle non-uniform SVG scaling', () => {
+      const event: SVGMousePointer = {
+        clientX: 100,
+        clientY: 100,
+        currentTarget: {
+          // SVG is scaled 2x horizontally, 4x vertically
+          getBoundingClientRect: () => getMockDomRect({ left: 0, top: 0, width: 200, height: 400 }),
+          getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
+        },
+      };
+      const actual = getChartPointer(event);
+
+      const expected: ChartPointer = {
+        chartX: 50, // 100 / 2
+        chartY: 25, // 100 / 4
+      };
+
+      expect(actual).toEqual(expected);
+    });
   });
 });

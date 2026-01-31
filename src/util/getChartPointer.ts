@@ -1,22 +1,60 @@
-import { ChartPointer, MousePointer } from './types';
+import { ChartPointer, MousePointer, SVGMousePointer } from './types';
 
 /**
- * Computes the chart coordinates from the mouse event.
+ * Type guard to check if the pointer event is from an SVG element.
+ */
+function isSvgPointer(pointer: MousePointer): pointer is SVGMousePointer {
+  return 'getBBox' in pointer.currentTarget && typeof pointer.currentTarget.getBBox === 'function';
+}
+
+/**
+ * Computes relative element coordinates from mouse event.
  *
- * The coordinates are relative to the top-left corner of the chart,
- * where the top-left corner of the chart is (0, 0).
+ * The output coordinates are relative to the top-left corner of the active element (= currentTarget),
+ * where the top-left corner is (0, 0).
  * Moving right, the x-coordinate increases, and moving down, the y-coordinate increases.
  *
- * The coordinates are rounded to the nearest integer and are including a CSS transform scale.
+ * The coordinates are rounded to the nearest integer and account for CSS transform scale.
  * So a chart that's scaled will return the same coordinates as a chart that's not scaled.
  *
- * @param event The mouse event from React event handlers
- * @return chartPointer The chart coordinates relative to the top-left corner of the chart
+ * This function works with both HTML elements and SVG elements:
+ * - For HTML elements, it uses `offsetWidth`/`offsetHeight` to compute the scale.
+ * - For SVG elements, it uses `getBBox()` to compute the scale.
+ *
+ * @example
+ * ```tsx
+ * // In an HTML element event handler
+ * <Legend onMouseMove={(e) => {
+ *   const { chartX, chartY } = getChartPointer(e);
+ *   console.log(`Mouse at chart position: (${chartX}, ${chartY})`);
+ * }}>
+ *
+ * // In an SVG element event handler
+ * <Area onMouseMove={(e) => {
+ *   const { chartX, chartY } = getChartPointer(e);
+ *   console.log(`Mouse at chart position: (${chartX}, ${chartY})`);
+ * }}>
+ * ```
+ *
+ * @param event The mouse event from React event handlers (works with both HTML and SVG elements)
+ * @returns The chart coordinates relative to the top-left corner of the element
  */
 export const getChartPointer = (event: MousePointer): ChartPointer => {
   const rect = event.currentTarget.getBoundingClientRect();
-  const scaleX = rect.width / event.currentTarget.offsetWidth;
-  const scaleY = rect.height / event.currentTarget.offsetHeight;
+
+  let scaleX: number, scaleY: number;
+
+  if (isSvgPointer(event)) {
+    // For SVG elements, use getBBox() to get the intrinsic size in SVG coordinates
+    const bbox = event.currentTarget.getBBox();
+    scaleX = bbox.width > 0 ? rect.width / bbox.width : 1;
+    scaleY = bbox.height > 0 ? rect.height / bbox.height : 1;
+  } else {
+    // For HTML elements, use offsetWidth/offsetHeight
+    scaleX = event.currentTarget.offsetWidth > 0 ? rect.width / event.currentTarget.offsetWidth : 1;
+    scaleY = event.currentTarget.offsetHeight > 0 ? rect.height / event.currentTarget.offsetHeight : 1;
+  }
+
   return {
     /*
      * Here it's important to use:

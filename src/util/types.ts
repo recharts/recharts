@@ -1329,11 +1329,28 @@ export type RangeObj = PolarViewBoxRequired & {
  * This is meant to represent the React.MouseEvent
  * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
  */
-export interface MousePointer {
+export interface HTMLMousePointer {
   clientX: number;
   clientY: number;
   currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
 }
+
+/**
+ * Simplified version of the MouseEvent for SVG elements.
+ *
+ * Similar to MousePointer but uses SVGGraphicsElement properties instead of HTMLElement properties.
+ * SVG elements use getBBox() to get the intrinsic size instead of offsetWidth/offsetHeight.
+ */
+export interface SVGMousePointer {
+  clientX: number;
+  clientY: number;
+  currentTarget: Pick<SVGGraphicsElement, 'getBoundingClientRect' | 'getBBox'>;
+}
+
+/**
+ * Recharts accepts mouse events from both HTML and SVG elements.
+ */
+export type MousePointer = HTMLMousePointer | SVGMousePointer;
 
 /**
  * Coordinates relative to the top-left corner of the chart.
