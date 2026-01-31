@@ -16,7 +16,7 @@ import {
   DefaultZIndexes,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
-import { useState, MouseEvent, useCallback } from 'react';
+import { useState, MouseEvent, TouchEvent, useCallback } from 'react';
 
 const data = generateMockData(30, 123);
 
@@ -59,7 +59,7 @@ const Crosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
 };
 
 export default function CrosshairExample() {
-  const [pointer, setPointer] = useState<RelativePointer | null>(null);
+  const [pointers, setPointers] = useState<RelativePointer[]>([]);
 
   const handleMouseMove = useCallback(
     (_data: MouseHandlerDataParam, event: MouseEvent<SVGGraphicsElement>) => {
@@ -81,14 +81,23 @@ export default function CrosshairExample() {
        * This particular example demonstrates the use of (2.)
        */
       const chartPointer: RelativePointer = getRelativeCoordinate(event);
-      setPointer(chartPointer);
+      setPointers([chartPointer]);
     },
-    [setPointer],
+    [setPointers],
   );
 
-  const handleMouseLeave = useCallback(() => {
-    setPointer(null);
-  }, [setPointer]);
+  const handleTouchMove = useCallback(
+    (_data: unknown, event: TouchEvent<SVGGraphicsElement>) => {
+      console.log('Touch move:', event);
+      const chartPointers = getRelativeCoordinate(event);
+      setPointers(chartPointers);
+    },
+    [setPointers],
+  );
+
+  const handleLeave = useCallback(() => {
+    setPointers([]);
+  }, [setPointers]);
 
   return (
     <AreaChart
@@ -97,18 +106,22 @@ export default function CrosshairExample() {
         maxWidth: '500px',
         maxHeight: '200px',
         aspectRatio: 1,
+        touchAction: 'none',
         // transform: 'scaleX(2) scaleY(3)',
       }}
       responsive
       data={data}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={(_1, _2) => {}}
+      onMouseLeave={handleLeave}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleLeave}
     >
       <XAxis dataKey="label" />
       <YAxis width="auto" />
       <Area type="monotone" dataKey="x" stroke="var(--color-chart-1)" />
-      <Crosshair pointer={pointer} />
+      {pointers.map((pointer, index) => (
+        <Crosshair key={index} pointer={pointer} />
+      ))}
       <Legend />
     </AreaChart>
   );

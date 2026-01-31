@@ -1323,6 +1323,9 @@ export type RangeObj = PolarViewBoxRequired & {
   radius: number;
 };
 
+type HTMLElementTarget = Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+type SVGElementTarget = Pick<SVGGraphicsElement, 'getBoundingClientRect' | 'getBBox'>;
+
 /**
  * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
  *
@@ -1332,7 +1335,14 @@ export type RangeObj = PolarViewBoxRequired & {
 export interface HTMLMousePointer {
   clientX: number;
   clientY: number;
-  currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+  currentTarget: HTMLElementTarget;
+}
+
+export interface HTMLTouchPointer {
+  changedTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  targetTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  currentTarget: HTMLElementTarget;
 }
 
 /**
@@ -1344,13 +1354,21 @@ export interface HTMLMousePointer {
 export interface SVGMousePointer {
   clientX: number;
   clientY: number;
-  currentTarget: Pick<SVGGraphicsElement, 'getBoundingClientRect' | 'getBBox'>;
+  currentTarget: SVGElementTarget;
+}
+
+export interface SVGTouchPointer {
+  changedTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  targetTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  currentTarget: SVGElementTarget;
 }
 
 /**
  * Recharts accepts mouse events from both HTML and SVG elements.
  */
 export type MousePointer = HTMLMousePointer | SVGMousePointer;
+export type TouchPointer = HTMLTouchPointer | SVGTouchPointer;
 
 /**
  * Coordinates relative to the top-left corner of the active element.

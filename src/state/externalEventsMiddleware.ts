@@ -10,6 +10,7 @@ import {
   selectIsTooltipActive,
 } from './selectors/tooltipSelectors';
 import { AppDispatch, RechartsRootState } from './store';
+import { createEventProxy } from '../util/createEventProxy';
 
 type ExternalEventActionPayload<E = SyntheticEvent> = {
   reactEvent: E;
@@ -41,22 +42,9 @@ externalEventsMiddleware.startListening({
     if (handler == null) {
       return;
     }
-    const { currentTarget } = reactEvent;
-    reactEvent.persist();
 
     const eventType = reactEvent.type;
-    const eventProxy = new Proxy(reactEvent, {
-      get: (target, prop) => {
-        if (prop === 'currentTarget') {
-          return currentTarget;
-        }
-        const value = Reflect.get(target, prop);
-        if (typeof value === 'function') {
-          return value.bind(target);
-        }
-        return value;
-      },
-    });
+    const eventProxy = createEventProxy(reactEvent);
 
     latestEventMap.set(eventType, {
       handler,

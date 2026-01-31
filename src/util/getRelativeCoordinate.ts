@@ -1,9 +1,9 @@
-import { RelativePointer, MousePointer, SVGMousePointer } from './types';
+import { RelativePointer, MousePointer, SVGMousePointer, TouchPointer, SVGTouchPointer } from './types';
 
 /**
  * Type guard to check if the pointer event is from an SVG element.
  */
-function isSvgPointer(pointer: MousePointer): pointer is SVGMousePointer {
+function isSvgPointer(pointer: MousePointer | TouchPointer): pointer is SVGMousePointer | SVGTouchPointer {
   return 'getBBox' in pointer.currentTarget && typeof pointer.currentTarget.getBBox === 'function';
 }
 
@@ -37,10 +37,12 @@ function isSvgPointer(pointer: MousePointer): pointer is SVGMousePointer {
  * }}>
  * ```
  *
- * @param event The mouse event from React event handlers (works with both HTML and SVG elements)
- * @returns The chart coordinates relative to the top-left corner of the element
+ * @param event The mouse or touch event from React event handlers (works with both HTML and SVG elements)
+ * @returns Coordinates relative to the top-left corner of the element
  */
-export const getRelativeCoordinate = (event: MousePointer): RelativePointer => {
+export function getRelativeCoordinate(event: MousePointer): RelativePointer;
+export function getRelativeCoordinate(event: TouchPointer): Array<RelativePointer>;
+export function getRelativeCoordinate(event: MousePointer | TouchPointer): RelativePointer | Array<RelativePointer> {
   const rect = event.currentTarget.getBoundingClientRect();
 
   let scaleX: number, scaleY: number;
@@ -52,11 +54,12 @@ export const getRelativeCoordinate = (event: MousePointer): RelativePointer => {
     scaleY = bbox.height > 0 ? rect.height / bbox.height : 1;
   } else {
     // For HTML elements, use offsetWidth/offsetHeight
-    scaleX = event.currentTarget.offsetWidth > 0 ? rect.width / event.currentTarget.offsetWidth : 1;
-    scaleY = event.currentTarget.offsetHeight > 0 ? rect.height / event.currentTarget.offsetHeight : 1;
+    const element = event.currentTarget;
+    scaleX = element.offsetWidth > 0 ? rect.width / element.offsetWidth : 1;
+    scaleY = element.offsetHeight > 0 ? rect.height / element.offsetHeight : 1;
   }
 
-  return {
+  const getCoordinates = (clientX: number, clientY: number): RelativePointer => ({
     /*
      * Here it's important to use:
      * - event.clientX and event.clientY to get the mouse position relative to the viewport, including scroll.
@@ -67,7 +70,13 @@ export const getRelativeCoordinate = (event: MousePointer): RelativePointer => {
      *  and surrounding element styles. CSS position: relative, absolute, fixed, will change the offset parent.
      * - scaleX and scaleY are necessary for when the chart element is scaled using CSS `transform: scale(N)`.
      */
-    relativeX: Math.round((event.clientX - rect.left) / scaleX),
-    relativeY: Math.round((event.clientY - rect.top) / scaleY),
-  };
-};
+    relativeX: Math.round((clientX - rect.left) / scaleX),
+    relativeY: Math.round((clientY - rect.top) / scaleY),
+  });
+
+  if ('touches' in event) {
+    return Array.from(event.touches).map(touch => getCoordinates(touch.clientX, touch.clientY));
+  }
+
+  return getCoordinates(event.clientX, event.clientY);
+}

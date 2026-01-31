@@ -59,15 +59,15 @@ export default function AreaChartWithCustomEvents() {
         console.log('AreaChart context menu:', mouseEventData, event, chartPointer);
       }}
       onTouchStart={(mouseEventData: MouseHandlerDataParam, event: TouchEvent<SVGGraphicsElement>) => {
-        const chartPointer: RelativePointer = getRelativeCoordinate(event);
+        const chartPointer: ReadonlyArray<RelativePointer> = getRelativeCoordinate(event);
         console.log('AreaChart touch start:', mouseEventData, event, chartPointer);
       }}
       onTouchMove={(mouseEventData: MouseHandlerDataParam, event: TouchEvent<SVGGraphicsElement>) => {
-        const chartPointer: RelativePointer = getRelativeCoordinate(event);
+        const chartPointer: ReadonlyArray<RelativePointer> = getRelativeCoordinate(event);
         console.log('AreaChart touch move:', mouseEventData, event, chartPointer);
       }}
       onTouchEnd={(mouseEventData: MouseHandlerDataParam, event: TouchEvent<SVGGraphicsElement>) => {
-        const chartPointer: RelativePointer = getRelativeCoordinate(event);
+        const chartPointer: ReadonlyArray<RelativePointer> = getRelativeCoordinate(event);
         console.log('AreaChart touch end:', mouseEventData, event, chartPointer);
       }}
     >

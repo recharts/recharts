@@ -9,6 +9,8 @@ import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { selectTooltipCoordinate } from './selectors/touchSelectors';
 import { selectAllGraphicalItemsSettings } from './selectors/tooltipSelectors';
+import { RelativePointer } from '../util/types';
+import { createEventProxy } from '../util/createEventProxy';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
@@ -16,6 +18,7 @@ export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>(
 
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let latestChartPointers: ReadonlyArray<RelativePointer> | null = null;
 let latestTouchEvent: React.TouchEvent<HTMLDivElement> | null = null;
 
 touchEventMiddleware.startListening({
@@ -29,7 +32,7 @@ touchEventMiddleware.startListening({
       return;
     }
 
-    latestTouchEvent = touchEvent;
+    latestTouchEvent = createEventProxy(touchEvent);
 
     const state = listenerApi.getState();
     const { throttleDelay, throttledEvents } = state.eventSettings;
@@ -44,28 +47,29 @@ touchEventMiddleware.startListening({
       timeoutId = null;
     }
 
+    latestChartPointers = Array.from(touchEvent.touches).map(touch =>
+      getRelativeCoordinate({
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        currentTarget: touchEvent.currentTarget,
+      }),
+    );
+
     const callback = () => {
-      if (!latestTouchEvent) {
+      if (latestTouchEvent == null) {
         return;
       }
 
       const currentState = listenerApi.getState();
       const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
       if (tooltipEventType === 'axis') {
-        const touch = latestTouchEvent.touches[0];
-        if (touch == null) {
+        const latestTouchPointer = latestChartPointers?.[0];
+        if (latestTouchPointer == null) {
           rafId = null;
           timeoutId = null;
           return;
         }
-        const activeProps = selectActivePropsFromChartPointer(
-          currentState,
-          getRelativeCoordinate({
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            currentTarget: latestTouchEvent.currentTarget,
-          }),
-        );
+        const activeProps = selectActivePropsFromChartPointer(currentState, latestTouchPointer);
         if (activeProps?.activeIndex != null) {
           listenerApi.dispatch(
             setMouseOverAxisIndex({
