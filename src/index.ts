@@ -184,3 +184,12 @@ export type { AxisId } from './state/cartesianAxisSlice';
 export type { AxisRange } from './state/selectors/axisSelectors';
 
 export { getRelativeCoordinate } from './util/getRelativeCoordinate';
+
+export type {
+  MousePointer,
+  TouchPointer,
+  SVGMousePointer,
+  SVGTouchPointer,
+  HTMLMousePointer,
+  HTMLTouchPointer,
+} from './util/types';

@@ -157,6 +157,12 @@ describe('Documentation Examples Coverage', () => {
     'TextAnchor',
     'TooltipItemSorter',
     'TooltipPayload',
+    'MousePointer',
+    'TouchPointer',
+    'SVGMousePointer',
+    'SVGTouchPointer',
+    'HTMLMousePointer',
+    'HTMLTouchPointer',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
