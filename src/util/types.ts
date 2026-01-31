@@ -1339,8 +1339,6 @@ export interface HTMLMousePointer {
 }
 
 export interface HTMLTouchPointer {
-  changedTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
-  targetTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   currentTarget: HTMLElementTarget;
 }
@@ -1358,8 +1356,6 @@ export interface SVGMousePointer {
 }
 
 export interface SVGTouchPointer {
-  changedTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
-  targetTouches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   currentTarget: SVGElementTarget;
 }
