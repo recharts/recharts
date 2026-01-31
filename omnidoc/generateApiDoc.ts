@@ -10,14 +10,16 @@
  * The generated files will always overwrite existing files - no merging is attempted.
  * Only en-US descriptions are generated from the TypeScript documentation.
  */
-import * as fs from 'fs';
 import * as path from 'path';
+import * as prettier from 'prettier';
 import { marked } from 'marked';
 import { getAllTagTexts, getTagText, JSDocMeta, ProjectDocReader } from './readProject';
 import { ExampleReader, ExampleResult } from './readExamples';
 import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
+import { writeFormattedFile } from './writerUtils';
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
+const PRETTIER_CONFIG_PATH = path.join(__dirname, '../.prettierrc');
 
 /**
  * Converts a TypeScript type to a simplified string representation for API docs
@@ -596,7 +598,11 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
 /**
  * Writes the API doc to a TypeScript file
  */
-function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
+async function writeApiDocFile(
+  apiDoc: ApiDoc,
+  outputPath: string,
+  prettierConfig: prettier.Options | null,
+): Promise<void> {
   const varName = `${apiDoc.name}API`;
 
   // Check if the description contains Link components (for internal links)
@@ -620,8 +626,29 @@ function writeApiDocFile(apiDoc: ApiDoc, outputPath: string): void {
 export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 `;
 
-  fs.writeFileSync(outputPath, fileContent, 'utf-8');
-  console.log(`✓ Generated ${outputPath}`);
+  await writeFormattedFile(outputPath, fileContent, prettierConfig);
+}
+
+/**
+ * Generates the index.ts file that exports all API docs
+ */
+async function generateIndexFile(componentNames: string[], prettierConfig: prettier.Options | null): Promise<void> {
+  const sortedNames = [...componentNames].sort();
+
+  const imports = sortedNames.map(name => `import { ${name}API } from './${name}API';`).join('\n');
+  const exports = sortedNames.map(name => `  ${name}: ${name}API,`).join('\n');
+
+  const content = `import { ApiDoc } from './types';
+
+${imports}
+
+export const allApiDocs: Record<string, ApiDoc> = {
+${exports}
+};
+`;
+
+  const outputPath = path.join(OUTPUT_DIR, 'index.ts');
+  await writeFormattedFile(outputPath, content, prettierConfig);
 }
 
 /**
@@ -638,22 +665,26 @@ async function main() {
   const allComponentNames = projectReader.getAllRuntimeExportedNames();
   const contextMap = buildContextMap(allComponentNames, projectReader);
 
+  const prettierConfig = await prettier.resolveConfig(PRETTIER_CONFIG_PATH);
+
   console.log('Generating API documentation for:', componentsToGenerate);
+
+  const generatedComponents: string[] = [];
 
   for (const componentName of componentsToGenerate) {
     try {
       const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);
-      writeApiDocFile(apiDoc, outputPath);
+      await writeApiDocFile(apiDoc, outputPath, prettierConfig);
+      generatedComponents.push(componentName);
     } catch (error) {
       console.error(`✗ Failed to generate documentation for ${componentName}:`, error);
     }
   }
 
-  console.log('\nDone! Remember to:');
-  console.log('1. Review the generated files');
-  console.log('2. Add imports to www/src/docs/api/index.ts if needed');
-  console.log('3. Run tests to verify consistency');
+  await generateIndexFile(generatedComponents, prettierConfig);
+
+  console.log('\nDone! Remember to review the generated files.');
 }
 
 if (require.main === module) {

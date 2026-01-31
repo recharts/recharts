@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "prebuild": "npm run lint",
+    "prebuild": "npm run omnidoc && npm run lint",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd && npm run test-build-output",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
@@ -42,7 +42,7 @@
     "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit:*",
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
     "test-exports": "vitest run scripts/verify-exports.test.ts",
-    "omnidoc": "npx tsx omnidoc/generateApiDoc.ts && npx tsx omnidoc/generateStorybookArgs.ts && prettier www/src/docs/api storybook/stories/API/arg-types --write",
+    "omnidoc": "npx tsx omnidoc/generateApiDoc.ts && npx tsx omnidoc/generateStorybookArgs.ts",
     "test-mutation": "stryker run",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",
     "lint": "eslint .",

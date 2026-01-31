@@ -243,6 +243,12 @@ jobs:
         with:
           repository: recharts/recharts # Checkout the main repo again but this time all directories and files
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: build
+        run: npm run build
+
       - name: Sanitize branch name
         # The branch name is used in the URL for the report.
         # It needs to be sanitized to remove characters that are not URL-friendly.
