@@ -17,9 +17,13 @@ function isSvgPointer(pointer: MousePointer | TouchPointer): pointer is SVGMouse
  * The coordinates are rounded to the nearest integer and account for CSS transform scale.
  * So element that's scaled will return the same coordinates as element that's not scaled.
  *
- * This function works with both HTML elements and SVG elements:
- * - For HTML elements, it uses `offsetWidth`/`offsetHeight` to compute the scale.
- * - For SVG elements, it uses `getBBox()` to compute the scale.
+ * In other words: you zoom in or out, numbers stay the same.
+ *
+ * This function works with both HTML elements and SVG elements.
+ *
+ * It works with both Mouse and Touch events.
+ * For Touch events, it returns an array of coordinates, one for each touch point.
+ * For Mouse events, it returns a single coordinate object.
  *
  * @example
  * ```tsx
@@ -29,16 +33,31 @@ function isSvgPointer(pointer: MousePointer | TouchPointer): pointer is SVGMouse
  *   const { relativeX, relativeY } = getRelativeCoordinate(e);
  *   console.log(`Mouse at Legend position: (${relativeX}, ${relativeY})`);
  * }}>
+ * ```
  *
- * // In an SVG element event handler
- * <Area onMouseMove={(e) => {
+ * @example
+ * ```tsx
+ * // In an SVG element event handler. Area is an SVG element, and passes the event as second argument.
+ * <Area onMouseMove={(_, e) => {
  *   const { relativeX, relativeY } = getRelativeCoordinate(e);
- *   console.log(`Mouse at chart position: (${relativeX}, ${relativeY})`);
+ *   console.log(`Mouse at Area position: (${relativeX}, ${relativeY})`);
+ *   // Here you can call usePlotArea to convert to chart coordinates
+ * }}>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // In a chart root touch handler. Chart root passes the event as second argument.
+ * <LineChart onTouchMove={(_, e) => {
+ *   const touchPoints = getRelativeCoordinate(e);
+ *   touchPoints.forEach(({ relativeX, relativeY }, index) => {
+ *     console.log(`Touch point ${index} at LineChart position: (${relativeX}, ${relativeY})`);
+ *   });
  * }}>
  * ```
  *
  * @param event The mouse or touch event from React event handlers (works with both HTML and SVG elements)
- * @returns Coordinates relative to the top-left corner of the element
+ * @returns Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.
  */
 export function getRelativeCoordinate(event: MousePointer): RelativePointer;
 export function getRelativeCoordinate(event: TouchPointer): Array<RelativePointer>;

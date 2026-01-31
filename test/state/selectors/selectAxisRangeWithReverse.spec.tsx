@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
-import { combineXAxisRange, selectAxisRangeWithReverse } from '../../../src/state/selectors/axisSelectors';
+import { selectXAxisRange, selectAxisRangeWithReverse } from '../../../src/state/selectors/axisSelectors';
 import {
   assertStableBetweenRenders,
   shouldReturnFromInitialState,
@@ -33,7 +33,7 @@ describe('selectAxisRangeWithReverse', () => {
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
     const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
-    const xAxisRange1 = combineXAxisRange(store.getState(), '0', false);
+    const xAxisRange1 = selectXAxisRange(store.getState(), '0', false);
     store.dispatch(
       setActiveMouseOverItemIndex({
         activeCoordinate: undefined,
@@ -43,7 +43,7 @@ describe('selectAxisRangeWithReverse', () => {
       }),
     );
     const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
-    const xAxisRange2 = combineXAxisRange(store.getState(), '0', false);
+    const xAxisRange2 = selectXAxisRange(store.getState(), '0', false);
     expect(xAxisRange1).toBe(xAxisRange2);
     expect(result1).toBe(result2);
   });

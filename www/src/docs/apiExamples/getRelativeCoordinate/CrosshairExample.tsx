@@ -44,6 +44,12 @@ const Crosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
         textAnchor="end"
       >{`y: ${pointer.relativeY}`}</TextWithOutline>
       <Cross
+        /*
+         * pointerEvents: none is necessary because without it, browser will detect hovering over the Cross itself
+         * which makes it trigger mouseLeave on the chart which makes it erase the Cross which looks like it's blinking.
+         * If we skip pointer events on the cross then we can skip the mouseLeave and the movement is smooth.
+         */
+        style={{ pointerEvents: 'none' }}
         x={pointer.relativeX}
         y={pointer.relativeY}
         top={0}
@@ -88,7 +94,6 @@ export default function CrosshairExample() {
 
   const handleTouchMove = useCallback(
     (_data: unknown, event: TouchEvent<SVGGraphicsElement>) => {
-      console.log('Touch move:', event);
       const chartPointers = getRelativeCoordinate(event);
       setPointers(chartPointers);
     },
@@ -107,7 +112,6 @@ export default function CrosshairExample() {
         maxHeight: '200px',
         aspectRatio: 1,
         touchAction: 'none',
-        // transform: 'scaleX(2) scaleY(3)',
       }}
       responsive
       data={data}
