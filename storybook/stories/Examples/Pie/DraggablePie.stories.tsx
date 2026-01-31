@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { DefaultZIndexes, getRelativeCoordinate, Pie, PieChart, ZIndexLayer } from '../../../../src';
-
-import { RelativePointer } from '../../../../src/util/types';
+import { DefaultZIndexes, getRelativeCoordinate, Pie, PieChart, RelativePointer, ZIndexLayer } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
@@ -23,7 +21,7 @@ function createData(email: number, socialMedia: number, phone: number, webchat: 
   ];
 }
 
-function computeAngle(cx: number, cy: number, e: React.MouseEvent): number {
+function computeAngle(cx: number, cy: number, e: React.MouseEvent<SVGGraphicsElement>): number {
   const { relativeX, relativeY }: RelativePointer = getRelativeCoordinate(e);
   const deltaX = relativeX - cx;
   const deltaY = relativeY - cy;
@@ -83,7 +81,6 @@ export const DraggablePie = {
         }}
         onMouseMove={(_data, e) => {
           if (isDragging) {
-            // @ts-expect-error event types are not matching
             const newAngleInDegrees = computeAngle(cx, cy, e);
             const delta = newAngleInDegrees - email;
             setEmail(newAngleInDegrees);
