@@ -735,17 +735,19 @@ export class ProjectDocReader implements DocReader {
         }
 
         // For VariableDeclaration, check the parent VariableStatement
-        const parent = decl.getParent();
-        if (parent) {
-          const parentJsDoc = this.getJsDocableDeclaration(parent);
-          if (parentJsDoc) {
-            return parentJsDoc;
-          }
-          const grandparent = parent.getParent();
-          if (grandparent) {
-            const grandparentJsDoc = this.getJsDocableDeclaration(grandparent);
-            if (grandparentJsDoc) {
-              return grandparentJsDoc;
+        if (Node.isVariableDeclaration(decl)) {
+          const parent = decl.getParent();
+          if (parent) {
+            const parentJsDoc = this.getJsDocableDeclaration(parent);
+            if (parentJsDoc) {
+              return parentJsDoc;
+            }
+            const grandparent = parent.getParent();
+            if (grandparent) {
+              const grandparentJsDoc = this.getJsDocableDeclaration(grandparent);
+              if (grandparentJsDoc) {
+                return grandparentJsDoc;
+              }
             }
           }
         }
