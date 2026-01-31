@@ -1353,12 +1353,12 @@ export interface SVGMousePointer {
 export type MousePointer = HTMLMousePointer | SVGMousePointer;
 
 /**
- * Coordinates relative to the top-left corner of the chart.
- * Also include scale which means that a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ * Coordinates relative to the top-left corner of the active element.
+ * Also include scale which means that element that's scaled will return the same coordinates as element that's not scaled.
  */
-export interface ChartPointer {
-  chartX: number;
-  chartY: number;
+export interface RelativePointer {
+  relativeX: number;
+  relativeY: number;
 }
 
 export interface DataProvider<DataPointType> {

@@ -153,6 +153,7 @@ export type {
   Padding,
   CartesianViewBox,
   SankeyNode,
+  RelativePointer,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
@@ -182,4 +183,4 @@ export type { MouseHandlerDataParam, ActiveLabel } from './synchronisation/types
 export type { AxisId } from './state/cartesianAxisSlice';
 export type { AxisRange } from './state/selectors/axisSelectors';
 
-export { getChartPointer } from './util/getChartPointer';
+export { getRelativeCoordinate } from './util/getRelativeCoordinate';

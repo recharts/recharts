@@ -4,7 +4,7 @@ import { AppDispatch, RechartsRootState } from './store';
 import { setActiveMouseOverItemIndex, setMouseOverAxisIndex } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 
-import { getChartPointer } from '../util/getChartPointer';
+import { getRelativeCoordinate } from '../util/getRelativeCoordinate';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { selectTooltipCoordinate } from './selectors/touchSelectors';
@@ -60,7 +60,7 @@ touchEventMiddleware.startListening({
         }
         const activeProps = selectActivePropsFromChartPointer(
           currentState,
-          getChartPointer({
+          getRelativeCoordinate({
             clientX: touch.clientX,
             clientY: touch.clientY,
             currentTarget: latestTouchEvent.currentTarget,

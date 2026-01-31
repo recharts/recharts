@@ -11,7 +11,7 @@ describe('isReactComponent', () => {
 
   it('should return false for names starting with lowercase', () => {
     expect(isReactComponent('useChart')).toBe(false);
-    expect(isReactComponent('getChartPointer')).toBe(false);
+    expect(isReactComponent('getRelativeCoordinate')).toBe(false);
     expect(isReactComponent('getNiceTickValues')).toBe(false);
     expect(isReactComponent('formatNumber')).toBe(false);
   });

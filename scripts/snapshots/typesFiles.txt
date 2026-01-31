@@ -233,7 +233,7 @@
   "types/util/excludeEventProps.d.ts",
   "types/util/getActiveCoordinate.d.ts",
   "types/util/getAxisTypeBasedOnLayout.d.ts",
-  "types/util/getChartPointer.d.ts",
+  "types/util/getRelativeCoordinate.d.ts",
   "types/util/getClassNameFromUnknown.d.ts",
   "types/util/getEveryNth.d.ts",
   "types/util/getRadiusAndStrokeWidthFromDot.d.ts",

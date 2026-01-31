@@ -14,7 +14,7 @@ import {
   AxisType,
   CartesianLayout,
   ChartOffsetInternal,
-  ChartPointer,
+  RelativePointer,
   Coordinate,
   DataKey,
   PolarCoordinate,
@@ -196,7 +196,7 @@ export const selectIsTooltipActive: (
 );
 
 const combineActiveCartesianProps = (
-  chartEvent: ChartPointer | undefined,
+  chartEvent: RelativePointer | undefined,
   layout: CartesianLayout,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
@@ -226,7 +226,7 @@ const combineActiveCartesianProps = (
 };
 
 const combineActivePolarProps = (
-  chartEvent: ChartPointer | undefined,
+  chartEvent: RelativePointer | undefined,
   layout: PolarLayout,
   polarViewBox: PolarViewBoxRequired | undefined,
   tooltipAxisType: AxisType | undefined,
@@ -257,7 +257,7 @@ const combineActivePolarProps = (
 };
 
 export const combineActiveProps = (
-  chartEvent: ChartPointer | undefined,
+  chartEvent: RelativePointer | undefined,
   layout: CartesianLayout | PolarLayout | undefined,
   polarViewBox: PolarViewBoxRequired | undefined,
   tooltipAxisType: AxisType | undefined,

@@ -44,7 +44,7 @@ export const apiCates = [
       'useChartHeight',
       'getNiceTickValues',
       'Global',
-      'getChartPointer',
+      'getRelativeCoordinate',
     ],
   },
   {

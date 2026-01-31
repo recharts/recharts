@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { getChartPointer } from '../../src';
+import { getRelativeCoordinate } from '../../src';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
-import { ChartPointer, HTMLMousePointer, SVGMousePointer } from '../../src/util/types';
+import { RelativePointer, HTMLMousePointer, SVGMousePointer } from '../../src/util/types';
 
-describe('getChartPointer', () => {
+describe('getRelativeCoordinate', () => {
   describe('with HTML elements', () => {
     it('should return chart coordinates relative to the top-left corner of the chart', () => {
       const event: HTMLMousePointer = {
@@ -15,11 +15,11 @@ describe('getChartPointer', () => {
           offsetHeight: 100,
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
-      const expected: ChartPointer = {
-        chartX: 50,
-        chartY: 50,
+      const expected: RelativePointer = {
+        relativeX: 50,
+        relativeY: 50,
       };
 
       expect(actual).toEqual(expected);
@@ -47,15 +47,15 @@ describe('getChartPointer', () => {
           offsetHeight: 100,
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
-      const expected: ChartPointer = {
+      const expected: RelativePointer = {
         /*
          * Since we hover over the same position relative to the viewport,
          * but the chart is now twice as big, the chart coordinates should be half.
          */
-        chartX: 25,
-        chartY: 25,
+        relativeX: 25,
+        relativeY: 25,
       };
 
       expect(actual).toEqual(expected);
@@ -71,12 +71,12 @@ describe('getChartPointer', () => {
           offsetHeight: 0,
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
       // When offsetWidth/offsetHeight is 0, scale defaults to 1
-      const expected: ChartPointer = {
-        chartX: 50,
-        chartY: 50,
+      const expected: RelativePointer = {
+        relativeX: 50,
+        relativeY: 50,
       };
 
       expect(actual).toEqual(expected);
@@ -93,11 +93,11 @@ describe('getChartPointer', () => {
           getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
-      const expected: ChartPointer = {
-        chartX: 50,
-        chartY: 50,
+      const expected: RelativePointer = {
+        relativeX: 50,
+        relativeY: 50,
       };
 
       expect(actual).toEqual(expected);
@@ -116,12 +116,12 @@ describe('getChartPointer', () => {
           getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
-      const expected: ChartPointer = {
+      const expected: RelativePointer = {
         // SVG is scaled 2x, so coordinates should be halved
-        chartX: 25,
-        chartY: 25,
+        relativeX: 25,
+        relativeY: 25,
       };
 
       expect(actual).toEqual(expected);
@@ -136,12 +136,12 @@ describe('getChartPointer', () => {
           getBBox: () => getMockDomRect({ x: 0, y: 0, width: 0, height: 0 }),
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
       // When getBBox returns 0, scale defaults to 1
-      const expected: ChartPointer = {
-        chartX: 50,
-        chartY: 50,
+      const expected: RelativePointer = {
+        relativeX: 50,
+        relativeY: 50,
       };
 
       expect(actual).toEqual(expected);
@@ -157,11 +157,11 @@ describe('getChartPointer', () => {
           getBBox: () => getMockDomRect({ x: 0, y: 0, width: 100, height: 100 }),
         },
       };
-      const actual = getChartPointer(event);
+      const actual = getRelativeCoordinate(event);
 
-      const expected: ChartPointer = {
-        chartX: 50, // 100 / 2
-        chartY: 25, // 100 / 4
+      const expected: RelativePointer = {
+        relativeX: 50, // 100 / 2
+        relativeY: 25, // 100 / 4
       };
 
       expect(actual).toEqual(expected);

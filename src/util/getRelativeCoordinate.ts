@@ -1,4 +1,4 @@
-import { ChartPointer, MousePointer, SVGMousePointer } from './types';
+import { RelativePointer, MousePointer, SVGMousePointer } from './types';
 
 /**
  * Type guard to check if the pointer event is from an SVG element.
@@ -8,14 +8,14 @@ function isSvgPointer(pointer: MousePointer): pointer is SVGMousePointer {
 }
 
 /**
- * Computes relative element coordinates from mouse event.
+ * Computes relative element coordinates from mouse or touch event.
  *
  * The output coordinates are relative to the top-left corner of the active element (= currentTarget),
  * where the top-left corner is (0, 0).
  * Moving right, the x-coordinate increases, and moving down, the y-coordinate increases.
  *
  * The coordinates are rounded to the nearest integer and account for CSS transform scale.
- * So a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ * So element that's scaled will return the same coordinates as element that's not scaled.
  *
  * This function works with both HTML elements and SVG elements:
  * - For HTML elements, it uses `offsetWidth`/`offsetHeight` to compute the scale.
@@ -23,23 +23,24 @@ function isSvgPointer(pointer: MousePointer): pointer is SVGMousePointer {
  *
  * @example
  * ```tsx
- * // In an HTML element event handler
- * <Legend onMouseMove={(e) => {
- *   const { chartX, chartY } = getChartPointer(e);
- *   console.log(`Mouse at chart position: (${chartX}, ${chartY})`);
+ * // In an HTML element event handler. Legend passes the native event as the 3rd argument.
+ * <Legend onMouseMove={(_data, _i, e) => {
+ *   // These coordinates are relative to the top-left corner of the Legend element
+ *   const { relativeX, relativeY } = getRelativeCoordinate(e);
+ *   console.log(`Mouse at Legend position: (${relativeX}, ${relativeY})`);
  * }}>
  *
  * // In an SVG element event handler
  * <Area onMouseMove={(e) => {
- *   const { chartX, chartY } = getChartPointer(e);
- *   console.log(`Mouse at chart position: (${chartX}, ${chartY})`);
+ *   const { relativeX, relativeY } = getRelativeCoordinate(e);
+ *   console.log(`Mouse at chart position: (${relativeX}, ${relativeY})`);
  * }}>
  * ```
  *
  * @param event The mouse event from React event handlers (works with both HTML and SVG elements)
  * @returns The chart coordinates relative to the top-left corner of the element
  */
-export const getChartPointer = (event: MousePointer): ChartPointer => {
+export const getRelativeCoordinate = (event: MousePointer): RelativePointer => {
   const rect = event.currentTarget.getBoundingClientRect();
 
   let scaleX: number, scaleY: number;
@@ -66,7 +67,7 @@ export const getChartPointer = (event: MousePointer): ChartPointer => {
      *  and surrounding element styles. CSS position: relative, absolute, fixed, will change the offset parent.
      * - scaleX and scaleY are necessary for when the chart element is scaled using CSS `transform: scale(N)`.
      */
-    chartX: Math.round((event.clientX - rect.left) / scaleX),
-    chartY: Math.round((event.clientY - rect.top) / scaleY),
+    relativeX: Math.round((event.clientX - rect.left) / scaleX),
+    relativeY: Math.round((event.clientY - rect.top) / scaleY),
   };
 };

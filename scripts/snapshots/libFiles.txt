@@ -233,7 +233,7 @@
   "lib/util/excludeEventProps.js",
   "lib/util/getActiveCoordinate.js",
   "lib/util/getAxisTypeBasedOnLayout.js",
-  "lib/util/getChartPointer.js",
+  "lib/util/getRelativeCoordinate.js",
   "lib/util/getClassNameFromUnknown.js",
   "lib/util/getEveryNth.js",
   "lib/util/getRadiusAndStrokeWidthFromDot.js",

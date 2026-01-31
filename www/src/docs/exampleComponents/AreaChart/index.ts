@@ -16,6 +16,8 @@ import tinyAreaChartSource from './TinyAreaChart?raw';
 import areaChartFillByValueSource from './AreaChartFillByValue?raw';
 import { ChartExample } from '../types.ts';
 import AreaChartNavExample from './AreaChartNavExample';
+import AreaChartWithCustomEvents from './AreaChartWithCustomEvents';
+import areaChartWithCustomEventsSource from './AreaChartWithCustomEvents?raw';
 
 export { AreaChartNavExample };
 
@@ -60,5 +62,12 @@ export const areaChartExamples: Record<string, ChartExample> = {
     Component: AreaChartFillByValue,
     sourceCode: areaChartFillByValueSource,
     name: 'Area Chart Fill By Value',
+  },
+  AreaChartWithCustomEvents: {
+    Component: AreaChartWithCustomEvents,
+    sourceCode: areaChartWithCustomEventsSource,
+    name: 'Area Chart With Custom Events',
+    description:
+      'The example demonstrates how to add custom event handlers to an Area Chart and how to write proper types.',
   },
 };

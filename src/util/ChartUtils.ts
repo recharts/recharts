@@ -21,7 +21,7 @@ import {
   RenderableAxisProps,
   CartesianLayout,
   CategoricalDomainItem,
-  ChartPointer,
+  RelativePointer,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -700,12 +700,15 @@ export function getTooltipNameProp(
   return undefined;
 }
 
-export const calculateCartesianTooltipPos = (coordinate: ChartPointer, layout: CartesianLayout): number | undefined => {
+export const calculateCartesianTooltipPos = (
+  coordinate: RelativePointer,
+  layout: CartesianLayout,
+): number | undefined => {
   if (layout === 'horizontal') {
-    return coordinate.chartX;
+    return coordinate.relativeX;
   }
   if (layout === 'vertical') {
-    return coordinate.chartY;
+    return coordinate.relativeY;
   }
 
   return undefined;

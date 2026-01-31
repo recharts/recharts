@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { Pie, PieChart } from '../../../../src';
-import { getChartPointer } from '../../../../src/util/getChartPointer';
+import { DefaultZIndexes, getRelativeCoordinate, Pie, PieChart, ZIndexLayer } from '../../../../src';
 
-import { ChartPointer } from '../../../../src/util/types';
+import { RelativePointer } from '../../../../src/util/types';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { ZIndexLayer } from '../../../../src/zIndex/ZIndexLayer';
-import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
 
 export default {
   component: Pie,
@@ -27,10 +24,9 @@ function createData(email: number, socialMedia: number, phone: number, webchat: 
 }
 
 function computeAngle(cx: number, cy: number, e: React.MouseEvent): number {
-  // @ts-expect-error event types are not matching
-  const { chartX, chartY }: ChartPointer = getChartPointer(e);
-  const deltaX = chartX - cx;
-  const deltaY = chartY - cy;
+  const { relativeX, relativeY }: RelativePointer = getRelativeCoordinate(e);
+  const deltaX = relativeX - cx;
+  const deltaY = relativeY - cy;
   const angleInDegrees = -Math.atan2(deltaY, deltaX) * (180 / Math.PI);
   return angleInDegrees < 0 ? angleInDegrees + 360 : angleInDegrees;
 }

@@ -11,12 +11,12 @@ import {
 } from './selectors/tooltipSelectors';
 import { AppDispatch, RechartsRootState } from './store';
 
-type ExternalEventActionPayload = {
-  reactEvent: SyntheticEvent;
-  handler: CategoricalChartFunc | undefined;
+type ExternalEventActionPayload<E = SyntheticEvent> = {
+  reactEvent: E;
+  handler: CategoricalChartFunc<E> | undefined;
 };
 
-export const externalEventAction = createAction<ExternalEventActionPayload>('externalEvent');
+export const externalEventAction = createAction<ExternalEventActionPayload<any>>('externalEvent');
 
 export const externalEventsMiddleware = createListenerMiddleware<RechartsRootState>();
 
@@ -41,11 +41,27 @@ externalEventsMiddleware.startListening({
     if (handler == null) {
       return;
     }
-    console.log('Mouse move event sync:', event.currentTarget);
+    const { currentTarget } = reactEvent;
     reactEvent.persist();
 
     const eventType = reactEvent.type;
-    latestEventMap.set(eventType, action.payload);
+    const eventProxy = new Proxy(reactEvent, {
+      get: (target, prop) => {
+        if (prop === 'currentTarget') {
+          return currentTarget;
+        }
+        const value = Reflect.get(target, prop);
+        if (typeof value === 'function') {
+          return value.bind(target);
+        }
+        return value;
+      },
+    });
+
+    latestEventMap.set(eventType, {
+      handler,
+      reactEvent: eventProxy,
+    });
 
     // Cancel any pending execution for this event type
     const existingRafId = rafIdMap.get(eventType);
@@ -80,7 +96,6 @@ externalEventsMiddleware.startListening({
 
     const callback = () => {
       const latestAction = latestEventMap.get(eventType);
-      console.log('Mouse move event async:', latestAction?.reactEvent?.currentTarget);
 
       try {
         if (!latestAction) {

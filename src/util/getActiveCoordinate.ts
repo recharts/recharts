@@ -2,7 +2,7 @@ import {
   AxisType,
   CartesianLayout,
   ChartOffsetInternal,
-  ChartPointer,
+  RelativePointer,
   Coordinate,
   PolarCoordinate,
   PolarLayout,
@@ -17,16 +17,16 @@ export const getActiveCartesianCoordinate = (
   layout: CartesianLayout,
   tooltipTicks: readonly TickItem[],
   activeIndex: number | undefined,
-  pointer: ChartPointer,
+  pointer: RelativePointer,
 ): Coordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
   if (entry) {
     if (layout === 'horizontal') {
-      return { x: entry.coordinate, y: pointer.chartY };
+      return { x: entry.coordinate, y: pointer.relativeY };
     }
     if (layout === 'vertical') {
-      return { x: pointer.chartX, y: entry.coordinate };
+      return { x: pointer.relativeX, y: entry.coordinate };
     }
   }
 
@@ -92,8 +92,8 @@ export const getActivePolarCoordinate = (
   };
 };
 
-export function isInCartesianRange(pointer: ChartPointer, offset: ChartOffsetInternal): boolean {
-  const { chartX: x, chartY: y } = pointer;
+export function isInCartesianRange(pointer: RelativePointer, offset: ChartOffsetInternal): boolean {
+  const { relativeX: x, relativeY: y } = pointer;
   return x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 }
 

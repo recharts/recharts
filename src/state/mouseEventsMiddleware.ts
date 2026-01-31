@@ -4,8 +4,8 @@ import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from '
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
-import { getChartPointer } from '../util/getChartPointer';
-import { ChartPointer, MousePointer } from '../util/types';
+import { getRelativeCoordinate } from '../util/getRelativeCoordinate';
+import { RelativePointer, MousePointer } from '../util/types';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 
@@ -16,7 +16,7 @@ mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), getChartPointer(mousePointer));
+    const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), getRelativeCoordinate(mousePointer));
     if (activeProps?.activeIndex != null) {
       listenerApi.dispatch(
         setMouseClickAxisIndex({
@@ -43,7 +43,7 @@ export const mouseMoveMiddleware = createListenerMiddleware<RechartsRootState>()
  */
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
-let latestChartPointer: ChartPointer | null = null;
+let latestChartPointer: RelativePointer | null = null;
 
 mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
@@ -67,9 +67,9 @@ mouseMoveMiddleware.startListening({
     /*
      * Here it is important to resolve the chart pointer _before_ the callback,
      * because once we leave the current event loop, the mousePointer event object will lose
-     * reference to currentTarget which getChartPointer uses.
+     * reference to currentTarget which getRelativeCoordinate uses.
      */
-    latestChartPointer = getChartPointer(mousePointer);
+    latestChartPointer = getRelativeCoordinate(mousePointer);
     const callback = () => {
       /*
        * Here we read a fresh state again inside the callback to ensure we have the latest state values
