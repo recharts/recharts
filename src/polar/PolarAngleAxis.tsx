@@ -37,8 +37,10 @@ import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
 
-export interface PolarAngleAxisProps
-  extends Omit<RenderableAxisProps, 'axisLine' | 'tickCount' | 'domain' | 'scale' | 'tick'>, ZIndexable {
+export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
+  extends
+    Omit<RenderableAxisProps<DataPointType, DataValueType>, 'axisLine' | 'tickCount' | 'domain' | 'scale' | 'tick'>,
+    ZIndexable {
   /**
    * Controls axis line element. These are be passed as props to SVG `<line>` element representing the axis line.
    * If `true` then the axis line is drawn using props of the PolarAngleAxis component.

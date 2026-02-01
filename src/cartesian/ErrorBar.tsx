@@ -44,7 +44,7 @@ export type ErrorBarDataPointFormatter<T extends BarRectangleItem | LinePointIte
 /**
  * External ErrorBar props, visible for users of the library
  */
-interface ErrorBarProps extends ZIndexable {
+interface ErrorBarProps<DataPointType = any, DataValueType = any> extends ZIndexable {
   /**
    * Decides how to extract the value of this ErrorBar from the data:
    * - `string`: the name of the field in the data object;
@@ -54,7 +54,7 @@ interface ErrorBarProps extends ZIndexable {
    * The error values can be a single value for symmetric error bars;
    * or an array of a lower and upper error value for asymmetric error bars.
    */
-  dataKey: DataKey<any>;
+  dataKey: DataKey<DataPointType, DataValueType>;
   /**
    * Width of the error bar ends (the serifs) in pixels.
    * This is not the total width of the error bar, but just the width of the little lines at the ends.

@@ -33,6 +33,7 @@ import {
   AnimationDuration,
   AnimationTiming,
   CartesianLayout,
+  DataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -134,7 +135,8 @@ interface InternalAreaProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface AreaProps<DataPointType = any> extends DataProvider<DataPointType>, ZIndexable {
+interface AreaProps<DataPointType = any, DataValueType = any>
+  extends DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -183,13 +185,6 @@ interface AreaProps<DataPointType = any> extends DataProvider<DataPointType>, ZI
    * @see {@link https://recharts.github.io/en-US/examples/AreaChartConnectNulls/ AreaChart with connectNull true and false}
    */
   connectNulls?: boolean;
-  /**
-   * Decides how to extract the value of this Area from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Area.
-   */
-  dataKey: DataKey<any>;
   /**
    * Renders a circle element at each data point. Options:
    *

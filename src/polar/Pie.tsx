@@ -20,6 +20,7 @@ import {
   AnimationTiming,
   ChartOffsetInternal,
   Coordinate,
+  DataConsumer,
   DataKey,
   DataProvider,
   GeometrySector,
@@ -252,7 +253,8 @@ interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPoi
   rootTabIndex?: number;
 }
 
-interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
+interface PieProps<DataPointType = any, DataValueType = any>
+  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, PieDef, PieEvents, ZIndexable {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -278,15 +280,6 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
    */
   animationEasing?: AnimationTiming;
   className?: string;
-  /**
-   * Decides how to extract the value of this Pie from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Pie.
-   *
-   * @defaultValue value
-   */
-  dataKey?: DataKey<any>;
   /**
    * Hides the whole graphical element when true.
    *
@@ -358,7 +351,7 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
    *
    * @defaultValue name
    */
-  nameKey?: DataKey<any>;
+  nameKey?: DataKey<DataPointType, DataValueType>;
   /**
    * The customized event handler of animation end.
    */

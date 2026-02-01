@@ -93,7 +93,7 @@ export type EvaluatedAxisDomainType = 'number' | 'category';
  *
  * @inline
  */
-export type DataKey<T> = string | number | ((obj: T) => any);
+export type DataKey<DataPointType, DataValueType = any> = string | number | ((obj: DataPointType) => DataValueType);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
@@ -794,7 +794,7 @@ export type YAxisTickContentProps = BaseTickContentProps & {
 
 export type TickProp<T> = TextProps | ReactElement | ((props: T) => ReactNode) | boolean;
 
-export interface BaseAxisProps {
+export interface BaseAxisProps<DataPointType, DataValueType> extends DataConsumer<DataPointType, DataValueType> {
   /**
    * The type of axis.
    *
@@ -806,7 +806,7 @@ export interface BaseAxisProps {
    *
    * `auto`: the type is inferred based on the chart layout.
    */
-  type?: 'category' | 'number' | 'auto';
+  type?: AxisDomainTypeInput;
   /**
    * The name of data.
    * This option will be used in tooltip.
@@ -818,6 +818,13 @@ export interface BaseAxisProps {
    */
   unit?: string;
   /**
+   * The data that you provide via the `data` prop is an array of objects.
+   * Each object can have multiple properties, each representing a different data dimension.
+   * Use the `dataKey` prop to specify which property (or dimension) to use for this component.
+   *
+   * Typically, you will want to have one dataKey on the X axis, and different dataKey on the Y axis,
+   * where they extract different values from the same data objects.
+   *
    * Decides how to extract the value of this Axis from the data:
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
@@ -825,7 +832,7 @@ export interface BaseAxisProps {
    *
    * If undefined, it will reuse the dataKey of graphical items.
    */
-  dataKey?: DataKey<any>;
+  dataKey?: DataKey<DataPointType, DataValueType>;
   /**
    * Specify the domain of axis when the axis is a number axis.
    *
@@ -876,7 +883,7 @@ export interface BaseAxisProps {
  * Props shared in all renderable axes - meaning the ones that are drawn on the chart,
  * can have ticks, axis line, etc.
  */
-export interface RenderableAxisProps extends BaseAxisProps {
+export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseAxisProps<DataPointType, DataValueType> {
   /**
    * Tick text rotation angle in degrees.
    * Positive values rotate clockwise, negative values rotate counterclockwise.
@@ -1344,6 +1351,19 @@ export interface ChartPointer {
   chartY: number;
 }
 
+/**
+ * Data provider means that this component accepts a `data` prop which is where you can input your data into the chart state.
+ * The data is an array of objects, where each object represents a data point.
+ *
+ * DataPointType is the type of each data point object in the data array.
+ *
+ * The data is reused in multiple charts and components. Meaning if you provide data on the chart level,
+ * then all child components, graphical items, legend, tooltip, axes ... will be able to access the data.
+ *
+ * Same goes for the graphical item. If you provide data on the graphical item level,
+ * then that data is visible for the main chart, and all axes, tooltip, legend ... in the whole chart.
+ * This is not scoped to the graphical item only.
+ */
 export interface DataProvider<DataPointType> {
   /**
    * The source data. Each element should be an object.
@@ -1355,6 +1375,30 @@ export interface DataProvider<DataPointType> {
    * @example data={[{ label: 'foo', measurements: [5, 12] }]}
    */
   data?: ChartData<DataPointType>;
+}
+
+/**
+ * Data consumer means that this component accepts a `dataKey` prop which is how you specify
+ * which dimension of the data to use for this component.
+ *
+ * DataPointType is the type of each data point object in the data array.
+ * DataValueType is the type of the value that this dataKey extracts from each data point.
+ */
+export interface DataConsumer<DataPointType, DataValueType> {
+  /**
+   * The data that you provide via the `data` prop is an array of objects.
+   * Each object can have multiple properties, each representing a different data dimension.
+   * Use the `dataKey` prop to specify which property (or dimension) to use for this component.
+   *
+   * Typically, you will want to have one dataKey on the X axis, and different dataKey on the Y axis,
+   * where they extract different values from the same data objects.
+   *
+   * Decides how to extract the value from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value.
+   */
+  dataKey?: DataKey<DataPointType, DataValueType>;
 }
 
 /**

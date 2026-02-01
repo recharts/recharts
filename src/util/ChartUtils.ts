@@ -18,7 +18,6 @@ import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice
 import {
   AxisTick,
   AxisType,
-  RenderableAxisProps,
   CartesianLayout,
   CategoricalDomainItem,
   ChartPointer,
@@ -32,6 +31,7 @@ import {
   Size,
   StackOffsetType,
   TickItem,
+  AxisDomainTypeInput,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { LegendSettings } from '../state/legendSlice';
@@ -494,7 +494,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis: {
     dataKey?: DataKey<T>;
     allowDuplicatedCategory?: boolean;
-    type?: RenderableAxisProps['type'];
+    type?: AxisDomainTypeInput;
     scale: RechartsScale;
   };
   ticks: ReadonlyArray<TickItem> | undefined;

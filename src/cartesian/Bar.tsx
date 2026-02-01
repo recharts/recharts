@@ -41,6 +41,7 @@ import {
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
+  DataConsumer,
   DataKey,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -119,7 +120,8 @@ export type BarShapeProps = BarRectangleItem & {
   option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
 };
 
-export interface BarProps extends ZIndexable {
+export interface BarProps<DataPointType = any, DataValueType = any>
+  extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -156,13 +158,6 @@ export interface BarProps extends ZIndexable {
    * If no value was set to this option, the value of dataKey will be used alternatively.
    */
   name?: string | number;
-  /**
-   * Decides how to extract the value of this Bar from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Bar.
-   */
-  dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   /**
    * The type of icon in legend. If set to 'none', no legend item will be rendered.

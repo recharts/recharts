@@ -39,9 +39,12 @@ import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
-export interface PolarRadiusAxisProps
+export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
   extends
-    Omit<RenderableAxisProps, 'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale' | 'tick'>,
+    Omit<
+      RenderableAxisProps<DataPointType, DataValueType>,
+      'axisLine' | 'angle' | 'type' | 'tickSize' | 'domain' | 'scale' | 'tick'
+    >,
     ZIndexable {
   /**
    * Determines how the axis line is drawn. Options:

@@ -23,6 +23,7 @@ import {
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
+  DataConsumer,
   DataKey,
   DataProvider,
   LegendType,
@@ -73,7 +74,8 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
 /**
  * External props, intended for end users to fill in
  */
-interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointType> {
+interface FunnelProps<DataPointType = any, DataValueType = any>
+  extends DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>> {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -95,13 +97,6 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
    */
   animationEasing?: AnimationTiming;
   className?: string;
-  /**
-   * Decides how to extract the value of this Funnel from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Funnel.
-   */
-  dataKey: DataKey<any>;
   /**
    * Hides the whole graphical element when true.
    *
@@ -146,7 +141,7 @@ interface FunnelProps<DataPointType = unknown> extends DataProvider<DataPointTyp
    *
    * @defaultValue name
    */
-  nameKey?: DataKey<any>;
+  nameKey?: DataKey<DataPointType, DataValueType>;
   /**
    * The customized event handler of animation end
    */

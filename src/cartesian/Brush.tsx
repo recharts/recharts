@@ -18,7 +18,7 @@ import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber, isNotNil } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-import { DataKey, Padding } from '../util/types';
+import { DataConsumer, DataKey, Padding } from '../util/types';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -35,7 +35,7 @@ type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) =>
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
-interface BrushProps {
+interface BrushProps<DataPointType = any, DataValueType = any> extends DataConsumer<DataPointType, DataValueType> {
   /**
    * The x-coordinate of brush.
    * If left undefined, it will be computed from the chart's offset and margins.
@@ -76,14 +76,6 @@ interface BrushProps {
    */
   gap?: number;
   padding?: Padding;
-
-  /**
-   * Decides how to extract the value of this Brush from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Brush.
-   */
-  dataKey?: DataKey<any>;
   /**
    * The default start index of brush.
    * If the option is not set, the start index will be 0.

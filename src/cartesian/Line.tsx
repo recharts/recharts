@@ -31,6 +31,7 @@ import {
   AnimationDuration,
   AnimationTiming,
   CartesianLayout,
+  DataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -124,7 +125,8 @@ interface InternalLineProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>, ZIndexable {
+interface LineProps<DataPointType = any, DataValueType = any>
+  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -169,13 +171,6 @@ interface LineProps<DataPointType = unknown> extends DataProvider<DataPointType>
    * @see {@link https://recharts.github.io/en-US/examples/LineChartConnectNulls/ LineChart with connectNull true and false}
    */
   connectNulls?: boolean;
-  /**
-   * Decides how to extract the value of this Line from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Line.
-   */
-  dataKey?: DataKey<any>;
   /**
    * Renders a circle element at each data point. Options:
    *

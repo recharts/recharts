@@ -19,6 +19,7 @@ import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
+  DataConsumer,
   DataKey,
   DotType,
   LegendType,
@@ -57,7 +58,8 @@ interface RadarPoint {
   name?: string;
 }
 
-interface RadarProps extends ZIndexable {
+interface RadarProps<DataPointType = any, DataValueType = any>
+  extends ZIndexable, DataConsumer<DataPointType, DataValueType> {
   /**
    * @defaultValue true
    */
@@ -84,13 +86,6 @@ interface RadarProps extends ZIndexable {
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;
-  /**
-   * Decides how to extract the value of this Radar from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Radar.
-   */
-  dataKey?: DataKey<any>;
   /**
    * Renders a circle element at each data point. Options:
    *
