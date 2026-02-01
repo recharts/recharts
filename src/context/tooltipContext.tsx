@@ -12,7 +12,7 @@ import {
  * Some graphical items choose to provide more information to the tooltip
  * and some do not.
  */
-type TooltipTriggerInfo = {
+export type TooltipTriggerInfo = {
   tooltipPayload?: TooltipPayload;
   tooltipPosition?: Coordinate;
 };

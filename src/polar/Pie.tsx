@@ -29,6 +29,7 @@ import {
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
 import {
+  TooltipTriggerInfo,
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
@@ -153,18 +154,17 @@ export type PieLabel =
    */
   | ReactElement<SVGElement>;
 
-export type PieSectorData = GeometrySector & {
-  dataKey?: DataKey<any>;
-  midAngle?: number;
-  middleRadius?: number;
-  name?: string | number;
-  paddingAngle?: number;
-  payload?: any;
-  percent?: number;
-  tooltipPayload?: TooltipPayload;
-  tooltipPosition: Coordinate;
-  value: number;
-};
+export type PieSectorData = GeometrySector &
+  TooltipTriggerInfo & {
+    dataKey?: DataKey<any>;
+    midAngle?: number;
+    middleRadius?: number;
+    name?: string | number;
+    paddingAngle?: number;
+    payload?: any;
+    percent?: number;
+    value: number;
+  };
 
 /**
  * We spread the data object into the sector data item,
@@ -185,10 +185,45 @@ export type PieSectorDataItem = PiePresentationProps &
 export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
 export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
+interface PieEvents {
+  /**
+   * The customized event handler of click on the sectors in this group.
+   */
+  onClick?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousedown on the sectors in this group.
+   */
+  onMouseDown?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseup on the sectors in this group.
+   */
+  onMouseUp?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mousemove on the sectors in this group.
+   */
+  onMouseMove?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseover on the sectors in this group.
+   */
+  onMouseOver?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseout on the sectors in this group.
+   */
+  onMouseOut?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseenter on the sectors in this group.
+   */
+  onMouseEnter?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  /**
+   * The customized event handler of mouseleave on the sectors in this group.
+   */
+  onMouseLeave?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+}
+
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
+interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
   id: GraphicalItemId;
   className?: string;
   dataKey: DataKey<any>;
@@ -214,13 +249,10 @@ interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPoi
   animationDuration?: AnimationDuration;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
-  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
   rootTabIndex?: number;
 }
 
-interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable {
+interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -335,38 +367,6 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
    * The customized event handler of animation start.
    */
   onAnimationStart?: () => void;
-  /**
-   * The customized event handler of click on the sectors in this group.
-   */
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mousedown on the sectors in this group.
-   */
-  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mouseup on the sectors in this group.
-   */
-  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mousemove on the sectors in this group.
-   */
-  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mouseover on the sectors in this group.
-   */
-  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mouseout on the sectors in this group.
-   */
-  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mouseenter on the sectors in this group.
-   */
-  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
-  /**
-   * The customized event handler of mouseleave on the sectors in this group.
-   */
-  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   /**
    * The tabindex of wrapper surrounding the cells.
    * @defaultValue 0
