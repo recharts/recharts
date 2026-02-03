@@ -1,0 +1,1 @@
+import{e as t}from"./hooks-B29HBlTR.js";function I(a,e){var i;return((i=a.graphicalItems.cartesianItems.find(s=>s.id===e))==null?void 0:i.xAxisId)??t}function d(a,e){var i;return((i=a.graphicalItems.cartesianItems.find(s=>s.id===e))==null?void 0:i.yAxisId)??t}export{d as a,I as s};
