@@ -18,6 +18,7 @@ import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayout
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { propsAreEqual } from '../util/propsAreEqual';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
@@ -207,7 +208,7 @@ export const legendDefaultProps = {
  * @consumes CartesianChartContext
  * @consumes PolarChartContext
  */
-export function Legend(outsideProps: Props) {
+function LegendImpl(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, legendDefaultProps);
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
@@ -263,5 +264,7 @@ export function Legend(outsideProps: Props) {
 
   return createPortal(legendElement, legendPortal);
 }
+
+export const Legend = React.memo(LegendImpl, propsAreEqual);
 
 Legend.displayName = 'Legend';

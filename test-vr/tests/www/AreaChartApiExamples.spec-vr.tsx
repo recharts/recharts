@@ -11,6 +11,7 @@ import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaCh
 import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
 import AreaChartExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartExample';
 import AreaChartRangeExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartRangeExample';
+import CrosshairExample from '../../../www/src/docs/apiExamples/getRelativeCoordinate/CrosshairExample';
 
 test('AreaChartNavExample', async ({ mount }) => {
   const component = await mount(<AreaChartNavExample />);
@@ -64,5 +65,10 @@ test('AreaChartExample', async ({ mount }) => {
 
 test('AreaChartRangeExample', async ({ mount }) => {
   const component = await mount(<AreaChartRangeExample isAnimationActive={false} />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('CrosshairExample', async ({ mount }) => {
+  const component = await mount(<CrosshairExample />);
   await expect(component).toHaveScreenshot();
 });

@@ -11,7 +11,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
-import { ChartPointer, Coordinate, PolarCoordinate, TooltipEventType } from '../../../src/util/types';
+import { RelativePointer, Coordinate, PolarCoordinate, TooltipEventType } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   addTooltipEntrySettings,
@@ -1137,9 +1137,9 @@ describe('selectIsTooltipActive', () => {
 });
 
 describe('selectActiveIndexFromChartPointer', () => {
-  const exampleChartPointer: ChartPointer = {
-    chartX: 10,
-    chartY: 10,
+  const exampleChartPointer: RelativePointer = {
+    relativeX: 10,
+    relativeY: 10,
   };
 
   const selector = (state: RechartsRootState) => selectActivePropsFromChartPointer(state, exampleChartPointer);

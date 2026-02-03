@@ -924,6 +924,13 @@ describe('readProject', () => {
     `);
   });
 
+  it('should get comment of a function argument', () => {
+    const comment = reader.getCommentOf('getRelativeCoordinate', 'event');
+    expect(comment).toEqual(
+      'The mouse or touch event from React event handlers (works with both HTML and SVG elements)',
+    );
+  });
+
   it('should return undefined for comment of unknown component', () => {
     expect(reader.getCommentOf('UnknownComponent', 'someProp')).toBe(undefined);
   });

@@ -1,4 +1,4 @@
-import { ChartOffsetInternal, ChartPointer, Coordinate, PolarViewBoxRequired, RangeObj } from './types';
+import { ChartOffsetInternal, RelativePointer, Coordinate, PolarViewBoxRequired, RangeObj } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -73,7 +73,7 @@ const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: Pol
 };
 
 export const inRangeOfSector = (
-  { chartX: x, chartY: y }: ChartPointer,
+  { relativeX: x, relativeY: y }: RelativePointer,
   viewBox: PolarViewBoxRequired,
 ): RangeObj | null => {
   const { radius, angle } = getAngleOfPoint({ x, y }, viewBox);

@@ -61,7 +61,9 @@ describe('externalEventsMiddleware', () => {
         activeTooltipIndex: null,
         isTooltipActive: false,
       }),
-      mockEvent,
+      expect.objectContaining({
+        type: mockEvent.type,
+      }),
     );
   });
 
@@ -182,5 +184,41 @@ describe('externalEventsMiddleware', () => {
     expect(handler2).toHaveBeenCalledTimes(1);
     expect(event1.persist).toHaveBeenCalledTimes(1);
     expect(event2.persist).toHaveBeenCalledTimes(1);
+  });
+
+  it('should have access to currentTarget in the async handler even if it is nullified on the original event', () => {
+    let currentTarget: HTMLElement | null = document.createElement('div');
+    const spy = vi.fn();
+    const eventWithCurrentTarget = {
+      type: 'mousemove',
+      persist: vi.fn(),
+      preventDefault: spy,
+      get currentTarget() {
+        return currentTarget;
+      },
+    } as unknown as SyntheticEvent;
+
+    store.dispatch(
+      externalEventAction({
+        reactEvent: eventWithCurrentTarget,
+        handler: mockHandler,
+      }),
+    );
+
+    // Simulate the browser/React behavior where currentTarget becomes null after the event handler finishes
+    currentTarget = null;
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+    const eventPassedToHandler = mockHandler.mock.calls[0][1];
+    expect(eventPassedToHandler.currentTarget).not.toBeNull();
+    // Verify it is the element we created
+    expect(eventPassedToHandler.currentTarget).toBeInstanceOf(HTMLDivElement);
+    expect(spy).toHaveBeenCalledTimes(0);
+    eventPassedToHandler.preventDefault();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

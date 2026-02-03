@@ -1323,7 +1323,7 @@ const selectYAxisPadding: (
   },
 );
 
-export const combineXAxisRange: (
+export const selectXAxisRange: (
   state: RechartsRootState,
   axisId: AxisId,
   isPanorama: boolean,
@@ -1351,7 +1351,7 @@ export const combineXAxisRange: (
 
 export type AxisRange = readonly [number, number];
 
-export const combineYAxisRange: (
+export const selectYAxisRange: (
   state: RechartsRootState,
   axisId: AxisId,
   isPanorama: boolean,
@@ -1390,9 +1390,9 @@ export const selectAxisRange = (
 ): AxisRange | undefined => {
   switch (axisType) {
     case 'xAxis':
-      return combineXAxisRange(state, axisId, isPanorama);
+      return selectXAxisRange(state, axisId, isPanorama);
     case 'yAxis':
-      return combineYAxisRange(state, axisId, isPanorama);
+      return selectYAxisRange(state, axisId, isPanorama);
     case 'zAxis':
       return selectZAxisSettings(state, axisId)?.range;
     case 'angleAxis':

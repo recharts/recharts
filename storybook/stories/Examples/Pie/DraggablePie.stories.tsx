@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import { Pie, PieChart } from '../../../../src';
-import { getChartPointer } from '../../../../src/util/getChartPointer';
-
-import { ChartPointer } from '../../../../src/util/types';
+import { DefaultZIndexes, getRelativeCoordinate, Pie, PieChart, RelativePointer, ZIndexLayer } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { ZIndexLayer } from '../../../../src/zIndex/ZIndexLayer';
-import { DefaultZIndexes } from '../../../../src/zIndex/DefaultZIndexes';
 
 export default {
   component: Pie,
@@ -26,11 +21,10 @@ function createData(email: number, socialMedia: number, phone: number, webchat: 
   ];
 }
 
-function computeAngle(cx: number, cy: number, e: React.MouseEvent): number {
-  // @ts-expect-error event types are not matching
-  const { chartX, chartY }: ChartPointer = getChartPointer(e);
-  const deltaX = chartX - cx;
-  const deltaY = chartY - cy;
+function computeAngle(cx: number, cy: number, e: React.MouseEvent<SVGGraphicsElement>): number {
+  const { relativeX, relativeY }: RelativePointer = getRelativeCoordinate(e);
+  const deltaX = relativeX - cx;
+  const deltaY = relativeY - cy;
   const angleInDegrees = -Math.atan2(deltaY, deltaX) * (180 / Math.PI);
   return angleInDegrees < 0 ? angleInDegrees + 360 : angleInDegrees;
 }
@@ -87,7 +81,6 @@ export const DraggablePie = {
         }}
         onMouseMove={(_data, e) => {
           if (isDragging) {
-            // @ts-expect-error event types are not matching
             const newAngleInDegrees = computeAngle(cx, cy, e);
             const delta = newAngleInDegrees - email;
             setEmail(newAngleInDegrees);

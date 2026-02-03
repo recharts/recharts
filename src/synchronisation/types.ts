@@ -3,6 +3,9 @@ import { TooltipIndex } from '../state/tooltipSlice';
 
 export type ActiveLabel = string | number | undefined;
 
+/**
+ * Despite the name, this type is used for all event types, not just mouse events.
+ */
 export type MouseHandlerDataParam = {
   /**
    * Index of the active tick in the current chart. Only works with number-indexed one-dimensional data charts,

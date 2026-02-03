@@ -1323,25 +1323,56 @@ export type RangeObj = PolarViewBoxRequired & {
   radius: number;
 };
 
+type HTMLElementTarget = Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+type SVGElementTarget = Pick<SVGGraphicsElement, 'getBoundingClientRect' | 'getBBox'>;
+
 /**
  * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
  *
  * This is meant to represent the React.MouseEvent
  * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
  */
-export interface MousePointer {
+export interface HTMLMousePointer {
   clientX: number;
   clientY: number;
-  currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+  currentTarget: HTMLElementTarget;
+}
+
+export interface HTMLTouchPointer {
+  touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  currentTarget: HTMLElementTarget;
 }
 
 /**
- * Coordinates relative to the top-left corner of the chart.
- * Also include scale which means that a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ * Simplified version of the MouseEvent for SVG elements.
+ *
+ * Similar to MousePointer but uses SVGGraphicsElement properties instead of HTMLElement properties.
+ * SVG elements use getBBox() to get the intrinsic size instead of offsetWidth/offsetHeight.
  */
-export interface ChartPointer {
-  chartX: number;
-  chartY: number;
+export interface SVGMousePointer {
+  clientX: number;
+  clientY: number;
+  currentTarget: SVGElementTarget;
+}
+
+export interface SVGTouchPointer {
+  touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
+  currentTarget: SVGElementTarget;
+}
+
+/**
+ * Recharts accepts mouse events from both HTML and SVG elements.
+ */
+export type MousePointer = HTMLMousePointer | SVGMousePointer;
+export type TouchPointer = HTMLTouchPointer | SVGTouchPointer;
+
+/**
+ * Coordinates relative to the top-left corner of the active element.
+ * Also include scale which means that element that's scaled will return the same coordinates as element that's not scaled.
+ */
+export interface RelativePointer {
+  relativeX: number;
+  relativeY: number;
 }
 
 export interface DataProvider<DataPointType> {

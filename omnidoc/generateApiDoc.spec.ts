@@ -1,7 +1,68 @@
 import { describe, it, expect } from 'vitest';
-import { generateApiDoc, processInlineLinks } from './generateApiDoc';
+import { generateApiDoc, processInlineLinks, simplifyOneType } from './generateApiDoc';
 import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
+
+describe('simplifyOneType', () => {
+  it('should return basic types as is', () => {
+    expect(simplifyOneType('string')).toBe('string');
+    expect(simplifyOneType('number')).toBe('number');
+    expect(simplifyOneType('boolean')).toBe('boolean');
+    expect(simplifyOneType('any')).toBe('any');
+    expect(simplifyOneType('void')).toBe('void');
+    expect(simplifyOneType('undefined')).toBe('undefined');
+    expect(simplifyOneType('null')).toBe('null');
+  });
+
+  it('should preserve capitalized types (custom interfaces/types)', () => {
+    expect(simplifyOneType('MousePointer')).toBe('MousePointer');
+    expect(simplifyOneType('HTMLMousePointer')).toBe('HTMLMousePointer');
+    expect(simplifyOneType('ChartPointer')).toBe('ChartPointer');
+    expect(simplifyOneType('SomeCustomType')).toBe('SomeCustomType');
+  });
+
+  it('should simplify complex object types to Object when not inline', () => {
+    // Basic object
+    expect(simplifyOneType('{ x: number, y: number }')).toBe('Object');
+    // Generic with braces - Record starts with Uppercase so it's preserved now!
+    expect(simplifyOneType('Record<string, number>')).toBe('Record<string, number>');
+  });
+
+  it('should preserve inline object types when isInline is true', () => {
+    expect(simplifyOneType('{ x: number, y: number }', true)).toBe('{ x: number, y: number }');
+  });
+
+  it('should simplify arrays', () => {
+    expect(simplifyOneType('string[]')).toBe('Array<string>');
+    expect(simplifyOneType('number[]')).toBe('Array<number>');
+    expect(simplifyOneType('MousePointer[]')).toBe('Array<MousePointer>');
+  });
+
+  it('should simplify functions', () => {
+    expect(simplifyOneType('(a: number) => void')).toBe('Function');
+    expect(simplifyOneType('() => string')).toBe('Function');
+  });
+
+  it('should simplify React types', () => {
+    expect(simplifyOneType('ReactNode')).toBe('ReactNode');
+    expect(simplifyOneType('ReactElement')).toBe('ReactNode');
+    expect(simplifyOneType('JSX.Element')).toBe('ReactNode');
+  });
+
+  it('should handle import types by extracting the name', () => {
+    expect(simplifyOneType('import("react").ReactNode')).toBe('ReactNode');
+    expect(simplifyOneType('import("./types").MousePointer')).toBe('MousePointer');
+  });
+
+  it('should remove readonly modifier', () => {
+    expect(simplifyOneType('readonly string[]')).toBe('Array<string>');
+  });
+
+  it('should remove outer parentheses', () => {
+    expect(simplifyOneType('(string)')).toBe('string');
+    expect(simplifyOneType('(MousePointer)')).toBe('MousePointer');
+  });
+});
 
 describe('processInlineLinks', () => {
   it('should convert {@link url} to HTML anchor tag', () => {

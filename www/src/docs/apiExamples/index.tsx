@@ -34,6 +34,7 @@ import { useXAxisDomainApiExamples } from './useXAxisDomain';
 import { useYAxisDomainApiExamples } from './useYAxisDomain';
 import { useIsTooltipActiveApiExamples } from './useIsTooltipActive';
 import { useActiveTooltipCoordinateApiExamples } from './useActiveTooltipCoordinate';
+import { getRelativeCoordinateExamples } from './getRelativeCoordinate';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -72,4 +73,5 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   useChartHeight: useChartWidthAndHeightApiExamples,
   useXAxisDomain: useXAxisDomainApiExamples,
   useYAxisDomain: useYAxisDomainApiExamples,
+  getRelativeCoordinate: getRelativeCoordinateExamples,
 };

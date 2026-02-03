@@ -6,14 +6,14 @@ import { selectTooltipAxisRangeWithReverse, selectTooltipAxisTicks } from './too
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineActiveProps, selectOrderedTooltipTicks } from './selectors';
 import { selectPolarViewBox } from './polarAxisSelectors';
-import { ChartPointer } from '../../util/types';
+import { RelativePointer } from '../../util/types';
 import { selectTooltipAxisType } from './selectTooltipAxisType';
 
-const pickChartPointer = (_state: RechartsRootState, chartPointer: ChartPointer) => chartPointer;
+const pickChartPointer = (_state: RechartsRootState, chartPointer: RelativePointer) => chartPointer;
 
 export const selectActivePropsFromChartPointer: (
   state: RechartsRootState,
-  chartPointer: ChartPointer,
+  chartPointer: RelativePointer,
 ) => ActiveTooltipProps | undefined = createSelector(
   [
     pickChartPointer,
