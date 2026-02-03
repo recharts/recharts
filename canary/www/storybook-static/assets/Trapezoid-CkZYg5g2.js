@@ -1,0 +1,5 @@
+import{j as o}from"./jsx-runtime-cSc29jOf.js";import{useMDXComponents as e}from"./index-jOji8zuM.js";import{M as i,C as m,a}from"./blocks-DYkow_yi.js";import{C as p,A as r}from"./Trapezoid.stories-D_35kvQ5.js";import"./iframe-CTxRHOGj.js";import"./preload-helper-Dp1pzeXC.js";import"./index-HMl1pmjv.js";import"./Trapezoid-VAjw1k5b.js";import"./resolveDefaultProps-DMjdAuvI.js";import"./useAnimationId-BmKrhVKp.js";function s(t){const n={h1:"h1",h2:"h2",...e(),...t.components};return o.jsxs(o.Fragment,{children:[o.jsx(n.h1,{id:"trapezoid",children:"Trapezoid"}),`
+`,o.jsx(i,{of:p}),`
+`,o.jsx(m,{of:r,layout:"padded"}),`
+`,o.jsx(n.h2,{id:"props",children:"Props"}),`
+`,o.jsx(a,{of:r})]})}function D(t={}){const{wrapper:n}={...e(),...t.components};return n?o.jsx(n,{...t,children:o.jsx(s,{...t})}):s(t)}export{D as default};
