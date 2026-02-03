@@ -1,0 +1,21 @@
+import{r as p,b as h,c as y,d as m}from"./iframe-BnXWjslm.js";import{r as z,c as C,s as T}from"./resolveDefaultProps-UG4fDJsJ.js";import{u as j,g as F,J as K}from"./useAnimationId-cDAtDGt9.js";const U=(t,n,r,o,$)=>{const l=h(r),u=h(o),c=Math.min(Math.abs(l)/2,Math.abs(u)/2),a=u>=0?1:-1,s=l>=0?1:-1,d=u>=0&&l>=0||u<0&&l<0?1:0;let i;if(c>0&&Array.isArray($)){const e=[0,0,0,0];for(let g=0,b=4;g<b;g++){const A=$[g]??0;e[g]=A>c?c:A}i=m`M${t},${n+a*e[0]}`,e[0]>0&&(i+=m`A ${e[0]},${e[0]},0,0,${d},${t+s*e[0]},${n}`),i+=m`L ${t+r-s*e[1]},${n}`,e[1]>0&&(i+=m`A ${e[1]},${e[1]},0,0,${d},
+        ${t+r},${n+a*e[1]}`),i+=m`L ${t+r},${n+o-a*e[2]}`,e[2]>0&&(i+=m`A ${e[2]},${e[2]},0,0,${d},
+        ${t+r-s*e[2]},${n+o}`),i+=m`L ${t+s*e[3]},${n+o}`,e[3]>0&&(i+=m`A ${e[3]},${e[3]},0,0,${d},
+        ${t},${n+o-a*e[3]}`),i+="Z"}else if(c>0&&$===+$&&$>0){const e=Math.min(c,$);i=m`M ${t},${n+a*e}
+            A ${e},${e},0,0,${d},${t+s*e},${n}
+            L ${t+r-s*e},${n}
+            A ${e},${e},0,0,${d},${t+r},${n+a*e}
+            L ${t+r},${n+o-a*e}
+            A ${e},${e},0,0,${d},${t+r-s*e},${n+o}
+            L ${t+s*e},${n+o}
+            A ${e},${e},0,0,${d},${t},${n+o-a*e} Z`}else i=m`M ${t},${n} h ${r} v ${o} h ${-r} Z`;return i},q={x:0,y:0,width:0,height:0,radius:0,isAnimationActive:!1,isUpdateAnimationActive:!1,animationBegin:0,animationDuration:1500,animationEasing:"ease"},B=t=>{const n=z(t,q),r=p.useRef(null),[o,$]=p.useState(-1);p.useEffect(()=>{if(r.current&&r.current.getTotalLength)try{const f=r.current.getTotalLength();f&&$(f)}catch{}},[]);const{x:l,y:u,width:c,height:a,radius:s,className:d}=n,{animationEasing:i,animationDuration:e,animationBegin:g,isAnimationActive:b,isUpdateAnimationActive:A}=n,V=p.useRef(c),E=p.useRef(a),L=p.useRef(l),k=p.useRef(u),W=p.useMemo(()=>({x:l,y:u,width:c,height:a,radius:s}),[l,u,c,a,s]),_=j(W,"rectangle-");if(l!==+l||u!==+u||c!==+c||a!==+a||c===0||a===0)return null;const D=C("recharts-rectangle",d);if(!A){const{radius:f,...v}=T(n);return p.createElement("path",{...v,x:h(l),y:h(u),width:h(c),height:h(a),radius:typeof s=="number"?s:void 0,className:D,d:U(l,u,c,a,s)})}const N=V.current,H=E.current,X=L.current,Y=k.current,G=`0px ${o===-1?1:o}px`,I=`${o}px 0px`,Z=F(["strokeDasharray"],e,typeof i=="string"?i:q.animationEasing);return p.createElement(K,{animationId:_,key:_,canBegin:o>0,duration:e,easing:i,isActive:A,begin:g},f=>{const v=y(N,c,f),M=y(H,a,f),P=y(X,l,f),S=y(Y,u,f);r.current&&(V.current=v,E.current=M,L.current=P,k.current=S);let R;b?f>0?R={transition:Z,strokeDasharray:I}:R={strokeDasharray:G}:R={strokeDasharray:I};const{radius:O,...J}=T(n);return p.createElement("path",{...J,radius:typeof s=="number"?s:void 0,className:D,d:U(P,S,v,M,s),ref:r,style:{...R,...n.style}})})};try{B.displayName="Rectangle",B.__docgenInfo={description:`Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
+and animation.
+
+This component accepts X and Y coordinates in pixels.
+If you need to position the rectangle based on your chart's data,
+consider using the {@link ReferenceArea } component instead.`,displayName:"Rectangle",props:{radius:{defaultValue:null,description:`The radius of corners.
+
+If you provide a single number, it applies to all four corners.
+If you provide an array of four numbers, they apply to top-left, top-right, bottom-right, bottom-left corners respectively.
+@see {@link https://recharts.github.io/en-US/guide/roundedBars/ Guide: Rounded bar corners}
+@defaultValue 0`,name:"radius",required:!1,type:{name:"RectRadius"}},isAnimationActive:{defaultValue:null,description:"@defaultValue false",name:"isAnimationActive",required:!1,type:{name:"boolean"}},isUpdateAnimationActive:{defaultValue:null,description:"@defaultValue false",name:"isUpdateAnimationActive",required:!1,type:{name:"boolean"}},animationBegin:{defaultValue:null,description:"@defaultValue 0",name:"animationBegin",required:!1,type:{name:"number"}},animationDuration:{defaultValue:null,description:"@defaultValue 1500",name:"animationDuration",required:!1,type:{name:"number"}},animationEasing:{defaultValue:null,description:"@defaultValue ease",name:"animationEasing",required:!1,type:{name:"EasingInput"}}}}}catch{}export{B as R};
