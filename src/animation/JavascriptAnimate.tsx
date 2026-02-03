@@ -38,6 +38,25 @@ type TimeAsObject = {
 const from: TimeAsObject = { t: 0 };
 const to: TimeAsObject = { t: 1 };
 
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleChange = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
+  return prefersReducedMotion;
+}
+
 export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
   const {
@@ -51,7 +70,9 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     children,
   } = props;
 
-  const isActive = isActiveProp === 'auto' ? !Global.isSsr : isActiveProp;
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationManager = useAnimationManager(props.animationId, props.animationManager);
 
