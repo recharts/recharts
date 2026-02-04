@@ -48,6 +48,7 @@ export default defineConfig({
           name: 'unit:website',
           include: ['test/**/*.spec.ts?(x)'],
           root: 'www',
+          setupFiles: ['test/vitest.setup.ts'],
         },
       },
       {
