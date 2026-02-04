@@ -56,6 +56,7 @@ function isSvgPointer(pointer: MousePointer | TouchPointer): pointer is SVGMouse
  * }}>
  * ```
  *
+ * @since 3.8
  * @param event The mouse or touch event from React event handlers (works with both HTML and SVG elements)
  * @returns Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.
  */

@@ -5,9 +5,9 @@ import {
   combineAxisTicks,
   combineCategoricalDomain,
   combineGraphicalItemTicks,
-  selectRenderableAxisSettings,
   selectDuplicateDomain,
   selectRealScaleType,
+  selectRenderableAxisSettings,
 } from './axisSelectors';
 import {
   selectAngleAxis,

@@ -30,8 +30,7 @@ type TestCaseResult<T> = {
   queryByText: (text: string) => HTMLElement | null;
 };
 
-type ReactHook<T> = {
-  name: `use${string}`;
+export type ReactHook<T> = {
   (): T;
 };
 
