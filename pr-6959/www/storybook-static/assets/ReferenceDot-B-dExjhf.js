@@ -1,0 +1,26 @@
+import{j as o}from"./jsx-runtime-D1aNSPFt.js";import{useMDXComponents as n}from"./index-DTDPSQzL.js";import{M as p,C as s,a as c}from"./blocks-C5YB_OOs.js";import{C as m,A as t}from"./ReferenceDot.stories-DG0SKG2_.js";import"./iframe-lWBX64pI.js";import"./preload-helper-Dp1pzeXC.js";import"./index-04LEDiAf.js";import"./utils-ePvtT4un.js";import"./ReferenceDot-BtuGm2fw.js";import"./resolveDefaultProps-F9aAykDU.js";import"./Layer-BUTtt9Bz.js";import"./Dot-CQ7tD8sg.js";import"./types-CeMusotU.js";import"./Label-BnM6Z2ZH.js";import"./Text-Cr9QQRZN.js";import"./DOMUtils-DKHDOrvS.js";import"./arrayEqualityCheck-Bc4Ot0PW.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-BWtmJpZw.js";import"./zIndexSlice-DrTdUYuM.js";import"./RechartsWrapper-Djqv5WdD.js";import"./hooks-DxrNJMr4.js";import"./axisSelectors-BWmy8ZsX.js";import"./CategoricalChart-CNbBFS0r.js";import"./CartesianScaleHelper-C9Oze4oB.js";import"./ComposedChart-C9sU2uaY.js";import"./CartesianChart-Dxi5Jpt2.js";import"./chartDataContext-BrNcW05w.js";import"./CartesianGrid-Dbc3AG7y.js";import"./CartesianAxis-CCAPZiMN.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./XAxis-TPgD44nE.js";import"./YAxis-Bfy5qxVv.js";import"./Bar-DHy-2l3E.js";import"./tooltipContext-DPhc0NFx.js";import"./ReactUtils-Caa168vS.js";import"./ActiveShapeUtils-BBPTy8PE.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-2euSkY-d.js";import"./useAnimationId-Bj8WvXUY.js";import"./Trapezoid-C8NVxs2k.js";import"./Sector-EvQq1WWA.js";import"./Symbols-D38f067d.js";import"./Curve-BU8W3PHf.js";import"./RegisterGraphicalItemId-nVIwNLcs.js";import"./ErrorBarContext-BmsITwJg.js";import"./GraphicalItemClipPath-B0xhchCc.js";import"./SetGraphicalItem-CksZixPS.js";import"./getZIndexFromUnknown-cEHZ7I4d.js";import"./graphicalItemSelectors-D6Ec4gXc.js";import"./RechartsHookInspector-DQzLYc7l.js";import"./ChartSizeDimensions-BCIgaepb.js";import"./OffsetShower-CEpgJiJ4.js";import"./PlotAreaShower-BJAGaSX0.js";import"./Page-Cj8EiXz7.js";function e(r){const i={code:"code",h1:"h1",h2:"h2",li:"li",p:"p",ul:"ul",...n(),...r.components};return o.jsxs(o.Fragment,{children:[o.jsx(i.h1,{id:"referencedot",children:"ReferenceDot"}),`
+`,o.jsx(p,{of:m}),`
+`,o.jsx(s,{of:t,layout:"padded"}),`
+`,o.jsx(i.h2,{id:"description",children:"Description"}),`
+`,o.jsx("p",{children:"Draws a circle on the chart to highlight a specific point."}),`
+`,o.jsx("p",{children:o.jsx(i.p,{children:`This component, unlike Dot or circle, is aware of the cartesian coordinate system, so you specify its center by using
+data coordinates instead of pixels.`})}),`
+`,o.jsx("p",{children:"ReferenceDot will calculate the pixels based on the provided data coordinates."}),`
+`,o.jsx("p",{children:"If you prefer to render dots using pixels rather than data coordinates, consider using the Dot component instead."}),`
+`,o.jsx(i.h2,{id:"parent-component",children:"Parent Component"}),`
+`,o.jsx(i.p,{children:"The ReferenceDot can be used within the following parent components:"}),`
+`,o.jsxs(i.ul,{children:[`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<AreaChart/>"})}),`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<BarChart/>"})}),`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<ComposedChart/>"})}),`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<FunnelChart/>"})}),`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<LineChart/>"})}),`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<ScatterChart/>"})}),`
+`]}),`
+`,o.jsx(i.h2,{id:"child-components",children:"Child Components"}),`
+`,o.jsx(i.p,{children:"The ReferenceDot can be used with the following child components:"}),`
+`,o.jsxs(i.ul,{children:[`
+`,o.jsx(i.li,{children:o.jsx(i.code,{children:"<Label/>"})}),`
+`]}),`
+`,o.jsx(i.h2,{id:"props",children:"Props"}),`
+`,o.jsx(c,{of:t})]})}function lo(r={}){const{wrapper:i}={...n(),...r.components};return i?o.jsx(i,{...r,children:o.jsx(e,{...r})}):e(r)}export{lo as default};
