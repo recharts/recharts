@@ -40,6 +40,9 @@ const to: TimeAsObject = { t: 1 };
 
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (Global.isSsr) {
+      return false;
+    }
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 
