@@ -4,7 +4,7 @@ import { useLocale } from '../../utils/LocaleUtils.ts';
 export function LinkToApi({ children }: { children: string }) {
   const locale = useLocale();
   return (
-    <Link to={`/${locale}/api/${children.toLowerCase()}`} className="link-to-api">
+    <Link to={`/${locale}/api/${children}`} className="link-to-api">
       {children}
     </Link>
   );
