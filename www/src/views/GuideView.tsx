@@ -1,6 +1,6 @@
 import { ComponentType, PureComponent } from 'react';
 import Helmet from 'react-helmet';
-import { Installation, GettingStarted, Customize, ZIndex } from '../components/GuideView';
+import { Installation, GettingStarted, Customize, ZIndex, CoordinateSystems } from '../components/GuideView';
 import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 import { SupportedLocale } from '../locale';
 import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
@@ -20,6 +20,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   domainAndTicks: DomainAndTicks,
   sizes: ChartSizing,
   zIndex: ZIndex,
+  coordinateSystems: CoordinateSystems,
   performance: Performance,
   roundedBars: RoundedBars,
   barAlignment: BarAlign,

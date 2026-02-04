@@ -46,6 +46,7 @@ export const map = {
     roundedBars: 'Rounded Bar corners',
     barAlignment: 'Bar Alignment',
     cell: 'Migrate from Cell component to shape prop',
+    coordinateSystems: 'Coordinate and dimension systems',
   },
   installation: {
     installation: 'Installation',
