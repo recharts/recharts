@@ -100,6 +100,80 @@ describe('<ZAxis />', () => {
     ]);
   });
 
+  it('should respect domain prop for calculating sizes', () => {
+    const dataOne = [{ x: 10, y: 10, z: 100 }];
+    const { container, rerender } = rechartsTestRender(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter data={dataOne} />
+        <ZAxis dataKey="z" range={[0, 100]} domain={[0, 100]} />
+      </ScatterChart>,
+    );
+
+    const firstRenderSymbol = container.querySelector('path');
+    assertNotNull(firstRenderSymbol);
+    const firstWidth = Number(firstRenderSymbol.getAttribute('width'));
+
+    // Re-render with larger domain, so the same z value (100) represents a smaller portion of the domain
+    // thus resulting in a smaller size
+    rerender(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter data={dataOne} />
+        <ZAxis dataKey="z" range={[0, 100]} domain={[0, 200]} />
+      </ScatterChart>,
+    );
+
+    const secondRenderSymbol = container.querySelector('path');
+    assertNotNull(secondRenderSymbol);
+    const secondWidth = Number(secondRenderSymbol.getAttribute('width'));
+
+    expect(secondWidth).toBeLessThan(firstWidth);
+  });
+
+  it('should respect scale="log" prop for calculating sizes', () => {
+    const dataTwo = [
+      { x: 10, y: 10, z: 10 },
+      { x: 20, y: 20, z: 1000 },
+    ];
+    // Linear scale (default)
+    const { container, rerender } = rechartsTestRender(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter data={dataTwo} />
+        <ZAxis dataKey="z" range={[100, 500]} domain={[0, 1000]} />
+      </ScatterChart>,
+    );
+
+    const linearSymbols = container.querySelectorAll('path');
+    const linearSmall = Number(linearSymbols[0].getAttribute('width'));
+    const linearLarge = Number(linearSymbols[1].getAttribute('width'));
+    const linearRatio = linearLarge / linearSmall;
+
+    // Log scale
+    rerender(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter data={dataTwo} />
+        <ZAxis dataKey="z" range={[100, 500]} scale="log" domain={[0.1, 1000]} />
+      </ScatterChart>,
+    );
+
+    const logSymbols = container.querySelectorAll('path');
+    const logSmall = Number(logSymbols[0].getAttribute('width'));
+    const logLarge = Number(logSymbols[1].getAttribute('width'));
+    const logRatio = logLarge / logSmall;
+
+    // In log scale (10 to 1000), the difference visually should be compressed compared to linear
+    // So the ratio of sizes should be different.
+    expect(linearSmall).not.toBe(logSmall);
+    expect(logRatio).toBeLessThan(linearRatio);
+  });
+
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
       const axisSettingsSpy = vi.fn();
