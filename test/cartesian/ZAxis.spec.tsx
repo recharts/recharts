@@ -138,7 +138,7 @@ describe('<ZAxis />', () => {
       { x: 10, y: 10, z: 10 },
       { x: 20, y: 20, z: 1000 },
     ];
-    // Linear scale (default)
+    // Linear scale (default) - Testing ZAxis domain behavior
     const { container, rerender } = rechartsTestRender(
       <ScatterChart width={400} height={400}>
         <XAxis dataKey="x" type="number" />
