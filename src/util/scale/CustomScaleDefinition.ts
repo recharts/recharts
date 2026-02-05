@@ -68,4 +68,12 @@ export interface CustomScaleDefinition<Domain extends CategoricalDomainItem = Ca
    * @param input
    */
   (input: Domain): number | undefined;
+
+  /**
+   * Given a value from the range, returns the corresponding value from the domain.
+   *
+   * This method is optional, as not all scales provide an inverse mapping.
+   * Linear and time scales typically do, while band and ordinal scales may not.
+   */
+  invert?(value: number): Domain | undefined;
 }

@@ -157,7 +157,7 @@ export function processInlineLinks(text: string, componentNames?: ReadonlyArray<
     // Check if the URL is a single word (no protocol, no slashes) and matches a component name
     if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
       // It's a Recharts component reference - create a React Router Link for SPA navigation
-      return `<Link to="/api/${url}/">${displayText}</Link>`;
+      return `<LinkToApi>${displayText}</LinkToApi>`;
     }
 
     // Otherwise, use the URL as-is for external links
@@ -595,6 +595,11 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   return result;
 }
 
+function hasTag(obj: ApiDoc | ApiProps, tagName: string): boolean {
+  if (!obj.desc) return false;
+  return Object.values(obj.desc).some(desc => typeof desc === 'string' && desc.includes(`</${tagName}>`));
+}
+
 /**
  * Writes the API doc to a TypeScript file
  */
@@ -606,22 +611,30 @@ async function writeApiDocFile(
   const varName = `${apiDoc.name}API`;
 
   // Check if the description contains Link components (for internal links)
-  const hasLinkInDesc =
-    apiDoc.desc && Object.values(apiDoc.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to='));
+  const hasLinkInDesc = hasTag(apiDoc, 'Link');
 
   // Check if any prop description contains Link components
-  const hasLinkInProps = apiDoc.props.some(
-    prop => prop.desc && Object.values(prop.desc).some(desc => typeof desc === 'string' && desc.includes('<Link to=')),
-  );
+  const hasLinkInProps = apiDoc.props.some(prop => hasTag(prop, 'Link'));
 
   const hasLinkComponents = hasLinkInDesc || hasLinkInProps;
 
-  // Add Link import if needed
-  const imports = hasLinkComponents
-    ? `import { Link } from 'react-router';\nimport { ApiDoc } from './types';`
-    : `import { ApiDoc } from './types';`;
+  const hasLinkToApiInDesc = hasTag(apiDoc, 'LinkToApi');
 
-  const fileContent = `${imports}
+  const hasLinkToApiInProps = apiDoc.props.some(prop => hasTag(prop, 'LinkToApi'));
+
+  const hasLinkToApiComponents = hasLinkToApiInDesc || hasLinkToApiInProps;
+
+  const imports = ["import { ApiDoc } from './types';"];
+
+  if (hasLinkComponents) {
+    imports.push(`import { Link } from 'react-router';`);
+  }
+
+  if (hasLinkToApiComponents) {
+    imports.push(`import { LinkToApi } from '../../components/Shared/LinkToApi';`);
+  }
+
+  const fileContent = `${imports.join('\n')}
 
 export const ${varName}: ApiDoc = ${stringifyApiDoc(apiDoc)};
 `;

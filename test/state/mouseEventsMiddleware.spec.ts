@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createRechartsStore } from '../../src/state/store';
 import { mouseClickAction, mouseMoveAction } from '../../src/state/mouseEventsMiddleware';
-import { MousePointer } from '../../src/util/types';
+import { HTMLMousePointer } from '../../src';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
-function createMockMousePointer(x: number, y: number): MousePointer {
+function createMockMousePointer(x: number, y: number): HTMLMousePointer {
   return {
     clientX: x,
     clientY: y,

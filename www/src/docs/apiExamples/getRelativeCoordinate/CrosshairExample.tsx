@@ -15,7 +15,7 @@ import {
   ZIndexLayer,
   DefaultZIndexes,
 } from 'recharts';
-import { generateMockData } from '@recharts/devtools';
+import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { useState, MouseEvent, TouchEvent, useCallback } from 'react';
 
 const data = generateMockData(30, 123);
@@ -127,6 +127,7 @@ export default function CrosshairExample() {
         <Crosshair key={index} pointer={pointer} />
       ))}
       <Legend />
+      <RechartsDevtools />
     </AreaChart>
   );
 }

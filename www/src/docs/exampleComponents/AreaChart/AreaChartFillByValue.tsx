@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, useChartHeight, useYAxisScale } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -48,21 +48,26 @@ const data = [
 ];
 
 // #endregion
-const gradientOffset = () => {
-  const dataMax = Math.max(...data.map(i => i.uv));
-  const dataMin = Math.min(...data.map(i => i.uv));
 
-  if (dataMax <= 0) {
-    return 0;
+const Gradient = () => {
+  const scale = useYAxisScale();
+  const height = useChartHeight();
+  const scaledZero = scale?.(0);
+  if (scaledZero == null || height == null) {
+    return null;
   }
-  if (dataMin >= 0) {
-    return 1;
-  }
-
-  return dataMax / (dataMax - dataMin);
+  const ratio = scaledZero / height;
+  return (
+    <defs>
+      <linearGradient id="splitColor" x1="0" x2="0" y1="0" y2={height} gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="green" stopOpacity={1} />
+        <stop offset={`${ratio}`} stopColor="green" stopOpacity={0.1} />
+        <stop offset={`${ratio}`} stopColor="red" stopOpacity={0.1} />
+        <stop offset="1" stopColor="red" stopOpacity={1} />
+      </linearGradient>
+    </defs>
+  );
 };
-
-const off = gradientOffset();
 
 const AreaChartFillByValue = () => {
   return (
@@ -86,14 +91,7 @@ const AreaChartFillByValue = () => {
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Tooltip />
-      <defs>
-        <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="green" stopOpacity={1} />
-          <stop offset={off} stopColor="green" stopOpacity={0.1} />
-          <stop offset={off} stopColor="red" stopOpacity={0.1} />
-          <stop offset="1" stopColor="red" stopOpacity={1} />
-        </linearGradient>
-      </defs>
+      <Gradient />
       <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
       <RechartsDevtools />
     </AreaChart>

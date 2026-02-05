@@ -16,6 +16,11 @@ export default defineConfig({
     globals: true,
     exclude: ['**/node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp', 'www'],
     restoreMocks: true,
-    setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
+    setupFiles: [
+      'test/vitest.setup.ts',
+      'test/helper/toBeRechartsScale.ts',
+      'test/helper/expectStackGroups.ts',
+      './test/helper/expectFunctionReturning.ts',
+    ],
   },
 });

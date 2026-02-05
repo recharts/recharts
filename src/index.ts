@@ -172,7 +172,20 @@ export {
   useYAxisDomain,
   useIsTooltipActive,
   useActiveTooltipCoordinate,
+  useXAxisScale,
+  useYAxisScale,
+  useXAxisInverseScale,
+  useXAxisInverseDataSnapScale,
+  useXAxisInverseTickSnapScale,
+  useYAxisInverseScale,
+  useYAxisInverseDataSnapScale,
+  useYAxisInverseTickSnapScale,
+  useXAxisTicks,
+  useYAxisTicks,
+  useCartesianScale,
 } from './hooks';
+
+export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 
 export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';
 
@@ -182,6 +195,8 @@ export type { MouseHandlerDataParam, ActiveLabel } from './synchronisation/types
 
 export type { AxisId } from './state/cartesianAxisSlice';
 export type { AxisRange } from './state/selectors/axisSelectors';
+
+export type { BandPosition } from './util/scale/RechartsScale';
 
 export { getRelativeCoordinate } from './util/getRelativeCoordinate';
 

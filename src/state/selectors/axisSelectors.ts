@@ -89,6 +89,9 @@ import { combineCheckedDomain } from './combiners/combineCheckedDomain';
 import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { combineConfiguredScale } from './combiners/combineConfiguredScale';
 import { combineRealScaleType } from './combiners/combineRealScaleType';
+import { InverseScaleFunction } from '../../hooks';
+import { createCategoricalInverse } from '../../util/scale/createCategoricalInverse';
+import { combineInverseScaleFunction } from './combiners/combineInverseScaleFunction';
 
 export const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -469,31 +472,6 @@ export const selectAllAppliedValues: (
   combineAppliedValues,
 );
 
-export function isErrorBarRelevantForAxisType(axisType: AllAxisTypes, errorBar: ErrorBarsSettings): boolean {
-  switch (axisType) {
-    case 'xAxis':
-      return errorBar.direction === 'x';
-    case 'yAxis':
-      return errorBar.direction === 'y';
-    default:
-      return false;
-  }
-}
-
-export type AppliedChartDataWithErrorDomain = {
-  /**
-   * This is the value after the dataKey has been applied. Presumably a number? But no guarantees.
-   */
-  value: unknown;
-  /**
-   * This is the error domain, if any, for the current value.
-   * This may be either x or y direction, whatever is applicable.
-   * Assumption is that we're looking at this data from the point of view of a single axis,
-   * and that axis dictates the relevant direction.
-   */
-  errorDomain: ReadonlyArray<number> | undefined;
-};
-
 function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
     const n = Number(val);
@@ -522,6 +500,55 @@ function makeDomain(val: unknown): NumberDomain | undefined {
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data.map(makeNumber).filter(isNotNil);
 }
+
+function sortBy(a: unknown, b: unknown): number {
+  const aNum = makeNumber(a);
+  const bNum = makeNumber(b);
+  if (aNum == null && bNum == null) {
+    return 0;
+  }
+  if (aNum == null) {
+    return -1;
+  }
+  if (bNum == null) {
+    return 1;
+  }
+  return aNum - bNum;
+}
+
+export const selectSortedDataPoints: (
+  state: RechartsRootState,
+  axisType: AllAxisTypes,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<unknown> | undefined = createSelector([selectAllAppliedValues], appliedData => {
+  return appliedData?.map(item => item.value).sort(sortBy);
+});
+
+export function isErrorBarRelevantForAxisType(axisType: AllAxisTypes, errorBar: ErrorBarsSettings): boolean {
+  switch (axisType) {
+    case 'xAxis':
+      return errorBar.direction === 'x';
+    case 'yAxis':
+      return errorBar.direction === 'y';
+    default:
+      return false;
+  }
+}
+
+export type AppliedChartDataWithErrorDomain = {
+  /**
+   * This is the value after the dataKey has been applied. Presumably a number? But no guarantees.
+   */
+  value: unknown;
+  /**
+   * This is the error domain, if any, for the current value.
+   * This may be either x or y direction, whatever is applicable.
+   * Assumption is that we're looking at this data from the point of view of a single axis,
+   * and that axis dictates the relevant direction.
+   */
+  errorDomain: ReadonlyArray<number> | undefined;
+};
 
 /**
  * @param entry One item in the 'data' array. Could be anything really - this is defined externally. This is the raw, before dataKey application
@@ -1411,7 +1438,7 @@ export const selectAxisRangeWithReverse: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector([selectBaseAxis, selectAxisRange], combineAxisRangeWithReverse);
 
-const selectCheckedAxisDomain: (
+export const selectCheckedAxisDomain: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
@@ -1431,12 +1458,56 @@ const selectConfiguredScale: (
   combineConfiguredScale,
 );
 
+export const combineCategoricalDomain = (
+  layout: LayoutType,
+  appliedValues: AppliedChartData,
+  axis: RenderableAxisSettings,
+  axisType: RenderableAxisType,
+): ReadonlyArray<unknown> | undefined => {
+  if (axis == null || axis.dataKey == null) {
+    return undefined;
+  }
+  const { type, scale } = axis;
+  const isCategorical = isCategoricalAxis(layout, axisType);
+  if (isCategorical && (type === 'number' || scale !== 'auto')) {
+    return appliedValues.map(d => d.value);
+  }
+  return undefined;
+};
+
+export const selectCategoricalDomain: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectAllAppliedValues, selectRenderableAxisSettings, pickAxisType],
+  combineCategoricalDomain,
+);
+
 export const selectAxisScale: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => RechartsScale | undefined = createSelector([selectConfiguredScale], rechartsScaleFactory);
+
+export const selectAxisInverseScale: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => InverseScaleFunction | undefined = createSelector([selectConfiguredScale], combineInverseScaleFunction);
+
+export const selectAxisInverseDataSnapScale: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => InverseScaleFunction | undefined = createSelector(
+  [selectConfiguredScale, selectSortedDataPoints],
+  createCategoricalInverse,
+);
 
 export const selectErrorBarsSettings: (
   state: RechartsRootState,
@@ -1696,33 +1767,6 @@ export const selectDuplicateDomain: (
 ) => ReadonlyArray<unknown> | undefined = createSelector(
   [selectChartLayout, selectAllAppliedValues, selectBaseAxis, pickAxisType],
   combineDuplicateDomain,
-);
-
-export const combineCategoricalDomain = (
-  layout: LayoutType,
-  appliedValues: AppliedChartData,
-  axis: RenderableAxisSettings,
-  axisType: RenderableAxisType,
-): ReadonlyArray<unknown> | undefined => {
-  if (axis == null || axis.dataKey == null) {
-    return undefined;
-  }
-  const { type, scale } = axis;
-  const isCategorical = isCategoricalAxis(layout, axisType);
-  if (isCategorical && (type === 'number' || scale !== 'auto')) {
-    return appliedValues.map(d => d.value);
-  }
-  return undefined;
-};
-
-export const selectCategoricalDomain: (
-  state: RechartsRootState,
-  axisType: RenderableAxisType,
-  axisId: AxisId,
-  isPanorama: boolean,
-) => ReadonlyArray<unknown> | undefined = createSelector(
-  [selectChartLayout, selectAllAppliedValues, selectRenderableAxisSettings, pickAxisType],
-  combineCategoricalDomain,
 );
 
 export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
@@ -2098,5 +2142,34 @@ export const selectChartDirection: (state: RechartsRootState) => AxisDirection |
         return undefined;
       }
     }
+  },
+);
+
+export const selectAxisInverseTickSnapScale: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => InverseScaleFunction | undefined = createSelector(
+  [selectTicksOfAxis],
+  (ticks: ReadonlyArray<CartesianTickItem> | undefined) => {
+    if (!ticks || ticks.length === 0) {
+      return undefined;
+    }
+
+    return (pixelValue: number) => {
+      // Find the tick with the closest coordinate to pixelValue
+      let minDistance = Infinity;
+      let closestTick = ticks[0];
+
+      for (const tick of ticks) {
+        const distance = Math.abs(tick.coordinate - pixelValue);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestTick = tick;
+        }
+      }
+      return closestTick?.value;
+    };
   },
 );

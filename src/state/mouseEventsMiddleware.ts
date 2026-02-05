@@ -5,16 +5,16 @@ import { selectActivePropsFromChartPointer } from './selectors/selectActiveProps
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
 import { getRelativeCoordinate } from '../util/getRelativeCoordinate';
-import { RelativePointer, MousePointer } from '../util/types';
+import { RelativePointer, HTMLMousePointer } from '../util/types';
 
-export const mouseClickAction = createAction<MousePointer>('mouseClick');
+export const mouseClickAction = createAction<HTMLMousePointer>('mouseClick');
 
 export const mouseClickMiddleware = createListenerMiddleware<RechartsRootState>();
 
 // TODO: there's a bug here when you click the chart the activeIndex resets to zero
 mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
-  effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
+  effect: (action: PayloadAction<HTMLMousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
     const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), getRelativeCoordinate(mousePointer));
     if (activeProps?.activeIndex != null) {
@@ -29,7 +29,7 @@ mouseClickMiddleware.startListening({
   },
 });
 
-export const mouseMoveAction = createAction<MousePointer>('mouseMove');
+export const mouseMoveAction = createAction<HTMLMousePointer>('mouseMove');
 
 export const mouseMoveMiddleware = createListenerMiddleware<RechartsRootState>();
 
@@ -47,7 +47,7 @@ let latestChartPointer: RelativePointer | null = null;
 
 mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
-  effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
+  effect: (action: PayloadAction<HTMLMousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
 
     const state = listenerApi.getState();

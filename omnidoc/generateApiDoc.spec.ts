@@ -94,15 +94,15 @@ describe('processInlineLinks', () => {
     expect(processInlineLinks(input)).toBe(input);
   });
 
-  it('should convert {@link ComponentName} to React Router Link for known Recharts components', () => {
+  it('should convert {@link ComponentName} to LinkToApi for known Recharts components', () => {
     const input = 'This component uses {@link Rectangle} for rendering';
-    const expected = 'This component uses <Link to="/api/Rectangle/">Rectangle</Link> for rendering';
+    const expected = 'This component uses <LinkToApi>Rectangle</LinkToApi> for rendering';
     expect(processInlineLinks(input, ['Rectangle'])).toBe(expected);
   });
 
   it('should handle multiple component links in the same text', () => {
     const input = 'Use {@link Rectangle} or {@link Line} components';
-    const expected = 'Use <Link to="/api/Rectangle/">Rectangle</Link> or <Link to="/api/Line/">Line</Link> components';
+    const expected = 'Use <LinkToApi>Rectangle</LinkToApi> or <LinkToApi>Line</LinkToApi> components';
     expect(processInlineLinks(input, ['Rectangle', 'Line'])).toBe(expected);
   });
 
@@ -166,7 +166,7 @@ describe('generateApiDoc', () => {
     expect(contentProp).toBeDefined();
     // @ts-expect-error locale fetching is not well typed
     const description = contentProp?.desc?.['en-US'];
-    expect(description).toContain('<Link to="/api/DefaultTooltipContent/">DefaultTooltipContent</Link>');
+    expect(description).toContain('<LinkToApi>DefaultTooltipContent</LinkToApi>');
   });
 
   it('should include return value in API doc for hooks', async () => {

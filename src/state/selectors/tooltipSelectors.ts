@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import {
   AxisRange,
-  RenderableAxisSettings,
   combineAppliedValues,
   combineAreasDomain,
   combineAxisDomain,
@@ -24,6 +23,7 @@ import {
   getDomainDefinition,
   itemAxisPredicate,
   mergeDomains,
+  RenderableAxisSettings,
   selectAllErrorBarSettings,
   selectAxisRange,
   selectHasBar,
@@ -82,7 +82,7 @@ import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
-import { selectTooltipAxisType, RenderableAxisType } from './selectTooltipAxisType';
+import { RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
@@ -90,10 +90,10 @@ import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { ActiveLabel } from '../../synchronisation/types';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
-import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
-import { combineConfiguredScale } from './combiners/combineConfiguredScale';
 import { combineRealScaleType } from './combiners/combineRealScaleType';
+import { combineConfiguredScale } from './combiners/combineConfiguredScale';
+import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => D3ScaleType | undefined = createSelector(
   [selectTooltipAxis, selectHasBar, selectChartName],

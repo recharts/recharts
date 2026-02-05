@@ -164,6 +164,21 @@ describe('Documentation Examples Coverage', () => {
     'SVGTouchPointer',
     'HTMLMousePointer',
     'HTMLTouchPointer',
+    'BandPosition',
+    'CartesianDataPoint',
+    'InverseScaleFunction',
+    'ScaleFunction',
+    'useCartesianScale',
+    'useXAxisInverseDataSnapScale',
+    'useYAxisInverseDataSnapScale',
+    'useXAxisInverseScale',
+    'useYAxisInverseScale',
+    'useXAxisInverseTickSnapScale',
+    'useYAxisInverseTickSnapScale',
+    'useXAxisScale',
+    'useYAxisScale',
+    'useXAxisTicks',
+    'useYAxisTicks',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
