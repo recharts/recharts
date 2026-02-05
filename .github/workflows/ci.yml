@@ -34,7 +34,8 @@ jobs:
       - name: Checkout Integration Tests Repository
         uses: actions/checkout@v4
         with:
-          repository: recharts/recharts-integ
+          repository: cloud-walker/recharts-integ
+          ref: auto-disable-animations
 
       - name: List Integration Test Directories
         id: set_matrix
@@ -199,7 +200,8 @@ jobs:
       - name: Checkout Integration Tests Repository
         uses: actions/checkout@v4
         with:
-          repository: recharts/recharts-integ # Checkout the test repo again but this time all directories and files
+          repository: cloud-walker/recharts-integ
+          ref: auto-disable-animations
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
