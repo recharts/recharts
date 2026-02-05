@@ -42,7 +42,10 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
-interface YAxisProps extends Omit<RenderableAxisProps, 'axisLine' | 'domain' | 'scale' | 'tick'> {
+interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
+  RenderableAxisProps<DataPointType, DataValueType>,
+  'axisLine' | 'domain' | 'scale' | 'tick'
+> {
   /**
    * Determines how the axis line is drawn. Options:
    * - `true`: the axis line is drawn with default props;

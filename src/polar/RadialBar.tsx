@@ -28,6 +28,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
+  DataConsumer,
   DataKey,
   LayoutType,
   LegendType,
@@ -270,7 +271,8 @@ function RenderSectors(props: InternalProps) {
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
-interface InternalRadialBarProps extends ZIndexable {
+interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
+  extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0

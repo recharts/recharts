@@ -15,6 +15,7 @@ import {
   AnimationDuration,
   AnimationTiming,
   Coordinate,
+  DataConsumer,
   DataKey,
   EventThrottlingProps,
   Margin,
@@ -116,7 +117,7 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
-export const computeNode = ({
+export const computeNode = <DataPointType extends TreemapDataType, DataValueType>({
   depth,
   node,
   index,
@@ -127,8 +128,8 @@ export const computeNode = ({
   depth: number;
   node: TreemapNode;
   index: number;
-  dataKey: DataKey<unknown>;
-  nameKey: DataKey<unknown>;
+  dataKey: DataKey<DataPointType, DataValueType>;
+  nameKey: DataKey<DataPointType, DataValueType>;
   nestedActiveTooltipIndex: TooltipIndex | undefined;
 }): TreemapNode => {
   const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(index, nestedActiveTooltipIndex);
@@ -358,7 +359,8 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
 
 export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
-export interface Props extends EventThrottlingProps {
+export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
+  extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -379,7 +381,7 @@ export interface Props extends EventThrottlingProps {
    *
    * If the `children` property is present on an element, it will be treated as a nested treemap.
    */
-  data?: ReadonlyArray<TreemapDataType>;
+  data?: ReadonlyArray<DataPointType>;
 
   /**
    * @deprecated unused prop, doesn't do anything, use `key` instead
@@ -414,18 +416,19 @@ export interface Props extends EventThrottlingProps {
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the name.
    *
-   * @defaultValue name
+   * @defaultValue 'name'
    */
-  nameKey?: DataKey<any>;
+  nameKey?: DataKey<DataPointType, DataValueType>;
 
   /**
    * Decides how to extract the value of this Treemap from the data:
    * - `string`: the name of the field in the data object;
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value of this Treemap.
-   * @default 'value'
+   *
+   * @defaultValue 'value'
    */
-  dataKey?: DataKey<any>;
+  dataKey?: DataKey<DataPointType, DataValueType>;
 
   children?: ReactNode;
 

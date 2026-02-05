@@ -5,7 +5,6 @@ import { generateMockData } from '@recharts/devtools';
 import {
   Brush,
   CartesianGrid,
-  Customized,
   LabelProps,
   Legend,
   Line,
@@ -139,7 +138,7 @@ describe('<LineChart />', () => {
         <Legend />
         <Line yAxisId="left" dataKey="pv" />
         <Line yAxisId="right" dataKey="uv" />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
 

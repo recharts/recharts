@@ -30,6 +30,7 @@ import {
   AnimationDuration,
   AnimationTiming,
   Coordinate,
+  DataConsumer,
   DataKey,
   DataProvider,
   isNonEmptyArray,
@@ -168,7 +169,8 @@ interface ScatterInternalProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps<DataPointType = unknown> extends DataProvider<DataPointType>, ZIndexable {
+interface ScatterProps<DataPointType = any, DataValueType = any>
+  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.
@@ -196,14 +198,6 @@ interface ScatterProps<DataPointType = unknown> extends DataProvider<DataPointTy
    * @see {@link https://recharts.github.io/en-US/examples/ThreeDimScatterChart/ Scatter chart with Z axis}
    */
   zAxisId?: AxisId;
-
-  /**
-   * Decides how to extract the numerical value of this Scatter from the data:
-   * - `string`: the name of the field in the data object;
-   * - `number`: the index of the field in the data;
-   * - `function`: a function that receives the data object and returns the value of this Scatter.
-   */
-  dataKey?: DataKey<any>;
 
   /**
    * Renders line connecting individual points.
