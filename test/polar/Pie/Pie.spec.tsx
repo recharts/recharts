@@ -14,8 +14,8 @@ import {
   PieSectorDataItem,
   Sector,
   Tooltip,
-} from '../../src';
-import { focusTestHelper } from '../helper/focus';
+} from '../../../src';
+import { focusTestHelper } from '../../helper/focus';
 import {
   expectTooltipCoordinate,
   expectTooltipNotVisible,
@@ -23,11 +23,11 @@ import {
   showTooltip,
   showTooltipOnCoordinate,
   showTooltipOnCoordinateTouch,
-} from '../component/Tooltip/tooltipTestHelpers';
-import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
-import { PageData } from '../_data';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+} from '../../component/Tooltip/tooltipTestHelpers';
+import { pieChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
+import { PageData } from '../../_data';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import {
   selectAllGraphicalItemsSettings,
   selectAllUnfilteredGraphicalItems,
@@ -36,25 +36,28 @@ import {
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
   selectTooltipDisplayedData,
-} from '../../src/state/selectors/tooltipSelectors';
-import { expectLastCalledWithScale } from '../helper/expectScale';
-import { mockTouchingElement, mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
-import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+} from '../../../src/state/selectors/tooltipSelectors';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
+import { mockTouchingElement, mockTouchingUnrelatedElement } from '../../helper/mockTouchingElement';
+import {
+  DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME,
+  DATA_ITEM_INDEX_ATTRIBUTE_NAME,
+} from '../../../src/util/Constants';
 import {
   selectActiveCoordinate,
   selectActiveIndex,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
-} from '../../src/state/selectors/selectors';
-import { useAppSelector } from '../../src/state/hooks';
-import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxisId';
-import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
-import { expectPieSectors } from '../helper/expectPieSectors';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { PieSettings } from '../../src/state/types/PieSettings';
-import { userEventSetup } from '../helper/userEventSetup';
-import { selectTooltipAxis } from '../../src/state/selectors/axisSelectors';
-import { assertNotNull } from '../helper/assertNotNull';
+} from '../../../src/state/selectors/selectors';
+import { useAppSelector } from '../../../src/state/hooks';
+import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
+import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
+import { expectPieSectors } from '../../helper/expectPieSectors';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { PieSettings } from '../../../src/state/types/PieSettings';
+import { userEventSetup } from '../../helper/userEventSetup';
+import { selectTooltipAxis } from '../../../src/state/selectors/axisSelectors';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 type CustomizedLabelLineProps = { points?: Array<Coordinate> };
 

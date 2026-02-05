@@ -72,7 +72,7 @@ export type {
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
-export type { RadialBarProps } from './polar/RadialBar';
+export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
 export { Brush } from './cartesian/Brush';

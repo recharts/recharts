@@ -38,6 +38,7 @@ import {
   TooltipType,
 } from '../util/types';
 import {
+  TooltipTriggerInfo,
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
@@ -66,7 +67,8 @@ import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
 export type RadialBarDataItem = SectorProps &
-  PolarViewBoxRequired & {
+  PolarViewBoxRequired &
+  TooltipTriggerInfo & {
     value?: any;
     payload?: any;
     background?: SectorProps;
@@ -368,35 +370,38 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   /**
    * The customized event handler of click in this chart.
    */
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mousedown in this chart.
    */
-  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseDown?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseup in this chart.
    */
-  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseUp?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mousemove in this chart.
    */
-  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseMove?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseover in this chart.
    */
-  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOver?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseout in this chart.
    */
-  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOut?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseenter in this chart.
    */
-  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseEnter?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseleave in this chart.
    */
-  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseLeave?: (data: RadialBarDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
+  onTouchStart?: (data: RadialBarDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
+  onTouchMove?: (data: RadialBarDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
+  onTouchEnd?: (data: RadialBarDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
   /**
    * @defaultValue 0
    */
@@ -410,7 +415,10 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
-export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
+export type RadialBarProps = Omit<
+  PresentationAttributesAdaptChildEvent<any, SVGElement>,
+  'ref' | keyof InternalRadialBarProps
+> &
   Omit<InternalRadialBarProps, 'sectors'>;
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;

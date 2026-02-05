@@ -1,12 +1,12 @@
 import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { pageDataWithFillColor } from '../../storybook/stories/data';
-import { RadialBar, RadialBarChart } from '../../src';
-import { getRadialBarPaths } from '../helper/expectRadialBars';
-import { assertNotNull } from '../helper/assertNotNull';
-import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { pageDataWithFillColor } from '../../../storybook/stories/data';
+import { RadialBar, RadialBarChart } from '../../../src';
+import { getRadialBarPaths } from '../../helper/expectRadialBars';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { MockAnimationManager } from '../../animation/MockProgressAnimationManager';
 
 const smallerData = pageDataWithFillColor.slice(0, 2);
 

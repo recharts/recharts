@@ -1,18 +1,18 @@
 import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { PageData } from '../_data';
-import { Pie, PieChart } from '../../src';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { PageData } from '../../_data';
+import { Pie, PieChart } from '../../../src';
 import {
   expectPieSectors,
   selectPieSectors,
   getPieSectorAngles,
   expectPieSectorAngles,
-} from '../helper/expectPieSectors';
-import { assertNotNull } from '../helper/assertNotNull';
-import { trim } from '../helper/trim';
-import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+} from '../../helper/expectPieSectors';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { trim } from '../../helper/trim';
+import { MockAnimationManager } from '../../animation/MockProgressAnimationManager';
 
 const smallerData = PageData.slice(0, 3);
 

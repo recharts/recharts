@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import {
   DefaultZIndexes,
   PolarAngleAxis,
@@ -9,18 +9,18 @@ import {
   RadialBar,
   RadialBarChart,
   RadialBarProps,
-} from '../../src';
-import { useAppSelector } from '../../src/state/hooks';
-import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
-import { PageData, ringsData } from '../_data';
-import { expectRadialBars } from '../helper/expectRadialBars';
-import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
-import { expectLastCalledWithScale } from '../helper/expectScale';
+} from '../../../src';
+import { useAppSelector } from '../../../src/state/hooks';
+import { selectPolarItemsSettings } from '../../../src/state/selectors/polarSelectors';
+import { PageData, ringsData } from '../../_data';
+import { expectRadialBars } from '../../helper/expectRadialBars';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
 import {
   selectPolarAxisScale,
   selectPolarAxisTicks,
   selectPolarGraphicalItemAxisTicks,
-} from '../../src/state/selectors/polarScaleSelectors';
+} from '../../../src/state/selectors/polarScaleSelectors';
 import {
   pickMaxBarSize,
   selectBandSizeOfPolarAxis,
@@ -28,18 +28,23 @@ import {
   selectPolarBarPosition,
   selectPolarBarSizeList,
   selectRadialBarSectors,
-} from '../../src/state/selectors/radialBarSelectors';
+} from '../../../src/state/selectors/radialBarSelectors';
 import {
   selectAngleAxis,
   selectRadiusAxis,
   selectRadiusAxisRangeWithReversed,
-} from '../../src/state/selectors/polarAxisSelectors';
-import { selectBarCategoryGap, selectBarGap, selectRootMaxBarSize } from '../../src/state/selectors/rootPropsSelectors';
-import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { userEventSetup } from '../helper/userEventSetup';
-import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
+} from '../../../src/state/selectors/polarAxisSelectors';
+import {
+  selectBarCategoryGap,
+  selectBarGap,
+  selectRootMaxBarSize,
+} from '../../../src/state/selectors/rootPropsSelectors';
+import { selectRealScaleType } from '../../../src/state/selectors/axisSelectors';
+import { RadialBarSettings } from '../../../src/state/types/RadialBarSettings';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { userEventSetup } from '../../helper/userEventSetup';
+import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
+import { RadialBarDataItem } from '../../../src/polar/RadialBar';
 
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
@@ -1085,9 +1090,9 @@ describe('<RadialBar />', () => {
 
   test('calls mouse handler events', async () => {
     const user = userEventSetup();
-    const onMouseEnter = vi.fn();
-    const onMouseLeave = vi.fn();
-    const onClick = vi.fn();
+    const onMouseEnter: Mock<(data: RadialBarDataItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+    const onMouseLeave: Mock<(data: RadialBarDataItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+    const onClick: Mock<(data: RadialBarDataItem, index: number, e: React.MouseEvent) => void> = vi.fn();
 
     const { container } = render(
       <RadialBarChart width={500} height={500} data={PageData} throttledEvents={[]}>
@@ -1111,6 +1116,7 @@ describe('<RadialBar />', () => {
       onMouseEnter,
       {
         name: 'Page A',
+        // @ts-expect-error Recharts spreads the data item in the main object
         uv: 400,
         pv: 2400,
         amt: 2400,
@@ -1146,6 +1152,7 @@ describe('<RadialBar />', () => {
       onMouseLeave,
       {
         name: 'Page A',
+        // @ts-expect-error Recharts spreads the data item in the main object
         uv: 400,
         pv: 2400,
         amt: 2400,
@@ -1181,6 +1188,7 @@ describe('<RadialBar />', () => {
       onClick,
       {
         name: 'Page A',
+        // @ts-expect-error Recharts spreads the data item in the main object
         uv: 400,
         pv: 2400,
         amt: 2400,

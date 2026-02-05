@@ -1,8 +1,7 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Pie, PieChart, Sector } from '../../src';
-import { PieSectorDataItem } from '../../src/polar/Pie';
+import { Pie, PieChart, PieSectorDataItem, Sector } from '../../../src';
 
 const data1 = [
   { name: 'Group A', value: 400 },
