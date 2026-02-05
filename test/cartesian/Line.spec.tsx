@@ -231,7 +231,7 @@ describe('<Line />', () => {
     });
 
     test('passes props to activeDot function', () => {
-      const spy: ActiveDotType = vi.fn();
+      const spy: ActiveDotType = vi.fn(() => null);
       const { container } = render(
         <LineChart width={400} height={400} data={PageData}>
           <Line activeDot={spy} type="monotone" dataKey="uv" />

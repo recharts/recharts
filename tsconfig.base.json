@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "es2023"],
     "baseUrl": ".",
     "jsx": "react",
     "module": "commonjs",
