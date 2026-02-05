@@ -1,0 +1,5 @@
+import{j as o}from"./jsx-runtime-Ck6dWWCG.js";import{useMDXComponents as i}from"./index-C1qMLbxk.js";import{M as s,C as e,a as p}from"./blocks-BeFvB4Nq.js";import{C as a,A as n}from"./Text.stories-BUZQMQHr.js";import"./iframe-D44FkRcR.js";import"./preload-helper-Dp1pzeXC.js";import"./index-D7ezxrhm.js";import"./Text-m6BVE9y3.js";import"./resolveDefaultProps-C9MxTna8.js";import"./DOMUtils-DdnL5-6j.js";import"./arrayEqualityCheck-CpHRyEoZ.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsHookInspector-BUut-YKB.js";import"./hooks-yX9SOuhB.js";import"./axisSelectors-DS2aNONq.js";import"./ChartSizeDimensions-B61qSqob.js";import"./OffsetShower-BfGtxzWE.js";import"./PlotAreaShower-DA_KxbUr.js";function m(t){const r={h1:"h1",h2:"h2",...i(),...t.components};return o.jsxs(o.Fragment,{children:[o.jsx(r.h1,{id:"text",children:"Text"}),`
+`,o.jsx(s,{of:a}),`
+`,o.jsx(e,{of:n,layout:"padded"}),`
+`,o.jsx(r.h2,{id:"props",children:"Props"}),`
+`,o.jsx(p,{of:n})]})}function w(t={}){const{wrapper:r}={...i(),...t.components};return r?o.jsx(r,{...t,children:o.jsx(m,{...t})}):m(t)}export{w as default};
