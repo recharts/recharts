@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { DefaultZIndexes, Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
+import { Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -302,8 +302,6 @@ describe('<Label />', () => {
               angle: 0,
               offset: 5,
               position: 'center',
-              textBreakAll: false,
-              zIndex: DefaultZIndexes.label,
               viewBox: {
                 height: 200,
                 width: 200,
@@ -463,9 +461,7 @@ describe('<Label />', () => {
             angle: 0,
             children: 'label from children',
             offset: 5,
-            textBreakAll: false,
             position: 'center',
-            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -498,9 +494,7 @@ describe('<Label />', () => {
             angle: 0,
             value: 'label from value',
             offset: 5,
-            textBreakAll: false,
             position: 'center',
-            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -535,10 +529,8 @@ describe('<Label />', () => {
             angle: 0,
             children: 'label from children',
             value: 'label from value',
-            textBreakAll: false,
             offset: 5,
             position: 'center',
-            zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
               width: 200,
@@ -608,10 +600,8 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            textBreakAll: false,
             position: 'center',
             offset: 5,
-            zIndex: DefaultZIndexes.label,
           },
           {},
         );
@@ -638,10 +628,8 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            textBreakAll: false,
             position: 'insideEnd',
             offset: 5,
-            zIndex: DefaultZIndexes.label,
           },
           {},
         );
@@ -671,10 +659,8 @@ describe('<Label />', () => {
             },
             angle: 0,
             value: 'text',
-            textBreakAll: false,
             position: 'center',
             offset: 5,
-            zIndex: DefaultZIndexes.label,
           },
           {},
         );

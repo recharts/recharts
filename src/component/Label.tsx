@@ -429,12 +429,12 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
+    const { labelRef: _, textBreakAll: __, zIndex: ___, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }
 
   if (typeof content === 'function') {
-    const { content: _, ...propsForContent } = propsWithViewBox;
+    const { content: _, textBreakAll: __, zIndex: ___, ...propsForContent } = propsWithViewBox;
     // @ts-expect-error we're not checking if the content component returns something that Text is able to render
     label = createElement(content, propsForContent);
 

@@ -1020,7 +1020,6 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
               x: expect.any(Number),
               y: expect.any(Number),
             },
-            textBreakAll: false,
             position: 'middle',
             value: expect.any(Number),
             viewBox: {
@@ -1034,7 +1033,6 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             width: expect.any(Number),
             x: expect.any(Number),
             y: expect.any(Number),
-            zIndex: 0,
           },
           {}, // second argument is a ref object
         );
