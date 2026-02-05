@@ -99,6 +99,7 @@ describe('Documentation Examples Coverage', () => {
     'RadarProps',
     'RadialBar',
     'RadialBarChart',
+    'RadialBarDataItem',
     'RadialBarProps',
     'Rectangle',
     'RectangleProps',
