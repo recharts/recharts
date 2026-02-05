@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 
 // https://vitejs.dev/config/
 // @ts-expect-error wants esModuleInterop
@@ -80,7 +81,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'firefox',
