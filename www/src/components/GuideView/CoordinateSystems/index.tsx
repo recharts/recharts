@@ -196,7 +196,7 @@ export function CoordinateSystems() {
           <LinkToApi>useYAxisScale</LinkToApi> - returns a function to convert Y data values to pixel positions
         </li>
         <li>
-          <LinkToApi>useDataToPixels</LinkToApi> - convenience hook for converting both at once
+          <LinkToApi>useCartesianScale</LinkToApi> - convenience hook for converting both at once
         </li>
       </ul>
       <p>

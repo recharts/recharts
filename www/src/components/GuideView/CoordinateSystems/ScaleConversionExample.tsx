@@ -18,7 +18,7 @@ const data = [
  * - useYAxisScale() - returns a function to convert Y data values to pixels
  * - useXAxisInverseScale() - returns a function to convert pixels to X data values
  * - useYAxisInverseScale() - returns a function to convert pixels to Y data values
- * - useDataToPixels({x, y}) - convenience hook to convert both coordinates
+ * - useCartesianScale({x, y}) - convenience hook to convert both coordinates
  *
  * For this example, we use ReferenceDot which handles the conversion internally.
  */

@@ -166,7 +166,7 @@ describe('axis scale hooks', () => {
     });
   });
 
-  describe('useDataToPixels', () => {
+  describe('useCartesianScale', () => {
     describe('in simple chart with categorical x-axis', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <LineChart width={500} height={300} data={PageData}>
@@ -176,21 +176,21 @@ describe('axis scale hooks', () => {
         </LineChart>
       ));
 
-      // Create named wrapper hooks that useDataToPixels with specific arguments
-      function useDataToPixelsPageC200() {
+      // Create named wrapper hooks that useCartesianScale with specific arguments
+      function useCartesianScalePageC200() {
         return useCartesianScale({ x: 'Page C', y: 200 });
       }
 
-      function useDataToPixelsPageA100() {
+      function useCartesianScalePageA100() {
         return useCartesianScale({ x: 'Page A', y: 100 });
       }
 
-      function useDataToPixelsPageF400() {
+      function useCartesianScalePageF400() {
         return useCartesianScale({ x: 'Page F', y: 400 });
       }
 
       it('should convert data coordinates to pixel coordinates', () => {
-        const { spy } = renderTestCase(useDataToPixelsPageC200);
+        const { spy } = renderTestCase(useCartesianScalePageC200);
         expect(spy).toHaveBeenCalled();
         const coords = spy.mock.calls.at(-1)?.[0];
         expect(coords).toBeDefined();
@@ -199,10 +199,10 @@ describe('axis scale hooks', () => {
       });
 
       it('should return different pixel values for different data values', () => {
-        const { spy: spy1 } = renderTestCase(useDataToPixelsPageA100);
+        const { spy: spy1 } = renderTestCase(useCartesianScalePageA100);
         const coords1 = spy1.mock.calls.at(-1)?.[0];
 
-        const { spy: spy2 } = renderTestCase(useDataToPixelsPageF400);
+        const { spy: spy2 } = renderTestCase(useCartesianScalePageF400);
         const coords2 = spy2.mock.calls.at(-1)?.[0];
 
         expect(coords1).toBeDefined();
@@ -223,12 +223,12 @@ describe('axis scale hooks', () => {
         </LineChart>
       ));
 
-      function useDataToPixelsNumerical() {
+      function useCartesianScaleNumerical() {
         return useCartesianScale({ x: 5000, y: 200 });
       }
 
       it('should convert numerical x value to pixel coordinates', () => {
-        const { spy } = renderTestCase(useDataToPixelsNumerical);
+        const { spy } = renderTestCase(useCartesianScaleNumerical);
         expect(spy).toHaveBeenCalled();
         const coords = spy.mock.calls.at(-1)?.[0];
         expect(coords).toBeDefined();
@@ -251,12 +251,12 @@ describe('axis scale hooks', () => {
         </LineChart>
       ));
 
-      function useDataToPixelsPageB() {
+      function useCartesianScalePageB() {
         return useCartesianScale({ x: 'Page B', y: 200 });
       }
 
       it('should work with filtered data from brush', () => {
-        const { spy } = renderTestCase(useDataToPixelsPageB);
+        const { spy } = renderTestCase(useCartesianScalePageB);
         expect(spy).toHaveBeenCalled();
         const coords = spy.mock.calls.at(-1)?.[0];
         // Even with brush, scale should exist and return coordinates
