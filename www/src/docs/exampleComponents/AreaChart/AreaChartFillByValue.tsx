@@ -92,7 +92,7 @@ const AreaChartFillByValue = () => {
       <YAxis width="auto" />
       <Tooltip />
       <Gradient />
-      <Area dot type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+      <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
       <RechartsDevtools />
     </AreaChart>
   );
