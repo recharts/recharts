@@ -18,7 +18,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/shape/Polygon.tsx'],
+  mutate: ['src/util/scale/createCategoricalInverse.ts'],
   commandRunner: {
     command: 'vitest run --config ./vitest.config-mutation.mts',
   },

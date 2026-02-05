@@ -11,7 +11,7 @@ import { CustomScaleDefinition } from './CustomScaleDefinition';
  * @param needle Number to find the insertion index for
  * @returns Index where x would fit in array a
  */
-function bisect(haystack: ReadonlyArray<number>, needle: number): number {
+export function bisect(haystack: ReadonlyArray<number>, needle: number): number {
   let lo = 0;
   let hi = haystack.length;
   const ascending = haystack[0]! < haystack[haystack.length - 1]!;
