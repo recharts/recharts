@@ -190,35 +190,38 @@ interface PieEvents {
   /**
    * The customized event handler of click on the sectors in this group.
    */
-  onClick?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mousedown on the sectors in this group.
    */
-  onMouseDown?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseDown?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseup on the sectors in this group.
    */
-  onMouseUp?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseUp?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mousemove on the sectors in this group.
    */
-  onMouseMove?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseMove?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseover on the sectors in this group.
    */
-  onMouseOver?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseOver?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseout on the sectors in this group.
    */
-  onMouseOut?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseOut?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseenter on the sectors in this group.
    */
-  onMouseEnter?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseEnter?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseleave on the sectors in this group.
    */
-  onMouseLeave?: (data: PieSectorDataItem, index: number, e: React.MouseEvent) => void;
+  onMouseLeave?: (data: PieSectorDataItem, index: number, e: React.MouseEvent<SVGGraphicsElement>) => void;
+  onTouchStart?: (data: PieSectorDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
+  onTouchMove?: (data: PieSectorDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
+  onTouchEnd?: (data: PieSectorDataItem, index: number, e: React.TouchEvent<SVGGraphicsElement>) => void;
 }
 
 /**
@@ -378,7 +381,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
-type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
+type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref' | keyof PieEvents>;
 
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
