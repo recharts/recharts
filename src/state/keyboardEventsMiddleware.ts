@@ -12,6 +12,7 @@ import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTo
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
+export const blurAction = createAction('blur');
 
 export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootState>();
 
@@ -150,6 +151,27 @@ keyboardEventsMiddleware.startListening({
           active: true,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,
+        }),
+      );
+    }
+  },
+});
+
+keyboardEventsMiddleware.startListening({
+  actionCreator: blurAction,
+  effect: (_action, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
+    const state: RechartsRootState = listenerApi.getState();
+    const accessibilityLayerIsActive = state.rootProps.accessibilityLayer !== false;
+    if (!accessibilityLayerIsActive) {
+      return;
+    }
+    const { keyboardInteraction } = state.tooltip;
+    if (keyboardInteraction.active) {
+      listenerApi.dispatch(
+        setKeyboardInteraction({
+          active: false,
+          activeIndex: keyboardInteraction.index,
+          activeCoordinate: keyboardInteraction.coordinate,
         }),
       );
     }
