@@ -416,7 +416,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
 }
 
 export type RadialBarProps = Omit<
-  PresentationAttributesAdaptChildEvent<any, SVGElement>,
+  PresentationAttributesAdaptChildEvent<RadialBarDataItem, SVGElement>,
   'ref' | keyof InternalRadialBarProps
 > &
   Omit<InternalRadialBarProps, 'sectors'>;

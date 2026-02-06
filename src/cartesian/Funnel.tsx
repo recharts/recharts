@@ -160,38 +160,38 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * The customized event handler of click on the area in this group
    */
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mousedown on the area in this group
    */
-  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseDown?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mouseup on the area in this group
    */
-  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseUp?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mousemove on the area in this group
    */
-  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseMove?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mouseover on the area in this group
    */
-  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOver?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mouseout on the area in this group
    */
-  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOut?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mouseenter on the area in this group
    */
-  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseEnter?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
   /**
    * The customized event handler of mouseleave on the area in this group
    */
-  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseLeave?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
 }
 
-type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'ref'>;
+type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<FunnelTrapezoidItem, SVGPathElement>, 'ref'>;
 
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
