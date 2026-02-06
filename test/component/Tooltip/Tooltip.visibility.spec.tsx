@@ -788,6 +788,7 @@ describe('Tooltip visibility', () => {
             animationBegin: 0,
             animationDuration: 1500,
             animationEasing: 'ease',
+            animationMatchBy: 'index',
             connectNulls: false,
             dataKey: 'uv',
             dot: true,

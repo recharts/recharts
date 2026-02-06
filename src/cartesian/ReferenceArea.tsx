@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useId, useRef } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
@@ -21,6 +21,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 
 interface ReferenceAreaProps extends Overflowable, ZIndexable {
   /**
@@ -115,6 +116,15 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
    */
   zIndex?: number;
   children?: React.ReactNode;
+
+  /** @defaultValue false */
+  isAnimationActive?: boolean;
+  /** @defaultValue 300 */
+  animationDuration?: number;
+  /** @defaultValue 'ease' */
+  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+  /** @defaultValue 0 */
+  animationBegin?: number;
 }
 
 /*
@@ -184,8 +194,29 @@ function ReportReferenceArea(props: ReferenceAreaSettings): null {
   return null;
 }
 
+function lerp(from: number | undefined, to: number | undefined, t: number): number {
+  return (from ?? 0) + ((to ?? 0) - (from ?? 0)) * t;
+}
+
 function ReferenceAreaImpl(props: PropsWithDefaults) {
-  const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
+  const {
+    x1,
+    x2,
+    y1,
+    y2,
+    className,
+    shape,
+    xAxisId,
+    yAxisId,
+    isAnimationActive,
+    animationDuration,
+    animationEasing,
+    animationBegin,
+  } = props;
+
+  const animationId = useId();
+  const previousRectRef = useRef<RectanglePosition | null>(null);
+
   const clipPathId = useClipPathId();
   const isPanorama = useIsPanorama();
   const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
@@ -213,18 +244,46 @@ function ReferenceAreaImpl(props: PropsWithDefaults) {
   const isOverflowHidden = props.ifOverflow === 'hidden';
   const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
-  return (
+  const renderContent = (currentRect: RectanglePosition | null) => (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={clsx('recharts-reference-area', className)}>
-        {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...rect })}
-        {rect != null && (
-          <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+        {renderRect(shape, { clipPath, ...svgPropertiesAndEvents(props), ...currentRect })}
+        {currentRect != null && (
+          <CartesianLabelContextProvider {...currentRect} lowerWidth={currentRect.width} upperWidth={currentRect.width}>
             <CartesianLabelFromLabelProp label={props.label} />
             {props.children}
           </CartesianLabelContextProvider>
         )}
       </Layer>
     </ZIndexLayer>
+  );
+
+  if (!isAnimationActive || !previousRectRef.current || !rect) {
+    previousRectRef.current = rect;
+    return renderContent(rect);
+  }
+
+  const prevRect = previousRectRef.current;
+  previousRectRef.current = rect;
+
+  return (
+    <JavascriptAnimate
+      animationId={`${animationId}-${JSON.stringify(rect)}`}
+      begin={animationBegin ?? 0}
+      duration={animationDuration ?? 300}
+      isActive
+      easing={animationEasing ?? 'ease'}
+    >
+      {(t: number) => {
+        const animatedRect: RectanglePosition = {
+          x: lerp(prevRect.x, rect.x, t),
+          y: lerp(prevRect.y, rect.y, t),
+          width: lerp(prevRect.width, rect.width, t),
+          height: lerp(prevRect.height, rect.height, t),
+        };
+        return renderContent(animatedRect);
+      }}
+    </JavascriptAnimate>
   );
 }
 
@@ -238,6 +297,10 @@ export const referenceAreaDefaultProps = {
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
+  isAnimationActive: false,
+  animationDuration: 300,
+  animationEasing: 'ease',
+  animationBegin: 0,
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 

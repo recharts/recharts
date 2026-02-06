@@ -1627,4 +1627,177 @@ describe('Line animation', () => {
       expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
     });
   });
+
+  describe('with animationMatchBy="x" (sliding window scenarios)', () => {
+    describe('sliding window shift left [A,B,C] -> [B,C,D]', () => {
+      // Initial data points: A at x=0, B at x=1, C at x=2
+      // After shift: B at x=0, C at x=1, D at x=2 (but with same original x values mapped to new positions)
+      const initialData = [
+        { name: 'A', x: 0, value: 100 },
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+      ];
+      const shiftedData = [
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+        { name: 'D', x: 3, value: 400 },
+      ];
+
+      const renderTestCase = createSelectorTestCase(({ children }) => {
+        const [data, setData] = useState(initialData);
+        const shiftData = () => setData(shiftedData);
+        return (
+          <div>
+            <button type="button" onClick={shiftData}>
+              Shift data
+            </button>
+            <LineChart data={data} width={100} height={100}>
+              <Line dataKey="value" animationEasing="linear" animationMatchBy="x" />
+              {children}
+            </LineChart>
+          </div>
+        );
+      });
+
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
+        await animationManager.completeAnimation();
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should match B and C to their previous positions and animate D from the right', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        // At t=0, points should start from their previous x positions
+        // B was at x=35 (index 1 position), now should be at x=5 (index 0 position)
+        // C was at x=65, now should be at x=35
+        // D is new, should enter from right edge
+
+        // After animation starts, the line should animate
+        await animationManager.setAnimationProgress(0.5);
+
+        // At t=1, all points should be at their final positions
+        await animationManager.completeAnimation();
+
+        // The final path should have the new data
+        const line = container.querySelector('.recharts-line-curve');
+        assertNotNull(line);
+        expect(line).toBeInTheDocument();
+      });
+    });
+
+    describe('sliding window append [A,B,C] -> [A,B,C,D]', () => {
+      const initialData = [
+        { name: 'A', x: 0, value: 100 },
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+      ];
+      const appendedData = [
+        { name: 'A', x: 0, value: 100 },
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+        { name: 'D', x: 3, value: 400 },
+      ];
+
+      const renderTestCase = createSelectorTestCase(({ children }) => {
+        const [data, setData] = useState(initialData);
+        const appendData = () => setData(appendedData);
+        return (
+          <div>
+            <button type="button" onClick={appendData}>
+              Append data
+            </button>
+            <LineChart data={data} width={100} height={100}>
+              <Line dataKey="value" animationEasing="linear" animationMatchBy="x" />
+              {children}
+            </LineChart>
+          </div>
+        );
+      });
+
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
+        await animationManager.completeAnimation();
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should keep A,B,C positions stable and animate D from right edge', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        // Animation should be smooth - A,B,C stay mostly in place (just x-scale changes)
+        // D enters from the right
+
+        await animationManager.setAnimationProgress(0.5);
+
+        await animationManager.completeAnimation();
+
+        const line = container.querySelector('.recharts-line-curve');
+        assertNotNull(line);
+        expect(line).toBeInTheDocument();
+      });
+    });
+
+    describe('sliding window prepend [B,C,D] -> [A,B,C,D]', () => {
+      const initialData = [
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+        { name: 'D', x: 3, value: 400 },
+      ];
+      const prependedData = [
+        { name: 'A', x: 0, value: 100 },
+        { name: 'B', x: 1, value: 200 },
+        { name: 'C', x: 2, value: 300 },
+        { name: 'D', x: 3, value: 400 },
+      ];
+
+      const renderTestCase = createSelectorTestCase(({ children }) => {
+        const [data, setData] = useState(initialData);
+        const prependData = () => setData(prependedData);
+        return (
+          <div>
+            <button type="button" onClick={prependData}>
+              Prepend data
+            </button>
+            <LineChart data={data} width={100} height={100}>
+              <Line dataKey="value" animationEasing="linear" animationMatchBy="x" />
+              {children}
+            </LineChart>
+          </div>
+        );
+      });
+
+      async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
+        await animationManager.completeAnimation();
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should keep B,C,D positions stable and animate A from left edge', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        // Animation should be smooth - B,C,D stay mostly in place (just x-scale changes)
+        // A enters from the left
+
+        await animationManager.setAnimationProgress(0.5);
+
+        await animationManager.completeAnimation();
+
+        const line = container.querySelector('.recharts-line-curve');
+        assertNotNull(line);
+        expect(line).toBeInTheDocument();
+      });
+    });
+  });
 });

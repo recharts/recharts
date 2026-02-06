@@ -15,8 +15,12 @@ describe('readApiDoc', () => {
   it('should return props', () => {
     expect(reader.getRechartsPropsOf('ReferenceLine')).toMatchInlineSnapshot(`
       [
+        "animationBegin",
+        "animationDuration",
+        "animationEasing",
         "className",
         "ifOverflow",
+        "isAnimationActive",
         "label",
         "position",
         "segment",

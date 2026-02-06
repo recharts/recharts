@@ -2,7 +2,7 @@
  * @fileOverview Reference Line
  */
 import * as React from 'react';
-import { ReactElement, SVGProps, useEffect } from 'react';
+import { ReactElement, SVGProps, useEffect, useId, useRef } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
@@ -23,6 +23,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
+import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
 /**
@@ -126,6 +127,15 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    * @defaultValue 1
    */
   strokeWidth?: number | string;
+
+  /** @defaultValue false */
+  isAnimationActive?: boolean;
+  /** @defaultValue 300 */
+  animationDuration?: number;
+  /** @defaultValue 'ease' */
+  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+  /** @defaultValue 0 */
+  animationBegin?: number;
 }
 
 /**
@@ -273,8 +283,27 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
   return null;
 }
 
+type LineEndPoints = { x1: number; y1: number; x2: number; y2: number };
+
+function lerp(from: number | null | undefined, to: number | null | undefined, t: number): number {
+  return (from ?? 0) + ((to ?? 0) - (from ?? 0)) * t;
+}
+
 function ReferenceLineImpl(props: PropsWithDefaults) {
-  const { xAxisId, yAxisId, shape, className, ifOverflow } = props;
+  const {
+    xAxisId,
+    yAxisId,
+    shape,
+    className,
+    ifOverflow,
+    isAnimationActive,
+    animationDuration,
+    animationEasing,
+    animationBegin,
+  } = props;
+
+  const animationId = useId();
+  const previousEndPointsRef = useRef<LineEndPoints | null>(null);
 
   const isPanorama = useIsPanorama();
   const clipPathId = useClipPathId();
@@ -307,32 +336,66 @@ function ReferenceLineImpl(props: PropsWithDefaults) {
   if (point1 == null || point2 == null) {
     return null;
   }
-  const { x: x1, y: y1 } = point1;
-  const { x: x2, y: y2 } = point2;
+  const currentEndPoints: LineEndPoints = {
+    x1: point1.x,
+    y1: point1.y,
+    x2: point2.x,
+    y2: point2.y,
+  };
 
   const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 
-  const lineProps: SVGProps<SVGLineElement> = {
-    clipPath,
-    ...svgPropertiesAndEvents(props),
-    x1,
-    y1,
-    x2,
-    y2,
+  const renderContent = (ep: LineEndPoints) => {
+    const lineProps: SVGProps<SVGLineElement> = {
+      clipPath,
+      ...svgPropertiesAndEvents(props),
+      x1: ep.x1,
+      y1: ep.y1,
+      x2: ep.x2,
+      y2: ep.y2,
+    };
+
+    const rect = rectWithCoords(ep);
+
+    return (
+      <ZIndexLayer zIndex={props.zIndex}>
+        <Layer className={clsx('recharts-reference-line', className)}>
+          {renderLine(shape, lineProps)}
+          <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
+            <CartesianLabelFromLabelProp label={props.label} />
+            {props.children}
+          </CartesianLabelContextProvider>
+        </Layer>
+      </ZIndexLayer>
+    );
   };
 
-  const rect = rectWithCoords({ x1, y1, x2, y2 });
+  if (!isAnimationActive || !previousEndPointsRef.current) {
+    previousEndPointsRef.current = currentEndPoints;
+    return renderContent(currentEndPoints);
+  }
+
+  const prev = previousEndPointsRef.current;
+  previousEndPointsRef.current = currentEndPoints;
 
   return (
-    <ZIndexLayer zIndex={props.zIndex}>
-      <Layer className={clsx('recharts-reference-line', className)}>
-        {renderLine(shape, lineProps)}
-        <CartesianLabelContextProvider {...rect} lowerWidth={rect.width} upperWidth={rect.width}>
-          <CartesianLabelFromLabelProp label={props.label} />
-          {props.children}
-        </CartesianLabelContextProvider>
-      </Layer>
-    </ZIndexLayer>
+    <JavascriptAnimate
+      animationId={`${animationId}-${JSON.stringify(currentEndPoints)}`}
+      begin={animationBegin ?? 0}
+      duration={animationDuration ?? 300}
+      isActive
+      easing={animationEasing ?? 'ease'}
+    >
+      {(t: number) => {
+        const animated: LineEndPoints = {
+          x1: lerp(prev.x1, currentEndPoints.x1, t),
+          y1: lerp(prev.y1, currentEndPoints.y1, t),
+          x2: lerp(prev.x2, currentEndPoints.x2, t),
+          y2: lerp(prev.y2, currentEndPoints.y2, t),
+        };
+        return renderContent(animated);
+      }}
+    </JavascriptAnimate>
   );
 }
 
@@ -346,6 +409,10 @@ export const referenceLineDefaultProps = {
   fillOpacity: 1,
   strokeWidth: 1,
   position: 'middle',
+  isAnimationActive: false,
+  animationDuration: 300,
+  animationEasing: 'ease',
+  animationBegin: 0,
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 

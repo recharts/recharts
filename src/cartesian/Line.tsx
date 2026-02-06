@@ -23,6 +23,7 @@ import {
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { PointMatchingStrategy, matchPointsWithRemovals, interpolateMatchedPoints } from '../animation/pointMatching';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -90,6 +91,7 @@ interface InternalLineProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
+  animationMatchBy: PointMatchingStrategy<LinePointItem>;
 
   className?: string;
   connectNulls: boolean;
@@ -163,6 +165,12 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
+  /**
+   * Strategy for matching points between data updates during animation.
+   * Use 'x' for time-series sliding windows, a DataKey string, or a custom function.
+   * @defaultValue 'index'
+   */
+  animationMatchBy?: PointMatchingStrategy<LinePointItem>;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -553,8 +561,7 @@ function CurveWithAnimation({
     animationDuration,
     animationEasing,
     animateNewValues,
-    width,
-    height,
+    animationMatchBy,
     onAnimationEnd,
     onAnimationStart,
   } = props;
@@ -679,37 +686,16 @@ function CurveWithAnimation({
           }
 
           if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepData =
-              t === 1
-                ? points
-                : points.map((entry, index): LinePointItem => {
-                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                    if (prevPoints[prevPointIndex]) {
-                      const prev = prevPoints[prevPointIndex];
-                      return {
-                        ...entry,
-                        x: interpolate(prev.x, entry.x, t),
-                        y: interpolate(prev.y, entry.y, t),
-                      };
-                    }
+            const { matched: matchedPoints, removed: removedPoints } = matchPointsWithRemovals(
+              points,
+              prevPoints,
+              animationMatchBy,
+            );
 
-                    // magic number of faking previous x and y location
-                    if (animateNewValues) {
-                      return {
-                        ...entry,
-                        x: interpolate(width * 2, entry.x, t),
-                        y: interpolate(height / 2, entry.y, t),
-                      };
-                    }
-                    return {
-                      ...entry,
-                      x: entry.x,
-                      y: entry.y,
-                    };
-                  });
+            const stepData = interpolateMatchedPoints(matchedPoints, removedPoints, t, interpolate, animateNewValues);
+
             // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = stepData;
+            previousPointsRef.current = t === 1 ? points : stepData;
             return (
               <StaticCurve
                 props={props}
@@ -828,6 +814,7 @@ export const defaultLineProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: 'index',
   connectNulls: false,
   dot: true,
   fill: '#fff',
@@ -850,6 +837,7 @@ function LineImpl(props: WithIdRequired<Props>) {
     animationBegin,
     animationDuration,
     animationEasing,
+    animationMatchBy,
     connectNulls,
     dot,
     hide,
@@ -887,6 +875,7 @@ function LineImpl(props: WithIdRequired<Props>) {
       animationBegin={animationBegin}
       animationDuration={animationDuration}
       animationEasing={animationEasing}
+      animationMatchBy={animationMatchBy}
       isAnimationActive={isAnimationActive}
       hide={hide}
       label={label}

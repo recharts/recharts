@@ -22,6 +22,12 @@ import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
+  PointMatchingStrategy,
+  matchPointsWithRemovals,
+  matchPointsByStrategy,
+  interpolateMatchedPoints,
+} from '../animation/pointMatching';
+import {
   getCateCoordinateOfLine,
   getNormalizedStackId,
   getTooltipNameProp,
@@ -93,6 +99,7 @@ interface InternalAreaProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
+  animationMatchBy: PointMatchingStrategy<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -169,6 +176,12 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'ease'
    */
   animationEasing?: AnimationTiming;
+  /**
+   * Strategy for matching points between data updates during animation.
+   * Use 'x' for time-series sliding windows, a DataKey string, or a custom function.
+   * @defaultValue 'index'
+   */
+  animationMatchBy?: PointMatchingStrategy<AreaPointItem>;
   /**
    * Baseline of the area:
    * - number: uses the corresponding axis value as a flat baseline;
@@ -616,6 +629,7 @@ function AreaWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
+    animationMatchBy,
     onAnimationStart,
     onAnimationEnd,
   } = props;
@@ -661,27 +675,19 @@ function AreaWithAnimation({
       >
         {(t: number) => {
           if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepPoints: ReadonlyArray<AreaPointItem> =
-              /*
-               * Here it is important that at the very end of the animation, on the last frame,
-               * we render the original points without any interpolation.
-               * This is needed because the code above is checking for reference equality to decide if the animation should run
-               * and if we create a new array instance (even if the numbers were the same)
-               * then we would break animations.
-               */
-              t === 1
-                ? points
-                : points.map((entry, index): AreaPointItem => {
-                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                    if (prevPoints[prevPointIndex]) {
-                      const prev: AreaPointItem = prevPoints[prevPointIndex];
+            const { matched: matchedPoints, removed: removedPoints } = matchPointsWithRemovals(
+              points,
+              prevPoints,
+              animationMatchBy,
+            );
 
-                      return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                    }
+            /*
+             * At the very end of the animation we render original points without interpolation.
+             * Reference equality matters here — creating a new array would re-trigger animation.
+             */
+            const stepPoints =
+              t === 1 ? [...points] : interpolateMatchedPoints(matchedPoints, removedPoints, t, interpolate, true);
 
-                    return entry;
-                  });
             let stepBaseLine: BaseLineType;
 
             if (isNumber(baseLine)) {
@@ -689,15 +695,21 @@ function AreaWithAnimation({
             } else if (isNullish(baseLine) || isNan(baseLine)) {
               stepBaseLine = interpolate(prevBaseLine, 0, t);
             } else {
-              stepBaseLine = baseLine.map((entry, index) => {
-                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
-                  const prev = prevBaseLine[prevPointIndex];
-
-                  return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+              const baseLineArray = Array.isArray(baseLine) ? baseLine : [];
+              const matchedBaseline = matchPointsByStrategy(
+                baseLineArray,
+                Array.isArray(prevBaseLine) ? prevBaseLine : null,
+                animationMatchBy,
+              );
+              stepBaseLine = matchedBaseline.map(({ current, previous }) => {
+                if (previous) {
+                  return {
+                    ...current,
+                    x: interpolate(previous.x, current.x, t),
+                    y: interpolate(previous.y, current.y, t),
+                  };
                 }
-
-                return entry;
+                return current;
               });
             }
 
@@ -853,6 +865,7 @@ export const defaultAreaProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: 'index',
   connectNulls: false,
   dot: false,
   fill: '#3182bd',
@@ -875,6 +888,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
     animationBegin,
     animationDuration,
     animationEasing,
+    animationMatchBy,
     connectNulls,
     dot,
     fill,
@@ -918,6 +932,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
       animationBegin={animationBegin}
       animationDuration={animationDuration}
       animationEasing={animationEasing}
+      animationMatchBy={animationMatchBy}
       baseLine={baseLine}
       connectNulls={connectNulls}
       dot={dot}
