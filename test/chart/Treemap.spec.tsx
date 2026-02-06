@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, test, expect, it, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import { Customized, Tooltip, Treemap, XAxis, YAxis } from '../../src';
+import { Tooltip, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
 import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
@@ -262,7 +262,7 @@ describe('<Treemap />', () => {
       };
       render(
         <Treemap width={100} height={50}>
-          <Customized component={<Comp />} />
+          <Comp />
         </Treemap>,
       );
       expect(marginSpy).toHaveBeenLastCalledWith({
@@ -370,7 +370,7 @@ describe('<Treemap /> mouse events', () => {
     const arg1 = onMouseEnter.mock.calls[0][0];
     // when I use `toHaveBeenLastCalledWith` then vitest fails with OOME when trying to match the synthetic event object
     // expect(onMouseEnter).toHaveBeenLastCalledWith({
-    expect(arg1).toEqual({
+    const expectedTreemapNode: TreemapNode = {
       id: expect.stringMatching(/^recharts-treemap-+/),
       width: 363,
       height: 250,
@@ -467,7 +467,8 @@ describe('<Treemap /> mouse events', () => {
         index: 0,
         tooltipIndex: '',
       },
-    });
+    };
+    expect(arg1).toEqual(expectedTreemapNode);
     const arg2 = onMouseEnter.mock.calls[0][1];
     expect(arg2.type).toBe('mouseenter');
     expect(arg2.target).toBeInstanceOf(SVGElement);
@@ -514,7 +515,7 @@ describe('<Treemap /> mouse events', () => {
     // should be called with two arguments
     expect(onMouseLeave.mock.calls[0]).toHaveLength(2);
     const arg1 = onMouseLeave.mock.calls[0][0];
-    expect(arg1).toEqual({
+    const expectedNode: TreemapNode = {
       id: expect.stringMatching(/^recharts-treemap-+/),
       area: 90719.61872159594,
       children: null,
@@ -611,7 +612,8 @@ describe('<Treemap /> mouse events', () => {
         index: 0,
         tooltipIndex: '',
       },
-    });
+    };
+    expect(arg1).toEqual(expectedNode);
     const arg2 = onMouseLeave.mock.calls[0][1];
     expect(arg2.type).toBe('mouseleave');
     expect(arg2.target).toBeInstanceOf(SVGElement);
@@ -641,7 +643,7 @@ describe('<Treemap /> mouse events', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick.mock.calls[0]).toHaveLength(1); // this doesn't pass the event? why?
     const arg1 = onClick.mock.calls[0][0];
-    expect(arg1).toEqual({
+    const expectedNode: TreemapNode = {
       id: expect.stringMatching(/^recharts-treemap-+/),
       area: 90719.61872159594,
       children: null,
@@ -738,7 +740,8 @@ describe('<Treemap /> mouse events', () => {
       width: 363,
       x: 0,
       y: 0,
-    });
+    };
+    expect(arg1).toEqual(expectedNode);
   });
 
   it('should not call touch event handlers', () => {

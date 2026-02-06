@@ -124,6 +124,7 @@ export type {
   NodeProps as SankeyNodeProps,
   LinkProps as SankeyLinkProps,
   SankeyData,
+  SankeyElementType,
 } from './chart/Sankey';
 export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
