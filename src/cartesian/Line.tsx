@@ -23,6 +23,7 @@ import {
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { AnimationStepFunction } from '../animation/pointMatching';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -90,6 +91,7 @@ interface InternalLineProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
+  animationStepFunction?: AnimationStepFunction<LinePointItem>;
 
   className?: string;
   connectNulls: boolean;
@@ -163,6 +165,22 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: AnimationTiming;
+  /**
+   * Custom function that computes intermediate points for each animation frame.
+   * Receives the current target points, the previous points, and animation progress t (0-1).
+   * Returns the points to render at time t.
+   *
+   * Recharts exports preset functions:
+   * - `indexMatchLinearInterpolation`: legacy index-based stretching (the default behaviour)
+   * - `xMatchLinearInterpolation`: matches points by x-coordinate for time-series sliding windows
+   *
+   * If not provided, the default index-based animation is used.
+   *
+   * @example
+   * import { xMatchLinearInterpolation } from 'recharts';
+   * <Line animationStepFunction={xMatchLinearInterpolation} />
+   */
+  animationStepFunction?: AnimationStepFunction<LinePointItem>;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -553,8 +571,7 @@ function CurveWithAnimation({
     animationDuration,
     animationEasing,
     animateNewValues,
-    width,
-    height,
+    animationStepFunction,
     onAnimationEnd,
     onAnimationStart,
   } = props;
@@ -679,35 +696,40 @@ function CurveWithAnimation({
           }
 
           if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepData =
-              t === 1
-                ? points
-                : points.map((entry, index): LinePointItem => {
-                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                    if (prevPoints[prevPointIndex]) {
-                      const prev = prevPoints[prevPointIndex];
-                      return {
-                        ...entry,
-                        x: interpolate(prev.x, entry.x, t),
-                        y: interpolate(prev.y, entry.y, t),
-                      };
-                    }
+            let stepData: ReadonlyArray<LinePointItem>;
+            if (animationStepFunction) {
+              stepData = t === 1 ? points : animationStepFunction(points, prevPoints, t);
+            } else {
+              const prevPointsDiffFactor = prevPoints.length / points.length;
+              stepData =
+                t === 1
+                  ? points
+                  : points.map((entry, index): LinePointItem => {
+                      const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                      if (prevPoints[prevPointIndex]) {
+                        const prev = prevPoints[prevPointIndex];
+                        return {
+                          ...entry,
+                          x: interpolate(prev.x, entry.x, t),
+                          y: interpolate(prev.y, entry.y, t),
+                        };
+                      }
 
-                    // magic number of faking previous x and y location
-                    if (animateNewValues) {
+                      // magic number of faking previous x and y location
+                      if (animateNewValues) {
+                        return {
+                          ...entry,
+                          x: interpolate(props.width * 2, entry.x, t),
+                          y: interpolate(props.height / 2, entry.y, t),
+                        };
+                      }
                       return {
                         ...entry,
-                        x: interpolate(width * 2, entry.x, t),
-                        y: interpolate(height / 2, entry.y, t),
+                        x: entry.x,
+                        y: entry.y,
                       };
-                    }
-                    return {
-                      ...entry,
-                      x: entry.x,
-                      y: entry.y,
-                    };
-                  });
+                    });
+            }
             // eslint-disable-next-line no-param-reassign
             previousPointsRef.current = stepData;
             return (

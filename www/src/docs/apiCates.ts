@@ -45,6 +45,8 @@ export const apiCates = [
       'getNiceTickValues',
       'Global',
       'getRelativeCoordinate',
+      'indexMatchLinearInterpolation',
+      'xMatchLinearInterpolation',
     ],
   },
   {

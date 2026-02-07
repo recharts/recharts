@@ -21,6 +21,7 @@ import {
 import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
+import { AnimatablePoint, AnimationStepFunction } from '../animation/pointMatching';
 import {
   getCateCoordinateOfLine,
   getNormalizedStackId,
@@ -93,6 +94,7 @@ interface InternalAreaProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
+  animationStepFunction?: AnimationStepFunction<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -169,6 +171,22 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'ease'
    */
   animationEasing?: AnimationTiming;
+  /**
+   * Custom function that computes intermediate points for each animation frame.
+   * Receives the current target points, the previous points, and animation progress t (0-1).
+   * Returns the points to render at time t.
+   *
+   * Recharts exports preset functions:
+   * - `indexMatchLinearInterpolation`: legacy index-based stretching (the default behaviour)
+   * - `xMatchLinearInterpolation`: matches points by x-coordinate for time-series sliding windows
+   *
+   * If not provided, the default index-based animation is used.
+   *
+   * @example
+   * import { xMatchLinearInterpolation } from 'recharts';
+   * <Area animationStepFunction={xMatchLinearInterpolation} />
+   */
+  animationStepFunction?: AnimationStepFunction<AreaPointItem>;
   /**
    * Baseline of the area:
    * - number: uses the corresponding axis value as a flat baseline;
@@ -616,6 +634,7 @@ function AreaWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
+    animationStepFunction,
     onAnimationStart,
     onAnimationEnd,
   } = props;
@@ -661,8 +680,9 @@ function AreaWithAnimation({
       >
         {(t: number) => {
           if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepPoints: ReadonlyArray<AreaPointItem> =
+            let stepPoints: ReadonlyArray<AreaPointItem>, stepBaseLine: BaseLineType;
+
+            if (animationStepFunction) {
               /*
                * Here it is important that at the very end of the animation, on the last frame,
                * we render the original points without any interpolation.
@@ -670,35 +690,59 @@ function AreaWithAnimation({
                * and if we create a new array instance (even if the numbers were the same)
                * then we would break animations.
                */
-              t === 1
-                ? points
-                : points.map((entry, index): AreaPointItem => {
-                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                    if (prevPoints[prevPointIndex]) {
-                      const prev: AreaPointItem = prevPoints[prevPointIndex];
+              stepPoints = t === 1 ? points : animationStepFunction(points, prevPoints, t);
 
-                      return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                    }
-
-                    return entry;
-                  });
-            let stepBaseLine: BaseLineType;
-
-            if (isNumber(baseLine)) {
-              stepBaseLine = interpolate(prevBaseLine, baseLine, t);
-            } else if (isNullish(baseLine) || isNan(baseLine)) {
-              stepBaseLine = interpolate(prevBaseLine, 0, t);
+              if (isNumber(baseLine)) {
+                stepBaseLine = interpolate(prevBaseLine, baseLine, t);
+              } else if (isNullish(baseLine) || isNan(baseLine)) {
+                stepBaseLine = interpolate(prevBaseLine, 0, t);
+              } else if (Array.isArray(prevBaseLine)) {
+                // baseLine and prevBaseLine are both coordinate arrays here; use a generic step function
+                // to avoid an unsafe type assertion between NullableCoordinate and AreaPointItem
+                const baselineStepFn: AnimationStepFunction<AnimatablePoint> = animationStepFunction;
+                stepBaseLine = t === 1 ? baseLine : baselineStepFn(baseLine, prevBaseLine, t);
+              } else {
+                stepBaseLine = baseLine;
+              }
             } else {
-              stepBaseLine = baseLine.map((entry, index) => {
-                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
-                  const prev = prevBaseLine[prevPointIndex];
+              const prevPointsDiffFactor = prevPoints.length / points.length;
+              /*
+               * Here it is important that at the very end of the animation, on the last frame,
+               * we render the original points without any interpolation.
+               * This is needed because the code above is checking for reference equality to decide if the animation should run
+               * and if we create a new array instance (even if the numbers were the same)
+               * then we would break animations.
+               */
+              stepPoints =
+                t === 1
+                  ? points
+                  : points.map((entry, index): AreaPointItem => {
+                      const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                      if (prevPoints[prevPointIndex]) {
+                        const prev: AreaPointItem = prevPoints[prevPointIndex];
 
-                  return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                }
+                        return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+                      }
 
-                return entry;
-              });
+                      return entry;
+                    });
+
+              if (isNumber(baseLine)) {
+                stepBaseLine = interpolate(prevBaseLine, baseLine, t);
+              } else if (isNullish(baseLine) || isNan(baseLine)) {
+                stepBaseLine = interpolate(prevBaseLine, 0, t);
+              } else {
+                stepBaseLine = baseLine.map((entry, index) => {
+                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                  if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
+                    const prev = prevBaseLine[prevPointIndex];
+
+                    return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+                  }
+
+                  return entry;
+                });
+              }
             }
 
             if (t > 0) {
