@@ -690,11 +690,14 @@ function AreaWithAnimation({
             );
 
             /*
-             * At the very end of the animation we render original points without interpolation.
-             * Reference equality matters here — creating a new array would re-trigger animation.
+             * Here it is important that at the very end of the animation, on the last frame,
+             * we render the original points without any interpolation.
+             * This is needed because the code above is checking for reference equality to decide if the animation should run
+             * and if we create a new array instance (even if the numbers were the same)
+             * then we would break animations.
              */
             const stepPoints =
-              t === 1 ? [...points] : interpolateMatchedPoints(matchedPoints, removedPoints, t, interpolate, true);
+              t === 1 ? points : interpolateMatchedPoints(matchedPoints, removedPoints, t, interpolate, true);
 
             let stepBaseLine: BaseLineType;
 
