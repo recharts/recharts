@@ -66,6 +66,103 @@ describe('<Treemap />', () => {
     expect(container.querySelectorAll('.recharts-treemap-depth-1')[0]).toHaveTextContent('U');
   });
 
+  test('breadcrumb navigation allows going back to root', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    // Initially at root level with many nodes
+    const initialNodeCount = container.querySelectorAll('.recharts-rectangle').length;
+    expect(initialNodeCount).toBeGreaterThan(4);
+
+    // Click into a nested node
+    const nodeWithChildren = getByText('A');
+    fireEvent.click(nodeWithChildren);
+
+    // Should now show fewer nodes (the children of A)
+    expect(container.querySelectorAll('.recharts-rectangle').length).toBeLessThan(initialNodeCount);
+
+    // Find and click the root breadcrumb to go back
+    const breadcrumbWrapper = container.querySelector('.recharts-treemap-nest-index-wrapper');
+    expect(breadcrumbWrapper).toBeInTheDocument();
+
+    // The first breadcrumb should be "root"
+    const rootBreadcrumb = breadcrumbWrapper?.querySelector('.recharts-treemap-nest-index-box');
+    expect(rootBreadcrumb).toBeInTheDocument();
+    if (rootBreadcrumb) {
+      fireEvent.click(rootBreadcrumb);
+    }
+
+    // Should be back at root level with original node count
+    expect(container.querySelectorAll('.recharts-rectangle').length).toBe(initialNodeCount);
+  });
+
+  test('renders custom nestIndexContent when provided as function', () => {
+    const customContent = vi.fn((item: TreemapNode, i: number) => (
+      <span data-testid={`breadcrumb-${i}`}>Custom: {item.name || 'root'}</span>
+    ));
+
+    const { getByText, getByTestId } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+        nestIndexContent={customContent}
+      />,
+    );
+
+    // Click into a nested node to trigger breadcrumb render
+    const nodeWithChildren = getByText('A');
+    fireEvent.click(nodeWithChildren);
+
+    // Custom content should be rendered
+    expect(customContent).toHaveBeenCalled();
+    expect(getByTestId('breadcrumb-0')).toBeInTheDocument();
+    expect(getByTestId('breadcrumb-1')).toBeInTheDocument();
+  });
+
+  test('clicking leaf nodes in nest mode does not navigate', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    const initialNodeCount = container.querySelectorAll('.recharts-rectangle').length;
+
+    // Click into A first (which has children)
+    const nodeWithChildren = getByText('A');
+    fireEvent.click(nodeWithChildren);
+
+    const nestedNodeCount = container.querySelectorAll('.recharts-rectangle').length;
+    expect(nestedNodeCount).toBeLessThan(initialNodeCount);
+
+    // Now try clicking U (a leaf node with no children)
+    const leafNode = getByText('U');
+    fireEvent.click(leafNode);
+
+    // Node count should remain the same - clicking leaf doesn't navigate further
+    expect(container.querySelectorAll('.recharts-rectangle').length).toBe(nestedNodeCount);
+  });
+
   describe('with Tooltip trigger=hover', () => {
     it('should display Tooltip on mouse enter on a Node and hide it on mouse leave', () => {
       const { container } = render(
