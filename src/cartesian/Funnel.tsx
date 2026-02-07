@@ -584,7 +584,7 @@ export function computeFunnelTrapezoids({
 
   let trapezoids: ReadonlyArray<FunnelTrapezoidItem> = displayedData.map(
     (entry: unknown, i: number): FunnelTrapezoidItem => {
-      // @ts-expect-error getValueByDataKey does not validate the output type
+      // getValueByDataKey does not validate the output type
       const rawVal: number | ReadonlyArray<number> = getValueByDataKey(entry, dataKey, 0);
       const name: string = String(getValueByDataKey(entry, nameKey, i));
       let val = rawVal;

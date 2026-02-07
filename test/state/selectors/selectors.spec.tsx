@@ -1240,151 +1240,160 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
     );
     expect(spy).toHaveBeenCalledTimes(3);
     // two of these elements will send the data as defined; Scatter decides to pre-chew it
-    expectLastCalledWith(
-      spy,
-      expect.arrayContaining([
-        [1, 2, 3],
-        [10, 20, 30],
-        [4, 5, 6],
-        [40, 50, 60],
+    expectLastCalledWith(spy, [
+      [1, 2, 3],
+      [10, 20, 30],
+      [4, 5, 6],
+      [40, 50, 60],
+      [
         [
-          [
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 7,
-              },
-              type: undefined,
-              unit: '',
-              value: 7,
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 7,
             },
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 7,
-              },
-              type: undefined,
-              unit: '',
-              value: 7,
+            type: undefined,
+            unit: '',
+            value: 7,
+          },
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 7,
             },
-          ],
-          [
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 8,
-              },
-              type: undefined,
-              unit: '',
-              value: 8,
-            },
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 8,
-              },
-              type: undefined,
-              unit: '',
-              value: 8,
-            },
-          ],
-          [
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 9,
-              },
-              type: undefined,
-              unit: '',
-              value: 9,
-            },
-            {
-              dataKey: 'x',
-              name: undefined,
-              payload: {
-                x: 9,
-              },
-              type: undefined,
-              unit: '',
-              value: 9,
-            },
-          ],
+            type: undefined,
+            unit: '',
+            value: 7,
+          },
         ],
         [
-          [
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 70,
-              },
-              type: undefined,
-              unit: '',
-              value: 70,
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 8,
             },
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 70,
-              },
-              type: undefined,
-              unit: '',
-              value: 70,
+            type: undefined,
+            unit: '',
+            value: 8,
+          },
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 8,
             },
-          ],
-          [
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 80,
-              },
-              type: undefined,
-              unit: '',
-              value: 80,
-            },
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 80,
-              },
-              type: undefined,
-              unit: '',
-              value: 80,
-            },
-          ],
-          [
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 90,
-              },
-              type: undefined,
-              unit: '',
-              value: 90,
-            },
-            {
-              dataKey: 'y',
-              name: undefined,
-              payload: {
-                y: 90,
-              },
-              type: undefined,
-              unit: '',
-              value: 90,
-            },
-          ],
+            type: undefined,
+            unit: '',
+            value: 8,
+          },
         ],
-      ]),
-    );
+        [
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 9,
+            },
+            type: undefined,
+            unit: '',
+            value: 9,
+          },
+          {
+            dataKey: 'x',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              x: 9,
+            },
+            type: undefined,
+            unit: '',
+            value: 9,
+          },
+        ],
+      ],
+      [
+        [
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 70,
+            },
+            type: undefined,
+            unit: '',
+            value: 70,
+          },
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 70,
+            },
+            type: undefined,
+            unit: '',
+            value: 70,
+          },
+        ],
+        [
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 80,
+            },
+            type: undefined,
+            unit: '',
+            value: 80,
+          },
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 80,
+            },
+            type: undefined,
+            unit: '',
+            value: 80,
+          },
+        ],
+        [
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 90,
+            },
+            type: undefined,
+            unit: '',
+            value: 90,
+          },
+          {
+            dataKey: 'y',
+            graphicalItemId: expect.stringMatching(/^recharts-scatter-.+/),
+            name: undefined,
+            payload: {
+              y: 90,
+            },
+            type: undefined,
+            unit: '',
+            value: 90,
+          },
+        ],
+      ],
+    ]);
   });
 
   it('should return all payloads in PieChart', () => {

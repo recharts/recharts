@@ -480,10 +480,11 @@ const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => 
 };
 
 type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown };
+
 const getPayloadOfTooltip = (
   item: { payload: SankeyNode | SankeyLink },
   type: SankeyElementType,
-  nameKey: DataKey<any> | undefined,
+  nameKey: DataKey<SankeyLink | SankeyNode, string> | undefined,
 ): SankeyTooltipPayload | undefined => {
   const { payload } = item;
   if (type === 'node') {
@@ -494,7 +495,9 @@ const getPayloadOfTooltip = (
     };
   }
   if ('source' in payload && payload.source && payload.target) {
+    // @ts-expect-error we're sending number indexes as source and target, but getValueByDataKey expects objects
     const sourceName = getValueByDataKey(payload.source, nameKey, '');
+    // @ts-expect-error we're sending number indexes as source and target, but getValueByDataKey expects objects
     const targetName = getValueByDataKey(payload.target, nameKey, '');
 
     return {
@@ -523,6 +526,7 @@ export const sankeyPayloadSearcher: TooltipPayloadSearcher = (
   const [targetType, index] = splitIndex;
   const item = get(computedData, `${targetType}s[${index}]`);
   if (item) {
+    // @ts-expect-error nameKey type does not match SankeyElementType
     const payload = getPayloadOfTooltip(item, targetType as SankeyElementType, nameKey);
     return payload;
   }

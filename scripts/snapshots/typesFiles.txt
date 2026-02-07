@@ -263,6 +263,7 @@
   "types/util/svgPropertiesNoEvents.d.ts",
   "types/util/tooltip",
   "types/util/tooltip/translate.d.ts",
+  "types/util/typedDataKey.d.ts",
   "types/util/types.d.ts",
   "types/util/useAnimationId.d.ts",
   "types/util/useElementOffset.d.ts",

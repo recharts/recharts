@@ -37,7 +37,7 @@ export type ErrorBarDirection = 'x' | 'y';
 
 export type ErrorBarDataPointFormatter<T extends BarRectangleItem | LinePointItem | ScatterPointItem> = (
   entry: T,
-  dataKey: DataKey<any>,
+  dataKey: DataKey<T, number[] | number>,
   direction: ErrorBarDirection,
 ) => ErrorBarDataItem;
 

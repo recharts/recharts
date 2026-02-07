@@ -873,7 +873,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> =
     x: dataPoint.x,
     y: dataPoint.y,
     value,
-    // @ts-expect-error getValueByDataKey does not validate the output type
+    // getValueByDataKey does not validate the output type
     errorVal: getValueByDataKey(dataPoint, dataKey),
   };
 };

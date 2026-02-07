@@ -323,7 +323,6 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * Calculated radial bar sectors
    */
   sectors: ReadonlyArray<RadialBarDataItem>;
-  dataKey: string | number | ((obj: any) => any);
   /**
    * @defaultValue false
    */

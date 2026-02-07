@@ -6,6 +6,7 @@ import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from 
 import { RechartsRootState } from '../../../src/state/store';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { pageData } from '../../../storybook/stories/data';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('selectScatterPoints', () => {
   const selector = (state: RechartsRootState) => {
@@ -70,6 +71,7 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -81,6 +83,7 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -122,6 +125,7 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -133,6 +137,7 @@ describe('selectScatterPoints', () => {
                 amt: 1400,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -174,6 +179,7 @@ describe('selectScatterPoints', () => {
                 amt: 1506,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -185,6 +191,7 @@ describe('selectScatterPoints', () => {
                 amt: 1506,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -226,6 +233,7 @@ describe('selectScatterPoints', () => {
                 amt: 989,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -237,6 +245,7 @@ describe('selectScatterPoints', () => {
                 amt: 989,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -278,6 +287,7 @@ describe('selectScatterPoints', () => {
                 amt: 1228,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -289,6 +299,7 @@ describe('selectScatterPoints', () => {
                 amt: 1228,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -330,6 +341,7 @@ describe('selectScatterPoints', () => {
                 amt: 1100,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -341,6 +353,7 @@ describe('selectScatterPoints', () => {
                 amt: 1100,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -382,6 +395,7 @@ describe('selectScatterPoints', () => {
                 amt: 1700,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
             {
               unit: '',
@@ -393,6 +407,7 @@ describe('selectScatterPoints', () => {
                 amt: 1700,
               },
               dataKey: 'uv',
+              graphicalItemId: 'scatter-id',
             },
           ],
           tooltipPosition: {
@@ -408,7 +423,7 @@ describe('selectScatterPoints', () => {
         },
       ];
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenCalledWith(expectedPoints);
+      expectLastCalledWith(spy, expectedPoints);
     });
   });
 });

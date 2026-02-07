@@ -147,6 +147,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page A',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -160,6 +161,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 2400,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
               [
@@ -175,6 +177,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page B',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -188,6 +191,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 4567,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
               [
@@ -203,6 +207,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page C',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -216,6 +221,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 1398,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
               [
@@ -231,6 +237,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page D',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -244,6 +251,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 9800,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
               [
@@ -259,6 +267,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page E',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -272,6 +281,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 3908,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
               [
@@ -287,6 +297,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 'Page F',
+                  graphicalItemId: 'scatter-uv',
                 },
                 {
                   dataKey: 'pv',
@@ -300,6 +311,7 @@ describe('itemSorter in ComposedChart', () => {
                   type: undefined,
                   unit: '',
                   value: 4800,
+                  graphicalItemId: 'scatter-uv',
                 },
               ],
             ],

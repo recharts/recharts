@@ -1574,6 +1574,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 400,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1587,6 +1588,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 2400,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
               [
@@ -1602,6 +1604,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 300,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1615,6 +1618,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 4567,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
               [
@@ -1630,6 +1634,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 300,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1643,6 +1648,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 1398,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
               [
@@ -1658,6 +1664,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 200,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1671,6 +1678,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 9800,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
               [
@@ -1686,6 +1694,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 278,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1699,6 +1708,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 3908,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
               [
@@ -1714,6 +1724,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 189,
+                  graphicalItemId: 'my-scatter',
                 },
                 {
                   dataKey: 'pv',
@@ -1727,6 +1738,7 @@ describe('Tooltip integration', () => {
                   type: undefined,
                   unit: '',
                   value: 4800,
+                  graphicalItemId: 'my-scatter',
                 },
               ],
             ],
@@ -1776,6 +1788,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 400,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1789,6 +1802,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 2400,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -1804,6 +1818,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 300,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1817,6 +1832,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 4567,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -1832,6 +1848,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 300,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1845,6 +1862,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 1398,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -1860,6 +1878,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 200,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1873,6 +1892,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 9800,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -1888,6 +1908,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 278,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1901,6 +1922,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 3908,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -1916,6 +1938,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 189,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -1929,6 +1952,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 4800,
+                graphicalItemId: 'my-scatter',
               },
             ],
           ],
@@ -1991,6 +2015,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 400,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2004,6 +2029,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 2400,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -2019,6 +2045,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 300,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2032,6 +2059,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 4567,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -2047,6 +2075,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 300,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2060,6 +2089,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 1398,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -2075,6 +2105,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 200,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2088,6 +2119,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 9800,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -2103,6 +2135,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 278,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2116,6 +2149,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 3908,
+                graphicalItemId: 'my-scatter',
               },
             ],
             [
@@ -2131,6 +2165,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 189,
+                graphicalItemId: 'my-scatter',
               },
               {
                 dataKey: 'pv',
@@ -2144,6 +2179,7 @@ describe('Tooltip integration', () => {
                 type: undefined,
                 unit: '',
                 value: 4800,
+                graphicalItemId: 'my-scatter',
               },
             ],
           ],
@@ -2245,6 +2281,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'cm',
               value: 100,
+              graphicalItemId: 'my-scatter',
             },
             {
               dataKey: 'y',
@@ -2257,6 +2294,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'kg',
               value: 100,
+              graphicalItemId: 'my-scatter',
             },
           ],
           [
@@ -2271,6 +2309,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'cm',
               value: 100,
+              graphicalItemId: 'my-scatter',
             },
             {
               dataKey: 'y',
@@ -2283,6 +2322,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'kg',
               value: 200,
+              graphicalItemId: 'my-scatter',
             },
           ],
           [
@@ -2297,6 +2337,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'cm',
               value: 100,
+              graphicalItemId: 'my-scatter',
             },
             {
               dataKey: 'y',
@@ -2309,6 +2350,7 @@ describe('ScatterChart with allowDuplicateCategory=false', () => {
               type: undefined,
               unit: 'kg',
               value: 300,
+              graphicalItemId: 'my-scatter',
             },
           ],
         ],
