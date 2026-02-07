@@ -14,7 +14,7 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
-import { isNumber, noop } from '../util/DataUtils';
+import { noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import {
   calculateChartDimensions,
@@ -24,8 +24,16 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export interface Props {
+  /**
+   * HTML data-* attributes (e.g. data-testid) forwarded to the container div.
+   *
+   * Note: These attributes are only applied when the container renders a wrapper element.
+   * If nested inside another ResponsiveContainer, the wrapper is optimized away and these attributes will not be rendered.
+   */
+  [key: `data-${string}`]: string | number | boolean | undefined;
   /**
    * width / height. If specified, the height will be calculated by width / aspect.
    */
@@ -135,6 +143,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
       className,
       onResize,
       style = {},
+      ...rest
     }: Props,
     ref,
   ) => {
@@ -230,6 +239,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
         className={clsx('recharts-responsive-container', className)}
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
+        {...svgPropertiesAndEvents(rest)}
       >
         <div style={getInnerDivStyle({ width, height })}>
           <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
@@ -268,33 +278,6 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref
     aspect: props.aspect,
   });
 
-  /*
-   * Let's try to get the calculated dimensions without having the div container set up.
-   * Sometimes this does produce fixed, positive dimensions. If so, we can skip rendering the div and monitoring its size.
-   */
-  const { calculatedWidth, calculatedHeight } = calculateChartDimensions(undefined, undefined, {
-    width,
-    height,
-    aspect: props.aspect,
-    maxHeight: props.maxHeight,
-  });
-
-  if (isNumber(calculatedWidth) && isNumber(calculatedHeight)) {
-    /*
-     * If it just so happens that the combination of width, height, and aspect ratio
-     * results in fixed dimensions, then we don't need to monitor the container's size.
-     * We can just provide these fixed dimensions to the context.
-     *
-     * Note that here we are not checking for positive numbers;
-     * if the user provides a zero or negative width/height, we will just pass that along
-     * as whatever size we detect won't be helping anyway.
-     */
-    return (
-      <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
-        {props.children}
-      </ResponsiveContainerContextProvider>
-    );
-  }
   /*
    * Static analysis did not produce fixed dimensions,
    * so we need to render a special div and monitor its size.
