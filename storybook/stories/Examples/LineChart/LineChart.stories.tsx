@@ -1128,6 +1128,51 @@ export const ChangingDataKey = {
   },
 };
 
+export const UndefinedEventHandlers: StoryObj = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="pv"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+          />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
+          <RechartsHookInspector />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Reproduces a bug where passing `onMouseEnter: undefined` or `onMouseLeave: undefined` to a Line would crash because `adaptEventHandlers` tried to call undefined as a function. Hover over the chart to verify it works without errors.',
+      },
+    },
+  },
+};
+
 const activeDotExcludedDomainData = [
   { timestamp: 0.9, pv: 120 },
   { timestamp: 1.3, pv: 160 },

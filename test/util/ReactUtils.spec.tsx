@@ -44,6 +44,15 @@ describe('ReactUtils', () => {
       expect(adaptEventHandlers(vi.fn())).toEqual(null);
       expect(adaptEventHandlers(1 as any)).toEqual(null);
     });
+
+    test('adaptEventHandlers skips event props that are not functions', () => {
+      const result = adaptEventHandlers({
+        onMouseEnter: undefined,
+        onMouseLeave: undefined,
+        onClick: vi.fn(),
+      });
+      expect(Object.keys(result ?? {})).toEqual(['onClick']);
+    });
   });
 
   describe('adaptEventsOfChild', () => {

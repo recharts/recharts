@@ -16,7 +16,7 @@ import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
-import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
+import { focusAction, keyDownAction, blurAction } from '../state/keyboardEventsMiddleware';
 import { useReportScale } from '../util/useReportScale';
 import { ExternalMouseEvents } from './types';
 import { externalEventAction } from '../state/externalEventsMiddleware';
@@ -304,6 +304,10 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       dispatch(focusAction());
     }, [dispatch]);
 
+    const onBlur = useCallback(() => {
+      dispatch(blurAction());
+    }, [dispatch]);
+
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         dispatch(keyDownAction(e.key));
@@ -392,6 +396,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
             onContextMenu={myOnContextMenu}
             onDoubleClick={myOnDoubleClick}
             onFocus={onFocus}
+            onBlur={onBlur}
             onKeyDown={onKeyDown}
             onMouseDown={myOnMouseDown}
             onMouseEnter={myOnMouseEnter}
