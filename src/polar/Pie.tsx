@@ -306,7 +306,7 @@ interface PieProps<DataPointType = unknown> extends DataProvider<DataPointType>,
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   /**
    * If set false, animation will be disabled.
-   * If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * If set "auto", the animation will be disabled in SSR and respects the user's prefers-reduced-motion system preference for accessibility.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
