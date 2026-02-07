@@ -230,8 +230,10 @@ interface PieEvents {
 interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
   id: GraphicalItemId;
   className?: string;
-  dataKey: DataKey<any>;
-  nameKey?: DataKey<any>;
+  // We actually spread the whole PieSectorDataItem into the keys.
+  dataKey: DataKey<DataPointType, unknown>;
+  // We actually spread the whole PieSectorDataItem into the keys.
+  nameKey?: DataKey<DataPointType, string>;
   /** The minimum angle for no-zero element */
   minAngle?: number;
   legendType?: LegendType;
@@ -595,6 +597,7 @@ function PieLabels({
       >
         <Layer>
           {labelLine && renderLabelLineItem(labelLine, lineProps)}
+          {/* @ts-expect-error we send the full PieSectorDataItem */}
           {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
         </Layer>
       </ZIndexLayer>
@@ -712,9 +715,7 @@ export function computePieSectors({
   if (sum > 0) {
     let prev: PieSectorDataItem;
     sectors = displayedData.map((entry: unknown, i: number) => {
-      // @ts-expect-error getValueByDataKey does not validate the output type
       const val: number = getValueByDataKey(entry, dataKey, 0);
-      // @ts-expect-error getValueByDataKey does not validate the output type
       const name: string = getValueByDataKey(entry, nameKey, i);
       const coordinate: PieCoordinate = parseCoordinateOfPie(pieSettings, offset, entry);
       const percent = (isNumber(val) ? val : 0) / sum;

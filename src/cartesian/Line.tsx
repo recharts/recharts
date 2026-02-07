@@ -760,7 +760,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<LinePointItem> = (
     x: dataPoint.x ?? undefined,
     y: dataPoint.y ?? undefined,
     value: dataPoint.value,
-    // @ts-expect-error getValueByDataKey does not validate the output type
+    // getValueByDataKey does not validate the output type
     errorVal: getValueByDataKey(dataPoint.payload, dataKey),
   };
 };
@@ -925,7 +925,7 @@ export function computeLinePoints({
 }): ReadonlyArray<LinePointItem> {
   return displayedData
     .map((entry, index): LinePointItem | null => {
-      // @ts-expect-error getValueByDataKey does not validate the output type
+      // getValueByDataKey does not validate the output type
       const value: number = getValueByDataKey(entry, dataKey);
 
       if (layout === 'horizontal') {

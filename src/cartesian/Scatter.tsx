@@ -664,7 +664,7 @@ export function computeScatterPoints({
   yAxisTicks,
   cells,
 }: {
-  displayedData: ReadonlyArray<any>;
+  displayedData: ReadonlyArray<unknown>;
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
   zAxis: ZAxisWithScale | undefined;
@@ -680,10 +680,10 @@ export function computeScatterPoints({
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
   const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
   const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
-  return displayedData.map((entry, index): ScatterPointItem => {
-    const x = getValueByDataKey(entry, xAxisDataKey);
-    const y = getValueByDataKey(entry, yAxisDataKey);
-    const z = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
+  return displayedData.map((entry: unknown, index): ScatterPointItem => {
+    const x: unknown = getValueByDataKey(entry, xAxisDataKey);
+    const y: unknown = getValueByDataKey(entry, yAxisDataKey);
+    const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
@@ -694,6 +694,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: xAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       },
       {
         name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxis.dataKey),
@@ -703,6 +704,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: yAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       },
     ];
 
@@ -716,6 +718,7 @@ export function computeScatterPoints({
         payload: entry,
         dataKey: zAxisDataKey,
         type: scatterSettings.tooltipType,
+        graphicalItemId: scatterSettings.id,
       });
     }
 
@@ -739,6 +742,7 @@ export function computeScatterPoints({
     const radius = size == null ? 0 : Math.sqrt(Math.max(size, 0) / Math.PI);
 
     return {
+      // @ts-expect-error can't spread unknown
       ...entry,
       cx,
       cy,

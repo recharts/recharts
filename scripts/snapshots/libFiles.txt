@@ -263,6 +263,7 @@
   "lib/util/svgPropertiesNoEvents.js",
   "lib/util/tooltip",
   "lib/util/tooltip/translate.js",
+  "lib/util/typedDataKey.js",
   "lib/util/types.js",
   "lib/util/useAnimationId.js",
   "lib/util/useElementOffset.js",

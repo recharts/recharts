@@ -121,9 +121,9 @@ export const combineTooltipPayload = (
           tooltipEntrySettings: settings,
           dataKey: finalDataKey,
           payload: tooltipPayload,
-          // @ts-expect-error getValueByDataKey does not validate the output type
+          // getValueByDataKey does not validate the output type
           value: getValueByDataKey(tooltipPayload, finalDataKey),
-          // @ts-expect-error getValueByDataKey does not validate the output type
+          // getValueByDataKey does not validate the output type
           name: getValueByDataKey(tooltipPayload, finalNameKey) ?? settings?.name,
         }),
       );

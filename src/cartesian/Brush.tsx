@@ -229,7 +229,7 @@ function TravellerLayer({
 type TextOfTickProps = {
   index: number;
   data: ChartData;
-  dataKey: DataKey<any> | undefined;
+  dataKey: DataKey<any, string | number> | undefined;
   tickFormatter: BrushTickFormatter | undefined;
 };
 
@@ -239,8 +239,7 @@ type TextOfTickProps = {
  */
 function getTextOfTick(props: TextOfTickProps): number | string {
   const { index, data, tickFormatter, dataKey } = props;
-  // @ts-expect-error getValueByDataKey does not validate the output type
-  const text: string = getValueByDataKey(data[index], dataKey, index);
+  const text: string | number = getValueByDataKey(data[index], dataKey, index);
 
   return typeof tickFormatter === 'function' ? tickFormatter(text, index) : text;
 }

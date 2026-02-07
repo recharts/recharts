@@ -263,6 +263,7 @@
   "es6/util/svgPropertiesNoEvents.js",
   "es6/util/tooltip",
   "es6/util/tooltip/translate.js",
+  "es6/util/typedDataKey.js",
   "es6/util/types.js",
   "es6/util/useAnimationId.js",
   "es6/util/useElementOffset.js",

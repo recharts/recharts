@@ -41,11 +41,21 @@ import { getSliced } from './getSliced';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 import { RechartsScale } from './scale/RechartsScale';
 
-export function getValueByDataKey<T>(
-  obj: T | null | undefined,
-  dataKey: DataKey<T> | undefined,
-  defaultValue?: any,
-): unknown {
+export function getValueByDataKey<DataPointType, DataValueType>(
+  obj: DataPointType | null | undefined,
+  dataKey: DataKey<DataPointType, DataValueType> | undefined,
+  defaultValue: DataValueType,
+): DataValueType;
+export function getValueByDataKey<DataPointType, DataValueType>(
+  obj: DataPointType | null | undefined,
+  dataKey: DataKey<DataPointType, DataValueType> | undefined,
+  defaultValue?: DataValueType,
+): DataValueType | undefined;
+export function getValueByDataKey<DataPointType, DataValueType>(
+  obj: DataPointType | null | undefined,
+  dataKey: DataKey<DataPointType, DataValueType> | undefined,
+  defaultValue?: DataValueType,
+): DataValueType | undefined {
   if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
@@ -539,13 +549,13 @@ export const getCateCoordinateOfBar = ({
   ticks: ReadonlyArray<TickItem>;
   offset: number;
   bandSize: number;
-  entry: any;
+  entry: unknown;
   index: number;
 }): number | null => {
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }
-  // @ts-expect-error getValueByDataKey does not validate the output type
+  // getValueByDataKey does not validate the output type
   const value: number | undefined = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
   if (isNullish(value)) {
