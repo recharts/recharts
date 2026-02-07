@@ -48,30 +48,45 @@ const data = [
 ];
 
 // #endregion
+const MyChart = (props: { interval: AxisInterval }) => (
+  <LineChart
+    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+    responsive
+    data={data}
+    margin={{ left: 0, right: 0, top: 10 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+    <XAxis dataKey="name" interval={props.interval} stroke="var(--color-text-3)" />
+    <YAxis interval={props.interval} width="auto" stroke="var(--color-text-3)" />
+    <Line
+      type="monotone"
+      dataKey="pv"
+      stroke="var(--color-chart-1)"
+      dot={{
+        fill: 'var(--color-surface-base)',
+      }}
+      activeDot={{ r: 8, stroke: 'var(--color-surface-base)' }}
+    />
+    <Line
+      type="monotone"
+      dataKey="uv"
+      stroke="var(--color-chart-2)"
+      dot={{
+        fill: 'var(--color-surface-base)',
+      }}
+      activeDot={{ stroke: 'var(--color-surface-base)' }}
+    />
+    <RechartsDevtools />
+  </LineChart>
+);
 const LineChartAxisInterval = () => {
-  const chart = (interval: AxisInterval) => (
-    <LineChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      data={data}
-      margin={{ left: 0, right: 0, top: 10 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" interval={interval} />
-      <YAxis interval={interval} width="auto" />
-      <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      <RechartsDevtools />
-    </LineChart>
-  );
-
   return (
     <>
-      {chart('preserveEnd')}
-      {chart('preserveStart')}
-      {chart('preserveStartEnd')}
-      {chart('equidistantPreserveStart')}
-      {chart(1)}
+      <MyChart interval="preserveStart" />
+      <MyChart interval="preserveEnd" />
+      <MyChart interval="preserveStartEnd" />
+      <MyChart interval="equidistantPreserveStart" />
+      <MyChart interval={1} />
     </>
   );
 };
