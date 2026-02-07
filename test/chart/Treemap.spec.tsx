@@ -106,9 +106,11 @@ describe('<Treemap />', () => {
   });
 
   test('renders custom nestIndexContent when provided as function', () => {
-    const customContent = vi.fn((item: TreemapNode, i: number) => <span data-testid={`breadcrumb-${i}`}>Custom: {item.name || 'root'}</span>);
+    const customContent = vi.fn((item: TreemapNode, i: number) => (
+      <span data-testid={`breadcrumb-${i}`}>Custom: {item.name || 'root'}</span>
+    ));
 
-    const { container, getByText, getByTestId } = render(
+    const { getByText, getByTestId } = render(
       <Treemap
         width={500}
         height={250}
@@ -160,7 +162,6 @@ describe('<Treemap />', () => {
     // Node count should remain the same - clicking leaf doesn't navigate further
     expect(container.querySelectorAll('.recharts-rectangle').length).toBe(nestedNodeCount);
   });
-
 
   describe('with Tooltip trigger=hover', () => {
     it('should display Tooltip on mouse enter on a Node and hide it on mouse leave', () => {
