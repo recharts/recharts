@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it } from 'vitest';
-import { Radar, RadarChart, getRelativeCoordinate } from '../../src';
+import { Radar, RadarChart, getRelativeCoordinate, InternalRadarProps } from '../../src';
 
 describe('Radar types', () => {
   it('should allow calling getRelativeCoordinate with the type provided by Recharts event handler', () => {
@@ -8,37 +8,37 @@ describe('Radar types', () => {
       <RadarChart width={100} height={100}>
         <Radar
           dataKey="foo"
-          onClick={(_data: any, _i: number, e) => {
+          onClick={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseDown={(_data: any, _i: number, e) => {
+          onMouseDown={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseUp={(_data: any, _i: number, e) => {
+          onMouseUp={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseMove={(_data: any, _i: number, e) => {
+          onMouseMove={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseLeave={(_data: any, _i: number, e) => {
+          onMouseLeave={(_data: InternalRadarProps, e) => {
             getRelativeCoordinate(e);
           }}
-          onMouseOver={(_data: any, _i: number, e) => {
+          onMouseOver={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseOut={(_data: any, _i: number, e) => {
+          onMouseOut={e => {
             getRelativeCoordinate(e);
           }}
-          onMouseEnter={(_data: any, _i: number, e) => {
+          onMouseEnter={(_data: InternalRadarProps, e) => {
             getRelativeCoordinate(e);
           }}
-          onTouchStart={(_data: any, _i: number, e) => {
+          onTouchStart={e => {
             getRelativeCoordinate(e);
           }}
-          onTouchMove={(_data: any, _i: number, e) => {
+          onTouchMove={e => {
             getRelativeCoordinate(e);
           }}
-          onTouchEnd={(_data: any, _i: number, e) => {
+          onTouchEnd={e => {
             getRelativeCoordinate(e);
           }}
         />

@@ -70,7 +70,7 @@ export type {
   PieShape,
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
-export type { Props as RadarProps } from './polar/Radar';
+export type { Props as RadarProps, RadarPoint, InternalRadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
 export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';

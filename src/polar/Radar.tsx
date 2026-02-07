@@ -46,7 +46,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 
-interface RadarPoint {
+export interface RadarPoint {
   x: number;
   y: number;
   cx?: number;
@@ -55,7 +55,7 @@ interface RadarPoint {
   radius?: number;
   value?: number;
   payload?: any;
-  name?: string;
+  name?: string | number;
 }
 
 interface RadarProps<DataPointType = any, DataValueType = any>
@@ -133,12 +133,8 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * The customized event handler of animation start
    */
   onAnimationStart?: () => void;
-  onMouseEnter?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
-  onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
-  /**
-   * The coordinates of all the vertexes of the radar shape, like an array of objects with x and y coordinates.
-   */
-  points?: RadarPoint[];
+  onMouseEnter?: (props: InternalRadarProps, e: MouseEvent<SVGPolygonElement>) => void;
+  onMouseLeave?: (props: InternalRadarProps, e: MouseEvent<SVGPolygonElement>) => void;
   /**
    * @defaultValue 0
    */
@@ -165,7 +161,7 @@ export type AngleAxisForRadar = {
   cy: number;
 };
 
-export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'> & RadarProps;
+export type Props = Omit<SVGProps<SVGGraphicsElement>, 'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'> & RadarProps;
 
 export type RadarComposedData = {
   points: RadarPoint[];
@@ -378,7 +374,7 @@ function StaticPolygon({
 }: {
   points: ReadonlyArray<RadarPoint>;
   baseLinePoints: ReadonlyArray<RadarPoint>;
-  props: PropsWithDefaults;
+  props: InternalRadarProps;
 }) {
   if (points == null) {
     return null;
@@ -453,7 +449,7 @@ function PolygonWithAnimation({
   previousPointsRef,
   previousBaseLinePointsRef,
 }: {
-  props: InternalProps;
+  props: InternalRadarProps;
   previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
   previousBaseLinePointsRef: MutableRefObject<ReadonlyArray<RadarPoint> | undefined>;
 }) {
@@ -528,7 +524,7 @@ function PolygonWithAnimation({
   );
 }
 
-function RenderPolygon(props: InternalProps) {
+function RenderPolygon(props: InternalRadarProps) {
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
   const previousBaseLinePointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
 
@@ -558,9 +554,9 @@ export const defaultRadarProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
+export type InternalRadarProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
 
-function RadarWithState(props: InternalProps) {
+function RadarWithState(props: InternalRadarProps) {
   const { hide, className, points } = props;
 
   if (hide) {
