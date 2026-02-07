@@ -100,6 +100,7 @@ interface InternalAreaProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
   animationMatchBy: PointMatchingStrategy<AreaPointItem>;
+  animationClipOverflow: boolean;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -182,6 +183,13 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'index'
    */
   animationMatchBy?: PointMatchingStrategy<AreaPointItem>;
+  /**
+   * Whether to clip the area to the chart bounds during animation.
+   * When true, points that slide beyond the axis bounds are hidden.
+   * Only applies when animationMatchBy is not 'index'.
+   * @defaultValue true
+   */
+  animationClipOverflow?: boolean;
   /**
    * Baseline of the area:
    * - number: uses the corresponding axis value as a flat baseline;
@@ -805,8 +813,24 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
 
 class AreaWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine, zIndex } =
-      this.props;
+    const {
+      hide,
+      dot,
+      points,
+      className,
+      top,
+      left,
+      needClip,
+      xAxisId,
+      yAxisId,
+      width,
+      height,
+      id,
+      baseLine,
+      animationClipOverflow,
+      animationMatchBy,
+      zIndex,
+    } = this.props;
 
     if (hide) {
       return null;
@@ -824,7 +848,12 @@ class AreaWithState extends PureComponent<InternalProps> {
         <Layer className={layerClass}>
           {needClip && (
             <defs>
-              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+              <GraphicalItemClipPath
+                clipPathId={clipPathId}
+                xAxisId={xAxisId}
+                yAxisId={yAxisId}
+                forceClip={animationClipOverflow && animationMatchBy !== 'index'}
+              />
               {!clipDot && (
                 <clipPath id={`clipPath-dots-${clipPathId}`}>
                   <rect
@@ -866,6 +895,7 @@ export const defaultAreaProps = {
   animationDuration: 1500,
   animationEasing: 'ease',
   animationMatchBy: 'index',
+  animationClipOverflow: true,
   connectNulls: false,
   dot: false,
   fill: '#3182bd',
@@ -889,6 +919,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
     animationDuration,
     animationEasing,
     animationMatchBy,
+    animationClipOverflow,
     connectNulls,
     dot,
     fill,
@@ -903,7 +934,8 @@ function AreaImpl(props: WithIdRequired<Props>) {
   } = resolveDefaultProps(props, defaultAreaProps);
   const layout = useChartLayout();
   const chartName = useChartName();
-  const { needClip } = useNeedsClip(xAxisId, yAxisId);
+  const { needClip: needClipFromAxes } = useNeedsClip(xAxisId, yAxisId);
+  const needClip = needClipFromAxes || (animationClipOverflow && animationMatchBy !== 'index');
   const isPanorama = useIsPanorama();
 
   const { points, isRange, baseLine } = useAppSelector(state => selectArea(state, props.id, isPanorama)) ?? {};
@@ -933,6 +965,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
       animationDuration={animationDuration}
       animationEasing={animationEasing}
       animationMatchBy={animationMatchBy}
+      animationClipOverflow={animationClipOverflow}
       baseLine={baseLine}
       connectNulls={connectNulls}
       dot={dot}

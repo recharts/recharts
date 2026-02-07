@@ -13,6 +13,7 @@ type GraphicalItemClipPathProps = {
   xAxisId: AxisId;
   yAxisId: AxisId;
   clipPathId: string;
+  forceClip?: boolean;
 };
 
 export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
@@ -26,24 +27,28 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
   return { needClip, needClipX, needClipY };
 }
 
-export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: GraphicalItemClipPathProps) {
+export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId, forceClip }: GraphicalItemClipPathProps) {
   const plotArea = usePlotArea();
 
   const { needClipX, needClipY, needClip } = useNeedsClip(xAxisId, yAxisId);
 
-  if (!needClip || !plotArea) {
+  if ((!needClip && !forceClip) || !plotArea) {
     return null;
   }
 
   const { x, y, width, height } = plotArea;
 
+  // When forceClip is set (e.g. animation overflow clipping), clip both axes to the plot area.
+  const clipX = forceClip || needClipX;
+  const clipY = forceClip || needClipY;
+
   return (
     <clipPath id={`clipPath-${clipPathId}`}>
       <rect
-        x={needClipX ? x : x - width / 2}
-        y={needClipY ? y : y - height / 2}
-        width={needClipX ? width : width * 2}
-        height={needClipY ? height : height * 2}
+        x={clipX ? x : x - width / 2}
+        y={clipY ? y : y - height / 2}
+        width={clipX ? width : width * 2}
+        height={clipY ? height : height * 2}
       />
     </clipPath>
   );

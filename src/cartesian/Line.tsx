@@ -92,6 +92,7 @@ interface InternalLineProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
   animationMatchBy: PointMatchingStrategy<LinePointItem>;
+  animationClipOverflow: boolean;
 
   className?: string;
   connectNulls: boolean;
@@ -171,6 +172,13 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'index'
    */
   animationMatchBy?: PointMatchingStrategy<LinePointItem>;
+  /**
+   * Whether to clip the line to the chart area during animation.
+   * When true, points that slide beyond the axis bounds are hidden.
+   * Only applies when animationMatchBy is not 'index'.
+   * @defaultValue true
+   */
+  animationClipOverflow?: boolean;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -754,8 +762,23 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<LinePointItem> = (
 // eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
   render() {
-    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, zIndex } =
-      this.props;
+    const {
+      hide,
+      dot,
+      points,
+      className,
+      xAxisId,
+      yAxisId,
+      top,
+      left,
+      width,
+      height,
+      id,
+      needClip,
+      animationClipOverflow,
+      animationMatchBy,
+      zIndex,
+    } = this.props;
 
     if (hide) {
       return null;
@@ -773,7 +796,12 @@ class LineWithState extends Component<InternalProps> {
         <Layer className={layerClass}>
           {needClip && (
             <defs>
-              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+              <GraphicalItemClipPath
+                clipPathId={clipPathId}
+                xAxisId={xAxisId}
+                yAxisId={yAxisId}
+                forceClip={animationClipOverflow && animationMatchBy !== 'index'}
+              />
               {!clipDot && (
                 <clipPath id={`clipPath-dots-${clipPathId}`}>
                   <rect
@@ -815,6 +843,7 @@ export const defaultLineProps = {
   animationDuration: 1500,
   animationEasing: 'ease',
   animationMatchBy: 'index',
+  animationClipOverflow: true,
   connectNulls: false,
   dot: true,
   fill: '#fff',
@@ -838,6 +867,7 @@ function LineImpl(props: WithIdRequired<Props>) {
     animationDuration,
     animationEasing,
     animationMatchBy,
+    animationClipOverflow,
     connectNulls,
     dot,
     hide,
@@ -850,7 +880,8 @@ function LineImpl(props: WithIdRequired<Props>) {
     ...everythingElse
   } = resolveDefaultProps(props, defaultLineProps);
 
-  const { needClip } = useNeedsClip(xAxisId, yAxisId);
+  const { needClip: needClipFromAxes } = useNeedsClip(xAxisId, yAxisId);
+  const needClip = needClipFromAxes || (animationClipOverflow && animationMatchBy !== 'index');
   const plotArea = usePlotArea();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
@@ -876,6 +907,7 @@ function LineImpl(props: WithIdRequired<Props>) {
       animationDuration={animationDuration}
       animationEasing={animationEasing}
       animationMatchBy={animationMatchBy}
+      animationClipOverflow={animationClipOverflow}
       isAnimationActive={isAnimationActive}
       hide={hide}
       label={label}
