@@ -3851,4 +3851,37 @@ describe('<BarChart />', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('data-* attributes', () => {
+    it('should pass data-testid to the SVG element', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={data} data-testid="my-bar-chart">
+          <Bar dataKey="uv" />
+        </BarChart>,
+      );
+
+      const svg = container.querySelector('svg.recharts-surface');
+      expect(svg).toHaveAttribute('data-testid', 'my-bar-chart');
+    });
+
+    it('should pass multiple data-* attributes to the SVG element', () => {
+      const { container } = render(
+        <BarChart
+          width={100}
+          height={50}
+          data={data}
+          data-testid="chart-1"
+          data-custom="custom-value"
+          data-analytics-id="bar-chart-analytics"
+        >
+          <Bar dataKey="uv" />
+        </BarChart>,
+      );
+
+      const svg = container.querySelector('svg.recharts-surface');
+      expect(svg).toHaveAttribute('data-testid', 'chart-1');
+      expect(svg).toHaveAttribute('data-custom', 'custom-value');
+      expect(svg).toHaveAttribute('data-analytics-id', 'bar-chart-analytics');
+    });
+  });
 });

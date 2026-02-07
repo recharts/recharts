@@ -24,8 +24,16 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 export interface Props {
+  /**
+   * HTML data-* attributes (e.g. data-testid) forwarded to the container div.
+   *
+   * Note: These attributes are only applied when the container renders a wrapper element (i.e. when dimensions are not fixed).
+   * If width and height are fixed numbers, or if nested inside another ResponsiveContainer, the wrapper is optimized away and these attributes will not be rendered.
+   */
+  [key: `data-${string}`]: string | number | boolean | undefined;
   /**
    * width / height. If specified, the height will be calculated by width / aspect.
    */
@@ -135,6 +143,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
       className,
       onResize,
       style = {},
+      ...rest
     }: Props,
     ref,
   ) => {
@@ -230,6 +239,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
         className={clsx('recharts-responsive-container', className)}
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
+        {...svgPropertiesAndEvents(rest)}
       >
         <div style={getInnerDivStyle({ width, height })}>
           <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
