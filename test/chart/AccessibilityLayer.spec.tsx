@@ -199,6 +199,37 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements).toHaveBeenCalledTimes(0);
     });
 
+    test('Tooltip closes when chart loses focus', () => {
+      const { container } = render(
+        <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>,
+      );
+
+      const svg = getMainSurface(container);
+      assertNotNull(svg);
+      const tooltip = getTooltip(container);
+
+      // Tooltip not visible initially
+      expect(tooltip.textContent).toBe('');
+
+      // Focus the chart - tooltip should appear
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('Page A');
+
+      // Navigate to another data point
+      arrowRight(svg);
+      expect(tooltip).toHaveTextContent('Page B');
+
+      // Blur the chart - tooltip should disappear
+      act(() => svg.blur());
+      expect(tooltip.textContent).toBe('');
+    });
+
     test('Left/right arrow pays attention to if the XAxis is reversed', () => {
       const mockMouseMovements = vi.fn();
 
@@ -828,5 +859,58 @@ describe('AreaChart vertical', () => {
     act(() => getMainSurface(container).focus());
 
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+});
+
+describe('Multiple charts navigation', () => {
+  test('Tooltip closes when tabbing away from one chart to another', () => {
+    const { container } = render(
+      <div>
+        <AreaChart width={100} height={50} data={PageData}>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>
+        <AreaChart width={100} height={50} data={PageData}>
+          <Area type="monotone" dataKey="pv" stroke="#387908" fill="#387908" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltips = container.querySelectorAll('.recharts-tooltip-wrapper');
+    expect(tooltips).toHaveLength(2);
+    const [tooltip1, tooltip2] = tooltips;
+
+    const svgs = container.querySelectorAll('svg.recharts-surface');
+    expect(svgs).toHaveLength(2);
+    const [svg1, svg2] = svgs;
+
+    // Initially, both tooltips should be hidden
+    expect(tooltip1?.textContent).toBe('');
+    expect(tooltip2?.textContent).toBe('');
+
+    // Focus first chart
+    act(() => (svg1 as HTMLElement).focus());
+    expect(tooltip1).toHaveTextContent('Page A');
+    expect(tooltip2?.textContent).toBe('');
+
+    // Navigate in first chart
+    arrowRight(svg1 as Element);
+    expect(tooltip1).toHaveTextContent('Page B');
+    expect(tooltip2?.textContent).toBe('');
+
+    // Blur first chart and focus second chart (simulating Tab key)
+    act(() => {
+      (svg1 as HTMLElement).blur();
+      (svg2 as HTMLElement).focus();
+    });
+
+    // First tooltip should be hidden, second tooltip should show
+    expect(tooltip1?.textContent).toBe('');
+    expect(tooltip2).toHaveTextContent('Page A');
   });
 });
