@@ -160,6 +160,9 @@ export type { IfOverflow } from './util/IfOverflow';
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';
 
+export type { AnimationStepFunction } from './animation/pointMatching';
+export { indexMatchLinearInterpolation, xMatchLinearInterpolation } from './animation/pointMatching';
+
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
 

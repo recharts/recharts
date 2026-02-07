@@ -788,6 +788,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             animationBegin: 0,
             animationDuration: 1500,
             animationEasing: 'ease',
+
             connectNulls: false,
             dataKey: 'value',
             dot: false,
@@ -846,6 +847,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             animationBegin: 0,
             animationDuration: 1500,
             animationEasing: 'ease',
+
             connectNulls: false,
             dataKey: 'value',
             dot: false,

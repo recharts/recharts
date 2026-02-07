@@ -179,6 +179,9 @@ describe('Documentation Examples Coverage', () => {
     'useYAxisScale',
     'useXAxisTicks',
     'useYAxisTicks',
+    'AnimationStepFunction',
+    'indexMatchLinearInterpolation',
+    'xMatchLinearInterpolation',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

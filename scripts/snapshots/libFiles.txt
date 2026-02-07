@@ -6,6 +6,7 @@
   "lib/animation/configUpdate.js",
   "lib/animation/createDefaultAnimationManager.js",
   "lib/animation/easing.js",
+  "lib/animation/pointMatching.js",
   "lib/animation/timeoutController.js",
   "lib/animation/useAnimationManager.js",
   "lib/animation/util.js",
