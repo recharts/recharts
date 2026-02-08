@@ -32,6 +32,7 @@ import {
   StackOffsetType,
   TickItem,
   AxisDomainTypeInput,
+  AxisDataType,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { LegendSettings } from '../state/legendSlice';
@@ -301,11 +302,11 @@ export const getTicksOfAxis = (
  * @returns tuple of two numbers
  */
 export const truncateByDomain = (
-  value: SeriesPoint<Record<number, number>>,
-  domain: ReadonlyArray<number>,
-): [number, number] | SeriesPoint<Record<number, number>> => {
+  value: SeriesPoint<Record<PropertyKey, unknown>>,
+  domain: ReadonlyArray<unknown> | null | undefined,
+): [number, number] | undefined => {
   if (!domain || domain.length !== 2 || !isNumber(domain[0]) || !isNumber(domain[1])) {
-    return value;
+    return undefined;
   }
 
   const minValue = Math.min(domain[0], domain[1]);

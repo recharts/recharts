@@ -6,7 +6,7 @@ import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
 import { isNullish, isNumber } from './DataUtils';
 
-export type BarRectangleProps = {
+export type BarRectangleProps<DataPointType = any, ValueAxisType = any> = {
   option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
   isActive: boolean;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -18,15 +18,10 @@ export type BarRectangleProps = {
   dataKey: DataKey<any> | undefined;
 } & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
-export function BarRectangle(props: BarRectangleProps) {
-  return (
-    <Shape
-      shapeType="rectangle"
-      activeClassName="recharts-active-bar"
-      inActiveClassName="recharts-inactive-bar"
-      {...props}
-    />
-  );
+export function BarRectangle<DataPointType = any, ValueAxisType = any>(
+  props: BarRectangleProps<DataPointType, ValueAxisType>,
+) {
+  return <Shape shapeType="rectangle" activeClassName="recharts-active-bar" inActiveClassName="recharts-inactive-bar" {...props} />;
 }
 
 export type MinPointSize = number | ((value: number | undefined | null, index: number) => number);

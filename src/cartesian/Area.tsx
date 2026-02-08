@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentType,
-  MutableRefObject,
-  PureComponent,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -21,13 +12,8 @@ import {
 import { Dots, DotsDotProps } from '../component/Dots';
 import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
-import {
-  getCateCoordinateOfLine,
-  getNormalizedStackId,
-  getTooltipNameProp,
-  getValueByDataKey,
-  StackId,
-} from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getNormalizedStackId, getTooltipNameProp, StackId } from '../util/ChartUtils';
+import { getTypedValue, TypedDataKey } from '../util/getTypedValue';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -88,7 +74,7 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalAreaProps extends ZIndexable {
+interface InternalAreaProps<DataPointType> extends ZIndexable {
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -98,8 +84,8 @@ interface InternalAreaProps extends ZIndexable {
   baseValue?: BaseValue;
   className?: string;
   connectNulls: boolean;
-  data?: ChartData;
-  dataKey: DataKey<any>;
+  data?: ChartData<DataPointType>;
+  dataKey: TypedDataKey<DataPointType>;
   dot: DotType;
   height: number;
   hide: boolean;
@@ -110,7 +96,7 @@ interface InternalAreaProps extends ZIndexable {
   id: string;
   isAnimationActive: boolean;
   isRange?: boolean;
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   layout: CartesianLayout;
   left: number;
 
@@ -120,7 +106,7 @@ interface InternalAreaProps extends ZIndexable {
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
 
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointType>>;
   stackId?: StackId;
 
   tooltipType?: TooltipType;
@@ -234,7 +220,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue false
    */
-  label?: ImplicitLabelListType;
+  label?: ImplicitLabelListType<DataPointType>;
   /**
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
@@ -315,9 +301,9 @@ type AreaSvgProps = Omit<
   'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML'
 >;
 
-type InternalProps = AreaSvgProps & InternalAreaProps;
+type InternalProps<DataPointType> = AreaSvgProps & InternalAreaProps<DataPointType>;
 
-export type Props = AreaSvgProps & AreaProps;
+export type Props<DataPointType = any, ValueAxisType = any> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -374,14 +360,14 @@ const SetAreaTooltipEntrySettings = React.memo(
   },
 );
 
-function AreaDotsWrapper({
+function AreaDotsWrapper<DataPointType>({
   clipPathId,
   points,
   props,
 }: {
   clipPathId: string;
-  points: ReadonlyArray<AreaPointItem>;
-  props: WithoutId<InternalProps>;
+  points: ReadonlyArray<AreaPointItem<DataPointType>>;
+  props: WithoutId<InternalProps<DataPointType>>;
 }) {
   const { needClip, dot, dataKey } = props;
   const areaProps: DotsDotProps = svgPropertiesNoEvents(props);
@@ -400,14 +386,14 @@ function AreaDotsWrapper({
   );
 }
 
-function AreaLabelListProvider({
+function AreaLabelListProvider<DataPointType>({
   showLabels,
   children,
   points,
 }: {
   showLabels: boolean;
   children: ReactNode;
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointType>>;
 }) {
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
     const viewBox: TrapezoidViewBox = {
@@ -435,18 +421,18 @@ function AreaLabelListProvider({
   );
 }
 
-function StaticArea({
+function StaticArea<DataPointItem>({
   points,
   baseLine,
   needClip,
   clipPathId,
   props,
 }: {
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointItem>>;
   baseLine: BaseLineType | undefined;
   needClip: boolean;
   clipPathId: string;
-  props: InternalProps;
+  props: InternalProps<DataPointItem>;
 }) {
   const { layout, type, stroke, connectNulls, isRange } = props;
 
@@ -498,14 +484,14 @@ function StaticArea({
   );
 }
 
-function VerticalRect({
+function VerticalRect<DataPointItem>({
   alpha,
   baseLine,
   points,
   strokeWidth,
 }: {
   alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointItem>>;
   baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
@@ -537,14 +523,14 @@ function VerticalRect({
   return null;
 }
 
-function HorizontalRect({
+function HorizontalRect<DataPointItem>({
   alpha,
   baseLine,
   points,
   strokeWidth,
 }: {
   alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointItem>>;
   baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
@@ -576,7 +562,7 @@ function HorizontalRect({
   return null;
 }
 
-function ClipRect({
+function ClipRect<DataPointItem>({
   alpha,
   layout,
   points,
@@ -585,7 +571,7 @@ function ClipRect({
 }: {
   alpha: number;
   layout: CartesianLayout;
-  points: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem<DataPointItem>>;
   baseLine: BaseLineType | undefined;
   strokeWidth: Props['strokeWidth'];
 }) {
@@ -596,7 +582,7 @@ function ClipRect({
   return <HorizontalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
 }
 
-function AreaWithAnimation({
+function AreaWithAnimation<DataPointItem>({
   needClip,
   clipPathId,
   props,
@@ -605,8 +591,8 @@ function AreaWithAnimation({
 }: {
   needClip: boolean;
   clipPathId: string;
-  props: InternalProps;
-  previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem> | null>;
+  props: InternalProps<DataPointItem>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem<DataPointItem>> | null>;
   previousBaselineRef: MutableRefObject<BaseLineType | undefined>;
 }) {
   const {
@@ -662,20 +648,20 @@ function AreaWithAnimation({
         {(t: number) => {
           if (prevPoints) {
             const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepPoints: ReadonlyArray<AreaPointItem> =
+            const stepPoints: ReadonlyArray<AreaPointItem<DataPointItem>> =
               /*
                * Here it is important that at the very end of the animation, on the last frame,
-               * we render the original points without any interpolation.
+               * we render the original points without interpolation.
                * This is needed because the code above is checking for reference equality to decide if the animation should run
                * and if we create a new array instance (even if the numbers were the same)
                * then we would break animations.
                */
               t === 1
                 ? points
-                : points.map((entry, index): AreaPointItem => {
+                : points.map((entry, index): AreaPointItem<DataPointItem> => {
                     const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
                     if (prevPoints[prevPointIndex]) {
-                      const prev: AreaPointItem = prevPoints[prevPointIndex];
+                      const prev: AreaPointItem<DataPointItem> = prevPoints[prevPointIndex];
 
                       return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
                     }
@@ -768,7 +754,15 @@ function AreaWithAnimation({
  * This components decides if the area should be animated or not.
  * It also holds the state of the animation.
  */
-function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPathId: string; props: InternalProps }) {
+function RenderArea<DataPointType>({
+  needClip,
+  clipPathId,
+  props,
+}: {
+  needClip: boolean;
+  clipPathId: string;
+  props: InternalProps<DataPointType>;
+}) {
   /*
    * These two must be refs, not state!
    * Because we want to store the most recent shape of the animation in case we have to interrupt the animation;
@@ -777,8 +771,8 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
    * If this was a useState, then every step in the animation would trigger a re-render.
    * So, useRef it is.
    */
-  const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
-  const previousBaselineRef = useRef<InternalProps['baseLine'] | undefined>();
+  const previousPointsRef = useRef<ReadonlyArray<AreaPointItem<DataPointType>> | null>(null);
+  const previousBaselineRef = useRef<BaseLineType | undefined>();
 
   return (
     <AreaWithAnimation
@@ -791,7 +785,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
   );
 }
 
-class AreaWithState extends PureComponent<InternalProps> {
+class AreaWithState<DataPointItem> extends PureComponent<InternalProps<DataPointItem>> {
   render() {
     const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine, zIndex } =
       this.props;
@@ -984,7 +978,7 @@ export const getBaseValue = (
   return domain[0];
 };
 
-export function computeArea({
+export function computeArea<DataPointItem>({
   areaSettings: { connectNulls, baseValue: itemBaseValue, dataKey },
   stackedData,
   layout,
@@ -997,63 +991,65 @@ export function computeArea({
   yAxisTicks,
   bandSize,
 }: {
-  areaSettings: AreaSettings;
+  areaSettings: AreaSettings<DataPointItem, any>;
   stackedData: ReadonlyArray<StackDataPoint> | undefined;
   layout: 'horizontal' | 'vertical';
   chartBaseValue: BaseValue | undefined;
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
-  displayedData: ChartData;
+  displayedData: ChartData<DataPointItem>;
   dataStartIndex: number;
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   bandSize: number;
-}): ComputedArea {
+}): ComputedArea<DataPointItem> {
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis);
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
 
-  const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
-    let valueAsArray: ReadonlyArray<unknown> | undefined;
+  const points: ReadonlyArray<AreaPointItem<DataPointItem>> = displayedData.map(
+    (entry, index): AreaPointItem<DataPointItem> => {
+      let valueAsArray: ReadonlyArray<unknown> | undefined;
 
-    if (hasStack) {
-      valueAsArray = stackedData[dataStartIndex + index];
-    } else {
-      const rawValue = getValueByDataKey(entry, dataKey);
-
-      if (!Array.isArray(rawValue)) {
-        valueAsArray = [baseValue, rawValue];
+      if (hasStack) {
+        valueAsArray = stackedData[dataStartIndex + index];
       } else {
-        valueAsArray = rawValue;
-        isRange = true;
+        const rawValue = getTypedValue(entry, dataKey);
+
+        if (Array.isArray(rawValue)) {
+          valueAsArray = rawValue;
+          isRange = true;
+        } else {
+          valueAsArray = [baseValue, rawValue];
+        }
       }
-    }
 
-    const value1 = valueAsArray?.[1] ?? null;
+      const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+      const isBreakPoint = value1 == null || (hasStack && !connectNulls && getTypedValue(entry, dataKey) == null);
 
-    if (isHorizontalLayout) {
+      if (isHorizontalLayout) {
+        return {
+          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry: entry as any, index }),
+          y: isBreakPoint ? null : (yAxis.scale.map(value1) ?? null),
+          value: valueAsArray,
+          payload: entry,
+        };
+      }
+
       return {
-        x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isBreakPoint ? null : (yAxis.scale.map(value1) ?? null),
+        x: isBreakPoint ? null : (xAxis.scale.map(value1) ?? null),
+        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry: entry as any, index }),
         value: valueAsArray,
         payload: entry,
       };
-    }
-
-    return {
-      x: isBreakPoint ? null : (xAxis.scale.map(value1) ?? null),
-      y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-      value: valueAsArray,
-      payload: entry,
-    };
-  });
+    },
+  );
 
   let baseLine: number | NullableCoordinate[] | undefined;
   if (hasStack || isRange) {
-    baseLine = points.map((entry: AreaPointItem): BaseValueCoordinate => {
+    baseLine = points.map((entry: AreaPointItem<DataPointItem>): BaseValueCoordinate<DataPointItem> => {
       const x = Array.isArray(entry.value) ? entry.value[0] : null;
       if (isHorizontalLayout) {
         return {
@@ -1079,10 +1075,10 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props) {
+function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType, ValueAxisType>) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   const isPanorama = useIsPanorama();
-  // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
+  // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
@@ -1100,7 +1096,7 @@ function AreaFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             id={id}
           />
-          <SetCartesianGraphicalItem
+          <SetCartesianGraphicalItem<DataPointType, ValueAxisType>
             type="area"
             id={id}
             data={props.data}
@@ -1126,5 +1122,8 @@ function AreaFn(outsideProps: Props) {
  * @provides LabelListContext
  * @consumes CartesianChartContext
  */
-export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
+export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => React.ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 Area.displayName = 'Area';

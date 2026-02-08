@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ComponentType, ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
+import { ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis, defaultCartesianAxisProps } from './CartesianAxis';
 import {
@@ -170,7 +170,11 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
+export type Props<DataPointType = unknown> = Omit<
+  PresentationAttributesAdaptChildEvent<any, SVGElement>,
+  'scale' | 'ref'
+> &
+  XAxisProps<DataPointType>;
 
 function SetXAxisSettings(props: Omit<XAxisSettings, 'type'> & { type: AxisDomainTypeInput }): ReactNode {
   const dispatch = useAppDispatch();
@@ -318,6 +322,9 @@ const XAxisSettingsDispatcher = (outsideProps: Props) => {
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
-export const XAxis: ComponentType<Props> = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual);
+export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as <DataPointType = any>(
+  props: Props<DataPointType>,
+) => React.ReactElement;
 
+// @ts-expect-error we need to set the displayName for debugging purposes
 XAxis.displayName = 'XAxis';

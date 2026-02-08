@@ -433,6 +433,7 @@ describe('<Pie />', () => {
             cy={250}
             innerRadius={0}
             outerRadius={200}
+            // @ts-expect-error typescript is correct here
             dataKey="this-key-does-not-exist-in-data"
             data={generateMockData(5, 0.603)}
           />
@@ -1670,7 +1671,7 @@ describe('<Pie />', () => {
       };
       const { rerender } = render(
         <PieChart width={500} height={500}>
-          <Pie data={PageData} dataKey="cy" innerRadius={100} id="my-pie" />
+          <Pie data={PageData} dataKey="uv" innerRadius={100} id="my-pie" />
           <Comp />
         </PieChart>,
       );
@@ -1683,7 +1684,7 @@ describe('<Pie />', () => {
         cx: '50%',
         cy: '50%',
         data: PageData,
-        dataKey: 'cy',
+        dataKey: 'uv',
         endAngle: 360,
         fill: '#808080',
         hide: false,
@@ -1710,7 +1711,7 @@ describe('<Pie />', () => {
 
       rerender(
         <PieChart width={500} height={500}>
-          <Pie data={PageData} dataKey="cx" innerRadius={200} id="my-pie" outerRadius={200} />
+          <Pie data={PageData} dataKey="pv" innerRadius={200} id="my-pie" outerRadius={200} />
           <Comp />
         </PieChart>,
       );
@@ -1723,7 +1724,7 @@ describe('<Pie />', () => {
         cx: '50%',
         cy: '50%',
         data: PageData,
-        dataKey: 'cx',
+        dataKey: 'pv',
         endAngle: 360,
         fill: '#808080',
         hide: false,
@@ -1758,7 +1759,7 @@ describe('<Pie />', () => {
       };
       render(
         <PieChart width={500} height={500}>
-          <Pie data={PageData} dataKey="cy" innerRadius={100} />
+          <Pie data={PageData} dataKey="uv" innerRadius={100} />
           <Comp />
         </PieChart>,
       );
@@ -1771,7 +1772,7 @@ describe('<Pie />', () => {
         cx: '50%',
         cy: '50%',
         data: PageData,
-        dataKey: 'cy',
+        dataKey: 'uv',
         endAngle: 360,
         fill: '#808080',
         hide: false,

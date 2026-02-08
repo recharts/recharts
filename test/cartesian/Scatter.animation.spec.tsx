@@ -277,7 +277,7 @@ describe('Scatter Animation', () => {
 
   describe('when changing dataKey prop', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
-      const [dataKey, setDataKey] = useState('uv');
+      const [dataKey, setDataKey] = useState<'uv' | 'pv'>('uv');
       const changeDataKey = () => setDataKey(prev => (prev === 'uv' ? 'pv' : 'uv'));
       return (
         <div>
@@ -323,7 +323,7 @@ describe('Scatter Animation', () => {
 
   describe('when the Scatter has a key prop to force re-animation', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
-      const [dataKey, setDataKey] = useState('pv');
+      const [dataKey, setDataKey] = useState<'uv' | 'pv'>('pv');
       const changeDataKey = () => setDataKey(prev => (prev === 'uv' ? 'pv' : 'uv'));
       return (
         <div>

@@ -39,6 +39,8 @@ import type { TickFormatter } from '../cartesian/CartesianAxis';
 import { TextProps } from '../index';
 import { TypedDataKey } from './typedDataKey';
 
+export { TypedDataKey };
+
 /**
  * Determines how values are stacked:
  *
@@ -913,7 +915,7 @@ export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseA
    *
    * @defaultValue true
    */
-  tick?: TickProp<unknown>;
+  tick?: TickProp<DataPointType>;
 
   /**
    * The count of axis ticks. Not used if 'type' is 'category'.
