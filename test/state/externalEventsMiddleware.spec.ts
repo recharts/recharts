@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { SyntheticEvent } from 'react';
 import { Store } from '@reduxjs/toolkit';
 import { act } from '@testing-library/react';
@@ -6,7 +6,7 @@ import { externalEventAction } from '../../src/state/externalEventsMiddleware';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 
 describe('externalEventsMiddleware', () => {
-  let store: Store<RechartsRootState>, mockHandler: ReturnType<typeof vi.fn>, mockEvent: SyntheticEvent;
+  let store: Store<RechartsRootState>, mockHandler: Mock, mockEvent: SyntheticEvent;
 
   beforeEach(() => {
     store = createRechartsStore();
