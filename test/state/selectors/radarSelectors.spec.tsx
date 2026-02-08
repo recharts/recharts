@@ -201,7 +201,6 @@ describe('selectRadarPoints', () => {
           angle: 90,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 0,
           payload: {
             half: 210,
@@ -217,7 +216,6 @@ describe('selectRadarPoints', () => {
           angle: 45,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 1,
           payload: {
             half: 230,
@@ -233,7 +231,6 @@ describe('selectRadarPoints', () => {
           angle: 0,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 2,
           payload: {
             half: 500,
@@ -249,7 +246,6 @@ describe('selectRadarPoints', () => {
           angle: -45,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 3,
           payload: {
             half: 250,
@@ -265,7 +261,6 @@ describe('selectRadarPoints', () => {
           angle: -90,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 4,
           payload: {
             half: 432,
@@ -281,7 +276,6 @@ describe('selectRadarPoints', () => {
           angle: -135,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 5,
           payload: {
             half: 325,
@@ -297,7 +291,6 @@ describe('selectRadarPoints', () => {
           angle: -180,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 6,
           payload: {
             half: 383,
@@ -313,7 +306,6 @@ describe('selectRadarPoints', () => {
           angle: -225,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 7,
           payload: {
             half: 183,
@@ -346,7 +338,6 @@ describe('selectRadarPoints', () => {
           angle: 90,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 0,
           payload: {
             half: 210,
@@ -362,7 +353,6 @@ describe('selectRadarPoints', () => {
           angle: 45,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 1,
           payload: {
             half: 230,
@@ -378,7 +368,6 @@ describe('selectRadarPoints', () => {
           angle: 0,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 2,
           payload: {
             half: 500,
@@ -394,7 +383,6 @@ describe('selectRadarPoints', () => {
           angle: -45,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 3,
           payload: {
             half: 250,
@@ -410,7 +398,6 @@ describe('selectRadarPoints', () => {
           angle: -90,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 4,
           payload: {
             half: 432,
@@ -426,7 +413,6 @@ describe('selectRadarPoints', () => {
           angle: -135,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 5,
           payload: {
             half: 325,
@@ -442,7 +428,6 @@ describe('selectRadarPoints', () => {
           angle: -180,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 6,
           payload: {
             half: 383,
@@ -458,7 +443,6 @@ describe('selectRadarPoints', () => {
           angle: -225,
           cx: 200,
           cy: 200,
-          // @ts-expect-error expected string, got number
           name: 7,
           payload: {
             half: 183,

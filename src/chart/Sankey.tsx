@@ -725,15 +725,15 @@ interface SankeyProps extends EventThrottlingProps {
   /**
    * The customized event handler of click on the area in this group
    */
-  onClick?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  onClick?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseenter on the area in this group
    */
-  onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => void;
   /**
    * The customized event handler of mouseleave on the area in this group
    */
-  onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
+  onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => void;
   /**
    * Whether to sort the nodes on the y axis, or to display them as user-defined.
    * @default true
@@ -751,9 +751,9 @@ interface SankeyProps extends EventThrottlingProps {
   align?: 'left' | 'justify';
 }
 
-export type Props = SVGProps<SVGSVGElement> & SankeyProps;
+export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
 
-type SankeyElementType = 'node' | 'link';
+export type SankeyElementType = 'node' | 'link';
 
 function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps) {
   if (React.isValidElement(option)) {
@@ -846,9 +846,9 @@ function SankeyLinkElement({
   props: LinkProps;
   i: number;
   linkContent: SankeyLinkOptions | undefined;
-  onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
-  onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
-  onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+  onMouseEnter: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onMouseLeave: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onClick: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
   dataKey: DataKey<any>;
 }) {
   const activeCoordinate = getLinkCoordinateOfTooltip(props);
@@ -857,7 +857,7 @@ function SankeyLinkElement({
   const dispatch = useAppDispatch();
 
   const events = {
-    onMouseEnter: (e: MouseEvent) => {
+    onMouseEnter: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(
         setActiveMouseOverItemIndex({
           activeIndex,
@@ -868,11 +868,11 @@ function SankeyLinkElement({
       );
       onMouseEnter(props, e);
     },
-    onMouseLeave: (e: MouseEvent) => {
+    onMouseLeave: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(mouseLeaveItem());
       onMouseLeave(props, e);
     },
-    onClick: (e: MouseEvent) => {
+    onClick: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(
         setActiveClickItemIndex({
           activeIndex,
@@ -902,9 +902,9 @@ function AllSankeyLinkElements({
   modifiedLinks: ReadonlyArray<LinkProps>;
   links: ReadonlyArray<SankeyLink>;
   linkContent: SankeyLinkOptions | undefined;
-  onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
-  onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
-  onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+  onMouseEnter: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onMouseLeave: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onClick: (linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => void;
   dataKey: DataKey<any>;
 }) {
   return (
@@ -987,9 +987,9 @@ function NodeElement({
   props: NodeProps;
   nodeContent: SankeyNodeOptions | undefined;
   i: number;
-  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
-  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
-  onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onClick: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
   dataKey: DataKey<any>;
 }) {
   const dispatch = useAppDispatch();
@@ -998,7 +998,7 @@ function NodeElement({
   const activeIndex = `node-${i}`;
 
   const events = {
-    onMouseEnter: (e: MouseEvent) => {
+    onMouseEnter: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(
         setActiveMouseOverItemIndex({
           activeIndex,
@@ -1009,11 +1009,11 @@ function NodeElement({
       );
       onMouseEnter(props, e);
     },
-    onMouseLeave: (e: MouseEvent) => {
+    onMouseLeave: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(mouseLeaveItem());
       onMouseLeave(props, e);
     },
-    onClick: (e: MouseEvent) => {
+    onClick: (e: MouseEvent<SVGGraphicsElement>) => {
       dispatch(
         setActiveClickItemIndex({
           activeIndex,
@@ -1041,9 +1041,9 @@ function AllNodeElements({
   graphicalItemId: GraphicalItemId;
   modifiedNodes: ReadonlyArray<NodeProps>;
   nodeContent: SankeyNodeOptions | undefined;
-  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
-  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
-  onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
+  onClick: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
   dataKey: DataKey<any>;
 }) {
   return (
@@ -1169,7 +1169,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   ]);
 
   const handleMouseEnter = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => {
       if (onMouseEnter) {
         onMouseEnter(item, type, e);
       }
@@ -1178,7 +1178,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   );
 
   const handleMouseLeave = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => {
       if (onMouseLeave) {
         onMouseLeave(item, type, e);
       }
@@ -1187,7 +1187,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   );
 
   const handleClick = useCallback(
-    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => {
+    (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => {
       if (onClick) {
         onClick(item, type, e);
       }
@@ -1210,18 +1210,26 @@ function SankeyImpl(props: InternalSankeyProps) {
           modifiedLinks={modifiedLinks}
           linkContent={link}
           dataKey={dataKey}
-          onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => handleMouseEnter(linkProps, 'link', e)}
-          onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => handleMouseLeave(linkProps, 'link', e)}
-          onClick={(linkProps: LinkProps, e: MouseEvent) => handleClick(linkProps, 'link', e)}
+          onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+            handleMouseEnter(linkProps, 'link', e)
+          }
+          onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+            handleMouseLeave(linkProps, 'link', e)
+          }
+          onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
         />
         <AllNodeElements
           graphicalItemId={id}
           modifiedNodes={modifiedNodes}
           nodeContent={node}
           dataKey={dataKey}
-          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => handleMouseEnter(nodeProps, 'node', e)}
-          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => handleMouseLeave(nodeProps, 'node', e)}
-          onClick={(nodeProps: NodeProps, e: MouseEvent) => handleClick(nodeProps, 'node', e)}
+          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+            handleMouseEnter(nodeProps, 'node', e)
+          }
+          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+            handleMouseLeave(nodeProps, 'node', e)
+          }
+          onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
         />
       </Surface>
     </>

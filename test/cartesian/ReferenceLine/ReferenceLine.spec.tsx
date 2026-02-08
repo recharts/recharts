@@ -1,6 +1,6 @@
 import React from 'react';
-import { MockInstance, vi, beforeEach, describe, it, test, expect } from 'vitest';
-import { screen, render } from '@testing-library/react';
+import { MockInstance, vi, beforeEach, describe, it, test, expect, Mock } from 'vitest';
+import { screen, render, fireEvent } from '@testing-library/react';
 import {
   BarChart,
   ReferenceLine,
@@ -19,6 +19,8 @@ import { pageData } from '../../../storybook/stories/data';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { selectBrushDimensions, selectBrushSettings } from '../../../src/state/selectors/brushSelectors';
 import { PageData } from '../../_data';
+import { userEventSetup } from '../../helper/userEventSetup';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 type ExpectedReferenceLine = {
   x1: string;
@@ -644,6 +646,76 @@ describe('<ReferenceLine />', () => {
           y2: '11',
         },
       ]);
+    });
+  });
+
+  describe('events', () => {
+    it('should fire event handlers when provided', async () => {
+      const userEvent = userEventSetup();
+      const onClick: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onMouseEnter: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onMouseLeave: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOver: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOut: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onMouseMove: Mock<(e: React.MouseEvent) => void> = vi.fn();
+      const onTouchStart: Mock<(e: React.TouchEvent) => void> = vi.fn();
+      const onTouchMove: Mock<(e: React.TouchEvent) => void> = vi.fn();
+      const onTouchEnd: Mock<(e: React.TouchEvent) => void> = vi.fn();
+
+      const { container } = render(
+        <LineChart width={100} height={100} data={[{ x: 1, y: 1 }]}>
+          <YAxis dataKey="y" />
+          <XAxis dataKey="x" />
+          <ReferenceLine
+            x={1}
+            r={3}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            onMouseMove={onMouseMove}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          />
+        </LineChart>,
+      );
+
+      const dot = container.querySelector('.recharts-reference-line .recharts-reference-line-line');
+      assertNotNull(dot);
+
+      await userEvent.click(dot);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(onClick, expect.objectContaining({ type: 'click' }));
+
+      await userEvent.hover(dot);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expect(onMouseEnter).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'mouseenter' }));
+      expect(onMouseOver).toHaveBeenCalledTimes(1);
+      expect(onMouseOver).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'mouseover' }));
+
+      await userEvent.unhover(dot);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onMouseLeave).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'mouseleave' }));
+      expect(onMouseOut).toHaveBeenCalledTimes(1);
+      expect(onMouseOut).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'mouseout' }));
+
+      await userEvent.pointer({ target: dot, keys: '[MouseMove]' });
+      expect(onMouseMove).toHaveBeenCalledTimes(1);
+      expect(onMouseMove).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'mousemove' }));
+
+      fireEvent.touchStart(dot);
+      expect(onTouchStart).toHaveBeenCalledTimes(1);
+      expect(onTouchStart).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'touchstart' }));
+
+      fireEvent.touchMove(dot);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
+      expect(onTouchMove).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'touchmove' }));
+
+      fireEvent.touchEnd(dot);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+      expect(onTouchEnd).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'touchend' }));
     });
   });
 });

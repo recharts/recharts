@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Customized, Sankey, Tooltip, XAxis, YAxis } from '../../src';
+import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
@@ -58,7 +58,7 @@ describe('<Sankey />', () => {
       };
       render(
         <Sankey width={1000} height={500} data={exampleSankeyData}>
-          <Customized component={<Comp />} />
+          <Comp />
         </Sankey>,
       );
       expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
@@ -76,7 +76,7 @@ describe('<Sankey />', () => {
       };
       render(
         <Sankey width={100} height={50} data={exampleSankeyData}>
-          <Customized component={<Comp />} />
+          <Comp />
         </Sankey>,
       );
       expect(widthSpy).toHaveBeenLastCalledWith(100);
@@ -255,7 +255,7 @@ describe('<Sankey />', () => {
         <Sankey width={1000} height={500} data={exampleSankeyData}>
           <XAxis dataKey="number" type="number" />
           <YAxis type="category" dataKey="name" />
-          <Customized component={<Comp />} />
+          <Comp />
         </Sankey>,
       );
       expectLastCalledWith(tooltipStateSpy, {
@@ -367,7 +367,7 @@ describe('<Sankey />', () => {
         <Sankey width={1000} height={500} data={exampleSankeyData}>
           <XAxis dataKey="number" type="number" />
           <YAxis type="category" dataKey="name" />
-          <Customized component={<Comp />} />
+          <Comp />
         </Sankey>,
       );
       expectLastCalledWith(tooltipStateSpy, {
@@ -478,72 +478,12 @@ describe('<Sankey />', () => {
 
       fireEvent.click(link, { clientX: 200, clientY: 200 });
       expect(onClick).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onClick,
-        {
-          index: 0,
-          linkWidth: 13.172337974085991,
-          payload: {
-            dy: 13.172337974085991,
-            source: {
-              depth: 0,
-              dx: 10,
-              dy: 13.172337974085991,
-              name: 'Agricultural waste',
-              sourceLinks: [],
-              sourceNodes: [],
-              targetLinks: [0],
-              targetNodes: [1],
-              value: 124.729,
-              x: 0,
-              y: 127.92976245668771,
-            },
-            sy: 0,
-            target: {
-              depth: 1,
-              dx: 10,
-              dy: 41.07345963305562,
-              name: 'Bio-conversion',
-              sourceLinks: [65, 0, 51, 44],
-              sourceNodes: [0, 34, 39, 45],
-              targetLinks: [2, 3, 4, 1],
-              targetNodes: [2, 3, 4, 5],
-              value: 388.925,
-              x: 140,
-              y: 113.96304660380619,
-            },
-            ty: 19.221650415407733,
-            value: 124.729,
-          },
-          sourceControlX: 80,
-          sourceRelativeY: 0,
-          sourceX: 15,
-          sourceY: 139.51593144373072,
-          targetControlX: 80,
-          targetRelativeY: 19.221650415407733,
-          targetX: 145,
-          targetY: 144.77086600625694,
-        },
-        'link',
-        expect.any(Object),
-      );
-    });
-
-    it('should call onClick handler on nodes', () => {
-      const onClick = vi.fn();
-      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
-
-      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
-      assertNotNull(node);
-
-      fireEvent.click(node, { clientX: 200, clientY: 200 });
-      expect(onClick).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onClick,
-        {
-          height: 13.172337974085991,
-          index: 0,
-          payload: {
+      const expectedLinkProps: SankeyLinkProps = {
+        index: 0,
+        linkWidth: 13.172337974085991,
+        payload: {
+          dy: 13.172337974085991,
+          source: {
             depth: 0,
             dx: 10,
             dy: 13.172337974085991,
@@ -556,13 +496,65 @@ describe('<Sankey />', () => {
             x: 0,
             y: 127.92976245668771,
           },
-          width: 10,
-          x: 5,
-          y: 132.9297624566877,
+          sy: 0,
+          target: {
+            depth: 1,
+            dx: 10,
+            dy: 41.07345963305562,
+            name: 'Bio-conversion',
+            sourceLinks: [65, 0, 51, 44],
+            sourceNodes: [0, 34, 39, 45],
+            targetLinks: [2, 3, 4, 1],
+            targetNodes: [2, 3, 4, 5],
+            value: 388.925,
+            x: 140,
+            y: 113.96304660380619,
+          },
+          ty: 19.221650415407733,
+          value: 124.729,
         },
-        'node',
-        expect.any(Object),
-      );
+        sourceControlX: 80,
+        sourceRelativeY: 0,
+        sourceX: 15,
+        sourceY: 139.51593144373072,
+        targetControlX: 80,
+        targetRelativeY: 19.221650415407733,
+        targetX: 145,
+        targetY: 144.77086600625694,
+      };
+      expectLastCalledWith(onClick, expectedLinkProps, 'link', expect.objectContaining({ type: 'click' }));
+    });
+
+    it('should call onClick handler on nodes', () => {
+      const onClick = vi.fn();
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      fireEvent.click(node, { clientX: 200, clientY: 200 });
+      expect(onClick).toHaveBeenCalledTimes(1);
+      const expectedNodeProps: SankeyNodeProps = {
+        height: 13.172337974085991,
+        index: 0,
+        payload: {
+          depth: 0,
+          dx: 10,
+          dy: 13.172337974085991,
+          name: 'Agricultural waste',
+          sourceLinks: [],
+          sourceNodes: [],
+          targetLinks: [0],
+          targetNodes: [1],
+          value: 124.729,
+          x: 0,
+          y: 127.92976245668771,
+        },
+        width: 10,
+        x: 5,
+        y: 132.9297624566877,
+      };
+      expectLastCalledWith(onClick, expectedNodeProps, 'node', expect.objectContaining({ type: 'click' }));
     });
 
     it('should call onMouseEnter and onMouseLeave handlers on links', () => {
@@ -583,107 +575,55 @@ describe('<Sankey />', () => {
 
       fireEvent.mouseEnter(link, { clientX: 200, clientY: 200 });
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onMouseEnter,
-        {
-          sourceX: 15,
-          targetX: 145,
-          sourceY: 139.51593144373072,
-          targetY: 144.77086600625694,
-          sourceControlX: 80,
-          targetControlX: 80,
-          sourceRelativeY: 0,
-          targetRelativeY: 19.221650415407733,
-          linkWidth: 13.172337974085991,
-          index: 0,
-          payload: {
-            source: {
-              name: 'Agricultural waste',
-              sourceNodes: [],
-              sourceLinks: [],
-              targetLinks: [0],
-              targetNodes: [1],
-              value: 124.729,
-              depth: 0,
-              x: 0,
-              dx: 10,
-              y: 127.92976245668771,
-              dy: 13.172337974085991,
-            },
-            target: {
-              name: 'Bio-conversion',
-              sourceNodes: [0, 34, 39, 45],
-              sourceLinks: [65, 0, 51, 44],
-              targetLinks: [2, 3, 4, 1],
-              targetNodes: [2, 3, 4, 5],
-              value: 388.925,
-              depth: 1,
-              x: 140,
-              dx: 10,
-              y: 113.96304660380619,
-              dy: 41.07345963305562,
-            },
+      const expectedLinkProps: SankeyLinkProps = {
+        sourceX: 15,
+        targetX: 145,
+        sourceY: 139.51593144373072,
+        targetY: 144.77086600625694,
+        sourceControlX: 80,
+        targetControlX: 80,
+        sourceRelativeY: 0,
+        targetRelativeY: 19.221650415407733,
+        linkWidth: 13.172337974085991,
+        index: 0,
+        payload: {
+          source: {
+            name: 'Agricultural waste',
+            sourceNodes: [],
+            sourceLinks: [],
+            targetLinks: [0],
+            targetNodes: [1],
             value: 124.729,
+            depth: 0,
+            x: 0,
+            dx: 10,
+            y: 127.92976245668771,
             dy: 13.172337974085991,
-            sy: 0,
-            ty: 19.221650415407733,
           },
+          target: {
+            name: 'Bio-conversion',
+            sourceNodes: [0, 34, 39, 45],
+            sourceLinks: [65, 0, 51, 44],
+            targetLinks: [2, 3, 4, 1],
+            targetNodes: [2, 3, 4, 5],
+            value: 388.925,
+            depth: 1,
+            x: 140,
+            dx: 10,
+            y: 113.96304660380619,
+            dy: 41.07345963305562,
+          },
+          value: 124.729,
+          dy: 13.172337974085991,
+          sy: 0,
+          ty: 19.221650415407733,
         },
-        'link',
-        expect.any(Object),
-      );
+      };
+      expectLastCalledWith(onMouseEnter, expectedLinkProps, 'link', expect.objectContaining({ type: 'mouseenter' }));
 
       fireEvent.mouseLeave(link);
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onMouseLeave,
-        {
-          sourceX: 15,
-          targetX: 145,
-          sourceY: 139.51593144373072,
-          targetY: 144.77086600625694,
-          sourceControlX: 80,
-          targetControlX: 80,
-          sourceRelativeY: 0,
-          targetRelativeY: 19.221650415407733,
-          linkWidth: 13.172337974085991,
-          index: 0,
-          payload: {
-            source: {
-              name: 'Agricultural waste',
-              sourceNodes: [],
-              sourceLinks: [],
-              targetLinks: [0],
-              targetNodes: [1],
-              value: 124.729,
-              depth: 0,
-              x: 0,
-              dx: 10,
-              y: 127.92976245668771,
-              dy: 13.172337974085991,
-            },
-            target: {
-              name: 'Bio-conversion',
-              sourceNodes: [0, 34, 39, 45],
-              sourceLinks: [65, 0, 51, 44],
-              targetLinks: [2, 3, 4, 1],
-              targetNodes: [2, 3, 4, 5],
-              value: 388.925,
-              depth: 1,
-              x: 140,
-              dx: 10,
-              y: 113.96304660380619,
-              dy: 41.07345963305562,
-            },
-            value: 124.729,
-            dy: 13.172337974085991,
-            sy: 0,
-            ty: 19.221650415407733,
-          },
-        },
-        'link',
-        expect.any(Object),
-      );
+      expectLastCalledWith(onMouseLeave, expectedLinkProps, 'link', expect.objectContaining({ type: 'mouseleave' }));
     });
 
     it('should do nothing onMouseMove on links', () => {
@@ -718,59 +658,31 @@ describe('<Sankey />', () => {
 
       fireEvent.mouseEnter(node, { clientX: 200, clientY: 200 });
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onMouseEnter,
-        {
-          height: 13.172337974085991,
-          index: 0,
-          payload: {
-            name: 'Agricultural waste',
-            sourceNodes: [],
-            sourceLinks: [],
-            targetLinks: [0],
-            targetNodes: [1],
-            value: 124.729,
-            depth: 0,
-            x: 0,
-            dx: 10,
-            y: 127.92976245668771,
-            dy: 13.172337974085991,
-          },
-          width: 10,
-          x: 5,
-          y: 132.9297624566877,
+      const expectedNodeProps: SankeyNodeProps = {
+        height: 13.172337974085991,
+        index: 0,
+        payload: {
+          name: 'Agricultural waste',
+          sourceNodes: [],
+          sourceLinks: [],
+          targetLinks: [0],
+          targetNodes: [1],
+          value: 124.729,
+          depth: 0,
+          x: 0,
+          dx: 10,
+          y: 127.92976245668771,
+          dy: 13.172337974085991,
         },
-        'node',
-        expect.any(Object),
-      );
+        width: 10,
+        x: 5,
+        y: 132.9297624566877,
+      };
+      expectLastCalledWith(onMouseEnter, expectedNodeProps, 'node', expect.objectContaining({ type: 'mouseenter' }));
 
       fireEvent.mouseLeave(node);
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        onMouseLeave,
-        {
-          height: 13.172337974085991,
-          index: 0,
-          payload: {
-            name: 'Agricultural waste',
-            sourceNodes: [],
-            sourceLinks: [],
-            targetLinks: [0],
-            targetNodes: [1],
-            value: 124.729,
-            depth: 0,
-            x: 0,
-            dx: 10,
-            y: 127.92976245668771,
-            dy: 13.172337974085991,
-          },
-          width: 10,
-          x: 5,
-          y: 132.9297624566877,
-        },
-        'node',
-        expect.any(Object),
-      );
+      expectLastCalledWith(onMouseLeave, expectedNodeProps, 'node', expect.objectContaining({ type: 'mouseleave' }));
     });
 
     it('should do nothing onMouseMove on nodes', () => {

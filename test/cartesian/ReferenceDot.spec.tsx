@@ -1,10 +1,12 @@
 import React from 'react';
-import { describe, expect, it, test, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Bar, BarChart, Customized, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Bar, BarChart, DotProps, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceDotsByAxis } from '../../src/state/selectors/axisSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
+import { userEventSetup } from '../helper/userEventSetup';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('<ReferenceDot />', () => {
   const data = [
@@ -344,6 +346,99 @@ describe('<ReferenceDot />', () => {
     });
   });
 
+  describe('events', () => {
+    it('should fire event handlers when provided', async () => {
+      const userEvent = userEventSetup();
+      const onClick: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseEnter: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseLeave: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOver: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOut: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseMove: Mock<(dotProps: DotProps, e: React.MouseEvent) => void> = vi.fn();
+      const onTouchStart: Mock<(dotProps: DotProps, e: React.TouchEvent) => void> = vi.fn();
+      const onTouchMove: Mock<(dotProps: DotProps, e: React.TouchEvent) => void> = vi.fn();
+      const onTouchEnd: Mock<(dotProps: DotProps, e: React.TouchEvent) => void> = vi.fn();
+
+      const { container } = render(
+        <LineChart width={100} height={100} data={[{ x: 1, y: 1 }]}>
+          <YAxis dataKey="y" />
+          <XAxis dataKey="x" />
+          <ReferenceDot
+            x={1}
+            y={1}
+            r={3}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            onMouseMove={onMouseMove}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          />
+        </LineChart>,
+      );
+
+      const dot = container.querySelector('.recharts-reference-dot .recharts-dot');
+      assertNotNull(dot);
+
+      await userEvent.click(dot);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      const expectedDotProps: DotProps = {
+        className: 'recharts-reference-dot-dot',
+        clipPath: undefined,
+        cx: 80,
+        cy: 5,
+        fill: '#fff',
+        fillOpacity: 1,
+        onClick,
+        onMouseEnter,
+        onMouseLeave,
+        onMouseMove,
+        onMouseOut,
+        onMouseOver,
+        onTouchEnd,
+        onTouchMove,
+        onTouchStart,
+        r: 3,
+        stroke: '#ccc',
+        strokeWidth: 1,
+        x: 1,
+        y: 1,
+      };
+      expectLastCalledWith(onClick, expectedDotProps, expect.objectContaining({ type: 'click' }));
+
+      await userEvent.hover(dot);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expect(onMouseEnter).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'mouseenter' }));
+      expect(onMouseOver).toHaveBeenCalledTimes(1);
+      expect(onMouseOver).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'mouseover' }));
+
+      await userEvent.unhover(dot);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onMouseLeave).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'mouseleave' }));
+      expect(onMouseOut).toHaveBeenCalledTimes(1);
+      expect(onMouseOut).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'mouseout' }));
+
+      await userEvent.pointer({ target: dot, keys: '[MouseMove]' });
+      expect(onMouseMove).toHaveBeenCalledTimes(1);
+      expect(onMouseMove).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'mousemove' }));
+
+      fireEvent.touchStart(dot);
+      expect(onTouchStart).toHaveBeenCalledTimes(1);
+      expect(onTouchStart).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'touchstart' }));
+
+      fireEvent.touchMove(dot);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
+      expect(onTouchMove).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'touchmove' }));
+
+      fireEvent.touchEnd(dot);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+      expect(onTouchEnd).toHaveBeenLastCalledWith(expectedDotProps, expect.objectContaining({ type: 'touchend' }));
+    });
+  });
+
   describe('state integration', () => {
     it('should report its settings to Redux state, and remove it after removing from DOM', () => {
       const dotSpy = vi.fn();
@@ -356,7 +451,7 @@ describe('<ReferenceDot />', () => {
           <YAxis />
           <XAxis />
           <ReferenceDot x={1} y="categorical data item" r={3} ifOverflow="extendDomain" />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -376,7 +471,7 @@ describe('<ReferenceDot />', () => {
         <LineChart width={100} height={100}>
           <YAxis />
           <XAxis />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 

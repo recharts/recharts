@@ -72,7 +72,7 @@ export interface TreemapNode {
   height: number;
   name: string;
   tooltipIndex: TooltipIndex;
-  root: TreemapNode;
+  root?: TreemapNode;
 
   [k: string]: unknown;
 }
@@ -458,9 +458,9 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    */
   onAnimationEnd?: () => void;
 
-  onMouseEnter?: (node: TreemapNode, e: React.MouseEvent) => void;
+  onMouseEnter?: (node: TreemapNode, e: React.MouseEvent<SVGGraphicsElement>) => void;
 
-  onMouseLeave?: (node: TreemapNode, e: React.MouseEvent) => void;
+  onMouseLeave?: (node: TreemapNode, e: React.MouseEvent<SVGGraphicsElement>) => void;
 
   onClick?: (node: TreemapNode) => void;
 
@@ -713,13 +713,13 @@ function TreemapItem({
   const translateX = -x - width;
   const translateY = 0;
 
-  const onMouseEnter = (e: React.MouseEvent) => {
+  const onMouseEnter = (e: React.MouseEvent<SVGGraphicsElement>) => {
     if ((isLeaf || type === 'nest') && typeof onMouseEnterFromProps === 'function') {
       onMouseEnterFromProps(nodeProps, e);
     }
   };
 
-  const onMouseLeave = (e: React.MouseEvent) => {
+  const onMouseLeave = (e: React.MouseEvent<SVGGraphicsElement>) => {
     if ((isLeaf || type === 'nest') && typeof onMouseLeaveFromProps === 'function') {
       onMouseLeaveFromProps(nodeProps, e);
     }

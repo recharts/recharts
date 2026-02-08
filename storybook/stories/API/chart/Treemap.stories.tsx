@@ -73,7 +73,7 @@ export const WithCustomContent = {
                   width={width}
                   height={height}
                   style={{
-                    fill: depth < 2 ? colors[Math.floor((index / (root.children?.length ?? 1)) * 6)] : '#ffffff00',
+                    fill: depth < 2 ? colors[Math.floor((index / (root?.children?.length ?? 1)) * 6)] : '#ffffff00',
                     stroke: '#fff',
                     strokeWidth: 2 / (depth + 1e-10),
                     strokeOpacity: 1 / (depth + 1e-10),
