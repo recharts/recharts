@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 /**
  * The allowed types of tools in the playground.
  */
-export type ToolType = 'source' | 'devtools' | 'controls';
+export type ToolType = 'source' | 'devtools' | 'controls' | 'annotations';
 
 /**
  * Definition of a tool item in the playground.
