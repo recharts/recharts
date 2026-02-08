@@ -9,6 +9,7 @@ import { sendEvent } from './analytics';
 import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
 import { SourceCodeEditor } from './Playground/SourceCodeEditor';
 import { DevToolsPanel } from './Playground/DevToolsPanel';
+import { AnnotationsPanel } from './Playground/AnnotationsPanel';
 import { CopyButton } from '../utils/CopyButton';
 
 /**
@@ -182,6 +183,11 @@ export function CodeEditorWithPreview<T>({
       label: 'Hook inspector',
       component: <DevToolsPanel onValueChange={setDevToolsValue} initialTab={defaultToolTab} />,
       actions: [<CopyButton key="copy-devtools" getValueToCopy={() => devToolsValue} />],
+    },
+    {
+      name: 'annotations',
+      label: 'Annotations',
+      component: <AnnotationsPanel />,
     },
   ];
 
