@@ -185,6 +185,41 @@ describe('<Pie />', () => {
       expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
     });
 
+    test('should use per-sector fill for tooltip item color when shape is customized', () => {
+      const data = [
+        { name: 'A', value: 100, fill: '#ff0000' },
+        { name: 'B', value: 100, fill: '#00ff00' },
+      ];
+
+      const renderShape = ({ payload, ...props }: PieSectorDataItem) => {
+        return <Sector {...props} fill={payload.fill} />;
+      };
+
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            fill="#8884d8"
+            shape={renderShape}
+          />
+          <Tooltip defaultIndex={0} />
+        </PieChart>,
+      );
+
+      expectTooltipPayload(container, '', ['A : 100']);
+
+      const tooltipItem = container.querySelector('.recharts-tooltip-item');
+      assertNotNull(tooltipItem);
+      expect((tooltipItem as HTMLElement).style.color).toBe('rgb(255, 0, 0)');
+    });
+
     test('Render customized active sector when activeShape is set to be an object', () => {
       const { container, debug } = render(
         <PieChart width={500} height={500}>
@@ -395,7 +430,9 @@ describe('<Pie />', () => {
           tabIndex: -1,
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'y',
+              fill: '#808080',
               name: 0,
               payload: {
                 label: 'Iter: 0',
@@ -555,7 +592,9 @@ describe('<Pie />', () => {
         textAnchor: 'end',
         tooltipPayload: [
           {
+            color: '#808080',
             dataKey: 'value',
+            fill: '#808080',
             name: 'A',
             payload: {
               cx: 250,
@@ -849,7 +888,9 @@ describe('<Pie />', () => {
             dataDefinedOnItem: [
               [
                 {
+                  color: '#808080',
                   dataKey: 'cy',
+                  fill: '#808080',
                   graphicalItemId: 'cy-pie',
                   name: 'A',
                   payload: {
@@ -868,7 +909,9 @@ describe('<Pie />', () => {
               ],
               [
                 {
+                  color: '#808080',
                   dataKey: 'cy',
+                  fill: '#808080',
                   graphicalItemId: 'cy-pie',
                   name: 'B',
                   payload: {
@@ -886,7 +929,9 @@ describe('<Pie />', () => {
               ],
               [
                 {
+                  color: '#808080',
                   dataKey: 'cy',
+                  fill: '#808080',
                   graphicalItemId: 'cy-pie',
                   name: 'C',
                   payload: {
@@ -904,7 +949,9 @@ describe('<Pie />', () => {
               ],
               [
                 {
+                  color: '#808080',
                   dataKey: 'cy',
+                  fill: '#808080',
                   graphicalItemId: 'cy-pie',
                   name: 3,
                   payload: {
@@ -921,7 +968,9 @@ describe('<Pie />', () => {
               ],
               [
                 {
+                  color: '#808080',
                   dataKey: 'cy',
+                  fill: '#808080',
                   graphicalItemId: 'cy-pie',
                   name: 4,
                   payload: {
@@ -945,6 +994,7 @@ describe('<Pie />', () => {
               ['4', { x: 263.1033255612459, y: 245.84724967881291 }],
             ]),
             settings: {
+              chartType: 'pie',
               color: '#808080',
               dataKey: 'cy',
               fill: '#808080',
@@ -1139,9 +1189,10 @@ describe('<Pie />', () => {
 
         expectLastCalledWith(spy, [
           {
-            color: undefined,
+            chartType: 'pie',
+            color: '#808080',
             dataKey: 'cy',
-            fill: undefined,
+            fill: '#808080',
             graphicalItemId: 'cy-pie',
             hide: false,
             name: 'C',
@@ -1865,7 +1916,9 @@ describe('<Pie />', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'cy',
+              fill: '#808080',
               graphicalItemId: expect.stringMatching(/^recharts-pie-.+/),
               name: 'B',
               payload: {
@@ -1964,7 +2017,9 @@ describe('<Pie />', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'uv',
+              fill: '#808080',
               name: 'Page A',
               payload: {
                 amt: 2400,
@@ -2043,7 +2098,9 @@ describe('<Pie />', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'uv',
+              fill: '#808080',
               name: 'Page A',
               payload: {
                 amt: 2400,
@@ -2098,7 +2155,9 @@ describe('<Pie />', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'uv',
+              fill: '#808080',
               name: 'Page A',
               payload: {
                 amt: 2400,
@@ -2176,7 +2235,9 @@ describe('<Pie />', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
               dataKey: 'uv',
+              fill: '#808080',
               name: 'Page A',
               payload: {
                 amt: 2400,

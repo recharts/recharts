@@ -451,6 +451,7 @@ const SetPieTooltipEntrySettings = React.memo(
         nameKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
+        chartType: 'pie',
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Pie support unit?
@@ -723,6 +724,10 @@ export function computePieSectors({
 
       // @ts-expect-error can't spread unknown
       const entryWithCellInfo: RealPieData = { ...entry, ...(cells && cells[i] && cells[i].props) };
+      const sectorColor =
+        entryWithCellInfo != null && 'fill' in entryWithCellInfo && typeof entryWithCellInfo.fill === 'string'
+          ? entryWithCellInfo.fill
+          : pieSettings.fill;
 
       if (i) {
         tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
@@ -742,6 +747,8 @@ export function computePieSectors({
           payload: entryWithCellInfo,
           dataKey,
           type: tooltipType,
+          color: sectorColor,
+          fill: sectorColor,
           graphicalItemId: pieSettings.id,
         },
       ];

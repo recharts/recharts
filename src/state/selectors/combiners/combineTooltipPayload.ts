@@ -89,16 +89,19 @@ export const combineTooltipPayload = (
 
     if (Array.isArray(tooltipPayload)) {
       tooltipPayload.forEach(item => {
+        const preserveItemColor = settings?.chartType === 'pie';
         const newSettings: TooltipEntrySettings = {
           ...settings,
           // @ts-expect-error we're assuming that item has name and unit properties
           name: item.name,
           // @ts-expect-error we're assuming that item has name and unit properties
           unit: item.unit,
-          // color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
-          color: undefined,
-          // color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
-          fill: undefined,
+          // Historically color/fill were erased here to match Recharts 2.x.
+          // Pie now preserves per-item color so tooltip can stay in sync with rendered sectors.
+          // @ts-expect-error we're assuming that item has color property
+          color: preserveItemColor ? item.color : undefined,
+          // @ts-expect-error we're assuming that item has fill property
+          fill: preserveItemColor ? item.fill : undefined,
         };
         agg.push(
           getTooltipEntry({
