@@ -1,0 +1,21 @@
+import{j as i}from"./jsx-runtime-DUmu7zxi.js";import{useMDXComponents as e}from"./index-Tq6H2tFL.js";import{M as p,C as m,a as s}from"./blocks-CeC0Urp7.js";import{C as c,A as t}from"./Line.stories-BqcyPcuM.js";import"./iframe-xqabyeMj.js";import"./preload-helper-Dp1pzeXC.js";import"./index-DIiQC_pi.js";import"./utils-ePvtT4un.js";import"./Line-C_a5crt8.js";import"./resolveDefaultProps-C4CpinzP.js";import"./Layer-Bh77GRoo.js";import"./ReactUtils-bWGvhqKE.js";import"./Label-BONDDJIo.js";import"./Text-CGJ1V4Sp.js";import"./DOMUtils-C4dT54L9.js";import"./arrayEqualityCheck-8L6pkBib.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-DT_FpcHY.js";import"./zIndexSlice-D0PgK1Qq.js";import"./RechartsWrapper-BiqM6SLb.js";import"./hooks-DUKF9BS0.js";import"./axisSelectors-Dsv016Jw.js";import"./ActivePoints-BaMeOVMK.js";import"./Dot-C1tAaa2s.js";import"./types-B39fGcYg.js";import"./RegisterGraphicalItemId-BRijqKHc.js";import"./ErrorBarContext-BxBXv2QU.js";import"./GraphicalItemClipPath-BDFMpOfU.js";import"./SetGraphicalItem-B2tkDh1g.js";import"./useAnimationId-Cs8mC2Bw.js";import"./getRadiusAndStrokeWidthFromDot-ZV4TJns9.js";import"./ActiveShapeUtils-CHTxT0Ma.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-BnLG2ZKC.js";import"./Trapezoid-CzCZCQIg.js";import"./Sector-BI2kwOQX.js";import"./Symbols-Co2bCSmq.js";import"./Curve-DXgolxSe.js";import"./ComposedChart-0LqFksIP.js";import"./CartesianChart-YoieVqbI.js";import"./chartDataContext-99M3a9R_.js";import"./CategoricalChart-5qGPlSyR.js";import"./Legend-4k7M-nb5.js";import"./useElementOffset-Cr7-bJ23.js";import"./iteratee-C2sEUqfR.js";import"./XAxis-DCnicXeQ.js";import"./CartesianAxis-DhN_DQtJ.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./YAxis-DVjLQwct.js";import"./Tooltip-EgWC_rlN.js";import"./Cross-rpHVI9wh.js";import"./RechartsHookInspector-CFJUwZ9y.js";import"./ChartSizeDimensions-gwsg2o-R.js";import"./OffsetShower-BIYWKZux.js";import"./PlotAreaShower-BBgrf_OL.js";import"./Page-Cj8EiXz7.js";function n(r){const o={code:"code",h1:"h1",h2:"h2",li:"li",p:"p",ul:"ul",...e(),...r.components};return i.jsxs(i.Fragment,{children:[i.jsx(o.h1,{id:"line",children:"Line"}),`
+`,i.jsx(p,{of:c}),`
+`,i.jsx(m,{of:t,layout:"padded"}),`
+`,i.jsx(o.h2,{id:"parent-component",children:"Parent Component"}),`
+`,i.jsx(o.p,{children:"The Line can be used within the following parent components:"}),`
+`,i.jsxs(o.ul,{children:[`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<AreaChart/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<BarChart/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<ComposedChart/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<FunnelChart/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<LineChart/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<ScatterChart/>"})}),`
+`]}),`
+`,i.jsx(o.h2,{id:"child-components",children:"Child Components"}),`
+`,i.jsx(o.p,{children:"The Line can be used with the following child components:"}),`
+`,i.jsxs(o.ul,{children:[`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<ErrorBar/>"})}),`
+`,i.jsx(o.li,{children:i.jsx(o.code,{children:"<LabelList/>"})}),`
+`]}),`
+`,i.jsx(o.h2,{id:"props",children:"Props"}),`
+`,i.jsx(s,{of:t})]})}function hi(r={}){const{wrapper:o}={...e(),...r.components};return o?i.jsx(o,{...r,children:i.jsx(n,{...r})}):n(r)}export{hi as default};
