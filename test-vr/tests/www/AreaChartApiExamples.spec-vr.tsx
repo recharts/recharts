@@ -69,6 +69,6 @@ test('AreaChartRangeExample', async ({ mount }) => {
 });
 
 test('CrosshairExample', async ({ mount }) => {
-  const component = await mount(<CrosshairExample />);
+  const component = await mount(<CrosshairExample initialPointers={[{ relativeX: 100, relativeY: 100 }]} />);
   await expect(component).toHaveScreenshot();
 });

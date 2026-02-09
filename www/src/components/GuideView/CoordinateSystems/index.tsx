@@ -3,11 +3,13 @@ import DataCoordinatesExample from './DataCoordinatesExample.tsx';
 import DataCoordinatesExampleSource from './DataCoordinatesExample.tsx?raw';
 import PixelCoordinatesExample from './PixelCoordinatesExample.tsx';
 import PixelCoordinatesExampleSource from './PixelCoordinatesExample.tsx?raw';
-import ScaleConversionExample from './ScaleConversionExample.tsx';
-import ScaleConversionExampleSource from './ScaleConversionExample.tsx?raw';
+import DataSnapExample from '../../../docs/apiExamples/useAxisInverseDataSnapScale/DataSnapExample.tsx';
+import DataSnapExampleSource from '../../../docs/apiExamples/useAxisInverseDataSnapScale/DataSnapExample.tsx?raw';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import CrosshairExample from '../../../docs/apiExamples/getRelativeCoordinate/CrosshairExample.tsx';
 import CrosshairExampleSource from '../../../docs/apiExamples/getRelativeCoordinate/CrosshairExample.tsx?raw';
+import AxisTickSnapExample from '../../../docs/apiExamples/useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
+import AxisTickSnapExampleSource from '../../../docs/apiExamples/useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx?raw';
 
 export function CoordinateSystems() {
   return (
@@ -231,8 +233,14 @@ export function CoordinateSystems() {
         </li>
       </ul>
       <CodeEditorWithPreview
-        Component={ScaleConversionExample}
-        sourceCode={ScaleConversionExampleSource}
+        Component={DataSnapExample}
+        sourceCode={DataSnapExampleSource}
+        stackBlitzTitle="Recharts Scale Conversion Example"
+      />
+
+      <CodeEditorWithPreview
+        Component={AxisTickSnapExample}
+        sourceCode={AxisTickSnapExampleSource}
         stackBlitzTitle="Recharts Scale Conversion Example"
       />
 

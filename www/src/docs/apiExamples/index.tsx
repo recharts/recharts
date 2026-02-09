@@ -35,6 +35,10 @@ import { useYAxisDomainApiExamples } from './useYAxisDomain';
 import { useIsTooltipActiveApiExamples } from './useIsTooltipActive';
 import { useActiveTooltipCoordinateApiExamples } from './useActiveTooltipCoordinate';
 import { getRelativeCoordinateExamples } from './getRelativeCoordinate';
+import { useAxisInverseDataSnapScaleApiExamples } from './useAxisInverseDataSnapScale';
+import { useAxisInverseTickSnapScaleApiExamples } from './useAxisInverseTickSnapScale';
+import { useXAxisTicksApiExamples } from './useXAxisTicks';
+import { useYAxisTicksApiExamples } from './useYAxisTicks';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -74,4 +78,10 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   useXAxisDomain: useXAxisDomainApiExamples,
   useYAxisDomain: useYAxisDomainApiExamples,
   getRelativeCoordinate: getRelativeCoordinateExamples,
+  useXAxisInverseDataSnapScale: useAxisInverseDataSnapScaleApiExamples,
+  useYAxisInverseDataSnapScale: useAxisInverseDataSnapScaleApiExamples,
+  useXAxisInverseTickSnapScale: useAxisInverseTickSnapScaleApiExamples,
+  useYAxisInverseTickSnapScale: useAxisInverseTickSnapScaleApiExamples,
+  useXAxisTicks: useXAxisTicksApiExamples,
+  useYAxisTicks: useYAxisTicksApiExamples,
 };
