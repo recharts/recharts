@@ -23,17 +23,24 @@ export class ExampleReader {
     const explicitExamples = new Map<string, ExampleResult>();
     const implicitExamples = new Map<string, ExampleResult>();
 
+    const cleanName = componentName.trim();
+    // Some components (like hooks) have their own API page but share example file with others.
+    // If a component has an explicit API example entry, we should ONLY show that.
+    const hasOwnApiPage = Array.from(this.fileToExamples.values()).some(exList =>
+      exList.some(ex => ex.url.includes(`/api/${cleanName}/`)),
+    );
+
     this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
       if (!sourceFile) return;
 
       // Check for component usage
-      const explicitMatches = exList.filter(ex => ex.url === `/api/${componentName}/`);
+      const explicitMatches = exList.filter(ex => ex.url === `/api/${cleanName}/`);
       const isExplicitApiExample = explicitMatches.length > 0;
 
       if (isExplicitApiExample) {
         if (propName) {
-          if (this.isPropUsed(sourceFile, componentName, propName)) {
+          if (this.isPropUsed(sourceFile, cleanName, propName)) {
             explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
           }
         } else {
@@ -41,21 +48,20 @@ export class ExampleReader {
         }
       }
 
-      if (this.isComponentUsed(sourceFile, componentName)) {
+      if (this.isComponentUsed(sourceFile, cleanName)) {
         // Implicit usage - add to implicit examples
-        // But filter out API examples that are NOT for this component
-        // i.e. if ex.url starts with /api/, it must match /api/${componentName}/
+        // But filter out API examples that are NOT for this component IF it has its own page
 
         const filteredList = exList.filter(ex => {
-          if (ex.url.startsWith('/api/')) {
-            return ex.url === `/api/${componentName}/`;
+          if (hasOwnApiPage && ex.url.startsWith('/api/')) {
+            return ex.url === `/api/${cleanName}/`;
           }
-          return true; // Keep non-API examples (e.g. /examples/...)
+          return true;
         });
 
         // If propName is specified, check for prop usage
         if (propName) {
-          if (this.isPropUsed(sourceFile, componentName, propName)) {
+          if (this.isPropUsed(sourceFile, cleanName, propName)) {
             filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
           }
         } else {

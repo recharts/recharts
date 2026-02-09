@@ -58,4 +58,13 @@ describe('ExampleReader', () => {
       name: 'useChartWidth API Example',
     });
   });
+
+  it('should find examples for a type', () => {
+    const examples = reader.getExamples('InverseScaleFunction');
+    expect(examples.length).toBeGreaterThan(0);
+    expect(examples).toContainEqual({
+      url: '/api/useXAxisInverseDataSnapScale/',
+      name: 'Converting pixels to data values',
+    });
+  });
 });
