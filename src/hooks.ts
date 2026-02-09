@@ -112,7 +112,7 @@ export const useYAxisScale = (yAxisId: AxisId = defaultAxisId): ScaleFunction | 
  * corresponds to a mouse position.
  *
  * For continuous (numerical) scales, returns an interpolated value.
- * For categorical scales, returns the closest category in the domain.
+ * For categorical scales, returns the closest category in the domain - which is the same behaviour as {@link useXAxisInverseDataSnapScale}.
  *
  * This hook must be used within a chart context (inside a {@link LineChart}, {@link BarChart}, etc.).
  * Returns `undefined` if used outside a chart context, or if the axes don't exist.
@@ -186,7 +186,7 @@ export const useXAxisInverseTickSnapScale = (xAxisId: AxisId = defaultAxisId): I
  * corresponds to a mouse position.
  *
  * For continuous (numerical) scales, returns an interpolated value.
- * For categorical scales, returns the closest category in the domain.
+ * For categorical scales, returns the closest category in the domain - which is the same behaviour as {@link useYAxisInverseDataSnapScale}.
  *
  * This hook must be used within a chart context (inside a {@link LineChart}, {@link BarChart}, etc.).
  * Returns `undefined` if used outside a chart context, or if the axes don't exist.

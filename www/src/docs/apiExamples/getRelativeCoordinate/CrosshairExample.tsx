@@ -24,7 +24,7 @@ const TextWithOutline = (textProps: TextProps) => (
   <Text stroke="white" strokeWidth={3} fill="black" paintOrder="stroke" {...textProps} />
 );
 
-const Crosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
+const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
   const width = useChartWidth();
   const height = useChartHeight();
   if (pointer == null || width == null || height == null) {
@@ -64,8 +64,12 @@ const Crosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
   );
 };
 
-export default function CrosshairExample() {
-  const [pointers, setPointers] = useState<RelativePointer[]>([]);
+export default function CrosshairExample({
+  initialPointers = [],
+}: {
+  initialPointers?: ReadonlyArray<RelativePointer>;
+}) {
+  const [pointers, setPointers] = useState<ReadonlyArray<RelativePointer>>(initialPointers);
 
   const handleMouseMove = useCallback(
     (_data: MouseHandlerDataParam, event: MouseEvent<SVGGraphicsElement>) => {
@@ -94,7 +98,7 @@ export default function CrosshairExample() {
 
   const handleTouchMove = useCallback(
     (_data: unknown, event: TouchEvent<SVGGraphicsElement>) => {
-      const chartPointers = getRelativeCoordinate(event);
+      const chartPointers: RelativePointer[] = getRelativeCoordinate(event);
       setPointers(chartPointers);
     },
     [setPointers],
@@ -124,7 +128,7 @@ export default function CrosshairExample() {
       <YAxis width="auto" />
       <Area type="monotone" dataKey="x" stroke="var(--color-chart-1)" />
       {pointers.map((pointer, index) => (
-        <Crosshair key={index} pointer={pointer} />
+        <PixelCrosshair key={index} pointer={pointer} />
       ))}
       <Legend />
       <RechartsDevtools />
