@@ -1415,7 +1415,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
+            color: expect.any(String),
             dataKey: 'x',
+            fill: expect.any(String),
             name: 0,
             payload: { x: 1 },
             type: undefined,
@@ -1425,7 +1427,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: expect.any(String),
             dataKey: 'x',
+            fill: expect.any(String),
             name: 1,
             payload: { x: 2 },
             type: undefined,
@@ -1435,7 +1439,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: expect.any(String),
             dataKey: 'x',
+            fill: expect.any(String),
             name: 2,
             payload: { x: 3 },
             type: undefined,
@@ -1447,7 +1453,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
+            color: expect.any(String),
             dataKey: 'y',
+            fill: expect.any(String),
             name: 0,
             payload: { y: 10 },
             type: undefined,
@@ -1457,7 +1465,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: expect.any(String),
             dataKey: 'y',
+            fill: expect.any(String),
             name: 1,
             payload: { y: 20 },
             type: undefined,
@@ -1467,7 +1477,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: expect.any(String),
             dataKey: 'y',
+            fill: expect.any(String),
             name: 2,
             payload: { y: 30 },
             type: undefined,
