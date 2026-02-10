@@ -148,7 +148,6 @@ const PolarAngles: React.FC<PropsWithDefaults> = (props: PropsWithDefaults) => {
     return null;
   }
   const polarAnglesProps = {
-    stroke: '#ccc',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -168,8 +167,6 @@ const PolarAngles: React.FC<PropsWithDefaults> = (props: PropsWithDefaults) => {
 const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius } = props;
   const concentricCircleProps = {
-    stroke: '#ccc',
-    fill: 'none',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -189,8 +186,6 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
 const ConcentricPolygon: React.FC<ConcentricProps> = (props: ConcentricProps) => {
   const { radius } = props;
   const concentricPolygonProps = {
-    stroke: '#ccc',
-    fill: 'none',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -239,6 +234,9 @@ export const defaultPolarGridProps = {
   gridType: 'polygon',
   radialLines: true,
   zIndex: DefaultZIndexes.grid,
+  stroke: '#ccc',
+  strokeWidth: 1,
+  fill: 'none',
 } as const satisfies Partial<Props>;
 
 /**
