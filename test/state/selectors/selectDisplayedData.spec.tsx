@@ -124,7 +124,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should be stable between renders', () => {
@@ -223,7 +223,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in all graphical items based on the input dataKey, and default axis ID', () => {

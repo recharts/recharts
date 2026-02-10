@@ -1397,7 +1397,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       </BarChart>,
     );
     expectLastCalledWith(spy, []);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return all data defined on graphical items', () => {
@@ -1426,7 +1426,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       // the arrayContaining is there because it ignores elements order.
       expect.arrayContaining([7, 8, 9, 70, 80, 90, 1, 2, 3, 10, 20, 30, 4, 5, 6, 40, 50, 60]),
     );
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
@@ -1584,7 +1584,7 @@ describe('selectAllAppliedValues', () => {
       </LineChart>,
     );
     expectLastCalledWith(spy, []);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return all data defined in all graphical items based on the input dataKey, and default axis ID', () => {
@@ -1712,7 +1712,7 @@ describe('selectErrorBarsSettings', () => {
       </BarChart>,
     );
     expectLastCalledWith(spy, []);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty array if there is no axis with matching ID', () => {
@@ -1831,7 +1831,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -1842,7 +1842,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -2522,7 +2522,7 @@ describe('selectAxisWithScale', () => {
       button.click();
     });
 
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(6);
     expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
     expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
     expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);

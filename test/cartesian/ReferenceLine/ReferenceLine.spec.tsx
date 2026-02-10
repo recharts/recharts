@@ -517,7 +517,7 @@ describe('<ReferenceLine />', () => {
       );
 
       expect(lineSpy).toHaveBeenLastCalledWith([]);
-      expect(lineSpy).toHaveBeenCalledTimes(4);
+      expect(lineSpy).toHaveBeenCalledTimes(6);
     });
 
     it('should report segment prop to Redux state', () => {

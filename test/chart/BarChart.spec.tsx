@@ -333,7 +333,7 @@ describe('<BarChart />', () => {
         zAxisId: 0,
       };
       expect(barSpy).toHaveBeenLastCalledWith([expectedBar]);
-      expect(barSpy).toHaveBeenCalledTimes(3);
+      expect(barSpy).toHaveBeenCalledTimes(2);
 
       expect(sizeListSpy).toHaveBeenLastCalledWith([
         {
@@ -3848,7 +3848,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 });

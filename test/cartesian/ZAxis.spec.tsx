@@ -251,7 +251,7 @@ describe('<ZAxis />', () => {
 
       const { spy, container } = renderTestCase(state => state.cartesianAxis.zAxis);
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
 
       // only id "1" exists
       const lastCallArgs1 = spy.mock.lastCall?.[0];

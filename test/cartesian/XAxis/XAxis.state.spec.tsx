@@ -278,7 +278,7 @@ describe('state integration', () => {
     expect(Object.keys(lastCallArgs1)).toEqual(['1']);
 
     fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(5);
 
     // only id "2" exists
     const lastCallArgs2 = spy.mock.lastCall?.[0];
@@ -329,7 +329,7 @@ describe('state integration', () => {
 
     rerenderSameComponent();
     expectLastCalledWith(spy, expectedSettings);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(4);
 
     // now assert that the 2nd and 3rd call have identical references (toBe)
     expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);

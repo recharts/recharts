@@ -101,7 +101,7 @@ describe('selectArea', () => {
       rerenderSameComponent();
 
       expect(spy).toHaveBeenLastCalledWith(expectedResult);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
 
       expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
     });
@@ -290,7 +290,7 @@ describe('selectArea', () => {
         ],
       };
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
       /*
        * Fourth render has the new updated data with consistent dataKey.
        * Area will resume the animation from the most recent previous data

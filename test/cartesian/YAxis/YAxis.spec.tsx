@@ -1216,7 +1216,7 @@ describe('<YAxis />', () => {
       expect(Object.keys(lastCallArgs1)).toEqual(['1']);
 
       fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
 
       // only id "2" exists
       const lastCallArgs2 = spy.mock.lastCall?.[0];

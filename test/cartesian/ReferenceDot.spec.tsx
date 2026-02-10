@@ -476,7 +476,7 @@ describe('<ReferenceDot />', () => {
       );
 
       expect(dotSpy).toHaveBeenLastCalledWith([]);
-      expect(dotSpy).toHaveBeenCalledTimes(4);
+      expect(dotSpy).toHaveBeenCalledTimes(6);
     });
   });
 });

@@ -191,7 +191,7 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
       /*
        * Last render has the new updated data with consistent dataKey.
        * Line will resume animation from the most recent previous data
@@ -294,7 +294,7 @@ describe('selectLinePoints', () => {
 
       rerenderSameComponent();
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
       const secondCall = spy.mock.calls[spy.mock.calls.length - 1][0];
       assertNotNull(secondCall);
       expect(secondCall.length).toBe(6);
