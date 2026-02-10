@@ -877,7 +877,7 @@ export const adaptEventHandlers = (
   const out: RecordString<(e: Event) => void> = {};
 
   Object.keys(inputProps).forEach(key => {
-    if (isEventKey(key)) {
+    if (isEventKey(key) && typeof inputProps[key] === 'function') {
       out[key] = newHandler || ((e: Event) => inputProps[key](inputProps, e));
     }
   });
