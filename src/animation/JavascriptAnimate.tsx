@@ -43,15 +43,22 @@ function usePrefersReducedMotion() {
     if (Global.isSsr) {
       return false;
     }
+    if (!('matchMedia' in window)) {
+      return false;
+    }
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 
   useEffect(() => {
+    if (!('matchMedia' in window)) {
+      return;
+    }
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handleChange = () => {
       setPrefersReducedMotion(mediaQuery.matches);
     };
     mediaQuery.addEventListener('change', handleChange);
+    // eslint-disable-next-line consistent-return
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
