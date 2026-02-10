@@ -81,6 +81,30 @@ interface PolarGridProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+  /**
+   * The stroke color.
+   * @defaultValue #ccc
+   */
+  stroke?: string;
+  /**
+   * The width of the stroke.
+   * @defaultValue 1
+   */
+  strokeWidth?: number | string;
+  /**
+   * The pattern of dashes and gaps used to paint the lines of the grid.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray stroke-dasharray on MDN}
+   */
+  strokeDasharray?: string | number;
+  /**
+   * The background color used to fill the space between grid lines.
+   * @defaultValue none
+   */
+  fill?: string;
+  /**
+   * The opacity of the background used to fill the space between grid lines.
+   */
+  fillOpacity?: number | string;
 }
 
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
