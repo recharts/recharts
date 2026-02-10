@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { clsx } from 'clsx';
-import { PresentationAttributesWithProps, adaptEventHandlers, RechartsMouseEventHandler } from '../util/types';
+import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isNumber } from '../util/DataUtils';
@@ -20,10 +20,6 @@ interface DotProps {
    */
   r?: number | string;
   clipDot?: boolean;
-  /**
-   * The customized event handler of click in this chart.
-   */
-  onClick?: RechartsMouseEventHandler<Props>;
 }
 
 export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;

@@ -95,16 +95,16 @@ interface DefaultLegendContentProps {
    * The customized event handler of mouseenter on the items in this group
    * @example https://recharts.github.io/examples/LegendEffectOpacity
    */
-  onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent<HTMLElement>) => void;
   /**
    * The customized event handler of mouseleave on the items in this group
    * @example https://recharts.github.io/examples/LegendEffectOpacity
    */
-  onMouseLeave?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: LegendPayload, index: number, event: MouseEvent<HTMLElement>) => void;
   /**
    * The customized event handler of click on the items in this group
    */
-  onClick?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  onClick?: (data: LegendPayload, index: number, event: MouseEvent<HTMLElement>) => void;
   /**
    * DefaultLegendContent.payload is omitted from Legend props.
    * A custom payload can be passed here if desired, or it can be passed from the Legend "content" callback.

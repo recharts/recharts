@@ -65,7 +65,7 @@ interface ReferenceDotProps extends Overflowable, ZIndexable {
    * If set a ReactElement, the shape of dot can be customized.
    * If set a function, the function will be called to render customized shape.
    */
-  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  shape?: ReactElement<SVGElement> | ((props: DotProps) => ReactElement<SVGElement>);
   /**
    * Renders a single label.
    *
@@ -94,35 +94,35 @@ interface ReferenceDotProps extends Overflowable, ZIndexable {
   /**
    * The customized event handler of click in this chart.
    */
-  onClick?: (e: React.MouseEvent<SVGElement>) => void;
+  onClick?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mousedown in this chart.
    */
-  onMouseDown?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseDown?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mouseup in this chart.
    */
-  onMouseUp?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseUp?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mouseover in this chart.
    */
-  onMouseOver?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseOver?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mouseout in this chart.
    */
-  onMouseOut?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseOut?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mouseenter in this chart.
    */
-  onMouseEnter?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseEnter?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mousemove in this chart.
    */
-  onMouseMove?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseMove?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
   /**
    * The customized event handler of mouseleave in this chart.
    */
-  onMouseLeave?: (e: React.MouseEvent<SVGElement>) => void;
+  onMouseLeave?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
 }
 
 export type Props = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps;

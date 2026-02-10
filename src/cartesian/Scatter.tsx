@@ -341,7 +341,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
 type BaseScatterSvgProps = Omit<
-  PresentationAttributesAdaptChildEvent<any, SVGElement>,
+  PresentationAttributesAdaptChildEvent<ScatterPointItem, SVGGraphicsElement>,
   'points' | 'ref' | 'children' | 'dangerouslySetInnerHTML'
 >;
 
@@ -538,7 +538,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   return (
     <>
       <ScatterLine points={points} props={allOtherPropsWithoutId} />
-      {points.map((entry, i) => {
+      {points.map((entry: ScatterPointItem, i: number) => {
         const hasActiveShape = activeShape != null && activeShape !== false;
         const isActive: boolean = hasActiveShape && activeIndex === String(i);
         const option = hasActiveShape && isActive ? activeShape : shape;

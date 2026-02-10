@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';
-import { Radar, Customized, RadarChart, RadarProps } from '../../src';
+import { DefaultZIndexes, InternalRadarProps, Radar, RadarChart, RadarPoint, RadarProps } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { exampleRadarData } from '../_data';
@@ -11,7 +11,6 @@ import { RadarSettings } from '../../src/state/types/RadarSettings';
 import { userEventSetup } from '../helper/userEventSetup';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
@@ -166,7 +165,7 @@ describe('<Radar />', () => {
   });
 
   describe('events', () => {
-    const points = [
+    const points: RadarPoint[] = [
       {
         x: 250,
         y: 167.68,
@@ -288,6 +287,7 @@ describe('<Radar />', () => {
         },
       },
     ];
+
     it('should fire onClick event when clicking on the radar polygon', async () => {
       const user = userEventSetup();
       const handleClick = vi.fn();
@@ -302,7 +302,7 @@ describe('<Radar />', () => {
       await user.click(polygon);
       expect(handleClick).toHaveBeenCalledTimes(1);
       // no special data here, just the original event
-      expectLastCalledWith(handleClick, expect.any(Object));
+      expectLastCalledWith(handleClick, expect.objectContaining({ type: 'click' }));
     });
 
     it('should fire onMouseEnter and onMouseLeave events when mouse enters and leaves the radar polygon', async () => {
@@ -325,59 +325,33 @@ describe('<Radar />', () => {
       assertNotNull(polygon);
       await user.hover(polygon);
       expect(handleMouseEnter).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        handleMouseEnter,
-        {
-          activeDot: true,
-          angleAxisId: 0,
-          animationBegin: 0,
-          animationDuration: 1500,
-          animationEasing: 'ease',
-          baseLinePoints: [],
-          dataKey: 'value',
-          dot: false,
-          hide: false,
-          id: expect.stringMatching(/recharts-radar-.*/),
-          isAnimationActive: false,
-          isRange: false,
-          label: false,
-          legendType: 'rect',
-          onMouseEnter: handleMouseEnter,
-          onMouseLeave: handleMouseLeave,
-          points,
-          radiusAxisId: 0,
-          zIndex: DefaultZIndexes.area,
-        },
-        expect.any(Object),
-      );
+
+      const expectedRadarProps: InternalRadarProps = {
+        activeDot: true,
+        angleAxisId: 0,
+        animationBegin: 0,
+        animationDuration: 1500,
+        animationEasing: 'ease',
+        baseLinePoints: [],
+        dataKey: 'value',
+        dot: false,
+        hide: false,
+        id: expect.stringMatching(/^recharts-radar-.*/),
+        isAnimationActive: false,
+        isRange: false,
+        label: false,
+        legendType: 'rect',
+        onMouseEnter: handleMouseEnter,
+        onMouseLeave: handleMouseLeave,
+        points,
+        radiusAxisId: 0,
+        zIndex: DefaultZIndexes.area,
+      };
+      expectLastCalledWith(handleMouseEnter, expectedRadarProps, expect.any(Object));
 
       await user.unhover(polygon);
       expect(handleMouseLeave).toHaveBeenCalledTimes(1);
-      expectLastCalledWith(
-        handleMouseLeave,
-        {
-          activeDot: true,
-          angleAxisId: 0,
-          animationBegin: 0,
-          animationDuration: 1500,
-          animationEasing: 'ease',
-          baseLinePoints: [],
-          dataKey: 'value',
-          dot: false,
-          hide: false,
-          id: expect.stringMatching(/recharts-radar-.*/),
-          isAnimationActive: false,
-          isRange: false,
-          label: false,
-          legendType: 'rect',
-          onMouseEnter: handleMouseEnter,
-          onMouseLeave: handleMouseLeave,
-          points,
-          radiusAxisId: 0,
-          zIndex: DefaultZIndexes.area,
-        },
-        expect.any(Object),
-      );
+      expectLastCalledWith(handleMouseLeave, expectedRadarProps, expect.any(Object));
     });
 
     it('should fire onMouseOver and onMouseMove events', async () => {
@@ -402,7 +376,9 @@ describe('<Radar />', () => {
       assertNotNull(polygon);
       await user.hover(polygon);
       expect(handleMouseOver).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(handleMouseOver, expect.any(Object));
       expect(handleMouseMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(handleMouseMove, expect.any(Object));
 
       fireEvent.mouseMove(polygon, { clientX: 200, clientY: 200 });
       expect(handleMouseMove).toHaveBeenCalledTimes(2);
@@ -425,6 +401,11 @@ describe('<Radar />', () => {
       assertNotNull(polygon);
       fireEvent.touchMove(polygon, { touches: [{ clientX: 200, clientY: 200 }] });
       expect(handleTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(handleTouchMove, expect.objectContaining({ type: 'touchmove' }));
+
+      fireEvent.touchEnd(polygon);
+      expect(handleTouchEnd).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(handleTouchEnd, expect.objectContaining({ type: 'touchend' }));
     });
   });
 
@@ -438,7 +419,7 @@ describe('<Radar />', () => {
       const { rerender } = render(
         <RadarChart width={100} height={100} data={exampleRadarData}>
           <Radar dataKey="value" />
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 
@@ -456,7 +437,7 @@ describe('<Radar />', () => {
 
       rerender(
         <RadarChart width={100} height={100} data={exampleRadarData}>
-          <Customized component={<Comp />} />
+          <Comp />
         </RadarChart>,
       );
 

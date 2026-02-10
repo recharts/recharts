@@ -70,7 +70,7 @@ export type {
   PieShape,
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
-export type { Props as RadarProps } from './polar/Radar';
+export type { Props as RadarProps, RadarPoint, InternalRadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
 export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
@@ -96,7 +96,7 @@ export type { Props as BarProps, BarRectangleItem, BarShapeProps } from './carte
 export { BarStack } from './cartesian/BarStack';
 export type { BarStackProps } from './cartesian/BarStack';
 export { Scatter } from './cartesian/Scatter';
-export type { Props as ScatterProps, ScatterPointNode } from './cartesian/Scatter';
+export type { Props as ScatterProps, ScatterPointNode, ScatterPointItem } from './cartesian/Scatter';
 export type { ScatterShapeProps } from './util/ScatterUtils';
 export type { BaseTickContentProps, CartesianTickItem } from './util/types';
 export { XAxis } from './cartesian/XAxis';
@@ -124,6 +124,7 @@ export type {
   NodeProps as SankeyNodeProps,
   LinkProps as SankeyLinkProps,
   SankeyData,
+  SankeyElementType,
 } from './chart/Sankey';
 export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
