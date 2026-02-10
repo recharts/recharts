@@ -1,0 +1,9 @@
+import{j as o}from"./jsx-runtime-BD5qL-TL.js";import{useMDXComponents as p}from"./index-BNCRsJRS.js";import{M as s,C as m,a as c}from"./blocks-CElDe8nk.js";import{C as d,A as r}from"./Dot.stories-BCI8rIe0.js";import"./iframe-Bg6hY-Lh.js";import"./preload-helper-Dp1pzeXC.js";import"./index-C3KvIg2I.js";import"./Dot-BIrCeUw-.js";import"./resolveDefaultProps-BI7FFBV-.js";import"./types-CCzU0McW.js";import"./arrayEqualityCheck-BDis9FaH.js";import"./PolarUtils-CTnnDHZv.js";import"./ComposedChart-BrWT8Xtr.js";import"./RechartsWrapper-DkqFGzuB.js";import"./hooks-DM-gzZjo.js";import"./axisSelectors-GHndRTSk.js";import"./zIndexSlice-DBH2YRr7.js";import"./CartesianChart-B3uSsgOm.js";import"./chartDataContext-BNQKMBbL.js";import"./CategoricalChart-fiMHtwty.js";import"./RechartsHookInspector-C0SDsqLX.js";import"./ChartSizeDimensions-oau-P_ha.js";import"./OffsetShower-B8fezjcj.js";import"./PlotAreaShower-_vIJxFcu.js";function e(n){const t={h1:"h1",h2:"h2",p:"p",...p(),...n.components},{LinkToApi:i}=t;return i||a("LinkToApi"),o.jsxs(o.Fragment,{children:[o.jsx(t.h1,{id:"dot",children:"Dot"}),`
+`,o.jsx(s,{of:d}),`
+`,o.jsx(m,{of:r,layout:"padded"}),`
+`,o.jsx(t.h2,{id:"description",children:"Description"}),`
+`,o.jsx("p",{children:"Renders a dot in the chart."}),`
+`,o.jsx("p",{children:o.jsxs(t.p,{children:[`This component accepts X and Y coordinates in pixels. If you need to position the rectangle based on your chart's
+data, consider using the `,o.jsx(i,{children:"ReferenceDot"})," component instead."]})}),`
+`,o.jsx(t.h2,{id:"props",children:"Props"}),`
+`,o.jsx(c,{of:r})]})}function F(n={}){const{wrapper:t}={...p(),...n.components};return t?o.jsx(t,{...n,children:o.jsx(e,{...n})}):e(n)}function a(n,t){throw new Error("Expected component `"+n+"` to be defined: you likely forgot to import, pass, or provide it.")}export{F as default};
