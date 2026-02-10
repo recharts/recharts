@@ -287,7 +287,7 @@ const PieChartWithCustomNameKeyTestCase: TooltipPayloadTestCase = {
   name: 'PieChart with custom nameKey',
   Wrapper: ({ children }) => (
     <PieChart {...commonChartProps}>
-      <Pie isAnimationActive={false} data={PageData} dataKey="uv" nameKey="pv" />
+      <Pie isAnimationActive={false} data={PageData} dataKey="uv" nameKey={entry => String(entry.pv)} />
       <Pie isAnimationActive={false} data={PageData} dataKey="pv" name="My custom name" />
       <Pie isAnimationActive={false} data={PageData} dataKey="amt" name="My custom name" />
       {children}

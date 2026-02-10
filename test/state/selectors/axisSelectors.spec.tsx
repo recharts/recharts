@@ -167,7 +167,7 @@ describe('selectAxisDomain', () => {
     const { container } = render(
       <ComposedChart data={PageData} width={100} height={100}>
         <Area dataKey="" />
-        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <Area dataKey="x" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
         <Line />
         <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
         <Scatter />
@@ -232,7 +232,7 @@ describe('selectAxisDomain', () => {
     const { container } = render(
       <ComposedChart data={PageData} width={100} height={100}>
         <Area dataKey="" />
-        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <Area dataKey="x" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
         <Line />
         <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
         <Scatter />
@@ -467,7 +467,7 @@ describe('selectAxisDomain', () => {
               { x: 80, y: 8 },
               { x: 90, y: 9 },
             ]}
-            dataKey=""
+            dataKey="x"
           />
           <Line
             data={[
@@ -1411,8 +1411,8 @@ describe('selectCartesianGraphicalItemsData', () => {
     };
     render(
       <ComposedChart data={PageData} width={100} height={100}>
-        <Area dataKey="" data={[1, 2, 3]} />
-        <Area dataKey="" data={[10, 20, 30]} />
+        <Area dataKey="a" data={[{ a: 1 }, { a: 2 }, { a: 3 }]} />
+        <Area dataKey="b" data={[{ b: 10 }, { b: 20 }, { c: 30 }]} />
         <Line data={[4, 5, 6]} />
         <Line data={[40, 50, 60]} />
         <Scatter data={[7, 8, 9]} />
@@ -1424,7 +1424,26 @@ describe('selectCartesianGraphicalItemsData', () => {
     expectLastCalledWith(
       spy,
       // the arrayContaining is there because it ignores elements order.
-      expect.arrayContaining([7, 8, 9, 70, 80, 90, 1, 2, 3, 10, 20, 30, 4, 5, 6, 40, 50, 60]),
+      expect.arrayContaining([
+        7,
+        8,
+        9,
+        70,
+        80,
+        90,
+        { a: 1 },
+        { a: 2 },
+        { a: 3 },
+        { b: 10 },
+        { b: 20 },
+        { c: 30 },
+        4,
+        5,
+        6,
+        40,
+        50,
+        60,
+      ]),
     );
     expect(spy).toHaveBeenCalledTimes(2);
   });
@@ -1442,7 +1461,7 @@ describe('selectCartesianGraphicalItemsData', () => {
     const { container } = render(
       <ComposedChart data={PageData} width={100} height={100}>
         <Area dataKey="" />
-        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <Area dataKey="x" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
         <Line />
         <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
         <Scatter />

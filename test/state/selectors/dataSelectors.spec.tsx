@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
-import { Area, BarChart, Brush, ComposedChart, Customized, Line, Scatter } from '../../../src';
+import { Area, BarChart, Brush, ComposedChart, Line, Scatter } from '../../../src';
 import { PageData } from '../../_data';
 import { ChartDataState } from '../../../src/state/chartDataSlice';
 import { pageData } from '../../../storybook/stories/data';
@@ -31,7 +31,7 @@ describe('selectChartDataWithIndexes', () => {
     };
     render(
       <BarChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledTimes(1);
@@ -51,15 +51,17 @@ describe('selectChartDataWithIndexes', () => {
       spy(tooltipData);
       return null;
     };
+    const data1 = [{ x: 1 }, { x: 2 }, { x: 3 }];
+    const data2 = [{ x: 10 }, { x: 20 }, { x: 30 }];
     render(
       <ComposedChart data={PageData} width={100} height={100}>
-        <Area dataKey="" data={[1, 2, 3]} />
-        <Area dataKey="" data={[10, 20, 30]} />
+        <Area dataKey="x" data={data1} />
+        <Area dataKey="x" data={data2} />
         <Line data={[4, 5, 6]} />
         <Line data={[40, 50, 60]} />
         <Scatter data={[7, 8, 9]} />
         <Scatter data={[70, 80, 90]} />
-        <Customized component={Comp} />
+        <Comp />
       </ComposedChart>,
     );
     const expected: ChartDataState = {
@@ -80,7 +82,7 @@ describe('selectChartDataWithIndexes', () => {
     };
     render(
       <BarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(pageData.length).toBeGreaterThan(1);
@@ -103,7 +105,7 @@ describe('selectChartDataWithIndexes', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <Brush startIndex={3} endIndex={4} />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     const expected: ChartDataState = {

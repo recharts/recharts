@@ -42,6 +42,7 @@ const Needle = ({ cx, cy, midAngle, innerRadius, outerRadius }: PieSectorDataIte
 const HalfPie = (props: PieProps) => (
   <Pie
     {...props}
+    nameKey="name"
     stroke="none"
     dataKey="value"
     startAngle={180}

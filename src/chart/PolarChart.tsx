@@ -43,7 +43,7 @@ export const defaultPolarChartProps = {
  * We can't have the defaults in this file because each of those convenience components
  * have their own opinions about what they should be.
  */
-type PolarChartPropsWithDefaults = PolarChartProps & {
+type PolarChartPropsWithDefaults<DataPointType = unknown> = PolarChartProps<DataPointType> & {
   cx: NonNullable<PolarChartProps['cx']>;
   cy: NonNullable<PolarChartProps['cy']>;
   startAngle: NonNullable<PolarChartProps['startAngle']>;
@@ -57,12 +57,12 @@ type PolarChartPropsWithDefaults = PolarChartProps & {
  * Users who wish to call CartesianChart may decide to pass these options explicitly,
  * but usually we would expect that they use one of the convenience components like PieChart, RadarChart, etc.
  */
-export type PolarChartOptions = {
+export type PolarChartOptions<DataPointType = unknown> = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: PolarChartPropsWithDefaults;
+  categoricalChartProps: PolarChartPropsWithDefaults<DataPointType>;
 };
 
 export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function PolarChart(
@@ -115,4 +115,6 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
       <CategoricalChart {...otherCategoricalProps} ref={ref} />
     </RechartsStoreProvider>
   );
-});
+}) as <DataPointType = unknown>(
+  props: PolarChartOptions<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

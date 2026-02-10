@@ -10,6 +10,7 @@ import { BarSettings } from './types/BarSettings';
 import { RadialBarSettings } from './types/RadialBarSettings';
 import { PieSettings } from './types/PieSettings';
 import { RadarSettings } from './types/RadarSettings';
+import { TypedDataKey } from '../util/getTypedValue';
 
 /**
  * Unique ID of the graphical item.
@@ -18,7 +19,7 @@ import { RadarSettings } from './types/RadarSettings';
  */
 export type GraphicalItemId = string;
 
-export interface GraphicalItemSettings {
+export interface GraphicalItemSettings<DataPointItem = unknown, ValueAxisType = unknown> {
   /**
    * Unique ID of the graphical item.
    * This is used to identify the graphical item in the state and in the React tree.
@@ -29,8 +30,8 @@ export interface GraphicalItemSettings {
    * If the given graphical item has its own data array, it will appear here.
    * If this is undefined, the data will be taken from the chart root prop.
    */
-  data: ChartData | undefined;
-  dataKey: DataKey<any> | undefined;
+  data: ChartData<DataPointItem> | undefined;
+  dataKey: TypedDataKey<DataPointItem, ValueAxisType> | undefined;
   /**
    * Why not just stop pushing the graphical items to state when they are hidden?
    * Well some components decide to continue showing them anyway.
@@ -40,7 +41,10 @@ export interface GraphicalItemSettings {
   hide: boolean;
 }
 
-export interface BaseCartesianGraphicalItemSettings extends GraphicalItemSettings {
+export interface BaseCartesianGraphicalItemSettings<
+  DataPointItem = unknown,
+  ValueAxisType = unknown,
+> extends GraphicalItemSettings<DataPointItem, ValueAxisType> {
   /**
    * Each of the graphical items explicitly says which axis it uses;
    * this property is optional for users but every graphical item must have a default,
@@ -56,9 +60,13 @@ export interface BaseCartesianGraphicalItemSettings extends GraphicalItemSetting
   isPanorama: boolean;
 }
 
-export type CartesianGraphicalItemSettings = AreaSettings | BarSettings | LineSettings | ScatterSettings;
+export type CartesianGraphicalItemSettings<DataPointType = unknown, ValueAxisType = unknown> =
+  | AreaSettings<DataPointType, ValueAxisType>
+  | BarSettings<DataPointType, ValueAxisType>
+  | LineSettings<DataPointType, ValueAxisType>
+  | ScatterSettings<DataPointType, ValueAxisType>;
 
-export interface BasePolarGraphicalItemSettings extends GraphicalItemSettings {
+export interface BasePolarGraphicalItemSettings<DataPointItem = unknown> extends GraphicalItemSettings<DataPointItem> {
   angleAxisId: AxisId;
   radiusAxisId: AxisId;
 }

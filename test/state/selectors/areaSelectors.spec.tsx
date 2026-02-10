@@ -23,7 +23,7 @@ describe('selectArea', () => {
 
     it('should return points and baseline and inRange, and stay stable after re-render', () => {
       const { spy, rerenderSameComponent } = renderTestCase(state => selectArea(state, 'area-0', false));
-      const expectedResult: ComputedArea = {
+      const expectedResult: ComputedArea<any> = {
         baseLine: 365,
         isRange: false,
         points: [
@@ -134,7 +134,7 @@ describe('selectArea', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => <TestCase>{children}</TestCase>);
     it('should select one more time', () => {
       const { container, spy } = renderTestCase(state => selectArea(state, 'area-0', false));
-      const expectedResultBefore: ComputedArea = {
+      const expectedResultBefore: ComputedArea<any> = {
         baseLine: 365,
         isRange: false,
         points: [
@@ -217,7 +217,7 @@ describe('selectArea', () => {
         button.click();
       });
 
-      const expectedResultAfterRerender: ComputedArea = {
+      const expectedResultAfterRerender: ComputedArea<any> = {
         baseLine: 365,
         isRange: false,
         points: [

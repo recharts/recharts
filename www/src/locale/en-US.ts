@@ -38,6 +38,7 @@ export const map = {
     installation: 'Installation',
     'getting-started': 'Getting Started',
     customize: 'Customize',
+    typescript: 'TypeScript',
     activeIndex: 'Active Index',
     sizes: 'Chart size',
     zIndex: 'Z-Index and layers',

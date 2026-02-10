@@ -649,7 +649,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         spy(cartesianItems);
         return null;
       };
-      const data2 = [1, 2, 3];
+      const data2 = [{ value: 1 }, { value: 2 }, { value: 3 }];
 
       const { rerender } = render(
         <ChartElement data={data}>
@@ -701,7 +701,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         spy(cartesianItems);
         return null;
       };
-      const data2 = [1, 2, 3];
+      const data2 = [{ value: 1 }, { value: 2 }, { value: 3 }];
 
       render(
         <ChartElement data={data}>

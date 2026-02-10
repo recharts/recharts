@@ -1227,10 +1227,12 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       spy(tooltipData);
       return null;
     };
+    const data1 = [{ x: 1 }, { x: 2 }, { x: 3 }];
+    const data2 = [{ x: 10 }, { x: 20 }, { x: 30 }];
     render(
       <ComposedChart data={PageData} width={100} height={100}>
-        <Area dataKey="" data={[1, 2, 3]} />
-        <Area dataKey="" data={[10, 20, 30]} />
+        <Area dataKey="x" data={data1} />
+        <Area dataKey="x" data={data2} />
         <Line data={[4, 5, 6]} />
         <Line data={[40, 50, 60]} />
         <Scatter data={[{ x: 7 }, { x: 8 }, { x: 9 }]} dataKey="x" />
@@ -1241,8 +1243,8 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
     expect(spy).toHaveBeenCalledTimes(3);
     // two of these elements will send the data as defined; Scatter decides to pre-chew it
     expectLastCalledWith(spy, [
-      [1, 2, 3],
-      [10, 20, 30],
+      data1,
+      data2,
       [4, 5, 6],
       [40, 50, 60],
       [

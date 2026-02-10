@@ -241,7 +241,7 @@ type AxisSvgProps = Omit<
   'scale' | 'type' | 'dangerouslySetInnerHTML'
 >;
 
-export type Props = AxisSvgProps & PolarAngleAxisProps;
+export type Props<DataPointType = any> = AxisSvgProps & PolarAngleAxisProps<DataPointType>;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
 

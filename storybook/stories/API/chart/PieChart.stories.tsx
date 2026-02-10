@@ -128,7 +128,7 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <PieChart {...args} data={useData2 ? data2 : data1}>
+        <PieChart<any> {...args} data={useData2 ? data2 : data1}>
           <Tooltip />
           <Legend />
           <RechartsHookInspector />
