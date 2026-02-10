@@ -342,7 +342,7 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(sizeListSpy).toHaveBeenCalledTimes(3);
+      expect(sizeListSpy).toHaveBeenCalledTimes(2);
 
       expectBars(container, [
         {
