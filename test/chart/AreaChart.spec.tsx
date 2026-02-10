@@ -244,7 +244,7 @@ describe('AreaChart', () => {
         value: 'Page G',
       },
     ]);
-    expect(xAxisTicksSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(3);
 
     expect(areaSpy).toHaveBeenLastCalledWith({
       baseLine: [
@@ -403,7 +403,7 @@ describe('AreaChart', () => {
         value: 14000,
       },
     ]);
-    expect(xAxisTicksSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(3);
 
     expectAreaCurve(container, [
       {

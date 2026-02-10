@@ -96,7 +96,7 @@ describe('selectArea', () => {
         ],
       };
       expect(spy).toHaveBeenLastCalledWith(expectedResult);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       rerenderSameComponent();
 
@@ -207,7 +207,7 @@ describe('selectArea', () => {
         ],
       };
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
       expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right points
 

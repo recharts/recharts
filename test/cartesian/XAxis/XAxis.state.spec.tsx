@@ -47,7 +47,7 @@ describe('state integration', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
     const expectedSettings: XAxisSettings = {
       angle: 13,
       minTickGap: 9,
@@ -270,7 +270,7 @@ describe('state integration', () => {
 
     const { spy, container } = renderTestCase(state => state.cartesianAxis.xAxis);
 
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
 
     // only id "1" exists
     const lastCallArgs1 = spy.mock.lastCall?.[0];

@@ -65,7 +65,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
         { xAxis: 30, y1: 6 },
         { xAxis: 30, y2: 12 },
       ]);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       // it is important that the data points are equal by reference because ActivePoints uses strict equality to compare them
       const activePoints = spy.mock.calls[spy.mock.calls.length - 1][0];

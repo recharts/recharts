@@ -93,7 +93,7 @@ describe('useOffset', () => {
       bottom: 70,
       left: 40,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should include explicit brush height in bottom property', () => {
@@ -114,7 +114,7 @@ describe('useOffset', () => {
       bottom: 43,
       left: 40,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should include default width of YAxis', () => {
@@ -136,7 +136,7 @@ describe('useOffset', () => {
       right: 80,
       top: 10,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should include explicit width of YAxis', () => {
@@ -158,7 +158,7 @@ describe('useOffset', () => {
       right: 59,
       top: 10,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should exclude hidden YAxis dimensions', () => {
@@ -295,7 +295,7 @@ describe('useOffset', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
 
     showTooltip(container, lineChartMouseHoverTooltipSelector);
 

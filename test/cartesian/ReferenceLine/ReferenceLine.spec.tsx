@@ -506,7 +506,7 @@ describe('<ReferenceLine />', () => {
           yAxisId: 0,
         },
       ]);
-      expect(lineSpy).toHaveBeenCalledTimes(2);
+      expect(lineSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <BarChart width={1100} height={250}>

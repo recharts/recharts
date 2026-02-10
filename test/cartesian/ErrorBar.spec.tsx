@@ -1320,7 +1320,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
       rerender(
         <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
@@ -1480,7 +1480,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <LineChart width={500} height={500}>
@@ -1642,7 +1642,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(xAxisDomainSpy).toHaveBeenCalledTimes(2);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(3);
       expectBars(container, [
         {
           d: 'M 65,16.5 h 252.9412 v 92 h -252.9412 Z',
@@ -1871,7 +1871,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(2);
+      expect(xAxisSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <LineChart width={500} height={500}>

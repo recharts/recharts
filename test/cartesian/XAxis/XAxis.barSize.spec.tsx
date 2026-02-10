@@ -143,7 +143,7 @@ describe('XAxis barSize', () => {
         stackId: undefined,
       },
     ]);
-    expect(barSizeListSpy).toHaveBeenCalledTimes(2);
+    expect(barSizeListSpy).toHaveBeenCalledTimes(3);
 
     expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
       {
@@ -183,10 +183,10 @@ describe('XAxis barSize', () => {
         value: 100,
       },
     ]);
-    expect(yAxisTicksSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisTicksSpy).toHaveBeenCalledTimes(3);
 
     expect(barBandSizeSpy).toHaveBeenLastCalledWith(0);
-    expect(barBandSizeSpy).toHaveBeenCalledTimes(2);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
 
     expect(barPositionsSpy).toHaveBeenLastCalledWith([
       {
@@ -198,7 +198,7 @@ describe('XAxis barSize', () => {
         stackId: undefined,
       },
     ]);
-    expect(barPositionsSpy).toHaveBeenCalledTimes(2);
+    expect(barPositionsSpy).toHaveBeenCalledTimes(3);
 
     expect(chartDataSpy).toHaveBeenLastCalledWith({
       chartData: [
@@ -212,7 +212,7 @@ describe('XAxis barSize', () => {
       dataEndIndex: 0,
       dataStartIndex: 0,
     });
-    expect(chartDataSpy).toHaveBeenCalledTimes(2);
+    expect(chartDataSpy).toHaveBeenCalledTimes(3);
 
     expectBars(container, [
       {

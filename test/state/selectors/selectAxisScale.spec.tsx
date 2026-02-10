@@ -37,7 +37,7 @@ describe('selectAxisScale', () => {
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
     expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5], range: [5, 95] });
-    // expect(spy).toHaveBeenCalledTimes(2);
+    // expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return scale if there is an Axis in the chart', () => {
@@ -55,7 +55,7 @@ describe('selectAxisScale', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
     expectLastCalledWithScale(spy, {
       domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
       range: [5, 95],

@@ -333,7 +333,7 @@ describe('<BarChart />', () => {
         zAxisId: 0,
       };
       expect(barSpy).toHaveBeenLastCalledWith([expectedBar]);
-      expect(barSpy).toHaveBeenCalledTimes(2);
+      expect(barSpy).toHaveBeenCalledTimes(3);
 
       expect(sizeListSpy).toHaveBeenLastCalledWith([
         {
@@ -342,7 +342,7 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(sizeListSpy).toHaveBeenCalledTimes(2);
+      expect(sizeListSpy).toHaveBeenCalledTimes(3);
 
       expectBars(container, [
         {
@@ -1623,7 +1623,7 @@ describe('<BarChart />', () => {
             },
           ];
           expectLastCalledWith(spy, expected);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for first axis', () => {
@@ -1645,7 +1645,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for second axis', () => {
@@ -1667,7 +1667,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should render bars', () => {
@@ -1788,7 +1788,7 @@ describe('<BarChart />', () => {
             },
           ];
           expectLastCalledWith(spy, expected);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for left axis', () => {
@@ -1826,7 +1826,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for right axis', () => {
@@ -1864,7 +1864,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bar size list for left axis', () => {
@@ -1881,7 +1881,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bar size list for right axis', () => {
@@ -1898,7 +1898,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select all bar positions for left axis', () => {
@@ -1921,7 +1921,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select all bar positions for right axis', () => {
@@ -1944,7 +1944,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should render bars', () => {
@@ -2071,7 +2071,7 @@ describe('<BarChart />', () => {
             },
           ];
           expectLastCalledWith(spy, expected);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for first axis', () => {
@@ -2109,7 +2109,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for second axis', () => {
@@ -2147,7 +2147,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should render bars', () => {
@@ -2269,7 +2269,7 @@ describe('<BarChart />', () => {
             },
           ];
           expectLastCalledWith(spy, expected);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for left axis', () => {
@@ -2291,7 +2291,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bars for right axis', () => {
@@ -2313,7 +2313,7 @@ describe('<BarChart />', () => {
               zAxisId: 0,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bar size list for left axis', () => {
@@ -2325,7 +2325,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select bar size list for right axis', () => {
@@ -2337,7 +2337,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select all bar positions for left axis', () => {
@@ -2352,7 +2352,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select all bar positions for right axis', () => {
@@ -2367,7 +2367,7 @@ describe('<BarChart />', () => {
               stackId: undefined,
             },
           ]);
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should render bars', () => {
@@ -3848,7 +3848,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 });

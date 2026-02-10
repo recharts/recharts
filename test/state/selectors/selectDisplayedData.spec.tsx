@@ -124,7 +124,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should be stable between renders', () => {
@@ -223,7 +223,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in all graphical items based on the input dataKey, and default axis ID', () => {
@@ -256,7 +256,7 @@ describe('selectDisplayedData', () => {
       { value: 293 },
       { value: 244 },
     ]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in graphical items with matching axis ID', () => {
@@ -345,12 +345,12 @@ describe('selectDisplayedData', () => {
     ]);
     expect(axisDomainSpy1).toHaveBeenLastCalledWith([280, 294, 239, 293, 244]);
     expect(axisDomainSpy2).toHaveBeenLastCalledWith([481, 672, 721, 446, 598]);
-    expect(axisDomainSpy1).toHaveBeenCalledTimes(2);
-    expect(axisDomainSpy2).toHaveBeenCalledTimes(2);
+    expect(axisDomainSpy1).toHaveBeenCalledTimes(3);
+    expect(axisDomainSpy2).toHaveBeenCalledTimes(3);
     expect(displayedDataSpy1).toHaveBeenLastCalledWith(data2);
     expect(displayedDataSpy2).toHaveBeenLastCalledWith(data1);
-    expect(displayedDataSpy1).toHaveBeenCalledTimes(2);
-    expect(displayedDataSpy2).toHaveBeenCalledTimes(2);
+    expect(displayedDataSpy1).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy2).toHaveBeenCalledTimes(3);
   });
 
   it('should gather data from all graphical items that match the axis ID', () => {
@@ -368,7 +368,7 @@ describe('selectDisplayedData', () => {
       </LineChart>,
     );
     expect(displayedDataSpy).toHaveBeenLastCalledWith(mockData);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in the chart root', () => {
@@ -417,7 +417,7 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in the chart root regardless of the axis ID match', () => {
@@ -512,6 +512,6 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 });

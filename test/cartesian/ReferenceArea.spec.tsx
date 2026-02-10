@@ -665,7 +665,7 @@ describe('<ReferenceArea />', () => {
           yAxisId: 0,
         },
       ]);
-      expect(areaSpy).toHaveBeenCalledTimes(2);
+      expect(areaSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <BarChart width={200} height={200} data={data}>

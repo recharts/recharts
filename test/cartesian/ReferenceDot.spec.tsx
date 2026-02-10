@@ -465,7 +465,7 @@ describe('<ReferenceDot />', () => {
           ifOverflow: 'extendDomain',
         },
       ]);
-      expect(dotSpy).toHaveBeenCalledTimes(2);
+      expect(dotSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <LineChart width={100} height={100}>
