@@ -43,14 +43,14 @@ function usePrefersReducedMotion() {
     if (Global.isSsr) {
       return false;
     }
-    if (!('matchMedia' in window)) {
+    if (!window.matchMedia) {
       return false;
     }
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 
   useEffect(() => {
-    if (!('matchMedia' in window)) {
+    if (!window.matchMedia) {
       return;
     }
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');

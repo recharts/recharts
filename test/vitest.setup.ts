@@ -20,19 +20,6 @@ setupConsoleWarningToError();
  */
 vi.useFakeTimers();
 
-beforeEach(() => {
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    };
-  });
-});
-
 /*
  * Looks like the testing-library only ever considers jest
  * and doesn't allow configuring the timer functions for other libraries,
