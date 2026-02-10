@@ -174,8 +174,7 @@ export const useXAxisInverseDataSnapScale = (xAxisId: AxisId = defaultAxisId): I
  * @since 3.8
  */
 export const useXAxisInverseTickSnapScale = (xAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'xAxis', xAxisId, isPanorama));
+  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'xAxis', xAxisId));
 };
 
 /**
@@ -248,8 +247,7 @@ export const useYAxisInverseDataSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @since 3.8
  */
 export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'yAxis', yAxisId, isPanorama));
+  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'yAxis', yAxisId));
 };
 
 /**

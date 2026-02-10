@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import * as React from 'react';
-import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle, useEffect } from 'react';
 
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
@@ -22,15 +22,18 @@ import {
   BaseTickContentProps,
   XAxisTickContentProps,
   YAxisTickContentProps,
+  TickItem as TickItemType,
 } from '../util/types';
 import { getTicks } from './getTicks';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
+import { AxisId, XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
+import { useAppDispatch } from '../state/hooks';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
@@ -41,7 +44,8 @@ export type TickFormatter = (value: any, index: number) => string;
 
 export interface CartesianAxisProps extends ZIndexable {
   className?: string;
-  axisType?: 'xAxis' | 'yAxis';
+  axisType: 'xAxis' | 'yAxis';
+  axisId: AxisId;
   x?: number;
   y?: number;
   width?: number;
@@ -297,8 +301,40 @@ function TickItem(props: { option: Props['tick']; tickProps: TextProps; value: s
   return tickItem;
 }
 
+function RenderedTicksReporter({
+  ticks,
+  axisType,
+  axisId,
+}: {
+  ticks: ReadonlyArray<TickItemType>;
+  axisType: 'xAxis' | 'yAxis';
+  axisId: AxisId;
+}) {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    // Filter out irrelevant internal properties before expoesing externally
+    const tickItems = ticks.map(tick => ({
+      value: tick.value,
+      coordinate: tick.coordinate,
+      offset: tick.offset,
+      index: tick.index,
+    }));
+    dispatch(setRenderedTicks({ ticks: tickItems, axisId, axisType }));
+    return () => {
+      dispatch(
+        removeRenderedTicks({
+          axisId,
+          axisType,
+        }),
+      );
+    };
+  }, [dispatch, ticks, axisId, axisType]);
+
+  return null;
+}
+
 type TicksProps = {
-  axisType: 'xAxis' | 'yAxis' | undefined;
+  axisType: 'xAxis' | 'yAxis';
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
   fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
@@ -319,6 +355,7 @@ type TicksProps = {
   width: number;
   x: number;
   y: number;
+  axisId: AxisId;
 };
 
 const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
@@ -344,6 +381,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     getTicksConfig,
     events,
     axisType,
+    axisId,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
@@ -425,6 +463,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
 
   return (
     <g className={`recharts-cartesian-axis-ticks recharts-${axisType}-ticks`}>
+      <RenderedTicksReporter ticks={finalTicks} axisId={axisId} axisType={axisType} />
       {tickLabels.length > 0 && (
         <ZIndexLayer zIndex={DefaultZIndexes.label}>
           <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref}>
@@ -440,7 +479,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
 });
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
-  const { axisLine, width, height, className, hide, ticks, axisType, ...rest } = props;
+  const { axisLine, width, height, className, hide, ticks, axisType, axisId, ...rest } = props;
   const [fontSize, setFontSize] = useState('');
   const [letterSpacing, setLetterSpacing] = useState('');
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
@@ -529,6 +568,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           width={props.width}
           x={props.x}
           y={props.y}
+          axisId={axisId}
         />
         <CartesianLabelContextProvider
           x={props.x}

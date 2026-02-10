@@ -7,11 +7,13 @@ import { useAppSelector } from '../../../src/state/hooks';
 import {
   implicitXAxis,
   selectRenderableAxisSettings,
+  selectRenderedTicksOfAxis,
   selectXAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
 import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { TickItem } from '../../../src/util/types';
 
 describe('state integration', () => {
   it('should publish its configuration to redux store', () => {
@@ -336,5 +338,37 @@ describe('state integration', () => {
   it('should not render anything when attempting to render outside of Chart', () => {
     const { container } = render(<XAxis dataKey="x" name="stature" unit="cm" />);
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(0);
+  });
+
+  it('should publish rendered ticks to the store', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={100} height={100} data={[{ x: 'x-1' }, { x: 'x-2' }, { x: 'x-3' }]}>
+        <XAxis xAxisId="foo" dataKey="x" />
+        {children}
+      </BarChart>
+    ));
+
+    const { spy } = renderTestCase(state => selectRenderedTicksOfAxis(state, 'xAxis', 'foo'));
+    const expectedTicks: ReadonlyArray<TickItem> = [
+      {
+        coordinate: 20,
+        index: 0,
+        offset: 15,
+        value: 'x-1',
+      },
+      {
+        coordinate: 50,
+        index: 1,
+        offset: 15,
+        value: 'x-2',
+      },
+      {
+        coordinate: 80,
+        index: 2,
+        offset: 15,
+        value: 'x-3',
+      },
+    ];
+    expectLastCalledWith(spy, expectedTicks);
   });
 });

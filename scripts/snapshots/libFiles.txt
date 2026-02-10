@@ -129,6 +129,7 @@
   "lib/state/polarOptionsSlice.js",
   "lib/state/reduxDevtoolsJsonStringifyReplacer.js",
   "lib/state/referenceElementsSlice.js",
+  "lib/state/renderedTicksSlice.js",
   "lib/state/rootPropsSlice.js",
   "lib/state/selectors",
   "lib/state/selectors/areaSelectors.js",
