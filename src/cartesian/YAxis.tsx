@@ -189,7 +189,7 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    *
    * Font size is used to calculate the width of the ticks, which in turn is used to determine how many ticks are rendered without overlapping.
    */
-  fontSize?: string;
+  fontSize?: number | string;
   /**
    * Specifies the letter spacing of ticks.
    * This is used in conjunction with fontSize to calculate the width of the ticks.
@@ -197,7 +197,7 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    *
    * Letter spacing is used to calculate the width of the ticks, which in turn is used to determine how many ticks are rendered without overlapping.
    */
-  letterSpacing?: string;
+  letterSpacing?: number | string;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
