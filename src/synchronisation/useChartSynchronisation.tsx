@@ -8,7 +8,7 @@ import { setSyncInteraction, TooltipIndex, TooltipSyncState } from '../state/too
 import { selectTooltipDataKey } from '../state/selectors/selectors';
 import { Coordinate, TickItem, TooltipEventType } from '../util/types';
 import { TooltipTrigger } from '../chart/types';
-import { selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipGraphicalItemId, selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
 import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
@@ -203,6 +203,7 @@ export function useTooltipChartSynchronisation(
   isTooltipActive: boolean,
 ) {
   const activeDataKey = useAppSelector(state => selectTooltipDataKey(state, tooltipEventType, trigger));
+  const activeGraphicalItemId = useAppSelector(selectActiveTooltipGraphicalItemId);
   const eventEmitterSymbol = useAppSelector(selectEventEmitter);
   const syncId = useAppSelector(selectSyncId);
   const syncMethod = useAppSelector(selectSyncMethod);
@@ -240,13 +241,14 @@ export function useTooltipChartSynchronisation(
       index: activeIndex,
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
       sourceViewBox: viewBox,
-      graphicalItemId: undefined,
+      graphicalItemId: activeGraphicalItemId,
     });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [
     isReceivingSynchronisation,
     activeCoordinate,
     activeDataKey,
+    activeGraphicalItemId,
     activeIndex,
     activeLabel,
     eventEmitterSymbol,
