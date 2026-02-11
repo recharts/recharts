@@ -451,7 +451,6 @@ const SetPieTooltipEntrySettings = React.memo(
         nameKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
-        chartType: 'pie',
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Pie support unit?

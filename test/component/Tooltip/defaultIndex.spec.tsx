@@ -158,7 +158,6 @@ describe('defaultIndex', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '3'));
       expectLastCalledWith(spy, [
         {
-          chartType: 'pie',
           color: '#808080',
           dataKey: 'pv',
           fill: '#808080',
@@ -186,7 +185,6 @@ describe('defaultIndex', () => {
       showTooltip(container, pieChartMouseHoverTooltipSelector);
       expectLastCalledWith(spy, [
         {
-          chartType: 'pie',
           color: '#808080',
           dataKey: 'pv',
           fill: '#808080',

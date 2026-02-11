@@ -994,7 +994,6 @@ describe('<Pie />', () => {
               ['4', { x: 263.1033255612459, y: 245.84724967881291 }],
             ]),
             settings: {
-              chartType: 'pie',
               color: '#808080',
               dataKey: 'cy',
               fill: '#808080',
@@ -1189,7 +1188,6 @@ describe('<Pie />', () => {
 
         expectLastCalledWith(spy, [
           {
-            chartType: 'pie',
             color: '#808080',
             dataKey: 'cy',
             fill: '#808080',

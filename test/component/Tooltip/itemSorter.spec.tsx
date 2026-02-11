@@ -948,7 +948,6 @@ describe('itemSorter in PieChart', () => {
       const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'item', 'hover', '0'));
       expectLastCalledWith(spy, [
         {
-          chartType: 'pie',
           color: '#808080',
           dataKey: 'uv',
           fill: '#808080',
