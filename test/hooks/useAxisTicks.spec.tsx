@@ -29,17 +29,17 @@ describe('new axis hooks', () => {
       it('should return an inverse scale function', () => {
         const { spy } = renderTestCase(useXAxisInverseTickSnapScale);
         expect(spy).toHaveBeenCalled();
-        const inverseFunction = spy.mock.calls.at(-1)?.[0];
+        const inverseFunction = spy.mock.lastCall?.[0];
         expect(inverseFunction).toBeDefined();
         expect(typeof inverseFunction).toBe('function');
       });
 
       it('should snap to the closest tick', () => {
         const { spy: scaleSpy } = renderTestCase(useXAxisScale);
-        const scaleFunction = scaleSpy.mock.calls.at(-1)?.[0];
+        const scaleFunction = scaleSpy.mock.lastCall?.[0];
 
         const { spy: inverseSpy } = renderTestCase(useXAxisInverseTickSnapScale);
-        const inverseFunction = inverseSpy.mock.calls.at(-1)?.[0];
+        const inverseFunction = inverseSpy.mock.lastCall?.[0];
 
         if (scaleFunction && inverseFunction) {
           // Get pixel for 'Page C'
@@ -78,22 +78,22 @@ describe('new axis hooks', () => {
       it('should return an inverse scale function', () => {
         const { spy } = renderTestCase(useYAxisInverseTickSnapScale);
         expect(spy).toHaveBeenCalled();
-        const inverseFunction = spy.mock.calls.at(-1)?.[0];
+        const inverseFunction = spy.mock.lastCall?.[0];
         expect(inverseFunction).toBeDefined();
         expect(typeof inverseFunction).toBe('function');
       });
 
       it('should snap to the closest tick', () => {
         const { spy: scaleSpy } = renderTestCase(useYAxisScale);
-        const scaleFunction = scaleSpy.mock.calls.at(-1)?.[0];
+        const scaleFunction = scaleSpy.mock.lastCall?.[0];
 
         const { spy: inverseSpy } = renderTestCase(useYAxisInverseTickSnapScale);
-        const inverseFunction = inverseSpy.mock.calls.at(-1)?.[0];
+        const inverseFunction = inverseSpy.mock.lastCall?.[0];
 
         if (scaleFunction && inverseFunction) {
           // Let's find two ticks first
           const { spy: ticksSpy } = renderTestCase(useYAxisTicks);
-          const ticks = ticksSpy.mock.calls.at(-1)?.[0];
+          const ticks = ticksSpy.mock.lastCall?.[0];
 
           if (ticks && ticks.length >= 2) {
             const tick1 = ticks[0];
@@ -130,7 +130,7 @@ describe('new axis hooks', () => {
       it('should return ticks', () => {
         const { spy } = renderTestCase(useXAxisTicks);
         expect(spy).toHaveBeenCalled();
-        const ticks = spy.mock.calls.at(-1)?.[0];
+        const ticks = spy.mock.lastCall?.[0];
         expect(ticks).toBeDefined();
         expect(Array.isArray(ticks)).toBe(true);
         expect(ticks!.length).toBeGreaterThan(0);
@@ -152,7 +152,7 @@ describe('new axis hooks', () => {
       it('should return ticks', () => {
         const { spy } = renderTestCase(useYAxisTicks);
         expect(spy).toHaveBeenCalled();
-        const ticks = spy.mock.calls.at(-1)?.[0];
+        const ticks = spy.mock.lastCall?.[0];
         expect(ticks).toBeDefined();
         expect(Array.isArray(ticks)).toBe(true);
         expect(ticks!.length).toBeGreaterThan(0);

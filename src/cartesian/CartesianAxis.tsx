@@ -312,7 +312,7 @@ function RenderedTicksReporter({
 }) {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if (!axisId || !axisType) {
+    if (axisId == null || axisType == null) {
       return noop;
     }
     // Filter out irrelevant internal properties before exposing externally

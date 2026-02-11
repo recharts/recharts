@@ -1,18 +1,7 @@
 import React from 'react';
 import { MockInstance, vi, beforeEach, describe, it, test, expect, Mock } from 'vitest';
 import { screen, render, fireEvent } from '@testing-library/react';
-import {
-  BarChart,
-  ReferenceLine,
-  Bar,
-  XAxis,
-  YAxis,
-  LineChart,
-  Line,
-  Customized,
-  Brush,
-  ComposedChart,
-} from '../../../src';
+import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line, Brush, ComposedChart } from '../../../src';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectReferenceLinesByAxis } from '../../../src/state/selectors/axisSelectors';
 import { pageData } from '../../../storybook/stories/data';
@@ -493,7 +482,7 @@ describe('<ReferenceLine />', () => {
           <XAxis />
           <YAxis />
           <ReferenceLine y={20} ifOverflow="extendDomain" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -512,7 +501,7 @@ describe('<ReferenceLine />', () => {
         <BarChart width={1100} height={250}>
           <XAxis />
           <YAxis />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -538,7 +527,7 @@ describe('<ReferenceLine />', () => {
             ]}
             ifOverflow="extendDomain"
           />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expect(lineSpy).toHaveBeenLastCalledWith([
@@ -593,10 +582,10 @@ describe('<ReferenceLine />', () => {
               <ReferenceLine x="Page C" />
               <Line dataKey="pv" />
               <Line dataKey="uv" />
-              <Customized component={<PanoramaComp />} />
+              <PanoramaComp />
             </LineChart>
           </Brush>
-          <Customized component={<RootComp />} />
+          <RootComp />
         </ComposedChart>,
       );
 
