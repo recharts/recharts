@@ -7,7 +7,7 @@ import {
   selectAxisInverseTickSnapScale,
   selectAxisScale,
   selectAxisWithScale,
-  selectTicksOfAxis,
+  selectRenderedTicksOfAxis,
 } from './state/selectors/axisSelectors';
 import { useAppSelector } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
@@ -261,8 +261,7 @@ export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @since 3.8
  */
 export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectTicksOfAxis(state, 'xAxis', xAxisId, isPanorama));
+  return useAppSelector(state => selectRenderedTicksOfAxis(state, 'xAxis', xAxisId));
 };
 
 /**
@@ -276,8 +275,7 @@ export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<Ca
  * @since 3.8
  */
 export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectTicksOfAxis(state, 'yAxis', yAxisId, isPanorama));
+  return useAppSelector(state => selectRenderedTicksOfAxis(state, 'yAxis', yAxisId));
 };
 
 /**
