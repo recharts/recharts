@@ -7,6 +7,7 @@ import { configEasing, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
+import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
 type JavascriptAnimateProps = {
   animationId: string;
@@ -37,35 +38,6 @@ type TimeAsObject = {
 
 const from: TimeAsObject = { t: 0 };
 const to: TimeAsObject = { t: 1 };
-
-function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
-    if (Global.isSsr) {
-      return false;
-    }
-    if (!window.matchMedia) {
-      return false;
-    }
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  });
-
-  useEffect(() => {
-    if (!window.matchMedia) {
-      return;
-    }
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleChange = () => {
-      setPrefersReducedMotion(mediaQuery.matches);
-    };
-    mediaQuery.addEventListener('change', handleChange);
-    // eslint-disable-next-line consistent-return
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, []);
-
-  return prefersReducedMotion;
-}
 
 export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
