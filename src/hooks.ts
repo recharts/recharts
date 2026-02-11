@@ -20,7 +20,7 @@ import {
 import { ChartOffset, PlotArea } from './types';
 import { selectChartOffset } from './state/selectors/selectChartOffset';
 import { selectPlotArea } from './state/selectors/selectPlotArea';
-import { CategoricalDomain, Coordinate, NumberDomain, CartesianTickItem } from './util/types';
+import { CategoricalDomain, Coordinate, NumberDomain, TickItem } from './util/types';
 import { ActiveLabel } from './synchronisation/types';
 import { BandPosition } from './util/scale/RechartsScale';
 
@@ -260,7 +260,7 @@ export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
  */
-export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
+export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
   return useAppSelector(state => selectRenderedTicksOfAxis(state, 'xAxis', xAxisId));
 };
 
@@ -274,7 +274,7 @@ export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<Ca
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
  */
-export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
+export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
   return useAppSelector(state => selectRenderedTicksOfAxis(state, 'yAxis', yAxisId));
 };
 
