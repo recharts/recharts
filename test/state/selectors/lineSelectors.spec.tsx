@@ -197,7 +197,7 @@ describe('selectLinePoints', () => {
        * Line will resume animation from the most recent previous data
        * to the new points.
        */
-      expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
     });
 
     it('should return the same points after rendering the same chart', () => {

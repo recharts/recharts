@@ -296,7 +296,8 @@ describe('selectArea', () => {
        * Area will resume the animation from the most recent previous data
        * to the new points.
        */
-      expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfterRerender);
     });
   });
 });

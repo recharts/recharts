@@ -2541,8 +2541,8 @@ describe('selectAxisWithScale', () => {
      * The `expect.toBeRechartsScale` verifies that domain equals and range equals - which they do - but instances don't.
      *
      */
-    expect(xAxisSpy.mock.calls[2][0]).not.toEqual(xAxisSpy.mock.calls[3][0]);
-    expect(xAxisSpy.mock.calls[2][0].scale).not.toEqual(xAxisSpy.mock.calls[3][0].scale);
+    expect(xAxisSpy.mock.calls[3][0]).not.toEqual(xAxisSpy.mock.calls[4][0]);
+    expect(xAxisSpy.mock.calls[3][0].scale).not.toEqual(xAxisSpy.mock.calls[4][0].scale);
   });
 });
 
