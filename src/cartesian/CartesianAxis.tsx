@@ -9,7 +9,7 @@ import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, noop } from '../util/DataUtils';
 import {
   CartesianViewBox,
   adaptEventsOfChild,
@@ -44,8 +44,8 @@ export type TickFormatter = (value: any, index: number) => string;
 
 export interface CartesianAxisProps extends ZIndexable {
   className?: string;
-  axisType: 'xAxis' | 'yAxis';
-  axisId: AxisId;
+  axisType?: 'xAxis' | 'yAxis';
+  axisId?: AxisId;
   x?: number;
   y?: number;
   width?: number;
@@ -307,12 +307,15 @@ function RenderedTicksReporter({
   axisId,
 }: {
   ticks: ReadonlyArray<TickItemType>;
-  axisType: 'xAxis' | 'yAxis';
-  axisId: AxisId;
+  axisType: 'xAxis' | 'yAxis' | undefined;
+  axisId: AxisId | undefined;
 }) {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    // Filter out irrelevant internal properties before expoesing externally
+    if (!axisId || !axisType) {
+      return noop;
+    }
+    // Filter out irrelevant internal properties before exposing externally
     const tickItems = ticks.map(tick => ({
       value: tick.value,
       coordinate: tick.coordinate,
@@ -334,7 +337,7 @@ function RenderedTicksReporter({
 }
 
 type TicksProps = {
-  axisType: 'xAxis' | 'yAxis';
+  axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
   fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
@@ -355,7 +358,7 @@ type TicksProps = {
   width: number;
   x: number;
   y: number;
-  axisId: AxisId;
+  axisId: AxisId | undefined;
 };
 
 const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
