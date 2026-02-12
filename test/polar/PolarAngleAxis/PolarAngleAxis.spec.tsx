@@ -2936,7 +2936,7 @@ describe('<PolarAngleAxis />', () => {
       const onTouchMove: Mock<(tickItem: TickItem, index: number, e: React.TouchEvent) => void> = vi.fn();
       const onTouchEnd: Mock<(tickItem: TickItem, index: number, e: React.TouchEvent) => void> = vi.fn();
 
-      const { container, debug } = render(
+      const { container } = render(
         <RadarChart width={100} height={100} data={[{ x: 1, y: 1 }]}>
           <PolarRadiusAxis dataKey="x" />
           <PolarAngleAxis
@@ -2953,7 +2953,7 @@ describe('<PolarAngleAxis />', () => {
           />
         </RadarChart>,
       );
-      debug();
+
       const axisLabel = container.querySelector('.recharts-polar-angle-axis-tick');
       assertNotNull(axisLabel);
 
