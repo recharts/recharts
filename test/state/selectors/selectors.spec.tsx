@@ -471,8 +471,8 @@ describe('selectTooltipPayload', () => {
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
-      color: undefined,
-      fill: undefined,
+      color: 'color',
+      fill: 'fill',
       unit: 'cm',
       value: 100,
       payload: {
@@ -486,8 +486,8 @@ describe('selectTooltipPayload', () => {
     };
     const expectedEntry2: TooltipPayloadEntry = {
       name: 'weight',
-      color: undefined,
-      fill: undefined,
+      color: 'color',
+      fill: 'fill',
       unit: 'kg',
       value: 200,
       payload: {
