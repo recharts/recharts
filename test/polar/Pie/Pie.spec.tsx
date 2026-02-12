@@ -217,7 +217,10 @@ describe('<Pie />', () => {
 
       const tooltipItem = container.querySelector('.recharts-tooltip-item');
       assertNotNull(tooltipItem);
-      expect((tooltipItem as HTMLElement).style.color).toBe('rgb(255, 0, 0)');
+      if (!(tooltipItem instanceof HTMLElement)) {
+        throw new Error(`Expected instance of HTMLElement, instead received: [${tooltipItem}]`);
+      }
+      expect(tooltipItem.style.color).toBe('rgb(255, 0, 0)');
     });
 
     test('Render customized active sector when activeShape is set to be an object', () => {
