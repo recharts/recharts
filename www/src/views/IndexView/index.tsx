@@ -67,7 +67,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
           <h2 className="block-title">Thanks to our sponsors</h2>
           <p style={{ fontSize: '21px', color: 'var(--color-text-1)' }}>
             Browser testing via{' '}
-            <a href="https://www.testmu.ai/?utm_source=recharts&utm_medium=sponsor" target="_blank" rel="noreferrer">
+            <a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=recharts" target="_blank" rel="noreferrer">
               <img
                 src="/assets/testmu-logo-black.svg"
                 style={{ verticalAlign: 'middle' }}
