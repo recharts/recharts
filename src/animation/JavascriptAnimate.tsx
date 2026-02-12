@@ -7,7 +7,7 @@ import { configEasing, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
-import { usePrefersReducedMotion } from './usePrefersReducedMotion';
+import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
 type JavascriptAnimateProps = {
   animationId: string;

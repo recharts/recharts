@@ -10,6 +10,7 @@ import {
 } from '../util/types';
 import { ElementOffset, SetElementOffset } from '../util/useElementOffset';
 import { getTooltipTranslate } from '../util/tooltip/translate';
+import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
 export type TooltipBoundingBoxProps = {
   active: boolean;
@@ -31,7 +32,24 @@ export type TooltipBoundingBoxProps = {
   hasPortalFromProps: boolean;
 };
 
+function resolveTransitionProperty(args: {
+  prefersReducedMotion: boolean;
+  isAnimationActive: boolean | 'auto';
+  active: boolean;
+  animationDuration: number;
+  animationEasing: string;
+}): `transform ${number}ms ${string}` | undefined {
+  if (args.prefersReducedMotion && args.isAnimationActive === 'auto') {
+    return undefined;
+  }
+  if (args.isAnimationActive && args.active) {
+    return `transform ${args.animationDuration}ms ${args.animationEasing}`;
+  }
+  return undefined;
+}
+
 function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [state, setState] = React.useState(() => ({
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
@@ -55,7 +73,11 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     };
   }, [props.coordinate?.x, props.coordinate?.y]);
 
-  if (props.coordinate?.x !== state.dismissedAtCoordinate.x || props.coordinate?.y !== state.dismissedAtCoordinate.y) {
+  if (
+    state.dismissed &&
+    ((props.coordinate?.x ?? 0) !== state.dismissedAtCoordinate.x ||
+      (props.coordinate?.y ?? 0) !== state.dismissedAtCoordinate.y)
+  ) {
     setState({ ...state, dismissed: false });
   }
 
@@ -76,10 +98,13 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
   const positionStyle: React.CSSProperties = props.hasPortalFromProps
     ? {}
     : {
-        transition:
-          props.isAnimationActive && props.active
-            ? `transform ${props.animationDuration}ms ${props.animationEasing}`
-            : undefined,
+        transition: resolveTransitionProperty({
+          prefersReducedMotion,
+          isAnimationActive: props.isAnimationActive,
+          active: props.active,
+          animationDuration: props.animationDuration,
+          animationEasing: props.animationEasing,
+        }),
         ...cssProperties,
         pointerEvents: 'none',
         visibility: !state.dismissed && props.active && props.hasPayload ? 'visible' : 'hidden',

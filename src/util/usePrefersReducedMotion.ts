@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Global } from '../util/Global';
+import { Global } from './Global';
 
 export function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {

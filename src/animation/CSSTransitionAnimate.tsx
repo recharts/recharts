@@ -6,7 +6,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';
 import { getTransitionVal } from './util';
 import { Global } from '../util/Global';
-import { usePrefersReducedMotion } from './usePrefersReducedMotion';
+import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
 type CSSTransitionAnimateProps = {
   animationId: string;
