@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Bar, BarChart, Customized, IfOverflow, LabelProps, LineChart, ReferenceArea, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, IfOverflow, LabelProps, LineChart, ReferenceArea, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceAreasByAxis } from '../../src/state/selectors/axisSelectors';
 import { userEventSetup } from '../helper/userEventSetup';
@@ -650,7 +650,7 @@ describe('<ReferenceArea />', () => {
           <YAxis />
           <Bar dataKey="uv" />
           <ReferenceArea y1={1} y2={2} x1="category 3" x2="category 4" ifOverflow="extendDomain" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -672,7 +672,7 @@ describe('<ReferenceArea />', () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Bar dataKey="uv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 

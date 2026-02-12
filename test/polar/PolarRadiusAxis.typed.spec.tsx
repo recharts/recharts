@@ -1,0 +1,47 @@
+import React from 'react';
+import { describe, it } from 'vitest';
+import { PolarRadiusAxis, RadialBarChart, getRelativeCoordinate } from '../../src';
+
+describe('PolarRadiusAxis types', () => {
+  it('should allow calling getRelativeCoordinate with the type provided by Recharts event handler', () => {
+    return (
+      <RadialBarChart width={100} height={100}>
+        <PolarRadiusAxis
+          onClick={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseDown={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseUp={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseMove={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseLeave={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseOver={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseOut={e => {
+            getRelativeCoordinate(e);
+          }}
+          onMouseEnter={e => {
+            getRelativeCoordinate(e);
+          }}
+          onTouchStart={e => {
+            getRelativeCoordinate(e);
+          }}
+          onTouchMove={e => {
+            getRelativeCoordinate(e);
+          }}
+          onTouchEnd={e => {
+            getRelativeCoordinate(e);
+          }}
+        />
+      </RadialBarChart>
+    );
+  });
+});

@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import {
   PolarAngleAxis,
   PolarRadiusAxis,
@@ -9,29 +9,31 @@ import {
   RadialBar,
   RadialBarChart,
   BaseTickContentProps,
-} from '../../src';
-import { exampleRadarData, PageData, pageDataWithFillColor } from '../_data';
-import { assertNotNull } from '../helper/assertNotNull';
-import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
+  TickItem,
+} from '../../../src';
+import { exampleRadarData, PageData, pageDataWithFillColor } from '../../_data';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { AngleAxisSettings } from '../../../src/state/polarAxisSlice';
 import {
   implicitAngleAxis,
   selectAngleAxis,
   selectAngleAxisRangeWithReversed,
   selectPolarOptions,
-} from '../../src/state/selectors/polarAxisSelectors';
-import { selectNiceTicks, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
+} from '../../../src/state/selectors/polarAxisSelectors';
+import { selectNiceTicks, selectRealScaleType } from '../../../src/state/selectors/axisSelectors';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../../../src/state/selectors/polarScaleSelectors';
 import {
   selectPolarAppliedValues,
   selectPolarAxisDomain,
   selectPolarItemsSettings,
   selectPolarNiceTicks,
-} from '../../src/state/selectors/polarSelectors';
-import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
-import { expectLastCalledWithScale } from '../helper/expectScale';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { useIsPanorama } from '../../src/context/PanoramaContext';
-import { expectLastCalledWith, expectNthCalledWith } from '../helper/expectLastCalledWith';
+} from '../../../src/state/selectors/polarSelectors';
+import { useAppSelectorWithStableTest } from '../../helper/selectorTestHelpers';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { useIsPanorama } from '../../../src/context/PanoramaContext';
+import { expectLastCalledWith, expectNthCalledWith } from '../../helper/expectLastCalledWith';
+import { userEventSetup } from '../../helper/userEventSetup';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -2918,6 +2920,81 @@ describe('<PolarAngleAxis />', () => {
       expect(formatter).toHaveBeenNthCalledWith(6, 'iPhone 6', 5);
       expect(formatter).toHaveBeenNthCalledWith(7, 'iPhone 6s', 6);
       expect(formatter).toHaveBeenNthCalledWith(8, 'iPhone 5se', 7);
+    });
+  });
+
+  describe('events', () => {
+    it('should fire event handlers when provided', async () => {
+      const userEvent = userEventSetup();
+      const onClick: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseEnter: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseLeave: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOver: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseOut: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onMouseMove: Mock<(tickItem: TickItem, index: number, e: React.MouseEvent) => void> = vi.fn();
+      const onTouchStart: Mock<(tickItem: TickItem, index: number, e: React.TouchEvent) => void> = vi.fn();
+      const onTouchMove: Mock<(tickItem: TickItem, index: number, e: React.TouchEvent) => void> = vi.fn();
+      const onTouchEnd: Mock<(tickItem: TickItem, index: number, e: React.TouchEvent) => void> = vi.fn();
+
+      const { container, debug } = render(
+        <RadarChart width={100} height={100} data={[{ x: 1, y: 1 }]}>
+          <PolarRadiusAxis dataKey="x" />
+          <PolarAngleAxis
+            dataKey="y"
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            onMouseMove={onMouseMove}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          />
+        </RadarChart>,
+      );
+      debug();
+      const axisLabel = container.querySelector('.recharts-polar-angle-axis-tick');
+      assertNotNull(axisLabel);
+
+      await userEvent.click(axisLabel);
+      expect(onClick).toHaveBeenCalledTimes(1);
+
+      const tickItem: TickItem = {
+        coordinate: 90,
+        index: 0,
+        offset: 360,
+        value: 1,
+      };
+      expectLastCalledWith(onClick, tickItem, 0, expect.any(Object));
+
+      await userEvent.hover(axisLabel);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expect(onMouseEnter).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+      expect(onMouseOver).toHaveBeenCalledTimes(1);
+      expect(onMouseOver).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+
+      await userEvent.unhover(axisLabel);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onMouseLeave).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+      expect(onMouseOut).toHaveBeenCalledTimes(1);
+      expect(onMouseOut).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+
+      await userEvent.pointer({ target: axisLabel, keys: '[MouseMove]' });
+      expect(onMouseMove).toHaveBeenCalledTimes(1);
+      expect(onMouseMove).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+
+      fireEvent.touchStart(axisLabel);
+      expect(onTouchStart).toHaveBeenCalledTimes(1);
+      expect(onTouchStart).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+
+      fireEvent.touchMove(axisLabel);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
+      expect(onTouchMove).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
+
+      fireEvent.touchEnd(axisLabel);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+      expect(onTouchEnd).toHaveBeenLastCalledWith(tickItem, 0, expect.any(Object));
     });
   });
 });
