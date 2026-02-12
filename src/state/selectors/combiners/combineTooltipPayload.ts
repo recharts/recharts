@@ -97,9 +97,9 @@ export const combineTooltipPayload = (
           unit: item.unit,
           // Preserve item-level color/fill from graphical items.
           // @ts-expect-error we're assuming that item has color property
-          color: item.color,
+          color: item.color ?? settings?.color,
           // @ts-expect-error we're assuming that item has fill property
-          fill: item.fill,
+          fill: item.fill ?? settings?.fill,
         };
         agg.push(
           getTooltipEntry({
