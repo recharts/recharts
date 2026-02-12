@@ -852,6 +852,7 @@ describe('<BarChart />', () => {
               y: -18.99999999999999,
             },
             height: 47,
+            originalDataIndex: 0,
             parentViewBox: {
               height: 400,
               width: 500,
@@ -885,6 +886,7 @@ describe('<BarChart />', () => {
               y: 341,
             },
             height: 47,
+            originalDataIndex: 1,
             parentViewBox: {
               height: 400,
               width: 500,
@@ -976,6 +978,7 @@ describe('<BarChart />', () => {
             },
             height: 9.600000000000001,
             name: 'food',
+            originalDataIndex: 0,
             payload: {
               name: 'food',
               pv: 2400,
@@ -1009,6 +1012,7 @@ describe('<BarChart />', () => {
             },
             height: 18.268,
             name: 'cosmetic',
+            originalDataIndex: 1,
             payload: {
               name: 'cosmetic',
               pv: 4567,
@@ -1042,6 +1046,7 @@ describe('<BarChart />', () => {
             },
             height: 5.591999999999999,
             name: 'storage',
+            originalDataIndex: 2,
             payload: {
               name: 'storage',
               pv: 1398,
@@ -1075,6 +1080,7 @@ describe('<BarChart />', () => {
             },
             height: 39.2,
             name: 'digital',
+            originalDataIndex: 3,
             payload: {
               name: 'digital',
               pv: 9800,
@@ -2644,6 +2650,7 @@ describe('<BarChart />', () => {
         bottomWhisker: 100,
         height: 40,
         min: 100,
+        originalDataIndex: 0,
         payload: {
           average: 150,
           bottomBox: 50,
@@ -2684,6 +2691,7 @@ describe('<BarChart />', () => {
         bottomWhisker: 200,
         height: 20,
         min: 200,
+        originalDataIndex: 1,
         payload: {
           average: 550,
           bottomBox: 200,
@@ -2724,6 +2732,7 @@ describe('<BarChart />', () => {
         bottomWhisker: 200,
         height: 40,
         min: 0,
+        originalDataIndex: 2,
         payload: {
           average: 400,
           bottomBox: 200,
