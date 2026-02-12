@@ -36,7 +36,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build main lib to get omnidoc docs
+        run: npm run build
+
+      - name: Build website
         working-directory: www
         run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` npm run build
 
