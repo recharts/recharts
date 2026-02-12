@@ -1,5 +1,0 @@
-import{j as o}from"./jsx-runtime-wC7fy548.js";import{useMDXComponents as i}from"./index-DUMxoBIH.js";import{M as s,C as e,a as p}from"./blocks-BcJ0boof.js";import{C as a,A as n}from"./Text.stories-BFG3so_r.js";import"./iframe-BJmj21Iv.js";import"./preload-helper-Dp1pzeXC.js";import"./index-Bcx4MYAQ.js";import"./Text-DA6O7Yy4.js";import"./resolveDefaultProps-BRnWZzOd.js";import"./DOMUtils-CQprm85Q.js";import"./arrayEqualityCheck-DUr5Baor.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsHookInspector-niLfVp7l.js";import"./hooks-B5MTKyny.js";import"./axisSelectors-CjDiZ-xu.js";import"./ChartSizeDimensions-DzMxt8cg.js";import"./OffsetShower-Do6Xki0H.js";import"./PlotAreaShower-CQq3hYEg.js";function m(t){const r={h1:"h1",h2:"h2",...i(),...t.components};return o.jsxs(o.Fragment,{children:[o.jsx(r.h1,{id:"text",children:"Text"}),`
-`,o.jsx(s,{of:a}),`
-`,o.jsx(e,{of:n,layout:"padded"}),`
-`,o.jsx(r.h2,{id:"props",children:"Props"}),`
-`,o.jsx(p,{of:n})]})}function w(t={}){const{wrapper:r}={...i(),...t.components};return r?o.jsx(r,{...t,children:o.jsx(m,{...t})}):m(t)}export{w as default};
