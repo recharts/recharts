@@ -220,7 +220,7 @@ describe('<Pie />', () => {
       if (!(tooltipItem instanceof HTMLElement)) {
         throw new Error(`Expected instance of HTMLElement, instead received: [${tooltipItem}]`);
       }
-      expect(tooltipItem.style.color).toBe('rgb(255, 0, 0)');
+      expect(tooltipItem).toHaveStyle({ color: 'rgb(255, 0, 0)' });
     });
 
     test('Render customized active sector when activeShape is set to be an object', () => {
