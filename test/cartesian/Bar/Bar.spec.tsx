@@ -2105,7 +2105,7 @@ describe('Bar background zIndex', () => {
   );
 });
 
-describe('activeBar with missing data: https://github.com/recharts/recharts/issues/xxxxx', () => {
+describe('activeBar with missing data', () => {
   beforeEach(() => {
     mockGetBoundingClientRect({ width: 500, height: 300 });
   });
@@ -2142,17 +2142,10 @@ describe('activeBar with missing data: https://github.com/recharts/recharts/issu
     const allBars = getAllBars(container);
     expect(allBars).toHaveLength(3);
 
-    // Debug: Let's check the XAxis ticks
-    const xAxisTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick');
-    console.log('XAxis ticks count:', xAxisTicks.length);
-
     // Hover over the area where the last bar should be (Page E at rightmost position)
     // We need to hover at the rightmost bar position
     // Let's hover closer to the right edge of the chart
     showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 450, clientY: 150 });
-
-    // Let's see what we got
-    console.log('activeIndex after hover:', spy.mock.lastCall?.[0]);
 
     // The activeIndex should match Page E's original position
     // It should be the index in the original data where Page E is located
