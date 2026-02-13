@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { noop } from '../util/DataUtils';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZIndexPortalElement } from './zIndexSelectors';
 import { registerZIndexPortal, unregisterZIndexPortal } from '../state/zIndexSlice';
@@ -70,41 +69,83 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
 
   const isPanorama = useIsPanorama();
 
+  /**
+   * When zIndex changes, the new portal element is not immediately available because
+   * it requires a full render cycle through AllZIndexPortals → ZIndexSvgPortal.
+   * During this transition we keep rendering into the previous portal element
+   * to avoid an unmount/remount cycle that would cause children to briefly disappear.
+   *
+   * `registeredZIndexesRef` tracks every zIndex we have registered so that
+   * we can defer unregistration of old values until the new portal is ready.
+   * `lastPortalElementRef` caches the most recent valid portal DOM node.
+   */
+  const lastPortalElementRef = useRef<Element | undefined>(undefined);
+  const registeredZIndexesRef = useRef(new Set<number>());
+
   const dispatch = useAppDispatch();
-  useLayoutEffect(() => {
-    if (!shouldRenderInPortal) {
-      // Nothing to do. We have to call the hook because of the rules of hooks.
-      return noop;
-    }
-    /*
-     * Because zIndexes are dynamic (meaning, we're not working with a predefined set of layers,
-     * but we allow users to define any zIndex at any time), we need to register
-     * the requested zIndex in the global store. This way, the ZIndexPortals component
-     * can render the corresponding portals and only the requested ones.
-     */
-    dispatch(registerZIndexPortal({ zIndex }));
-    return () => {
-      dispatch(unregisterZIndexPortal({ zIndex }));
-    };
-  }, [dispatch, zIndex, shouldRenderInPortal]);
 
   const portalElement: Element | undefined = useAppSelector(state =>
     selectZIndexPortalElement(state, zIndex, isPanorama),
   );
 
+  /*
+   * Lifecycle effect — handles both registration and deferred cleanup.
+   *
+   * Registration: when zIndex changes we register the new value WITHOUT
+   * immediately unregistering the old one. This keeps the old <g> element
+   * alive in the DOM so `lastPortalElementRef` remains a valid render target.
+   *
+   * Deferred cleanup: once `portalElement` for the *new* zIndex becomes
+   * available we unregister every stale zIndex that is no longer needed.
+   */
+  useLayoutEffect(() => {
+    if (!shouldRenderInPortal) {
+      // Portal rendering was disabled — clean up any stale registrations
+      const registered = registeredZIndexesRef.current;
+      registered.forEach(z => dispatch(unregisterZIndexPortal({ zIndex: z })));
+      registered.clear();
+      lastPortalElementRef.current = undefined;
+      return;
+    }
+
+    // Register the current zIndex (idempotent — skips if already registered)
+    if (!registeredZIndexesRef.current.has(zIndex)) {
+      dispatch(registerZIndexPortal({ zIndex }));
+      registeredZIndexesRef.current.add(zIndex);
+    }
+
+    // When the new portal element is ready, retire old zIndex registrations
+    if (portalElement) {
+      lastPortalElementRef.current = portalElement;
+      const registered = registeredZIndexesRef.current;
+      registered.forEach(z => {
+        if (z !== zIndex) {
+          dispatch(unregisterZIndexPortal({ zIndex: z }));
+          registered.delete(z);
+        }
+      });
+    }
+  }, [dispatch, zIndex, shouldRenderInPortal, portalElement]);
+
+  // Unmount-only cleanup — unregister everything when the component is removed
+  useLayoutEffect(() => {
+    const registered = registeredZIndexesRef.current;
+    return () => {
+      registered.forEach(z => dispatch(unregisterZIndexPortal({ zIndex: z })));
+      registered.clear();
+    };
+  }, [dispatch]);
+
   if (!shouldRenderInPortal) {
-    // If no zIndex is provided or zIndex is 0, render normally without portals
     return children;
   }
 
-  if (!portalElement) {
-    /*
-     * If we don't have a portal element yet, this means that the registration
-     * has not been processed yet by the ZIndexPortals component.
-     * So here we render null and wait for the next render cycle.
-     */
+  // Prefer the current portal; fall back to the cached one during transitions
+  const targetElement = portalElement ?? lastPortalElementRef.current;
+  if (!targetElement) {
+    // Very first render — no portal has ever been registered yet
     return null;
   }
 
-  return createPortal(children, portalElement);
+  return createPortal(children, targetElement);
 }
