@@ -1415,9 +1415,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'x',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 0,
             payload: { x: 1 },
             type: undefined,
@@ -1427,9 +1427,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'x',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 1,
             payload: { x: 2 },
             type: undefined,
@@ -1439,9 +1439,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'x',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 2,
             payload: { x: 3 },
             type: undefined,
@@ -1453,9 +1453,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'y',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 0,
             payload: { y: 10 },
             type: undefined,
@@ -1465,9 +1465,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'y',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 1,
             payload: { y: 20 },
             type: undefined,
@@ -1477,9 +1477,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
-            color: expect.any(String),
+            color: '#808080',
             dataKey: 'y',
-            fill: expect.any(String),
+            fill: '#808080',
             name: 2,
             payload: { y: 30 },
             type: undefined,
