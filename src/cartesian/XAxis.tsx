@@ -16,6 +16,7 @@ import {
   EvaluatedAxisDomainType,
   TickProp,
   XAxisTickContentProps,
+  TickItem,
 } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -170,7 +171,7 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & XAxisProps;
 
 function SetXAxisSettings(props: Omit<XAxisSettings, 'type'> & { type: AxisDomainTypeInput }): ReactNode {
   const dispatch = useAppDispatch();
