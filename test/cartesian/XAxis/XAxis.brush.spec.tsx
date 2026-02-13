@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectTicksOfAxis } from '../../../src/state/selectors/axisSelectors';
-import { BarChart, Brush, Customized, XAxis } from '../../../src';
+import { BarChart, Brush, XAxis } from '../../../src';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 
 const data = [
@@ -28,7 +28,7 @@ describe('brush and startIndex + endIndex', () => {
       <BarChart width={300} height={300} data={data}>
         <XAxis dataKey="x" type="category" />
         <Brush startIndex={1} endIndex={4} />
-        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
         <Comp />
       </BarChart>,
     );
@@ -94,7 +94,7 @@ describe('brush and startIndex + endIndex', () => {
       <BarChart width={300} height={300} data={data}>
         <XAxis dataKey="x" type="category" />
         <Brush />
-        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
         <Comp />
       </BarChart>,
     );
@@ -185,7 +185,7 @@ describe('brush and startIndex + endIndex', () => {
       <BarChart width={300} height={300} data={data}>
         <XAxis dataKey="x" type="category" />
         <Brush startIndex={1} endIndex={4} />
-        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />
         <Comp />
       </BarChart>,
     );

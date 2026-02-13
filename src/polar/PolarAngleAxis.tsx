@@ -202,42 +202,48 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
    * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+}
+
+type PolarAngleAxisEvents = {
   /**
    * The customized event handler of click on the ticks of this axis
    */
-  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mousedown on the ticks of this axis
    */
-  onMouseDown?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseDown?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mouseup on the ticks of this axis
    */
-  onMouseUp?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseUp?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mousemove on the ticks of this axis
    */
-  onMouseMove?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseMove?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mouseover on the ticks of this axis
    */
-  onMouseOver?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOver?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mouseout on the ticks of this axis
    */
-  onMouseOut?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseOut?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mouseenter on the ticks of this axis
    */
-  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseEnter?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
   /**
    * The customized event handler of mouseleave on the ticks of this axis
    */
-  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
-}
+  onMouseLeave?: (data: TickItem, index: number, e: React.MouseEvent<SVGTextElement>) => void;
+  onTouchStart?: (data: TickItem, index: number, e: React.TouchEvent<SVGTextElement>) => void;
+  onTouchMove?: (data: TickItem, index: number, e: React.TouchEvent<SVGTextElement>) => void;
+  onTouchEnd?: (data: TickItem, index: number, e: React.TouchEvent<SVGTextElement>) => void;
+};
 
 type AxisSvgProps = Omit<
-  PresentationAttributesAdaptChildEvent<any, SVGTextElement>,
+  PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
   'scale' | 'type' | 'dangerouslySetInnerHTML'
 >;
 
@@ -245,13 +251,13 @@ export type Props = AxisSvgProps & PolarAngleAxisProps;
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
 
-type InsideProps = Omit<PropsWithDefaults, 'scale'> & {
+type InternalPolarAngleAxisProps = Omit<PropsWithDefaults, 'scale'> & {
   cx: number;
   cy: number;
   radius: number;
   ticks: ReadonlyArray<TickItem>;
   scale: RechartsScale;
-};
+} & PolarAngleAxisEvents;
 
 const AXIS_TYPE = 'angleAxis';
 
@@ -302,7 +308,7 @@ function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
  */
 const getTickLineCoord = (
   data: TickItem,
-  props: InsideProps,
+  props: InternalPolarAngleAxisProps,
 ): {
   x1: number;
   y1: number;
@@ -353,7 +359,7 @@ const getTickTextVerticalAnchor = (data: TickItem): TextVerticalAnchor => {
   return 'middle';
 };
 
-const AxisLine = (props: InsideProps) => {
+const AxisLine = (props: InternalPolarAngleAxisProps) => {
   const { cx, cy, radius, axisLineType, axisLine, ticks } = props;
   if (!axisLine) {
     return null;
@@ -397,9 +403,9 @@ const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactNode => {
   );
 };
 
-const Ticks = (props: InsideProps) => {
+const Ticks = (props: InternalPolarAngleAxisProps) => {
   const { tick, tickLine, tickFormatter, stroke, ticks } = props;
-  const axisProps = svgPropertiesNoEvents(props);
+  const { ref, ...axisProps } = svgPropertiesNoEvents(props);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   const tickLineProps = {
     ...axisProps,
@@ -433,7 +439,6 @@ const Ticks = (props: InsideProps) => {
         key={`tick-${entry.coordinate}`}
         {...adaptEventsOfChild(props, entry, i)}
       >
-        {/* @ts-expect-error we're passing recharts internal `scale` prop in place of SVG scale prop */}
         {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
         <TickItemText
           tick={tick}
@@ -459,7 +464,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
     return null;
   }
 
-  const props: InsideProps = {
+  const props: InternalPolarAngleAxisProps = {
     ...defaultsAndInputs,
     scale,
     ...viewBox,

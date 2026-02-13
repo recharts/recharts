@@ -138,6 +138,7 @@ describe('Documentation Examples Coverage', () => {
     'SymbolsProps',
     'Text',
     'TextProps',
+    'TickItem',
     'Tooltip',
     'TooltipPayloadEntry',
     'TooltipProps',

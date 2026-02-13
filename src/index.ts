@@ -155,6 +155,7 @@ export type {
   CartesianViewBox,
   SankeyNode,
   RelativePointer,
+  TickItem,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
