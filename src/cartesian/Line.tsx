@@ -210,7 +210,7 @@ interface LineProps<DataPointType = any, DataValueType = any>
   id?: string;
   /**
    * If set false, animation of line will be disabled.
-   * If set "auto", the animation will be disabled in SSR and respects the user's prefers-reduced-motion system preference for accessibility.
+   * If set "auto", the animation will be disabled in SSR and will respect the user's prefers-reduced-motion system preference for accessibility.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
