@@ -22,10 +22,6 @@ type TooltipPayloadItemLike = {
   fill: string | undefined;
 };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value != null && typeof value === 'object';
-}
-
 function parseName(value: unknown): TooltipEntrySettings['name'] {
   if (typeof value === 'string' || typeof value === 'number') {
     return value;
@@ -58,17 +54,24 @@ function parseColor(value: unknown): string | undefined {
 }
 
 function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefined {
-  if (!isRecord(item)) {
+  if (item == null || typeof item !== 'object') {
     return undefined;
   }
 
+  const name = 'name' in item ? parseName(item.name) : undefined;
+  const unit = 'unit' in item ? parseUnit(item.unit) : undefined;
+  const dataKey = 'dataKey' in item ? parseDataKey(item.dataKey) : undefined;
+  const payload = 'payload' in item ? item.payload : undefined;
+  const color = 'color' in item ? parseColor(item.color) : undefined;
+  const fill = 'fill' in item ? parseColor(item.fill) : undefined;
+
   return {
-    name: parseName(item.name),
-    unit: parseUnit(item.unit),
-    dataKey: parseDataKey(item.dataKey),
-    payload: item.payload,
-    color: parseColor(item.color),
-    fill: parseColor(item.fill),
+    name,
+    unit,
+    dataKey,
+    payload,
+    color,
+    fill,
   };
 }
 
