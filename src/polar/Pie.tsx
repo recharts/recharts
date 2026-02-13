@@ -424,6 +424,22 @@ type PieSectorsProps = {
   id: GraphicalItemId;
 };
 
+function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
+  // activeShape can be boolean/function/element/object; only element/object can carry a static fill value.
+  if (activeShape == null || typeof activeShape === 'boolean' || typeof activeShape === 'function') {
+    return undefined;
+  }
+
+  if (React.isValidElement(activeShape)) {
+    // React element form: <Sector fill="..."/> or custom element with fill prop.
+    const fill = activeShape.props?.fill;
+    return typeof fill === 'string' ? fill : undefined;
+  }
+
+  const { fill } = activeShape;
+  return typeof fill === 'string' ? fill : undefined;
+}
+
 const SetPieTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -436,12 +452,38 @@ const SetPieTooltipEntrySettings = React.memo(
     hide,
     tooltipType,
     id,
+    activeShape,
   }: Pick<
     InternalProps,
-    'dataKey' | 'nameKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'id'
+    | 'dataKey'
+    | 'nameKey'
+    | 'sectors'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'hide'
+    | 'tooltipType'
+    | 'id'
+    | 'activeShape'
   >) => {
+    const activeShapeFill = getActiveShapeFill(activeShape);
+
+    const tooltipDataDefinedOnItem = sectors.map(sector => {
+      const sectorTooltipPayload = sector.tooltipPayload;
+      if (activeShapeFill == null || sectorTooltipPayload == null) {
+        return sectorTooltipPayload;
+      }
+
+      return sectorTooltipPayload.map(item => ({
+        ...item,
+        color: activeShapeFill,
+        fill: activeShapeFill,
+      }));
+    });
+
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: sectors.map((p: PieSectorDataItem) => p.tooltipPayload),
+      dataDefinedOnItem: tooltipDataDefinedOnItem,
       getPosition: index => sectors[Number(index)]?.tooltipPosition,
       settings: {
         stroke,
@@ -979,6 +1021,7 @@ function PieImpl(props: Omit<InternalProps, 'sectors'>) {
         hide={props.hide}
         tooltipType={props.tooltipType}
         id={id}
+        activeShape={props.activeShape}
       />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
         <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} id={id} />

@@ -223,6 +223,37 @@ describe('<Pie />', () => {
       expect(tooltipItem).toHaveStyle({ color: 'rgb(255, 0, 0)' });
     });
 
+    test('should use active shape fill for tooltip item color when activeShape provides fill', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            activeShape={{ fill: '#ff0000' }}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={[
+              { name: 'Page A', uv: 590 },
+              { name: 'Page B', uv: 590 },
+              { name: 'Page C', uv: 868 },
+            ]}
+            dataKey="uv"
+          />
+          <Tooltip defaultIndex={2} />
+        </PieChart>,
+      );
+
+      expectTooltipPayload(container, '', ['Page C : 868']);
+
+      const tooltipItem = container.querySelector('.recharts-tooltip-item');
+      assertNotNull(tooltipItem);
+      if (!(tooltipItem instanceof HTMLElement)) {
+        throw new Error(`Expected instance of HTMLElement, instead received: [${tooltipItem}]`);
+      }
+      expect(tooltipItem).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+    });
+
     test('Render customized active sector when activeShape is set to be an object', () => {
       const { container, debug } = render(
         <PieChart width={500} height={500}>
