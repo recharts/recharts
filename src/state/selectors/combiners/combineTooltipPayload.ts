@@ -13,21 +13,62 @@ import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
 import { getSliced } from '../../../util/getSliced';
 import { ActiveLabel } from '../../../synchronisation/types';
 
-type TooltipPayloadItemLike = Pick<TooltipPayloadEntry, 'name' | 'unit' | 'dataKey' | 'payload' | 'color' | 'fill'>;
+type TooltipPayloadItemLike = {
+  name: TooltipEntrySettings['name'];
+  unit: TooltipEntrySettings['unit'];
+  dataKey: DataKey<any> | undefined;
+  payload: unknown;
+  color: string | undefined;
+  fill: string | undefined;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value != null && typeof value === 'object';
+}
+
+function parseName(value: unknown): TooltipEntrySettings['name'] {
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value;
+  }
+  return undefined;
+}
+
+function parseUnit(value: unknown): TooltipEntrySettings['unit'] {
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return value;
+  }
+  return undefined;
+}
+
+function parseDataKey(value: unknown): DataKey<any> | undefined {
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value;
+  }
+  if (typeof value === 'function') {
+    return obj => value(obj);
+  }
+  return undefined;
+}
+
+function parseColor(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    return value;
+  }
+  return undefined;
+}
 
 function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefined {
-  if (item == null || typeof item !== 'object') {
+  if (!isRecord(item)) {
     return undefined;
   }
 
-  const candidate = item as Partial<TooltipPayloadItemLike>;
   return {
-    name: candidate.name,
-    unit: candidate.unit,
-    dataKey: candidate.dataKey,
-    payload: candidate.payload,
-    color: candidate.color,
-    fill: candidate.fill,
+    name: parseName(item.name),
+    unit: parseUnit(item.unit),
+    dataKey: parseDataKey(item.dataKey),
+    payload: item.payload,
+    color: parseColor(item.color),
+    fill: parseColor(item.fill),
   };
 }
 
