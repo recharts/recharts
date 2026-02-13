@@ -13,6 +13,8 @@ import {
   Legend,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
@@ -40,6 +42,7 @@ import {
   composedChartMouseHoverTooltipSelector,
   lineChartMouseHoverTooltipSelector,
   MouseHoverTooltipTriggerSelector,
+  pieChartMouseHoverTooltipSelector,
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
@@ -219,17 +222,17 @@ const RadialBarChartTestCase: TooltipSyncTestCase = {
   tooltipContent: { chartOne: { name: 'Mike', value: '200' }, chartTwo: { name: 'Mike', value: '9800' } },
 };
 
-// TODO: fix synchronization in Pie, Scatter, Funnel. These currently accept syncId as a prop but do not work.
-// const PieChartTestCase: TooltipVisibilityTestCase = {
-//   name: 'PieChart',
-//   Wrapper: ({ children, syncId }) => (
-//     <PieChart height={400} width={400} syncId={syncId}>
-//       <Pie data={PageData} isAnimationActive={false} dataKey="uv" nameKey="name" cx={200} cy={200} />
-//       {children}
-//     </PieChart>
-//   ),
-//   mouseHoverSelector: pieChartMouseHoverTooltipSelector,
-// };
+const PieChartTestCase: TooltipSyncTestCase = {
+  name: 'PieChart',
+  Wrapper: ({ children, syncId, dataKey }) => (
+    <PieChart height={400} width={400} syncId={syncId}>
+      <Pie data={PageData} isAnimationActive={false} dataKey={dataKey} nameKey="name" cx={200} cy={200} />
+      {children}
+    </PieChart>
+  ),
+  mouseHoverSelector: pieChartMouseHoverTooltipSelector,
+  tooltipContent: { chartOne: { name: 'Page A', value: '400' }, chartTwo: { name: 'Page A', value: '2400' } },
+};
 
 // const ScatterChartTestCase: TooltipVisibilityTestCase = {
 //   name: 'ScatterChart',
@@ -309,12 +312,12 @@ const cartesianTestCases: ReadonlyArray<TooltipSyncTestCase> = [
 ];
 
 const radialTestCases: ReadonlyArray<TooltipSyncTestCase> = [
-  // PieChartTestCase,
+  PieChartTestCase,
   RadarChartTestCase,
   RadialBarChartTestCase,
 ];
 
-// Tooltip sync does not work for PieChart, ScatterChart, FunnelChart, SunburstChart, SankeyChart, Treemap
+// Tooltip sync does not work for ScatterChart, FunnelChart, SunburstChart, SankeyChart, Treemap
 describe('Tooltip synchronization', () => {
   beforeEach(() => {
     mockGetBoundingClientRect({ width: 100, height: 100 });
