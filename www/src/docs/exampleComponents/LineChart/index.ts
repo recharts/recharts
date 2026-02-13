@@ -33,6 +33,8 @@ import lineChartNegativeValuesWithReferenceLinesSource from './LineChartNegative
 import { ChartExample } from '../types.ts';
 import CompareTwoLines from './CompareTwoLines.tsx';
 import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
+import DynamicZIndexLineChart from './DynamicZIndexLineChart.tsx';
+import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
 
 export const lineChartExamples = {
   SimpleLineChart: {
@@ -119,6 +121,11 @@ export const lineChartExamples = {
     Component: CompareTwoLines,
     sourceCode: CompareTwoLinesSource,
     name: 'Compare Two Lines',
+  },
+  DynamicZIndexLineChart: {
+    Component: DynamicZIndexLineChart,
+    sourceCode: DynamicZIndexLineChartSource,
+    name: 'Dynamic Z-Index Line Chart',
   },
 } satisfies Record<string, ChartExample>;
 
