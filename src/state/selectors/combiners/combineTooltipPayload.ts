@@ -13,6 +13,24 @@ import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
 import { getSliced } from '../../../util/getSliced';
 import { ActiveLabel } from '../../../synchronisation/types';
 
+type TooltipPayloadItemLike = Pick<TooltipPayloadEntry, 'name' | 'unit' | 'dataKey' | 'payload' | 'color' | 'fill'>;
+
+function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefined {
+  if (item == null || typeof item !== 'object') {
+    return undefined;
+  }
+
+  const candidate = item as Partial<TooltipPayloadItemLike>;
+  return {
+    name: candidate.name,
+    unit: candidate.unit,
+    dataKey: candidate.dataKey,
+    payload: candidate.payload,
+    color: candidate.color,
+    fill: candidate.fill,
+  };
+}
+
 function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ChartData | undefined): unknown {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
@@ -89,29 +107,25 @@ export const combineTooltipPayload = (
 
     if (Array.isArray(tooltipPayload)) {
       tooltipPayload.forEach(item => {
+        const parsedItem = parseTooltipPayloadItem(item);
+        const itemName = parsedItem?.name;
+        const itemDataKey = parsedItem?.dataKey;
+        const itemPayload = parsedItem?.payload;
         const newSettings: TooltipEntrySettings = {
           ...settings,
-          // @ts-expect-error we're assuming that item has name and unit properties
-          name: item.name,
-          // @ts-expect-error we're assuming that item has name and unit properties
-          unit: item.unit,
+          name: itemName,
+          unit: parsedItem?.unit,
           // Preserve item-level color/fill from graphical items.
-          // @ts-expect-error we're assuming that item has color property
-          color: item.color ?? settings?.color,
-          // @ts-expect-error we're assuming that item has fill property
-          fill: item.fill ?? settings?.fill,
+          color: parsedItem?.color ?? settings?.color,
+          fill: parsedItem?.fill ?? settings?.fill,
         };
         agg.push(
           getTooltipEntry({
             tooltipEntrySettings: newSettings,
-            // @ts-expect-error we're assuming that item has name and unit properties
-            dataKey: item.dataKey,
-            // @ts-expect-error we're assuming that item has name and unit properties
-            payload: item.payload,
-            // @ts-expect-error getValueByDataKey does not validate the output type
-            value: getValueByDataKey(item.payload, item.dataKey),
-            // @ts-expect-error we're assuming that item has name and unit properties
-            name: item.name,
+            dataKey: itemDataKey,
+            payload: itemPayload,
+            value: getValueByDataKey(itemPayload, itemDataKey),
+            name: itemName == null ? undefined : String(itemName),
           }),
         );
       });
