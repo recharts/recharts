@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Area, Brush, CurveProps, DefaultZIndexes, DotItemDotProps, Tooltip, XAxis, YAxis } from '../../src';
-import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
+import { BaseValue, computeArea, getBaseValue } from '../../src/cartesian/Area';
 import {
   allCartesianChartsExcept,
   AreaChartCase,
@@ -40,7 +40,7 @@ const data = [
   { x: 170, y: 50, value: 100 },
 ];
 
-const emptyBaseValues: ReadonlyArray<Props['baseValue']> = [undefined, NaN];
+const emptyBaseValues: ReadonlyArray<BaseValue | undefined> = [undefined, NaN];
 
 type BaseValueTestCase = {
   domain: [number, number];
@@ -649,7 +649,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         spy(cartesianItems);
         return null;
       };
-      const data2 = [1, 2, 3];
+      const data2 = [{ value: 1 }, { value: 2 }, { value: 3 }];
 
       const { rerender } = render(
         <ChartElement data={data}>
@@ -701,7 +701,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         spy(cartesianItems);
         return null;
       };
-      const data2 = [1, 2, 3];
+      const data2 = [{ value: 1 }, { value: 2 }, { value: 3 }];
 
       render(
         <ChartElement data={data}>

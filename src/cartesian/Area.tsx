@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
-  ComponentType,
   MutableRefObject,
   PureComponent,
+  ReactElement,
   ReactNode,
   useCallback,
   useMemo,
@@ -58,7 +58,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
@@ -317,13 +317,19 @@ type AreaSvgProps = Omit<
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
-export type Props = AreaSvgProps & AreaProps;
+export type Props<DataPointType, ValueAxisType> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
+
+type PropsWithDefaults<DataPointType, ValueAxisType> = WithIdRequired<
+  RequiresDefaultProps<Props<DataPointType, ValueAxisType>, typeof defaultAreaProps>
+>;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
+  props: Props<DataPointType, ValueAxisType>,
+): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide } = props;
   return [
     {
@@ -338,7 +344,7 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
 };
 
 const SetAreaTooltipEntrySettings = React.memo(
-  ({
+  <DataPointType, ValueAxisType>({
     dataKey,
     data,
     stroke,
@@ -350,7 +356,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: Pick<
-    WithIdRequired<Props>,
+    WithIdRequired<Props<DataPointType, ValueAxisType>>,
     'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
@@ -372,7 +378,12 @@ const SetAreaTooltipEntrySettings = React.memo(
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
   },
-);
+) as <DataPointType, ValueAxisType>(
+  props: Pick<
+    WithIdRequired<Props<DataPointType, ValueAxisType>>,
+    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
+  >,
+) => ReactElement;
 
 function AreaDotsWrapper({
   clipPathId,
@@ -507,7 +518,7 @@ function VerticalRect({
   alpha: number;
   points: ReadonlyArray<AreaPointItem>;
   baseLine: BaseLineType | undefined;
-  strokeWidth: Props['strokeWidth'];
+  strokeWidth: string | number | undefined;
 }) {
   const startY = points[0]?.y;
   const endY = points[points.length - 1]?.y;
@@ -546,7 +557,7 @@ function HorizontalRect({
   alpha: number;
   points: ReadonlyArray<AreaPointItem>;
   baseLine: BaseLineType | undefined;
-  strokeWidth: Props['strokeWidth'];
+  strokeWidth: string | number | undefined;
 }) {
   const startX = points[0]?.x;
   const endX = points[points.length - 1]?.x;
@@ -587,7 +598,7 @@ function ClipRect({
   layout: CartesianLayout;
   points: ReadonlyArray<AreaPointItem>;
   baseLine: BaseLineType | undefined;
-  strokeWidth: Props['strokeWidth'];
+  strokeWidth: string | number | undefined;
 }) {
   if (layout === 'vertical') {
     return <VerticalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
@@ -778,7 +789,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
    * So, useRef it is.
    */
   const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
-  const previousBaselineRef = useRef<InternalProps['baseLine'] | undefined>();
+  const previousBaselineRef = useRef<BaseLineType | undefined>();
 
   return (
     <AreaWithAnimation
@@ -867,9 +878,9 @@ export const defaultAreaProps = {
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props>;
+} as const satisfies Partial<Props<never, never>>;
 
-function AreaImpl(props: WithIdRequired<Props>) {
+function AreaImpl<DataPointType, ValueAxisType>(props: PropsWithDefaults<DataPointType, ValueAxisType>) {
   const {
     activeDot,
     animationBegin,
@@ -886,7 +897,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
     xAxisId,
     yAxisId,
     ...everythingElse
-  } = resolveDefaultProps(props, defaultAreaProps);
+  } = props;
   const layout = useChartLayout();
   const chartName = useChartName();
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
@@ -1079,10 +1090,10 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props) {
+function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType, ValueAxisType>) {
   const props = resolveDefaultProps(outsideProps, defaultAreaProps);
   const isPanorama = useIsPanorama();
-  // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
+  // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
@@ -1126,5 +1137,8 @@ function AreaFn(outsideProps: Props) {
  * @provides LabelListContext
  * @consumes CartesianChartContext
  */
-export const Area: ComponentType<Props> = React.memo(AreaFn, propsAreEqual);
+export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 Area.displayName = 'Area';
