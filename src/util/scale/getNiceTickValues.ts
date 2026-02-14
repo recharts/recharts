@@ -38,20 +38,38 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
     return new Decimal(0);
   }
 
-  const digitCount = getDigitCount(roughStep.toNumber());
-  // The ratio between the rough step and the smallest number which has a bigger
-  // order of magnitudes than the rough step
-  const digitCountValue = new Decimal(10).pow(digitCount);
-  const stepRatio = roughStep.div(digitCountValue);
-  // When an integer and a float multiplied, the accuracy of result may be wrong
-  const stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
-  const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
-    .add(correctionFactor)
-    .mul(stepRatioScale);
+  // Nice number sequence: steps snap to multiples of {1, 2, 2.5, 5} at each
+  // order of magnitude, producing human-friendly tick intervals like
+  // 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+  const NICE_STEPS = [1, 2, 2.5, 5];
 
-  const formatStep = amendStepRatio.mul(digitCountValue);
+  const roughNum = roughStep.toNumber();
+  const exponent = Math.floor(new Decimal(roughNum).abs().log(10).toNumber());
+  let magnitude = new Decimal(10).pow(exponent);
 
-  return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
+  // normalized is in the range [1, 10)
+  const normalized = roughStep.div(magnitude).toNumber();
+
+  // Find the smallest nice step >= normalized (ceiling)
+  let niceIdx = NICE_STEPS.findIndex(s => s >= normalized - 1e-10);
+  if (niceIdx === -1) {
+    // normalized > 5 (e.g. 7.3), move to next order of magnitude
+    magnitude = magnitude.mul(10);
+    niceIdx = 0;
+  }
+
+  // Apply correction factor by stepping through the nice number sequence
+  niceIdx += correctionFactor;
+  if (niceIdx >= NICE_STEPS.length) {
+    const extraMag = Math.floor(niceIdx / NICE_STEPS.length);
+    niceIdx %= NICE_STEPS.length;
+    magnitude = magnitude.mul(new Decimal(10).pow(extraMag));
+  }
+
+  const niceStep = NICE_STEPS[niceIdx] ?? 1;
+  const formatStep = new Decimal(niceStep).mul(magnitude);
+
+  return allowDecimals ? formatStep : new Decimal(Math.ceil(formatStep.toNumber()));
 };
 
 /**
