@@ -108,6 +108,12 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
       return;
     }
 
+    /*
+     * Because zIndexes are dynamic (meaning, we're not working with a predefined set of layers,
+     * but we allow users to define any zIndex at any time), we need to register
+     * the requested zIndex in the global store. This way, the ZIndexPortals component
+     * can render the corresponding portals and only the requested ones.
+     */
     // Register the current zIndex (idempotent — skips if already registered)
     if (!registeredZIndexesRef.current.has(zIndex)) {
       dispatch(registerZIndexPortal({ zIndex }));
