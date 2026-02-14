@@ -113,6 +113,10 @@ export type { CustomScaleDefinition } from './util/scale/CustomScaleDefinition';
 export { ErrorBar } from './cartesian/ErrorBar';
 export type { Props as ErrorBarProps } from './cartesian/ErrorBar';
 
+// Waterfall chart utility
+export { computeWaterfallData } from './util/waterfall';
+export type { WaterfallOptions, WaterfallDatum } from './util/waterfall';
+
 export { LineChart } from './chart/LineChart';
 export { BarChart } from './chart/BarChart';
 export { PieChart } from './chart/PieChart';
