@@ -1,5 +1,5 @@
 /* eslint no-console: 0 */
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = false;
 
 export const warn = (condition: boolean, format: string, ...args: any[]) => {
   if (isDev && typeof console !== 'undefined' && console.warn) {
