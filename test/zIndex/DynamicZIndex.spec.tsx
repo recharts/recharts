@@ -41,8 +41,12 @@ describe('Dynamic zIndex updates', () => {
     const button = getByText('Increment zIndex');
 
     // Rapid zIndex updates should not cause lines to disappear
+    // Rapid zIndex updates should not cause lines to disappear
     act(() => {
       button.click();
+    });
+    act(() => {
+      vi.runOnlyPendingTimers();
     });
 
     let lines = container.querySelectorAll('.recharts-line');
@@ -50,6 +54,9 @@ describe('Dynamic zIndex updates', () => {
 
     act(() => {
       button.click();
+    });
+    act(() => {
+      vi.runOnlyPendingTimers();
     });
 
     lines = container.querySelectorAll('.recharts-line');

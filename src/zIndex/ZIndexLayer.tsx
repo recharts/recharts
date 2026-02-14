@@ -102,7 +102,9 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
     if (!shouldRenderInPortal) {
       // Portal rendering was disabled — clean up any stale registrations
       const registered = registeredZIndexesRef.current;
-      registered.forEach(z => dispatch(unregisterZIndexPortal({ zIndex: z })));
+      registered.forEach(z => {
+        dispatch(unregisterZIndexPortal({ zIndex: z }));
+      });
       registered.clear();
       lastPortalElementRef.current = undefined;
       return;
@@ -137,7 +139,9 @@ export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   useLayoutEffect(() => {
     const registered = registeredZIndexesRef.current;
     return () => {
-      registered.forEach(z => dispatch(unregisterZIndexPortal({ zIndex: z })));
+      registered.forEach(z => {
+        dispatch(unregisterZIndexPortal({ zIndex: z }));
+      });
       registered.clear();
     };
   }, [dispatch]);
