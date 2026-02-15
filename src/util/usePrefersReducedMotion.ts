@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { Global } from './Global';
 
-export function usePrefersReducedMotion() {
+/**
+ * Detects and subscribes to the user's `prefers-reduced-motion` system preference.
+ * Returns `true` when the user prefers reduced motion, `false` otherwise.
+ * SSR-safe: always returns `false` during server-side rendering.
+ */
+export function usePrefersReducedMotion(): boolean {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
     if (Global.isSsr) {
       return false;
