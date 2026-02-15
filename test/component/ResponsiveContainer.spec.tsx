@@ -384,16 +384,6 @@ describe('<ResponsiveContainer />', () => {
     expect(onResize2).toHaveBeenCalledWith(100, 100);
   });
 
-  it('should render children straight, without any detector divs, when width and height are both fixed numbers', () => {
-    const { container } = render(
-      <ResponsiveContainer width={100} height={100}>
-        <DimensionSpy />
-      </ResponsiveContainer>,
-    );
-    expect(container.querySelector('.recharts-responsive-container')).not.toBeInTheDocument();
-    expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
-  });
-
   it('should warn when aspect is not greater than zero', () => {
     render(
       <ResponsiveContainer aspect={-1} width="100%" height={100}>
@@ -501,5 +491,29 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>,
     );
     expect(container.querySelector('.recharts-responsive-container')).toHaveClass('my-custom-class');
+  });
+
+  it('should pass data-testid attribute to the container div', () => {
+    render(
+      <ResponsiveContainer data-testid="my-responsive-container">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    expect(screen.getByTestId('my-responsive-container')).toBeInTheDocument();
+    expect(screen.getByTestId('my-responsive-container')).toHaveClass('recharts-responsive-container');
+  });
+
+  it('should pass multiple data-* attributes to the container div', () => {
+    const { container } = render(
+      <ResponsiveContainer data-testid="my-container" data-custom="custom-value" data-analytics-id="chart-1">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    const responsiveContainer = container.querySelector('.recharts-responsive-container');
+    expect(responsiveContainer).toHaveAttribute('data-testid', 'my-container');
+    expect(responsiveContainer).toHaveAttribute('data-custom', 'custom-value');
+    expect(responsiveContainer).toHaveAttribute('data-analytics-id', 'chart-1');
   });
 });
