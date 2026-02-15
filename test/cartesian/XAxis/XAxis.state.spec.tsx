@@ -7,11 +7,13 @@ import { useAppSelector } from '../../../src/state/hooks';
 import {
   implicitXAxis,
   selectRenderableAxisSettings,
+  selectRenderedTicksOfAxis,
   selectXAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
 import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { TickItem } from '../../../src/util/types';
 
 describe('state integration', () => {
   it('should publish its configuration to redux store', () => {
@@ -45,7 +47,7 @@ describe('state integration', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
     const expectedSettings: XAxisSettings = {
       angle: 13,
       minTickGap: 9,
@@ -268,7 +270,7 @@ describe('state integration', () => {
 
     const { spy, container } = renderTestCase(state => state.cartesianAxis.xAxis);
 
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
 
     // only id "1" exists
     const lastCallArgs1 = spy.mock.lastCall?.[0];
@@ -276,7 +278,7 @@ describe('state integration', () => {
     expect(Object.keys(lastCallArgs1)).toEqual(['1']);
 
     fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(5);
 
     // only id "2" exists
     const lastCallArgs2 = spy.mock.lastCall?.[0];
@@ -327,7 +329,7 @@ describe('state integration', () => {
 
     rerenderSameComponent();
     expectLastCalledWith(spy, expectedSettings);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(4);
 
     // now assert that the 2nd and 3rd call have identical references (toBe)
     expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
@@ -336,5 +338,37 @@ describe('state integration', () => {
   it('should not render anything when attempting to render outside of Chart', () => {
     const { container } = render(<XAxis dataKey="x" name="stature" unit="cm" />);
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(0);
+  });
+
+  it('should publish rendered ticks to the store', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={100} height={100} data={[{ x: 'x-1' }, { x: 'x-2' }, { x: 'x-3' }]}>
+        <XAxis xAxisId="foo" dataKey="x" />
+        {children}
+      </BarChart>
+    ));
+
+    const { spy } = renderTestCase(state => selectRenderedTicksOfAxis(state, 'xAxis', 'foo'));
+    const expectedTicks: ReadonlyArray<TickItem> = [
+      {
+        coordinate: 20,
+        index: 0,
+        offset: 15,
+        value: 'x-1',
+      },
+      {
+        coordinate: 50,
+        index: 1,
+        offset: 15,
+        value: 'x-2',
+      },
+      {
+        coordinate: 80,
+        index: 2,
+        offset: 15,
+        value: 'x-3',
+      },
+    ];
+    expectLastCalledWith(spy, expectedTicks);
   });
 });

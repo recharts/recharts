@@ -96,12 +96,12 @@ describe('selectArea', () => {
         ],
       };
       expect(spy).toHaveBeenLastCalledWith(expectedResult);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       rerenderSameComponent();
 
       expect(spy).toHaveBeenLastCalledWith(expectedResult);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
 
       expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
     });
@@ -207,7 +207,7 @@ describe('selectArea', () => {
         ],
       };
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
       expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right points
 
@@ -290,13 +290,14 @@ describe('selectArea', () => {
         ],
       };
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
       /*
        * Fourth render has the new updated data with consistent dataKey.
        * Area will resume the animation from the most recent previous data
        * to the new points.
        */
-      expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfterRerender);
     });
   });
 });

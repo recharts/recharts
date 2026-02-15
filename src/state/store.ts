@@ -20,6 +20,7 @@ import { errorBarReducer } from './errorBarSlice';
 import { Global } from '../util/Global';
 import { zIndexReducer } from './zIndexSlice';
 import { eventSettingsReducer } from './eventSettingsSlice';
+import { renderedTicksReducer } from './renderedTicksSlice';
 
 export type RechartsRootState = {
   brush: ReturnType<typeof brushReducer>;
@@ -34,6 +35,7 @@ export type RechartsRootState = {
   polarAxis: ReturnType<typeof polarAxisReducer>;
   polarOptions: ReturnType<typeof polarOptionsReducer>;
   referenceElements: ReturnType<typeof referenceElementsReducer>;
+  renderedTicks: ReturnType<typeof renderedTicksReducer>;
   rootProps: ReturnType<typeof rootPropsReducer>;
   tooltip: ReturnType<typeof tooltipReducer>;
   zIndex: ReturnType<typeof zIndexReducer>;
@@ -52,6 +54,7 @@ const rootReducer: Reducer<RechartsRootState> = combineReducers({
   polarAxis: polarAxisReducer,
   polarOptions: polarOptionsReducer,
   referenceElements: referenceElementsReducer,
+  renderedTicks: renderedTicksReducer,
   rootProps: rootPropsReducer,
   tooltip: tooltipReducer,
   zIndex: zIndexReducer,

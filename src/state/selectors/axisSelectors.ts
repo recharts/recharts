@@ -2145,14 +2145,21 @@ export const selectChartDirection: (state: RechartsRootState) => AxisDirection |
   },
 );
 
+export const selectRenderedTicksOfAxis: (
+  state: RechartsRootState,
+  axisType: 'xAxis' | 'yAxis',
+  axisId: AxisId,
+) => ReadonlyArray<TickItem> | undefined = (state, axisType, axisId) => {
+  return state.renderedTicks[axisType]?.[axisId];
+};
+
 export const selectAxisInverseTickSnapScale: (
   state: RechartsRootState,
-  axisType: RenderableAxisType,
+  axisType: 'xAxis' | 'yAxis',
   axisId: AxisId,
-  isPanorama: boolean,
 ) => InverseScaleFunction | undefined = createSelector(
-  [selectTicksOfAxis],
-  (ticks: ReadonlyArray<CartesianTickItem> | undefined) => {
+  [selectRenderedTicksOfAxis],
+  (ticks: ReadonlyArray<TickItem> | undefined) => {
     if (!ticks || ticks.length === 0) {
       return undefined;
     }

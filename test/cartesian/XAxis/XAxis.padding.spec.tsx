@@ -47,7 +47,7 @@ describe('XAxis padding', () => {
     );
 
     expect(barBandSizeSpy).toHaveBeenLastCalledWith(25.15625);
-    expect(barBandSizeSpy).toHaveBeenCalledTimes(2);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
 
     expect(offsetSpy).toHaveBeenLastCalledWith({
       brushBottom: 35,
@@ -58,10 +58,10 @@ describe('XAxis padding', () => {
       width: 230,
       height: 260,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
 
     expect(yAxisRangeSpy).toHaveBeenLastCalledWith([265, 5]);
-    expect(yAxisRangeSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
 
     expect(barTicksSpy).toHaveBeenLastCalledWith([
       {
@@ -107,7 +107,7 @@ describe('XAxis padding', () => {
         value: 110,
       },
     ]);
-    expect(barTicksSpy).toHaveBeenCalledTimes(2);
+    expect(barTicksSpy).toHaveBeenCalledTimes(3);
 
     expectBars(container, [
       {

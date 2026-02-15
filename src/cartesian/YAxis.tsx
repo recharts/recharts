@@ -184,6 +184,21 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    * The margin between tick line and tick.
    */
   tickMargin?: number;
+  /**
+   * Specifies the font size of tick text.
+   * If this prop is not specified, Recharts will read the default tick size from the DOM.
+   *
+   * Font size is used to calculate the width of the ticks, which in turn is used to determine how many ticks are rendered without overlapping.
+   */
+  fontSize?: number | string;
+  /**
+   * Specifies the letter spacing of ticks.
+   * This is used in conjunction with fontSize to calculate the width of the ticks.
+   * If this prop is not specified, Recharts will read the default letter spacing from the DOM.
+   *
+   * Letter spacing is used to calculate the width of the ticks, which in turn is used to determine how many ticks are rendered without overlapping.
+   */
+  letterSpacing?: number | string;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & YAxisProps;
@@ -309,6 +324,7 @@ function YAxisImpl(props: PropsWithDefaults) {
       viewBox={viewBox}
       ticks={cartesianTickItems}
       axisType={axisType}
+      axisId={yAxisId}
     />
   );
 }

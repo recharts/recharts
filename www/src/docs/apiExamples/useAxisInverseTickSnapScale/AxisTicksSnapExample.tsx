@@ -136,7 +136,7 @@ export default function AxisTickSnapExample({
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
-      <YAxis domain={[0, 7000]} />
+      <YAxis width="auto" />
       <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={2} />
 
       {pointers.map(pointer => (

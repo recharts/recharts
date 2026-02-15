@@ -218,17 +218,17 @@ describe('<ZAxis />', () => {
         range: [20, 30],
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expected);
-      expect(axisSettingsSpy).toHaveBeenCalledTimes(2);
+      expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
 
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 800]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
 
       expect(axisScaleSpy).toHaveBeenLastCalledWith({
         domain: [0, 800],
         range: [20, 30],
         realScaleType: 'linear',
       });
-      expect(axisScaleSpy).toHaveBeenCalledTimes(2);
+      expect(axisScaleSpy).toHaveBeenCalledTimes(3);
     });
 
     it('should remove old ID configuration when the ID changes', () => {

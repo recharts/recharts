@@ -128,7 +128,7 @@ describe('Tooltip in chart with multiple data arrays', () => {
           range: [65, 495],
         }),
       );
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
       const scale = spy.mock.calls[2][0];
       assertNotNull(scale);
       const chartX1 = scale.map(5);

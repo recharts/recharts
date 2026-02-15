@@ -112,7 +112,7 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
       expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right points
 
@@ -191,13 +191,13 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
       /*
        * Last render has the new updated data with consistent dataKey.
        * Line will resume animation from the most recent previous data
        * to the new points.
        */
-      expect(spy).toHaveBeenNthCalledWith(3, expectedResultAfterRerender);
+      expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
     });
 
     it('should return the same points after rendering the same chart', () => {
@@ -286,7 +286,7 @@ describe('selectLinePoints', () => {
       const { spy, rerenderSameComponent } = renderTestCase(state =>
         selectLinePoints(state, 0, 0, false, 'my-line-id'),
       );
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       const firstCall = spy.mock.calls[spy.mock.calls.length - 1][0];
       assertNotNull(firstCall);
       expect(firstCall).toEqual(expectedLines);
@@ -294,7 +294,7 @@ describe('selectLinePoints', () => {
 
       rerenderSameComponent();
 
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
       const secondCall = spy.mock.calls[spy.mock.calls.length - 1][0];
       assertNotNull(secondCall);
       expect(secondCall.length).toBe(6);

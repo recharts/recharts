@@ -985,7 +985,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
         angle: 17,
         minTickGap: 8,
@@ -1208,7 +1208,7 @@ describe('<YAxis />', () => {
 
       const { spy, container } = renderTestCase(state => state.cartesianAxis.yAxis);
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       // only id "1" exists
       const lastCallArgs1 = spy.mock.lastCall?.[0];
@@ -1216,7 +1216,7 @@ describe('<YAxis />', () => {
       expect(Object.keys(lastCallArgs1)).toEqual(['1']);
 
       fireEvent.click(container.getElementsByClassName('pushbutton')[0]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(5);
 
       // only id "2" exists
       const lastCallArgs2 = spy.mock.lastCall?.[0];

@@ -7,7 +7,7 @@ import {
   selectAxisInverseTickSnapScale,
   selectAxisScale,
   selectAxisWithScale,
-  selectTicksOfAxis,
+  selectRenderedTicksOfAxis,
 } from './state/selectors/axisSelectors';
 import { useAppSelector } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
@@ -20,7 +20,7 @@ import {
 import { ChartOffset, PlotArea } from './types';
 import { selectChartOffset } from './state/selectors/selectChartOffset';
 import { selectPlotArea } from './state/selectors/selectPlotArea';
-import { CategoricalDomain, Coordinate, NumberDomain, CartesianTickItem } from './util/types';
+import { CategoricalDomain, Coordinate, NumberDomain, TickItem } from './util/types';
 import { ActiveLabel } from './synchronisation/types';
 import { BandPosition } from './util/scale/RechartsScale';
 
@@ -174,8 +174,7 @@ export const useXAxisInverseDataSnapScale = (xAxisId: AxisId = defaultAxisId): I
  * @since 3.8
  */
 export const useXAxisInverseTickSnapScale = (xAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'xAxis', xAxisId, isPanorama));
+  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'xAxis', xAxisId));
 };
 
 /**
@@ -248,8 +247,7 @@ export const useYAxisInverseDataSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @since 3.8
  */
 export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'yAxis', yAxisId, isPanorama));
+  return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'yAxis', yAxisId));
 };
 
 /**
@@ -262,9 +260,8 @@ export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
  */
-export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectTicksOfAxis(state, 'xAxis', xAxisId, isPanorama));
+export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
+  return useAppSelector(state => selectRenderedTicksOfAxis(state, 'xAxis', xAxisId));
 };
 
 /**
@@ -277,9 +274,8 @@ export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<Ca
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
  */
-export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<CartesianTickItem> | undefined => {
-  const isPanorama = useIsPanorama();
-  return useAppSelector(state => selectTicksOfAxis(state, 'yAxis', yAxisId, isPanorama));
+export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
+  return useAppSelector(state => selectRenderedTicksOfAxis(state, 'yAxis', yAxisId));
 };
 
 /**

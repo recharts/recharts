@@ -495,7 +495,7 @@ describe('<ReferenceLine />', () => {
           yAxisId: 0,
         },
       ]);
-      expect(lineSpy).toHaveBeenCalledTimes(2);
+      expect(lineSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <BarChart width={1100} height={250}>
@@ -506,7 +506,7 @@ describe('<ReferenceLine />', () => {
       );
 
       expect(lineSpy).toHaveBeenLastCalledWith([]);
-      expect(lineSpy).toHaveBeenCalledTimes(4);
+      expect(lineSpy).toHaveBeenCalledTimes(6);
     });
 
     it('should report segment prop to Redux state', () => {

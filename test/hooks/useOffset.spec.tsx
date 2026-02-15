@@ -295,10 +295,10 @@ describe('useOffset', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
 
     showTooltip(container, lineChartMouseHoverTooltipSelector);
 
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });

@@ -129,6 +129,7 @@
   "types/state/polarOptionsSlice.d.ts",
   "types/state/reduxDevtoolsJsonStringifyReplacer.d.ts",
   "types/state/referenceElementsSlice.d.ts",
+  "types/state/renderedTicksSlice.d.ts",
   "types/state/rootPropsSlice.d.ts",
   "types/state/selectors",
   "types/state/selectors/areaSelectors.d.ts",

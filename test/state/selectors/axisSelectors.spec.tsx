@@ -99,7 +99,7 @@ describe('selectAxisDomain', () => {
       </LineChart>,
     );
     expect(axisDomainSpy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
-    expect(axisDomainSpy).toHaveBeenCalledTimes(2);
+    expect(axisDomainSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return domain from multiple axes', () => {
@@ -224,7 +224,7 @@ describe('selectAxisDomain', () => {
       },
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([10, 20, 30, 40, 50, 60, 70, 80, 90]);
-    expect(domainSpy).toHaveBeenCalledTimes(2);
+    expect(domainSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return array indexes if there are multiple graphical items, and no explicit dataKey on the matching XAxis', () => {
@@ -289,7 +289,7 @@ describe('selectAxisDomain', () => {
       },
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-    expect(domainSpy).toHaveBeenCalledTimes(2);
+    expect(domainSpy).toHaveBeenCalledTimes(3);
   });
 
   describe('XAxis with type = number', () => {
@@ -371,7 +371,7 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expectLastCalledWith(spy, undefined);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     it('should parse strings, and ignore values that are not numbers', () => {
@@ -1606,7 +1606,7 @@ describe('selectAllAppliedValues', () => {
       </LineChart>,
     );
     expectLastCalledWith(spy, [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 10 }, { value: 20 }, { value: 30 }]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in the chart root', () => {
@@ -1627,7 +1627,7 @@ describe('selectAllAppliedValues', () => {
       </LineChart>,
     );
     expectLastCalledWith(spy, [{ value: 211 }, { value: 245 }, { value: 266 }, { value: 140 }, { value: 131 }]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return values as full input objects if the axis ID does not match anything in the data', () => {
@@ -1736,8 +1736,8 @@ describe('selectErrorBarsSettings', () => {
     // There are ErrorBars but they are specified for another XAxis
     expect(xAxisSpy).toHaveBeenLastCalledWith([]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   describe('error bars settings', () => {
@@ -1831,7 +1831,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -1842,7 +1842,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -2166,8 +2166,8 @@ describe('selectNiceTicks', () => {
     expect(xAxisSpy).toHaveBeenLastCalledWith([0, 100, 200, 300, 400]);
     expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
 
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
@@ -2194,7 +2194,7 @@ describe('selectNiceTicks', () => {
       </LineChart>,
     );
     expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
-    expect(niceTicksSpy).toHaveBeenCalledTimes(2);
+    expect(niceTicksSpy).toHaveBeenCalledTimes(3);
   });
 });
 
@@ -2294,8 +2294,8 @@ describe('selectAxisWithScale', () => {
       unit: undefined,
     });
     expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   describe('in chart with explicit axes', () => {
@@ -2343,7 +2343,7 @@ describe('selectAxisWithScale', () => {
         type: 'category',
         unit: undefined,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     test('selectNumericalDomain', () => {
@@ -2354,13 +2354,13 @@ describe('selectAxisWithScale', () => {
     test('selectAxisDomain', () => {
       const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', defaultAxisId, false));
       expectLastCalledWith(spy, [0, 9800]);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     test('selectNumericalDomain', () => {
       const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', defaultAxisId, false));
       expectLastCalledWith(spy, [0, 9800]);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     it('should select YAxis settings', () => {
@@ -2395,7 +2395,7 @@ describe('selectAxisWithScale', () => {
         unit: undefined,
         width: 60,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -2448,7 +2448,7 @@ describe('selectAxisWithScale', () => {
 
     const { container } = render(<TestCase />);
 
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
     const expectedXAxis: Omit<XAxisSettings, 'scale'> & BaseAxisWithScale = {
       allowDataOverflow: false,
       allowDecimals: true,
@@ -2484,7 +2484,7 @@ describe('selectAxisWithScale', () => {
     // Second call is when the chart is populated
     expect(xAxisSpy).toHaveBeenNthCalledWith(2, expectedXAxis);
 
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
     expect(yAxisSpy).toHaveBeenNthCalledWith(1, undefined);
     expect(yAxisSpy).toHaveBeenNthCalledWith(2, {
       allowDataOverflow: false,
@@ -2522,7 +2522,7 @@ describe('selectAxisWithScale', () => {
       button.click();
     });
 
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(6);
     expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
     expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
     expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);
@@ -2541,8 +2541,8 @@ describe('selectAxisWithScale', () => {
      * The `expect.toBeRechartsScale` verifies that domain equals and range equals - which they do - but instances don't.
      *
      */
-    expect(xAxisSpy.mock.calls[2][0]).not.toEqual(xAxisSpy.mock.calls[3][0]);
-    expect(xAxisSpy.mock.calls[2][0].scale).not.toEqual(xAxisSpy.mock.calls[3][0].scale);
+    expect(xAxisSpy.mock.calls[3][0]).not.toEqual(xAxisSpy.mock.calls[4][0]);
+    expect(xAxisSpy.mock.calls[3][0].scale).not.toEqual(xAxisSpy.mock.calls[4][0].scale);
   });
 });
 
