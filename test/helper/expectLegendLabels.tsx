@@ -8,7 +8,12 @@ export function assertHasLegend(container: Element): ReadonlyArray<Element> {
 
 export function expectLegendLabels(
   container: Element,
-  expectedLabels: null | ReadonlyArray<{ textContent: string; fill: string | null | undefined; stroke?: string }>,
+  expectedLabels: null | ReadonlyArray<{
+    textContent: string;
+    textColor?: string;
+    fill: string | null | undefined;
+    stroke?: string;
+  }>,
 ) {
   assertNotNull(container);
 
@@ -18,9 +23,11 @@ export function expectLegendLabels(
   }
 
   const expectsStroke = expectedLabels.some(label => label.stroke != null);
+  const expectsColor = expectedLabels.some(label => label.textColor !== undefined);
 
   const actualLabels = assertHasLegend(container).map(legend => ({
     textContent: legend.textContent,
+    textColor: expectsColor ? legend.querySelector('.recharts-legend-item-text').style.color : undefined,
     fill: legend.querySelector('.recharts-legend-icon')?.getAttribute('fill'),
     stroke: expectsStroke ? legend.querySelector('.recharts-legend-icon')?.getAttribute('stroke') : undefined,
   }));
