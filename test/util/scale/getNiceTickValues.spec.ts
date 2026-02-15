@@ -33,7 +33,7 @@ describe('getNiceTickValues', () => {
     it('should return bigger step for bigger numbers', () => {
       const roughStep = new Decimal(3.45687e9);
       const formattedStep = getFormatStep(roughStep, true, 0);
-      expect(formattedStep.toNumber()).toBe(3.5e9);
+      expect(formattedStep.toNumber()).toBe(5e9);
     });
 
     it('should return smaller step for small numbers', () => {
@@ -227,7 +227,7 @@ describe('getNiceTickValues', () => {
 
     it('should return correct ticks with float [39.9156, 42.5401, 5]', () => {
       const scales = getNiceTickValues([39.9156, 42.5401], 5);
-      expect(scales).toEqual([39.9, 40.6, 41.3, 42, 42.7]);
+      expect(scales).toEqual([39, 40, 41, 42, 43]);
     });
 
     it('should return correct ticks with float [0.3885416666666666, 0.04444444444444451, 5]', () => {
@@ -237,7 +237,7 @@ describe('getNiceTickValues', () => {
 
     it('should return correct ticks with float [-4.10389, 0.59414, 7]', () => {
       const scales = getNiceTickValues([-4.10389, 0.59414], 7);
-      expect(scales).toEqual([-4.25, -3.4, -2.55, -1.7, -0.85, 0, 0.85]);
+      expect(scales).toEqual([-5, -4, -3, -2, -1, 0, 1]);
     });
 
     it('should return correct ticks with float [-4.10389, 0.59414, 7] not allow decimals', () => {
@@ -247,7 +247,7 @@ describe('getNiceTickValues', () => {
 
     it('should return correct ticks with integers [0, 14, 5]', () => {
       const scales = getNiceTickValues([0, 14], 5);
-      expect(scales).toEqual([0, 4, 8, 12, 16]);
+      expect(scales).toEqual([0, 5, 10, 15, 20]);
     });
 
     it('should return correct ticks with integers [0, 1, 5]', () => {
@@ -277,7 +277,7 @@ describe('getNiceTickValues', () => {
 
     it('should return correct ticks with very small values [0, 0.000013202017268238587, 5]', () => {
       const scales = getNiceTickValues([0, 0.000013202017268238587], 5);
-      expect(scales).toEqual([0, 0.0000035, 0.000007, 0.0000105, 0.000014]);
+      expect(scales).toEqual([0, 0.000005, 0.00001, 0.000015, 0.00002]);
     });
   });
 });

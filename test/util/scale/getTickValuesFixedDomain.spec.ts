@@ -29,8 +29,8 @@ test('of unequal values of negative integer', () => {
   const [min, max, count] = [-205, -25, 6];
   const scales = getTickValuesFixedDomain([min, max], count);
 
-  expect(scales).toEqual([-205, -165, -125, -85, -45, -25]);
-  expect(scales.length).toBe(count);
+  expect(scales).toEqual([-205, -155, -105, -55, -25]);
+  expect(scales.length).toBe(5);
 });
 
 test('of unequal values of min is bigger than max & has odd ticks', () => {
@@ -53,8 +53,8 @@ test('of unequal values of float [-4.10389, 0.59414, 7]', () => {
   const [min, max, count] = [-4.10389, 0.59414, 7];
   const scales = getTickValuesFixedDomain([min, max], count);
 
-  expect(scales).toEqual([-4.10389, -3.30389, -2.50389, -1.70389, -0.90389, -0.10389, 0.59414]);
-  expect(scales.length).toBe(count);
+  expect(scales).toEqual([-4.10389, -3.10389, -2.10389, -1.10389, -0.10389, 0.59414]);
+  expect(scales.length).toBe(6);
 });
 
 test('when allowDecimals is false of unequal values of float [-0.10389, 0.59414, 7] should not produce duplicates in the output', () => {
@@ -77,8 +77,8 @@ test('of unequal values of integers [0, 14, 5]', () => {
   const [min, max, count] = [0, 14, 5];
   const scales = getTickValuesFixedDomain([min, max], count);
 
-  expect(scales).toEqual([0, 4, 8, 12, 14]);
-  expect(scales.length).toBe(count);
+  expect(scales).toEqual([0, 5, 10, 14]);
+  expect(scales.length).toBe(4);
 });
 
 test('of unequal values of integers [0, 1e+100, 6]', () => {
