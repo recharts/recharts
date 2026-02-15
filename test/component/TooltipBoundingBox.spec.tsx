@@ -53,11 +53,18 @@ describe('TooltipBoundingBox', () => {
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });
 
-  it('should hide children when dismissed using Escape key', () => {
-    render(<TooltipBoundingBox {...defaultProps} active={false} />);
-    userEvent.keyboard('{Escape}');
-    expect(screen.getByText('Hello world!')).toBeInTheDocument();
-    expect(screen.getByText('Hello world!')).not.toBeVisible();
+  it('should hide children when dismissed using Escape key', async () => {
+    render(<TooltipBoundingBox {...defaultProps} />);
+    const user = userEvent.setup({
+      advanceTimers: vi.advanceTimersByTime.bind(vi),
+    });
+    const element = screen.getByText('Hello world!');
+
+    expect(element).toBeVisible();
+
+    await user.keyboard('{Escape}');
+    expect(element).toBeInTheDocument();
+    expect(element).not.toBeVisible();
   });
 
   describe('offset prop', () => {
