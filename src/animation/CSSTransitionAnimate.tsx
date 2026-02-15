@@ -6,6 +6,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';
 import { getTransitionVal } from './util';
 import { Global } from '../util/Global';
+import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
 type CSSTransitionAnimateProps = {
   animationId: string;
@@ -50,7 +51,9 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     children,
   } = props;
 
-  const isActive = isActiveProp === 'auto' ? !Global.isSsr : isActiveProp;
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationManager = useAnimationManager(animationId + attributeName, props.animationManager);
   const [style, setStyle] = useState<ReactSmoothStyle>(() => {

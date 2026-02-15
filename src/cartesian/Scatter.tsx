@@ -304,7 +304,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
 
   /**
    * If set false, animation of Scatter points will be disabled.
-   * If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * If set "auto", the animation will be disabled in SSR and will respect the user's prefers-reduced-motion system preference for accessibility.
    * @defaultValue 'auto'
    */
   isAnimationActive?: boolean | 'auto';

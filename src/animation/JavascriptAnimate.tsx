@@ -7,6 +7,7 @@ import { configEasing, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
+import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
 type JavascriptAnimateProps = {
   animationId: string;
@@ -51,7 +52,9 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     children,
   } = props;
 
-  const isActive = isActiveProp === 'auto' ? !Global.isSsr : isActiveProp;
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationManager = useAnimationManager(props.animationId, props.animationManager);
 

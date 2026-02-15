@@ -269,6 +269,7 @@
   "es6/util/useAnimationId.js",
   "es6/util/useElementOffset.js",
   "es6/util/useId.js",
+  "es6/util/usePrefersReducedMotion.js",
   "es6/util/useReportScale.js",
   "es6/util/useUniqueId.js",
   "es6/zIndex",

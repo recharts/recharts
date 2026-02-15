@@ -19,7 +19,6 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
-import { Global } from '../util/Global';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
@@ -108,7 +107,7 @@ interface InternalAreaProps extends ZIndexable {
    * ID is mandatory internally, but optional externally.
    */
   id: string;
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   isRange?: boolean;
   label?: ImplicitLabelListType;
   layout: CartesianLayout;
@@ -218,7 +217,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
 
   /**
    * If set false, animation of area will be disabled.
-   * If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * If set "auto", will be disabled in SSR and will respect the user's prefers-reduced-motion system preference for accessibility.
    * @defaultValue 'auto'
    */
   isAnimationActive?: boolean | 'auto';
@@ -926,7 +925,7 @@ function AreaImpl(props: WithIdRequired<Props>) {
       height={height}
       hide={hide}
       layout={layout}
-      isAnimationActive={isAnimationActive === 'auto' ? !Global.isSsr : isAnimationActive}
+      isAnimationActive={isAnimationActive}
       isRange={isRange}
       legendType={legendType}
       needClip={needClip}

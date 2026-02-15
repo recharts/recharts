@@ -156,7 +156,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
   includeHidden?: boolean | undefined;
   /**
    * If set false, animation of tooltip will be disabled.
-   * If set "auto", the animation will be disabled in SSR and enabled in browser.
+   * If set "auto", the animation will be disabled in SSR and will respect the user's prefers-reduced-motion system preference for accessibility.
    * @defaultValue auto
    */
   isAnimationActive?: boolean | 'auto';
