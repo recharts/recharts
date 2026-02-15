@@ -867,9 +867,38 @@ describe('<Legend />', () => {
       );
 
       expectLegendLabels(container, [
-        { fill: 'none', textContent: 'pv' },
-        { fill: 'none', textContent: 'uv' },
+        { fill: 'none', textContent: 'pv', textColor: 'rgb(136, 132, 216)' },
+        { fill: 'none', textContent: 'uv', textColor: 'rgb(130, 202, 157)' },
       ]);
+    });
+
+    it('should render legend labels with same text color', () => {
+      const { container } = rechartsTestRender(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend iconType="plainline" labelStyle={{ color: '#666' }} />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      expectLegendLabels(container, [
+        { fill: 'none', textContent: 'pv', textColor: 'rgb(102, 102, 102)' },
+        { fill: 'none', textContent: 'uv', textColor: 'rgb(102, 102, 102)' },
+      ]);
+    });
+
+    test('label style should not change color of hidden Line', () => {
+      const { container } = rechartsTestRender(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend inactiveColor="yellow" labelStyle={{ color: '#666' }} />
+          <Line dataKey="percent" stroke="red" hide />
+        </LineChart>,
+      );
+      const findResult = expectedLegendTypeSymbolsWithColor('yellow').find(tc => tc.legendType === 'line');
+      assertNotNull(findResult);
+      const { selector, expectedAttributes } = findResult;
+      assertExpectedAttributes(container, selector, expectedAttributes);
+      expectLegendLabels(container, [{ fill: 'none', textContent: 'percent', textColor: 'yellow' }]);
     });
 
     describe('legendType symbols', () => {

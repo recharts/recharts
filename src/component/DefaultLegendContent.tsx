@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactNode, MouseEvent, ReactElement } from 'react';
+import { ReactNode, MouseEvent, ReactElement, CSSProperties } from 'react';
 
 import { clsx } from 'clsx';
 import { Surface } from '../container/Surface';
@@ -110,6 +110,11 @@ interface DefaultLegendContentProps {
    * A custom payload can be passed here if desired, or it can be passed from the Legend "content" callback.
    */
   payload?: ReadonlyArray<LegendPayload>;
+  /**
+   * The style of each text label which is a span element.
+   * @defaultValue {}
+   */
+  labelStyle?: CSSProperties;
 }
 
 export type Props = DefaultLegendContentProps &
@@ -201,7 +206,7 @@ function Icon({
 }
 
 function Items(props: InternalProps) {
-  const { payload, iconSize, layout, formatter, inactiveColor, iconType } = props;
+  const { payload, iconSize, layout, formatter, inactiveColor, iconType, labelStyle } = props;
   const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
   const itemStyle = {
     display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -220,7 +225,9 @@ function Items(props: InternalProps) {
       return null;
     }
 
-    const color = entry.inactive ? inactiveColor : entry.color;
+    const finalLabelStyle = typeof labelStyle === 'object' && labelStyle !== null ? { ...labelStyle } : {};
+    finalLabelStyle.color = entry.inactive ? inactiveColor : finalLabelStyle.color || entry.color;
+
     const finalValue = finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value;
 
     return (
@@ -234,7 +241,7 @@ function Items(props: InternalProps) {
         >
           <Icon data={entry} iconType={iconType} inactiveColor={inactiveColor} />
         </Surface>
-        <span className="recharts-legend-item-text" style={{ color }}>
+        <span className="recharts-legend-item-text" style={finalLabelStyle}>
           {finalValue}
         </span>
       </li>
