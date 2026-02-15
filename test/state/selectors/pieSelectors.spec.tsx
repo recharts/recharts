@@ -73,6 +73,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page A',
               payload: {
@@ -121,6 +123,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page B',
               payload: {
@@ -169,6 +173,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page C',
               payload: {
@@ -217,6 +223,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page D',
               payload: {
@@ -265,6 +273,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page E',
               payload: {
@@ -313,6 +323,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page F',
               payload: {
@@ -361,6 +373,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'uv',
               name: 'Page G',
               payload: {
@@ -422,6 +436,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page A',
               payload: {
@@ -470,6 +486,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page B',
               payload: {
@@ -518,6 +536,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page C',
               payload: {
@@ -566,6 +586,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page D',
               payload: {
@@ -614,6 +636,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page E',
               payload: {
@@ -662,6 +686,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page F',
               payload: {
@@ -710,6 +736,8 @@ describe('selectPieSectors', () => {
           stroke: '#fff',
           tooltipPayload: [
             {
+              color: '#808080',
+              fill: '#808080',
               dataKey: 'pv',
               name: 'Page G',
               payload: {
@@ -794,6 +822,8 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
         stroke: '#fff',
         tooltipPayload: [
           {
+            color: '#8884d8',
+            fill: '#8884d8',
             dataKey: 'value',
             name: 'Group A',
             payload: {
@@ -840,6 +870,8 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
         stroke: '#fff',
         tooltipPayload: [
           {
+            color: '#8884d8',
+            fill: '#8884d8',
             dataKey: 'value',
             name: 'Group B',
             payload: {

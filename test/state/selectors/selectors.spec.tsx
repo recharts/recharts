@@ -471,8 +471,8 @@ describe('selectTooltipPayload', () => {
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
-      color: undefined,
-      fill: undefined,
+      color: 'color',
+      fill: 'fill',
       unit: 'cm',
       value: 100,
       payload: {
@@ -486,8 +486,8 @@ describe('selectTooltipPayload', () => {
     };
     const expectedEntry2: TooltipPayloadEntry = {
       name: 'weight',
-      color: undefined,
-      fill: undefined,
+      color: 'color',
+      fill: 'fill',
       unit: 'kg',
       value: 200,
       payload: {
@@ -1415,7 +1415,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
+            color: '#808080',
             dataKey: 'x',
+            fill: '#808080',
             name: 0,
             payload: { x: 1 },
             type: undefined,
@@ -1425,7 +1427,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: '#808080',
             dataKey: 'x',
+            fill: '#808080',
             name: 1,
             payload: { x: 2 },
             type: undefined,
@@ -1435,7 +1439,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: '#808080',
             dataKey: 'x',
+            fill: '#808080',
             name: 2,
             payload: { x: 3 },
             type: undefined,
@@ -1447,7 +1453,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
       [
         [
           {
+            color: '#808080',
             dataKey: 'y',
+            fill: '#808080',
             name: 0,
             payload: { y: 10 },
             type: undefined,
@@ -1457,7 +1465,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: '#808080',
             dataKey: 'y',
+            fill: '#808080',
             name: 1,
             payload: { y: 20 },
             type: undefined,
@@ -1467,7 +1477,9 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         ],
         [
           {
+            color: '#808080',
             dataKey: 'y',
+            fill: '#808080',
             name: 2,
             payload: { y: 30 },
             type: undefined,
