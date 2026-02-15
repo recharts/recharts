@@ -62,39 +62,3 @@ export const Simple = {
     </ResponsiveContainer>
   ),
 };
-
-const budgetData = [
-  { name: 'Tax revenue', value: 3.2 },
-  { name: 'State taxes', value: 0.8 },
-  { name: 'Benefits', value: -2.1 },
-  { name: 'Net impact', value: 1.9, isTotal: true },
-];
-
-const budgetWaterfall = computeWaterfallData({
-  data: budgetData,
-  dataKey: 'value',
-  totalKey: 'isTotal',
-});
-
-export const BudgetaryImpact = {
-  render: () => (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={budgetWaterfall} margin={{ top: 20, right: 30, bottom: 5, left: 20 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="name" />
-        <YAxis tickFormatter={(v: number) => `$${v.toFixed(1)}bn`} />
-        <Tooltip
-          formatter={(_value: [number, number], _name: string, props: { payload: (typeof budgetWaterfall)[0] }) => [
-            `$${props.payload.value.toFixed(1)}bn`,
-            props.payload.name,
-          ]}
-        />
-        <Bar dataKey="waterfallRange" isAnimationActive={false}>
-          {budgetWaterfall.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={getFill(entry)} />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  ),
-};
