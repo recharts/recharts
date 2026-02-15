@@ -107,7 +107,6 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
         }),
         ...cssProperties,
         pointerEvents: 'none',
-        visibility: !state.dismissed && props.active && props.hasPayload ? 'visible' : 'hidden',
         position: 'absolute',
         top: 0,
         left: 0,
