@@ -42,6 +42,7 @@ export const apiCates = [
       'usePlotArea',
       'useChartWidth',
       'useChartHeight',
+      'computeWaterfallData',
       'getNiceTickValues',
       'Global',
       'getRelativeCoordinate',

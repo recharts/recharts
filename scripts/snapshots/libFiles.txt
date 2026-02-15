@@ -271,6 +271,7 @@
   "lib/util/useId.js",
   "lib/util/useReportScale.js",
   "lib/util/useUniqueId.js",
+  "lib/util/waterfall.js",
   "lib/zIndex",
   "lib/zIndex/DefaultZIndexes.js",
   "lib/zIndex/ZIndexLayer.js",
