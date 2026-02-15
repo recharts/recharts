@@ -112,6 +112,11 @@ export interface BarRectangleItem extends RectangleProps {
    * Chart range coordinate of the baseValue of the first bar in a stack.
    */
   stackedBarStart: number;
+  /**
+   * The index in the original data array before filtering null values.
+   * Used for matching with activeIndex from tooltip.
+   */
+  originalDataIndex: number;
 }
 
 export type BarShapeProps = BarRectangleItem & {
@@ -585,9 +590,15 @@ function BarRectangleWithActiveState(props: {
    * regardless of the dataKey.
    *
    * With shared Tooltip, the activeDataKey is undefined.
+   *
+   * We use entry.originalDataIndex to match against activeIndex because the index parameter
+   * is based on the filtered array, but activeIndex is based on the original data array.
+   * When there are null values in the data, these indices can differ.
    */
   const isActive: boolean =
-    activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
+    activeBar &&
+    String(entry.originalDataIndex) === activeIndex &&
+    (activeDataKey == null || dataKey === activeDataKey);
 
   const [stayInLayer, setStayInLayer] = useState(false);
   const [hasMountedActive, setHasMountedActive] = useState(false);
@@ -1113,6 +1124,7 @@ export function computeBarRectangles({
         background,
         tooltipPosition: { x: x + width / 2, y: y + height / 2 },
         parentViewBox,
+        originalDataIndex: index,
         ...(cells && cells[index] && cells[index].props),
       } satisfies BarRectangleItem;
 

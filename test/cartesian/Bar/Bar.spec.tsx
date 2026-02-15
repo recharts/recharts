@@ -840,6 +840,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         onMouseEnter: expect.any(Function),
         onMouseLeave: expect.any(Function),
         onClick: expect.any(Function),
+        originalDataIndex: expect.any(Number),
         payload: {
           background: {
             height: 50,
@@ -1787,6 +1788,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           height: 63.333333333333314,
           label: 'test2',
+          originalDataIndex: 1,
           parentViewBox: {
             height: 200,
             width: 200,
@@ -1841,6 +1843,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           height: 63.333333333333314,
           label: 'test2',
+          originalDataIndex: 1,
           parentViewBox: {
             height: 200,
             width: 200,
@@ -1882,6 +1885,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           height: 63.333333333333314,
           label: 'test2',
+          originalDataIndex: 1,
           parentViewBox: {
             height: 200,
             width: 200,
@@ -1935,6 +1939,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           },
           height: 31.666666666666657,
           label: 'test1',
+          originalDataIndex: 0,
           parentViewBox: {
             height: 200,
             width: 200,
@@ -2098,4 +2103,104 @@ describe('Bar background zIndex', () => {
       expect(backgroundRects).toHaveLength(0);
     },
   );
+});
+
+describe('activeBar with missing data', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 500, height: 300 });
+  });
+
+  it('should highlight the correct bar when data has null values', () => {
+    // Data with missing values (null) in the middle
+    const dataWithMissingValues = [
+      { name: 'Page A', uv: 2400, pv: 4000 },
+      { name: 'Page B', uv: null, pv: null }, // missing data
+      { name: 'Page C', uv: 9800, pv: 2000 },
+      { name: 'Page D', uv: null, pv: null }, // missing data
+      { name: 'Page E', uv: 4800, pv: 1890 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      return (
+        <BarChart data={dataWithMissingValues} width={500} height={300}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar activeBar dataKey="uv" isAnimationActive={false} />
+          <Tooltip isAnimationActive={false} />
+          {children}
+        </BarChart>
+      );
+    });
+
+    const { container, spy } = renderTestCase(selectActiveTooltipIndex);
+
+    // Before interaction, no bar should be active
+    expectActiveBars(container, []);
+    expectLastCalledWith(spy, null);
+
+    // There should be 3 bars rendered (indices 0, 2, 4 in original data)
+    const allBars = getAllBars(container);
+    expect(allBars).toHaveLength(3);
+
+    // Hover over the area where the last bar should be (Page E at rightmost position)
+    // We need to hover at the rightmost bar position
+    // Let's hover closer to the right edge of the chart
+    showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 450, clientY: 150 });
+
+    // The activeIndex should match Page E's original position
+    // It should be the index in the original data where Page E is located
+    expectLastCalledWith(spy, '4');
+
+    // Wait for the active bar to mount
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    // The third bar (Page E) should be highlighted, not a different bar
+    const activeBars = container.querySelectorAll('.recharts-active-bar');
+    expect(activeBars).toHaveLength(1);
+
+    // Verify the tooltip shows the correct data
+    expectTooltipPayload(container, 'Page E', ['uv : 4800']);
+  });
+
+  it('should highlight the correct bar when hovering over middle bar with surrounding nulls', () => {
+    const dataWithMissingValues = [
+      { name: 'Page A', uv: 2400 },
+      { name: 'Page B', uv: null },
+      { name: 'Page C', uv: 9800 },
+      { name: 'Page D', uv: null },
+      { name: 'Page E', uv: 4800 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      return (
+        <BarChart data={dataWithMissingValues} width={500} height={300}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar activeBar dataKey="uv" isAnimationActive={false} />
+          <Tooltip isAnimationActive={false} />
+          {children}
+        </BarChart>
+      );
+    });
+
+    const { container, spy } = renderTestCase(selectActiveTooltipIndex);
+
+    // Hover over the middle bar (Page C, which is at original index 2)
+    showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 250, clientY: 150 });
+
+    // The activeIndex should be "2" (the original data index for Page C)
+    expectLastCalledWith(spy, '2');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    // The second rendered bar (Page C) should be highlighted
+    const activeBars = container.querySelectorAll('.recharts-active-bar');
+    expect(activeBars).toHaveLength(1);
+
+    expectTooltipPayload(container, 'Page C', ['uv : 9800']);
+  });
 });

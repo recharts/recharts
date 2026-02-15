@@ -99,6 +99,7 @@ describe('Bar stacked with truncateByDomain', () => {
           day: 1,
           height: 0,
           losses: 0,
+          originalDataIndex: 0,
           payload: {
             date: '2025-06-30T17:00:00.000Z',
             day: 1,
@@ -134,6 +135,7 @@ describe('Bar stacked with truncateByDomain', () => {
           height: 54,
           kd: 9.764204545454545,
           losses: -5,
+          originalDataIndex: 1,
           payload: {
             date: '2025-07-31T17:00:00.000Z',
             day: 1,
