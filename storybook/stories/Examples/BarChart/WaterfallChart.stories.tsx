@@ -1,6 +1,15 @@
 import React from 'react';
-import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
-import { computeWaterfallData } from '../../../../src/util/waterfall';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  computeWaterfallData,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../../src';
 
 export default {
   title: 'Examples/BarChart/Waterfall',
@@ -82,7 +91,7 @@ export const BudgetaryImpact = {
         />
         <Bar dataKey="waterfallRange" isAnimationActive={false}>
           {budgetWaterfall.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.value >= 0 ? '#00897B' : '#78909C'} />
+            <Cell key={`cell-${index}`} fill={getFill(entry)} />
           ))}
         </Bar>
       </BarChart>

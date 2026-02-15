@@ -74,7 +74,9 @@ export interface WaterfallDatum<T> {
   value: number;
 
   /**
-   * Running total after this bar (useful for connecting lines or labels).
+   * Running total of non-total entries after this bar. Total bars do not
+   * affect the running total, so their `cumulativeValue` reflects only the
+   * sum of preceding non-total entries (useful for connecting lines or labels).
    */
   cumulativeValue: number;
 
@@ -84,21 +86,25 @@ export interface WaterfallDatum<T> {
   isTotal: boolean;
 }
 
-function resolveValue<T>(entry: T, key: string | ((entry: T) => number)): number {
+function resolveValue<T extends Record<string, unknown>>(entry: T, key: string | ((entry: T) => number)): number {
   if (typeof key === 'function') {
     return key(entry);
   }
-  return (entry as Record<string, unknown>)[key] as number;
+  const raw = entry[key];
+  return typeof raw === 'number' ? raw : Number(raw);
 }
 
-function resolveBoolean<T>(entry: T, key: string | ((entry: T) => boolean) | undefined): boolean {
+function resolveBoolean<T extends Record<string, unknown>>(
+  entry: T,
+  key: string | ((entry: T) => boolean) | undefined,
+): boolean {
   if (key == null) {
     return false;
   }
   if (typeof key === 'function') {
     return key(entry);
   }
-  return Boolean((entry as Record<string, unknown>)[key]);
+  return Boolean(entry[key]);
 }
 
 /**
