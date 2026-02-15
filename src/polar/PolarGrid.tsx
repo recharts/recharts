@@ -81,6 +81,30 @@ interface PolarGridProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+  /**
+   * The stroke color.
+   * @defaultValue #ccc
+   */
+  stroke?: string;
+  /**
+   * The width of the stroke.
+   * @defaultValue 1
+   */
+  strokeWidth?: number | string;
+  /**
+   * The pattern of dashes and gaps used to paint the lines of the grid.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray stroke-dasharray on MDN}
+   */
+  strokeDasharray?: string | number;
+  /**
+   * The background color used to fill the space between grid lines.
+   * @defaultValue none
+   */
+  fill?: string;
+  /**
+   * The opacity of the background used to fill the space between grid lines.
+   */
+  fillOpacity?: number | string;
 }
 
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
@@ -124,7 +148,6 @@ const PolarAngles: React.FC<PropsWithDefaults> = (props: PropsWithDefaults) => {
     return null;
   }
   const polarAnglesProps = {
-    stroke: '#ccc',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -144,8 +167,6 @@ const PolarAngles: React.FC<PropsWithDefaults> = (props: PropsWithDefaults) => {
 const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius } = props;
   const concentricCircleProps = {
-    stroke: '#ccc',
-    fill: 'none',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -165,8 +186,6 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
 const ConcentricPolygon: React.FC<ConcentricProps> = (props: ConcentricProps) => {
   const { radius } = props;
   const concentricPolygonProps = {
-    stroke: '#ccc',
-    fill: 'none',
     ...svgPropertiesNoEvents(props),
   };
 
@@ -215,6 +234,9 @@ export const defaultPolarGridProps = {
   gridType: 'polygon',
   radialLines: true,
   zIndex: DefaultZIndexes.grid,
+  stroke: '#ccc',
+  strokeWidth: 1,
+  fill: 'none',
 } as const satisfies Partial<Props>;
 
 /**
