@@ -13,6 +13,7 @@ import {
   EvaluatedAxisDomainType,
   TickProp,
   YAxisTickContentProps,
+  TickItem,
 } from '../util/types';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
@@ -185,7 +186,7 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & YAxisProps;
 
 function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
