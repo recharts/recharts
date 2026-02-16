@@ -41,11 +41,14 @@ async function captureAnimationFrames(
   const interval = totalDuration / (frameCount - 1);
   const frames: Buffer[] = [];
 
+  // Sequential capture is intentional -- we need frames at specific time intervals
+  // eslint-disable-next-line no-await-in-loop
   for (let i = 0; i < frameCount; i++) {
+    // eslint-disable-next-line no-await-in-loop
     const buffer = await component.screenshot();
     frames.push(buffer);
     if (i < frameCount - 1) {
-      // eslint-disable-next-line no-await-in-loop, playwright/no-wait-for-timeout
+      // eslint-disable-next-line no-await-in-loop
       await page.waitForTimeout(interval);
     }
   }
@@ -103,7 +106,6 @@ test.describe('Animation capture - BarChart', () => {
     );
 
     // Wait for animation to complete, then take the baseline snapshot.
-    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(ANIMATION_DURATION + 300);
     await expect(component).toHaveScreenshot();
   });
@@ -154,7 +156,6 @@ test.describe('Animation capture - LineChart', () => {
       </LineChart>,
     );
 
-    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(ANIMATION_DURATION + 300);
     await expect(component).toHaveScreenshot();
   });
@@ -207,7 +208,6 @@ test.describe('Animation capture - AreaChart', () => {
       </AreaChart>,
     );
 
-    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(ANIMATION_DURATION + 300);
     await expect(component).toHaveScreenshot();
   });
