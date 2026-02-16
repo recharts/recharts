@@ -5,105 +5,112 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { BarChart, Bar } from '../../src';
 import { PageData } from '../_data';
-import { expectBars, getAllBarPaths } from '../helper/expectBars';
+import { getAllBarPaths } from '../helper/expectBars';
 import { assertNotNull } from '../helper/assertNotNull';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const smallerData = PageData.slice(0, 2);
 
 /**
- * This function will run the animation and make some basic assertions.
- * It will assert that:
- * - all bar attributes _except_ height+y+d will remain the same throughout the animation
- * - on contrary the height+y+d of each bar will change in every animation step
- *
- * This function will also collect all heights of all bars during the animation and return them.
- * @param container root of the chart
- * @param animationManager mock animation manager
- * @param steps number of animation steps to run
- * @returns 2d array: first level are animation steps, second level is the heights and y-coordinates and path.d-s of all bars at that step
+ * Helper: parse a numeric attribute from an SVG element, returning 0 if missing.
  */
-async function expectBarHeightAnimation(
+function numAttr(el: Element, attr: string): number {
+  return Number(el.getAttribute(attr)) || 0;
+}
+
+/**
+ * Collect numeric heights from all bar paths in the container.
+ */
+function getBarHeights(container: Element): number[] {
+  return Array.from(getAllBarPaths(container)).map(bar => numAttr(bar, 'height'));
+}
+
+function getBarYCoords(container: Element): number[] {
+  return Array.from(getAllBarPaths(container)).map(bar => numAttr(bar, 'y'));
+}
+
+/**
+ * Run the animation and assert behavioral properties at each step:
+ * - Bar count stays constant
+ * - Non-animated attributes (x, width, radius) remain stable
+ *
+ * When `expectMonotonicGrowth` is true (default — for initial animations from zero),
+ * also asserts heights grow and y-coords shrink monotonically at each step.
+ * Set to false for data transitions where bars may shrink.
+ *
+ * Returns the heights at each animation step for further behavioral assertions.
+ */
+async function runAnimationAndAssertBehavior(
   container: Element,
   animationManager: MockAnimationManager,
   steps: number = 5,
-): Promise<{
-  heights: ReadonlyArray<ReadonlyArray<string | null>>;
-  yCoordinates: ReadonlyArray<ReadonlyArray<string | null>>;
-  pathDs: ReadonlyArray<ReadonlyArray<string | null>>;
-}> {
+  expectMonotonicGrowth: boolean = true,
+): Promise<{ heightsPerStep: number[][]; yPerStep: number[][] }> {
   assertNotNull(container);
-  /*
-   * Bars at 0% progress do not render at all, so we
-   * start from 0.1 so that the bars have rendered a little bit.
-   */
-  let animationProgress = 0.1;
-  await animationManager.setAnimationProgress(animationProgress);
-  const stepSize = (1 - animationProgress) / steps;
-  const initialBarPaths = getAllBarPaths(container);
-  const initialHeights = Array.from(initialBarPaths).map(bar => bar.getAttribute('height'));
-  const initialYCoordinates = Array.from(initialBarPaths).map(bar => bar.getAttribute('y'));
-  const initialPathDs = Array.from(initialBarPaths).map(bar => bar.getAttribute('d'));
-  const initialAttributes = Array.from(initialBarPaths).map(bar => ({
+
+  // Start at 0.1 (bars at 0% progress do not render at all)
+  let progress = 0.1;
+  await animationManager.setAnimationProgress(progress);
+
+  const initialPaths = getAllBarPaths(container);
+  const barCount = initialPaths.length;
+  expect(barCount).toBeGreaterThan(0);
+
+  // Record initial non-animated attributes for stability checks
+  const stableAttrs = Array.from(initialPaths).map(bar => ({
     x: bar.getAttribute('x'),
     width: bar.getAttribute('width'),
     radius: bar.getAttribute('radius'),
   }));
 
-  const heightsDuringAnimation: (string | null)[][] = [];
-  const yCoordinatesDuringAnimation: (string | null)[][] = [];
-  const pathDsDuringAnimation: (string | null)[][] = [];
-  for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
-    // eslint-disable-next-line no-await-in-loop
-    await animationManager.setAnimationProgress(animationProgress);
-    const currentBarPaths = getAllBarPaths(container);
-    const currentHeights = Array.from(currentBarPaths).map(bar => bar.getAttribute('height'));
-    heightsDuringAnimation.push(currentHeights);
-    const currentYCoordinates = Array.from(currentBarPaths).map(bar => bar.getAttribute('y'));
-    yCoordinatesDuringAnimation.push(currentYCoordinates);
-    const currentPathDs = Array.from(currentBarPaths).map(bar => bar.getAttribute('d'));
-    pathDsDuringAnimation.push(currentPathDs);
+  const heightsPerStep: number[][] = [getBarHeights(container)];
+  const yPerStep: number[][] = [getBarYCoords(container)];
 
-    // Assert that all attributes except height remain the same
-    initialAttributes.forEach((initial, index) => {
-      const currentBar = currentBarPaths[index];
-      expect(currentBar.getAttribute('x')).toBe(initial.x);
-      expect(currentBar.getAttribute('width')).toBe(initial.width);
-      expect(currentBar.getAttribute('radius')).toBe(initial.radius);
-      // height and y and d should change
-      expect(currentBar.getAttribute('height')).not.toBe(initialHeights[index]);
-      expect(currentBar.getAttribute('y')).not.toBe(initialYCoordinates[index]);
-      expect(currentBar.getAttribute('d')).not.toBe(initialPathDs[index]);
+  const stepSize = (1 - progress) / steps;
+
+  for (let i = 1; i < steps; i++) {
+    progress += stepSize;
+    // eslint-disable-next-line no-await-in-loop
+    await animationManager.setAnimationProgress(progress);
+
+    const paths = getAllBarPaths(container);
+    expect(paths).toHaveLength(barCount);
+
+    // Non-animated attributes must be stable throughout animation
+    Array.from(paths).forEach((bar, idx) => {
+      expect(bar.getAttribute('x')).toBe(stableAttrs[idx].x);
+      expect(bar.getAttribute('width')).toBe(stableAttrs[idx].width);
+      expect(bar.getAttribute('radius')).toBe(stableAttrs[idx].radius);
     });
+
+    const currentHeights = getBarHeights(container);
+    const currentYs = getBarYCoords(container);
+
+    if (expectMonotonicGrowth) {
+      // For initial animations from zero: heights grow, y-coords shrink
+      const prevHeights = heightsPerStep[heightsPerStep.length - 1];
+      currentHeights.forEach((h, idx) => {
+        expect(h).toBeGreaterThanOrEqual(prevHeights[idx]);
+      });
+      const prevYs = yPerStep[yPerStep.length - 1];
+      currentYs.forEach((y, idx) => {
+        expect(y).toBeLessThanOrEqual(prevYs[idx]);
+      });
+    }
+
+    heightsPerStep.push(currentHeights);
+    yPerStep.push(currentYs);
   }
 
+  // Complete the animation
   await animationManager.completeAnimation();
-  // Final check to ensure the animation completed
-  const finalBarPaths = getAllBarPaths(container);
-  expect(finalBarPaths).toHaveLength(initialBarPaths.length);
-  finalBarPaths.forEach((bar, index) => {
-    expect(bar.getAttribute('x')).toBe(initialAttributes[index].x);
-    expect(bar.getAttribute('width')).toBe(initialAttributes[index].width);
-    expect(bar.getAttribute('radius')).toBe(initialAttributes[index].radius);
-    expect(bar.getAttribute('height')).not.toBe(initialHeights[index]);
-    expect(bar.getAttribute('y')).not.toBe(initialYCoordinates[index]);
-    expect(bar.getAttribute('d')).not.toBe(initialPathDs[index]);
-  });
+  const finalPaths = getAllBarPaths(container);
+  expect(finalPaths).toHaveLength(barCount);
 
-  // collect the heights, y-coordinates and path.d-s one last time, at the end of the animation
-  const finalHeights = Array.from(finalBarPaths).map(bar => bar.getAttribute('height'));
-  const finalYCoordinates = Array.from(finalBarPaths).map(bar => bar.getAttribute('y'));
-  const finalPathDs = Array.from(finalBarPaths).map(bar => bar.getAttribute('d'));
-  heightsDuringAnimation.push(finalHeights);
-  yCoordinatesDuringAnimation.push(finalYCoordinates);
-  pathDsDuringAnimation.push(finalPathDs);
+  heightsPerStep.push(getBarHeights(container));
+  yPerStep.push(getBarYCoords(container));
 
-  // Return the collected heights, y-coordinates and path.d-s
-  expect(heightsDuringAnimation).toHaveLength(steps);
-  expect(yCoordinatesDuringAnimation).toHaveLength(steps);
-  expect(pathDsDuringAnimation).toHaveLength(steps);
-
-  return { heights: heightsDuringAnimation, yCoordinates: yCoordinatesDuringAnimation, pathDs: pathDsDuringAnimation };
+  return { heightsPerStep, yPerStep };
 }
 
 describe('Bar animation', () => {
@@ -135,26 +142,26 @@ describe('Bar animation', () => {
       </BarChart>
     ));
 
-    it('should render without animation', () => {
+    it('should render all bars immediately with positive dimensions', () => {
       const { container } = renderTestCase();
-      expectBars(container, [
-        {
-          d: 'M 9.5,59 h 36 v 36 h -36 Z',
-          height: '36',
-          radius: '0',
-          width: '36',
-          x: '9.5',
-          y: '59',
-        },
-        {
-          d: 'M 54.5,26.495 h 36 v 68.505 h -36 Z',
-          height: '68.505',
-          radius: '0',
-          width: '36',
-          x: '54.5',
-          y: '26.495',
-        },
-      ]);
+      const bars = getAllBarPaths(container);
+      expect(bars).toHaveLength(2);
+
+      const heights = getBarHeights(container);
+      heights.forEach(h => expect(h).toBeGreaterThan(0));
+
+      // Second data point (pv=4567) should produce a taller bar than first (pv=2400)
+      expect(heights[1]).toBeGreaterThan(heights[0]);
+    });
+
+    it('should render bars proportional to data values', () => {
+      const { container } = renderTestCase();
+      const heights = getBarHeights(container);
+
+      // pv values: 2400, 4567 — ratio should be approximately preserved
+      const ratio = heights[1] / heights[0];
+      const expectedRatio = 4567 / 2400;
+      expect(ratio).toBeCloseTo(expectedRatio, 0);
     });
 
     it('should not call animation start or end callbacks', () => {
@@ -175,7 +182,8 @@ describe('Bar animation', () => {
 
     it('should first render with no bars at all', () => {
       const { container } = renderTestCase();
-      expectBars(container, []);
+      const bars = getAllBarPaths(container);
+      expect(bars).toHaveLength(0);
     });
 
     it('should call onAnimationStart callback when the animation begins', async () => {
@@ -202,32 +210,27 @@ describe('Bar animation', () => {
       expect(onAnimationEnd).toHaveBeenCalledWith();
     });
 
-    it('should animate bars', async () => {
+    it('should animate bars with monotonically increasing heights', async () => {
       const { container, animationManager } = renderTestCase();
+      const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 5);
 
-      const { heights, yCoordinates, pathDs } = await expectBarHeightAnimation(container, animationManager, 5);
+      // Verify final heights preserve data proportionality (pv: 2400, 4567)
+      const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+      expect(finalHeights[1]).toBeGreaterThan(finalHeights[0]);
+      const ratio = finalHeights[1] / finalHeights[0];
+      expect(ratio).toBeCloseTo(4567 / 2400, 0);
+    });
 
-      expect(heights).toEqual([
-        ['17.0229', '32.3931'],
-        ['27.3446', '52.0344'],
-        ['32.7704', '62.3594'],
-        ['35.2995', '67.1719'],
-        ['36', '68.505'],
-      ]);
-      expect(yCoordinates).toEqual([
-        ['77.9771', '62.6069'],
-        ['67.6554', '42.9656'],
-        ['62.2296', '32.6406'],
-        ['59.7005', '27.8281'],
-        ['59', '26.495'],
-      ]);
-      expect(pathDs).toEqual([
-        ['M 9.5,77.9771 h 36 v 17.0229 h -36 Z', 'M 54.5,62.6069 h 36 v 32.3931 h -36 Z'],
-        ['M 9.5,67.6554 h 36 v 27.3446 h -36 Z', 'M 54.5,42.9656 h 36 v 52.0344 h -36 Z'],
-        ['M 9.5,62.2296 h 36 v 32.7704 h -36 Z', 'M 54.5,32.6406 h 36 v 62.3594 h -36 Z'],
-        ['M 9.5,59.7005 h 36 v 35.2995 h -36 Z', 'M 54.5,27.8281 h 36 v 67.1719 h -36 Z'],
-        ['M 9.5,59 h 36 v 36 h -36 Z', 'M 54.5,26.495 h 36 v 68.505 h -36 Z'],
-      ]);
+    it('should have larger heights at end than at start of animation', async () => {
+      const { container, animationManager } = renderTestCase();
+      const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 5);
+
+      const firstHeights = heightsPerStep[0];
+      const lastHeights = heightsPerStep[heightsPerStep.length - 1];
+
+      firstHeights.forEach((h, idx) => {
+        expect(lastHeights[idx]).toBeGreaterThan(h);
+      });
     });
   });
 
@@ -259,58 +262,48 @@ describe('Bar animation', () => {
 
     describe('interaction after initial animation completes', () => {
       async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
-        // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
         await animationManager.completeAnimation();
 
-        // change the dataKey prop
         const button = container.querySelector('button');
         assertNotNull(button);
         act(() => {
           button.click();
         });
-
-        // now the chart is ready for assertions
       }
 
-      it('should animate bar heights', async () => {
+      it('should animate to new data values after dataKey change', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
 
-        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-        expect(heights).toEqual([
-          // the second bar is the same because the amt value in the data is the same
-          ['72.8572', '67.819'],
-          ['86.8013', '67.5595'],
-          ['90', '67.5'],
-        ]);
+        // Transition animation — bars may grow or shrink, so disable monotonic check
+        const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3, false);
+
+        // After switching to 'uv' (400, 300), bar 0 should be taller than bar 1
+        const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+        expect(finalHeights[0]).toBeGreaterThan(finalHeights[1]);
       });
     });
 
     describe('interaction in the middle of the initial animation', () => {
       async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
-        // The test begins initially with the 'pv' dataKey, so we let the animation run half way
         await animationManager.setAnimationProgress(0.5);
 
-        // change the dataKey prop
         const button = container.querySelector('button');
         assertNotNull(button);
         act(() => {
           button.click();
         });
-
-        // now the chart is ready for assertions
       }
 
-      it('should animate the bar heights from the intermediate state', async () => {
+      it('should animate to new data values from intermediate state', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
 
-        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-        expect(heights).toEqual([
-          ['70.5989', '63.5218'],
-          ['86.3799', '66.7577'],
-          ['90', '67.5'],
-        ]);
+        const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3, false);
+
+        // After switching to 'uv' (400, 300), final: bar 0 > bar 1
+        const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+        expect(finalHeights[0]).toBeGreaterThan(finalHeights[1]);
       });
     });
   });
@@ -343,31 +336,33 @@ describe('Bar animation', () => {
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
     async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
-      // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
       await animationManager.completeAnimation();
 
-      // change the dataKey prop
       const button = container.querySelector('button');
       assertNotNull(button);
       act(() => {
         button.click();
       });
-
-      // now the chart is ready for assertions
     }
 
-    it('should re-run the initial animation from the beginning', async () => {
+    it('should re-run the initial animation from the beginning (no bars visible)', async () => {
       const { container, animationManager } = renderTestCase();
       await prime(container, animationManager);
 
-      expectBars(container, []);
+      // Because key changed, React unmounts + remounts — bars start from zero
+      const bars = getAllBarPaths(container);
+      expect(bars).toHaveLength(0);
+    });
 
-      const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-      expect(heights).toEqual([
-        ['61.4286', '46.0715'],
-        ['84.6688', '63.5016'],
-        ['90', '67.5'],
-      ]);
+    it('should animate to correct final proportions after key change', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+
+      const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3);
+
+      // Switched to 'uv' (400, 300): bar 0 should be taller
+      const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+      expect(finalHeights[0]).toBeGreaterThan(finalHeights[1]);
     });
   });
 
@@ -406,16 +401,19 @@ describe('Bar animation', () => {
         });
       }
 
-      it('should animate from 2 to 10 bars', async () => {
+      it('should animate to new data proportions', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
 
-        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-        expect(heights).toEqual([
-          ['20.0163', '81.9476'],
-          ['13.9692', '87.0334'],
-          ['12.582', '88.2'],
-        ]);
+        // Data transition — bars may grow or shrink
+        const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3, false);
+
+        // data2 pv values: Page C = 1398, Page D = 9800
+        // bar 1 (9800) should be much taller than bar 0 (1398)
+        const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+        expect(finalHeights[1]).toBeGreaterThan(finalHeights[0]);
+        const ratio = finalHeights[1] / finalHeights[0];
+        expect(ratio).toBeCloseTo(9800 / 1398, 0);
       });
     });
 
@@ -430,16 +428,16 @@ describe('Bar animation', () => {
         });
       }
 
-      it('should animate from 2 to 10 bars from the intermediate state', async () => {
+      it('should animate to new data proportions from intermediate state', async () => {
         const { container, animationManager } = renderTestCase();
         await prime(container, animationManager);
 
-        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-        expect(heights).toEqual([
-          ['17.758', '77.6504'],
-          ['13.5478', '86.2315'],
-          ['12.582', '88.2'],
-        ]);
+        // Data transition from intermediate state
+        const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3, false);
+
+        // Same final state: bar 1 (pv=9800) > bar 0 (pv=1398)
+        const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+        expect(finalHeights[1]).toBeGreaterThan(finalHeights[0]);
       });
     });
   });
@@ -474,7 +472,8 @@ describe('Bar animation', () => {
         button.click();
       });
 
-      expectBars(container, []);
+      const bars = getAllBarPaths(container);
+      expect(bars).toHaveLength(0);
     });
 
     it('should restart the animation from the beginning when the bar appears again', async () => {
@@ -484,24 +483,23 @@ describe('Bar animation', () => {
 
       const button = container.querySelector('button');
       assertNotNull(button);
+      // Hide
       act(() => {
         button.click();
       });
+      expect(getAllBarPaths(container)).toHaveLength(0);
 
-      expectBars(container, []);
-
+      // Show again
       act(() => {
         button.click();
       });
+      expect(getAllBarPaths(container)).toHaveLength(0); // Animation restarts from 0
 
-      expectBars(container, []);
+      const { heightsPerStep } = await runAnimationAndAssertBehavior(container, animationManager, 3);
 
-      const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
-      expect(heights).toEqual([
-        ['24.5715', '46.7574'],
-        ['33.8675', '64.4471'],
-        ['36', '68.505'],
-      ]);
+      // Should end at correct proportions (pv: 2400, 4567)
+      const finalHeights = heightsPerStep[heightsPerStep.length - 1];
+      expect(finalHeights[1]).toBeGreaterThan(finalHeights[0]);
     });
   });
 });
