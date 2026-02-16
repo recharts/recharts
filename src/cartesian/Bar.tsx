@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  ComponentType,
   Key,
   MutableRefObject,
   PureComponent,
@@ -125,8 +124,7 @@ export type BarShapeProps = BarRectangleItem & {
   option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
 };
 
-export interface BarProps<DataPointType = any, DataValueType = any>
-  extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
+interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -412,7 +410,9 @@ type BarSvgProps = Omit<
   'radius' | 'name' | 'ref'
 >;
 
-export type Props = Partial<BarEvents> & BarProps & Omit<BarSvgProps, keyof BarEvents>;
+export type Props<DataPointType = any, ValueAxisType = any> = Partial<BarEvents> &
+  BarProps<DataPointType, ValueAxisType> &
+  Omit<BarSvgProps, keyof BarEvents>;
 
 type InternalProps = BarSvgProps & InternalBarProps;
 
@@ -1187,5 +1187,8 @@ function BarFn(outsideProps: Props) {
  * @consumes CartesianChartContext
  * @consumes BarStackContext
  */
-export const Bar: ComponentType<Props> = React.memo(BarFn, propsAreEqual);
+export const Bar = React.memo(BarFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
+  props: Props<DataPointType, ValueAxisType>,
+) => ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 Bar.displayName = 'Bar';
