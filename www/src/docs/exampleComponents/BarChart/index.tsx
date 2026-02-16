@@ -37,6 +37,8 @@ import candlestickExampleSource from './CandlestickExample?raw';
 import { RechartsLink } from '../../../components/Shared/RechartsLink';
 import AnimatedBarWidthExample from './AnimatedBarWidthExample';
 import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
+import WaterfallExample from './WaterfallExample';
+import waterfallExampleSource from './WaterfallExample?raw';
 
 export { BarChartNavExample };
 
@@ -164,5 +166,26 @@ export const barChartExamples: Record<string, ChartExample> = {
     Component: AnimatedBarWidthExample,
     sourceCode: animatedBarWidthSource,
     name: 'Animated Bar Width Example',
+  },
+  Waterfall: {
+    Component: WaterfallExample,
+    sourceCode: waterfallExampleSource,
+    name: 'Waterfall',
+    description: (
+      <article>
+        <p>
+          Waterfall charts show how sequential positive or negative values contribute to a running total. Each bar
+          starts where the previous one ended.
+        </p>
+        <p>
+          This example uses range values (<code>[low, high]</code> arrays) on a <RechartsLink api="Bar" /> component and
+          a custom <code>shape</code> to color bars based on whether they represent gains, losses, or totals.
+        </p>
+        <p>
+          The <code>computeWaterfallData</code> helper function is defined inline to transform raw data into the range
+          format that Recharts expects.
+        </p>
+      </article>
+    ),
   },
 };

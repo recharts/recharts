@@ -39,7 +39,6 @@ import { useAxisInverseDataSnapScaleApiExamples } from './useAxisInverseDataSnap
 import { useAxisInverseTickSnapScaleApiExamples } from './useAxisInverseTickSnapScale';
 import { useXAxisTicksApiExamples } from './useXAxisTicks';
 import { useYAxisTicksApiExamples } from './useYAxisTicks';
-import { computeWaterfallDataApiExamples } from './computeWaterfallData';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -85,7 +84,4 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   useYAxisInverseTickSnapScale: useAxisInverseTickSnapScaleApiExamples,
   useXAxisTicks: useXAxisTicksApiExamples,
   useYAxisTicks: useYAxisTicksApiExamples,
-  computeWaterfallData: computeWaterfallDataApiExamples,
-  WaterfallDatum: computeWaterfallDataApiExamples,
-  WaterfallOptions: computeWaterfallDataApiExamples,
 };
