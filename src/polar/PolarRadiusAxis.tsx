@@ -168,6 +168,14 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
    */
   allowDecimals?: boolean;
   /**
+   * When true, uses an improved tick step algorithm that snaps to nice numbers
+   * {1, 2, 2.5, 5} at each order of magnitude, producing human-friendly tick
+   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   *
+   * @defaultValue false
+   */
+  useNiceTicks?: boolean;
+  /**
    * @defaultValue 0
    */
   radiusAxisId?: string | number;
@@ -418,6 +426,7 @@ export function PolarRadiusAxis(outsideProps: Props) {
         reversed={props.reversed}
         includeHidden={props.includeHidden}
         allowDecimals={props.allowDecimals}
+        useNiceTicks={props.useNiceTicks ?? false}
         // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
         ticks={props.ticks}
         tickCount={props.tickCount}

@@ -31,6 +31,7 @@ export const implicitAngleAxis: Omit<AngleAxisSettings, 'type'> & { type: AxisDo
   ticks: undefined,
   type: defaultPolarAngleAxisProps.type,
   unit: undefined,
+  useNiceTicks: false,
 };
 
 export const implicitRadiusAxis: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput } = {
@@ -49,6 +50,7 @@ export const implicitRadiusAxis: Omit<RadiusAxisSettings, 'type'> & { type: Axis
   ticks: undefined,
   type: defaultPolarRadiusAxisProps.type,
   unit: undefined,
+  useNiceTicks: false,
 };
 
 const selectAngleAxisNoDefaults = (

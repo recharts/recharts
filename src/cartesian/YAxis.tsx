@@ -199,6 +199,14 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    * Letter spacing is used to calculate the width of the ticks, which in turn is used to determine how many ticks are rendered without overlapping.
    */
   letterSpacing?: number | string;
+  /**
+   * When true, uses an improved tick step algorithm that snaps to nice numbers
+   * {1, 2, 2.5, 5} at each order of magnitude, producing human-friendly tick
+   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   *
+   * @defaultValue false
+   */
+  useNiceTicks?: boolean;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & YAxisProps;
@@ -350,6 +358,7 @@ export const yAxisDefaultProps = {
   tickLine: defaultCartesianAxisProps.tickLine,
   tickSize: defaultCartesianAxisProps.tickSize,
   type: implicitYAxis.type,
+  useNiceTicks: implicitYAxis.useNiceTicks,
   width: implicitYAxis.width,
   yAxisId: 0,
 } as const satisfies Partial<Props>;
@@ -385,6 +394,7 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
         minTickGap={props.minTickGap}
         tick={props.tick}
         tickFormatter={props.tickFormatter}
+        useNiceTicks={props.useNiceTicks}
       />
       <YAxisImpl {...props} />
     </>

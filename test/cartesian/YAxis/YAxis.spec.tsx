@@ -1014,6 +1014,7 @@ describe('<YAxis />', () => {
           bottom: 0,
         },
         reversed: true,
+        useNiceTicks: false,
       };
       expectLastCalledWith(spy, expectedSettings);
     });
@@ -1059,6 +1060,7 @@ describe('<YAxis />', () => {
           bottom: 0,
         },
         reversed: false,
+        useNiceTicks: false,
         hide: false,
       };
       expectLastCalledWith(spy, {
@@ -1103,6 +1105,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          useNiceTicks: false,
           ticks: undefined,
         },
         bar: {
@@ -1132,6 +1135,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          useNiceTicks: false,
           ticks: undefined,
         },
       };
@@ -1171,6 +1175,7 @@ describe('<YAxis />', () => {
         },
         allowDecimals: true,
         reversed: false,
+        useNiceTicks: false,
       };
       expectLastCalledWith(spy, {
         foo: implicitYAxis,

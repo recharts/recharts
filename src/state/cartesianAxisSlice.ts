@@ -73,6 +73,14 @@ export type TicksSettings = {
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
   tick: TickProp<any>;
+  /**
+   * When true, uses an improved tick step algorithm that snaps to nice numbers
+   * {1, 2, 2.5, 5} at each order of magnitude, producing human-friendly tick
+   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   *
+   * @defaultValue false
+   */
+  useNiceTicks: boolean;
 };
 
 /**

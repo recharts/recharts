@@ -54,6 +54,60 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
   return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
 };
 
+type StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => Decimal;
+
+/**
+ * An improved step algorithm that snaps to nice numbers {1, 2, 2.5, 5} at each
+ * order of magnitude, producing human-friendly tick intervals like
+ * 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+ *
+ * This is opt-in and can be enabled via the `useNiceTicks` prop on axis components.
+ *
+ * @param  roughStep        The rough step calculated by dividing the difference by the tickCount
+ * @param  allowDecimals    Allow the ticks to be decimals or not
+ * @param  correctionFactor A correction factor
+ * @return The step which is easy to understand between two ticks
+ */
+export const getFormatStepNice: StepFunction = (
+  roughStep: Decimal,
+  allowDecimals: boolean,
+  correctionFactor: number,
+) => {
+  if (roughStep.lte(0)) {
+    return new Decimal(0);
+  }
+
+  const NICE_STEPS = [1, 2, 2.5, 5];
+
+  const roughNum = roughStep.toNumber();
+  const exponent = Math.floor(new Decimal(roughNum).abs().log(10).toNumber());
+  let magnitude = new Decimal(10).pow(exponent);
+
+  // normalized is in the range [1, 10)
+  const normalized = roughStep.div(magnitude).toNumber();
+
+  // Find the smallest nice step >= normalized (ceiling)
+  let niceIdx = NICE_STEPS.findIndex(s => s >= normalized - 1e-10);
+  if (niceIdx === -1) {
+    // normalized > 5 (e.g. 7.3), move to next order of magnitude
+    magnitude = magnitude.mul(10);
+    niceIdx = 0;
+  }
+
+  // Apply correction factor by stepping through the nice number sequence
+  niceIdx += correctionFactor;
+  if (niceIdx >= NICE_STEPS.length) {
+    const extraMag = Math.floor(niceIdx / NICE_STEPS.length);
+    niceIdx %= NICE_STEPS.length;
+    magnitude = magnitude.mul(new Decimal(10).pow(extraMag));
+  }
+
+  const niceStep = NICE_STEPS[niceIdx] ?? 1;
+  const formatStep = new Decimal(niceStep).mul(magnitude);
+
+  return allowDecimals ? formatStep : new Decimal(Math.ceil(formatStep.toNumber()));
+};
+
 /**
  * calculate the ticks when the minimum value equals to the maximum value
  *
@@ -111,6 +165,7 @@ export const calculateStep = (
   tickCount: number,
   allowDecimals: boolean,
   correctionFactor: number = 0,
+  stepFn: StepFunction = getFormatStep,
 ): {
   step: Decimal;
   tickMin: Decimal;
@@ -126,7 +181,7 @@ export const calculateStep = (
   }
 
   // The step which is easy to understand between two ticks
-  const step = getFormatStep(new Decimal(max).sub(min).div(tickCount - 1), allowDecimals, correctionFactor);
+  const step = stepFn(new Decimal(max).sub(min).div(tickCount - 1), allowDecimals, correctionFactor);
 
   // A medial value of ticks
   let middle;
@@ -147,7 +202,7 @@ export const calculateStep = (
 
   if (scaleCount > tickCount) {
     // When more ticks need to cover the interval, step should be bigger.
-    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1);
+    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1, stepFn);
   }
   if (scaleCount < tickCount) {
     // When less ticks can cover the interval, we should add some additional ticks
@@ -171,7 +226,12 @@ export const calculateStep = (
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allowDecimals = true): number[] => {
+export const getNiceTickValues = (
+  [min, max]: NumberDomain,
+  tickCount = 6,
+  allowDecimals = true,
+  useNiceTicks = false,
+): number[] => {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -189,8 +249,10 @@ export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allow
     return getTickOfSingleValue(cormin, tickCount, allowDecimals);
   }
 
+  const stepFn = useNiceTicks ? getFormatStepNice : getFormatStep;
+
   // Get the step between two ticks
-  const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0);
+  const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0, stepFn);
 
   const values = rangeStep(tickMin, tickMax.add(new Decimal(0.1).mul(step)), step);
 
@@ -206,7 +268,12 @@ export const getNiceTickValues = ([min, max]: NumberDomain, tickCount = 6, allow
  * @param allowDecimals Allow the ticks to be decimals or not
  * @return array of ticks
  */
-export const getTickValuesFixedDomain = ([min, max]: NumberDomain, tickCount: number, allowDecimals = true) => {
+export const getTickValuesFixedDomain = (
+  [min, max]: NumberDomain,
+  tickCount: number,
+  allowDecimals = true,
+  useNiceTicks = false,
+) => {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
 
@@ -218,8 +285,9 @@ export const getTickValuesFixedDomain = ([min, max]: NumberDomain, tickCount: nu
     return [cormin];
   }
 
+  const stepFn = useNiceTicks ? getFormatStepNice : getFormatStep;
   const count = Math.max(tickCount, 2);
-  const step = getFormatStep(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
+  const step = stepFn(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
   let values = [...rangeStep(new Decimal(cormin), new Decimal(cormax), step), cormax];
 
   if (allowDecimals === false) {
