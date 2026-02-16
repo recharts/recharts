@@ -3,7 +3,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   computeWaterfallData,
   ResponsiveContainer,
   Tooltip,
@@ -31,15 +30,6 @@ const waterfallData = computeWaterfallData({
   totalKey: 'isTotal',
 });
 
-const POSITIVE_COLOR = '#00897B';
-const NEGATIVE_COLOR = '#78909C';
-const TOTAL_COLOR = '#1565C0';
-
-function getFill(d: (typeof waterfallData)[0]) {
-  if (d.isTotal) return TOTAL_COLOR;
-  return d.value >= 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
-}
-
 export const Simple = {
   render: () => (
     <ResponsiveContainer width="100%" height={400}>
@@ -53,11 +43,7 @@ export const Simple = {
             'Value',
           ]}
         />
-        <Bar dataKey="waterfallRange" isAnimationActive={false}>
-          {waterfallData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={getFill(entry)} />
-          ))}
-        </Bar>
+        <Bar dataKey="waterfallRange" fill="#1565C0" isAnimationActive={false} />
       </BarChart>
     </ResponsiveContainer>
   ),

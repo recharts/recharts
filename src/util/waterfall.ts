@@ -11,7 +11,7 @@
  *
  * @example
  * ```tsx
- * import { BarChart, Bar, XAxis, YAxis, Cell, computeWaterfallData } from 'recharts';
+ * import { BarChart, Bar, XAxis, YAxis, computeWaterfallData } from 'recharts';
  *
  * const raw = [
  *   { name: 'Revenue', value: 100 },
@@ -25,11 +25,7 @@
  * <BarChart data={data}>
  *   <XAxis dataKey="name" />
  *   <YAxis />
- *   <Bar dataKey="waterfallRange">
- *     {data.map((d, i) => (
- *       <Cell key={i} fill={d.value >= 0 ? '#00897B' : '#757575'} />
- *     ))}
- *   </Bar>
+ *   <Bar dataKey="waterfallRange" fill="#1565C0" />
  * </BarChart>
  * ```
  */
