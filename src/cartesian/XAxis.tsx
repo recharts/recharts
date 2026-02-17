@@ -191,7 +191,7 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    *
    * @defaultValue false
    */
-  useNiceTicks?: boolean;
+  niceTicks?: boolean;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & XAxisProps;
@@ -299,7 +299,7 @@ export const xAxisDefaultProps = {
   tickLine: defaultCartesianAxisProps.tickLine,
   tickSize: defaultCartesianAxisProps.tickSize,
   type: implicitXAxis.type,
-  useNiceTicks: implicitXAxis.useNiceTicks,
+  niceTicks: implicitXAxis.niceTicks,
   xAxisId: 0,
 } as const satisfies Partial<Props>;
 
@@ -334,7 +334,7 @@ const XAxisSettingsDispatcher = (outsideProps: Props) => {
         ticks={props.ticks}
         type={props.type}
         unit={props.unit}
-        useNiceTicks={props.useNiceTicks}
+        niceTicks={props.niceTicks}
       />
       <XAxisImpl {...props} />
     </>

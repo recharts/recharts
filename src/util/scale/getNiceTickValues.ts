@@ -61,7 +61,7 @@ type StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFacto
  * order of magnitude, producing human-friendly tick intervals like
  * 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
  *
- * This is opt-in and can be enabled via the `useNiceTicks` prop on axis components.
+ * This is opt-in and can be enabled via the `niceTicks` prop on axis components.
  *
  * @param  roughStep        The rough step calculated by dividing the difference by the tickCount
  * @param  allowDecimals    Allow the ticks to be decimals or not
@@ -230,7 +230,7 @@ export const getNiceTickValues = (
   [min, max]: NumberDomain,
   tickCount = 6,
   allowDecimals = true,
-  useNiceTicks = false,
+  niceTicks = false,
 ): number[] => {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
@@ -249,7 +249,7 @@ export const getNiceTickValues = (
     return getTickOfSingleValue(cormin, tickCount, allowDecimals);
   }
 
-  const stepFn = useNiceTicks ? getFormatStepNice : getFormatStep;
+  const stepFn = niceTicks ? getFormatStepNice : getFormatStep;
 
   // Get the step between two ticks
   const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0, stepFn);
@@ -272,7 +272,7 @@ export const getTickValuesFixedDomain = (
   [min, max]: NumberDomain,
   tickCount: number,
   allowDecimals = true,
-  useNiceTicks = false,
+  niceTicks = false,
 ) => {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -285,7 +285,7 @@ export const getTickValuesFixedDomain = (
     return [cormin];
   }
 
-  const stepFn = useNiceTicks ? getFormatStepNice : getFormatStep;
+  const stepFn = niceTicks ? getFormatStepNice : getFormatStep;
   const count = Math.max(tickCount, 2);
   const step = stepFn(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
   let values = [...rangeStep(new Decimal(cormin), new Decimal(cormax), step), cormax];

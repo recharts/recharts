@@ -494,7 +494,7 @@ describe('selectRadiusAxisForBandSize', () => {
       includeHidden: false,
       name: undefined,
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
       scale: expect.toBeRechartsScale({
         domain: [0, 1000],
         range: [0, 196],
@@ -538,7 +538,7 @@ describe('selectAngleAxisForBandSize', () => {
       includeHidden: false,
       name: undefined,
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
       scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [-270, 90] }),
       tick: true,
       tickCount: undefined,

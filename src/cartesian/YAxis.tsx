@@ -206,7 +206,7 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    *
    * @defaultValue false
    */
-  useNiceTicks?: boolean;
+  niceTicks?: boolean;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & YAxisProps;
@@ -358,7 +358,7 @@ export const yAxisDefaultProps = {
   tickLine: defaultCartesianAxisProps.tickLine,
   tickSize: defaultCartesianAxisProps.tickSize,
   type: implicitYAxis.type,
-  useNiceTicks: implicitYAxis.useNiceTicks,
+  niceTicks: implicitYAxis.niceTicks,
   width: implicitYAxis.width,
   yAxisId: 0,
 } as const satisfies Partial<Props>;
@@ -394,7 +394,7 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
         minTickGap={props.minTickGap}
         tick={props.tick}
         tickFormatter={props.tickFormatter}
-        useNiceTicks={props.useNiceTicks}
+        niceTicks={props.niceTicks}
       />
       <YAxisImpl {...props} />
     </>

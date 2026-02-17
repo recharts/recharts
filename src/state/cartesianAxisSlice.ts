@@ -80,7 +80,7 @@ export type TicksSettings = {
    *
    * @defaultValue false
    */
-  useNiceTicks: boolean;
+  niceTicks: boolean;
 };
 
 /**

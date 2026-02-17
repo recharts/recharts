@@ -38,7 +38,7 @@ const defaultExpectedYAxisSettings: RenderableAxisSettings = {
     top: 0,
   },
   reversed: false,
-  useNiceTicks: false,
+  niceTicks: false,
   scale: 'auto',
   tick: true,
   tickCount: 5,

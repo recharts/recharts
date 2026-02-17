@@ -76,7 +76,7 @@ describe('state integration', () => {
         right: 0,
       },
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
     };
     expectLastCalledWith(spy, expectedSettings);
   });
@@ -123,7 +123,7 @@ describe('state integration', () => {
         right: 0,
       },
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
     };
     expectLastCalledWith(spy, {
       foo: expectedSettings1,
@@ -168,7 +168,7 @@ describe('state integration', () => {
         allowDecimals: true,
         tickCount: 5,
         reversed: false,
-        useNiceTicks: false,
+        niceTicks: false,
       },
       bar: {
         angle: 0,
@@ -198,7 +198,7 @@ describe('state integration', () => {
         allowDecimals: true,
         tickCount: 5,
         reversed: false,
-        useNiceTicks: false,
+        niceTicks: false,
       },
     };
     expectLastCalledWith(spy, expectedSettings2);
@@ -237,7 +237,7 @@ describe('state integration', () => {
       },
       allowDecimals: true,
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
     };
     expectLastCalledWith(spy, {
       foo: implicitXAxis,
@@ -329,7 +329,7 @@ describe('state integration', () => {
         right: 0,
       },
       reversed: false,
-      useNiceTicks: false,
+      niceTicks: false,
     };
     expectLastCalledWith(spy, expectedSettings);
 

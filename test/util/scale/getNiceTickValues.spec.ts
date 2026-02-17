@@ -330,7 +330,7 @@ describe('getNiceTickValues', () => {
     });
   });
 
-  describe('getNiceTickValues with useNiceTicks=true', () => {
+  describe('getNiceTickValues with niceTicks=true', () => {
     it('should produce nicer ticks for [0, 14], 5 (step of 5 instead of 4)', () => {
       const scales = getNiceTickValues([0, 14], 5, true, true);
       expect(scales).toEqual([0, 5, 10, 15, 20]);
@@ -382,7 +382,7 @@ describe('getNiceTickValues', () => {
     });
   });
 
-  describe('getTickValuesFixedDomain with useNiceTicks=true', () => {
+  describe('getTickValuesFixedDomain with niceTicks=true', () => {
     it('should produce nice step ticks constrained to domain [0, 14], 5', () => {
       const scales = getTickValuesFixedDomain([0, 14], 5, true, true);
       expect(scales).toEqual([0, 5, 10, 14]);

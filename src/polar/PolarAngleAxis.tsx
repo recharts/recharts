@@ -171,7 +171,7 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue false
    */
-  useNiceTicks?: boolean;
+  niceTicks?: boolean;
   /**
    * The formatter function of ticks.
    */
@@ -511,7 +511,7 @@ export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
       includeHidden={false}
       allowDecimals={props.allowDecimals}
       tickCount={props.tickCount}
-      useNiceTicks={props.useNiceTicks ?? false}
+      niceTicks={props.niceTicks ?? false}
       // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
       ticks={props.ticks}
       tick={props.tick}

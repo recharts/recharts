@@ -174,7 +174,7 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue false
    */
-  useNiceTicks?: boolean;
+  niceTicks?: boolean;
   /**
    * @defaultValue 0
    */
@@ -426,7 +426,7 @@ export function PolarRadiusAxis(outsideProps: Props) {
         reversed={props.reversed}
         includeHidden={props.includeHidden}
         allowDecimals={props.allowDecimals}
-        useNiceTicks={props.useNiceTicks ?? false}
+        niceTicks={props.niceTicks ?? false}
         // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
         ticks={props.ticks}
         tickCount={props.tickCount}

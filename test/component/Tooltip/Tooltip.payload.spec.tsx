@@ -1536,7 +1536,7 @@ describe('Tooltip payload', () => {
             includeHidden: false,
             name: undefined,
             reversed: false,
-            useNiceTicks: false,
+            niceTicks: false,
             scale: 'auto',
             tick: true,
             tickCount: 5,
