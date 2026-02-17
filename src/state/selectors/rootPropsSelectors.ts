@@ -1,6 +1,6 @@
 import { RechartsRootState } from '../store';
 import { StackOffsetType } from '../../util/types';
-import { SyncMethod } from '../../synchronisation/types';
+import { SyncMethod, SyncValueFallback } from '../../synchronisation/types';
 import { BaseValue } from '../../cartesian/Area';
 
 export const selectRootMaxBarSize = (state: RechartsRootState): number | undefined => state.rootProps.maxBarSize;
@@ -13,6 +13,8 @@ export const selectChartName = (state: RechartsRootState) => state.options.chart
 
 export const selectSyncId = (state: RechartsRootState) => state.rootProps.syncId;
 export const selectSyncMethod = (state: RechartsRootState): SyncMethod => state.rootProps.syncMethod;
+export const selectSyncValueFallback = (state: RechartsRootState): SyncValueFallback =>
+  state.rootProps.syncValueFallback;
 export const selectEventEmitter = (state: RechartsRootState) => state.options.eventEmitter;
 export const selectChartBaseValue: (state: RechartsRootState) => BaseValue | undefined = (state: RechartsRootState) =>
   state.rootProps.baseValue;
