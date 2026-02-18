@@ -429,7 +429,7 @@ function repeat(lines: number[], count: number): number[] {
  * @returns A stroke-dasharray string incorporating the custom dash pattern
  */
 const getStrokeDasharray = (length: number, totalLength: number, lines: number[]): string => {
-  const lineLength = lines.reduce((pre, next) => pre + next);
+  const lineLength = lines.reduce((pre, next) => pre + next, 0);
 
   // if lineLength is 0 return the default when no strokeDasharray is provided
   if (!lineLength) {
