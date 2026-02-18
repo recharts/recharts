@@ -95,7 +95,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
 };
 
 const CustomContentOfTooltip = ({
-  isAnimationActive = true,
+  isAnimationActive,
   defaultIndex,
 }: {
   isAnimationActive?: boolean;
