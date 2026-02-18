@@ -12,14 +12,11 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-} from '../../../../src';
+} from 'recharts';
 
 export default {
   title: 'Examples/cartesian/ErrorBar/DataPointFormatter',
   component: ErrorBar,
-  docs: {
-    autodocs: false,
-  },
 };
 
 const scatterData = [
