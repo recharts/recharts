@@ -1140,12 +1140,7 @@ export const combineNiceTicks = (
     (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
     isWellFormedNumberDomain(axisDomain)
   ) {
-    return getNiceTickValues(
-      axisDomain,
-      axisSettings.tickCount,
-      axisSettings.allowDecimals,
-      axisSettings.niceTicks,
-    );
+    return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, axisSettings.niceTicks);
   }
 
   if (
