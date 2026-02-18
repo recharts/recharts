@@ -546,7 +546,7 @@ describe('Tooltip synchronization', () => {
       // This tests the cascading counter-emission bug:
       // When Chart A hovers over "Day 3" (which Chart C doesn't have),
       // Chart C should NOT emit a counter-sync event that clears Chart B's tooltip.
-      const { wrapperA, wrapperB, debug } = renderThreeChartTestCase();
+      const { wrapperA, wrapperB, wrapperC, debug } = renderThreeChartTestCase();
 
       expectTooltipNotVisible(wrapperA);
       expectTooltipNotVisible(wrapperB);
@@ -557,6 +557,9 @@ describe('Tooltip synchronization', () => {
       expectTooltipPayload(wrapperA, 'Day 3', ['uv : 300']);
       // Chart B should sync and show tooltip — NOT be cleared by Chart C's counter-emission
       expectTooltipPayload(wrapperB, 'Day 3', ['pv : 350']);
+      // Chart C has no 'Day 3' entry, so its tooltip should be hidden
+      assertNotNull(wrapperC);
+      expectTooltipNotVisible(wrapperC);
     });
 
     test('chart B sync state should show active tooltip even when chart C has no matching label', () => {
@@ -579,7 +582,10 @@ describe('Tooltip synchronization', () => {
       showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
 
       // Verify active state before deactivation
+      expectLastCalledWith(spyA, { isActive: true, activeIndex: '2' });
       expectLastCalledWith(spyB, { isActive: true, activeIndex: '2' });
+      // Chart C has no 'Day 3' entry — it should never become active during sync
+      expectLastCalledWith(spyC, { isActive: false, activeIndex: null });
 
       hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
 
