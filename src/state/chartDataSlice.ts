@@ -56,13 +56,18 @@ const chartDataSlice = createSlice({
   initialState: initialChartDataState,
   reducers: {
     setChartData(state, action: PayloadAction<ChartData | undefined>) {
+      const prevDataLength = state.chartData?.length;
       state.chartData = castDraft(action.payload);
       if (action.payload == null) {
         state.dataStartIndex = 0;
         state.dataEndIndex = 0;
         return;
       }
-      if (action.payload.length > 0 && state.dataEndIndex !== action.payload.length - 1) {
+      // Only reset start/end indices when the data length actually changes (initial load or
+      // data size change). When a parent component re-renders and creates a new array reference
+      // with the same number of items, preserve any user-defined Brush selection.
+      if (action.payload.length > 0 && prevDataLength !== action.payload.length) {
+        state.dataStartIndex = 0;
         state.dataEndIndex = action.payload.length - 1;
       }
     },
