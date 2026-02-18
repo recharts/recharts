@@ -27,6 +27,7 @@ describe('cartesianAxisSlice', () => {
       angle: 0,
       hide: false,
       tickFormatter: undefined,
+      niceTicks: false,
       padding: { top: 0, bottom: 0 },
       orientation: 'left',
     };
