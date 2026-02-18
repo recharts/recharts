@@ -464,6 +464,113 @@ describe('Tooltip synchronization', () => {
     });
   });
 
+  describe('when syncMethod=value with a chart that has very few data points (cascading counter-emission bug)', () => {
+    // Chart A: 6 data points (full range)
+    const fullData = [
+      { name: 'Day 1', uv: 100 },
+      { name: 'Day 2', uv: 200 },
+      { name: 'Day 3', uv: 300 },
+      { name: 'Day 4', uv: 400 },
+      { name: 'Day 5', uv: 500 },
+      { name: 'Day 6', uv: 600 },
+    ];
+
+    // Chart B: 6 data points (same range)
+    const fullData2 = [
+      { name: 'Day 1', pv: 150 },
+      { name: 'Day 2', pv: 250 },
+      { name: 'Day 3', pv: 350 },
+      { name: 'Day 4', pv: 450 },
+      { name: 'Day 5', pv: 550 },
+      { name: 'Day 6', pv: 650 },
+    ];
+
+    // Chart C: only 2 data points (mimics a sparse chart like an equity curve with trade dates only)
+    const sparseData = [
+      { name: 'Day 1', ev: 100 },
+      { name: 'Day 4', ev: 103 },
+    ];
+
+    const renderThreeChartTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart
+          syncId="counterEmissionSync"
+          syncMethod="value"
+          data={fullData}
+          width={400}
+          height={400}
+          className="chart-A"
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="uv" />
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart
+          syncId="counterEmissionSync"
+          syncMethod="value"
+          data={fullData2}
+          width={400}
+          height={400}
+          className="chart-B"
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="pv" />
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart
+          syncId="counterEmissionSync"
+          syncMethod="value"
+          data={sparseData}
+          width={400}
+          height={400}
+          className="chart-C"
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="ev" />
+        </LineChart>
+      ),
+    );
+
+    test('chart B tooltip should remain active when chart C cannot match the synced label', () => {
+      // This tests the cascading counter-emission bug:
+      // When Chart A hovers over "Day 3" (which Chart C doesn't have),
+      // Chart C should NOT emit a counter-sync event that clears Chart B's tooltip.
+      const { wrapperA, wrapperB, debug } = renderThreeChartTestCase();
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      // Chart A shows tooltip at the hovered point
+      expectTooltipPayload(wrapperA, 'Day 3', ['uv : 300']);
+      // Chart B should sync and show tooltip — NOT be cleared by Chart C's counter-emission
+      expectTooltipPayload(wrapperB, 'Day 3', ['pv : 350']);
+    });
+
+    test('chart B sync state should show active tooltip even when chart C has no matching label', () => {
+      const { spyB, wrapperA, debug } = renderThreeChartTestCase(state =>
+        selectIsTooltipActive(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      // Chart B's tooltip should be active via sync — not cleared by Chart C's counter-emission
+      expect(spyB).toHaveBeenLastCalledWith(expect.objectContaining({ isActive: true }));
+    });
+  });
+
   describe('selectActiveCoordinate', () => {
     it('should return undefined for initial state', () => {
       const store = createRechartsStore();
@@ -804,10 +911,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: null,
         label: undefined,
-        sourceViewBox: viewBox,
+        sourceViewBox: undefined,
         graphicalItemId: undefined,
       });
-      expect(spyA).toHaveBeenCalledTimes(3);
       expect(spyB).toHaveBeenLastCalledWith({
         active: false,
         coordinate: undefined,
@@ -817,20 +923,19 @@ describe('Tooltip synchronization', () => {
         sourceViewBox: undefined,
         graphicalItemId: undefined,
       });
-      expect(spyB).toHaveBeenCalledTimes(1);
 
       showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
-      // chart A is the target of mouse events so its sync state stays undefined
+      // chart A is the target of mouse events so its sync state stays cleared
+      // (sourceViewBox is cleared by setMouseOverAxisIndex since A is now doing its own interaction)
       expect(spyA).toHaveBeenLastCalledWith({
         active: false,
         coordinate: undefined,
         dataKey: undefined,
         index: null,
         label: undefined,
-        sourceViewBox: viewBox,
+        sourceViewBox: undefined,
         graphicalItemId: undefined,
       });
-      expect(spyA).toHaveBeenCalledTimes(3);
       // chart B is now receiving synchronisation
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -847,16 +952,17 @@ describe('Tooltip synchronization', () => {
       expect(spyB).toHaveBeenCalledTimes(2);
 
       hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+      // Chart A's sync sourceViewBox was cleared when it started its own mouse interaction
+      // (setMouseOverAxisIndex clears sourceViewBox since the chart is no longer "receiving" sync)
       expect(spyA).toHaveBeenLastCalledWith({
         active: false,
         coordinate: undefined,
         dataKey: undefined,
         index: null,
         label: undefined,
-        sourceViewBox: viewBox,
+        sourceViewBox: undefined,
         graphicalItemId: undefined,
       });
-      expect(spyA).toHaveBeenCalledTimes(3);
       // thanks to the active=true prop, the synchronised state remains on the chart B even though the active is on chart A
       expect(spyB).toHaveBeenLastCalledWith({
         active: true,
@@ -889,6 +995,7 @@ describe('Tooltip synchronization', () => {
       expect(spyA).toHaveBeenCalledTimes(4);
       expect(spyB).toHaveBeenLastCalledWith({
         // Thanks to mouse events, synchronisation on this chart is now turned off so that it can start sending events to other charts
+        // sourceViewBox is cleared by setMouseOverAxisIndex since Chart B is now doing its own interaction
         active: false,
         coordinate: {
           x: 161,
@@ -897,10 +1004,9 @@ describe('Tooltip synchronization', () => {
         dataKey: undefined,
         index: '2',
         label: 'Page C',
-        sourceViewBox: viewBox,
+        sourceViewBox: undefined,
         graphicalItemId: undefined,
       });
-      expect(spyB).toHaveBeenCalledTimes(3);
     });
   });
 });

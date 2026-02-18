@@ -41,6 +41,28 @@ function useTooltipSyncEventsListener() {
         // This event is not for this chart
         return;
       }
+
+      /*
+       * Handle source chart deactivation (mouseLeave) for ALL sync methods.
+       * This must be checked before any syncMethod-specific logic to ensure
+       * sourceViewBox is cleared, which allows isReceivingSynchronisation
+       * to become false and lets the normal emission flow resume.
+       */
+      if (action.payload.active === false) {
+        dispatch(
+          setSyncInteraction({
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+            label: undefined,
+            sourceViewBox: undefined,
+            graphicalItemId: undefined,
+          }),
+        );
+        return;
+      }
+
       if (syncMethod === 'index') {
         if (viewBox && action?.payload?.coordinate && action.payload.sourceViewBox) {
           const { x, y, ...otherCoordinateProps } = action.payload.coordinate;
@@ -94,7 +116,7 @@ function useTooltipSyncEventsListener() {
 
       const { coordinate } = action.payload;
 
-      if (activeTick == null || action.payload.active === false || coordinate == null || viewBox == null) {
+      if (coordinate == null || viewBox == null) {
         dispatch(
           setSyncInteraction({
             active: false,
@@ -103,6 +125,33 @@ function useTooltipSyncEventsListener() {
             index: null,
             label: undefined,
             sourceViewBox: undefined,
+            graphicalItemId: undefined,
+          }),
+        );
+        return;
+      }
+
+      if (activeTick == null) {
+        /*
+         * The label from the source chart doesn't match any tick in this chart.
+         * This happens when synced charts have different data arrays
+         * (e.g., one chart has 3 data points while another has 252).
+         *
+         * We set active: false so the tooltip hides (correct — no data for this date),
+         * but we keep sourceViewBox set to signal that we're still receiving sync events.
+         * The emission guard in useTooltipChartSynchronisation checks sourceViewBox
+         * (not active) to decide whether to suppress outgoing sync events.
+         * Without this, the chart would emit a counter-sync event with active: false,
+         * cascading to clear tooltips on ALL other synced charts.
+         */
+        dispatch(
+          setSyncInteraction({
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+            label: undefined,
+            sourceViewBox: action.payload.sourceViewBox,
             graphicalItemId: undefined,
           }),
         );
@@ -208,15 +257,22 @@ export function useTooltipChartSynchronisation(
   const syncId = useAppSelector(selectSyncId);
   const syncMethod = useAppSelector(selectSyncMethod);
   const tooltipState = useAppSelector(selectSynchronisedTooltipState);
-  const isReceivingSynchronisation = tooltipState?.active;
+  /*
+   * Use sourceViewBox (not active) to determine if we're receiving sync events.
+   * sourceViewBox is set whenever another chart sends a sync event to us — even when
+   * our own tooltip is inactive (because the label didn't match our data).
+   * This prevents charts with sparse data from emitting counter-sync events
+   * that would clear tooltips on all other synced charts.
+   */
+  const isReceivingSynchronisation = tooltipState?.sourceViewBox != null;
   const viewBox = useViewBox();
 
   useEffect(() => {
     if (isReceivingSynchronisation) {
       /*
-       * This chart currently has active tooltip, synchronised from another chart.
+       * This chart is currently receiving synchronisation events from another chart.
        * Let's not send any outgoing synchronisation events while that's happening
-       * to avoid infinite loops.
+       * to avoid infinite loops and cascading tooltip clears.
        */
       return;
     }
