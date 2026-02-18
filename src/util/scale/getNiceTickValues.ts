@@ -57,7 +57,7 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
 type StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => Decimal;
 
 /**
- * An improved step algorithm that snaps to nice numbers {1, 2, 2.5, 5} at each
+ * An improved step algorithm that snaps to nice numbers (1, 2, 2.5, 5) at each
  * order of magnitude, producing human-friendly tick intervals like
  * 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
  *

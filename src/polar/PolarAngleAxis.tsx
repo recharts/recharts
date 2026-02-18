@@ -166,7 +166,7 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
   tickCount?: number;
   /**
    * When true, uses an improved tick step algorithm that snaps to nice numbers
-   * {1, 2, 2.5, 5} at each order of magnitude, producing human-friendly tick
+   * (1, 2, 2.5, 5) at each order of magnitude, producing human-friendly tick
    * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
    *
    * @defaultValue false
