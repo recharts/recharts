@@ -9,6 +9,7 @@ export const defaultPolarRadiusAxisProps = {
   axisLine: true,
   includeHidden: false,
   hide: false,
+  niceTicks: false,
   label: false,
   orientation: 'right',
   radiusAxisId: 0,
