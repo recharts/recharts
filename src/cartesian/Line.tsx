@@ -404,14 +404,12 @@ const generateSimpleStrokeDasharray = (totalLength: number, length: number): str
  * @param count Number of times to repeat the pattern
  * @returns A new array with the pattern repeated `count` times
  */
-function repeat(lines: number[], count: number) {
+function repeat(lines: number[], count: number): number[] {
   const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
-  let result: number[] = [];
-
+  const result: number[] = [];
   for (let i = 0; i < count; ++i) {
-    result = [...result, ...linesUnit];
+    result.push(...linesUnit);
   }
-
   return result;
 }
 
@@ -430,7 +428,7 @@ function repeat(lines: number[], count: number) {
  * @param lines The user-specified dash pattern as an array of numbers (e.g. [7, 3])
  * @returns A stroke-dasharray string incorporating the custom dash pattern
  */
-const getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
+const getStrokeDasharray = (length: number, totalLength: number, lines: number[]): string => {
   const lineLength = lines.reduce((pre, next) => pre + next);
 
   // if lineLength is 0 return the default when no strokeDasharray is provided

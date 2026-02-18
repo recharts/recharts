@@ -214,12 +214,12 @@ describe('Line animation', () => {
       await animationManager.setAnimationProgress(0.1);
 
       const line = getLine(container);
-      // after travelling 10% of the path, the stroke-dasharray should be 10px visible and 90px hidden
+      // after travelling 10% of the path, the stroke-dasharray should be 10px visible with a totalLength gap
       expect(line).toHaveAttribute('stroke-dasharray', '10px 100px');
 
       await animationManager.setAnimationProgress(0.2);
 
-      // after travelling 20% of the path, the stroke-dasharray should be 20px visible and 80px hidden
+      // after travelling 20% of the path, the stroke-dasharray should be 20px visible with a totalLength gap
       expect(line).toHaveAttribute('stroke-dasharray', '20px 100px');
 
       await animationManager.setAnimationProgress(1);
@@ -366,13 +366,13 @@ describe('Line animation', () => {
         await animationManager.setAnimationProgress(0.1);
 
         const line = getLine(container);
-        // after travelling 10% of the path, the stroke-dasharray should be 10px visible and 90px hidden
+        // after travelling 10% of the path, the stroke-dasharray should be 10px visible with a totalLength gap
         // but as the line grows, it leaves behind the 7,3 dashed stroke as instructed by the prop
         expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 0px, 100px');
 
         await animationManager.setAnimationProgress(0.2);
 
-        // after travelling 20% of the path, the stroke-dasharray should be 20px visible and 80px hidden
+        // after travelling 20% of the path, the stroke-dasharray should be 20px visible with a totalLength gap
         expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 7px, 3px, 0px, 100px');
 
         await animationManager.setAnimationProgress(1);
@@ -504,12 +504,12 @@ describe('Line animation', () => {
 
         /*
          * During priming we have progressed the animation to 30% of the path,
-         * so the stroke-dasharray should be 30px visible and 70px hidden.
+         * so the stroke-dasharray should be 30px visible with a totalLength gap.
          */
         expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 100px');
 
         /*
-         * Now, the line should continue growing from where it left off. Previously it was 30% of the path, so 30px visible and 70px hidden.
+         * Now, the line should continue growing from where it left off. Previously it was 30% of the path, so 30px visible with a totalLength gap.
          * Even though a new animation is started, it should not reset the stroke-dasharray
          * and it should continue growing from the most recent length.
          */
@@ -683,7 +683,7 @@ describe('Line animation', () => {
         const fullyVisibleLine = '100px 100px';
 
         /*
-         * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
+         * stroke-dasharray should still be 100px visible with a totalLength gap because the animation works by changing the path, not the dasharray
          */
         expect(getLine(container)).toHaveAttribute('stroke-dasharray', '100px 100px');
 
@@ -961,13 +961,13 @@ describe('Line animation', () => {
         const fullyVisibleLine = '100px 100px';
 
         /*
-         * The path had arrived at 30% of the path, so it should be 30px visible and 70px hidden
+         * The path had arrived at 30% of the path, so it should be 30px visible with a totalLength gap
          * before the next animation starts.
          */
         expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 100px');
 
         /*
-         * Now, the line should continue growing from where it left off. Previously it was 30% of the path, so 30px visible and 70px hidden.
+         * Now, the line should continue growing from where it left off. Previously it was 30% of the path, so 30px visible with a totalLength gap.
          * Even though a new animation is started, it should not reset the stroke-dasharray
          * and it should continue growing from the most recent length.
          */
@@ -1040,7 +1040,7 @@ describe('Line animation', () => {
         const fullyVisibleLine = '100px 100px';
 
         /*
-         * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
+         * stroke-dasharray should still be 100px visible with a totalLength gap because the animation works by changing the path, not the dasharray
          */
         expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
 
@@ -1217,7 +1217,7 @@ describe('Line animation', () => {
       const fullyVisibleLine = '100px 100px';
 
       /*
-       * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
+       * stroke-dasharray should still be 100px visible with a totalLength gap because the animation works by changing the path, not the dasharray
        */
       expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
 
