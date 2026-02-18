@@ -234,7 +234,7 @@ describe('Line animation', () => {
       expect(line).toHaveAttribute('stroke-dasharray', '100px 100px');
     });
 
-    it('should set the stroke-dasharray to 100, 0 when the animation is completed', async () => {
+    it('should set the stroke-dasharray to 100, 100 when the animation is completed', async () => {
       const { container, animationManager } = renderTestCase();
 
       await animationManager.setAnimationProgress(1);
@@ -376,7 +376,7 @@ describe('Line animation', () => {
         expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 7px, 3px, 0px, 100px');
 
         await animationManager.setAnimationProgress(1);
-        // after travelling 100% of the path, the stroke-dasharray should be 100px visible and 0px hidden
+        // after travelling 100% of the path, the stroke-dasharray should be fully visible with a totalLength gap
         expect(line).toHaveAttribute(
           'stroke-dasharray',
           '7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 0px, 100px',
@@ -384,7 +384,7 @@ describe('Line animation', () => {
 
         await animationManager.completeAnimation();
         /*
-         * After the animation is completed, the stroke-dasharray should remain 100px visible and 0px hidden.
+         * After the animation is completed, the stroke-dasharray should remain fully visible with a totalLength gap.
          * This could be shortened to just '7,3' but no harm if it remains as is.
          */
         expect(line).toHaveAttribute(

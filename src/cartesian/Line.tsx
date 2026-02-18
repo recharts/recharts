@@ -376,10 +376,34 @@ const SetLineTooltipEntrySettings = React.memo(
   },
 );
 
+/**
+ * Generates a simple stroke-dasharray string for animating a line draw effect.
+ *
+ * Uses `totalLength` as the gap (instead of `totalLength - length`) to prevent a floating-point
+ * precision artifact: when fractional dash and gap values are serialized to a string attribute
+ * and re-parsed by the SVG renderer, their sum can differ from the actual path length by a ULP,
+ * causing the dasharray pattern to repeat and render a phantom dot at the path endpoint
+ * with round or square strokeLinecap.
+ *
+ * @param totalLength The total length of the SVG path
+ * @param length The currently visible portion of the path
+ * @returns A stroke-dasharray string like "50px 200px"
+ */
 const generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
   return `${length}px ${totalLength}px`;
 };
 
+/**
+ * Repeats a dash pattern array a given number of times.
+ *
+ * If the input array has an odd length, a trailing `0` is appended to make it even
+ * before repeating, because SVG stroke-dasharray patterns must have an even number
+ * of values to cycle correctly between dash and gap segments.
+ *
+ * @param lines Array of dash/gap lengths to repeat
+ * @param count Number of times to repeat the pattern
+ * @returns A new array with the pattern repeated `count` times
+ */
 function repeat(lines: number[], count: number) {
   const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
   let result: number[] = [];
@@ -391,6 +415,21 @@ function repeat(lines: number[], count: number) {
   return result;
 }
 
+/**
+ * Computes a stroke-dasharray string for animating a custom-dashed line draw effect.
+ *
+ * Given a user-specified dash pattern (e.g. `"7,3"`), this function builds a dasharray
+ * that reveals exactly `length` pixels of that pattern, followed by a gap of `totalLength`
+ * to hide the remainder of the path.
+ *
+ * Like {@link generateSimpleStrokeDasharray}, the trailing gap uses `totalLength` rather than
+ * `totalLength - length` to avoid floating-point precision artifacts with round/square strokeLinecap.
+ *
+ * @param length The currently visible portion of the path
+ * @param totalLength The total length of the SVG path
+ * @param lines The user-specified dash pattern as an array of numbers (e.g. [7, 3])
+ * @returns A stroke-dasharray string incorporating the custom dash pattern
+ */
 const getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
   const lineLength = lines.reduce((pre, next) => pre + next);
 
