@@ -217,7 +217,7 @@ describe('Rectangle animation', () => {
 
         it('should not animate stroke-dasharray property', () => {
           const { container } = renderTestCase();
-          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 0px;');
+          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 1234px;');
         });
       });
 
@@ -242,7 +242,7 @@ describe('Rectangle animation', () => {
 
         it('should not animate stroke-dasharray property', () => {
           const { container } = renderTestCase();
-          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 0px;');
+          expect(getStyle(container)).toEqual('stroke-dasharray: 1234px 1234px;');
         });
       });
     },
@@ -313,7 +313,7 @@ describe('Rectangle animation', () => {
           const { container, animationManager } = renderTestCase();
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
             'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 0px; transition: stroke-dasharray 1500ms ease;',
+            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms ease;',
           ]);
         });
       });
@@ -352,7 +352,7 @@ describe('Rectangle animation', () => {
           await prime(container);
           expect(await expectAnimatedStrokeDasharray(container, animationManager)).toEqual([
             'stroke-dasharray: 0px 1234px;',
-            'stroke-dasharray: 1234px 0px; transition: stroke-dasharray 1500ms ease;',
+            'stroke-dasharray: 1234px 1234px; transition: stroke-dasharray 1500ms ease;',
           ]);
         });
       });

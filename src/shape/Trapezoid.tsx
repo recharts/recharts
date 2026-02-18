@@ -172,7 +172,7 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
   const prevY = prevYRef.current;
 
   const from = `0px ${totalLength === -1 ? 1 : totalLength}px`;
-  const to = `${totalLength}px 0px`;
+  const to = `${totalLength}px ${totalLength}px`;
   const transition = getTransitionVal(['strokeDasharray'], animationDuration, animationEasing);
 
   return (

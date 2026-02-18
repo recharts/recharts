@@ -377,7 +377,7 @@ const SetLineTooltipEntrySettings = React.memo(
 );
 
 const generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
-  return `${length}px ${totalLength - length}px`;
+  return `${length}px ${totalLength}px`;
 };
 
 function repeat(lines: number[], count: number) {
@@ -401,8 +401,6 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
 
   const count = Math.floor(length / lineLength);
   const remainLength = length % lineLength;
-  const restLength = totalLength - length;
-
   let remainLines: number[] = [];
   for (let i = 0, sum = 0; i < lines.length; sum += lines[i] ?? 0, ++i) {
     const lineValue = lines[i];
@@ -412,7 +410,7 @@ const getStrokeDasharray = (length: number, totalLength: number, lines: number[]
     }
   }
 
-  const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
+  const emptyLines = remainLines.length % 2 === 0 ? [0, totalLength] : [totalLength];
 
   return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
 };
