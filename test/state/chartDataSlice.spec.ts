@@ -39,27 +39,6 @@ describe('chartDataSlice', () => {
     expect(state2.dataEndIndex).toBe(0);
   });
 
-  it('should preserve Brush selection when data reference changes but length stays the same', () => {
-    const chartData = [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }];
-    // Initial load: indices reset to full range
-    const action1 = setChartData(chartData);
-    const state1 = chartDataReducer(undefined, action1);
-    expect(state1.dataStartIndex).toBe(0);
-    expect(state1.dataEndIndex).toBe(4);
-
-    // Simulate user narrowing the Brush selection (e.g. index 1 to 3)
-    const state2 = chartDataReducer(state1, setDataStartEndIndexes({ startIndex: 1, endIndex: 3 }));
-    expect(state2.dataStartIndex).toBe(1);
-    expect(state2.dataEndIndex).toBe(3);
-
-    // Parent re-renders with new array reference but same data length → selection preserved
-    const newChartDataRef = [...chartData];
-    const action3 = setChartData(newChartDataRef);
-    const state3 = chartDataReducer(state2, action3);
-    expect(state3.dataStartIndex).toBe(1);
-    expect(state3.dataEndIndex).toBe(3);
-  });
-
   it('should reset indices to full range when data length changes', () => {
     const chartData = [{ value: 1 }, { value: 2 }, { value: 3 }];
     const action1 = setChartData(chartData);

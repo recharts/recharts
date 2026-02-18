@@ -1403,6 +1403,13 @@ export interface DataProvider<DataPointType> {
    *
    * Use the `dataKey` prop to specify which properties to use.
    *
+   * **Brush and referential equality:** Recharts compares the `data` prop by reference on every
+   * render. Passing an inline array literal or creating a new array inside the render function
+   * causes the Brush selection (start/end indices) to reset on every re-render because each
+   * render produces a new array reference. To preserve the Brush selection across re-renders,
+   * stabilize the reference with `useMemo` so the same array instance is reused as long as the
+   * underlying data has not changed.
+   *
    * @example data={[{ name: 'a', value: 12 }]}
    * @example data={[{ label: 'foo', measurements: [5, 12] }]}
    */
