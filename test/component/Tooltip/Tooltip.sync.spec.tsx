@@ -567,7 +567,27 @@ describe('Tooltip synchronization', () => {
       showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
 
       // Chart B's tooltip should be active via sync — not cleared by Chart C's counter-emission
-      expect(spyB).toHaveBeenLastCalledWith(expect.objectContaining({ isActive: true }));
+      // "Day 3" is at index 2 in Chart B's data
+      expectLastCalledWith(spyB, { isActive: true, activeIndex: '2' });
+    });
+
+    test('all synced charts deactivate when the source chart mouse leaves', () => {
+      const { spyA, spyB, spyC, wrapperA, debug } = renderThreeChartTestCase(state =>
+        selectIsTooltipActive(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      // Verify active state before deactivation
+      expectLastCalledWith(spyB, { isActive: true, activeIndex: '2' });
+
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+
+      // After mouseLeave, the deactivation sync event (active: false, sourceViewBox: undefined)
+      // should propagate to all charts, clearing their tooltips
+      expectLastCalledWith(spyA, { isActive: false, activeIndex: null });
+      expectLastCalledWith(spyB, { isActive: false, activeIndex: null });
+      expectLastCalledWith(spyC, { isActive: false, activeIndex: null });
     });
   });
 
