@@ -16,6 +16,18 @@ import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { ActiveLabel, MouseHandlerDataParam } from './types';
 import { noop } from '../util/DataUtils';
 
+/**
+ * Listens for tooltip sync events from other charts and dispatches the appropriate
+ * sync interaction state based on the current chart's syncMethod.
+ *
+ * Handles three sync methods:
+ * - 'index': passes through the tooltip index with coordinate scaling between chart viewBoxes
+ * - 'value': matches the incoming label against this chart's axis ticks by string comparison
+ * - function: delegates tick resolution to a user-provided callback
+ *
+ * When a synced label has no matching tick (e.g. sparse chart), the tooltip is hidden
+ * but sourceViewBox is preserved to prevent counter-emission cascades.
+ */
 function useTooltipSyncEventsListener() {
   const mySyncId = useAppSelector(selectSyncId);
   const myEventEmitter = useAppSelector(selectEventEmitter);
@@ -185,6 +197,10 @@ function useTooltipSyncEventsListener() {
   }, [className, dispatch, myEventEmitter, mySyncId, syncMethod, tooltipTicks, layout, viewBox]);
 }
 
+/**
+ * Listens for brush sync events from other charts and updates this chart's
+ * data start/end indexes to match, keeping brush positions synchronised.
+ */
 function useBrushSyncEventsListener() {
   const mySyncId = useAppSelector(selectSyncId);
   const myEventEmitter = useAppSelector(selectEventEmitter);
@@ -315,6 +331,10 @@ export function useTooltipChartSynchronisation(
   ]);
 }
 
+/**
+ * Emits brush sync events to other charts when the brush start/end indexes change.
+ * If syncId is undefined, no events will be sent.
+ */
 export function useBrushChartSynchronisation() {
   const syncId = useAppSelector(selectSyncId);
   const eventEmitterSymbol = useAppSelector(selectEventEmitter);
