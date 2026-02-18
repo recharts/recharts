@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import { expect, test } from './fixtures';
 import { ExamplesIndexView } from '../../../www/src/views/ExamplesIndexView.tsx';
@@ -10,8 +10,11 @@ test.use({
   colorScheme: 'dark',
 });
 
-test('dark mode: examples list', async ({ mount, page }) => {
+test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+});
+
+test('dark mode: examples list', async ({ mount }) => {
   const component = await mount(
     <BrowserRouter>
       <Routes>
@@ -28,9 +31,7 @@ test('dark mode: examples list', async ({ mount, page }) => {
     </BrowserRouter>,
   );
 
-  await expect(component).toHaveScreenshot({
-    timeout: 15_000,
-  });
+  await expect(component).toHaveScreenshot();
 });
 
 test('dark mode: Simple Line Chart', async ({ mount }) => {
