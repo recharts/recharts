@@ -502,4 +502,40 @@ describe('<ResponsiveContainer />', () => {
     );
     expect(container.querySelector('.recharts-responsive-container')).toHaveClass('my-custom-class');
   });
+
+  it('should pass data-testid attribute to the container div', () => {
+    render(
+      <ResponsiveContainer data-testid="my-responsive-container">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    expect(screen.getByTestId('my-responsive-container')).toBeInTheDocument();
+    expect(screen.getByTestId('my-responsive-container')).toHaveClass('recharts-responsive-container');
+  });
+
+  it('should pass multiple data-* attributes to the container div', () => {
+    const { container } = render(
+      <ResponsiveContainer data-testid="my-container" data-custom="custom-value" data-analytics-id="chart-1">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    const responsiveContainer = container.querySelector('.recharts-responsive-container');
+    expect(responsiveContainer).toHaveAttribute('data-testid', 'my-container');
+    expect(responsiveContainer).toHaveAttribute('data-custom', 'custom-value');
+    expect(responsiveContainer).toHaveAttribute('data-analytics-id', 'chart-1');
+  });
+
+  it('should NOT forward data-* attributes when width and height are both fixed numbers (optimization)', () => {
+    const { container } = render(
+      <ResponsiveContainer width={100} height={100} data-testid="fixed-container">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+    // Fixed dimensions skip the wrapper div, so data-* attributes are not rendered
+    expect(container.querySelector('[data-testid="fixed-container"]')).not.toBeInTheDocument();
+    // But the children are still rendered correctly
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
+  });
 });
