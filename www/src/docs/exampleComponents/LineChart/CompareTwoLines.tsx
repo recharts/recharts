@@ -738,8 +738,8 @@ const data: DataPoint[] = [
 ];
 // #endregion
 
-const color = '#bd7f2a';
-const compareColor = '#dd4b1a';
+const color = 'var(--color-chart-3)';
+const compareColor = 'var(--color-chart-8)';
 
 const { yAxisMin, yAxisMax } = data.reduce(
   (acc, val) => {
