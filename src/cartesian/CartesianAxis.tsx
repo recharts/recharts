@@ -388,10 +388,11 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
-  const textAnchor: TextAnchor = getTickTextAnchor(orientation, mirror);
-  const verticalAnchor: TextVerticalAnchor = getTickVerticalAnchor(orientation, mirror);
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
+  // Use user-provided textAnchor if available, otherwise calculate from orientation/mirror
+  const textAnchor: TextAnchor = (axisProps.textAnchor as TextAnchor) ?? getTickTextAnchor(orientation, mirror);
+  const verticalAnchor: TextVerticalAnchor = getTickVerticalAnchor(orientation, mirror);
   let tickLinePropsObject: SVGProps<SVGLineElement> = {};
   if (typeof tickLine === 'object') {
     tickLinePropsObject = tickLine;
