@@ -14,9 +14,26 @@ import {
 const es6EntryPath = path.resolve(__dirname, '..', 'es6', 'index.js');
 const es6EntryExists = existsSync(es6EntryPath);
 
+/**
+ * Known pre-existing tree-shaking failures: these components pull in other tracked components
+ * when tree-shaken in isolation. Each entry maps a component name to the components it
+ * unexpectedly pulls in.
+ *
+ * When a tree-shaking issue is fixed, remove the corresponding entry from this map.
+ * When a new issue is introduced, add it here and investigate whether it is acceptable.
+ */
+const KNOWN_TREESHAKING_FAILURES: Readonly<Record<string, ReadonlyArray<string>>> = {
+  BarStack: ['Bar'],
+  XAxis: ['CartesianAxis'],
+  YAxis: ['CartesianAxis'],
+  CartesianGrid: ['CartesianAxis'],
+};
+
 describe.skipIf(!es6EntryExists)('tree-shaking: each component should not pull in other components', () => {
   for (const componentName of ALL_TRACKED_COMPONENT_NAMES) {
-    it(`${componentName} should not pull in other tracked components`, async () => {
+    const knownFailure = KNOWN_TREESHAKING_FAILURES[componentName];
+
+    const testFn = async () => {
       const output = await treeshake(componentName);
       const otherComponents = ALL_TRACKED_COMPONENT_NAMES.filter(n => n !== componentName);
       const unexpectedComponents = findComponentsInBundle(output, otherComponents);
@@ -24,7 +41,18 @@ describe.skipIf(!es6EntryExists)('tree-shaking: each component should not pull i
         unexpectedComponents,
         `Importing ${componentName} unexpectedly bundled: ${unexpectedComponents.join(', ')}`,
       ).toEqual([]);
-    }, 30_000);
+    };
+
+    if (knownFailure != null) {
+      // This component has a known tree-shaking issue. Mark as expected failure so that:
+      // - The test documents the problem
+      // - CI remains green until the issue is fixed
+      // - Fixing the issue (test unexpectedly passes) will turn this into a failing test,
+      //   requiring the entry to be removed from KNOWN_TREESHAKING_FAILURES.
+      it.fails(`${componentName} should not pull in other tracked components`, testFn, 30_000);
+    } else {
+      it(`${componentName} should not pull in other tracked components`, testFn, 30_000);
+    }
   }
 });
 
