@@ -310,7 +310,7 @@ const overridesConfig = [
   },
   {
     name: 'scripts override',
-    files: ['scripts/*.js', 'scripts/*.mjs', 'www/scripts/*.tsx'],
+    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'www/scripts/*.tsx'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
