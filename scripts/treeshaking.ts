@@ -86,8 +86,11 @@ export function findComponentsInBundle(output: (OutputChunk | OutputAsset)[], co
     .join('\n');
 
   return componentNames.filter(name => {
-    // Match function declarations, variable assignments, or class declarations
-    return new RegExp(`function\\s+${name}\\b|(?:var|const|let)\\s+${name}\\s*=|class\\s+${name}\\b`).test(code);
+    /*
+     * Simple heuristic: check if the component name appears in the code. This can produce false positives
+     * but for small library like Recharts it is good enough.
+     */
+    return code.includes(name);
   });
 }
 
