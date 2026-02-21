@@ -9,9 +9,8 @@ COPY package.json package-lock.json* ./
 RUN mkdir -p /recharts/www
 COPY www/package.json www/package-lock.json* /recharts/www/
 
-# Install project dependencies and build the project
+# Install project dependencies
 RUN npm install
-RUN npm run build
 
 # Install Playwright's browser binaries inside the container. Playwright itself says this should be after npm install.
 RUN npx playwright install --with-deps

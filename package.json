@@ -56,7 +56,7 @@
     "chromatic": "npx chromatic",
     "test-build-output": "vitest run --project build-output --config vitest.config.mts",
     "test-storybook": "vitest --config vitest.config.mts --project storybook",
-    "test-vr:prepare": "docker compose up -d --build",
+    "test-vr:prepare": "npm run build && docker compose up -d --build",
     "test-vr": "docker compose run --rm test-vr playwright-test",
     "test-vr:update": "docker compose run --rm test-vr playwright-test --update-snapshots",
     "test-vr:ui": "docker compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080",
