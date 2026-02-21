@@ -1,0 +1,31 @@
+{
+  "files": [
+    {
+      "path": "umd/Recharts.js",
+      "maxSize": "600kB"
+    },
+    {
+      "path": "bundlewatch-bundles/treeshaking-cartesian.js",
+      "maxSize": "300kB"
+    },
+    {
+      "path": "bundlewatch-bundles/treeshaking-polar.js",
+      "maxSize": "300kB"
+    },
+    {
+      "path": "bundlewatch-bundles/treeshaking-treemap.js",
+      "maxSize": "300kB"
+    },
+    {
+      "path": "bundlewatch-bundles/treeshaking-sunburst.js",
+      "maxSize": "300kB"
+    },
+    {
+      "path": "bundlewatch-bundles/treeshaking-sankey.js",
+      "maxSize": "300kB"
+    }
+  ],
+  "ci": {
+    "trackBranch": "main"
+  }
+}

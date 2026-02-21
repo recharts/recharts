@@ -172,6 +172,16 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: node ./scripts/upload-bundle-analysis.js
 
+      - name: BundleWatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+          CI_COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          CI_BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          CI_BRANCH_BASE: ${{ github.base_ref || 'main' }}
+          CI_REPO_OWNER: ${{ github.repository_owner }}
+          CI_REPO_NAME: ${{ github.event.repository.name }}
+        run: npm run bundlewatch
+
       # Chromatic gives us only this many free credits per month
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish visual regression tests to Chromatic

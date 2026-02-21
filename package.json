@@ -60,7 +60,8 @@
     "test-vr": "docker compose run --rm test-vr playwright-test",
     "test-vr:update": "docker compose run --rm test-vr playwright-test --update-snapshots",
     "test-vr:ui": "docker compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080",
-    "test-vr:report": "npx playwright show-report test-vr/playwright-report"
+    "test-vr:report": "npx playwright show-report test-vr/playwright-report",
+    "bundlewatch": "bundlewatch"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -140,6 +141,7 @@
     "babel-plugin-dev-expression": "^0.2.3",
     "babel-plugin-transform-define": "^2.1.4",
     "browserslist": "^4.23.2",
+    "bundlewatch": "^0.4.1",
     "chromatic": "^11.5.6",
     "cross-env": "^7.0.3",
     "d3-scale-chromatic": "^3.1.0",

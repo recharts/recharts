@@ -4,6 +4,7 @@ node_modules
 umd
 lib
 es6
+bundlewatch-bundles
 coverage
 npm-debug.log
 *.orig

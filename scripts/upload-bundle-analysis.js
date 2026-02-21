@@ -106,10 +106,17 @@ const CARTESIAN_COMPONENTS = [
 
 const POLAR_COMPONENTS = ['Pie', 'Radar', 'RadialBar', 'PolarGrid', 'PolarAngleAxis', 'PolarRadiusAxis'];
 
-async function generateAndUploadTreeshakingBundle(components, bundleName) {
+const bundlewatchDir = path.join(packageRoot, 'bundlewatch-bundles');
+
+async function generateAndUploadTreeshakingBundle(components, bundleName, bundlewatchOutputFile) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'recharts-treeshake-'));
   try {
-    await generateTreeshakingBundle(components, path.join(tmpDir, 'bundle.js'));
+    const bundleFile = path.join(tmpDir, 'bundle.js');
+    await generateTreeshakingBundle(components, bundleFile);
+    if (bundlewatchOutputFile) {
+      fs.mkdirSync(path.dirname(bundlewatchOutputFile), { recursive: true });
+      fs.copyFileSync(bundleFile, bundlewatchOutputFile);
+    }
     await uploadBundleAnalysis(tmpDir, bundleName);
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
@@ -124,17 +131,37 @@ uploadBundleAnalysis('lib', 'recharts/bundle-cjs')
     return uploadBundleAnalysis('umd', 'recharts/bundle-umd');
   })
   .then(() => {
-    return generateAndUploadTreeshakingBundle(CARTESIAN_COMPONENTS, 'recharts/bundle-treeshaking-cartesian');
+    return generateAndUploadTreeshakingBundle(
+      CARTESIAN_COMPONENTS,
+      'recharts/bundle-treeshaking-cartesian',
+      path.join(bundlewatchDir, 'treeshaking-cartesian.js'),
+    );
   })
   .then(() => {
-    return generateAndUploadTreeshakingBundle(POLAR_COMPONENTS, 'recharts/bundle-treeshaking-polar');
+    return generateAndUploadTreeshakingBundle(
+      POLAR_COMPONENTS,
+      'recharts/bundle-treeshaking-polar',
+      path.join(bundlewatchDir, 'treeshaking-polar.js'),
+    );
   })
   .then(() => {
-    return generateAndUploadTreeshakingBundle(['Treemap'], 'recharts/bundle-treeshaking-treemap');
+    return generateAndUploadTreeshakingBundle(
+      ['Treemap'],
+      'recharts/bundle-treeshaking-treemap',
+      path.join(bundlewatchDir, 'treeshaking-treemap.js'),
+    );
   })
   .then(() => {
-    return generateAndUploadTreeshakingBundle(['SunburstChart'], 'recharts/bundle-treeshaking-sunburst');
+    return generateAndUploadTreeshakingBundle(
+      ['SunburstChart'],
+      'recharts/bundle-treeshaking-sunburst',
+      path.join(bundlewatchDir, 'treeshaking-sunburst.js'),
+    );
   })
   .then(() => {
-    return generateAndUploadTreeshakingBundle(['Sankey'], 'recharts/bundle-treeshaking-sankey');
+    return generateAndUploadTreeshakingBundle(
+      ['Sankey'],
+      'recharts/bundle-treeshaking-sankey',
+      path.join(bundlewatchDir, 'treeshaking-sankey.js'),
+    );
   });
