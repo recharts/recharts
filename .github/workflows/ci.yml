@@ -6,6 +6,12 @@ permissions:
   contents: read
   pull-requests: write
 
+# Cancel any in-progress runs for the same branch/PR when a new commit is pushed.
+# This prevents stale CI artifacts from an older run being deployed after a newer run has started.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches:
