@@ -31,8 +31,19 @@ const ScatterAndLineOfBestFit = () => {
       <Tooltip />
       <Legend />
 
-      <XAxis dataKey="index" type="number" label={{ value: 'Index', position: 'insideBottomRight', offset: 0 }} />
-      <YAxis unit="ms" type="number" label={{ value: 'Time', angle: -90, position: 'insideLeft' }} width="auto" />
+      <XAxis
+        dataKey="index"
+        type="number"
+        label={{ value: 'Index', position: 'insideBottomRight', offset: 0 }}
+        niceTicks
+      />
+      <YAxis
+        unit="ms"
+        type="number"
+        label={{ value: 'Time', angle: -90, position: 'insideLeft' }}
+        width="auto"
+        niceTicks
+      />
       <Scatter name="red" dataKey="red" fill="red" />
       <Scatter name="blue" dataKey="blue" fill="blue" />
       <Line dataKey="blueLine" stroke="blue" dot={false} activeDot={false} legendType="none" />
