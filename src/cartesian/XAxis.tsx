@@ -190,6 +190,7 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
    *
    * @defaultValue false
+   * @since 3.8
    */
   niceTicks?: boolean;
 }

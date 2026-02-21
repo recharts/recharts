@@ -62,8 +62,8 @@ const StackedAreaChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
+      <XAxis dataKey="name" niceTicks />
+      <YAxis width="auto" niceTicks />
       <Tooltip />
       <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
       <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />

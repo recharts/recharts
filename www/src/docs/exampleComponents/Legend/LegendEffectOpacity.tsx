@@ -85,8 +85,8 @@ const LegendEffectOpacity = () => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis width="auto" />
+        <XAxis dataKey="name" niceTicks />
+        <YAxis width="auto" niceTicks />
         <Tooltip />
         <Legend onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
         <Line type="monotone" dataKey="pv" strokeOpacity={pvOpacity} stroke="#8884d8" activeDot={{ r: 8 }} />
