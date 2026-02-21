@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import { restoreHTMLElementProperties } from './helper/mockHTMLElementProperty';
 import { setupConsoleWarningToError } from './helper/consoleWarningToError';
 
+// @ts-expect-error vitest 3 was happy with process.env but vitest 4 is not
 process.env.TZ = 'UTC';
 
 // Setup console warning/error interception

@@ -12,7 +12,7 @@ import { Mock } from 'vitest';
  * @return void
  */
 export function expectLastCalledWith<T1, T2, T3, T4>(
-  spy: Mock<(arg1: T1, arg2: T2, arg3: T3, arg4: T4) => void>,
+  spy: Mock<(arg1: T1, arg2: T2, arg3: T3, arg4: T4) => unknown>,
   expected1: T1,
   expected2?: T2,
   expected3?: T3,
@@ -44,7 +44,7 @@ export function expectLastCalledWith<T1, T2, T3, T4>(
  * @return void
  */
 export function expectNthCalledWith<T1, T2>(
-  spy: Mock<(arg1: T1, arg2: T2) => void>,
+  spy: Mock<(arg1: T1, arg2: T2) => unknown>,
   n: number,
   expected1: T1,
   expected2?: T2,
