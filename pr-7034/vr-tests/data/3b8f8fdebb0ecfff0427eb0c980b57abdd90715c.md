@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "pv legend icon" [ref=e7]
+        - text: pv
+      - listitem [ref=e9]:
+        - img "uv legend icon" [ref=e10]
+        - text: uv
+    - application [ref=e12]:
+      - generic [ref=e17]:
+        - 'slider "Min value: 1, Max value: 40" [ref=e20]'
+        - 'slider "Min value: 1, Max value: 40" [ref=e22]'
+      - generic [ref=e272]:
+        - generic [ref=e273]:
+          - generic [ref=e275]: "1"
+          - generic [ref=e277]: "2"
+          - generic [ref=e279]: "3"
+          - generic [ref=e281]: "4"
+          - generic [ref=e283]: "5"
+          - generic [ref=e285]: "6"
+          - generic [ref=e287]: "7"
+          - generic [ref=e289]: "8"
+          - generic [ref=e291]: "9"
+          - generic [ref=e293]: "12"
+          - generic [ref=e295]: "14"
+          - generic [ref=e297]: "16"
+          - generic [ref=e299]: "18"
+          - generic [ref=e301]: "20"
+          - generic [ref=e303]: "22"
+          - generic [ref=e305]: "24"
+          - generic [ref=e307]: "26"
+          - generic [ref=e309]: "28"
+          - generic [ref=e311]: "30"
+          - generic [ref=e313]: "32"
+          - generic [ref=e315]: "34"
+          - generic [ref=e317]: "36"
+          - generic [ref=e319]: "38"
+          - generic [ref=e321]: "40"
+        - generic [ref=e322]:
+          - generic [ref=e324]: "-500"
+          - generic [ref=e326]: "0"
+          - generic [ref=e328]: "500"
+          - generic [ref=e330]: "1000"
+          - generic [ref=e332]: "1500"
+  - generic [ref=e333]: "-500"
+```
