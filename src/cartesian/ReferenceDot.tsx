@@ -20,7 +20,13 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
-interface ReferenceDotProps extends Overflowable, ZIndexable {
+type ReferenceCoordinateValue = number | string;
+
+interface ReferenceDotProps<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>
+  extends Overflowable, ZIndexable {
   /**
    * The radius of the dot in pixels.
    *
@@ -35,7 +41,7 @@ interface ReferenceDotProps extends Overflowable, ZIndexable {
    *
    * @example <ReferenceDot x="January" y="2026" />
    */
-  x?: number | string;
+  x?: XValueType;
   /**
    * The y-coordinate of the center of the dot.
    *
@@ -44,7 +50,7 @@ interface ReferenceDotProps extends Overflowable, ZIndexable {
    *
    * @example <ReferenceDot x="January" y="2026" />
    */
-  y?: number | string;
+  y?: YValueType;
 
   className?: number | string;
   /**
@@ -125,7 +131,10 @@ interface ReferenceDotProps extends Overflowable, ZIndexable {
   onMouseLeave?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
 }
 
-export type Props = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps;
+export type Props<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+> = Omit<DotProps, 'cx' | 'cy' | 'clipDot' | 'dangerouslySetInnerHTML'> & ReferenceDotProps<XValueType, YValueType>;
 
 const useCoordinate = (
   x: number | string | undefined,
@@ -253,7 +262,10 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
  */
-export function ReferenceDot(outsideProps: Props) {
+export function ReferenceDot<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>(outsideProps: Props<XValueType, YValueType>) {
   const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
   return (

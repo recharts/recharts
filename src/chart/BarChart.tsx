@@ -24,6 +24,6 @@ export const BarChart = forwardRef<SVGSVGElement, CartesianChartProps<unknown>>(
       />
     );
   },
-) as <DataPointType>(
+) as <DataPointType = any>(
   props: CartesianChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
 ) => React.ReactElement;

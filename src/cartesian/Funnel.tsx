@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
@@ -195,7 +195,8 @@ type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<FunnelTrapezoid
 
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
-export type Props = FunnelSvgProps & FunnelProps;
+export type Props<DataPointType = any, DataValueType = any> = FunnelSvgProps &
+  FunnelProps<DataPointType, DataValueType>;
 
 type RealFunnelData = unknown;
 
@@ -687,7 +688,7 @@ export function computeFunnelTrapezoids({
  * @provides LabelListContext
  * @provides CellReader
  */
-export function Funnel(outsideProps: Props) {
+function FunnelFn(outsideProps: Props) {
   const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
@@ -696,4 +697,9 @@ export function Funnel(outsideProps: Props) {
   );
 }
 
+export const Funnel = FunnelFn as {
+  <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
+  (outsideProps: Props<any, any>): ReactElement;
+};
+// @ts-expect-error we need to set the displayName for debugging purposes
 Funnel.displayName = 'Funnel';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentType, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
+import { ReactElement, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import {
   AxisDomainTypeInput,
@@ -201,7 +201,11 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   letterSpacing?: number | string;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>, 'scale' | 'ref'> & YAxisProps;
+export type Props<DataPointType = any, DataValueType = any> = Omit<
+  PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
+  'scale' | 'ref'
+> &
+  YAxisProps<DataPointType, DataValueType>;
 
 function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
@@ -354,10 +358,13 @@ export const yAxisDefaultProps = {
   yAxisId: 0,
 } as const satisfies Partial<Props>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof yAxisDefaultProps>;
+type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
+  Props<DataPointType, DataValueType>,
+  typeof yAxisDefaultProps
+>;
 
-const YAxisSettingsDispatcher = (outsideProps: Props) => {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, yAxisDefaultProps);
+const YAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Props<DataPointType, DataValueType>) => {
+  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(outsideProps, yAxisDefaultProps);
   return (
     <>
       <SetYAxisSettings
@@ -395,6 +402,12 @@ const YAxisSettingsDispatcher = (outsideProps: Props) => {
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
-export const YAxis: ComponentType<Props> = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual);
+export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as <
+  DataPointType = any,
+  DataValueType = any,
+>(
+  props: Props<DataPointType, DataValueType>,
+) => ReactElement;
+// @ts-expect-error we need to set the displayName for debugging purposes
 
 YAxis.displayName = 'YAxis';

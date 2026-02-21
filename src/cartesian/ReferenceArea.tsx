@@ -22,7 +22,13 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 
-interface ReferenceAreaProps extends Overflowable, ZIndexable {
+type ReferenceCoordinateValue = number | string;
+
+interface ReferenceAreaProps<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>
+  extends Overflowable, ZIndexable {
   /**
    * Starting X-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -34,7 +40,7 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
    * @example <ReferenceArea x1={10} x2={50} />
    * @example <ReferenceArea x1="Page C" />
    */
-  x1?: number | string;
+  x1?: XValueType;
   /**
    * Ending X-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -46,7 +52,7 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
    * @example <ReferenceArea x1={10} x2={50} />
    * @example <ReferenceArea x2="Page C" />
    */
-  x2?: number | string;
+  x2?: XValueType;
   /**
    * Starting Y-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -58,7 +64,7 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
    * @example <ReferenceArea y1="low" y2="high" />
    * @example <ReferenceArea y1={200} />
    */
-  y1?: number | string;
+  y1?: YValueType;
   /**
    * Ending Y-coordinate of the area.
    * This value is using your chart's domain, so you will provide a data value instead of a pixel value.
@@ -70,7 +76,7 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
    * @example <ReferenceArea y1="low" y2="high" />
    * @example <ReferenceArea y2={400} />
    */
-  y2?: number | string;
+  y2?: YValueType;
 
   className?: number | string;
   /**
@@ -121,7 +127,11 @@ interface ReferenceAreaProps extends Overflowable, ZIndexable {
  * Omit width, height, x, y from SVGPropsAndEvents because ReferenceArea receives x1, x2, y1, y2 instead.
  * The position is calculated internally instead.
  */
-export type Props = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y'> & ReferenceAreaProps;
+export type Props<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+> = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y'> &
+  ReferenceAreaProps<XValueType, YValueType>;
 
 const getRect = (
   hasX1: boolean,
@@ -256,7 +266,10 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefault
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
  */
-export function ReferenceArea(outsideProps: Props) {
+export function ReferenceArea<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>(outsideProps: Props<XValueType, YValueType>) {
   const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);
   return (
     <>

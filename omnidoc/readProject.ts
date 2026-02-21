@@ -150,24 +150,6 @@ export class ProjectDocReader implements DocReader {
     return declarations[0];
   }
 
-  private getComponentType(component: string): Type {
-    const declaration = this.getComponentDeclaration(component);
-
-    return declaration.getType();
-  }
-
-  /**
-   * This returns properties of a symbol. So if you pass a React component, you get back React lifecycle methods,
-   * and displayName.
-   * @param component
-   */
-  getPropertiesOf(component: string): ReadonlyArray<string> | undefined {
-    const type = this.getComponentType(component);
-
-    const properties = type.getProperties();
-    return properties.map(p => p.getName());
-  }
-
   private getDeclarationOrigin(declaration: Node): PropOrigin {
     const sourceFile = declaration.getSourceFile();
     const filePath = sourceFile.getFilePath();

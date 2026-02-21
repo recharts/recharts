@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentType,
-  MutableRefObject,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -347,7 +338,8 @@ type BaseScatterSvgProps = Omit<
 
 type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 
-export type Props = BaseScatterSvgProps & ScatterProps;
+export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProps &
+  ScatterProps<DataPointType, ValueAxisType>;
 
 const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -924,6 +916,10 @@ function ScatterFn(outsideProps: Props) {
  * @provides CellReader
  * @consumes CartesianChartContext
  */
-export const Scatter: ComponentType<Props> = React.memo(ScatterFn, propsAreEqual);
+export const Scatter = React.memo(ScatterFn, propsAreEqual) as {
+  <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
+  (props: Props<any, any>): ReactElement;
+};
+// @ts-expect-error we need to set the displayName for debugging purposes
 
 Scatter.displayName = 'Scatter';

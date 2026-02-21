@@ -247,9 +247,13 @@ type AxisSvgProps = Omit<
   'scale' | 'type' | 'dangerouslySetInnerHTML'
 >;
 
-export type Props = AxisSvgProps & PolarAngleAxisProps;
+export type Props<DataPointType = any, DataValueType = any> = AxisSvgProps &
+  PolarAngleAxisProps<DataPointType, DataValueType>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
+type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
+  Props<DataPointType, DataValueType>,
+  typeof defaultPolarAngleAxisProps
+>;
 
 type InternalPolarAngleAxisProps = Omit<PropsWithDefaults, 'scale'> & {
   cx: number;
@@ -486,8 +490,13 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
  */
-export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
-  const props = resolveDefaultProps(outsideProps, defaultPolarAngleAxisProps);
+export function PolarAngleAxis<DataPointType = any, DataValueType = any>(
+  outsideProps: Props<DataPointType, DataValueType>,
+): React.ReactNode {
+  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+    outsideProps,
+    defaultPolarAngleAxisProps,
+  );
 
   return (
     <SetAngleAxisSettings

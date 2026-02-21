@@ -414,11 +414,11 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
-export type RadialBarProps = Omit<
+export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<RadialBarDataItem, SVGElement>,
-  'ref' | keyof InternalRadialBarProps
+  'ref' | keyof InternalRadialBarProps<DataPointType, DataValueType>
 > &
-  Omit<InternalRadialBarProps, 'sectors'>;
+  Omit<InternalRadialBarProps<DataPointType, DataValueType>, 'sectors'>;
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
 
@@ -594,7 +594,10 @@ export const defaultRadialBarProps = {
   zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 
-type PropsWithDefaults = RequiresDefaultProps<RadialBarProps, typeof defaultRadialBarProps>;
+type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
+  RadialBarProps<DataPointType, DataValueType>,
+  typeof defaultRadialBarProps
+>;
 
 export function computeRadialBarDataItems({
   displayedData,
@@ -735,8 +738,13 @@ export function computeRadialBarDataItems({
  * @provides LabelListContext
  * @provides CellReader
  */
-export function RadialBar(outsideProps: RadialBarProps) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadialBarProps);
+export function RadialBar<DataPointType = any, DataValueType = any>(
+  outsideProps: RadialBarProps<DataPointType, DataValueType>,
+) {
+  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+    outsideProps,
+    defaultRadialBarProps,
+  );
   return (
     <RegisterGraphicalItemId id={props.id} type="radialBar">
       {id => (

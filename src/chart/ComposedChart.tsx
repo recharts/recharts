@@ -24,6 +24,6 @@ export const ComposedChart = forwardRef<SVGSVGElement, CartesianChartProps<unkno
       />
     );
   },
-) as <DataPointType>(
+) as <DataPointType = any>(
   props: CartesianChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
 ) => React.ReactElement;

@@ -51,15 +51,6 @@ describe('readProject', () => {
     expect(variables).not.toContain('AreaProps');
   });
 
-  it('should return properties', () => {
-    // this is not entirely helpful for what we need to do
-    expect(reader.getPropertiesOf('Funnel')).toMatchInlineSnapshot(`
-      [
-        "displayName",
-      ]
-    `);
-  });
-
   it('should return Recharts props of Bar', () => {
     expect(reader.getRechartsPropsOf('Bar')).toMatchInlineSnapshot(`
       [

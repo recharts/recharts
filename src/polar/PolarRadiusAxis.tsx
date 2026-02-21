@@ -203,9 +203,13 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
 
-export type Props = AxisSvgProps & PolarRadiusAxisProps;
+export type Props<DataPointType = any, DataValueType = any> = AxisSvgProps &
+  PolarRadiusAxisProps<DataPointType, DataValueType>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarRadiusAxisProps>;
+type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
+  Props<DataPointType, DataValueType>,
+  typeof defaultPolarRadiusAxisProps
+>;
 
 type InsideProps = Omit<PropsWithDefaults, 'scale'> &
   PolarViewBoxRequired & {
@@ -401,8 +405,13 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
  */
-export function PolarRadiusAxis(outsideProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultPolarRadiusAxisProps);
+export function PolarRadiusAxis<DataPointType = any, DataValueType = any>(
+  outsideProps: Props<DataPointType, DataValueType>,
+) {
+  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+    outsideProps,
+    defaultPolarRadiusAxisProps,
+  );
   return (
     <>
       <SetRadiusAxisSettings
