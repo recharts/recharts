@@ -10,28 +10,18 @@ import {
   CARTESIAN_COMPONENT_NAMES,
   POLAR_COMPONENT_NAMES,
 } from './treeshaking';
+import { knownTreeshakingIssues } from './treeshaking-known-issues';
 
 const es6EntryPath = path.resolve(__dirname, '..', 'es6', 'index.js');
 const es6EntryExists = existsSync(es6EntryPath);
 
-/**
- * Known pre-existing tree-shaking failures: these components pull in other tracked components
- * when tree-shaken in isolation. Each entry maps a component name to the components it
- * unexpectedly pulls in.
- *
- * When a tree-shaking issue is fixed, remove the corresponding entry from this map.
- * When a new issue is introduced, add it here and investigate whether it is acceptable.
- */
-const KNOWN_TREESHAKING_FAILURES: Readonly<Record<string, ReadonlyArray<string>>> = {
-  BarStack: ['Bar'],
-  XAxis: ['CartesianAxis'],
-  YAxis: ['CartesianAxis'],
-  CartesianGrid: ['CartesianAxis'],
-};
+const knownIssuesByComponent = Object.fromEntries(
+  knownTreeshakingIssues.map(issue => [issue.component, issue.expectedInBundle]),
+);
 
 describe.skipIf(!es6EntryExists)('tree-shaking: each component should not pull in other components', () => {
   for (const componentName of ALL_TRACKED_COMPONENT_NAMES) {
-    const knownFailure = KNOWN_TREESHAKING_FAILURES[componentName];
+    const knownExpectedBundle = knownIssuesByComponent[componentName];
 
     const testFn = async () => {
       const output = await treeshake(componentName);
@@ -43,12 +33,13 @@ describe.skipIf(!es6EntryExists)('tree-shaking: each component should not pull i
       ).toEqual([]);
     };
 
-    if (knownFailure != null) {
-      // This component has a known tree-shaking issue. Mark as expected failure so that:
+    if (knownExpectedBundle != null) {
+      // This component has a known tree-shaking issue documented in scripts/treeshaking-known-issues/.
+      // Mark as expected failure so that:
       // - The test documents the problem
       // - CI remains green until the issue is fixed
       // - Fixing the issue (test unexpectedly passes) will turn this into a failing test,
-      //   requiring the entry to be removed from KNOWN_TREESHAKING_FAILURES.
+      //   requiring the entry to be removed from treeshaking-known-issues/.
       it.fails(`${componentName} should not pull in other tracked components`, testFn, 30_000);
     } else {
       it(`${componentName} should not pull in other tracked components`, testFn, 30_000);
@@ -73,12 +64,28 @@ describe.skipIf(!es6EntryExists)('tree-shaking: bundle sizes', () => {
     console.log(`Polar components bundle size: ${size} bytes`);
   }, 60_000);
 
-  it('special components bundle size (Treemap, SunburstChart, Sankey)', async () => {
-    const output = await treeshake(['Treemap', 'SunburstChart', 'Sankey']);
+  it('Treemap bundle size', async () => {
+    const output = await treeshake('Treemap');
     const size = getBundleSize(output);
     expect(size).toBeGreaterThan(0);
 
-    console.log(`Special components bundle size: ${size} bytes`);
+    console.log(`Treemap bundle size: ${size} bytes`);
+  }, 60_000);
+
+  it('SunburstChart bundle size', async () => {
+    const output = await treeshake('SunburstChart');
+    const size = getBundleSize(output);
+    expect(size).toBeGreaterThan(0);
+
+    console.log(`SunburstChart bundle size: ${size} bytes`);
+  }, 60_000);
+
+  it('Sankey bundle size', async () => {
+    const output = await treeshake('Sankey');
+    const size = getBundleSize(output);
+    expect(size).toBeGreaterThan(0);
+
+    console.log(`Sankey bundle size: ${size} bytes`);
   }, 60_000);
 
   it('chart components bundle size', async () => {

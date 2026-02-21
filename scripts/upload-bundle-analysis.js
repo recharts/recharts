@@ -106,14 +106,14 @@ const CARTESIAN_COMPONENTS = [
 
 const POLAR_COMPONENTS = ['Pie', 'Radar', 'RadialBar', 'PolarGrid', 'PolarAngleAxis', 'PolarRadiusAxis'];
 
-const SPECIAL_COMPONENTS = ['Treemap', 'SunburstChart', 'Sankey'];
-
 async function generateAndUploadTreeshakingBundles() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'recharts-treeshake-'));
   try {
     await generateTreeshakingBundle(CARTESIAN_COMPONENTS, path.join(tmpDir, 'cartesian.js'));
     await generateTreeshakingBundle(POLAR_COMPONENTS, path.join(tmpDir, 'polar.js'));
-    await generateTreeshakingBundle(SPECIAL_COMPONENTS, path.join(tmpDir, 'special.js'));
+    await generateTreeshakingBundle(['Treemap'], path.join(tmpDir, 'treemap.js'));
+    await generateTreeshakingBundle(['SunburstChart'], path.join(tmpDir, 'sunburst.js'));
+    await generateTreeshakingBundle(['Sankey'], path.join(tmpDir, 'sankey.js'));
     await uploadBundleAnalysis(tmpDir, 'recharts/bundle-treeshaking');
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
