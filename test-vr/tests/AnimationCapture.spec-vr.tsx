@@ -48,7 +48,6 @@ async function captureAnimationFrames(
   const frames: Buffer[] = [];
 
   // Sequential capture is intentional -- we need frames at specific time intervals
-  // eslint-disable-next-line no-await-in-loop
   for (let i = 0; i < frameCount; i++) {
     // eslint-disable-next-line no-await-in-loop
     const buffer = await component.screenshot();
@@ -146,6 +145,5 @@ for (const { name, element } of chartConfigs) {
       const lastFrame = frames[frames.length - 1];
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
     });
-
   });
 }
