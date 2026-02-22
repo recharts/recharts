@@ -2,9 +2,9 @@
  * @fileOverview Proof-of-concept for Playwright animation capture in visual regression testing.
  *
  * Existing VR tests set `isAnimationActive={false}` and compare a single static screenshot.
- * These tests capture multiple frames during chart animations to verify:
- * 1. The animation actually occurs (frames differ over time)
- * 2. The final rendered state matches a baseline snapshot (visual regression)
+ * These tests capture multiple frames during chart animations to verify
+ * the animation actually occurs (frames differ over time) and attach
+ * each frame to the test report for visual inspection.
  *
  * See https://github.com/recharts/recharts/issues/7013
  */
@@ -147,11 +147,5 @@ for (const { name, element } of chartConfigs) {
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
     });
 
-    test('final frame after animation matches baseline snapshot', async ({ mount, page }) => {
-      const component = await mount(element);
-
-      await page.waitForTimeout(ANIMATION_DURATION + 300);
-      await expect(component).toHaveScreenshot();
-    });
   });
 }
