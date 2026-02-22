@@ -2,6 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
 import { rollup, type OutputChunk, type OutputAsset } from 'rollup';
+import { ProjectDocReader } from '../omnidoc/readProject';
 
 const packageRoot = path.resolve(__dirname, '..');
 const es6Entry = path.join(packageRoot, 'es6', 'index.js');
@@ -161,23 +162,33 @@ export function getBundleSize(output: (OutputChunk | OutputAsset)[]): number {
   }, 0);
 }
 
+export function matchComponentNamesInBundle(sourceCode: string, componentNames: ReadonlyArray<string>): Set<string> {
+  return new Set(
+    componentNames.filter(name => {
+      return (
+        new RegExp(`var ${name} `).test(sourceCode) ||
+        new RegExp(`const ${name} `).test(sourceCode) ||
+        new RegExp(`function ${name}\\(`).test(sourceCode) ||
+        new RegExp(`class ${name}\\s+{`).test(sourceCode)
+      );
+    }),
+  );
+}
+
 /**
  * Check which component names from the given list appear as definitions in the bundle output.
  * A component is considered "present" when its function/class/variable definition is found in the code.
  */
-export function findComponentsInBundle(output: (OutputChunk | OutputAsset)[], componentNames: string[]): string[] {
+export function findComponentsInBundle(
+  output: (OutputChunk | OutputAsset)[],
+  componentNames: ReadonlyArray<string>,
+): Set<string> {
   const code = output
     .filter((c): c is OutputChunk => c.type === 'chunk')
     .map(c => c.code)
     .join('\n');
 
-  return componentNames.filter(name => {
-    /*
-     * Simple heuristic: check if the component name appears in the code. This can produce false positives
-     * but for small library like Recharts it is good enough.
-     */
-    return code.includes(name);
-  });
+  return matchComponentNamesInBundle(code, componentNames);
 }
 
 /**
@@ -240,3 +251,27 @@ export const ALL_TRACKED_COMPONENT_NAMES: string[] = [
   ...CARTESIAN_COMPONENT_NAMES,
   ...POLAR_COMPONENT_NAMES,
 ];
+
+// when called as the first argument of node, we read the array of component names from the command line
+if (require.main === module) {
+  const components = process.argv.slice(2);
+  treeshake(components)
+    .then(output => {
+      const size = getBundleSize(output);
+      const projectReader = new ProjectDocReader();
+      const allExportedSymbols = projectReader.getAllRuntimeExportedNames();
+      const foundComponents = findComponentsInBundle(output, allExportedSymbols);
+      console.error(`Bundle size: ${size} bytes`);
+      console.error(`Found components in bundle: ${[...foundComponents].join(', ')}`);
+
+      const code = output
+        .filter((c): c is OutputChunk => c.type === 'chunk')
+        .map(c => c.code)
+        .join('\n');
+      console.log(code);
+    })
+    .catch(error => {
+      console.error('Error during treeshaking:', error);
+      process.exit(1);
+    });
+}

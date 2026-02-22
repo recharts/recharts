@@ -5,45 +5,36 @@ import {
   treeshake,
   getBundleSize,
   findComponentsInBundle,
-  ALL_TRACKED_COMPONENT_NAMES,
   CHART_COMPONENT_NAMES,
   CARTESIAN_COMPONENT_NAMES,
   POLAR_COMPONENT_NAMES,
+  matchComponentNamesInBundle,
 } from './treeshaking';
-import { knownTreeshakingIssues } from './treeshaking-known-issues';
+import { treeshakingGroups } from './treeshaking-groups';
+import { ProjectDocReader } from '../omnidoc/readProject';
 
 const es6EntryPath = path.resolve(__dirname, '..', 'es6', 'index.js');
 const es6EntryExists = existsSync(es6EntryPath);
 
-const knownIssuesByComponent = Object.fromEntries(
-  knownTreeshakingIssues.map(issue => [issue.component, issue.expectedInBundle]),
-);
-
-describe.skipIf(!es6EntryExists)('tree-shaking: each component should not pull in other components', () => {
-  for (const componentName of ALL_TRACKED_COMPONENT_NAMES) {
-    const knownExpectedBundle = knownIssuesByComponent[componentName];
+describe.skipIf(!es6EntryExists)('tree-shaking groups', () => {
+  const projectReader = new ProjectDocReader();
+  const allExportedSymbols = projectReader.getAllRuntimeExportedNames();
+  for (const componentName of allExportedSymbols) {
+    // If we don't have an explicit known issue for this component, we expect it to be the only tracked component in its bundle.
+    const knownExpectedBundle = new Set(treeshakingGroups[componentName] ?? [componentName]);
+    // In case the component itself is missing from the known expected bundle, add it.
+    knownExpectedBundle.add(componentName);
 
     const testFn = async () => {
-      const output = await treeshake(componentName);
-      const otherComponents = ALL_TRACKED_COMPONENT_NAMES.filter(n => n !== componentName);
-      const unexpectedComponents = findComponentsInBundle(output, otherComponents);
+      const bundledCodeOutput = await treeshake(componentName);
+      const allBundledComponents = findComponentsInBundle(bundledCodeOutput, allExportedSymbols);
       expect(
-        unexpectedComponents,
-        `Importing ${componentName} unexpectedly bundled: ${unexpectedComponents.join(', ')}`,
-      ).toEqual([]);
+        allBundledComponents,
+        `Importing ${componentName} bundled different components than it should have. Diff: [${Array.from(allBundledComponents.symmetricDifference(knownExpectedBundle)).join(', ')}]`,
+      ).toEqual(knownExpectedBundle);
     };
 
-    if (knownExpectedBundle != null) {
-      // This component has a known tree-shaking issue documented in scripts/treeshaking-known-issues/.
-      // Mark as expected failure so that:
-      // - The test documents the problem
-      // - CI remains green until the issue is fixed
-      // - Fixing the issue (test unexpectedly passes) will turn this into a failing test,
-      //   requiring the entry to be removed from treeshaking-known-issues/.
-      it.fails(`${componentName} should not pull in other tracked components`, testFn, 30_000);
-    } else {
-      it(`${componentName} should not pull in other tracked components`, testFn, 30_000);
-    }
+    it(`${componentName}`, testFn, 30_000);
   }
 });
 
@@ -95,4 +86,20 @@ describe.skipIf(!es6EntryExists)('tree-shaking: bundle sizes', () => {
 
     console.log(`Chart components bundle size: ${size} bytes`);
   }, 60_000);
+});
+
+describe('matchComponentNamesInBundle', () => {
+  it('should return matched component names in the bundle', () => {
+    const code = `
+    var Foo = 12345;
+    const Bar = () => {};
+    class Baz {};
+    function Zoo() {}
+    var NotLookingForMe = true;
+    var foo = 'case sensitive'
+    var FooPrefix = 'should not match Foo'
+    `;
+    const foundComponents = matchComponentNamesInBundle(code, ['LineChart', 'Foo', 'Bar', 'Baz', 'Zoo', 'NotInCode']);
+    expect(foundComponents).toEqual(new Set(['Foo', 'Bar', 'Baz', 'Zoo']));
+  });
 });

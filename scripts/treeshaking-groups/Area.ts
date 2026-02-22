@@ -1,0 +1,15 @@
+export const expectedInBundle = [
+  'Area',
+  'Curve',
+  'DefaultZIndexes',
+  'Dot',
+  'getNiceTickValues',
+  'Global',
+  'Label',
+  'LabelList',
+  'Layer',
+  'Text',
+  'useActiveTooltipDataPoints',
+  'usePlotArea',
+  'ZIndexLayer',
+] as const;
