@@ -21,6 +21,8 @@ const data = [
   { name: 'E', value: 350 },
 ];
 
+const ANIMATION_DURATION = 800;
+
 /**
  * Captures a sequence of screenshots at intervals during the animation window.
  * Returns the raw PNG buffers so we can compare them.
@@ -34,10 +36,14 @@ async function captureAnimationFrames(
   }: {
     /** Total time to capture over, in milliseconds */
     totalDuration: number;
-    /** Number of frames to capture */
+    /** Number of frames to capture (must be >= 2) */
     frameCount: number;
   },
 ): Promise<Buffer[]> {
+  if (frameCount <= 1) {
+    throw new Error(`frameCount must be >= 2 to capture animation progress, got ${frameCount}`);
+  }
+
   const interval = totalDuration / (frameCount - 1);
   const frames: Buffer[] = [];
 
@@ -70,52 +76,20 @@ function framesAreDifferent(a: Buffer, b: Buffer): boolean {
   return false;
 }
 
-test.describe('Animation capture - BarChart', () => {
-  const ANIMATION_DURATION = 800;
-
-  test('captures animation frames that show visual progress', async ({ mount, page }) => {
-    const component = await mount(
+const chartConfigs: Array<{ name: string; element: React.ReactElement }> = [
+  {
+    name: 'BarChart',
+    element: (
       <BarChart data={data} width={400} height={300}>
         <XAxis dataKey="name" />
         <YAxis />
         <Bar dataKey="value" fill="#8884d8" isAnimationActive animationDuration={ANIMATION_DURATION} />
-      </BarChart>,
-    );
-
-    // Capture frames across the animation window.
-    // We start immediately (animation begins on mount) and capture over the full duration.
-    const frames = await captureAnimationFrames(component, page, {
-      totalDuration: ANIMATION_DURATION + 200, // add buffer for mount overhead
-      frameCount: 5,
-    });
-
-    // The first frame should differ from the last frame -- this proves animation occurred.
-    // If the chart rendered statically (no animation), all frames would be identical.
-    const firstFrame = frames[0];
-    const lastFrame = frames[frames.length - 1];
-    expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
-  });
-
-  test('final frame after animation matches baseline snapshot', async ({ mount, page }) => {
-    const component = await mount(
-      <BarChart data={data} width={400} height={300}>
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Bar dataKey="value" fill="#8884d8" isAnimationActive animationDuration={ANIMATION_DURATION} />
-      </BarChart>,
-    );
-
-    // Wait for animation to complete, then take the baseline snapshot.
-    await page.waitForTimeout(ANIMATION_DURATION + 300);
-    await expect(component).toHaveScreenshot();
-  });
-});
-
-test.describe('Animation capture - LineChart', () => {
-  const ANIMATION_DURATION = 800;
-
-  test('captures line drawing animation', async ({ mount, page }) => {
-    const component = await mount(
+      </BarChart>
+    ),
+  },
+  {
+    name: 'LineChart',
+    element: (
       <LineChart data={data} width={400} height={300}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
@@ -127,45 +101,12 @@ test.describe('Animation capture - LineChart', () => {
           isAnimationActive
           animationDuration={ANIMATION_DURATION}
         />
-      </LineChart>,
-    );
-
-    const frames = await captureAnimationFrames(component, page, {
-      totalDuration: ANIMATION_DURATION + 200,
-      frameCount: 5,
-    });
-
-    const firstFrame = frames[0];
-    const lastFrame = frames[frames.length - 1];
-    expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
-  });
-
-  test('final frame after line animation matches baseline snapshot', async ({ mount, page }) => {
-    const component = await mount(
-      <LineChart data={data} width={400} height={300}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#8884d8"
-          isAnimationActive
-          animationDuration={ANIMATION_DURATION}
-        />
-      </LineChart>,
-    );
-
-    await page.waitForTimeout(ANIMATION_DURATION + 300);
-    await expect(component).toHaveScreenshot();
-  });
-});
-
-test.describe('Animation capture - AreaChart', () => {
-  const ANIMATION_DURATION = 800;
-
-  test('captures area fill animation', async ({ mount, page }) => {
-    const component = await mount(
+      </LineChart>
+    ),
+  },
+  {
+    name: 'AreaChart',
+    element: (
       <AreaChart data={data} width={400} height={300}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
@@ -178,37 +119,39 @@ test.describe('Animation capture - AreaChart', () => {
           isAnimationActive
           animationDuration={ANIMATION_DURATION}
         />
-      </AreaChart>,
-    );
+      </AreaChart>
+    ),
+  },
+];
 
-    const frames = await captureAnimationFrames(component, page, {
-      totalDuration: ANIMATION_DURATION + 200,
-      frameCount: 5,
+for (const { name, element } of chartConfigs) {
+  test.describe(`Animation capture - ${name}`, () => {
+    test('captures animation frames that show visual progress', async ({ mount, page }) => {
+      const component = await mount(element);
+
+      const frames = await captureAnimationFrames(component, page, {
+        totalDuration: ANIMATION_DURATION + 200,
+        frameCount: 5,
+      });
+
+      // Attach each frame to the test report so reviewers can observe animation stages
+      for (let i = 0; i < frames.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        await test.info().attach(`${name}-frame-${i}.png`, { body: frames[i], contentType: 'image/png' });
+      }
+
+      // The first frame should differ from the last frame -- this proves animation occurred.
+      // If the chart rendered statically (no animation), all frames would be identical.
+      const firstFrame = frames[0];
+      const lastFrame = frames[frames.length - 1];
+      expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
     });
 
-    const firstFrame = frames[0];
-    const lastFrame = frames[frames.length - 1];
-    expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
-  });
+    test('final frame after animation matches baseline snapshot', async ({ mount, page }) => {
+      const component = await mount(element);
 
-  test('final frame after area animation matches baseline snapshot', async ({ mount, page }) => {
-    const component = await mount(
-      <AreaChart data={data} width={400} height={300}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Area
-          type="monotone"
-          dataKey="value"
-          stroke="#8884d8"
-          fill="#8884d8"
-          isAnimationActive
-          animationDuration={ANIMATION_DURATION}
-        />
-      </AreaChart>,
-    );
-
-    await page.waitForTimeout(ANIMATION_DURATION + 300);
-    await expect(component).toHaveScreenshot();
+      await page.waitForTimeout(ANIMATION_DURATION + 300);
+      await expect(component).toHaveScreenshot();
+    });
   });
-});
+}
