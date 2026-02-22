@@ -61,7 +61,7 @@
     "test-vr:update": "docker compose run --rm test-vr playwright-test --update-snapshots",
     "test-vr:ui": "docker compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080",
     "test-vr:report": "npx playwright show-report test-vr/playwright-report",
-    "bundlewatch": "bundlewatch"
+    "bundlewatch": "bundlewatch --config .bundlewatch.config.json"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
