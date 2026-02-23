@@ -85,7 +85,7 @@ const renderNodeGapAndPaddingContent = (props: TreemapNode) => {
         width={width}
         height={height}
         style={{
-          fill: depth < 2 ? colors[Math.floor((index / (root?.children?.length ?? 1)) * 6)] : '#ffffff00',
+          fill: depth < 2 ? colors[Math.floor((index / (root?.children?.length ?? 1)) * 5)] : '#ffffff00',
           stroke: '#fff',
           strokeWidth: 1,
         }}
