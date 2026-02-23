@@ -129,7 +129,7 @@ export const implicitXAxis: XAxisSettings = {
   ticks: undefined,
   type: 'category',
   unit: undefined,
-  niceTicks: false,
+  niceTicks: 'auto',
 };
 
 export const selectXAxisSettingsNoDefaults = (state: RechartsRootState, axisId: AxisId): XAxisSettings | undefined => {
@@ -173,7 +173,7 @@ export const implicitYAxis: YAxisSettings = {
   ticks: undefined,
   type: 'number',
   unit: undefined,
-  niceTicks: false,
+  niceTicks: 'auto',
   width: DEFAULT_Y_AXIS_WIDTH,
 };
 
@@ -1127,34 +1127,66 @@ export const combineNiceTicks = (
   axisSettings: RenderableAxisSettings,
   realScaleType: string | undefined,
 ): ReadonlyArray<number> | undefined => {
-  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+  const { niceTicks } = axisSettings;
+
+  if (niceTicks === 'none') {
+    return undefined;
+  }
 
   if (realScaleType !== 'auto' && realScaleType !== 'linear') {
     return undefined;
   }
 
-  if (
-    axisSettings != null &&
-    axisSettings.tickCount &&
-    Array.isArray(domainDefinition) &&
-    (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
-    isWellFormedNumberDomain(axisDomain)
-  ) {
-    return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, axisSettings.niceTicks);
+  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+  const hasDomainAutoKeyword =
+    Array.isArray(domainDefinition) && (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto');
+
+  if (niceTicks === 'auto') {
+    // Current magic-selector behaviour: apply nice ticks when the domain contains
+    // an 'auto' keyword (may extend the domain), or for any fixed number-type axis.
+    // Always uses the space-efficient algorithm (getFormatStep / useNiceNumbers=false).
+    if (
+      axisSettings != null &&
+      axisSettings.tickCount &&
+      hasDomainAutoKeyword &&
+      isWellFormedNumberDomain(axisDomain)
+    ) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, false);
+    }
+
+    if (
+      axisSettings != null &&
+      axisSettings.tickCount &&
+      axisSettings.type === 'number' &&
+      isWellFormedNumberDomain(axisDomain)
+    ) {
+      return getTickValuesFixedDomain(
+        axisDomain as NumberDomain,
+        axisSettings.tickCount,
+        axisSettings.allowDecimals,
+        false,
+      );
+    }
+
+    return undefined;
   }
 
-  if (
-    axisSettings != null &&
-    axisSettings.tickCount &&
-    axisSettings.type === 'number' &&
-    isWellFormedNumberDomain(axisDomain)
-  ) {
-    return getTickValuesFixedDomain(
-      axisDomain as NumberDomain,
-      axisSettings.tickCount,
-      axisSettings.allowDecimals,
-      axisSettings.niceTicks,
-    );
+  // Explicit 'equidistant' or 'nice': bypass the magic-selector conditions and
+  // always apply the chosen algorithm for any number-type axis with a tickCount.
+  const useNiceNumbers = niceTicks === 'nice';
+
+  if (axisSettings != null && axisSettings.tickCount && isWellFormedNumberDomain(axisDomain)) {
+    if (hasDomainAutoKeyword) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, useNiceNumbers);
+    }
+    if (axisSettings.type === 'number') {
+      return getTickValuesFixedDomain(
+        axisDomain as NumberDomain,
+        axisSettings.tickCount,
+        axisSettings.allowDecimals,
+        useNiceNumbers,
+      );
+    }
   }
 
   return undefined;

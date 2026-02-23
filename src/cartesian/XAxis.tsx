@@ -26,6 +26,7 @@ import {
   XAxisOrientation,
   XAxisPadding,
   XAxisSettings,
+  NiceTicks,
 } from '../state/cartesianAxisSlice';
 import {
   implicitXAxis,
@@ -185,14 +186,13 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    */
   letterSpacing?: number | string;
   /**
-   * When true, uses an improved tick step algorithm that snaps to nice numbers
-   * (1, 2, 2.5, 5) at each order of magnitude, producing human-friendly tick
-   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   * Controls how Recharts calculates "nice" tick values for this axis.
+   * See {@link NiceTicks} for a full description of each option.
    *
-   * @defaultValue false
+   * @defaultValue 'auto'
    * @since 3.8
    */
-  niceTicks?: boolean;
+  niceTicks?: NiceTicks;
 }
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<

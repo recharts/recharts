@@ -52,7 +52,7 @@ describe('<Radar />', () => {
         includeHidden: false,
         name: undefined,
         reversed: false,
-        niceTicks: false,
+        niceTicks: 'auto',
         scale: 'auto',
         tick: true,
         tickCount: 5,

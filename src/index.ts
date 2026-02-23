@@ -102,7 +102,7 @@ export type { BaseTickContentProps, CartesianTickItem } from './util/types';
 export { XAxis } from './cartesian/XAxis';
 export type { Props as XAxisProps } from './cartesian/XAxis';
 export type { XAxisTickContentProps } from './util/types';
-export type { XAxisOrientation, XAxisPadding } from './state/cartesianAxisSlice';
+export type { XAxisOrientation, XAxisPadding, NiceTicks } from './state/cartesianAxisSlice';
 export { YAxis } from './cartesian/YAxis';
 export type { Props as YAxisProps } from './cartesian/YAxis';
 export type { YAxisTickContentProps } from './util/types';

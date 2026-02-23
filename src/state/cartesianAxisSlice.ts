@@ -56,6 +56,32 @@ export type BaseCartesianAxis = {
   domain: AxisDomain | undefined;
 };
 
+/**
+ * Controls how Recharts calculates "nice" tick values for numerical axes.
+ *
+ * - `'none'`: Recharts does not apply any tick-rounding algorithm; tick positions are
+ *   determined entirely by d3, evenly spaced but not rounded to human-friendly numbers.
+ *
+ * - `'auto'` *(default)*: Recharts automatically decides whether and how to apply tick
+ *   niceties based on the domain definition. When the domain contains an `'auto'` keyword,
+ *   Recharts uses the `'equidistant'` algorithm and may extend the domain slightly to
+ *   produce clean tick labels. Otherwise it applies the same algorithm while keeping
+ *   ticks within the fixed domain. This mirrors the historical default behaviour.
+ *
+ * - `'equidistant'`: Always applies the space-efficient algorithm (`getFormatStep`),
+ *   which fills the available range as densely as possible while still rounding steps
+ *   to reasonable numbers (e.g. 10, 20, 25). May produce less "round-looking" labels
+ *   than `'nice'`, but wastes less space. The domain-extension logic still applies
+ *   when the domain contains an `'auto'` keyword.
+ *
+ * - `'nice'`: Always applies the round-numbers algorithm (`getFormatStepNice`), which
+ *   snaps step sizes to values from the set {1, 2, 2.5, 5} × 10ⁿ. Produces very
+ *   human-friendly labels (e.g. 0, 5, 10, 15, 20) but may leave blank space at the
+ *   edges of the chart. The domain-extension logic still applies when the domain
+ *   contains an `'auto'` keyword.
+ */
+export type NiceTicks = 'none' | 'auto' | 'equidistant' | 'nice';
+
 export type TicksSettings = {
   allowDecimals: boolean;
   /**
@@ -74,13 +100,12 @@ export type TicksSettings = {
   ticks: ReadonlyArray<AxisTick> | undefined;
   tick: TickProp<any>;
   /**
-   * When true, uses an improved tick step algorithm that snaps to nice numbers
-   * (1, 2, 2.5, 5) at each order of magnitude, producing human-friendly tick
-   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   * Controls how Recharts calculates "nice" tick values for this axis.
+   * See {@link NiceTicks} for a full description of each option.
    *
-   * @defaultValue false
+   * @defaultValue 'auto'
    */
-  niceTicks: boolean;
+  niceTicks: NiceTicks;
 };
 
 /**

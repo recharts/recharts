@@ -14,7 +14,7 @@ export const defaultPolarAngleAxisProps = {
   hide: false,
   includeHidden: false,
   label: false,
-  niceTicks: false,
+  niceTicks: 'auto',
   orientation: 'outer',
   reversed: false,
   scale: 'auto',

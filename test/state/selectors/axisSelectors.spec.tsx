@@ -2215,6 +2215,62 @@ describe('selectNiceTicks', () => {
     expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
     expect(niceTicksSpy).toHaveBeenCalledTimes(3);
   });
+
+  it('should return undefined when niceTicks="none", ignoring domain type', () => {
+    const niceTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama));
+      niceTicksSpy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line dataKey="pv" isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="none" />
+        <Comp />
+      </LineChart>,
+    );
+    expect(niceTicksSpy).toHaveBeenLastCalledWith(undefined);
+  });
+
+  it('should return equidistant nice ticks (algorithm A) when niceTicks="equidistant"', () => {
+    const niceTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama));
+      niceTicksSpy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line dataKey="pv" isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="equidistant" />
+        <Comp />
+      </LineChart>,
+    );
+    // algorithm A (getFormatStep) produces the same ticks as the 'auto' magic selector for this domain
+    expect(niceTicksSpy).toHaveBeenLastCalledWith([180, 240, 300, 360, 420]);
+  });
+
+  it('should return round-number nice ticks (algorithm B) when niceTicks="nice"', () => {
+    const niceTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama));
+      niceTicksSpy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line dataKey="pv" isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="nice" />
+        <Comp />
+      </LineChart>,
+    );
+    // algorithm B (getFormatStepNice) snaps to {1,2,2.5,5}×10^n steps
+    expect(niceTicksSpy).toHaveBeenLastCalledWith([100, 200, 300, 400, 500]);
+  });
 });
 
 describe('mergeDomains', () => {
@@ -2304,7 +2360,7 @@ describe('selectAxisWithScale', () => {
         right: 0,
       },
       reversed: false,
-      niceTicks: false,
+      niceTicks: 'auto',
       scale: expect.toBeRechartsScale({ domain: [0, 1, 2, 3, 4, 5], range: [5, 95] }),
       tick: true,
       tickCount: 5,
@@ -2352,7 +2408,7 @@ describe('selectAxisWithScale', () => {
           right: 0,
         },
         reversed: false,
-        niceTicks: false,
+        niceTicks: 'auto',
         scale: expect.toBeRechartsScale({
           domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
           range: [65, 95],
@@ -2407,7 +2463,7 @@ describe('selectAxisWithScale', () => {
           top: 0,
         },
         reversed: false,
-        niceTicks: false,
+        niceTicks: 'auto',
         scale: expect.toBeRechartsScale({ domain: [0, 10000], range: [5, 65] }),
         tick: true,
         tickCount: 5,
@@ -2492,7 +2548,7 @@ describe('selectAxisWithScale', () => {
         right: 0,
       },
       reversed: false,
-      niceTicks: false,
+      niceTicks: 'auto',
       scale: expect.toBeRechartsScale({
         domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
         range: [65, 95],
@@ -2529,7 +2585,7 @@ describe('selectAxisWithScale', () => {
         top: 0,
       },
       reversed: false,
-      niceTicks: false,
+      niceTicks: 'auto',
       scale: expect.toBeRechartsScale({ domain: [0, 400], range: [5, 65] }),
       tick: true,
       tickCount: 5,
