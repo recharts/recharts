@@ -48,7 +48,6 @@
     "lint": "eslint .",
     "autofix": "eslint . --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack -o umd/Recharts.js",
-    "visualize-bundle": "npx tsx scripts/visualize-bundle.ts",
     "trace-bundle": "npx tsx scripts/trace-bundle.ts",
     "generate-bundle-data": "npx tsx scripts/generate-bundle-data.ts",
     "prettier": "prettier . --write",
