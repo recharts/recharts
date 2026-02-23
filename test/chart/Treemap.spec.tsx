@@ -268,6 +268,51 @@ describe('<Treemap />', () => {
     expect(container.querySelectorAll('.recharts-rectangle').length).toBe(initialNodeCount);
   });
 
+  test('clicking current root cell in nest mode does not drill repeatedly', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    fireEvent.click(getByText('A'));
+
+    const breadcrumbCountBefore = container.querySelectorAll('.recharts-treemap-nest-index-box').length;
+    const currentRootCell = container.querySelector<SVGPathElement>('.recharts-treemap-depth-0 .recharts-rectangle');
+    assertNotNull(currentRootCell);
+
+    fireEvent.click(currentRootCell);
+
+    const breadcrumbCountAfter = container.querySelectorAll('.recharts-treemap-nest-index-box').length;
+    expect(breadcrumbCountAfter).toBe(breadcrumbCountBefore);
+  });
+
+  test('does not render drill-down arrow on current root cell in nest mode', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    fireEvent.click(getByText('A'));
+
+    const rootLayer = container.querySelector('.recharts-treemap-depth-0');
+    assertNotNull(rootLayer);
+    expect(rootLayer.querySelector('.recharts-polygon')).not.toBeInTheDocument();
+  });
+
   test('renders custom nestIndexContent when provided as function', () => {
     const customContent = vi.fn((item: TreemapNode, i: number) => (
       <span data-testid={`breadcrumb-${i}`}>Custom: {item.name || 'root'}</span>

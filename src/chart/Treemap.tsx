@@ -644,7 +644,7 @@ function ContentItem({
   // optimize default shape
   const { x, y, width, height, index } = nodeProps;
   let arrow = null;
-  if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
+  if (width > 10 && height > 10 && nodeProps.children && type === 'nest' && nodeProps.depth > 0) {
     arrow = (
       <Polygon
         points={[
@@ -803,7 +803,7 @@ function TreemapItem({
   };
 
   const onClick = () => {
-    if (type === 'nest') {
+    if (type === 'nest' && nodeProps.depth > 0) {
       onNestClick(nodeProps);
     }
     if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
