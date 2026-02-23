@@ -35,14 +35,14 @@ const ScatterAndLineOfBestFit = () => {
         dataKey="index"
         type="number"
         label={{ value: 'Index', position: 'insideBottomRight', offset: 0 }}
-        niceTicks
+        niceTicks="nice"
       />
       <YAxis
         unit="ms"
         type="number"
         label={{ value: 'Time', angle: -90, position: 'insideLeft' }}
         width="auto"
-        niceTicks
+        niceTicks="nice"
       />
       <Scatter name="red" dataKey="red" fill="red" />
       <Scatter name="blue" dataKey="blue" fill="blue" />
