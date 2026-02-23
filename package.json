@@ -177,6 +177,7 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.40.1",
     "storybook": "^9.0.17",
+    "terser": "^5.46.0",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
     "ts-morph": "^27.0.2",
