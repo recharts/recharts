@@ -59,6 +59,25 @@ describe('<Treemap />', () => {
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
   });
 
+  test('uses the same drawing height for nest layout and surface', () => {
+    const chartHeight = 250;
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={chartHeight}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    const depth0Rect = container.querySelector<SVGPathElement>('.recharts-treemap-depth-0 .recharts-rectangle');
+    assertNotNull(depth0Rect);
+    expect(depth0Rect.getAttribute('height')).toBe(String(chartHeight - 30));
+  });
+
   test('renders nested children directly on top of parent when nodePadding is not set', () => {
     const { container } = render(
       <Treemap

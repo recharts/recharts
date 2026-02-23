@@ -117,6 +117,16 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
+const NEST_INDEX_HEIGHT = 30;
+
+const getTreemapRenderHeight = (height: number, type: Props['type']) => {
+  if (type === 'nest') {
+    return height - NEST_INDEX_HEIGHT;
+  }
+
+  return height;
+};
+
 export const computeNode = <DataPointType extends TreemapDataType, DataValueType>({
   depth,
   node,
@@ -882,8 +892,14 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     ) {
       const root: TreemapNode = computeNode({
         depth: 0,
-        // @ts-expect-error missing properties
-        node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height },
+        node: {
+          // @ts-expect-error missing properties
+          children: nextProps.data,
+          x: 0,
+          y: 0,
+          width: nextProps.width,
+          height: getTreemapRenderHeight(nextProps.height, nextProps.type),
+        },
         index: 0,
         dataKey: nextProps.dataKey,
         nameKey: nextProps.nameKey,
@@ -915,7 +931,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       const { width, height, dataKey, nameKey, aspectRatio, nodePadding, nodeGap } = this.props;
       const root = computeNode({
         depth: 0,
-        node: { ...node, x: 0, y: 0, width, height },
+        node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
         index: 0,
         dataKey,
         nameKey,
@@ -941,10 +957,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
-    const { width, height, dataKey, nameKey, aspectRatio, nodePadding, nodeGap } = this.props;
+    const { width, height, dataKey, nameKey, aspectRatio, nodePadding, nodeGap, type } = this.props;
     const root = computeNode({
       depth: 0,
-      node: { ...node, x: 0, y: 0, width, height },
+      node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
       index: 0,
       dataKey,
       nameKey,
@@ -1101,7 +1117,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <Surface
           {...attrs}
           width={width}
-          height={type === 'nest' ? height - 30 : height}
+          height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
           {this.renderAllNodes()}
