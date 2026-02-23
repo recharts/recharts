@@ -6,6 +6,7 @@ import {
   Legend,
   Line,
   LineChart,
+  NiceTicks,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -177,5 +178,42 @@ export const CustomTickFunction = {
     padding: { left: 20, right: 30 },
     height: 80,
     tickMargin: 10,
+  },
+};
+
+const niceTicksData = [
+  { x: 0, y: 12 },
+  { x: 117, y: 45 },
+  { x: 234, y: 23 },
+  { x: 351, y: 78 },
+  { x: 468, y: 56 },
+];
+
+/**
+ * Demonstrates the different `niceTicks` options side-by-side.
+ *
+ * - `'none'`: d3 decides tick positions; no rounding applied.
+ * - `'auto'` *(default)*: Recharts' magic selector applies the space-efficient algorithm when the domain contains `'auto'`.
+ * - `'equidistant'`: Always applies the space-efficient algorithm (Algorithm A / `getFormatStep`).
+ * - `'nice'`: Always snaps steps to {1, 2, 2.5, 5} × 10ⁿ (Algorithm B / `getFormatStepNice`).
+ */
+export const NiceTicksComparison = {
+  render: () => {
+    const options: NiceTicks[] = ['none', 'auto', 'equidistant', 'nice'];
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {options.map(option => (
+          <div key={option}>
+            <p style={{ margin: '0 0 4px', fontWeight: 'bold' }}>niceTicks=&quot;{option}&quot;</p>
+            <LineChart width={500} height={120} data={niceTicksData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="x" type="number" domain={['auto', 'auto']} niceTicks={option} />
+              <YAxis />
+              <Line dataKey="y" isAnimationActive={false} />
+            </LineChart>
+          </div>
+        ))}
+      </div>
+    );
   },
 };

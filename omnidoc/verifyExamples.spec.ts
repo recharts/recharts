@@ -159,6 +159,7 @@ describe('Documentation Examples Coverage', () => {
     'YAxisOrientation',
     'XAxisPadding',
     'YAxisPadding',
+    'NiceTicks',
     'CartesianTickItem',
     'TextAnchor',
     'TooltipItemSorter',
