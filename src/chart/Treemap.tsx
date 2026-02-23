@@ -178,6 +178,52 @@ const filterRect = (node: TreemapNode): RectanglePosition => ({
   height: node.height,
 });
 
+const insetRect = (rect: RectanglePosition, nodePadding: number): RectanglePosition => {
+  if (!Number.isFinite(nodePadding) || nodePadding <= 0) {
+    return rect;
+  }
+
+  const clampedPadding = Math.min(nodePadding, rect.width / 2, rect.height / 2);
+
+  return {
+    x: rect.x + clampedPadding,
+    y: rect.y + clampedPadding,
+    width: Math.max(rect.width - clampedPadding * 2, 0),
+    height: Math.max(rect.height - clampedPadding * 2, 0),
+  };
+};
+
+const applyGapToChildren = (
+  children: ReadonlyArray<TreemapNodeWithArea>,
+  parentRect: RectanglePosition,
+  nodeGap: number,
+): ReadonlyArray<TreemapNodeWithArea> => {
+  if (!Number.isFinite(nodeGap) || nodeGap <= 0) {
+    return children;
+  }
+
+  const halfGap = nodeGap / 2;
+  const parentRight = parentRect.x + parentRect.width;
+  const parentBottom = parentRect.y + parentRect.height;
+
+  return children.map(child => {
+    const childRight = child.x + child.width;
+    const childBottom = child.y + child.height;
+    const leftInset = child.x > parentRect.x ? halfGap : 0;
+    const rightInset = childRight < parentRight ? halfGap : 0;
+    const topInset = child.y > parentRect.y ? halfGap : 0;
+    const bottomInset = childBottom < parentBottom ? halfGap : 0;
+
+    return {
+      ...child,
+      x: child.x + leftInset,
+      y: child.y + topInset,
+      width: Math.max(child.width - leftInset - rightInset, 0),
+      height: Math.max(child.height - topInset - bottomInset, 0),
+    };
+  });
+};
+
 type TreemapNodeWithArea = TreemapNode & { area: number };
 
 // Compute the area for each child based on value & scale.
@@ -303,11 +349,12 @@ const position = (
 type AreaArray<T> = Array<T> & { area: number };
 
 // Recursively arranges the specified node's children into squarified rows.
-const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
+const squarify = (node: TreemapNode, aspectRatio: number, nodePadding: number, nodeGap: number): TreemapNode => {
   const { children } = node;
 
   if (children && children.length) {
-    let rect: RectanglePosition = filterRect(node);
+    const layoutRect: RectanglePosition = insetRect(filterRect(node), nodePadding);
+    let rect: RectanglePosition = layoutRect;
     // @ts-expect-error we can't create an array with static property on a single line so typescript will complain.
     const row: AreaArray<TreemapNodeWithArea> = [];
     let best = Infinity; // the best row score so far
@@ -348,9 +395,11 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
       row.length = row.area = 0;
     }
 
+    const childrenWithGaps = applyGapToChildren(scaleChildren, layoutRect, nodeGap);
+
     return {
       ...node,
-      children: scaleChildren.map(c => squarify(c, aspectRatio)),
+      children: childrenWithGaps.map(c => squarify(c, aspectRatio, nodePadding, nodeGap)),
     };
   }
 
@@ -395,6 +444,18 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * @default 1.618033988749895
    */
   aspectRatio?: number;
+
+  /**
+   * The padding between the nodes.
+   * @default 0
+   */
+  nodePadding?: number;
+
+  /**
+   * The gap between the nodes.
+   * @default 0
+   */
+  nodeGap?: number;
 
   /**
    * If set to a React element, the option is the customized React element of rendering the content.
@@ -505,10 +566,14 @@ interface State {
   prevHeight?: number;
   prevDataKey: DataKey<any>;
   prevAspectRatio: number;
+  prevNodePadding: number;
+  prevNodeGap: number;
 }
 
 export const defaultTreeMapProps = {
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
+  nodePadding: 0,
+  nodeGap: 0,
   dataKey: 'value',
   nameKey: 'name',
   type: 'flat',
@@ -526,6 +591,8 @@ const defaultState: State = {
   currentRoot: undefined,
   nestIndex: [],
   prevAspectRatio: defaultTreeMapProps.aspectRatio,
+  prevNodePadding: defaultTreeMapProps.nodePadding,
+  prevNodeGap: defaultTreeMapProps.nodeGap,
   prevDataKey: defaultTreeMapProps.dataKey,
 };
 
@@ -809,7 +876,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nextProps.width !== prevState.prevWidth ||
       nextProps.height !== prevState.prevHeight ||
       nextProps.dataKey !== prevState.prevDataKey ||
-      nextProps.aspectRatio !== prevState.prevAspectRatio
+      nextProps.aspectRatio !== prevState.prevAspectRatio ||
+      nextProps.nodePadding !== prevState.prevNodePadding ||
+      nextProps.nodeGap !== prevState.prevNodeGap
     ) {
       const root: TreemapNode = computeNode({
         depth: 0,
@@ -819,7 +888,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         dataKey: nextProps.dataKey,
         nameKey: nextProps.nameKey,
       });
-      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio);
+      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio, nextProps.nodePadding, nextProps.nodeGap);
 
       return {
         ...prevState,
@@ -832,6 +901,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         prevHeight: nextProps.height,
         prevDataKey: nextProps.dataKey,
         prevType: nextProps.type,
+        prevNodePadding: nextProps.nodePadding,
+        prevNodeGap: nextProps.nodeGap,
       };
     }
 
@@ -841,7 +912,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   handleClick = (node: TreemapNode) => {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
-      const { width, height, dataKey, nameKey, aspectRatio } = this.props;
+      const { width, height, dataKey, nameKey, aspectRatio, nodePadding, nodeGap } = this.props;
       const root = computeNode({
         depth: 0,
         node: { ...node, x: 0, y: 0, width, height },
@@ -852,7 +923,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         nestedActiveTooltipIndex: node.tooltipIndex,
       });
 
-      const formatRoot = squarify(root, aspectRatio);
+      const formatRoot = squarify(root, aspectRatio, nodePadding, nodeGap);
 
       const { nestIndex } = this.state;
       nestIndex.push(node);
@@ -870,7 +941,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
-    const { width, height, dataKey, nameKey, aspectRatio } = this.props;
+    const { width, height, dataKey, nameKey, aspectRatio, nodePadding, nodeGap } = this.props;
     const root = computeNode({
       depth: 0,
       node: { ...node, x: 0, y: 0, width, height },
@@ -881,7 +952,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nestedActiveTooltipIndex: node.tooltipIndex,
     });
 
-    const formatRoot = squarify(root, aspectRatio);
+    const formatRoot = squarify(root, aspectRatio, nodePadding, nodeGap);
 
     nestIndex = nestIndex.slice(0, i + 1);
     this.setState({

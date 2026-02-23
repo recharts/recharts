@@ -106,3 +106,53 @@ export const WithCustomContent = {
     isAnimationActive: false,
   },
 };
+
+export const ThreeLevelDataWithInset = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <Treemap
+          {...args}
+          content={(props: TreemapNode) => {
+            const { root, depth, x, y, width, height, index, name, children } = props;
+
+            const isLeaf = !children || children.length === 0;
+
+            return (
+              <g>
+                <rect
+                  x={x}
+                  y={y}
+                  width={width}
+                  height={height}
+                  style={{
+                    fill: depth < 2 ? colors[Math.floor((index / (root?.children?.length ?? 1)) * 6)] : '#ffffff00',
+                    stroke: '#fff',
+                    strokeWidth: 1,
+                  }}
+                />
+                {isLeaf && width > 36 && height > 18 ? (
+                  <text x={x + width / 2} y={y + height / 2 + 4} textAnchor="middle" fill="#fff" fontSize={12}>
+                    {name}
+                  </text>
+                ) : null}
+              </g>
+            );
+          }}
+        >
+          <Tooltip />
+          <RechartsHookInspector />
+        </Treemap>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TreemapArgs),
+    data: treemapData,
+    dataKey: 'size',
+    nameKey: 'name',
+    nodePadding: 6,
+    nodeGap: 6,
+    isAnimationActive: false,
+  },
+};
