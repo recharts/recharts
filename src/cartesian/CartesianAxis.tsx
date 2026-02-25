@@ -391,7 +391,9 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   // Use user-provided textAnchor if available, otherwise calculate from orientation/mirror
-  const textAnchor: TextAnchor = isValidTextAnchor(axisProps.textAnchor) ? axisProps.textAnchor : getTickTextAnchor(orientation, mirror);
+  const textAnchor: TextAnchor = isValidTextAnchor(axisProps.textAnchor)
+    ? axisProps.textAnchor
+    : getTickTextAnchor(orientation, mirror);
   const verticalAnchor: TextVerticalAnchor = getTickVerticalAnchor(orientation, mirror);
   let tickLinePropsObject: SVGProps<SVGLineElement> = {};
   if (typeof tickLine === 'object') {
