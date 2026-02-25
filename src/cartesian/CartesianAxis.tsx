@@ -7,7 +7,7 @@ import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandl
 import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
-import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor } from '../component/Text';
+import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor, isValidTextAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
 import { isNumber, noop } from '../util/DataUtils';
 import {
@@ -391,7 +391,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   // Use user-provided textAnchor if available, otherwise calculate from orientation/mirror
-  const textAnchor: TextAnchor = (axisProps.textAnchor as TextAnchor) ?? getTickTextAnchor(orientation, mirror);
+  const textAnchor: TextAnchor = isValidTextAnchor(axisProps.textAnchor) ? axisProps.textAnchor : getTickTextAnchor(orientation, mirror);
   const verticalAnchor: TextVerticalAnchor = getTickVerticalAnchor(orientation, mirror);
   let tickLinePropsObject: SVGProps<SVGLineElement> = {};
   if (typeof tickLine === 'object') {
