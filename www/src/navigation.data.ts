@@ -15,6 +15,7 @@ const guidePages = [
   'activeIndex',
   'sizes',
   'domainAndTicks',
+  'axisTicks',
   'coordinateSystems',
   'zIndex',
   'performance',
