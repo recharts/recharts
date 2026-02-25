@@ -10,7 +10,7 @@ describe('Treemap types', () => {
         height={400}
         data={[]}
         dataKey="value"
-        nodePadding={4}
+        nodeInset={4}
         nodeGap={2}
         onMouseEnter={(_node: TreemapNode, e) => {
           getRelativeCoordinate(e);

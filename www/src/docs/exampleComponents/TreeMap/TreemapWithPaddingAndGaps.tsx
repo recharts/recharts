@@ -72,7 +72,7 @@ const data = [
 
 const colors = ['#8889DD', '#3a6bd6', '#ce6d1d', '#45b622', '#E2CF45'];
 
-const renderNodeGapAndPaddingContent = (props: TreemapNode) => {
+export const renderNodeGapAndPaddingContent = (props: TreemapNode) => {
   const { root, depth, x, y, width, height, index, name, children } = props;
 
   const isLeaf = !children || children.length === 0;
@@ -107,7 +107,7 @@ const TreemapWithPaddingAndGaps = () => {
       dataKey="size"
       nameKey="name"
       aspectRatio={4 / 3}
-      nodePadding={6}
+      nodeInset={6}
       nodeGap={6}
       content={renderNodeGapAndPaddingContent}
     >

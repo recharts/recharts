@@ -1,10 +1,11 @@
-import React from 'react';
-import { Args } from '@storybook/react-vite';
-import { sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
+import { sizeData, treemapData } from '../../data';
+
+import { Args } from '@storybook/react-vite';
+import React from 'react';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { TreemapArgs } from '../arg-types/TreemapArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   argTypes: TreemapArgs,
@@ -122,7 +123,7 @@ export const ThreeLevelDataWithInset = {
     data: treemapData,
     dataKey: 'size',
     nameKey: 'name',
-    nodePadding: 6,
+    nodeInset: 6,
     nodeGap: 6,
     isAnimationActive: false,
   },

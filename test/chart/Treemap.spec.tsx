@@ -78,7 +78,7 @@ describe('<Treemap />', () => {
     expect(depth0Rect.getAttribute('height')).toBe(String(chartHeight - 30));
   });
 
-  test('renders nested children directly on top of parent when nodePadding is not set', () => {
+  test('renders nested children directly on top of parent when nodeInset is not set', () => {
     const { container } = render(
       <Treemap
         width={500}
@@ -101,8 +101,8 @@ describe('<Treemap />', () => {
     expect(depth2Rect.getAttribute('height')).toBe(depth1Rect.getAttribute('height'));
   });
 
-  test('insets nested children when nodePadding is set', () => {
-    const nodePadding = 8;
+  test('insets nested children when nodeInset is set', () => {
+    const nodeInset = 8;
     const { container } = render(
       <Treemap
         width={500}
@@ -111,7 +111,7 @@ describe('<Treemap />', () => {
         isAnimationActive={false}
         dataKey="value"
         nameKey="name"
-        nodePadding={nodePadding}
+        nodeInset={nodeInset}
       />,
     );
 
@@ -129,10 +129,10 @@ describe('<Treemap />', () => {
     const depth2Width = Number(depth2Rect.getAttribute('width'));
     const depth2Height = Number(depth2Rect.getAttribute('height'));
 
-    expect(depth2X).toBe(depth1X + nodePadding);
-    expect(depth2Y).toBe(depth1Y + nodePadding);
-    expect(depth2Width).toBe(depth1Width - nodePadding * 2);
-    expect(depth2Height).toBe(depth1Height - nodePadding * 2);
+    expect(depth2X).toBe(depth1X + nodeInset);
+    expect(depth2Y).toBe(depth1Y + nodeInset);
+    expect(depth2Width).toBe(depth1Width - nodeInset * 2);
+    expect(depth2Height).toBe(depth1Height - nodeInset * 2);
   });
 
   test('renders sibling nodes without spacing when nodeGap is not set', () => {
