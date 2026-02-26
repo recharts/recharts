@@ -221,7 +221,7 @@ export const calculateStep = (
  * @param tuple of [min,max] min: The minimum value, max: The maximum value
  * @param tickCount     The count of ticks
  * @param allowDecimals Allow the ticks to be decimals or not
- * @param niceTicksMode          The algorithm to use for calculating nice ticks. See {@link NiceTicksAlgorithm}.
+ * @param niceTicksMode The algorithm to use for calculating nice ticks.
  * @return array of ticks
  */
 export const getNiceTickValues = (
