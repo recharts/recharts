@@ -141,8 +141,7 @@ You can add a new example and commit it too!
 To run the website locally in dev mode with hot-reloading:
 
 ```sh
-$ cd www
-$ npm run start
+$ npm run start -w www
 ```
 
 When running locally, the website pulls the Recharts library from the local filesystem.
@@ -150,9 +149,7 @@ When running locally, the website pulls the Recharts library from the local file
 When you make changes to the Recharts source code, you need to re-build it for the changes to be reflected in the website:
 
 ```sh
-$ cd ..
 $ npm run build
-$ cd www
 ```
 
 In production build, the website pulls recharts from npm registry.
