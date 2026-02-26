@@ -114,8 +114,8 @@ const CustomContentOfTooltip = ({
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" niceTicks="nice" />
-      <YAxis width="auto" niceTicks="nice" />
+      <XAxis dataKey="name" niceTicks="snap125" />
+      <YAxis width="auto" niceTicks="snap125" />
       <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />
       <Legend />
       <Bar dataKey="pv" barSize={20} fill="#8884d8" isAnimationActive={isAnimationActive} />

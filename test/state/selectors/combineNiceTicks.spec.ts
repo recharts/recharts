@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { combineNiceTicks, implicitXAxis, RenderableAxisSettings } from '../../../src/state/selectors/axisSelectors';
 
 const createAxisSettings = (partial: Partial<RenderableAxisSettings>): RenderableAxisSettings => ({
@@ -7,20 +7,17 @@ const createAxisSettings = (partial: Partial<RenderableAxisSettings>): Renderabl
 });
 
 describe('combineNiceTicks', () => {
-  beforeEach(() => {});
-
   it('returns undefined when niceTicks="none"', () => {
     const result = combineNiceTicks([0, 100], createAxisSettings({ type: 'number', niceTicks: 'none' }), 'linear');
     expect(result).toBeUndefined();
   });
 
   it('returns undefined for unsupported scale types', () => {
-    const result = combineNiceTicks([0, 100], createAxisSettings({ type: 'number', niceTicks: 'auto' }), 'log');
-
+    const result = combineNiceTicks([0, 100], createAxisSettings({ type: 'number', niceTicks: 'auto' }), 'time');
     expect(result).toBeUndefined();
   });
 
-  it('uses getNiceTickValues in auto mode when domain definition contains auto', () => {
+  it('uses adaptive mode for auto + auto domain', () => {
     const axisDomain: [number, number] = [12, 468];
     const axisSettings = createAxisSettings({
       type: 'number',
@@ -31,11 +28,10 @@ describe('combineNiceTicks', () => {
     });
 
     const result = combineNiceTicks(axisDomain, axisSettings, 'linear');
-
     expect(result).toEqual([0, 150, 300, 450, 600]);
   });
 
-  it('uses getTickValuesFixedDomain in auto mode for fixed number domains', () => {
+  it('uses adaptive fixed-domain mode for auto + fixed domain', () => {
     const axisDomain: [number, number] = [0, 500];
     const axisSettings = createAxisSettings({
       type: 'number',
@@ -46,7 +42,6 @@ describe('combineNiceTicks', () => {
     });
 
     const result = combineNiceTicks(axisDomain, axisSettings, 'auto');
-
     expect(result).toEqual([0, 85, 170, 255, 340, 425, 500]);
   });
 
@@ -59,59 +54,136 @@ describe('combineNiceTicks', () => {
     });
 
     const result = combineNiceTicks([0, 500], axisSettings, 'linear');
-
     expect(result).toBeUndefined();
   });
 
-  it('uses getNiceTickValues with useNiceNumbers=false for explicit equidistant + auto domain', () => {
-    const axisDomain: [number, number] = [12, 468];
-    const axisSettings = createAxisSettings({
-      type: 'number',
-      niceTicks: 'equidistant',
-      tickCount: 5,
-      allowDecimals: true,
-      domain: ['auto', 'auto'],
+  describe('linear scale', () => {
+    it('uses adaptive algorithm when niceTicks="adaptive"', () => {
+      const axisDomain: [number, number] = [12, 468];
+      const axisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'adaptive',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: ['auto', 'auto'],
+      });
+
+      const result = combineNiceTicks(axisDomain, axisSettings, 'linear');
+      expect(result).toEqual([0, 150, 300, 450, 600]);
     });
 
-    combineNiceTicks(axisDomain, axisSettings, 'linear');
+    it('uses snap125 algorithm when niceTicks="snap125"', () => {
+      const axisDomain: [number, number] = [12, 468];
+      const axisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'snap125',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: ['auto', 'auto'],
+      });
+
+      const result = combineNiceTicks(axisDomain, axisSettings, 'linear');
+      expect(result).toEqual([0, 200, 400, 600, 800]);
+    });
   });
 
-  it('uses getNiceTickValues with useNiceNumbers=true for explicit nice + auto domain', () => {
-    const axisDomain: [number, number] = [12, 468];
-    const axisSettings = createAxisSettings({
-      type: 'number',
-      niceTicks: 'nice',
-      tickCount: 5,
-      allowDecimals: true,
-      domain: ['auto', 'auto'],
+  describe('log scale', () => {
+    it('returns undefined when niceTicks="auto"', () => {
+      const axisDomain: [number, number] = [1, 215];
+      const axisSettings: RenderableAxisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'auto',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const logResult = combineNiceTicks(axisDomain, axisSettings, 'log');
+      expect(logResult).toBeUndefined();
     });
 
-    combineNiceTicks(axisDomain, axisSettings, 'linear');
+    it('uses adaptive algorithm when niceTicks="adaptive"', () => {
+      const axisDomain: [number, number] = [1, 215];
+      const axisSettings: RenderableAxisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'adaptive',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const logResult = combineNiceTicks(axisDomain, axisSettings, 'log');
+      expect(logResult).toEqual([0, 55, 110, 165, 220]);
+    });
+
+    it('uses snap125 algorithm when niceTicks="snap125"', () => {
+      const axisDomain: [number, number] = [1, 215];
+      const axisSettings: RenderableAxisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'snap125',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const logResult = combineNiceTicks(axisDomain, axisSettings, 'log');
+      expect(logResult).toEqual([0, 100, 200, 300, 400]);
+    });
   });
 
-  it('uses getTickValuesFixedDomain with useNiceNumbers=true for explicit nice + fixed domain', () => {
-    const axisDomain: [number, number] = [0, 500];
-    const axisSettings = createAxisSettings({
-      type: 'number',
-      niceTicks: 'nice',
-      tickCount: 6,
-      allowDecimals: false,
-      domain: [0, 500],
+  describe('symlog scale', () => {
+    it('returns undefined when niceTicks="auto"', () => {
+      const axisDomain: [number, number] = [-834, 356];
+      const axisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'auto',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const symlogResult = combineNiceTicks(axisDomain, axisSettings, 'symlog');
+      expect(symlogResult).toBeUndefined();
     });
 
-    combineNiceTicks(axisDomain, axisSettings, 'linear');
+    it('uses adaptive algorithm when niceTicks="adaptive"', () => {
+      const axisDomain: [number, number] = [-834, 356];
+      const axisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'adaptive',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const symlogResult = combineNiceTicks(axisDomain, axisSettings, 'symlog');
+      expect(symlogResult).toEqual([-1200, -800, -400, +0, 400]);
+    });
+
+    it('uses snap125 algorithm when niceTicks="snap125"', () => {
+      const axisDomain: [number, number] = [-834, 356];
+      const axisSettings = createAxisSettings({
+        type: 'number',
+        niceTicks: 'snap125',
+        tickCount: 5,
+        allowDecimals: true,
+        domain: undefined,
+      });
+
+      const symlogResult = combineNiceTicks(axisDomain, axisSettings, 'symlog');
+      expect(symlogResult).toEqual([-1000, -500, +0, 500, 1000]);
+    });
   });
 
   it('returns undefined when tickCount is not set', () => {
     const axisSettings = createAxisSettings({
       type: 'number',
-      niceTicks: 'nice',
+      niceTicks: 'snap125',
       tickCount: undefined,
       domain: ['auto', 'auto'],
     });
 
     const result = combineNiceTicks([0, 500], axisSettings, 'linear');
-
     expect(result).toBeUndefined();
   });
 });

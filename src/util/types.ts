@@ -917,6 +917,8 @@ export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseA
 
   /**
    * The count of axis ticks. Not used if 'type' is 'category'.
+   *
+   * @see {@link https://recharts.github.io/guide/axisTicks/}
    * @defaultValue 5
    */
   tickCount?: number;

@@ -61,26 +61,30 @@ export type BaseCartesianAxis = {
  *
  * - `'none'`: Recharts does not apply any tick-rounding algorithm; tick positions are
  *   determined entirely by d3, evenly spaced but not rounded to human-friendly numbers.
+ *   There is no domain-extension logic applied in this mode.
  *
  * - `'auto'` *(default)*: Recharts automatically decides whether and how to apply tick
  *   niceties based on the domain definition. When the domain contains an `'auto'` keyword,
- *   Recharts uses the `'equidistant'` algorithm and may extend the domain slightly to
- *   produce clean tick labels. Otherwise it applies the same algorithm while keeping
- *   ticks within the fixed domain. This mirrors the historical default behaviour.
+ *   Recharts uses the `'adaptive'` algorithm and may extend the domain slightly to
+ *   produce clean tick labels. Otherwise, it applies the same algorithm while keeping
+ *   ticks within the fixed domain. This mirrors the default behavior from Recharts v2.
  *
- * - `'equidistant'`: Always applies the space-efficient algorithm (`getFormatStep`),
+ * - `'adaptive'`: Always applies the space-efficient algorithm (`getAdaptiveStep`),
  *   which fills the available range as densely as possible while still rounding steps
  *   to reasonable numbers (e.g. 10, 20, 25). May produce less "round-looking" labels
- *   than `'nice'`, but wastes less space. The domain-extension logic still applies
+ *   than `'snap125'`, but wastes less space. The domain-extension logic still applies
  *   when the domain contains an `'auto'` keyword.
  *
- * - `'nice'`: Always applies the round-numbers algorithm (`getFormatStepNice`), which
+ * - `'snap125'`: Always applies the round-numbers algorithm (`getSnap125Step`), which
  *   snaps step sizes to values from the set {1, 2, 2.5, 5} × 10ⁿ. Produces very
  *   human-friendly labels (e.g. 0, 5, 10, 15, 20) but may leave blank space at the
  *   edges of the chart. The domain-extension logic still applies when the domain
  *   contains an `'auto'` keyword.
+ *
+ * @see {@link https://recharts.github.io/guide/axisTicks/}
+ * @inline
  */
-export type NiceTicks = 'none' | 'auto' | 'equidistant' | 'nice';
+export type NiceTicksAlgorithm = 'none' | 'auto' | 'adaptive' | 'snap125';
 
 export type TicksSettings = {
   allowDecimals: boolean;
@@ -101,11 +105,11 @@ export type TicksSettings = {
   tick: TickProp<any>;
   /**
    * Controls how Recharts calculates "nice" tick values for this axis.
-   * See {@link NiceTicks} for a full description of each option.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
    * @defaultValue 'auto'
    */
-  niceTicks: NiceTicks;
+  niceTicks: NiceTicksAlgorithm;
 };
 
 /**

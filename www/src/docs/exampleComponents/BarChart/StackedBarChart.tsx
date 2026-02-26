@@ -62,8 +62,8 @@ const StackedBarChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" niceTicks="nice" />
-      <YAxis width="auto" niceTicks="nice" />
+      <XAxis dataKey="name" niceTicks="snap125" />
+      <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend />
       <Bar dataKey="pv" stackId="a" fill="#8884d8" background />

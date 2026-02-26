@@ -19,7 +19,7 @@ import {
 } from '../util/types';
 import { degreeToRadian, polarToCartesian } from '../util/PolarUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
-import { NiceTicks } from '../state/cartesianAxisSlice';
+import { NiceTicksAlgorithm } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAngleAxisTicks, selectPolarAxisScale } from '../state/selectors/polarScaleSelectors';
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -167,11 +167,12 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
   tickCount?: number;
   /**
    * Controls how Recharts calculates "nice" tick values for this axis.
-   * See {@link NiceTicks} for a full description of each option.
+   * Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
    * @defaultValue 'auto'
    */
-  niceTicks?: NiceTicks;
+  niceTicks?: NiceTicksAlgorithm;
   /**
    * The formatter function of ticks.
    */

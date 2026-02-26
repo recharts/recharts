@@ -63,8 +63,8 @@ const SimpleAreaChart = () => {
       onContextMenu={(_, e) => e.preventDefault()}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" niceTicks="nice" />
-      <YAxis width="auto" niceTicks="nice" />
+      <XAxis dataKey="name" niceTicks="snap125" />
+      <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
       <RechartsDevtools />

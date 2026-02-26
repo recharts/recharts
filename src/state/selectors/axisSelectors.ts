@@ -1133,7 +1133,13 @@ export const combineNiceTicks = (
     return undefined;
   }
 
-  if (realScaleType !== 'auto' && realScaleType !== 'linear') {
+  if (
+    realScaleType !== 'auto' &&
+    realScaleType !== 'linear' &&
+    realScaleType !== 'scaleLinear' &&
+    realScaleType !== 'scaleLog' &&
+    realScaleType !== 'scaleSymlog'
+  ) {
     return undefined;
   }
 
@@ -1141,50 +1147,39 @@ export const combineNiceTicks = (
   const hasDomainAutoKeyword =
     Array.isArray(domainDefinition) && (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto');
 
-  if (niceTicks === 'auto') {
-    // Current magic-selector behaviour: apply nice ticks when the domain contains
-    // an 'auto' keyword (may extend the domain), or for any fixed number-type axis.
-    // Always uses the space-efficient algorithm (getFormatStep / useNiceNumbers=false).
-    if (
-      axisSettings != null &&
-      axisSettings.tickCount &&
-      hasDomainAutoKeyword &&
-      isWellFormedNumberDomain(axisDomain)
-    ) {
-      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, false);
-    }
-
-    if (
-      axisSettings != null &&
-      axisSettings.tickCount &&
-      axisSettings.type === 'number' &&
-      isWellFormedNumberDomain(axisDomain)
-    ) {
-      return getTickValuesFixedDomain(
-        axisDomain as NumberDomain,
-        axisSettings.tickCount,
-        axisSettings.allowDecimals,
-        false,
-      );
-    }
-
-    return undefined;
-  }
-
-  // Explicit 'equidistant' or 'nice': bypass the magic-selector conditions and
-  // always apply the chosen algorithm for any number-type axis with a tickCount.
-  const useNiceNumbers = niceTicks === 'nice';
-
-  if (axisSettings != null && axisSettings.tickCount && isWellFormedNumberDomain(axisDomain)) {
+  if (
+    (niceTicks === 'snap125' || niceTicks === 'adaptive') &&
+    axisSettings != null &&
+    axisSettings.tickCount &&
+    isWellFormedNumberDomain(axisDomain)
+  ) {
     if (hasDomainAutoKeyword) {
-      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, useNiceNumbers);
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, niceTicks);
     }
     if (axisSettings.type === 'number') {
       return getTickValuesFixedDomain(
         axisDomain as NumberDomain,
         axisSettings.tickCount,
         axisSettings.allowDecimals,
-        useNiceNumbers,
+        niceTicks,
+      );
+    }
+  }
+
+  if (niceTicks === 'auto' && realScaleType === 'linear' && axisSettings != null && axisSettings.tickCount) {
+    // Current magic-selector behaviour: apply nice ticks when the domain contains
+    // an 'auto' keyword (may extend the domain), or for any fixed number-type axis.
+    // Always uses the space-efficient algorithm (adaptive).
+    if (hasDomainAutoKeyword && isWellFormedNumberDomain(axisDomain)) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, 'adaptive');
+    }
+
+    if (axisSettings.type === 'number' && isWellFormedNumberDomain(axisDomain)) {
+      return getTickValuesFixedDomain(
+        axisDomain as NumberDomain,
+        axisSettings.tickCount,
+        axisSettings.allowDecimals,
+        'adaptive',
       );
     }
   }

@@ -25,7 +25,7 @@ import {
   YAxisPadding,
   YAxisSettings,
   YAxisWidth,
-  NiceTicks,
+  NiceTicksAlgorithm,
 } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -143,6 +143,8 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
+   *
+   * @see {@link https://recharts.github.io/guide/axisTicks/}
    */
   ticks?: ReadonlyArray<AxisTick>;
   /**
@@ -202,12 +204,14 @@ interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   letterSpacing?: number | string;
   /**
    * Controls how Recharts calculates "nice" tick values for this axis.
-   * See {@link NiceTicks} for a full description of each option.
+   * Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
+   * @see {@link https://recharts.github.io/guide/axisTicks/}
    * @defaultValue 'auto'
    * @since 3.8
    */
-  niceTicks?: NiceTicks;
+  niceTicks?: NiceTicksAlgorithm;
 }
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<

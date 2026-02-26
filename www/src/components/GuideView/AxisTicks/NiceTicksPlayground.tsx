@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, NiceTicksAlgorithm } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 const data = [
@@ -7,46 +7,37 @@ const data = [
   { x: 117, y: 45 },
   { x: 234, y: 23 },
   { x: 351, y: 78 },
-  { x: 468, y: 56 },
+  { x: 468, y: 156 },
 ];
 
-type DomainMode = 'auto' | 'fixed';
-type NiceTicksMode = 'none' | 'auto' | 'equidistant' | 'nice';
-
 export type AxisTicksControlsType = {
-  niceTicks: NiceTicksMode;
+  niceTicks: NiceTicksAlgorithm;
   tickCount: number;
-  minMode: DomainMode;
-  maxMode: DomainMode;
-  minValue: number;
-  maxValue: number;
+  scale: 'linear' | 'symlog';
 };
 
 const defaultState: AxisTicksControlsType = {
-  // niceTicks: 'auto',
-  niceTicks: 'none',
+  niceTicks: 'auto',
   tickCount: 5,
-  minMode: 'auto',
-  maxMode: 'auto',
-  minValue: 0,
-  maxValue: 500,
+  scale: 'linear',
 };
 
-const niceTicksOptions: ReadonlyArray<NiceTicksMode> = ['none', 'auto', 'equidistant', 'nice'];
+const niceTicksOptions: ReadonlyArray<NiceTicksAlgorithm> = ['none', 'auto', 'adaptive', 'snap125'];
 
-function isNiceTicks(value: string): value is NiceTicksMode {
-  return value === 'none' || value === 'auto' || value === 'equidistant' || value === 'nice';
+function isNiceTicks(value: string): value is NiceTicksAlgorithm {
+  return value === 'none' || value === 'auto' || value === 'adaptive' || value === 'snap125';
 }
 
 export default function AxisTicksPlayground(props: Partial<AxisTicksControlsType>) {
   const niceTicks = props.niceTicks ?? defaultState.niceTicks;
   const tickCount = props.tickCount ?? defaultState.tickCount;
+  const scale = props.scale ?? defaultState.scale;
 
   return (
     <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 700 }} responsive data={data}>
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis type="number" dataKey="x" tickCount={tickCount} niceTicks={niceTicks} />
-      <YAxis width="auto" tickCount={tickCount} niceTicks={niceTicks} />
+      <XAxis type="number" dataKey="x" tickCount={tickCount} niceTicks={niceTicks} scale={scale} />
+      <YAxis width="auto" tickCount={tickCount} niceTicks={niceTicks} scale={scale} />
       <Tooltip />
       <Line type="monotone" dataKey="y" stroke="#12978f" isAnimationActive={false} />
       <RechartsDevtools />
@@ -75,7 +66,7 @@ export function AxisTicksControls({ onChange }: { onChange: (values: AxisTicksCo
         <tbody>
           <tr>
             <td>
-              <label htmlFor="axis-ticks-algorithm">XAxis.niceTicks</label>
+              <label htmlFor="axis-ticks-algorithm">niceTicks</label>
             </td>
             <td style={{ padding: '0 1ex' }}>
               <select
@@ -98,7 +89,22 @@ export function AxisTicksControls({ onChange }: { onChange: (values: AxisTicksCo
           </tr>
           <tr>
             <td>
-              <label htmlFor="axis-ticks-count">XAxis.tickCount</label>
+              <label htmlFor="axis-ticks-scale">scale</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <select
+                id="axis-ticks-scale"
+                value={state.scale}
+                onChange={event => updateState({ scale: event.target.value as AxisTicksControlsType['scale'] })}
+              >
+                <option value="linear">linear</option>
+                <option value="symlog">symlog</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="axis-ticks-count">tickCount</label>
             </td>
             <td style={{ padding: '0 1ex' }}>
               <input

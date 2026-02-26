@@ -2234,7 +2234,7 @@ describe('selectNiceTicks', () => {
     expect(niceTicksSpy).toHaveBeenLastCalledWith(undefined);
   });
 
-  it('should return equidistant nice ticks (algorithm A) when niceTicks="equidistant"', () => {
+  it('should return adaptive ticks (algorithm A) when niceTicks="adaptive"', () => {
     const niceTicksSpy = vi.fn();
     const Comp = (): null => {
       const isPanorama = useIsPanorama();
@@ -2245,15 +2245,15 @@ describe('selectNiceTicks', () => {
     render(
       <LineChart width={100} height={100} data={PageData}>
         <Line dataKey="pv" isAnimationActive={false} />
-        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="equidistant" />
+        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="adaptive" />
         <Comp />
       </LineChart>,
     );
-    // algorithm A (getFormatStep) produces the same ticks as the 'auto' magic selector for this domain
+    // algorithm A (getAdaptiveStep) produces the same ticks as the 'auto' magic selector for this domain
     expect(niceTicksSpy).toHaveBeenLastCalledWith([180, 240, 300, 360, 420]);
   });
 
-  it('should return round-number nice ticks (algorithm B) when niceTicks="nice"', () => {
+  it('should return round-number snap125 ticks (algorithm B) when niceTicks="snap125"', () => {
     const niceTicksSpy = vi.fn();
     const Comp = (): null => {
       const isPanorama = useIsPanorama();
@@ -2264,11 +2264,11 @@ describe('selectNiceTicks', () => {
     render(
       <LineChart width={100} height={100} data={PageData}>
         <Line dataKey="pv" isAnimationActive={false} />
-        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="nice" />
+        <XAxis type="number" dataKey="uv" domain={['auto', 'auto']} niceTicks="snap125" />
         <Comp />
       </LineChart>,
     );
-    // algorithm B (getFormatStepNice) snaps to {1,2,2.5,5}×10^n steps
+    // algorithm B (getSnap125Step) snaps to {1,2,2.5,5}×10^n steps
     expect(niceTicksSpy).toHaveBeenLastCalledWith([100, 200, 300, 400, 500]);
   });
 });

@@ -63,7 +63,7 @@ const LineBarAreaComposedChart = () => {
     >
       <CartesianGrid stroke="#f5f5f5" />
       <XAxis dataKey="name" scale="band" />
-      <YAxis width="auto" niceTicks="nice" />
+      <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend />
       <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />

@@ -6,6 +6,7 @@
 import Decimal from 'decimal.js-light';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 import { NumberDomain } from '../types';
+import { NiceTicksAlgorithm } from '../../state/cartesianAxisSlice';
 
 /**
  * Calculate a interval of a minimum value and a maximum value
@@ -33,7 +34,7 @@ export const getValidInterval = ([min, max]: [number, number]): [number, number]
  * @param  correctionFactor A correction factor
  * @return The step which is easy to understand between two ticks
  */
-export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
+export const getAdaptiveStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
   if (roughStep.lte(0)) {
     return new Decimal(0);
   }
@@ -57,7 +58,7 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
 type StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => Decimal;
 
 /**
- * An improved step algorithm that snaps to nice numbers (1, 2, 2.5, 5) at each
+ * The snap125 step algorithm snaps to nice numbers (1, 2, 2.5, 5) at each
  * order of magnitude, producing human-friendly tick intervals like
  * 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
  *
@@ -68,11 +69,7 @@ type StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFacto
  * @param  correctionFactor A correction factor
  * @return The step which is easy to understand between two ticks
  */
-export const getFormatStepNice: StepFunction = (
-  roughStep: Decimal,
-  allowDecimals: boolean,
-  correctionFactor: number,
-) => {
+export const getSnap125Step: StepFunction = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
   if (roughStep.lte(0)) {
     return new Decimal(0);
   }
@@ -165,7 +162,7 @@ export const calculateStep = (
   tickCount: number,
   allowDecimals: boolean,
   correctionFactor: number = 0,
-  stepFn: StepFunction = getFormatStep,
+  stepFn: StepFunction = getAdaptiveStep,
 ): {
   step: Decimal;
   tickMin: Decimal;
@@ -224,13 +221,14 @@ export const calculateStep = (
  * @param tuple of [min,max] min: The minimum value, max: The maximum value
  * @param tickCount     The count of ticks
  * @param allowDecimals Allow the ticks to be decimals or not
+ * @param niceTicksMode          The algorithm to use for calculating nice ticks. See {@link NiceTicksAlgorithm}.
  * @return array of ticks
  */
 export const getNiceTickValues = (
   [min, max]: NumberDomain,
   tickCount = 6,
   allowDecimals = true,
-  niceTicks = false,
+  niceTicksMode: NiceTicksAlgorithm = 'auto',
 ): number[] => {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
@@ -249,7 +247,7 @@ export const getNiceTickValues = (
     return getTickOfSingleValue(cormin, tickCount, allowDecimals);
   }
 
-  const stepFn = niceTicks ? getFormatStepNice : getFormatStep;
+  const stepFn = niceTicksMode === 'snap125' ? getSnap125Step : getAdaptiveStep;
 
   // Get the step between two ticks
   const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0, stepFn);
@@ -266,13 +264,14 @@ export const getNiceTickValues = (
  * @param tuple of [min,max] min: The minimum value, max: The maximum value
  * @param tickCount     The count of ticks. This function may return less than tickCount ticks if the interval is too small.
  * @param allowDecimals Allow the ticks to be decimals or not
+ * @param niceTicksMode          The algorithm to use for calculating nice ticks. See {@link NiceTicksAlgorithm}.
  * @return array of ticks
  */
 export const getTickValuesFixedDomain = (
   [min, max]: NumberDomain,
   tickCount: number,
   allowDecimals = true,
-  niceTicks = false,
+  niceTicksMode: NiceTicksAlgorithm = 'auto',
 ) => {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -285,7 +284,7 @@ export const getTickValuesFixedDomain = (
     return [cormin];
   }
 
-  const stepFn = niceTicks ? getFormatStepNice : getFormatStep;
+  const stepFn = niceTicksMode === 'snap125' ? getSnap125Step : getAdaptiveStep;
   const count = Math.max(tickCount, 2);
   const step = stepFn(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
   let values = [...rangeStep(new Decimal(cormin), new Decimal(cormax), step), cormax];

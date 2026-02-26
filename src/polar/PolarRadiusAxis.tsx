@@ -23,7 +23,7 @@ import {
   BaseTickContentProps,
 } from '../util/types';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
-import { NiceTicks } from '../state/cartesianAxisSlice';
+import { NiceTicksAlgorithm } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -170,11 +170,12 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
   allowDecimals?: boolean;
   /**
    * Controls how Recharts calculates "nice" tick values for this axis.
-   * See {@link NiceTicks} for a full description of each option.
+   * Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
    * @defaultValue 'auto'
    */
-  niceTicks?: NiceTicks;
+  niceTicks?: NiceTicksAlgorithm;
   /**
    * @defaultValue 0
    */
