@@ -22,6 +22,7 @@ import {
   UIEvent,
   WheelEvent,
 } from 'react';
+import type * as d3Scales from 'victory-vendor/d3-scale';
 import type { Props as DotProps } from '../shape/Dot';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
@@ -189,7 +190,7 @@ export const isPolarCoordinate = (c: Coordinate | PolarCoordinate): c is PolarCo
   return 'radius' in c && 'startAngle' in c && 'endAngle' in c;
 };
 
-export type D3ScaleType =
+export type RechartsScaleType =
   | 'linear'
   | 'pow'
   | 'sqrt'
@@ -206,12 +207,14 @@ export type D3ScaleType =
   | 'sequential'
   | 'threshold';
 
+export type D3ScaleType = Extract<keyof typeof d3Scales, `scale${string}`>;
+
 /**
  * String shortcuts for scale types.
  * In case none of these does what you want you can also provide your own scale function
  * @see {@link CustomScaleDefinition}
  */
-export type ScaleType = 'auto' | D3ScaleType;
+export type ScaleType = 'auto' | RechartsScaleType;
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.

@@ -17,7 +17,7 @@ import {
   CategoricalDomainItem,
   ChartOffsetInternal,
   Coordinate,
-  D3ScaleType,
+  RechartsScaleType,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -1120,7 +1120,10 @@ export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
-) => D3ScaleType | undefined = createSelector([selectBaseAxis, selectHasBar, selectChartName], combineRealScaleType);
+) => RechartsScaleType | undefined = createSelector(
+  [selectBaseAxis, selectHasBar, selectChartName],
+  combineRealScaleType,
+);
 
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
@@ -1130,16 +1133,6 @@ export const combineNiceTicks = (
   const { niceTicks } = axisSettings;
 
   if (niceTicks === 'none') {
-    return undefined;
-  }
-
-  if (
-    realScaleType !== 'auto' &&
-    realScaleType !== 'linear' &&
-    realScaleType !== 'scaleLinear' &&
-    realScaleType !== 'scaleLog' &&
-    realScaleType !== 'scaleSymlog'
-  ) {
     return undefined;
   }
 
@@ -1869,7 +1862,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
 export const combineAxisTicks = (
   layout: LayoutType,
   axis: RenderableAxisSettings,
-  realScaleType: D3ScaleType | undefined,
+  realScaleType: RechartsScaleType | undefined,
   scale: RechartsScale | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
   axisRange: AxisRange | undefined,

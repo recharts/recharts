@@ -49,20 +49,20 @@ describe('combineRealScaleType', () => {
     expect(combineRealScaleType(axis, false, 'LineChart')).toBe('linear');
   });
 
-  it('maps scale="log" to scaleLog and scale="symlog" to scaleSymlog', () => {
+  it('returns short names for log and symlog scales', () => {
     const axis = createAxis({ type: 'number' });
-    expect(combineRealScaleType({ ...axis, scale: 'log' }, false, 'LineChart')).toBe('scaleLog');
-    expect(combineRealScaleType({ ...axis, scale: 'symlog' }, false, 'LineChart')).toBe('scaleSymlog');
+    expect(combineRealScaleType({ ...axis, scale: 'log' }, false, 'LineChart')).toBe('log');
+    expect(combineRealScaleType({ ...axis, scale: 'symlog' }, false, 'LineChart')).toBe('symlog');
   });
 
-  it('maps supported short names to their d3 scale function names', () => {
+  it('returns supported short scale names as-is', () => {
     const axis = createAxis({ type: 'number' });
-    expect(combineRealScaleType({ ...axis, scale: 'linear' }, false, 'LineChart')).toBe('scaleLinear');
-    expect(combineRealScaleType({ ...axis, scale: 'point' }, false, 'LineChart')).toBe('scalePoint');
+    expect(combineRealScaleType({ ...axis, scale: 'linear' }, false, 'LineChart')).toBe('linear');
+    expect(combineRealScaleType({ ...axis, scale: 'point' }, false, 'LineChart')).toBe('point');
   });
 
   it('falls back to point for already-prefixed names like scaleLog', () => {
-    // @ts-expect-error typescript is doing its job and preventing us from passing an invalid scale, but we want to test the runtime behavior in this case
+    // @ts-expect-error TypeScript is doing its job and preventing us from passing an invalid scale, but we want to test the runtime behavior in this case
     const axis = createAxis({ type: 'number', scale: 'scaleLog' });
     expect(combineRealScaleType(axis, false, 'LineChart')).toBe('point');
   });

@@ -41,7 +41,7 @@ describe('combineNiceTicks', () => {
       domain: [0, 500],
     });
 
-    const result = combineNiceTicks(axisDomain, axisSettings, 'auto');
+    const result = combineNiceTicks(axisDomain, axisSettings, 'linear');
     expect(result).toEqual([0, 85, 170, 255, 340, 425, 500]);
   });
 
