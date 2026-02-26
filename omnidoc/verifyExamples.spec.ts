@@ -177,6 +177,7 @@ describe('Documentation Examples Coverage', () => {
     'useXAxisInverseScale',
     'useYAxisInverseScale',
     'useXAxisScale',
+    'NiceTicksAlgorithm',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
