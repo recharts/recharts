@@ -153,7 +153,6 @@ for (const { name, element } of chartConfigs) {
       const component = await mount(element);
 
       // Wait for animation to fully complete before taking the snapshot
-      // eslint-disable-next-line playwright/no-wait-for-timeout
       await page.waitForTimeout(ANIMATION_DURATION + 500);
 
       // This snapshot comparison ensures the test fails if the animation's
