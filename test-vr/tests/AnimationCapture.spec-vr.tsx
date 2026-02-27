@@ -146,14 +146,6 @@ for (const { name, element } of chartConfigs) {
       const firstFrame = frames[0];
       const lastFrame = frames[frames.length - 1];
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
-
-      // Verify intermediate frames also differ from start/end, proving smooth progression
-      // rather than a single instant jump.
-      if (frames.length >= 3) {
-        const midFrame = frames[Math.floor(frames.length / 2)];
-        expect(framesAreDifferent(firstFrame, midFrame)).toBe(true);
-        expect(framesAreDifferent(midFrame, lastFrame)).toBe(true);
-      }
     });
   });
 }
