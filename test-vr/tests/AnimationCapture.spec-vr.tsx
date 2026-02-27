@@ -1,10 +1,13 @@
 /**
- * @fileOverview Proof-of-concept for Playwright animation capture in visual regression testing.
+ * @fileOverview Playwright animation capture for visual regression testing.
  *
  * Existing VR tests set `isAnimationActive={false}` and compare a single static screenshot.
- * These tests capture multiple frames during chart animations to verify
- * the animation actually occurs (frames differ over time) and attach
- * each frame to the test report for visual inspection.
+ * These tests capture multiple frames during chart animations to:
+ *
+ * 1. Verify animation actually occurs (first frame differs from last frame)
+ * 2. Attach every frame to the test report so reviewers can observe each animation stage
+ * 3. Snapshot-compare the final (post-animation) frame so the test fails if the
+ *    animation's end result changes unexpectedly
  *
  * See https://github.com/recharts/recharts/issues/7013
  */
@@ -133,7 +136,7 @@ for (const { name, element } of chartConfigs) {
         frameCount: 5,
       });
 
-      // Attach each frame to the test report so reviewers can observe animation stages
+      // Attach each frame to the test report so reviewers can observe each animation stage
       for (let i = 0; i < frames.length; i++) {
         // eslint-disable-next-line no-await-in-loop
         await test.info().attach(`${name}-frame-${i}.png`, { body: frames[i], contentType: 'image/png' });
@@ -144,6 +147,18 @@ for (const { name, element } of chartConfigs) {
       const firstFrame = frames[0];
       const lastFrame = frames[frames.length - 1];
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
+    });
+
+    test('final animation frame matches snapshot', async ({ mount, page }) => {
+      const component = await mount(element);
+
+      // Wait for animation to fully complete before taking the snapshot
+      // eslint-disable-next-line playwright/no-wait-for-timeout
+      await page.waitForTimeout(ANIMATION_DURATION + 500);
+
+      // This snapshot comparison ensures the test fails if the animation's
+      // end result changes -- catching regressions in final chart appearance.
+      await expect(component).toHaveScreenshot();
     });
   });
 }
