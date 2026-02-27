@@ -536,7 +536,7 @@ function PolygonWithAnimation<DataPointType = unknown, ValueAxisType = unknown>(
 }
 
 function RenderPolygon<DataPointType = unknown, ValueAxisType = unknown>(
-  props: InternalProps<DataPointType, ValueAxisType>,
+  props: InternalRadarProps<DataPointType, ValueAxisType>,
 ) {
   const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
   const previousBaseLinePointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);

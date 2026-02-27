@@ -758,7 +758,7 @@ export function computePieSectors({
   if (sum > 0) {
     let prev: PieSectorDataItem;
     sectors = displayedData.map((entry: unknown, i: number) => {
-      const val: number = getValueByDataKey(entry, dataKey, 0);
+      const val: unknown = getValueByDataKey(entry, dataKey, 0);
       const name: string = getValueByDataKey(entry, nameKey, i);
       const coordinate: PieCoordinate = parseCoordinateOfPie(pieSettings, offset, entry);
       const percent = (isNumber(val) ? val : 0) / sum;

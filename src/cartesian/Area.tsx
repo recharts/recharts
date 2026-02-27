@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import {
   MutableRefObject,
   PureComponent,
@@ -29,7 +28,6 @@ import {
   AnimationTiming,
   CartesianLayout,
   DataConsumer,
-  DataKey,
   DataProvider,
   DotType,
   LegendType,

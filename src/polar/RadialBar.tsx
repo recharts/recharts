@@ -35,7 +35,6 @@ import {
   PresentationAttributesAdaptChildEvent,
   TickItem,
   TooltipType,
-  TypedDataKey,
 } from '../util/types';
 import {
   TooltipTriggerInfo,
