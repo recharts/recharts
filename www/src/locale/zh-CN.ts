@@ -89,6 +89,7 @@ export const map = {
     'cartesian-components': '笛卡尔坐标系组件',
     'polar-components': '极坐标系组件',
     shapes: '图形',
+    helpers: '辅助函数',
     default: '默认值：',
     format: '格式：',
     examples: '示例：',

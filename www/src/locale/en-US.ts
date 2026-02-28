@@ -93,6 +93,7 @@ export const map = {
     'cartesian-components': 'Cartesian Components',
     'polar-components': 'Polar Components',
     shapes: 'Shapes',
+    helpers: 'Helpers',
     default: 'DEFAULT: ',
     format: 'FORMAT: ',
     examples: 'Examples: ',

@@ -89,4 +89,8 @@ export const apiCates = [
     name: 'shapes',
     items: ['Cross', 'Curve', 'Dot', 'Polygon', 'Rectangle', 'Sector', 'Trapezoid', 'Symbols'],
   },
+  {
+    name: 'helpers',
+    items: ['createHorizontalChart', 'createVerticalChart', 'createRadialChart', 'createCentricChart'],
+  },
 ];
