@@ -82,6 +82,8 @@
   "types/context/tooltipContext.d.ts",
   "types/context/tooltipPortalContext.d.ts",
   "types/context/useTooltipAxis.d.ts",
+  "types/helper",
+  "types/helper/createChartTypes.d.ts",
   "types/hooks.d.ts",
   "types/index.d.ts",
   "types/polar",

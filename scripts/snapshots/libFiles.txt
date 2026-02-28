@@ -82,6 +82,8 @@
   "lib/context/tooltipContext.js",
   "lib/context/tooltipPortalContext.js",
   "lib/context/useTooltipAxis.js",
+  "lib/helper",
+  "lib/helper/createChartTypes.js",
   "lib/hooks.js",
   "lib/index.js",
   "lib/polar",

@@ -82,6 +82,8 @@
   "es6/context/tooltipContext.js",
   "es6/context/tooltipPortalContext.js",
   "es6/context/useTooltipAxis.js",
+  "es6/helper",
+  "es6/helper/createChartTypes.js",
   "es6/hooks.js",
   "es6/index.js",
   "es6/polar",
