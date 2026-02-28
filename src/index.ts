@@ -210,3 +210,10 @@ export type {
   HTMLMousePointer,
   HTMLTouchPointer,
 } from './util/types';
+
+export {
+  createHorizontalChart,
+  createVerticalChart,
+  createRadialChart,
+  createCentricChart,
+} from './helper/createChartTypes';
