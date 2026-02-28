@@ -1355,6 +1355,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       yAxisId: 'y',
       zAxisId: 0,
       barSize: '',
+      hasCustomShape: false,
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
@@ -2102,6 +2103,7 @@ describe('selectErrorBarsSettings', () => {
       xAxisId: '',
       yAxisId: '',
       zAxisId: 0,
+      hasCustomShape: false,
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
