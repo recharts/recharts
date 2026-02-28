@@ -268,4 +268,41 @@ describe('Bar zero-dimension filtering', () => {
 
     expect(actualBars).toBeLessThan(potentialBars * 0.2);
   });
+
+  it('should not filter out zero-height bars that have a custom shape (BoxPlot use case)', () => {
+    const HorizonBar = (props: { x?: number; y?: number; width?: number; height?: number }) => {
+      const { x, y, width } = props;
+      if (x == null || y == null || width == null) {
+        return null;
+      }
+      return <line x1={x} y1={y} x2={x + width} y2={y} stroke="#000" strokeWidth={3} />;
+    };
+
+    // The BoxPlot pattern uses bars with height=0 as position markers; the custom shape renders a line there
+    const data = [
+      { min: 100, bottomWhisker: 100, bottomBox: 50, topBox: 200, topWhisker: 200, marker: 0 },
+      { min: 200, bottomWhisker: 200, bottomBox: 200, topBox: 100, topWhisker: 100, marker: 0 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={400} height={400} data={data}>
+        <XAxis />
+        <YAxis />
+        <Bar stackId="a" id="bar-min" dataKey="min" fill="none" isAnimationActive={false} />
+        <Bar stackId="a" id="bar-marker" dataKey="marker" shape={<HorizonBar />} isAnimationActive={false} />
+        <Bar stackId="a" id="bar-whisker" dataKey="bottomWhisker" isAnimationActive={false} />
+        {children}
+      </BarChart>
+    ));
+
+    // bar-marker has zero height (marker=0) but has a custom shape
+    const { spy } = renderTestCase(state => selectBarRectangles(state, 'bar-marker', false, undefined));
+    const rectangles = spy.mock.lastCall?.[0] ?? [];
+
+    // The custom-shape bars should NOT be filtered out
+    expect(rectangles.length).toBe(data.length);
+    rectangles.forEach((rect: { height: number }) => {
+      expect(rect.height).toBe(0);
+    });
+  });
 });
