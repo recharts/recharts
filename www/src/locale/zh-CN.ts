@@ -37,6 +37,7 @@ export const map = {
     guide: '教程',
     installation: '安装',
     'getting-started': '起步',
+    typescript: 'TypeScript',
     customize: '组件自定义',
     activeIndex: '活动索引',
     sizes: '图表尺寸',
@@ -69,6 +70,18 @@ export const map = {
     'step-5-title': '5. 实现自定义功能',
     'step-5-desc':
       '例如，你可以通过传入自定义的刻度函数来实现定制化的功能，当然其他的组件也支持类似的功能，比如 Bar 组件也能接收自定义的 shape 组件或者 shape 函数。',
+  },
+  typescript: {
+    typescript: 'TypeScript',
+    'step-1-title': '1. Default Usage (everything is <any, any>)',
+    'step-1-desc':
+      "By default, Recharts components fall back to `any`. This means that if you make a typo in your `dataKey` or provide the wrong data shape, you won't be warned by TypeScript.",
+    'step-2-title': '2. Explicit Typing using Generics',
+    'step-2-desc':
+      'You can provide explicit types to most graphical components and axes (e.g., `<Area<MyDataType, number>>`). This enforces that the `dataKey` actually exists on your data, catching errors early.',
+    'step-3-title': '3. Strict Typing with Chart Helpers',
+    'step-3-desc':
+      'To perfectly align your layout properties and ensure all your charts, axes, and lines work in harmony, Recharts provides Chart Helpers (e.g., `createHorizontalChart`). Once you define the helper with your generic types, all returned components strictly enforce your data structure.',
   },
   customize: {
     customize: '组件自定义',

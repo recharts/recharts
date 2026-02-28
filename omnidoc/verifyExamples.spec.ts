@@ -176,6 +176,14 @@ describe('Documentation Examples Coverage', () => {
     'useXAxisInverseScale',
     'useYAxisInverseScale',
     'useXAxisScale',
+    'createHorizontalChart',
+    'createVerticalChart',
+    'createCentricChart',
+    'createRadialChart',
+    'TypedHorizontalChartContext',
+    'TypedVerticalChartContext',
+    'TypedCentricChartContext',
+    'TypedRadialChartContext',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

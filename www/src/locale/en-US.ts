@@ -37,6 +37,7 @@ export const map = {
     guide: 'Guide',
     installation: 'Installation',
     'getting-started': 'Getting Started',
+    typescript: 'TypeScript',
     customize: 'Customize',
     activeIndex: 'Active Index',
     sizes: 'Chart size',
@@ -72,6 +73,18 @@ export const map = {
     'step-5-desc': `For example, you can edit your x-axis label very easily by passing in a custom axis
      tick render function. You can do similar things with other graphs as well, such as custom shapes for bar
      charts and much more!`,
+  },
+  typescript: {
+    typescript: 'TypeScript',
+    'step-1-title': '1. Default Usage (everything is <any, any>)',
+    'step-1-desc':
+      "By default, Recharts components fall back to `any`. This means that if you make a typo in your `dataKey` or provide the wrong data shape, you won't be warned by TypeScript.",
+    'step-2-title': '2. Explicit Typing using Generics',
+    'step-2-desc':
+      'You can provide explicit types to most graphical components and axes (e.g., `<Area<MyDataType, number>>`). This enforces that the `dataKey` actually exists on your data, catching errors early.',
+    'step-3-title': '3. Strict Typing with Chart Helpers',
+    'step-3-desc':
+      'To perfectly align your layout properties and ensure all your charts, axes, and lines work in harmony, Recharts provides Chart Helpers (e.g., `createHorizontalChart`). Once you define the helper with your generic types, all returned components strictly enforce your data structure.',
   },
   customize: {
     customize: 'Customize',
