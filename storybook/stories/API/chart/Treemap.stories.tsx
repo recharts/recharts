@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { sizeData, treemapData } from '../../data';
+import { flatTreemapData, sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -24,7 +24,7 @@ export const API = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
-    data: sizeData,
+    data: flatTreemapData,
     dataKey: 'size',
     nameKey: 'name',
     isAnimationActive: false,
@@ -44,7 +44,7 @@ export const WithTooltip = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
-    data: sizeData,
+    data: flatTreemapData,
     dataKey: 'size',
     nameKey: 'name',
     isAnimationActive: false,
@@ -103,6 +103,27 @@ export const WithCustomContent = {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
     data: treemapData,
     dataKey: 'size',
+    isAnimationActive: false,
+  },
+};
+
+export const Nested = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <Treemap {...args}>
+          <Tooltip />
+          <RechartsHookInspector />
+        </Treemap>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TreemapArgs),
+    data: sizeData,
+    dataKey: 'size',
+    nameKey: 'name',
+    type: 'nest',
     isAnimationActive: false,
   },
 };
