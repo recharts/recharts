@@ -79,11 +79,22 @@ export const apiCates = [
       'useYAxisInverseDataSnapScale',
       'useXAxisInverseTickSnapScale',
       'useYAxisInverseTickSnapScale',
+      'createHorizontalChart',
+      'createVerticalChart',
     ],
   },
   {
     name: 'polar-components',
-    items: ['Pie', 'Radar', 'RadialBar', 'PolarAngleAxis', 'PolarGrid', 'PolarRadiusAxis'],
+    items: [
+      'Pie',
+      'Radar',
+      'RadialBar',
+      'PolarAngleAxis',
+      'PolarGrid',
+      'PolarRadiusAxis',
+      'createRadialChart',
+      'createCentricChart',
+    ],
   },
   {
     name: 'shapes',

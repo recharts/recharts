@@ -1,5 +1,4 @@
-import { PureComponent } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 
 type MyData = {
   name: string;
@@ -18,27 +17,25 @@ const data: MyData[] = [
   { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
 ];
 
-export default class Example extends PureComponent {
-  render() {
-    return (
-      <AreaChart
-        width={500}
-        height={400}
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        {/* By specifying MyData and string, we get type safety on dataKey! */}
-        <XAxis<MyData, string> dataKey="name" />
-        <YAxis<MyData, number> />
-        <Tooltip />
-        <Area<MyData, number> type="monotone" dataKey="uv" stroke="#82ca9d" fill="#82ca9d" />
-      </AreaChart>
-    );
-  }
+export default function Example() {
+  return (
+    <AreaChart
+      width={500}
+      height={400}
+      data={data}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      {/* By specifying MyData and string, we get type safety on dataKey! */}
+      <XAxis<MyData, string> dataKey="name" />
+      <YAxis<MyData, number> />
+      <Tooltip />
+      <Area<MyData, number> type="monotone" dataKey="uv" stroke="#82ca9d" fill="#82ca9d" />
+    </AreaChart>
+  );
 }
