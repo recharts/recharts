@@ -8,10 +8,12 @@ import { ScatterChart as OriginalScatterChart } from '../chart/ScatterChart';
 
 import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Props as YAxisProps } from '../cartesian/YAxis';
+import { Props as ZAxisProps } from '../cartesian/ZAxis';
 import { Props as AreaProps } from '../cartesian/Area';
 import { Props as BarProps } from '../cartesian/Bar';
 import { Props as LineProps } from '../cartesian/Line';
 import { Props as ScatterProps } from '../cartesian/Scatter';
+import { Props as FunnelProps } from '../cartesian/Funnel';
 import { CartesianChartProps } from './types';
 
 export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TComponents> = {
@@ -25,15 +27,19 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
     ? React.ComponentType<XAxisProps<TData, TCategorical>>
     : K extends 'YAxis'
       ? React.ComponentType<YAxisProps<TData, TNumerical>>
-      : K extends 'Area'
-        ? React.ComponentType<AreaProps<TData, TNumerical>>
-        : K extends 'Bar'
-          ? React.ComponentType<BarProps<TData, TNumerical>>
-          : K extends 'Line'
-            ? React.ComponentType<LineProps<TData, TNumerical>>
-            : K extends 'Scatter'
-              ? React.ComponentType<ScatterProps<TData, TNumerical>>
-              : TComponents[K];
+      : K extends 'ZAxis'
+        ? React.ComponentType<ZAxisProps<TData, TNumerical>>
+        : K extends 'Area'
+          ? React.ComponentType<AreaProps<TData, TNumerical>>
+          : K extends 'Bar'
+            ? React.ComponentType<BarProps<TData, TNumerical>>
+            : K extends 'Line'
+              ? React.ComponentType<LineProps<TData, TNumerical>>
+              : K extends 'Scatter'
+                ? React.ComponentType<ScatterProps<TData, TNumerical>>
+                : K extends 'Funnel'
+                  ? React.ComponentType<FunnelProps<TData, TNumerical>>
+                  : TComponents[K];
 };
 
 export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponents> = {
@@ -47,15 +53,19 @@ export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponen
     ? React.ComponentType<XAxisProps<TData, TNumerical>>
     : K extends 'YAxis'
       ? React.ComponentType<YAxisProps<TData, TCategorical>>
-      : K extends 'Area'
-        ? React.ComponentType<AreaProps<TData, TNumerical>>
-        : K extends 'Bar'
-          ? React.ComponentType<BarProps<TData, TNumerical>>
-          : K extends 'Line'
-            ? React.ComponentType<LineProps<TData, TNumerical>>
-            : K extends 'Scatter'
-              ? React.ComponentType<ScatterProps<TData, TNumerical>>
-              : TComponents[K];
+      : K extends 'ZAxis'
+        ? React.ComponentType<ZAxisProps<TData, TNumerical>>
+        : K extends 'Area'
+          ? React.ComponentType<AreaProps<TData, TNumerical>>
+          : K extends 'Bar'
+            ? React.ComponentType<BarProps<TData, TNumerical>>
+            : K extends 'Line'
+              ? React.ComponentType<LineProps<TData, TNumerical>>
+              : K extends 'Scatter'
+                ? React.ComponentType<ScatterProps<TData, TNumerical>>
+                : K extends 'Funnel'
+                  ? React.ComponentType<FunnelProps<TData, TNumerical>>
+                  : TComponents[K];
 };
 
 const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({

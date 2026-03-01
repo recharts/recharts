@@ -6,6 +6,7 @@ import { RadialBarProps } from '../polar/RadialBar';
 import { Props as PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { Props as RadarProps } from '../polar/Radar';
+import { Props as PieProps } from '../polar/Pie';
 import { PolarChartProps } from './types';
 
 export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponents> = {
@@ -17,10 +18,12 @@ export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponent
     : K extends 'PolarRadiusAxis'
       ? React.ComponentType<PolarRadiusAxisProps<TData, TNumerical>>
       : K extends 'RadialBar'
-        ? React.ComponentType<RadialBarProps>
+        ? React.ComponentType<RadialBarProps<TData, TNumerical>>
         : K extends 'Radar'
-          ? React.ComponentType<RadarProps>
-          : TComponents[K];
+          ? React.ComponentType<RadarProps<TData, TNumerical>>
+          : K extends 'Pie'
+            ? React.ComponentType<PieProps<TData, TNumerical>>
+            : TComponents[K];
 };
 
 export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents> = {
@@ -32,10 +35,12 @@ export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents
     : K extends 'PolarRadiusAxis'
       ? React.ComponentType<PolarRadiusAxisProps<TData, TCategorical>>
       : K extends 'RadialBar'
-        ? React.ComponentType<RadialBarProps>
+        ? React.ComponentType<RadialBarProps<TData, TNumerical>>
         : K extends 'Radar'
-          ? React.ComponentType<RadarProps>
-          : TComponents[K];
+          ? React.ComponentType<RadarProps<TData, TNumerical>>
+          : K extends 'Pie'
+            ? React.ComponentType<PieProps<TData, TNumerical>>
+            : TComponents[K];
 };
 
 const createPolarCharts = <TData,>(layout: 'radial' | 'centric') => ({
