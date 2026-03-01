@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { rollup, type OutputChunk, type OutputAsset } from 'rollup';
 import { minify } from 'terser';
@@ -84,6 +84,9 @@ export async function treeshake(components: string | string[]): Promise<(OutputC
             if (source === 'recharts') {
               return srcEntry;
             }
+            if (source.startsWith('file://')) {
+              return fileURLToPath(source);
+            }
             return null;
           },
         },
@@ -156,6 +159,9 @@ export async function getModuleGraph(components: string | string[]): Promise<Mod
           resolveId(source) {
             if (source === 'recharts') {
               return srcEntry;
+            }
+            if (source.startsWith('file://')) {
+              return fileURLToPath(source);
             }
             return null;
           },
