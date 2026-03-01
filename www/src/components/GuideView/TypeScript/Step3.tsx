@@ -1,14 +1,7 @@
-import React, { PureComponent } from 'react';
-import {
-  createHorizontalChart,
-  CartesianGrid,
-  Tooltip,
-  XAxis as OriginalXAxis,
-  YAxis as OriginalYAxis,
-  Area as OriginalArea,
-} from 'recharts';
+// 1. Import the components you would like to use in your chart from Recharts as usual
+import { Area, CartesianGrid, createHorizontalChart, Tooltip, XAxis, YAxis } from 'recharts';
 
-// 1. Define your data type
+// 2. Define your data type
 type MyData = {
   name: string;
   uv: number;
@@ -16,17 +9,16 @@ type MyData = {
   amt: number;
 };
 
-// 2. Pass in the required data and axis types to the helper (TData, TCategorical, TNumerical)
-// 3. Unbundle what you need into specifically-typed wrapper components
-const {
-  AreaChart, // AreaChart is strongly-typed to CartesianChartProps<MyData> and enforces layout="horizontal"
-  XAxis, // XAxis is strongly-typed to expect a string dataKey from MyData (e.g. "name")
-  YAxis, // YAxis is strongly-typed to expect a number dataKey from MyData (e.g. "uv", "pv", "amt")
-  Area, // Area is strongly-typed to expect a number dataKey from MyData
-} = createHorizontalChart<MyData, string, number>()({
-  XAxis: OriginalXAxis,
-  YAxis: OriginalYAxis,
-  Area: OriginalArea,
+// 3. Pass in the required data and axis types to the helper (TData, TCategorical, TNumerical). Unbundle what you need into specifically-typed wrapper components
+// Chart wrappers are included for all Cartesian charts (AreaChart, BarChart, ComposedChart, LineChart, ScatterChart) by default.
+const Typed = createHorizontalChart<MyData, string, number>()({
+  // XAxis is strongly-typed to expect a string dataKey from MyData (e.g. "name")
+  XAxis,
+  // YAxis is strongly-typed to expect a number dataKey from MyData (e.g. "uv", "pv", "amt")
+  YAxis,
+  // Area is strongly-typed to expect a number dataKey from MyData
+  Area,
+  // Typed.AreaChart is included automatically. AreaChart is strongly-typed to CartesianChartProps<MyData> and enforces layout="horizontal"
 });
 
 const data: MyData[] = [
@@ -39,27 +31,27 @@ const data: MyData[] = [
   { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
 ];
 
-export default class Example extends PureComponent {
-  render() {
-    return (
-      <AreaChart
-        width={500}
-        height={400}
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        {/* dataKey is automatically restricted to numbers on MyData without redeclaring! */}
-        <Area type="monotone" dataKey="uv" stroke="#ffc658" fill="#ffc658" />
-      </AreaChart>
-    );
-  }
+export default function Example() {
+  // 4. Use the typed components in place of the original Recharts components. TypeScript will enforce correct prop types based on your data type!
+  return (
+    <Typed.AreaChart
+      layout="vertical"
+      width={500}
+      height={400}
+      data={data}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <Typed.XAxis dataKey="name" />
+      <Typed.YAxis />
+      <Tooltip />
+      {/* dataKey is automatically restricted to numbers on MyData without redeclaring! */}
+      <Typed.Area type="monotone" dataKey="uv" stroke="#ffc658" fill="#ffc658" />
+    </Typed.AreaChart>
+  );
 }
