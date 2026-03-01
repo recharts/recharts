@@ -73,15 +73,15 @@ export const map = {
   },
   typescript: {
     typescript: 'TypeScript',
-    'step-1-title': '1. Default Usage (everything is <any, any>)',
+    'step-1-title': '1. 默认用法（均为 <any, any>）',
     'step-1-desc':
-      "By default, Recharts components fall back to `any`. This means that if you make a typo in your `dataKey` or provide the wrong data shape, you won't be warned by TypeScript.",
-    'step-2-title': '2. Explicit Typing using Generics',
+      '默认情况下，Recharts 组件会回退到 `any`。这意味着如果你在 `dataKey` 拼写错误或提供了错误的数据结构，TypeScript 不会发出警告。',
+    'step-2-title': '2. 使用泛型的显式类型',
     'step-2-desc':
-      'You can provide explicit types to most graphical components and axes (e.g., `<Area<MyDataType, number>>`). This enforces that the `dataKey` actually exists on your data, catching errors early.',
-    'step-3-title': '3. Strict Typing with Chart Helpers',
+      '你可以为大多数图形组件和坐标轴提供显式类型（例如 `<Area<MyDataType, number>>`）。这将强制验证 `dataKey` 是否确实存在于你的数据中，从而尽早捕获错误。',
+    'step-3-title': '3. 使用图表辅助函数实现严格类型',
     'step-3-desc':
-      'To perfectly align your layout properties and ensure all your charts, axes, and lines work in harmony, Recharts provides Chart Helpers (e.g., `createHorizontalChart`). Once you define the helper with your generic types, all returned components strictly enforce your data structure.',
+      '为了完美对齐你的布局属性，并确保所有图表、坐标轴和线条协调工作，Recharts 提供了可用的图表辅助函数（例如 `createHorizontalChart`）。使用泛型定义辅助函数后，所有返回的组件将严格执行你的数据结构。',
   },
   customize: {
     customize: '组件自定义',

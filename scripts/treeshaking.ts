@@ -1,11 +1,12 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
+import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { rollup, type OutputChunk, type OutputAsset } from 'rollup';
 import { minify } from 'terser';
-import resolve from '@rollup/plugin-node-resolve';
-import babel from '@rollup/plugin-babel';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { babel } from '@rollup/plugin-babel';
 
 const packageRoot = path.resolve(__dirname, '..');
 const srcEntry = path.join(packageRoot, 'src', 'index.ts');
@@ -47,11 +48,11 @@ function createTmpEntry(componentsOrFile: string | string[]): { tmpFile: string;
   let source = '';
   if (isFile) {
     const absolutePath = path.resolve(process.cwd(), firstArg);
-    source = `import * as Bundle from '${absolutePath}';\nexport const used = Bundle;\n`;
+    source = `import * as Bundle from ${JSON.stringify(pathToFileURL(absolutePath).href)};\nexport const used = Bundle;\n`;
   } else {
     const componentList = Array.isArray(componentsOrFile) ? componentsOrFile : [componentsOrFile];
     const importList = componentList.join(', ');
-    source = `import { ${importList} } from '${srcEntry}';\nexport const used = { ${importList} };\n`;
+    source = `import { ${importList} } from ${JSON.stringify(pathToFileURL(srcEntry).href)};\nexport const used = { ${importList} };\n`;
   }
 
   const tmpFile = path.join(
@@ -86,7 +87,7 @@ export async function treeshake(components: string | string[]): Promise<(OutputC
             return null;
           },
         },
-        resolve({
+        nodeResolve({
           extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
           moduleDirectories: ['node_modules'],
         }),
@@ -159,7 +160,7 @@ export async function getModuleGraph(components: string | string[]): Promise<Mod
             return null;
           },
         },
-        resolve({
+        nodeResolve({
           extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
           moduleDirectories: ['node_modules'],
         }),
