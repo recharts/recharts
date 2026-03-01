@@ -6,7 +6,8 @@
  *
  * 1. Verify animation actually occurs (first frame differs from last frame)
  * 2. Attach every frame to the test report so reviewers can observe each animation stage
- * 3. Verify consecutive frames show intermediate states (not just start/end)
+ * 3. Snapshot-compare the final (post-animation) frame so the test fails if the
+ *    animation's end result changes unexpectedly
  *
  * See https://github.com/recharts/recharts/issues/7013
  */
@@ -146,6 +147,17 @@ for (const { name, element } of chartConfigs) {
       const firstFrame = frames[0];
       const lastFrame = frames[frames.length - 1];
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
+    });
+
+    test('final animation frame matches snapshot', async ({ mount, page }) => {
+      const component = await mount(element);
+
+      // Wait for animation to fully complete before taking the snapshot
+      await page.waitForTimeout(ANIMATION_DURATION + 500);
+
+      // This snapshot comparison ensures the test fails if the animation's
+      // end result changes -- catching regressions in final chart appearance.
+      await expect(component).toHaveScreenshot();
     });
   });
 }
