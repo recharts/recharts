@@ -1,0 +1,25 @@
+import{e}from"./iframe-DjYpiCK1.js";import{C as u}from"./ComposedChart-DGjTVrS3.js";import{R as h}from"./arrayEqualityCheck-ChWij-6b.js";import{C as k}from"./CartesianGrid-CqWR3c8s.js";import{B as o}from"./Bar-CQuPCIXk.js";import{Z as x}from"./ZAxis-C3AU4-C-.js";import{S as y}from"./Scatter-DIlC-WmZ.js";import{X as B}from"./XAxis-BAlFokgy.js";import{Y as E}from"./YAxis-bUcTdGAX.js";import{R as f}from"./RechartsHookInspector-ycUhMjsN.js";import"./preload-helper-Dp1pzeXC.js";import"./RechartsWrapper-BsT6E87M.js";import"./index-Dcc_DcJs.js";import"./immer-Q7LYndgz.js";import"./hooks-DA7ZLRAz.js";import"./axisSelectors-DRA31YxA.js";import"./d3-scale-D4J-_PMg.js";import"./zIndexSlice-DD29w02m.js";import"./renderedTicksSlice-CQl_TKKG.js";import"./clsx-B-dksMZM.js";import"./PolarUtils-CTnnDHZv.js";import"./CartesianChart-DMb_0zJ6.js";import"./chartDataContext-A4NUbCSz.js";import"./CategoricalChart-DDH3jH2P.js";import"./resolveDefaultProps-BKyQYHPq.js";import"./CartesianAxis-C5b0QVvJ.js";import"./Layer-DTpB7dpX.js";import"./Text-tzBe5md3.js";import"./DOMUtils-C_4MXzyf.js";import"./Label-BjhhnV9x.js";import"./ZIndexLayer-DPHhTAxg.js";import"./types-uugzObvO.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./tooltipContext-AAl5ihZW.js";import"./ReactUtils-Bc2S-2Ko.js";import"./tiny-invariant-CopsF_GD.js";import"./ActiveShapeUtils-BB_vNw8U.js";import"./isPlainObject-COujrb7r.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-DJnZMjz6.js";import"./useAnimationId-DKdTeHc-.js";import"./Trapezoid-ljRWXtqg.js";import"./Sector-lipzQdUB.js";import"./Symbols-CkWT8iKr.js";import"./symbol-CHsY7JKe.js";import"./step-e2Z4FnHn.js";import"./Curve-CcdovDiP.js";import"./RegisterGraphicalItemId-CzheeRaZ.js";import"./ErrorBarContext-D-vVpbAT.js";import"./GraphicalItemClipPath-BAi4t0TL.js";import"./SetGraphicalItem-DCV_XwVp.js";import"./getZIndexFromUnknown-CW64FEow.js";import"./graphicalItemSelectors-DBaAmjf3.js";import"./index-DQOJXr3R.js";import"./ChartSizeDimensions-Bar3NlUL.js";import"./OffsetShower-EZRykoXG.js";import"./PlotAreaShower-BUEMDiZc.js";const K=[{min:100,lowerQuartile:200,median:250,upperQuartile:450,max:650,average:150},{min:200,lowerQuartile:400,median:600,upperQuartile:700,max:800,average:550},{min:0,lowerQuartile:200,median:400,upperQuartile:600,max:800,average:400}],Qe={component:u},s=a=>{const{x:r,y:t,width:i,height:n}=a;return r==null||t==null||i==null||n==null?null:e.createElement("line",{x1:r,y1:t,x2:r+i,y2:t,stroke:"#000",strokeWidth:3})},p=a=>{const{x:r,y:t,width:i,height:n}=a;return r==null||t==null||i==null||n==null?null:e.createElement("line",{x1:r+i/2,y1:t+n,x2:r+i/2,y2:t,stroke:"#000",strokeWidth:5,strokeDasharray:"5"})},g=a=>e.useMemo(()=>a.map(t=>({min:t.min,bottomWhisker:t.lowerQuartile-t.min,bottomBox:t.median-t.lowerQuartile,topBox:t.upperQuartile-t.median,topWhisker:t.max-t.upperQuartile,average:t.average,size:250})),[a]),m={render:()=>{const a=g(K);return e.createElement(h,{minHeight:600},e.createElement(u,{data:a},e.createElement(k,{strokeDasharray:"3 3"}),e.createElement(o,{stackId:"a",dataKey:"min",fill:"none"}),e.createElement(o,{stackId:"a",dataKey:"bar-min",shape:e.createElement(s,null)}),e.createElement(o,{stackId:"a",dataKey:"bottomWhisker",shape:e.createElement(p,null)}),e.createElement(o,{stackId:"a",dataKey:"bottomBox",fill:"#8884d8"}),e.createElement(o,{stackId:"a",dataKey:"bar-avg",shape:e.createElement(s,null)}),e.createElement(o,{stackId:"a",dataKey:"topBox",fill:"#8884d8"}),e.createElement(o,{stackId:"a",dataKey:"topWhisker",shape:e.createElement(p,null)}),e.createElement(o,{stackId:"a",dataKey:"bar-max",shape:e.createElement(s,null)}),e.createElement(x,{type:"number",dataKey:"size",range:[0,250]}),e.createElement(y,{dataKey:"average",fill:"red",stroke:"#FFF"}),e.createElement(B,null),e.createElement(E,null),e.createElement(f,null)))},args:{}};var l,d,c;m.parameters={...m.parameters,docs:{...(l=m.parameters)==null?void 0:l.docs,source:{originalSource:`{
+  render: () => {
+    const data = useBoxPlot(boxPlots);
+    return <ResponsiveContainer minHeight={600}>
+        <ComposedChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar stackId="a" dataKey="min" fill="none" />
+          <Bar stackId="a" dataKey="bar-min" shape={<HorizonBar />} />
+          <Bar stackId="a" dataKey="bottomWhisker" shape={<DotBar />} />
+          <Bar stackId="a" dataKey="bottomBox" fill="#8884d8" />
+          <Bar stackId="a" dataKey="bar-avg" shape={<HorizonBar />} />
+          <Bar stackId="a" dataKey="topBox" fill="#8884d8" />
+          <Bar stackId="a" dataKey="topWhisker" shape={<DotBar />} />
+          <Bar stackId="a" dataKey="bar-max" shape={<HorizonBar />} />
+          <ZAxis type="number" dataKey="size" range={[0, 250]} />
+
+          <Scatter dataKey="average" fill="red" stroke="#FFF" />
+          <XAxis />
+          <YAxis />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {}
+}`,...(c=(d=m.parameters)==null?void 0:d.docs)==null?void 0:c.source}}};const He=["BoxPlotChart"];export{m as BoxPlotChart,He as __namedExportsOrder,Qe as default};
