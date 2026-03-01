@@ -64,18 +64,8 @@ async function captureAnimationFrames(
   return frames;
 }
 
-/**
- * Checks whether two PNG buffers are visually different.
- * Uses a simple byte comparison -- if the buffers differ, the images differ.
- * This is sufficient for detecting animation progress because animated charts
- * produce meaningfully different pixel content at different time points.
- */
 function framesAreDifferent(a: Buffer, b: Buffer): boolean {
-  if (a.length !== b.length) return true;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return true;
-  }
-  return false;
+  return !a.equals(b);
 }
 
 const chartConfigs: Array<{ name: string; element: React.ReactElement }> = [
@@ -147,16 +137,10 @@ for (const { name, element } of chartConfigs) {
       const firstFrame = frames[0];
       const lastFrame = frames[frames.length - 1];
       expect(framesAreDifferent(firstFrame, lastFrame)).toBe(true);
-    });
 
-    test('final animation frame matches snapshot', async ({ mount, page }) => {
-      const component = await mount(element);
-
-      // Wait for animation to fully complete before taking the snapshot
-      await page.waitForTimeout(ANIMATION_DURATION + 500);
-
-      // This snapshot comparison ensures the test fails if the animation's
-      // end result changes -- catching regressions in final chart appearance.
+      // Wait for any remaining animation to settle, then snapshot the final state.
+      // This catches regressions in the animation's end result.
+      await page.waitForTimeout(300);
       await expect(component).toHaveScreenshot();
     });
   });
