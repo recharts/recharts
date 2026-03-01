@@ -15,11 +15,11 @@ import { Props as ScatterProps } from '../cartesian/Scatter';
 import { CartesianChartProps } from './types';
 
 export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TComponents> = {
-  AreaChart: React.ComponentType<CartesianChartProps<TData>>;
-  BarChart: React.ComponentType<CartesianChartProps<TData>>;
-  LineChart: React.ComponentType<CartesianChartProps<TData>>;
-  ComposedChart: React.ComponentType<CartesianChartProps<TData>>;
-  ScatterChart: React.ComponentType<CartesianChartProps<TData>>;
+  AreaChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  BarChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  LineChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  ComposedChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  ScatterChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
 } & {
   [K in keyof TComponents]: K extends 'XAxis'
     ? React.ComponentType<XAxisProps<TData, TCategorical>>
@@ -37,11 +37,11 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
 };
 
 export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponents> = {
-  AreaChart: React.ComponentType<CartesianChartProps<TData>>;
-  BarChart: React.ComponentType<CartesianChartProps<TData>>;
-  LineChart: React.ComponentType<CartesianChartProps<TData>>;
-  ComposedChart: React.ComponentType<CartesianChartProps<TData>>;
-  ScatterChart: React.ComponentType<CartesianChartProps<TData>>;
+  AreaChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  BarChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  LineChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  ComposedChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  ScatterChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
 } & {
   [K in keyof TComponents]: K extends 'XAxis'
     ? React.ComponentType<XAxisProps<TData, TNumerical>>
@@ -59,11 +59,15 @@ export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponen
 };
 
 const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
-  AreaChart: (props: CartesianChartProps<TData>) => <OriginalAreaChart layout={layout} {...props} />,
-  BarChart: (props: CartesianChartProps<TData>) => <OriginalBarChart layout={layout} {...props} />,
-  LineChart: (props: CartesianChartProps<TData>) => <OriginalLineChart layout={layout} {...props} />,
-  ComposedChart: (props: CartesianChartProps<TData>) => <OriginalComposedChart layout={layout} {...props} />,
-  ScatterChart: (props: CartesianChartProps<TData>) => <OriginalScatterChart layout={layout} {...props} />,
+  AreaChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => <OriginalAreaChart {...props} layout={layout} />,
+  BarChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => <OriginalBarChart {...props} layout={layout} />,
+  LineChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => <OriginalLineChart {...props} layout={layout} />,
+  ComposedChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => (
+    <OriginalComposedChart {...props} layout={layout} />
+  ),
+  ScatterChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => (
+    <OriginalScatterChart {...props} layout={layout} />
+  ),
 });
 
 export function createHorizontalChart<TData, TCategorical = string, TNumerical = number>() {

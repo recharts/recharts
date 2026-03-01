@@ -34,8 +34,8 @@ const data: MyData[] = [
 export default function Example() {
   // 4. Use the typed components in place of the original Recharts components. TypeScript will enforce correct prop types based on your data type!
   return (
+    // layout="vertical" would correctly trigger a TypeScript error below as createHorizontalChart enforces layout="horizontal"
     <Typed.AreaChart
-      layout="vertical"
       width={500}
       height={400}
       data={data}
