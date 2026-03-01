@@ -71,18 +71,7 @@ export const map = {
     'step-5-desc':
       '例如，你可以通过传入自定义的刻度函数来实现定制化的功能，当然其他的组件也支持类似的功能，比如 Bar 组件也能接收自定义的 shape 组件或者 shape 函数。',
   },
-  typescript: {
-    typescript: 'TypeScript',
-    'step-1-title': '1. 默认用法（均为 <any, any>）',
-    'step-1-desc':
-      '默认情况下，Recharts 组件会回退到 `any`。这意味着如果你在 `dataKey` 拼写错误或提供了错误的数据结构，TypeScript 不会发出警告。',
-    'step-2-title': '2. 使用泛型的显式类型',
-    'step-2-desc':
-      '你可以为大多数图形组件和坐标轴提供显式类型（例如 `<Area<MyDataType, number>>`）。这将强制验证 `dataKey` 是否确实存在于你的数据中，从而尽早捕获错误。',
-    'step-3-title': '3. 使用图表辅助函数实现严格类型',
-    'step-3-desc':
-      '为了完美对齐你的布局属性，并确保所有图表、坐标轴和线条协调工作，Recharts 提供了可用的图表辅助函数（例如 `createHorizontalChart`）。使用泛型定义辅助函数后，所有返回的组件将严格执行你的数据结构。',
-  },
+
   customize: {
     customize: '组件自定义',
     'step-1-title': '1. 组件 Line , Area , Bar , XAxis, YAxis 的 labels 支持自定义',

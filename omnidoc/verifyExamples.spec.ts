@@ -184,6 +184,9 @@ describe('Documentation Examples Coverage', () => {
     'TypedVerticalChartContext',
     'TypedCentricChartContext',
     'TypedRadialChartContext',
+    'NoRadial',
+    'NoFunnel',
+    'NoCentric',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

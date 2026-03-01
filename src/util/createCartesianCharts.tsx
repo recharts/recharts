@@ -83,7 +83,7 @@ const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
   ),
 });
 
-type NoFunnel<T> = 'Funnel' extends keyof T ? never : 'FunnelChart' extends keyof T ? never : T;
+export type NoFunnel<T> = 'Funnel' extends keyof T ? never : 'FunnelChart' extends keyof T ? never : T;
 
 /**
  * Creates a typed context for horizontal Cartesian charts.
@@ -116,7 +116,7 @@ type NoFunnel<T> = 'Funnel' extends keyof T ? never : 'FunnelChart' extends keyo
  * ```
  *
  * @since 3.8
- * @see {@link https://recharts.github.io/en-US/guide/typescript/}
+ * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
  */
 export function createHorizontalChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoFunnel<TComponents>) {
@@ -158,7 +158,7 @@ export function createHorizontalChart<TData, TCategorical = string, TNumerical =
  * ```
  *
  * @since 3.8
- * @see {@link https://recharts.github.io/en-US/guide/typescript/}
+ * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
  */
 export function createVerticalChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: TComponents) {

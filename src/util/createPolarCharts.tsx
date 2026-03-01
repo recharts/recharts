@@ -49,7 +49,7 @@ export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents
   'Radar' | 'RadarChart'
 >;
 
-type NoRadial<T> = 'RadialBar' extends keyof T
+export type NoRadial<T> = 'RadialBar' extends keyof T
   ? never
   : 'RadialBarChart' extends keyof T
     ? never
@@ -58,7 +58,8 @@ type NoRadial<T> = 'RadialBar' extends keyof T
       : 'PieChart' extends keyof T
         ? never
         : T;
-type NoCentric<T> = 'Radar' extends keyof T ? never : 'RadarChart' extends keyof T ? never : T;
+
+export type NoCentric<T> = 'Radar' extends keyof T ? never : 'RadarChart' extends keyof T ? never : T;
 
 /**
  * Creates a typed context for centric Polar charts.
@@ -88,7 +89,7 @@ type NoCentric<T> = 'Radar' extends keyof T ? never : 'RadarChart' extends keyof
  * ```
  *
  * @since 3.8
- * @see {@link https://recharts.github.io/en-US/guide/typescript/}
+ * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
  */
 export function createCentricChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoRadial<TComponents>) {
@@ -127,7 +128,7 @@ export function createCentricChart<TData, TCategorical = string, TNumerical = nu
  * ```
  *
  * @since 3.8
- * @see {@link https://recharts.github.io/en-US/guide/typescript/}
+ * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
  */
 export function createRadialChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoCentric<TComponents>) {

@@ -215,6 +215,6 @@ export { createHorizontalChart, createVerticalChart } from './util/createCartesi
 
 export { createCentricChart, createRadialChart } from './util/createPolarCharts';
 
-export type { TypedHorizontalChartContext, TypedVerticalChartContext } from './util/createCartesianCharts';
+export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel } from './util/createCartesianCharts';
 
-export type { TypedCentricChartContext, TypedRadialChartContext } from './util/createPolarCharts';
+export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
