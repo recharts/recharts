@@ -1,0 +1,22 @@
+import{e}from"./iframe-KIGRIIb5.js";import{P as p,a}from"./PieChart-DR65UdAs.js";import{R as n}from"./arrayEqualityCheck-BpdZ7hwi.js";import{L as s}from"./Legend-CuaO4-BX.js";import{R as c}from"./RechartsHookInspector-Bt2WJDB1.js";import"./preload-helper-Dp1pzeXC.js";import"./clsx-B-dksMZM.js";import"./immer-WG6U2D_d.js";import"./Layer-DuIzwjaR.js";import"./resolveDefaultProps-D_adPZ-8.js";import"./Curve-BndPQnOp.js";import"./types-w2IwZ3Nn.js";import"./step-CQsLqeZl.js";import"./Text-BoAeRYTN.js";import"./DOMUtils-CBEI-OH0.js";import"./tooltipContext-bsfh6YT_.js";import"./hooks-CB3QlvSf.js";import"./axisSelectors-BkzxsiaE.js";import"./d3-scale-DgRq4lUU.js";import"./ReactUtils-CkQKUzGb.js";import"./Label-CkUDjV7L.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-CBYmGw4W.js";import"./zIndexSlice-_VCrDw0P.js";import"./index-ClQqk-oX.js";import"./ActiveShapeUtils-BbMpDdiq.js";import"./isPlainObject-CCJRIfQY.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-BcYcowey.js";import"./useAnimationId-Bv85JSPp.js";import"./Trapezoid-6-PW5Hrl.js";import"./Sector-Dsu6XmgC.js";import"./Symbols-B6R2DiC2.js";import"./symbol-C10mZUN3.js";import"./RegisterGraphicalItemId-DsmENlGz.js";import"./SetGraphicalItem-DmMr7UzB.js";import"./RechartsWrapper-DHe9ZVa4.js";import"./renderedTicksSlice-eT4Ivs1b.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./polarSelectors-DheBTpqi.js";import"./PolarChart-BMBJz9hn.js";import"./chartDataContext-D4pNrPnz.js";import"./CategoricalChart-e7-cm4mq.js";import"./useElementOffset-D6WzauAM.js";import"./uniqBy-Cw44ZgZs.js";import"./iteratee-8JDIDxH7.js";import"./index-CoeeyBxi.js";import"./ChartSizeDimensions-BY9JAKDy.js";import"./OffsetShower-DhxtKv-n.js";import"./PlotAreaShower-DjAl-bbb.js";const l=[{value:"Luck",percent:10},{value:"Skill",percent:20},{value:"Concentrated power of will",percent:15},{value:"Pleasure",percent:50},{value:"Pain",percent:50},{value:"Reason to remember the name",percent:100}],ne={component:p},r={render:m=>e.createElement(n,{width:"100%",height:500},e.createElement(a,{width:400,height:400},e.createElement(p,{dataKey:"percent",...m}),e.createElement(s,null),e.createElement(c,null))),args:{cx:"50%",cy:"50%",data:l,dataKey:"percent",nameKey:"value",fill:"#8884d8",innerRadius:60,outerRadius:80,label:!0}};var t,o,i;r.parameters={...r.parameters,docs:{...(t=r.parameters)==null?void 0:t.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <PieChart width={400} height={400}>
+          <Pie dataKey="percent" {...args} />
+          <Legend />
+          <RechartsHookInspector />
+        </PieChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    cx: '50%',
+    cy: '50%',
+    data,
+    dataKey: 'percent',
+    nameKey: 'value',
+    fill: '#8884d8',
+    innerRadius: 60,
+    outerRadius: 80,
+    label: true
+  }
+}`,...(i=(o=r.parameters)==null?void 0:o.docs)==null?void 0:i.source}}};const se=["PieWithLegend"];export{r as PieWithLegend,se as __namedExportsOrder,ne as default};
