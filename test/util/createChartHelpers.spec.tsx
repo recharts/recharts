@@ -2,15 +2,30 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 import {
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  ComposedChart,
   createCentricChart,
   createHorizontalChart,
   createRadialChart,
   createVerticalChart,
+  Funnel,
+  FunnelChart,
+  Line,
+  LineChart,
   Pie,
+  PieChart,
+  Radar,
+  RadarChart,
   RadialBar,
+  RadialBarChart,
+  Scatter,
+  ScatterChart,
   Tooltip,
   XAxis,
+  YAxis,
 } from '../../src';
 import { selectChartLayout } from '../../src/context/chartLayoutContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -23,6 +38,82 @@ const data: ReadonlyArray<ExampleDataPoint> = [
 
 describe('Chart Helpers', () => {
   describe('createHorizontalChart', () => {
+    it('should return the same component references at runtime, but no others', () => {
+      const components = createHorizontalChart<ExampleDataPoint, string, number>()({
+        AreaChart,
+        Area,
+        XAxis,
+        YAxis,
+      });
+      expect(components.AreaChart).toBeDefined();
+      expect(components.Area).toBe(Area);
+      expect(components.XAxis).toBe(XAxis);
+      expect(components.YAxis).toBe(YAxis);
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Bar).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Scatter).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Line).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Pie).toBeUndefined();
+      // on the other hand, all the chart elements should be available even if not provided, since they are all aliases to the same component anyway
+      expect(components.BarChart).toBeDefined();
+      expect(components.ComposedChart).toBeDefined();
+      expect(components.LineChart).toBeDefined();
+      expect(components.ScatterChart).toBeDefined();
+      // @ts-expect-error except! Funnel chart. Funnels in Recharts are only vertical, so the FunnelChart component should not be included in the returned object since it cannot be used in a horizontal chart
+      expect(components.FunnelChart).toBeUndefined();
+    });
+
+    it('should accept all supported cartesian chart components except Funnel and FunnelChart', () => {
+      const components = createHorizontalChart<ExampleDataPoint, string, number>()({
+        AreaChart,
+        BarChart,
+        ComposedChart,
+        LineChart,
+        ScatterChart,
+        Area,
+        Bar,
+        Line,
+        Scatter,
+        XAxis,
+        YAxis,
+      });
+
+      expect(components.AreaChart).toBeDefined();
+      expect(components.BarChart).toBe(BarChart);
+      expect(components.ComposedChart).toBe(ComposedChart);
+      expect(components.LineChart).toBe(LineChart);
+      expect(components.ScatterChart).toBe(ScatterChart);
+      expect(components.Area).toBe(Area);
+      expect(components.Bar).toBe(Bar);
+      expect(components.Line).toBe(Line);
+      expect(components.Scatter).toBe(Scatter);
+      expect(components.XAxis).toBe(XAxis);
+      expect(components.YAxis).toBe(YAxis);
+    });
+
+    it('should not accept FunnelChart because funnels can only be vertical', () => {
+      // @ts-expect-error FunnelChart should not be accepted in a horizontal chart since funnels can only be vertical
+      const components = createHorizontalChart<ExampleDataPoint, string, number>()({
+        FunnelChart,
+      });
+
+      // @ts-expect-error FunnelChart should not be accepted in a horizontal chart since funnels can only be vertical
+      expect(components.FunnelChart).toBeDefined();
+    });
+
+    it('should not accept Funnel because funnels can only be vertical', () => {
+      // @ts-expect-error Funnel should not be accepted in a horizontal chart since funnels can only be vertical
+      const components = createHorizontalChart<ExampleDataPoint, string, number>()({
+        Funnel,
+      });
+
+      // @ts-expect-error Funnel should not be accepted in a horizontal chart since funnels can only be vertical
+      expect(components.Funnel).toBeDefined();
+    });
+
     it('should set layout to horizontal and prevent overriding', () => {
       const Typed = createHorizontalChart<ExampleDataPoint, string, number>()({
         Area,
@@ -80,6 +171,31 @@ describe('Chart Helpers', () => {
   });
 
   describe('createVerticalChart', () => {
+    it('should include all chart components, PLUS FunnelChart because funnels can only be vertical', () => {
+      const components = createVerticalChart<ExampleDataPoint, number, string>()({
+        Area,
+        Funnel,
+      });
+      expect(components.AreaChart).toBeDefined();
+      expect(components.BarChart).toBeDefined();
+      expect(components.ComposedChart).toBeDefined();
+      expect(components.FunnelChart).toBeDefined();
+      expect(components.LineChart).toBeDefined();
+      expect(components.ScatterChart).toBeDefined();
+      expect(components.Area).toBe(Area);
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Bar).toBeUndefined();
+      expect(components.Funnel).toBe(Funnel);
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Line).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.Scatter).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.XAxis).toBeUndefined();
+      // @ts-expect-error Only the provided components should be available on the returned object
+      expect(components.YAxis).toBeUndefined();
+    });
+
     it('should set layout to vertical and prevent overriding', () => {
       const Typed = createVerticalChart<ExampleDataPoint, number, string>()({
         Area,
@@ -107,16 +223,36 @@ describe('Chart Helpers', () => {
   });
 
   describe('createCentricChart', () => {
+    it('should not accept RadialBar, RadialBarChart, Pie, or PieChart as they are radial only', () => {
+      // @ts-expect-error RadialBar should not be accepted in a centric chart
+      const components1 = createCentricChart<ExampleDataPoint, string, number>()({ RadialBar });
+      // @ts-expect-error RadialBarChart should not be accepted
+      const components2 = createCentricChart<ExampleDataPoint, string, number>()({ RadialBarChart });
+      // @ts-expect-error Pie should not be accepted
+      const components3 = createCentricChart<ExampleDataPoint, string, number>()({ Pie });
+      // @ts-expect-error PieChart should not be accepted
+      const components4 = createCentricChart<ExampleDataPoint, string, number>()({ PieChart });
+
+      // @ts-expect-error natively omitted type
+      expect(components1.RadialBar).toBeDefined();
+      // @ts-expect-error natively omitted type
+      expect(components2.RadialBarChart).toBeDefined();
+      // @ts-expect-error natively omitted type
+      expect(components3.Pie).toBeDefined();
+      // @ts-expect-error natively omitted type
+      expect(components4.PieChart).toBeDefined();
+    });
+
     it('should set layout to centric and prevent overriding', () => {
       const Typed = createCentricChart<ExampleDataPoint, string, number>()({
-        Pie,
+        Radar,
       });
 
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <Typed.PieChart data={data} width={400} height={400}>
-          <Typed.Pie dataKey="value" isAnimationActive={false} />
+        <Typed.RadarChart data={data} width={400} height={400}>
+          <Typed.Radar dataKey="value" isAnimationActive={false} />
           {children}
-        </Typed.PieChart>
+        </Typed.RadarChart>
       ));
 
       const { spy } = renderTestCase(selectChartLayout);
@@ -125,9 +261,9 @@ describe('Chart Helpers', () => {
 
       const invalidLayoutChart = (
         // @ts-expect-error layout should be omitted and enforced by the wrapper
-        <Typed.PieChart layout="horizontal" data={data} width={400} height={400}>
-          <Typed.Pie dataKey="value" isAnimationActive={false} />
-        </Typed.PieChart>
+        <Typed.RadarChart layout="horizontal" data={data} width={400} height={400}>
+          <Typed.Radar dataKey="value" isAnimationActive={false} />
+        </Typed.RadarChart>
       );
 
       expect(invalidLayoutChart).toBeDefined();
@@ -135,6 +271,18 @@ describe('Chart Helpers', () => {
   });
 
   describe('createRadialChart', () => {
+    it('should not accept Radar or RadarChart as they are centric only', () => {
+      // @ts-expect-error Radar should not be accepted in a radial chart
+      const components1 = createRadialChart<ExampleDataPoint, string, number>()({ Radar });
+      // @ts-expect-error RadarChart should not be accepted
+      const components2 = createRadialChart<ExampleDataPoint, string, number>()({ RadarChart });
+
+      // @ts-expect-error natively omitted type
+      expect(components1.Radar).toBeDefined();
+      // @ts-expect-error natively omitted type
+      expect(components2.RadarChart).toBeDefined();
+    });
+
     it('should set layout to radial and prevent overriding', () => {
       const Typed = createRadialChart<ExampleDataPoint, string, number>()({
         RadialBar,
