@@ -1,3 +1,30 @@
+const flatTreemapData = [
+  { name: 'Axis', size: 24593 },
+  { name: 'Data', size: 20544 },
+  { name: 'Legend', size: 20859 },
+  { name: 'NodeSprite', size: 19382 },
+  { name: 'DataList', size: 19788 },
+  { name: 'NodeLinkTreeLayout', size: 12870 },
+  { name: 'CirclePackingLayout', size: 12003 },
+  { name: 'RadialTreeLayout', size: 12348 },
+  { name: 'ScaleBinding', size: 11275 },
+  { name: 'DataSprite', size: 10349 },
+  { name: 'LegendRange', size: 10530 },
+  { name: 'Labeler', size: 9956 },
+  { name: 'TreeBuilder', size: 9930 },
+  { name: 'TreeMapLayout', size: 9191 },
+  { name: 'CircleLayout', size: 9317 },
+  { name: 'StackedAreaLayout', size: 9121 },
+  { name: 'TooltipControl', size: 8435 },
+  { name: 'ForceDirectedLayout', size: 8411 },
+  { name: 'SelectionControl', size: 7862 },
+  { name: 'Layout', size: 7881 },
+  { name: 'DataEvent', size: 7313 },
+  { name: 'Tree', size: 7147 },
+  { name: 'SelectionEvent', size: 6880 },
+  { name: 'CartesianAxes', size: 6703 },
+];
+
 const sizeData = [
   {
     name: 'analytics',
@@ -156,4 +183,4 @@ const treemapData = [
   },
 ];
 
-export { sizeData, treemapData };
+export { flatTreemapData, sizeData, treemapData };
