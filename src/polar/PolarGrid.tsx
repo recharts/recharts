@@ -59,6 +59,8 @@ interface PolarGridProps extends ZIndexable {
    */
   gridType?: 'polygon' | 'circle';
   /**
+   * Whether to display the radial lines that connect the center to the outer edge at each angle.
+   * When set to false, only the concentric grid lines (circles or polygons) are rendered.
    * @defaultValue true
    */
   radialLines?: boolean;
