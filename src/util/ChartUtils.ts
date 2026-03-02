@@ -244,7 +244,8 @@ export const getTicksOfAxis = (
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-  if (isCategorical && categoricalDomain) {
+  // For type='number' with niceTicks available, skip this branch so ticks are evenly spaced (GitHub issue #4271)
+  if (isCategorical && categoricalDomain && !(type === 'number' && niceTicks)) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
         const scaled = scale.map(entry);

@@ -1910,8 +1910,10 @@ export const combineAxisTicks = (
       .filter(isNotNil);
   }
 
-  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-  if (isCategorical && categoricalDomain) {
+  // When axis is a categorical axis, but the type of axis is not number and scale is not "auto"
+  // For type='number' with linear scale (where niceTicks are available), skip this branch
+  // so ticks are evenly spaced instead of placed at data positions (GitHub issue #4271)
+  if (isCategorical && categoricalDomain && !(type === 'number' && niceTicks)) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
         const scaled = scale.map(entry);
