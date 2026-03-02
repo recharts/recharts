@@ -40,7 +40,7 @@ import {
   CategoricalDomain,
   CategoricalDomainItem,
   Coordinate,
-  D3ScaleType,
+  RechartsScaleType,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -95,10 +95,8 @@ import { combineRealScaleType } from './combiners/combineRealScaleType';
 import { combineConfiguredScale } from './combiners/combineConfiguredScale';
 import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 
-export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => D3ScaleType | undefined = createSelector(
-  [selectTooltipAxis, selectHasBar, selectChartName],
-  combineRealScaleType,
-);
+export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => RechartsScaleType | undefined =
+  createSelector([selectTooltipAxis, selectHasBar, selectChartName], combineRealScaleType);
 
 export const selectAllUnfilteredGraphicalItems: (
   state: RechartsRootState,

@@ -8,7 +8,7 @@ import { CategoricalDomainItem } from '../types';
  * Specifically we want to avoid all the setters
  * - immutable API is preferred in Recharts and mutating state will lead to hard-to-debug issues.
  *
- * @see {@link ScaleType} and {@link D3ScaleType} for string shortcuts that you can use instead of this interface.
+ * @see {@link ScaleType} and {@link RechartsScaleType} for string shortcuts that you can use instead of this interface.
  */
 export interface CustomScaleDefinition<Domain extends CategoricalDomainItem = CategoricalDomainItem> {
   /**

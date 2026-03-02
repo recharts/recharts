@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { test, expect } from './fixtures';
 import IndexLineChart from '../../../www/src/views/IndexView/IndexLineChart';
 
 test('Index Line Chart', async ({ mount }) => {

@@ -2,8 +2,8 @@ import { describe } from 'vitest';
 import Decimal from 'decimal.js-light';
 import {
   calculateStep,
-  getFormatStep,
-  getFormatStepNice,
+  getAdaptiveStep,
+  getSnap125Step,
   getNiceTickValues,
   getTickOfSingleValue,
   getTickValuesFixedDomain,
@@ -19,34 +19,34 @@ describe('getNiceTickValues', () => {
     });
   });
 
-  describe('getFormatStep', () => {
+  describe('getAdaptiveStep', () => {
     it('should return 0 when roughStep is less than 0', () => {
       const roughStep = new Decimal(-0.5);
-      const formattedStep = getFormatStep(roughStep, true, 0);
+      const formattedStep = getAdaptiveStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0);
     });
 
     it('should return correct step', () => {
       const roughStep = new Decimal(0.5);
-      const formattedStep = getFormatStep(roughStep, true, 0);
+      const formattedStep = getAdaptiveStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0.5);
     });
 
     it('should return bigger step for bigger numbers', () => {
       const roughStep = new Decimal(3.45687e9);
-      const formattedStep = getFormatStep(roughStep, true, 0);
+      const formattedStep = getAdaptiveStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(3.5e9);
     });
 
     it('should return smaller step for small numbers', () => {
       const roughStep = new Decimal(9.6341e-9);
-      const formattedStep = getFormatStep(roughStep, true, 0);
+      const formattedStep = getAdaptiveStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(1e-8);
     });
 
     it('should return correct step without decimals', () => {
       const roughStep = new Decimal(0.5);
-      const formattedStep = getFormatStep(roughStep, false, 0);
+      const formattedStep = getAdaptiveStep(roughStep, false, 0);
       expect(formattedStep.toNumber()).toBe(1);
     });
   });
@@ -283,124 +283,136 @@ describe('getNiceTickValues', () => {
     });
   });
 
-  describe('getFormatStepNice', () => {
+  describe('getSnap125Step', () => {
     it('should return 0 when roughStep is less than 0', () => {
       const roughStep = new Decimal(-0.5);
-      const formattedStep = getFormatStepNice(roughStep, true, 0);
+      const formattedStep = getSnap125Step(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0);
     });
 
     it('should snap to the nearest nice number', () => {
       const roughStep = new Decimal(3.5);
-      const formattedStep = getFormatStepNice(roughStep, true, 0);
+      const formattedStep = getSnap125Step(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(5);
     });
 
     it('should return 0.25 for roughStep of 0.25', () => {
-      const formattedStep = getFormatStepNice(new Decimal(0.25), true, 0);
+      const formattedStep = getSnap125Step(new Decimal(0.25), true, 0);
       expect(formattedStep.toNumber()).toBe(0.25);
     });
 
     it('should return 0.5 for roughStep of 0.5', () => {
-      const formattedStep = getFormatStepNice(new Decimal(0.5), true, 0);
+      const formattedStep = getSnap125Step(new Decimal(0.5), true, 0);
       expect(formattedStep.toNumber()).toBe(0.5);
     });
 
     it('should snap up to next order of magnitude when normalized > 5', () => {
-      const formattedStep = getFormatStepNice(new Decimal(7.3), true, 0);
+      const formattedStep = getSnap125Step(new Decimal(7.3), true, 0);
       expect(formattedStep.toNumber()).toBe(10);
     });
 
     it('should return bigger step for bigger numbers', () => {
       const roughStep = new Decimal(3.45687e9);
-      const formattedStep = getFormatStepNice(roughStep, true, 0);
+      const formattedStep = getSnap125Step(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(5e9);
     });
 
     it('should return smaller step for small numbers', () => {
       const roughStep = new Decimal(9.6341e-9);
-      const formattedStep = getFormatStepNice(roughStep, true, 0);
+      const formattedStep = getSnap125Step(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(1e-8);
     });
 
     it('should return correct step without decimals', () => {
       const roughStep = new Decimal(0.5);
-      const formattedStep = getFormatStepNice(roughStep, false, 0);
+      const formattedStep = getSnap125Step(roughStep, false, 0);
       expect(formattedStep.toNumber()).toBe(1);
     });
   });
 
-  describe('getNiceTickValues with niceTicks=true', () => {
+  describe("getNiceTickValues with niceTicks='snap125'", () => {
     it('should produce nicer ticks for [0, 14], 5 (step of 5 instead of 4)', () => {
-      const scales = getNiceTickValues([0, 14], 5, true, true);
+      const scales = getNiceTickValues([0, 14], 5, true, 'snap125');
       expect(scales).toEqual([0, 5, 10, 15, 20]);
     });
 
     it('should return correct ticks with [0, 1], 5', () => {
-      const scales = getNiceTickValues([0, 1], 5, true, true);
+      const scales = getNiceTickValues([0, 1], 5, true, 'snap125');
       expect(scales).toEqual([0, 0.25, 0.5, 0.75, 1]);
     });
 
     it('should produce nice ticks for [-5, 95], 7', () => {
-      const scales = getNiceTickValues([-5, 95], 7, true, true);
+      const scales = getNiceTickValues([-5, 95], 7, true, 'snap125');
       expect(scales).toEqual([-20, 0, 20, 40, 60, 80, 100]);
     });
 
     it('should produce nice ticks for negative ranges [-105, -25], 6', () => {
-      const scales = getNiceTickValues([-105, -25], 6, true, true);
+      const scales = getNiceTickValues([-105, -25], 6, true, 'snap125');
       expect(scales).toEqual([-120, -100, -80, -60, -40, -20]);
     });
 
     it('should produce nice ticks when min > max (reversed) [67, 5], 5', () => {
-      const scales = getNiceTickValues([67, 5], 5, true, true);
+      const scales = getNiceTickValues([67, 5], 5, true, 'snap125');
       expect(scales).toEqual([80, 60, 40, 20, 0]);
     });
 
     it('should return correct ticks with small range [1, 5], 5', () => {
-      const scales = getNiceTickValues([1, 5], 5, true, true);
+      const scales = getNiceTickValues([1, 5], 5, true, 'snap125');
       expect(scales).toEqual([1, 2, 3, 4, 5]);
     });
 
     it('should produce nicer integer ticks for float range [39.9156, 42.5401], 5', () => {
-      const scales = getNiceTickValues([39.9156, 42.5401], 5, true, true);
+      const scales = getNiceTickValues([39.9156, 42.5401], 5, true, 'snap125');
       expect(scales).toEqual([39, 40, 41, 42, 43]);
     });
 
     it('should produce nicer integer ticks for negative-to-positive float range [-4.10389, 0.59414], 7', () => {
-      const scales = getNiceTickValues([-4.10389, 0.59414], 7, true, true);
+      const scales = getNiceTickValues([-4.10389, 0.59414], 7, true, 'snap125');
       expect(scales).toEqual([-5, -4, -3, -2, -1, 0, 1]);
     });
 
     it('should produce nice ticks for very small values [0, 0.000013202017268238587], 5', () => {
-      const scales = getNiceTickValues([0, 0.000013202017268238587], 5, true, true);
+      const scales = getNiceTickValues([0, 0.000013202017268238587], 5, true, 'snap125');
       expect(scales).toEqual([0, 0.000005, 0.00001, 0.000015, 0.00002]);
     });
 
     it('should handle very large numbers [0, 1e100], 6', () => {
-      const scales = getNiceTickValues([0, 1e100], 6, true, true);
+      const scales = getNiceTickValues([0, 1e100], 6, true, 'snap125');
       expect(scales).toEqual([0, 2e99, 4e99, 6e99, 8e99, 1e100]);
     });
   });
 
-  describe('getTickValuesFixedDomain with niceTicks=true', () => {
+  describe("getTickValuesFixedDomain with niceTicks='snap125'", () => {
     it('should produce nice step ticks constrained to domain [0, 14], 5', () => {
-      const scales = getTickValuesFixedDomain([0, 14], 5, true, true);
+      const scales = getTickValuesFixedDomain([0, 14], 5, true, 'snap125');
       expect(scales).toEqual([0, 5, 10, 14]);
     });
 
     it('should return correct ticks with [0, 1], 5', () => {
-      const scales = getTickValuesFixedDomain([0, 1], 5, true, true);
+      const scales = getTickValuesFixedDomain([0, 1], 5, true, 'snap125');
       expect(scales).toEqual([0, 0.25, 0.5, 0.75, 1]);
     });
 
     it('should produce nice step ticks constrained to domain [-5, 95], 7', () => {
-      const scales = getTickValuesFixedDomain([-5, 95], 7, true, true);
+      const scales = getTickValuesFixedDomain([-5, 95], 7, true, 'snap125');
       expect(scales).toEqual([-5, 15, 35, 55, 75, 95]);
     });
 
     it('should produce nice round step ticks for [0, 100], 6', () => {
-      const scales = getTickValuesFixedDomain([0, 100], 6, true, true);
+      const scales = getTickValuesFixedDomain([0, 100], 6, true, 'snap125');
       expect(scales).toEqual([0, 20, 40, 60, 80, 100]);
+    });
+
+    it('should produce stable ticks for log-like positive domains', () => {
+      const scales = getTickValuesFixedDomain([1, 1000], 5, true, 'snap125');
+      expect(scales).toEqual([1, 251, 501, 751, 1000]);
+    });
+  });
+
+  describe("getNiceTickValues with niceTicks='snap125' for symlog-like domains", () => {
+    it('should include zero when domain spans negative and positive values', () => {
+      const scales = getNiceTickValues([-1000, 1000], 5, true, 'snap125');
+      expect(scales).toEqual([-1000, -500, 0, 500, 1000]);
     });
   });
 });

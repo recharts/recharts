@@ -43,6 +43,7 @@ export const map = {
     sizes: '图表尺寸',
     zIndex: 'Z-Index 和图层',
     domainAndTicks: '定义域与刻度',
+    axisTicks: '轴刻度',
     performance: '性能优化',
     roundedBars: '圆角柱状图',
     barAlignment: '柱子对齐方式',

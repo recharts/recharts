@@ -23,6 +23,7 @@ import {
   BaseTickContentProps,
 } from '../util/types';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
+import { NiceTicksAlgorithm } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -168,13 +169,13 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
    */
   allowDecimals?: boolean;
   /**
-   * When true, uses an improved tick step algorithm that snaps to nice numbers
-   * (1, 2, 2.5, 5) at each order of magnitude, producing human-friendly tick
-   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   * Controls how Recharts calculates "nice" tick values for this axis.
+   * Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
-   * @defaultValue false
+   * @defaultValue 'auto'
    */
-  niceTicks?: boolean;
+  niceTicks?: NiceTicksAlgorithm;
   /**
    * @defaultValue 0
    */
@@ -435,7 +436,7 @@ export function PolarRadiusAxis<DataPointType = any, DataValueType = any>(
         reversed={props.reversed}
         includeHidden={props.includeHidden}
         allowDecimals={props.allowDecimals}
-        niceTicks={props.niceTicks ?? false}
+        niceTicks={props.niceTicks ?? 'auto'}
         // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
         ticks={props.ticks}
         tickCount={props.tickCount}

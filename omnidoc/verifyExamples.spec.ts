@@ -159,6 +159,7 @@ describe('Documentation Examples Coverage', () => {
     'YAxisOrientation',
     'XAxisPadding',
     'YAxisPadding',
+    'NiceTicks',
     'CartesianTickItem',
     'TextAnchor',
     'TooltipItemSorter',
@@ -187,6 +188,7 @@ describe('Documentation Examples Coverage', () => {
     'NoRadial',
     'NoFunnel',
     'NoCentric',
+    'NiceTicksAlgorithm',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

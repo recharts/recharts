@@ -43,6 +43,7 @@ export const map = {
     sizes: 'Chart size',
     zIndex: 'Z-Index and layers',
     domainAndTicks: 'Domain and Ticks',
+    axisTicks: 'Axis ticks',
     performance: 'Performance',
     roundedBars: 'Rounded Bar corners',
     barAlignment: 'Bar Alignment',

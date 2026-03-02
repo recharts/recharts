@@ -779,7 +779,7 @@ describe('AreaChart', () => {
     });
   });
 
-  test('Renders null points as 0 if stacked and connectNulls is true', () => {
+  test('connects nulls correctly when connectNulls is true and chart is stacked', () => {
     const dataWithNullPV = [
       { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
       { name: 'Page B', uv: 300, amt: 2400 },
@@ -800,26 +800,30 @@ describe('AreaChart', () => {
         d: 'M5,42.333C20,42.667,35,43,50,43C65,43,80,43,95,43',
       },
       {
-        d: 'M5,26.333C20,34.667,35,43,50,43C65,43,80,38.34,95,33.68',
+        d: 'M5,26.333L95,33.68',
       },
       {
         d: 'M5,10.333C20,18.667,35,27,50,27C65,27,80,22.34,95,17.68',
       },
     ]);
 
-    [uv, pv].forEach(path => {
+    const getCommands = (path: Element) => {
       const d = path.getAttribute('d');
       assertNotNull(d);
-      const matchAll = d.matchAll(/[a-zA-Z][\d ,.]+/g);
-      const commands = [...matchAll];
-      expect(commands).toHaveLength(3);
-      const [pageB] = commands[1];
-      expect(pageB[0]).toBe('C');
-      const [x, y] = pageB.slice(1).split(',').slice(4);
-      // Page B is missing pv, so it should be treated as 0.
-      // Since areas are stacked, pv should go to same point as uv.
-      expect([x, y]).toEqual(['50', '43']);
-    });
+      return [...d.matchAll(/[a-zA-Z][\d ,.]+/g)];
+    };
+
+    const uvCommands = getCommands(uv);
+    expect(uvCommands).toHaveLength(3);
+    expect(uvCommands[1][0][0]).toBe('C');
+    // For uv, the second point has x=50, y=43
+    const uvCoords = uvCommands[1][0].slice(1).split(',').slice(4);
+    expect(uvCoords).toEqual(['50', '43']);
+
+    const pvCommands = getCommands(pv);
+    expect(pvCommands).toHaveLength(2);
+    expect(pvCommands[1][0][0]).toBe('L');
+    expect(pvCommands[1][0].slice(1)).toBe('95,33.68');
   });
 
   test('Renders two active dots for ranged Area chart on hover', () => {

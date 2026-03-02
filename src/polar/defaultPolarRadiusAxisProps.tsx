@@ -9,7 +9,7 @@ export const defaultPolarRadiusAxisProps = {
   axisLine: true,
   includeHidden: false,
   hide: false,
-  niceTicks: false,
+  niceTicks: 'auto',
   label: false,
   orientation: 'right',
   radiusAxisId: 0,
