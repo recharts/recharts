@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="application" tabindex="0" class="recharts-surface" width="200" height="60"
+     viewBox="0 0 200 60">
+  <style type="text/css"><![CDATA[
+    .recharts-text {
+    font-family: 'Roboto Mono', Consolas, 'Liberation Mono', 'Courier New', Courier, monospace;
+    font-weight: 300;
+    font-size: 18px;
+    white-space: nowrap;
+    fill: #1074b6;
+    }
+  ]]></style>
+  <defs>
+    <clipPath id="recharts3-clip">
+      <rect x="5" y="5" height="50" width="190" />
+    </clipPath>
+  </defs>
+  <g class="recharts-layer recharts-line">
+    <path stroke-width="1.5" stroke="#1074b6" fill="none" id="recharts-line-:r2:"
+          class="recharts-curve recharts-line-curve"
+          d="M5,30L14.5,25" />
+  </g>
+  <g class="recharts-layer recharts-line">
+    <path stroke-width="1.5" stroke="#1074b6" fill="none" id="recharts-line-:r3:"
+          class="recharts-curve recharts-line-curve"
+          d="M5,30L14.5,35" />
+  </g>
+  <g class="recharts-layer recharts-line">
+    <path stroke-width="1.5" stroke="#1074b6" fill="none" id="recharts-line-:r4:"
+          class="recharts-curve recharts-line-curve" stroke-dasharray="17.755281448364258px 0px"
+          d="M114.25,37.5L123.75,22.5" />
+  </g>
+  <g class="recharts-layer recharts-line">
+    <path stroke-width="1.5" stroke="#1074b6" fill="none" id="recharts-line-:r5:"
+          class="recharts-curve recharts-line-curve"
+          d="M128.5,25L138,30" />
+  </g>
+  <g class="recharts-layer recharts-line">
+    <path stroke-width="1.5" stroke="#1074b6" fill="none" id="recharts-line-:r6:"
+          class="recharts-curve recharts-line-curve"
+          d="M128.5,35L138,30" />
+  </g>
+  <text x="18" y="30" class="recharts-text recharts-label" text-anchor="start">
+    <tspan x="18" dy="0.355em">Recharts</tspan>
+  </text>
+</svg>
