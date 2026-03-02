@@ -1,0 +1,155 @@
+import{e}from"./iframe-DtsdDKdZ.js";import{P as S}from"./_data-CE1j0ret.js";import{L as c}from"./LineChart-BvPHy9kI.js";import{R as i}from"./arrayEqualityCheck-Droc7dSW.js";import{A as T}from"./AreaChart-DXsyvLZy.js";import{C as g}from"./CartesianGrid-E5AGxnFR.js";import{X as m}from"./XAxis-BoqN_M_f.js";import{Y as s}from"./YAxis-Ca_gtZCr.js";import{A as I}from"./Area-s0Qadzz_.js";import{B as h}from"./Brush-CjckprjV.js";import{T as a}from"./Tooltip-BGursgnW.js";import{R as L}from"./RechartsHookInspector-BlgcmNAN.js";import{B as M}from"./BarChart-Cz34xBUq.js";import{B as G}from"./Bar-Btp23MlU.js";import{L as u}from"./Line-B8-iHccE.js";import{a as X,P as Y}from"./PieChart-4VxjquGZ.js";import{R as W}from"./RadarChart-Bp5HrzTc.js";import{P as E}from"./PolarGrid-_vnLGIVv.js";import{P as f}from"./PolarRadiusAxis-CZrvdI03.js";import{P as x}from"./PolarAngleAxis-CIJE94y0.js";import{R as H}from"./Radar-B4MoD540.js";import{R as O}from"./RadialBarChart-CrSirzQO.js";import{R as _}from"./RadialBar-Bqn2HEOT.js";import"./preload-helper-Dp1pzeXC.js";import"./RechartsWrapper-BHAf4vKZ.js";import"./index-C-dV99_B.js";import"./immer-Cl4pjRPT.js";import"./hooks-BeulUkkW.js";import"./axisSelectors-DFbwRFUO.js";import"./d3-scale-C3JQrokV.js";import"./zIndexSlice-C9mn4FBr.js";import"./renderedTicksSlice-DiHGExst.js";import"./clsx-B-dksMZM.js";import"./PolarUtils-CTnnDHZv.js";import"./CartesianChart-dUJOPO3Y.js";import"./chartDataContext-BYoNMw3_.js";import"./CategoricalChart-G5xMZxW2.js";import"./resolveDefaultProps-CYphw90L.js";import"./CartesianAxis-XgYIScCi.js";import"./Layer-SH7Pqpr5.js";import"./Text-DywitbW7.js";import"./DOMUtils-_7Ng8zPY.js";import"./Label-DA1oiymG.js";import"./ZIndexLayer-DBoKoGoH.js";import"./types-8PVRu1dQ.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./Curve-DR4nUNk7.js";import"./step-BAMUjg0M.js";import"./ReactUtils-D2snZVWC.js";import"./ActivePoints-BpXmKIch.js";import"./Dot-W3eXNr9t.js";import"./RegisterGraphicalItemId-CUTcSbcF.js";import"./GraphicalItemClipPath-BnsyXWl3.js";import"./SetGraphicalItem-B8wIveBb.js";import"./useAnimationId-BeYERtYV.js";import"./getRadiusAndStrokeWidthFromDot-Fg5nPjko.js";import"./graphicalItemSelectors-DjSkvU14.js";import"./useElementOffset-Cb5MxjJe.js";import"./uniqBy-jMwGgNZk.js";import"./iteratee-Bs43YSd1.js";import"./Cross-qdeQRJDU.js";import"./Rectangle-Bs14o4jp.js";import"./Sector-BvQTjcKL.js";import"./index-txaMAxKK.js";import"./ChartSizeDimensions-RUaYI8h3.js";import"./OffsetShower-Cc_Brw8F.js";import"./PlotAreaShower-Ch2pfbhA.js";import"./tooltipContext-DsgXlwBL.js";import"./tiny-invariant-CopsF_GD.js";import"./ActiveShapeUtils-DTqZq5h0.js";import"./isPlainObject-PKiGLw7x.js";import"./isPlainObject-BSutPv-K.js";import"./Trapezoid-CfylSPEx.js";import"./Symbols-Ct3soTwA.js";import"./symbol-Biu6vDdW.js";import"./ErrorBarContext-BXVMNut-.js";import"./getZIndexFromUnknown-TfBFkrNM.js";import"./polarSelectors-CvZKUwMO.js";import"./PolarChart-BuBDmkZI.js";import"./polarScaleSelectors-DRGWGE3X.js";import"./maxBy-CjgHvZkV.js";import"./Polygon-ZY3WVAQ3.js";import"./last-girR2Bcc.js";const F={syncId:{control:"text"},syncMethod:{control:{type:"radio"},options:["index","value","custom"],mapping:{custom:function(o,y){return(y.activeTooltipIndex+1)%o.length}}}},At={argTypes:F,component:c,decorators:[]};function d(t,o){return[...t.slice(o),...t.slice(0,o)]}const n=S,j=d(n,1),q=d(n,2),z=d(n,3),J=d(n,4),N=d(n,5),C="#82ca9d",K="#8884d8",k="#2c5097",Q="#d71e1e",R="#ff7300",v="#dd4a98",p={render:t=>e.createElement(e.Fragment,null,e.createElement(i,{width:"100%",height:200},e.createElement(T,{width:500,height:200,data:n,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(g,{strokeDasharray:"3 3"}),e.createElement(m,{dataKey:"name"}),e.createElement(s,null),e.createElement(I,{type:"monotone",dataKey:"uv",stroke:C,fill:C}),e.createElement(h,null),e.createElement(a,null),e.createElement(L,null))),e.createElement(i,{width:"100%",height:200},e.createElement(M,{width:500,height:200,data:j,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(g,{strokeDasharray:"3 3"}),e.createElement(m,{dataKey:"name"}),e.createElement(s,null),e.createElement(a,null),e.createElement(G,{dataKey:"pv",stroke:K,fill:K}),e.createElement(h,null))),e.createElement("p",null,"Maybe some other content"),e.createElement(i,{width:"100%",height:200},e.createElement(c,{width:500,height:200,data:q,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(g,{strokeDasharray:"3 3"}),e.createElement(m,{dataKey:"name"}),e.createElement(s,null),e.createElement(u,{type:"monotone",dataKey:"uv",stroke:k,fill:k}),e.createElement(h,null),e.createElement(a,null))),e.createElement(i,{width:"100%",height:200},e.createElement(X,{width:500,height:200,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(Y,{data:z,dataKey:"pv",fill:Q}),e.createElement(a,null))),e.createElement(i,{width:"100%",height:200},e.createElement(W,{width:500,height:200,data:J,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(E,{strokeDasharray:"3 3"}),e.createElement(f,{dataKey:"uv",type:"number"}),e.createElement(x,{dataKey:"name",type:"category"}),e.createElement(H,{dataKey:"uv",stroke:R,fill:R}),e.createElement(a,null))),e.createElement(i,{width:"100%",height:200},e.createElement(O,{width:500,height:200,data:N,...t,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(E,{strokeDasharray:"3 3"}),e.createElement(f,{dataKey:"name",type:"category"}),e.createElement(x,{dataKey:"pv",type:"number"}),e.createElement(_,{dataKey:"pv",stroke:v,fill:v}),e.createElement(a,null)))),args:{syncMethod:"index",syncId:"my-sync-id"}},l={render:t=>{const o=[{name:"Series 1",data:[{x:0,y:0},{x:1,y:1},{x:2,y:2}]}],y=[{name:"Series 1",data:[{x:1,y:0},{x:2,y:1},{x:3,y:2}]}];return e.createElement(e.Fragment,null,e.createElement(c,{...t,width:500,height:300},e.createElement(m,{dataKey:"x",type:"number",domain:[0,3]}),e.createElement(s,{dataKey:"y"}),e.createElement(a,{cursor:{stroke:"red"}}),o.map(r=>e.createElement(u,{dataKey:"y",data:r.data,name:r.name,key:r.name})),e.createElement(L,null)),e.createElement(c,{...t,width:500,height:300},e.createElement(m,{dataKey:"x",type:"number",domain:[0,3]}),e.createElement(s,{dataKey:"y"}),e.createElement(a,{cursor:{stroke:"red",strokeWidth:"5px"}}),y.map(r=>e.createElement(u,{dataKey:"y",data:r.data,name:r.name,key:r.name})),e.createElement(h,null)))},args:{syncMethod:"index",syncId:"my-sync-id"}};var A,w,b;p.parameters={...p.parameters,docs:{...(A=p.parameters)==null?void 0:A.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart width={500} height={200} data={data1} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area type="monotone" dataKey="uv" stroke={green} fill={green} />
+            <Brush />
+            <Tooltip />
+            <RechartsHookInspector />
+          </AreaChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart width={500} height={200} data={data2} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="pv" stroke={purple} fill={purple} />
+            <Brush />
+          </BarChart>
+        </ResponsiveContainer>
+        <p>Maybe some other content</p>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart width={500} height={200} data={data3} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Line type="monotone" dataKey="uv" stroke={blue} fill={blue} />
+            <Brush />
+            <Tooltip />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart width={500} height={200} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <Pie data={data4} dataKey="pv" fill={red} />
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <RadarChart width={500} height={200} data={data5} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <PolarGrid strokeDasharray="3 3" />
+            <PolarRadiusAxis dataKey="uv" type="number" />
+            <PolarAngleAxis dataKey="name" type="category" />
+            <Radar dataKey="uv" stroke={orange} fill={orange} />
+            <Tooltip />
+          </RadarChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <RadialBarChart width={500} height={200} data={data6} {...args} margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0
+        }}>
+            <PolarGrid strokeDasharray="3 3" />
+            <PolarRadiusAxis dataKey="name" type="category" />
+            <PolarAngleAxis dataKey="pv" type="number" />
+            <RadialBar dataKey="pv" stroke={pink} fill={pink} />
+            <Tooltip />
+          </RadialBarChart>
+        </ResponsiveContainer>
+      </>;
+  },
+  args: {
+    syncMethod: 'index',
+    syncId: 'my-sync-id'
+  }
+}`,...(b=(w=p.parameters)==null?void 0:w.docs)==null?void 0:b.source}}};var P,B,D;l.parameters={...l.parameters,docs:{...(P=l.parameters)==null?void 0:P.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const series = [{
+      name: 'Series 1',
+      data: [{
+        x: 0,
+        y: 0
+      }, {
+        x: 1,
+        y: 1
+      }, {
+        x: 2,
+        y: 2
+      }]
+    }];
+    const series2 = [{
+      name: 'Series 1',
+      data: [{
+        x: 1,
+        y: 0
+      }, {
+        x: 2,
+        y: 1
+      }, {
+        x: 3,
+        y: 2
+      }]
+    }];
+    return <>
+        <LineChart {...args} width={500} height={300}>
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{
+          stroke: 'red'
+        }} />
+          {series.map(s => <Line dataKey="y" data={s.data} name={s.name} key={s.name} />)}
+          <RechartsHookInspector />
+        </LineChart>
+        <LineChart {...args} width={500} height={300}>
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{
+          stroke: 'red',
+          strokeWidth: '5px'
+        }} />
+          {series2.map(s => <Line dataKey="y" data={s.data} name={s.name} key={s.name} />)}
+          <Brush />
+        </LineChart>
+      </>;
+  },
+  args: {
+    syncMethod: 'index',
+    syncId: 'my-sync-id'
+  }
+}`,...(D=(B=l.parameters)==null?void 0:B.docs)==null?void 0:D.source}}};const wt=["Synchronised","SynchronisedWithDataOnItem"];export{p as Synchronised,l as SynchronisedWithDataOnItem,wt as __namedExportsOrder,At as default};
