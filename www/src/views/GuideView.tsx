@@ -7,6 +7,7 @@ import { RouteComponentProps, withRouter } from '../routes/withRouter.tsx';
 import { ActiveIndex } from '../components/GuideView/ActiveIndex';
 import { ChartSizing } from '../components/GuideView/ChartSizing';
 import { DomainAndTicks } from '../components/GuideView/DomainAndTicks';
+import { AxisTicks } from '../components/GuideView/AxisTicks';
 import { Performance } from '../components/GuideView/Performance';
 import { RoundedBars } from '../components/GuideView/RoundedBars';
 import { BarAlign } from '../components/GuideView/BarAlign';
@@ -18,6 +19,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   customize: Customize,
   activeIndex: ActiveIndex,
   domainAndTicks: DomainAndTicks,
+  axisTicks: AxisTicks,
   sizes: ChartSizing,
   zIndex: ZIndex,
   coordinateSystems: CoordinateSystems,

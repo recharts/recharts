@@ -223,7 +223,7 @@ describe('<XAxis />', () => {
         tickCount: 5,
         type: 'number',
         reversed: false,
-        niceTicks: false,
+        niceTicks: 'auto',
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
       expect(itemDataSpy).toHaveBeenLastCalledWith([]);

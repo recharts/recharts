@@ -81,7 +81,7 @@ describe('time scale', () => {
       </LineChart>,
     );
 
-    expect(scaleTypeSpy).toHaveBeenLastCalledWith('scaleTime');
+    expect(scaleTypeSpy).toHaveBeenLastCalledWith('time');
     expectXAxisTicks(container, [
       {
         textContent: 'Thu, Jul 04, 2019, 00:00:00 Coordinated Universal Time',
