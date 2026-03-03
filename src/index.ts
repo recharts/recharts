@@ -210,3 +210,11 @@ export type {
   HTMLMousePointer,
   HTMLTouchPointer,
 } from './util/types';
+
+export { createHorizontalChart, createVerticalChart } from './util/createCartesianCharts';
+
+export { createCentricChart, createRadialChart } from './util/createPolarCharts';
+
+export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel } from './util/createCartesianCharts';
+
+export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';

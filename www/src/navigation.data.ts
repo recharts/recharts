@@ -11,6 +11,7 @@ export const exampleComponents = Object.values(allExamples).flatMap(({ examples 
 const guidePages = [
   'installation',
   'getting-started',
+  'typescript',
   'customize',
   'activeIndex',
   'sizes',

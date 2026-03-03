@@ -37,6 +37,7 @@ export const map = {
     guide: '教程',
     installation: '安装',
     'getting-started': '起步',
+    typescript: 'TypeScript',
     customize: '组件自定义',
     activeIndex: '活动索引',
     sizes: '图表尺寸',
@@ -71,6 +72,7 @@ export const map = {
     'step-5-desc':
       '例如，你可以通过传入自定义的刻度函数来实现定制化的功能，当然其他的组件也支持类似的功能，比如 Bar 组件也能接收自定义的 shape 组件或者 shape 函数。',
   },
+
   customize: {
     customize: '组件自定义',
     'step-1-title': '1. 组件 Line , Area , Bar , XAxis, YAxis 的 labels 支持自定义',

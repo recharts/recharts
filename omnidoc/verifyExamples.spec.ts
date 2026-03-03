@@ -177,6 +177,17 @@ describe('Documentation Examples Coverage', () => {
     'useXAxisInverseScale',
     'useYAxisInverseScale',
     'useXAxisScale',
+    'createHorizontalChart',
+    'createVerticalChart',
+    'createCentricChart',
+    'createRadialChart',
+    'TypedHorizontalChartContext',
+    'TypedVerticalChartContext',
+    'TypedCentricChartContext',
+    'TypedRadialChartContext',
+    'NoRadial',
+    'NoFunnel',
+    'NoCentric',
     'NiceTicksAlgorithm',
   ];
 
