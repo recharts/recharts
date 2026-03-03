@@ -26,6 +26,7 @@ describe('graphicalItemsSlice', () => {
     zAxisId: 0,
     hide: false,
     barSize: undefined,
+    hasCustomShape: false,
   };
 
   const item2: LineSettings = {

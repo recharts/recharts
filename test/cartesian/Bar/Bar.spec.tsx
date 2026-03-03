@@ -1314,6 +1314,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           barSize: 13,
           minPointSize: 3,
           maxBarSize: 90,
+          hasCustomShape: false,
         },
       ];
       expectLastCalledWith(spy, expected);
@@ -1355,6 +1356,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           barSize: undefined,
           minPointSize: 0,
           maxBarSize: undefined,
+          hasCustomShape: false,
         },
       ];
       expectLastCalledWith(spy, expected);
