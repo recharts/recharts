@@ -14,8 +14,8 @@ npm install # the right Node version can be found in .nvmrc file
 You may also want to enable ESLint and Prettier configuration in your favourite IDE.
 
 ```sh
-$ npm run lint
-$ npm run check-types
+npm run lint
+npm run check-types
 ```
 
 ## Import restrictions
@@ -46,13 +46,13 @@ Most unit tests are in the `test` directory, some others are in `www/test`.
 Run all tests:
 
 ```sh
-$ npm run test
+npm run test
 ```
 
 Run a specific test file:
 
 ```sh
-$ npm run test -- path/to/TestFile.spec.tsx
+npm run test -- path/to/TestFile.spec.tsx
 ```
 
 ## Running mutation tests
@@ -64,7 +64,7 @@ that you want to test. That may take 5-10 minutes to run.
 Mutation tests do not run in CI.
 
 ```sh
-$ npm run test-mutation
+npm run test-mutation
 ```
 
 ## Storybook
@@ -72,7 +72,7 @@ $ npm run test-mutation
 To run the Storybook UI:
 
 ```sh
-$ npm run storybook
+npm run storybook
 ```
 
 and then browse to http://localhost:6006.
@@ -80,7 +80,7 @@ and then browse to http://localhost:6006.
 While the storybook is running:
 
 ```sh
-$ npm run test-storybook
+npm run test-storybook
 ```
 
 ## Run visual regression tests (using playwright)
@@ -98,7 +98,7 @@ This takes two or three minutes to complete.
 You will need to re-build every time you make a change to dependencies in `package.json`.
 
 ```sh
-$ npm run test-vr:prepare
+npm run test-vr:prepare
 ```
 
 ### Run the tests
@@ -106,19 +106,19 @@ $ npm run test-vr:prepare
 Now, the usual loop. Write a new test, run it, fix it, repeat.
 
 ```sh
-$ npm run test-vr
+npm run test-vr
 ```
 
 Alternatively, the UI playwright mode is available as well:
 
 ```sh
-$ npm run test-vr:ui
+npm run test-vr:ui
 ```
 
 If you want to record new snapshots or update the old ones, you can run:
 
 ```sh
-$ npm run test-vr:update
+npm run test-vr:update
 ```
 
 You will see new files created in the `test-vr/__snapshots__` directory, please commit them to the repository!
@@ -141,8 +141,7 @@ You can add a new example and commit it too!
 To run the website locally in dev mode with hot-reloading:
 
 ```sh
-$ cd www
-$ npm run start
+npm run start -w www
 ```
 
 When running locally, the website pulls the Recharts library from the local filesystem.
@@ -150,9 +149,7 @@ When running locally, the website pulls the Recharts library from the local file
 When you make changes to the Recharts source code, you need to re-build it for the changes to be reflected in the website:
 
 ```sh
-$ cd ..
-$ npm run build
-$ cd www
+npm run build
 ```
 
 In production build, the website pulls recharts from npm registry.
@@ -162,7 +159,7 @@ In production build, the website pulls recharts from npm registry.
 You can also use Storybook for manual testing of individual components.
 
 ```sh
-$ npm run storybook
+npm run storybook
 ```
 
 When adding new stories, mind that all stories here are also used for automated visual regression tests,
@@ -180,7 +177,7 @@ You can also use Playwright in UI mode for manual testing. This opens a browser 
 and you can see before & after.
 
 ```sh
-$ npm run test-vr:ui
+npm run test-vr:ui
 ```
 
 # Releases

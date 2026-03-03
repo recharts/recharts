@@ -254,6 +254,11 @@ jobs:
       # GH_TOKEN is needed to use `gh` CLI to comment on the PR
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Checkout Recharts Repository
         uses: actions/checkout@v4
         with:

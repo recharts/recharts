@@ -17,7 +17,7 @@ import {
   CategoricalDomainItem,
   ChartOffsetInternal,
   Coordinate,
-  D3ScaleType,
+  RechartsScaleType,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -129,7 +129,7 @@ export const implicitXAxis: XAxisSettings = {
   ticks: undefined,
   type: 'category',
   unit: undefined,
-  niceTicks: false,
+  niceTicks: 'auto',
 };
 
 export const selectXAxisSettingsNoDefaults = (state: RechartsRootState, axisId: AxisId): XAxisSettings | undefined => {
@@ -173,7 +173,7 @@ export const implicitYAxis: YAxisSettings = {
   ticks: undefined,
   type: 'number',
   unit: undefined,
-  niceTicks: false,
+  niceTicks: 'auto',
   width: DEFAULT_Y_AXIS_WIDTH,
 };
 
@@ -1120,41 +1120,61 @@ export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
-) => D3ScaleType | undefined = createSelector([selectBaseAxis, selectHasBar, selectChartName], combineRealScaleType);
+) => RechartsScaleType | undefined = createSelector(
+  [selectBaseAxis, selectHasBar, selectChartName],
+  combineRealScaleType,
+);
 
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
   axisSettings: RenderableAxisSettings,
   realScaleType: string | undefined,
 ): ReadonlyArray<number> | undefined => {
-  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+  const { niceTicks } = axisSettings;
 
-  if (realScaleType !== 'auto' && realScaleType !== 'linear') {
+  if (niceTicks === 'none') {
     return undefined;
   }
 
-  if (
-    axisSettings != null &&
-    axisSettings.tickCount &&
-    Array.isArray(domainDefinition) &&
-    (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
-    isWellFormedNumberDomain(axisDomain)
-  ) {
-    return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, axisSettings.niceTicks);
-  }
+  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+  const hasDomainAutoKeyword =
+    Array.isArray(domainDefinition) && (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto');
 
   if (
+    (niceTicks === 'snap125' || niceTicks === 'adaptive') &&
     axisSettings != null &&
     axisSettings.tickCount &&
-    axisSettings.type === 'number' &&
     isWellFormedNumberDomain(axisDomain)
   ) {
-    return getTickValuesFixedDomain(
-      axisDomain as NumberDomain,
-      axisSettings.tickCount,
-      axisSettings.allowDecimals,
-      axisSettings.niceTicks,
-    );
+    if (hasDomainAutoKeyword) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, niceTicks);
+    }
+    if (axisSettings.type === 'number') {
+      return getTickValuesFixedDomain(
+        axisDomain as NumberDomain,
+        axisSettings.tickCount,
+        axisSettings.allowDecimals,
+        niceTicks,
+      );
+    }
+  }
+
+  if (niceTicks === 'auto' && realScaleType === 'linear' && axisSettings != null && axisSettings.tickCount) {
+    // Current magic-selector behaviour: apply nice ticks when the domain contains
+    // an 'auto' keyword (may extend the domain), or for any fixed number-type axis.
+    // Always uses the space-efficient algorithm (adaptive).
+    if (hasDomainAutoKeyword && isWellFormedNumberDomain(axisDomain)) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals, 'adaptive');
+    }
+
+    if (axisSettings.type === 'number' && isWellFormedNumberDomain(axisDomain)) {
+      return getTickValuesFixedDomain(
+        axisDomain as NumberDomain,
+        axisSettings.tickCount,
+        axisSettings.allowDecimals,
+        'adaptive',
+      );
+    }
   }
 
   return undefined;
@@ -1842,7 +1862,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator: (
 export const combineAxisTicks = (
   layout: LayoutType,
   axis: RenderableAxisSettings,
-  realScaleType: D3ScaleType | undefined,
+  realScaleType: RechartsScaleType | undefined,
   scale: RechartsScale | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
   axisRange: AxisRange | undefined,

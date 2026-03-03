@@ -54,4 +54,6 @@ export const RadarChart = forwardRef<SVGSVGElement, RadarChartProps<unknown>>(
       />
     );
   },
-) as <DataPointType>(props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> }) => React.ReactElement;
+) as <DataPointType = any>(
+  props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

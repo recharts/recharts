@@ -1,0 +1,18 @@
+export const expectedInBundle = [
+  'Bar',
+  'Cell',
+  'Curve',
+  'DefaultZIndexes',
+  'getNiceTickValues',
+  'Global',
+  'Label',
+  'LabelList',
+  'Layer',
+  'Rectangle',
+  'Sector',
+  'Symbols',
+  'Text',
+  'Trapezoid',
+  'usePlotArea',
+  'ZIndexLayer',
+] as const;

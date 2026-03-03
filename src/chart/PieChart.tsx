@@ -31,4 +31,6 @@ export const PieChart = forwardRef<SVGSVGElement, PolarChartProps<unknown>>((pro
       ref={ref}
     />
   );
-}) as <DataPointType>(props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> }) => React.ReactElement;
+}) as <DataPointType = any>(
+  props: PolarChartProps<DataPointType> & { ref?: React.Ref<SVGSVGElement> },
+) => React.ReactElement;

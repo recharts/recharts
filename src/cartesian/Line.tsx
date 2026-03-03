@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
   Component,
-  ComponentType,
   MutableRefObject,
+  ReactElement,
   ReactNode,
   Ref,
   useCallback,
@@ -323,7 +323,7 @@ type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | '
 
 type InternalProps = LineSvgProps & InternalLineProps;
 
-export type Props = LineSvgProps & LineProps;
+export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
@@ -1032,5 +1032,9 @@ function LineFn(outsideProps: Props) {
  * @provides ErrorBarContext
  * @consumes CartesianChartContext
  */
-export const Line: ComponentType<Props> = React.memo(LineFn, propsAreEqual);
+export const Line = React.memo(LineFn, propsAreEqual) as {
+  <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
+  (props: Props<any, any>): ReactElement;
+};
+// @ts-expect-error we need to set the displayName for debugging purposes
 Line.displayName = 'Line';

@@ -24,7 +24,7 @@ const data02 = [
 
 // #endregion
 export default function TwoLevelPieChart({
-  isAnimationActive = true,
+  isAnimationActive,
   defaultIndex,
 }: {
   isAnimationActive?: boolean;

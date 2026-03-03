@@ -161,7 +161,11 @@ export type AngleAxisForRadar = {
   cy: number;
 };
 
-export type Props = Omit<SVGProps<SVGGraphicsElement>, 'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'> & RadarProps;
+export type Props<DataPointType = any, DataValueType = any> = Omit<
+  SVGProps<SVGGraphicsElement>,
+  'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'
+> &
+  RadarProps<DataPointType, DataValueType>;
 
 export type RadarComposedData = {
   points: RadarPoint[];
@@ -604,7 +608,7 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
  * @consumes PolarChartContext
  * @provides LabelListContext
  */
-export function Radar(outsideProps: Props) {
+export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadarProps);
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">

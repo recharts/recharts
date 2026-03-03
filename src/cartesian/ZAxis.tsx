@@ -120,7 +120,7 @@ export const zAxisDefaultProps = {
  *
  * @consumes CartesianViewBoxContext
  */
-export function ZAxis(outsideProps: Props) {
+export function ZAxis<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const props = resolveDefaultProps(outsideProps, zAxisDefaultProps);
   return (
     <SetZAxisSettings

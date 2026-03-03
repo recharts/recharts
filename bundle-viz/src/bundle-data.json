@@ -1,0 +1,1070 @@
+{
+  "components": [
+    "LineChart",
+    "BarChart",
+    "AreaChart",
+    "ScatterChart",
+    "PieChart",
+    "RadarChart",
+    "RadialBarChart",
+    "ComposedChart",
+    "FunnelChart",
+    "SunburstChart",
+    "Treemap",
+    "Sankey",
+    "Line",
+    "Area",
+    "Bar",
+    "BarStack",
+    "Scatter",
+    "XAxis",
+    "YAxis",
+    "ZAxis",
+    "ErrorBar",
+    "Brush",
+    "ReferenceLine",
+    "ReferenceDot",
+    "ReferenceArea",
+    "CartesianAxis",
+    "CartesianGrid",
+    "Funnel",
+    "Pie",
+    "Radar",
+    "RadialBar",
+    "PolarGrid",
+    "PolarAngleAxis",
+    "PolarRadiusAxis"
+  ],
+  "generatedAt": "2026-02-22T00:58:16.756Z",
+  "totalSize": 918259,
+  "tree": {
+    "name": "recharts",
+    "value": 918259,
+    "children": [
+      {
+        "name": "cartesian",
+        "value": 240227,
+        "children": [
+          {
+            "name": "Brush.js",
+            "value": 26106
+          },
+          {
+            "name": "Area.js",
+            "value": 25307
+          },
+          {
+            "name": "Line.js",
+            "value": 24856
+          },
+          {
+            "name": "Bar.js",
+            "value": 24327
+          },
+          {
+            "name": "Scatter.js",
+            "value": 20492
+          },
+          {
+            "name": "CartesianAxis.js",
+            "value": 16208
+          },
+          {
+            "name": "Funnel.js",
+            "value": 16010
+          },
+          {
+            "name": "CartesianGrid.js",
+            "value": 14502
+          },
+          {
+            "name": "ErrorBar.js",
+            "value": 9549
+          },
+          {
+            "name": "ReferenceLine.js",
+            "value": 8728
+          },
+          {
+            "name": "YAxis.js",
+            "value": 8659
+          },
+          {
+            "name": "getCartesianPosition.js",
+            "value": 7534
+          },
+          {
+            "name": "XAxis.js",
+            "value": 7322
+          },
+          {
+            "name": "getTicks.js",
+            "value": 6910
+          },
+          {
+            "name": "ReferenceArea.js",
+            "value": 6728
+          },
+          {
+            "name": "ReferenceDot.js",
+            "value": 5517
+          },
+          {
+            "name": "getEquidistantTicks.js",
+            "value": 4488
+          },
+          {
+            "name": "BarStack.js",
+            "value": 3943
+          },
+          {
+            "name": "ZAxis.js",
+            "value": 1609
+          },
+          {
+            "name": "GraphicalItemClipPath.js",
+            "value": 1432
+          }
+        ]
+      },
+      {
+        "name": "state",
+        "value": 227097,
+        "children": [
+          {
+            "name": "selectors",
+            "value": 161452,
+            "children": [
+              {
+                "name": "axisSelectors.js",
+                "value": 51857
+              },
+              {
+                "name": "combiners",
+                "value": 29759,
+                "children": [
+                  {
+                    "name": "combineTooltipPayload.js",
+                    "value": 8232
+                  },
+                  {
+                    "name": "combineAllBarPositions.js",
+                    "value": 4277
+                  },
+                  {
+                    "name": "combineTooltipInteractionState.js",
+                    "value": 3081
+                  },
+                  {
+                    "name": "combineActiveTooltipIndex.js",
+                    "value": 2284
+                  },
+                  {
+                    "name": "combineTooltipPayloadConfigurations.js",
+                    "value": 2094
+                  },
+                  {
+                    "name": "combineDisplayedStackedData.js",
+                    "value": 1914
+                  },
+                  {
+                    "name": "combineConfiguredScale.js",
+                    "value": 1466
+                  },
+                  {
+                    "name": "combineBarSizeList.js",
+                    "value": 1316
+                  },
+                  {
+                    "name": "combineCoordinateForDefaultIndex.js",
+                    "value": 1262
+                  },
+                  {
+                    "name": "combineCheckedDomain.js",
+                    "value": 1199
+                  },
+                  {
+                    "name": "combineRealScaleType.js",
+                    "value": 713
+                  },
+                  {
+                    "name": "combineStackedData.js",
+                    "value": 567
+                  },
+                  {
+                    "name": "combineBarPosition.js",
+                    "value": 379
+                  },
+                  {
+                    "name": "combineActiveLabel.js",
+                    "value": 372
+                  },
+                  {
+                    "name": "combineInverseScaleFunction.js",
+                    "value": 325
+                  },
+                  {
+                    "name": "combineAxisRangeWithReverse.js",
+                    "value": 278
+                  }
+                ]
+              },
+              {
+                "name": "tooltipSelectors.js",
+                "value": 11299
+              },
+              {
+                "name": "radialBarSelectors.js",
+                "value": 9751
+              },
+              {
+                "name": "barSelectors.js",
+                "value": 6684
+              },
+              {
+                "name": "polarAxisSelectors.js",
+                "value": 6265
+              },
+              {
+                "name": "radarSelectors.js",
+                "value": 4677
+              },
+              {
+                "name": "areaSelectors.js",
+                "value": 4558
+              },
+              {
+                "name": "selectChartOffsetInternal.js",
+                "value": 4162
+              },
+              {
+                "name": "selectors.js",
+                "value": 4055
+              },
+              {
+                "name": "pieSelectors.js",
+                "value": 3924
+              },
+              {
+                "name": "polarSelectors.js",
+                "value": 2827
+              },
+              {
+                "name": "lineSelectors.js",
+                "value": 2771
+              },
+              {
+                "name": "funnelSelectors.js",
+                "value": 2558
+              },
+              {
+                "name": "scatterSelectors.js",
+                "value": 2508
+              },
+              {
+                "name": "polarScaleSelectors.js",
+                "value": 2291
+              },
+              {
+                "name": "barStackSelectors.js",
+                "value": 1915
+              },
+              {
+                "name": "dataSelectors.js",
+                "value": 1724
+              },
+              {
+                "name": "touchSelectors.js",
+                "value": 851
+              },
+              {
+                "name": "selectTooltipEventType.js",
+                "value": 844
+              },
+              {
+                "name": "graphicalItemSelectors.js",
+                "value": 825
+              },
+              {
+                "name": "arrayEqualityCheck.js",
+                "value": 733
+              },
+              {
+                "name": "rootPropsSelectors.js",
+                "value": 674
+              },
+              {
+                "name": "polarGridSelectors.js",
+                "value": 573
+              },
+              {
+                "name": "brushSelectors.js",
+                "value": 542
+              },
+              {
+                "name": "selectTooltipAxisType.js",
+                "value": 458
+              },
+              {
+                "name": "selectPlotArea.js",
+                "value": 410
+              },
+              {
+                "name": "legendSelectors.js",
+                "value": 395
+              },
+              {
+                "name": "selectActivePropsFromChartPointer.js",
+                "value": 333
+              },
+              {
+                "name": "selectAllAxes.js",
+                "value": 247
+              },
+              {
+                "name": "selectChartOffset.js",
+                "value": 234
+              },
+              {
+                "name": "containerSelectors.js",
+                "value": 210
+              },
+              {
+                "name": "numberDomainEqualityCheck.js",
+                "value": 179
+              },
+              {
+                "name": "selectTooltipPayloadSearcher.js",
+                "value": 81
+              },
+              {
+                "name": "selectTooltipAxisId.js",
+                "value": 65
+              },
+              {
+                "name": "selectTooltipSettings.js",
+                "value": 60
+              },
+              {
+                "name": "pickAxisId.js",
+                "value": 55
+              },
+              {
+                "name": "pickAxisType.js",
+                "value": 50
+              },
+              {
+                "name": "selectTooltipState.js",
+                "value": 48
+              }
+            ]
+          },
+          {
+            "name": "tooltipSlice.js",
+            "value": 7529
+          },
+          {
+            "name": "cartesianAxisSlice.js",
+            "value": 5394
+          },
+          {
+            "name": "keyboardEventsMiddleware.js",
+            "value": 4921
+          },
+          {
+            "name": "externalEventsMiddleware.js",
+            "value": 4506
+          },
+          {
+            "name": "zIndexSlice.js",
+            "value": 4477
+          },
+          {
+            "name": "mouseEventsMiddleware.js",
+            "value": 4232
+          },
+          {
+            "name": "touchEventsMiddleware.js",
+            "value": 4003
+          },
+          {
+            "name": "store.js",
+            "value": 2900
+          },
+          {
+            "name": "graphicalItemsSlice.js",
+            "value": 2318
+          },
+          {
+            "name": "SetGraphicalItem.js",
+            "value": 2183
+          },
+          {
+            "name": "legendSlice.js",
+            "value": 1977
+          },
+          {
+            "name": "chartDataSlice.js",
+            "value": 1823
+          },
+          {
+            "name": "SetLegendPayload.js",
+            "value": 1733
+          },
+          {
+            "name": "RechartsStoreProvider.js",
+            "value": 1637
+          },
+          {
+            "name": "hooks.js",
+            "value": 1553
+          },
+          {
+            "name": "rootPropsSlice.js",
+            "value": 1416
+          },
+          {
+            "name": "layoutSlice.js",
+            "value": 1407
+          },
+          {
+            "name": "errorBarSlice.js",
+            "value": 1306
+          },
+          {
+            "name": "referenceElementsSlice.js",
+            "value": 1208
+          },
+          {
+            "name": "optionsSlice.js",
+            "value": 1114
+          },
+          {
+            "name": "ReportMainChartProps.js",
+            "value": 1110
+          },
+          {
+            "name": "renderedTicksSlice.js",
+            "value": 1041
+          },
+          {
+            "name": "SetTooltipEntrySettings.js",
+            "value": 997
+          },
+          {
+            "name": "polarAxisSlice.js",
+            "value": 732
+          },
+          {
+            "name": "RechartsReduxContext.js",
+            "value": 704
+          },
+          {
+            "name": "eventSettingsSlice.js",
+            "value": 683
+          },
+          {
+            "name": "brushSlice.js",
+            "value": 674
+          },
+          {
+            "name": "polarOptionsSlice.js",
+            "value": 642
+          },
+          {
+            "name": "types",
+            "value": 447,
+            "children": [
+              {
+                "name": "StackedGraphicalItem.js",
+                "value": 447
+              }
+            ]
+          },
+          {
+            "name": "reduxDevtoolsJsonStringifyReplacer.js",
+            "value": 375
+          },
+          {
+            "name": "ReportEventSettings.js",
+            "value": 262
+          },
+          {
+            "name": "ReportPolarOptions.js",
+            "value": 174
+          },
+          {
+            "name": "ReportChartProps.js",
+            "value": 167
+          }
+        ]
+      },
+      {
+        "name": "util",
+        "value": 129099,
+        "children": [
+          {
+            "name": "scale",
+            "value": 17485,
+            "children": [
+              {
+                "name": "getNiceTickValues.js",
+                "value": 10051
+              },
+              {
+                "name": "createCategoricalInverse.js",
+                "value": 2313
+              },
+              {
+                "name": "RechartsScale.js",
+                "value": 2028
+              },
+              {
+                "name": "CartesianScaleHelper.js",
+                "value": 1881
+              },
+              {
+                "name": "util",
+                "value": 1212,
+                "children": [
+                  {
+                    "name": "arithmetic.js",
+                    "value": 1212
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ChartUtils.js",
+            "value": 17246
+          },
+          {
+            "name": "getActiveCoordinate.js",
+            "value": 7295
+          },
+          {
+            "name": "types.js",
+            "value": 7006
+          },
+          {
+            "name": "isDomainSpecifiedByUser.js",
+            "value": 6928
+          },
+          {
+            "name": "svgPropertiesNoEvents.js",
+            "value": 6706
+          },
+          {
+            "name": "ReduceCSSCalc.js",
+            "value": 5501
+          },
+          {
+            "name": "resolveDefaultProps.js",
+            "value": 5184
+          },
+          {
+            "name": "DataUtils.js",
+            "value": 4967
+          },
+          {
+            "name": "ActiveShapeUtils.js",
+            "value": 4595
+          },
+          {
+            "name": "PolarUtils.js",
+            "value": 4351
+          },
+          {
+            "name": "getRelativeCoordinate.js",
+            "value": 4284
+          },
+          {
+            "name": "DOMUtils.js",
+            "value": 3870
+          },
+          {
+            "name": "excludeEventProps.js",
+            "value": 3122
+          },
+          {
+            "name": "propsAreEqual.js",
+            "value": 2732
+          },
+          {
+            "name": "ReactUtils.js",
+            "value": 2265
+          },
+          {
+            "name": "CartesianUtils.js",
+            "value": 2021
+          },
+          {
+            "name": "svgPropertiesAndEvents.js",
+            "value": 1898
+          },
+          {
+            "name": "axisPropsAreEqual.js",
+            "value": 1820
+          },
+          {
+            "name": "CssPrefixUtils.js",
+            "value": 1651
+          },
+          {
+            "name": "YAxisUtils.js",
+            "value": 1465
+          },
+          {
+            "name": "ScatterUtils.js",
+            "value": 1426
+          },
+          {
+            "name": "BarUtils.js",
+            "value": 1353
+          },
+          {
+            "name": "LRUCache.js",
+            "value": 1351
+          },
+          {
+            "name": "TickUtils.js",
+            "value": 1126
+          },
+          {
+            "name": "round.js",
+            "value": 1100
+          },
+          {
+            "name": "useUniqueId.js",
+            "value": 1090
+          },
+          {
+            "name": "useAnimationId.js",
+            "value": 1084
+          },
+          {
+            "name": "usePrefersReducedMotion.js",
+            "value": 1001
+          },
+          {
+            "name": "Constants.js",
+            "value": 878
+          },
+          {
+            "name": "getEveryNth.js",
+            "value": 795
+          },
+          {
+            "name": "LogUtils.js",
+            "value": 730
+          },
+          {
+            "name": "getRadiusAndStrokeWidthFromDot.js",
+            "value": 632
+          },
+          {
+            "name": "useId.js",
+            "value": 577
+          },
+          {
+            "name": "RadialBarUtils.js",
+            "value": 571
+          },
+          {
+            "name": "useReportScale.js",
+            "value": 462
+          },
+          {
+            "name": "getAxisTypeBasedOnLayout.js",
+            "value": 446
+          },
+          {
+            "name": "FunnelUtils.js",
+            "value": 421
+          },
+          {
+            "name": "createEventProxy.js",
+            "value": 408
+          },
+          {
+            "name": "stacks",
+            "value": 378,
+            "children": [
+              {
+                "name": "getStackSeriesIdentifier.js",
+                "value": 378
+              }
+            ]
+          },
+          {
+            "name": "getSliced.js",
+            "value": 208
+          },
+          {
+            "name": "Global.js",
+            "value": 196
+          },
+          {
+            "name": "getClassNameFromUnknown.js",
+            "value": 171
+          },
+          {
+            "name": "isWellBehavedNumber.js",
+            "value": 160
+          },
+          {
+            "name": "Events.js",
+            "value": 143
+          }
+        ]
+      },
+      {
+        "name": "chart",
+        "value": 100375,
+        "children": [
+          {
+            "name": "Sankey.js",
+            "value": 28824
+          },
+          {
+            "name": "Treemap.js",
+            "value": 26882
+          },
+          {
+            "name": "RechartsWrapper.js",
+            "value": 12295
+          },
+          {
+            "name": "SunburstChart.js",
+            "value": 11281
+          },
+          {
+            "name": "PolarChart.js",
+            "value": 5517
+          },
+          {
+            "name": "CartesianChart.js",
+            "value": 4083
+          },
+          {
+            "name": "CategoricalChart.js",
+            "value": 2298
+          },
+          {
+            "name": "RadialBarChart.js",
+            "value": 2072
+          },
+          {
+            "name": "RadarChart.js",
+            "value": 2050
+          },
+          {
+            "name": "PieChart.js",
+            "value": 2041
+          },
+          {
+            "name": "ComposedChart.js",
+            "value": 510
+          },
+          {
+            "name": "BarChart.js",
+            "value": 508
+          },
+          {
+            "name": "ScatterChart.js",
+            "value": 508
+          },
+          {
+            "name": "LineChart.js",
+            "value": 502
+          },
+          {
+            "name": "AreaChart.js",
+            "value": 502
+          },
+          {
+            "name": "FunnelChart.js",
+            "value": 502
+          }
+        ]
+      },
+      {
+        "name": "polar",
+        "value": 85550,
+        "children": [
+          {
+            "name": "Pie.js",
+            "value": 23691
+          },
+          {
+            "name": "RadialBar.js",
+            "value": 18089
+          },
+          {
+            "name": "Radar.js",
+            "value": 14860
+          },
+          {
+            "name": "PolarAngleAxis.js",
+            "value": 10232
+          },
+          {
+            "name": "PolarRadiusAxis.js",
+            "value": 9044
+          },
+          {
+            "name": "PolarGrid.js",
+            "value": 8685
+          },
+          {
+            "name": "defaultPolarAngleAxisProps.js",
+            "value": 529
+          },
+          {
+            "name": "defaultPolarRadiusAxisProps.js",
+            "value": 420
+          }
+        ]
+      },
+      {
+        "name": "shape",
+        "value": 40476,
+        "children": [
+          {
+            "name": "Rectangle.js",
+            "value": 10578
+          },
+          {
+            "name": "Sector.js",
+            "value": 7725
+          },
+          {
+            "name": "Trapezoid.js",
+            "value": 6142
+          },
+          {
+            "name": "Curve.js",
+            "value": 5907
+          },
+          {
+            "name": "Symbols.js",
+            "value": 4781
+          },
+          {
+            "name": "Polygon.js",
+            "value": 4385
+          },
+          {
+            "name": "Dot.js",
+            "value": 958
+          }
+        ]
+      },
+      {
+        "name": "component",
+        "value": 35856,
+        "children": [
+          {
+            "name": "Label.js",
+            "value": 13096
+          },
+          {
+            "name": "Text.js",
+            "value": 8936
+          },
+          {
+            "name": "LabelList.js",
+            "value": 5341
+          },
+          {
+            "name": "Dots.js",
+            "value": 4357
+          },
+          {
+            "name": "ActivePoints.js",
+            "value": 3314
+          },
+          {
+            "name": "Cell.js",
+            "value": 522
+          },
+          {
+            "name": "ResponsiveContainer.js",
+            "value": 192
+          },
+          {
+            "name": "responsiveContainerUtils.js",
+            "value": 98
+          }
+        ]
+      },
+      {
+        "name": "animation",
+        "value": 19032,
+        "children": [
+          {
+            "name": "configUpdate.js",
+            "value": 5647
+          },
+          {
+            "name": "easing.js",
+            "value": 4035
+          },
+          {
+            "name": "util.js",
+            "value": 2267
+          },
+          {
+            "name": "CSSTransitionAnimate.js",
+            "value": 2141
+          },
+          {
+            "name": "AnimationManager.js",
+            "value": 1745
+          },
+          {
+            "name": "JavascriptAnimate.js",
+            "value": 1629
+          },
+          {
+            "name": "timeoutController.js",
+            "value": 983
+          },
+          {
+            "name": "useAnimationManager.js",
+            "value": 464
+          },
+          {
+            "name": "createDefaultAnimationManager.js",
+            "value": 121
+          }
+        ]
+      },
+      {
+        "name": "context",
+        "value": 13635,
+        "children": [
+          {
+            "name": "chartLayoutContext.js",
+            "value": 6641
+          },
+          {
+            "name": "chartDataContext.js",
+            "value": 2345
+          },
+          {
+            "name": "ErrorBarContext.js",
+            "value": 2152
+          },
+          {
+            "name": "tooltipContext.js",
+            "value": 1368
+          },
+          {
+            "name": "RegisterGraphicalItemId.js",
+            "value": 429
+          },
+          {
+            "name": "PanoramaContext.js",
+            "value": 296
+          },
+          {
+            "name": "accessibilityContext.js",
+            "value": 215
+          },
+          {
+            "name": "brushUpdateContext.js",
+            "value": 70
+          },
+          {
+            "name": "tooltipPortalContext.js",
+            "value": 60
+          },
+          {
+            "name": "legendPortalContext.js",
+            "value": 59
+          }
+        ]
+      },
+      {
+        "name": "synchronisation",
+        "value": 8792,
+        "children": [
+          {
+            "name": "useChartSynchronisation.js",
+            "value": 8792
+          }
+        ]
+      },
+      {
+        "name": "container",
+        "value": 8032,
+        "children": [
+          {
+            "name": "RootSurface.js",
+            "value": 3439
+          },
+          {
+            "name": "Surface.js",
+            "value": 1945
+          },
+          {
+            "name": "Layer.js",
+            "value": 1528
+          },
+          {
+            "name": "ClipPathProvider.js",
+            "value": 1120
+          }
+        ]
+      },
+      {
+        "name": "zIndex",
+        "value": 7594,
+        "children": [
+          {
+            "name": "ZIndexLayer.js",
+            "value": 2468
+          },
+          {
+            "name": "DefaultZIndexes.js",
+            "value": 2269
+          },
+          {
+            "name": "ZIndexPortal.js",
+            "value": 1559
+          },
+          {
+            "name": "zIndexSelectors.js",
+            "value": 1052
+          },
+          {
+            "name": "getZIndexFromUnknown.js",
+            "value": 246
+          }
+        ]
+      },
+      {
+        "name": "hooks.js",
+        "value": 2111
+      },
+      {
+        "name": "",
+        "value": 383,
+        "children": [
+          {
+            "name": "tmp",
+            "value": 383,
+            "children": [
+              {
+                "name": "recharts-treeshake-entry-1771721895525-5vydbzhsc34.mjs",
+                "value": 383
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

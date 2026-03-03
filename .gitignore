@@ -34,3 +34,10 @@ storybook/stories/API/**/*.mdx
 !storybook/stories/API/hooks/useAxisDomain.mdx
 !storybook/stories/API/Accessibility.mdx
 !storybook/stories/API/ResponsiveContainer.mdx
+
+# Bundle analysis output
+bundle-visualization.html
+
+# bundle-viz app: dependencies and build artifacts
+bundle-viz/node_modules
+bundle-viz/dist

@@ -387,7 +387,7 @@ type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGEleme
 
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
-export type Props = PieSvgAttributes & PieProps;
+export type Props<DataPointType = any, DataValueType = any> = PieSvgAttributes & PieProps<DataPointType, DataValueType>;
 
 type RealPieData = Record<string, unknown>;
 
@@ -1037,7 +1037,7 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
  * @provides LabelListContext
  * @provides CellReader
  */
-export function Pie(outsideProps: Props) {
+function PieFn(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
   const { id: externalId, ...propsWithoutId } = props;
   const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
@@ -1078,4 +1078,9 @@ export function Pie(outsideProps: Props) {
     </RegisterGraphicalItemId>
   );
 }
+export const Pie = PieFn as {
+  <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
+  (outsideProps: Props<any, any>): ReactElement;
+};
+// @ts-expect-error we need to set the displayName for debugging purposes
 Pie.displayName = 'Pie';

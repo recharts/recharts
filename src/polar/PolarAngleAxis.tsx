@@ -19,6 +19,7 @@ import {
 } from '../util/types';
 import { degreeToRadian, polarToCartesian } from '../util/PolarUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
+import { NiceTicksAlgorithm } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAngleAxisTicks, selectPolarAxisScale } from '../state/selectors/polarScaleSelectors';
 import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
@@ -165,13 +166,13 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
    */
   tickCount?: number;
   /**
-   * When true, uses an improved tick step algorithm that snaps to nice numbers
-   * (1, 2, 2.5, 5) at each order of magnitude, producing human-friendly tick
-   * intervals like 0, 5, 10, 15, 20 instead of 0, 4, 8, 12, 16.
+   * Controls how Recharts calculates "nice" tick values for this axis.
+   * Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.
+   * See {@link NiceTicksAlgorithm} for a full description of each option.
    *
-   * @defaultValue false
+   * @defaultValue 'auto'
    */
-  niceTicks?: boolean;
+  niceTicks?: NiceTicksAlgorithm;
   /**
    * The formatter function of ticks.
    */
@@ -255,9 +256,13 @@ type AxisSvgProps = Omit<
   'scale' | 'type' | 'dangerouslySetInnerHTML'
 >;
 
-export type Props = AxisSvgProps & PolarAngleAxisProps;
+export type Props<DataPointType = any, DataValueType = any> = AxisSvgProps &
+  PolarAngleAxisProps<DataPointType, DataValueType>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultPolarAngleAxisProps>;
+type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
+  Props<DataPointType, DataValueType>,
+  typeof defaultPolarAngleAxisProps
+>;
 
 type InternalPolarAngleAxisProps = Omit<PropsWithDefaults, 'scale'> & {
   cx: number;
@@ -494,8 +499,13 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
  */
-export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
-  const props = resolveDefaultProps(outsideProps, defaultPolarAngleAxisProps);
+export function PolarAngleAxis<DataPointType = any, DataValueType = any>(
+  outsideProps: Props<DataPointType, DataValueType>,
+): React.ReactNode {
+  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+    outsideProps,
+    defaultPolarAngleAxisProps,
+  );
 
   return (
     <SetAngleAxisSettings
@@ -511,7 +521,7 @@ export function PolarAngleAxis(outsideProps: Props): React.ReactNode {
       includeHidden={false}
       allowDecimals={props.allowDecimals}
       tickCount={props.tickCount}
-      niceTicks={props.niceTicks ?? false}
+      niceTicks={props.niceTicks ?? 'auto'}
       // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
       ticks={props.ticks}
       tick={props.tick}

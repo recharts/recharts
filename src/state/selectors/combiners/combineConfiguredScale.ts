@@ -1,12 +1,18 @@
 import * as d3Scales from 'victory-vendor/d3-scale';
 import { BaseCartesianAxis } from '../../cartesianAxisSlice';
-import { CategoricalDomain, CategoricalDomainItem, D3ScaleType, NumberDomain } from '../../../util/types';
+import {
+  CategoricalDomain,
+  CategoricalDomainItem,
+  D3ScaleType,
+  NumberDomain,
+  RechartsScaleType,
+} from '../../../util/types';
 import { CustomScaleDefinition } from '../../../util/scale/CustomScaleDefinition';
 import { AxisRange } from '../axisSelectors';
 import { upperFirst } from '../../../util/DataUtils';
 
 function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  realScaleType: D3ScaleType,
+  realScaleType: D3ScaleType | RechartsScaleType,
 ): CustomScaleDefinition<Domain> | undefined {
   if (realScaleType in d3Scales) {
     // @ts-expect-error we should do better type verification here
@@ -22,7 +28,7 @@ function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDo
 
 /**
  * Converts external scale definition into internal RechartsScale definition.
- * @param scale custom function scale - if you have the `string` from outside, use `combineRealScaleType` first which will validate it and return D3ScaleType or undefined
+ * @param scale custom function scale - if you have the `string` from outside, use `combineRealScaleType` first which will validate it and return RechartsScaleType or undefined
  * @param axisDomain
  * @param axisRange
  */
@@ -36,12 +42,12 @@ export function combineConfiguredScaleInternal(
   axisRange: AxisRange,
 ): CustomScaleDefinition;
 export function combineConfiguredScaleInternal(
-  scale: D3ScaleType,
+  scale: D3ScaleType | RechartsScaleType,
   axisDomain: ReadonlyArray<CategoricalDomainItem>,
   axisRange: AxisRange,
 ): CustomScaleDefinition;
 export function combineConfiguredScaleInternal(
-  scale: D3ScaleType | undefined,
+  scale: D3ScaleType | RechartsScaleType | undefined,
   axisDomain: ReadonlyArray<CategoricalDomainItem>,
   axisRange: AxisRange,
 ): CustomScaleDefinition | undefined;
@@ -51,12 +57,12 @@ export function combineConfiguredScaleInternal(
   axisRange: AxisRange,
 ): undefined;
 export function combineConfiguredScaleInternal<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  scale: D3ScaleType | CustomScaleDefinition<Domain> | undefined,
+  scale: D3ScaleType | RechartsScaleType | CustomScaleDefinition<Domain> | undefined,
   axisDomain: ReadonlyArray<Domain>,
   axisRange: AxisRange,
 ): CustomScaleDefinition<Domain> | undefined;
 export function combineConfiguredScaleInternal<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  scale: D3ScaleType | CustomScaleDefinition<Domain> | undefined,
+  scale: D3ScaleType | RechartsScaleType | CustomScaleDefinition<Domain> | undefined,
   axisDomain: ReadonlyArray<Domain>,
   axisRange: AxisRange,
 ): CustomScaleDefinition<Domain> | undefined {
@@ -76,7 +82,7 @@ export function combineConfiguredScaleInternal<Domain extends CategoricalDomainI
 
 export function combineConfiguredScale(
   axis: BaseCartesianAxis,
-  realScaleType: D3ScaleType | undefined,
+  realScaleType: D3ScaleType | RechartsScaleType | undefined,
   axisDomain: NumberDomain | CategoricalDomain | undefined,
   axisRange: AxisRange | undefined,
 ): CustomScaleDefinition | undefined {

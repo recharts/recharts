@@ -356,4 +356,49 @@ describe('<CartesianAxis />', () => {
       expect(element).toHaveClass('recharts-cartesian-axis-tick-value');
     });
   });
+
+  it('Respects user-provided textAnchor prop on horizontal axis', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          textAnchor="start"
+          scale={exampleScale}
+        />
+      </Surface>,
+    );
+
+    const tickTexts = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
+    expect(tickTexts).toHaveLength(5);
+    tickTexts.forEach(text => {
+      expect(text).toHaveAttribute('text-anchor', 'start');
+    });
+  });
+
+  it('Uses default textAnchor when not provided', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          scale={exampleScale}
+        />
+      </Surface>,
+    );
+
+    const tickTexts = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
+    expect(tickTexts).toHaveLength(5);
+    tickTexts.forEach(text => {
+      expect(text).toHaveAttribute('text-anchor', 'middle');
+    });
+  });
 });

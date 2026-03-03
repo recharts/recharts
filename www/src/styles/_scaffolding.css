@@ -121,8 +121,9 @@ a.button {
   padding: 12px 14px;
   border-radius: 4px;
   transition: all 0.15s ease;
+  text-decoration: none;
 
   &:hover {
-    background-color: #1078bb;
+    background-color: color-mix(in srgb, var(--color-solid-brand-1) 80%, black);
   }
 }

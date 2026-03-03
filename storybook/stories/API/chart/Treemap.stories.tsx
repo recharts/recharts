@@ -1,8 +1,7 @@
-import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
-import { sizeData, treemapData } from '../../data';
-
-import { Args } from '@storybook/react-vite';
 import React from 'react';
+import { Args } from '@storybook/react-vite';
+import { flatTreemapData, sizeData, treemapData } from '../../data';
+import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { TreemapArgs } from '../arg-types/TreemapArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -25,7 +24,7 @@ export const API = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
-    data: sizeData,
+    data: flatTreemapData,
     dataKey: 'size',
     nameKey: 'name',
     isAnimationActive: false,
@@ -45,7 +44,7 @@ export const WithTooltip = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
-    data: sizeData,
+    data: flatTreemapData,
     dataKey: 'size',
     nameKey: 'name',
     isAnimationActive: false,
@@ -108,11 +107,12 @@ export const WithCustomContent = {
   },
 };
 
-export const ThreeLevelDataWithInset = {
+export const Nested = {
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
+          <Tooltip />
           <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
@@ -120,11 +120,10 @@ export const ThreeLevelDataWithInset = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(TreemapArgs),
-    data: treemapData,
+    data: sizeData,
     dataKey: 'size',
     nameKey: 'name',
-    nodeInset: 6,
-    nodeGap: 6,
+    type: 'nest',
     isAnimationActive: false,
   },
 };

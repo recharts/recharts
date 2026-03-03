@@ -48,7 +48,13 @@ export type ReferenceLineSegment = readonly [
   },
 ];
 
-interface ReferenceLineProps extends Overflowable, ZIndexable {
+type ReferenceCoordinateValue = number | string;
+
+interface ReferenceLineProps<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>
+  extends Overflowable, ZIndexable {
   /**
    * If defined, renders a horizontal line on this position.
    *
@@ -57,7 +63,7 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    *
    * @example <ReferenceLine y="Page D" />
    */
-  y?: number | string;
+  y?: YValueType;
 
   /**
    * If defined, renders a vertical line on this position.
@@ -67,12 +73,21 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
    *
    * @example <ReferenceLine x="Monday" />
    */
-  x?: number | string;
+  x?: XValueType;
 
   /**
    * Tuple of coordinates. If defined, renders a diagonal line segment.
    */
-  segment?: ReferenceLineSegment;
+  segment?: readonly [
+    {
+      x?: XValueType;
+      y?: YValueType;
+    },
+    {
+      x?: XValueType;
+      y?: YValueType;
+    },
+  ];
 
   /**
    * The position of the reference line when the axis has bandwidth
@@ -134,7 +149,10 @@ interface ReferenceLineProps extends Overflowable, ZIndexable {
  *    - so there's a conflict, and the component will throw if it gets string
  * 2. Internally the component calls `svgPropertiesNoEvents` which filters the viewBox away anyway
  */
-export type Props = Omit<SVGProps<SVGLineElement>, 'viewBox'> & ReferenceLineProps;
+export type Props<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+> = Omit<SVGProps<SVGLineElement>, 'viewBox'> & ReferenceLineProps<XValueType, YValueType>;
 
 const renderLine = (option: ReferenceLineProps['shape'], props: SVGProps<SVGLineElement>) => {
   let line;
@@ -365,7 +383,10 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
  */
-export function ReferenceLine(outsideProps: Props) {
+export function ReferenceLine<
+  XValueType extends ReferenceCoordinateValue = any,
+  YValueType extends ReferenceCoordinateValue = any,
+>(outsideProps: Props<XValueType, YValueType>) {
   const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);
   return (
     <>

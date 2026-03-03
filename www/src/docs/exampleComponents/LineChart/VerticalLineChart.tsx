@@ -48,7 +48,7 @@ const data = [
 ];
 
 // #endregion
-export default function Example() {
+export default function Example(props: { isAnimationActive?: boolean }) {
   return (
     <LineChart
       layout="vertical"
@@ -62,13 +62,36 @@ export default function Example() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis type="number" />
-      <YAxis dataKey="name" type="category" width="auto" />
-      <Tooltip />
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <XAxis type="number" stroke="var(--color-text-3)" />
+      <YAxis dataKey="name" type="category" width="auto" stroke="var(--color-text-3)" />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      />
       <Legend />
-      <Line dataKey="pv" stroke="#8884d8" />
-      <Line dataKey="uv" stroke="#82ca9d" />
+      <Line
+        dataKey="pv"
+        stroke="var(--color-chart-1)"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+        isAnimationActive={props.isAnimationActive}
+      />
+      <Line
+        dataKey="uv"
+        stroke="var(--color-chart-2)"
+        dot={{
+          fill: 'var(--color-surface-base)',
+        }}
+        activeDot={{
+          stroke: 'var(--color-surface-base)',
+        }}
+        isAnimationActive={props.isAnimationActive}
+      />
       <RechartsDevtools />
     </LineChart>
   );
