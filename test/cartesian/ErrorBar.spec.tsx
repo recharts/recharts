@@ -2,7 +2,11 @@ import React from 'react';
 import { describe, expect, test, it } from 'vitest';
 import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
-import { selectAxisDomainIncludingNiceTicks, selectNumericalDomain } from '../../src/state/selectors/axisSelectors';
+import {
+  getErrorDomainByDataKey,
+  selectAxisDomainIncludingNiceTicks,
+  selectNumericalDomain,
+} from '../../src/state/selectors/axisSelectors';
 import { expectBars } from '../helper/expectBars';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
@@ -1651,6 +1655,61 @@ describe('<ErrorBar />', () => {
             y2: '127.5',
           },
         ]);
+      });
+    });
+
+    describe('extending YAxis domain for ranged Bar values', () => {
+      type BoxPlotDatum = {
+        category: string;
+        min: number;
+        q1: number;
+        q3: number;
+        max: number;
+      };
+
+      const boxPlotData: ReadonlyArray<BoxPlotDatum> = [
+        { category: 'A', min: 16, q1: 20, q3: 29, max: 35 },
+        { category: 'B', min: 12, q1: 15, q3: 21, max: 27 },
+        { category: 'C', min: 22, q1: 26, q3: 34, max: 39 },
+        { category: 'D', min: 9, q1: 13, q3: 20, max: 26 },
+      ];
+
+      const boxDataKey = (entry: BoxPlotDatum): [number, number] => [entry.q1, entry.q3];
+      const whiskerDataKey = (entry: BoxPlotDatum): [number, number] => [entry.q3 - entry.min, entry.max - entry.q3];
+
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart data={boxPlotData} width={500} height={500}>
+          <YAxis />
+          <Bar isAnimationActive={false} dataKey={boxDataKey} />
+          {children}
+        </BarChart>
+      ));
+
+      const secondRender = ({ children }: { children: React.ReactNode }) => (
+        <BarChart data={boxPlotData} width={500} height={500}>
+          <YAxis />
+          <Bar isAnimationActive={false} dataKey={boxDataKey}>
+            <ErrorBar dataKey={whiskerDataKey} />
+          </Bar>
+          {children}
+        </BarChart>
+      );
+
+      test('getErrorDomainByDataKey should support ranged bar values', () => {
+        const errorDomain = getErrorDomainByDataKey(boxPlotData[0], boxDataKey(boxPlotData[0]), [
+          { direction: 'y', dataKey: whiskerDataKey },
+        ]);
+        expect(errorDomain).toEqual([16, 35]);
+      });
+
+      test('selectNumericalDomain should include error bars for ranged bars', () => {
+        const { spy, rerender } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+
+        expectLastCalledWith(spy, [0, 34]);
+
+        rerender(secondRender);
+
+        expectLastCalledWith(spy, [0, 39]);
       });
     });
 

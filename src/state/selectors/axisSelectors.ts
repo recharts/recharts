@@ -563,11 +563,25 @@ export function getErrorDomainByDataKey(
   appliedValue: unknown,
   relevantErrorBars: ReadonlyArray<ErrorBarsSettings> | undefined,
 ): ReadonlyArray<number> {
-  if (!relevantErrorBars || typeof appliedValue !== 'number' || isNan(appliedValue)) {
+  if (!relevantErrorBars) {
     return [];
   }
 
   if (!relevantErrorBars.length) {
+    return [];
+  }
+
+  let appliedNumericValue: number | undefined;
+  if (typeof appliedValue === 'number' && !isNan(appliedValue)) {
+    appliedNumericValue = appliedValue;
+  } else if (Array.isArray(appliedValue)) {
+    const numericRangeValues = onlyAllowNumbers(appliedValue);
+    if (numericRangeValues.length > 0) {
+      appliedNumericValue = Math.max(...numericRangeValues);
+    }
+  }
+
+  if (appliedNumericValue == null) {
     return [];
   }
 
@@ -584,7 +598,7 @@ export function getErrorDomainByDataKey(
       if (!isWellBehavedNumber(lowBound) || !isWellBehavedNumber(highBound)) {
         return undefined;
       }
-      return [appliedValue - lowBound, appliedValue + highBound];
+      return [appliedNumericValue - lowBound, appliedNumericValue + highBound];
     }),
   );
 }
