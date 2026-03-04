@@ -1,5 +1,5 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI } from '@reduxjs/toolkit';
-import { setKeyboardInteraction } from './tooltipSlice';
+import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
 import {
   selectTooltipAxisDomain,
@@ -63,11 +63,12 @@ keyboardEventsMiddleware.startListening({
           selectTooltipAxisDomain(currentState),
         );
         const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
-        if (!Number.isFinite(currentIndex) || currentIndex < 0) {
-          return;
-        }
+        const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0;
         const tooltipTicks = selectTooltipAxisTicks(currentState);
         if (key === 'Enter') {
+          if (isOutsideDomain) {
+            return;
+          }
           const coordinate = selectCoordinateForDefaultIndex(
             currentState,
             'axis',
@@ -87,9 +88,47 @@ keyboardEventsMiddleware.startListening({
         const direction = selectChartDirection(currentState);
         const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
         const movement = key === 'ArrowRight' ? 1 : -1;
-        const nextIndex = currentIndex + movement * directionMultiplier;
-        if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
-          return;
+        let nextIndex: number;
+        if (isOutsideDomain) {
+          const displayedData = selectTooltipDisplayedData(currentState);
+          const axisDataKey = selectTooltipAxisDataKey(currentState);
+          const domain = selectTooltipAxisDomain(currentState);
+          const effectiveMovement = movement * directionMultiplier;
+
+          // Build a minimal TooltipInteractionState for the candidate-index check.
+          const mkInteraction = (i: number): TooltipInteractionState => ({
+            active: false,
+            index: String(i),
+            dataKey: undefined,
+            graphicalItemId: undefined,
+            coordinate: undefined,
+          });
+
+          nextIndex = -1;
+          if (effectiveMovement > 0) {
+            for (let i = 0; i < displayedData.length; i++) {
+              if (combineActiveTooltipIndex(mkInteraction(i), displayedData, axisDataKey, domain) != null) {
+                nextIndex = i;
+                break;
+              }
+            }
+          } else {
+            for (let i = displayedData.length - 1; i >= 0; i--) {
+              if (combineActiveTooltipIndex(mkInteraction(i), displayedData, axisDataKey, domain) != null) {
+                nextIndex = i;
+                break;
+              }
+            }
+          }
+
+          if (nextIndex < 0) {
+            return;
+          }
+        } else {
+          nextIndex = currentIndex + movement * directionMultiplier;
+          if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
+            return;
+          }
         }
         const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
 
