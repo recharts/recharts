@@ -162,8 +162,8 @@ export type { IfOverflow } from './util/IfOverflow';
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';
 
-/** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
-export { getNiceTickValues } from './util/scale/getNiceTickValues';
+/** export getNiceTickValues and getTickValuesFixedDomain so these can be used as replacements for what is in recharts-scale */
+export { getNiceTickValues, getTickValuesFixedDomain } from './util/scale/getNiceTickValues';
 
 export {
   useActiveTooltipLabel,
