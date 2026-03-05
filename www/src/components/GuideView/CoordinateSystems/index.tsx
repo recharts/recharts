@@ -116,7 +116,8 @@ export function CoordinateSystems() {
       <h2>2. Pixel/Chart-Range Coordinates</h2>
       <p>
         Pixel coordinates are positions measured in pixels from the top-left corner of the chart. Use the{' '}
-        <code>useOffset()</code> hook to get the plot area dimensions, then position elements relative to that area.
+        <LinkToApi>useOffset</LinkToApi> hook to get the plot area dimensions, then position elements relative to that
+        area.
       </p>
       <p>
         <strong>Key hooks:</strong>
@@ -210,6 +211,14 @@ export function CoordinateSystems() {
         </li>
         <li>
           <LinkToApi>useYAxisInverseScale</LinkToApi> - returns a function to convert pixel Y to the closest data value
+        </li>
+        <li>
+          <LinkToApi>useXAxisInverseDataSnapScale</LinkToApi> - returns a function to convert pixel X to the closest
+          data value
+        </li>
+        <li>
+          <LinkToApi>useYAxisInverseDataSnapScale</LinkToApi> - returns a function to convert pixel Y to the closest
+          data value
         </li>
         <li>
           <LinkToApi>useXAxisInverseTickSnapScale</LinkToApi> - returns a function to convert pixel X to the closest

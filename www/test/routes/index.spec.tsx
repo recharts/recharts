@@ -2,15 +2,18 @@ import * as React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { MemoryRouter } from 'react-router';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from '../../src/routes';
 import { ColorModeProvider, defineColorModeStore } from '../../src/components/color-mode';
 
+vi.mock('react-github-btn', () => ({ default: () => null }));
+
 function baseRender(url: string) {
   const colorModeStore = defineColorModeStore();
+  const router = createMemoryRouter(routes, { initialEntries: [url] });
   const renderResult = render(
     <ColorModeProvider store={colorModeStore}>
-      <MemoryRouter initialEntries={[url]}>{routes()}</MemoryRouter>
+      <RouterProvider router={router} />
     </ColorModeProvider>,
   );
   expect(renderResult.getByRole('main')).toBeInTheDocument();
@@ -84,6 +87,7 @@ function testNotFoundView(url: string) {
 
 describe('routes', () => {
   beforeEach(() => {
+    vi.stubGlobal('scrollTo', vi.fn());
     vi.stubGlobal('matchMedia', (query: string) => ({
       media: query,
       matches: false,

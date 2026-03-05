@@ -1,14 +1,15 @@
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from './routes';
 import { supportedLocales } from './locale';
 import { getSiteRoutes } from './navigation.data';
 import { ColorModeProvider, defineColorModeStore } from './components/color-mode';
 
 export function render(url: string, template: string) {
+  const router = createMemoryRouter(routes, { initialEntries: [url] });
   const appHtml = renderToString(
     <ColorModeProvider store={defineColorModeStore()}>
-      <StaticRouter location={url}>{routes()}</StaticRouter>
+      <RouterProvider router={router} />
     </ColorModeProvider>,
   );
 
