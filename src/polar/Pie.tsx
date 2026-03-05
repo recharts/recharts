@@ -746,12 +746,27 @@ export function computePieSectors({
 
   const notZeroItemCount = displayedData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
   const totalPaddingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
-  const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPaddingAngle;
 
   const sum = displayedData.reduce((result: number, entry: any) => {
     const val = getValueByDataKey(entry, dataKey, 0);
     return result + (isNumber(val) ? val : 0);
   }, 0);
+
+  // Only apply minAngle redistribution when at least one non-zero segment's
+  // natural angle falls below the minAngle threshold. Otherwise, minAngle
+  // unnecessarily shifts all segments even when none need the boost.
+  // See: https://github.com/recharts/recharts/issues/6814
+  const needsMinAngleAdjustment =
+    minAngle > 0 &&
+    sum > 0 &&
+    displayedData.some(entry => {
+      const val = getValueByDataKey(entry, dataKey, 0);
+      const percent = (isNumber(val) ? val : 0) / sum;
+      return val !== 0 && percent * absDeltaAngle < minAngle;
+    });
+  const effectiveMinAngle = needsMinAngleAdjustment ? minAngle : 0;
+
+  const realTotalAngle = absDeltaAngle - notZeroItemCount * effectiveMinAngle - totalPaddingAngle;
   let sectors;
 
   if (sum > 0) {
@@ -777,7 +792,7 @@ export function computePieSectors({
       }
 
       const tempEndAngle =
-        tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
+        tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? effectiveMinAngle : 0) + percent * realTotalAngle);
       const midAngle = (tempStartAngle + tempEndAngle) / 2;
       const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
 
