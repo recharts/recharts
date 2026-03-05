@@ -14,13 +14,11 @@ import { upperFirst } from '../../../util/DataUtils';
 function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
   realScaleType: D3ScaleType | RechartsScaleType,
 ): CustomScaleDefinition<Domain> | undefined {
-  if (realScaleType in d3Scales) {
-    // @ts-expect-error we should do better type verification here
+  if (realScaleType in d3Scales && typeof d3Scales[realScaleType] === 'function') {
     return d3Scales[realScaleType]();
   }
   const name = `scale${upperFirst(realScaleType)}`;
-  if (name in d3Scales) {
-    // @ts-expect-error we should do better type verification here
+  if (name in d3Scales && typeof d3Scales[name] === 'function') {
     return d3Scales[name]();
   }
   return undefined;
