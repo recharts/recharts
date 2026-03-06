@@ -101,6 +101,8 @@ export const lineChartExamples = {
     Component: HighlightAndZoomLineChart,
     sourceCode: highlightAndZoomLineChartSource,
     name: 'Highlight And Zoom Line Chart',
+    description:
+      'Click and drag your mouse to make a selection to zoom in. Click the "Zoom Out" button to reset the zoom level.',
   },
   LineChartHasMultiSeries: {
     Component: LineChartHasMultiSeries,
