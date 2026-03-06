@@ -596,6 +596,19 @@ describe('<Legend />', () => {
       expect(surface.getAttribute('aria-label')).toBe('My Line Data legend icon');
     });
 
+    test('aria-label uses the raw entry value even when formatter returns a React element', () => {
+      const { container } = rechartsTestRender(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend formatter={value => <strong>{value}</strong>} />
+          <Line dataKey="value" name="UV" />
+        </LineChart>,
+      );
+
+      const legendItem = container.getElementsByClassName('legend-item-0')[0];
+      const surface = legendItem.getElementsByClassName('recharts-surface')[0];
+      expect(surface.getAttribute('aria-label')).toBe('UV legend icon');
+    });
+
     it('should render one line legend item for each Line, with default class and style attributes', () => {
       const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
