@@ -69138,7 +69138,7 @@ Ct();
 var Dme = N(Ka(), 1), kn = N(Lme(), 1);
 
 // src/manager-api/version.ts
-var kme = "9.1.19";
+var kme = "9.1.20";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK: jst } = Z, qme = (0, Dme.default)(1)(() => {
