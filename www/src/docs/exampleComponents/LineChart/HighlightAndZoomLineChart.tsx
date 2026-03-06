@@ -79,7 +79,7 @@ const HighlightAndZoomLineChart = () => {
     setZoomGraph((prev: ZoomAndHighlightState): ZoomAndHighlightState => {
       let { refAreaLeft, refAreaRight } = prev;
 
-      if (refAreaLeft === refAreaRight || refAreaRight === '') {
+      if (refAreaLeft === refAreaRight || !refAreaRight) {
         return {
           ...prev,
           refAreaLeft: undefined,
