@@ -82,7 +82,7 @@ interface PolarGridProps extends ZIndexable {
    */
   zIndex?: number;
   /**
-   * The stroke color.
+   * The stroke color. If "none", no line will be drawn.
    * @defaultValue #ccc
    */
   stroke?: string;
