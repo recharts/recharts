@@ -429,12 +429,17 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
+    // textBreakAll is a recharts-internal prop (maps to `breakAll` on <Text>);
+    // it must not be forwarded to host (DOM) elements to avoid React warnings.
+    const { labelRef: _, textBreakAll: __, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }
 
   if (typeof content === 'function') {
-    const { content: _, ...propsForContent } = propsWithViewBox;
+    // textBreakAll is a recharts-internal prop; exclude it from the function's
+    // props so that users who naively spread all props onto a DOM element do not
+    // trigger a React "unrecognized prop" warning.
+    const { content: _, textBreakAll: __, ...propsForContent } = propsWithViewBox;
     // @ts-expect-error we're not checking if the content component returns something that Text is able to render
     label = createElement(content, propsForContent);
 
