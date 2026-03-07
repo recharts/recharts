@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { BarChart, Bar, LineChart, PieChart } from '../../src';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 
@@ -11,19 +11,22 @@ const data: ReadonlyArray<ExampleDataPoint> = [
 
 describe('BarChart types', () => {
   it('should accept cursor prop on BarChart', () => {
-    return (
+    const { container } = rechartsTestRender(
       <BarChart width={400} height={300} data={data} cursor="pointer">
         <Bar dataKey="value" />
-      </BarChart>
+      </BarChart>,
     );
+    expect(container.querySelector('.recharts-surface')).toHaveAttribute('cursor', 'pointer');
   });
 
   it('should accept cursor prop on LineChart', () => {
-    return <LineChart width={400} height={300} data={data} cursor="crosshair" />;
+    const { container } = rechartsTestRender(<LineChart width={400} height={300} data={data} cursor="crosshair" />);
+    expect(container.querySelector('.recharts-surface')).toHaveAttribute('cursor', 'crosshair');
   });
 
   it('should accept cursor prop on PieChart', () => {
-    return <PieChart width={400} height={300} cursor="default" />;
+    const { container } = rechartsTestRender(<PieChart width={400} height={300} cursor="default" />);
+    expect(container.querySelector('.recharts-surface')).toHaveAttribute('cursor', 'default');
   });
 
   it('should allow implicit chart typing', () => {
