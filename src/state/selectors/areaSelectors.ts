@@ -20,6 +20,7 @@ import { AreaSettings } from '../types/AreaSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectChartBaseValue } from './rootPropsSelectors';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
+import { isNotNil } from '../../util/DataUtils';
 
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
@@ -148,7 +149,7 @@ const selectStackDataKeys: (
     if (group == null) {
       return undefined;
     }
-    return group.graphicalItems.map(item => item.dataKey).filter(Boolean);
+    return group.graphicalItems.map(item => item.dataKey).filter(isNotNil);
   },
 );
 
