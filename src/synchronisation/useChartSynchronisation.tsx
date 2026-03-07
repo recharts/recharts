@@ -28,8 +28,18 @@ import { noop } from '../util/DataUtils';
  * This handles cases where synced charts have slightly different data arrays
  * (e.g., one chart starts a day earlier than another). Instead of hiding the tooltip
  * entirely, the receiving chart shows the nearest available data point.
+ *
+ * When a label falls between two ticks, this function deterministically returns
+ * the previous tick (the last tick whose string value is less than the label),
+ * rather than computing actual lexicographic or numeric proximity.
+ *
+ * Note: comparison is purely lexicographic (via String(tick.value) < label).
+ * This means ticks must be sorted by their string representation for correct results.
+ * Numeric labels like "Day 10" sort before "Day 2" lexicographically, which may
+ * differ from numeric ordering. In practice, axis ticks arrive in display order
+ * which matches string sort order for consistently formatted labels.
  */
-function findClosestTick(ticks: ReadonlyArray<TickItem>, label: string): TickItem | undefined {
+export function findClosestTick(ticks: ReadonlyArray<TickItem>, label: string): TickItem | undefined {
   const len = ticks.length;
   if (len === 0) {
     return undefined;
