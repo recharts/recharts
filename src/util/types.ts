@@ -1478,6 +1478,11 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
   margin?: Partial<Margin>;
   style?: CSSProperties;
   /**
+   * The CSS cursor style applied to the chart container.
+   * Useful for setting the mouse cursor when hovering over the chart (e.g. `"pointer"`, `"crosshair"`).
+   */
+  cursor?: CSSProperties['cursor'];
+  /**
    * Charts with the same syncId will synchronize Tooltip and Brush events.
    *
    * @see {@link https://recharts.github.io/en-US/examples/SynchronizedAreaChart/ Synchronized Charts Example}

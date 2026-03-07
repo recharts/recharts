@@ -113,6 +113,19 @@ describe('cross-component prop consistency', () => {
         );
       }
 
+      /**
+       * If you see a test failure here, it means that the JSDoc comments for the shared prop "${propName}" are significantly different across components.
+       *
+       * The idea is that if two components both have a prop called "dataKey", their JSDoc comments should be similar to avoid confusion for users.
+       * If the comments are very different, it may indicate that one of them is outdated, incomplete, or just inconsistent with the others.
+       *
+       * To fix this, review the JSDoc comments for the "${propName}" prop in the affected components and update them to be more consistent with each other.
+       * If the props are intended to be different, please consider choosing a different name for your new prop to avoid confusion.
+       *
+       * If you are just adding a new comment, and you have discovered this test failing. That may happen.
+       * It's possible that Recharts already had assigned a different meaning to it (for example, Recharts scale and DOM scale are different).
+       * In that case, please add a comment similarity exception for this prop in the {@link commentSimilarityExceptions} array, and provide a clear explanation in the exception's comment field.
+       */
       expect(inconsistencies).toEqual([]);
     });
   });

@@ -197,6 +197,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   },
   {
     components: ['Tooltip'],
+    props: ['cursor'],
+    reason:
+      'Tooltip cursor is the graphical element that highlights the hovered item, unlike other components where cursor is a CSS property for mouse cursor',
+  },
+  {
+    components: ['Tooltip'],
     props: ['offset', 'position'],
     reason: 'Tooltip position uses the same prop names but works differently than other components',
   },
