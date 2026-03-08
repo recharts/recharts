@@ -893,4 +893,42 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
       },
     ]);
   });
+
+  describe('when data contains zero-value items and paddingAngle is set', () => {
+    // https://github.com/recharts/recharts/issues/1698
+    // Zero-value sectors should not consume paddingAngle, which would create a double gap
+    const renderZeroValueTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          data={[
+            { name: 'A', value: 400 },
+            { name: 'B', value: 300 },
+            { name: 'C', value: 0 },
+            { name: 'D', value: 200 },
+          ]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          paddingAngle={5}
+          id="pie-id"
+        />
+        {children}
+      </PieChart>
+    ));
+
+    it('should set paddingAngle to 0 for zero-value sectors', () => {
+      const { spy } = renderZeroValueTestCase(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      expect(sectors).toBeDefined();
+      expect(sectors).toHaveLength(4);
+      // Non-zero sectors have paddingAngle = 5
+      expect(sectors[0].paddingAngle).toBe(5);
+      expect(sectors[1].paddingAngle).toBe(5);
+      // Zero-value sector must have paddingAngle = 0, not 5
+      // Otherwise the animation code adds an extra gap around the zero-value sector
+      expect(sectors[2].paddingAngle).toBe(0);
+      expect(sectors[3].paddingAngle).toBe(5);
+    });
+  });
 });
