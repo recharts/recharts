@@ -920,7 +920,7 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
     it('should set paddingAngle to 0 for zero-value sectors', () => {
       const { spy } = renderZeroValueTestCase(state => selectPieSectors(state, 'pie-id', []));
       const sectors = spy.mock.lastCall?.[0];
-      expect(sectors).toBeDefined();
+      assertNotNull(sectors);
       expect(sectors).toHaveLength(4);
       // Non-zero sectors have paddingAngle = 5
       expect(sectors[0].paddingAngle).toBe(5);
