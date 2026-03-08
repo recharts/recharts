@@ -21,6 +21,7 @@ import {
   EvaluatedAxisDomainType,
   TickProp,
   BaseTickContentProps,
+  AxisTick,
 } from '../util/types';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
 import { NiceTicksAlgorithm } from '../state/cartesianAxisSlice';
@@ -196,7 +197,7 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
    * @defaultValue true
    */
   tick?: TickProp<BaseTickContentProps>;
-  ticks?: ReadonlyArray<TickItem>;
+  ticks?: ReadonlyArray<AxisTick>;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
@@ -437,7 +438,6 @@ export function PolarRadiusAxis<DataPointType = any, DataValueType = any>(
         includeHidden={props.includeHidden}
         allowDecimals={props.allowDecimals}
         niceTicks={props.niceTicks ?? 'auto'}
-        // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
         ticks={props.ticks}
         tickCount={props.tickCount}
         tick={props.tick}
