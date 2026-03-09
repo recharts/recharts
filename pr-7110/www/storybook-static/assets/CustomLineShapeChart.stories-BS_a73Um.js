@@ -1,0 +1,33 @@
+import{e as t}from"./iframe-CE_u6gw7.js";import{R as D,i as s}from"./arrayEqualityCheck-DrWQ_zH1.js";import{L as v}from"./LineChartArgs-E1uHAgXQ.js";import{g as I}from"./utils-ePvtT4un.js";import{L as A}from"./LineChart-nqoSMd18.js";import{C as K}from"./CartesianGrid-Cc4ioig5.js";import{X as T}from"./XAxis-CLmHv_2r.js";import{Y as M}from"./YAxis-Bs0Yklvo.js";import{L as $}from"./Legend-Dfcg53g_.js";import{T as O}from"./Tooltip-BZFuu6Lh.js";import{L as C}from"./Line-C8DzJEYg.js";import{R as W}from"./RechartsHookInspector-Dl79BROd.js";import{C as X}from"./Curve-VV1uNtUT.js";import{p as Y}from"./Page-Cj8EiXz7.js";import"./preload-helper-Dp1pzeXC.js";import"./clsx-B-dksMZM.js";import"./resolveDefaultProps-B_XoAT-1.js";import"./immer-B4lMi1z1.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-B6u2BPsd.js";import"./index-CxjNEs9W.js";import"./hooks-PVjuMKZG.js";import"./axisSelectors-BIg47fnU.js";import"./d3-scale-DJKgZxBp.js";import"./zIndexSlice-BphKS-MH.js";import"./renderedTicksSlice-PB7f1cWi.js";import"./CartesianChart-Cxn-kkBD.js";import"./chartDataContext-DcP55NXx.js";import"./CategoricalChart-8rYVrRQy.js";import"./CartesianAxis-CWIyTumo.js";import"./Layer-DWHUvPCA.js";import"./Text-CMYMNHqG.js";import"./DOMUtils-BxWdBvEt.js";import"./Label-B0RF5qp9.js";import"./ZIndexLayer-DmUZ0Rp1.js";import"./types-BY4GBGia.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./Symbols-BcL7Z710.js";import"./symbol-CRUhxG3e.js";import"./step-CYcDECZ0.js";import"./useElementOffset-CsNs9pCE.js";import"./uniqBy-B6So3ul3.js";import"./iteratee-D0NxlJV3.js";import"./useAnimationId-Ey9rpLv3.js";import"./Cross-Ci23TiHh.js";import"./Rectangle-CJD0TK60.js";import"./Sector-DrGniStY.js";import"./ReactUtils-DKt0JvWb.js";import"./ActivePoints-hrEYGtat.js";import"./Dot-CRKbFyPB.js";import"./RegisterGraphicalItemId-CbUb9Psg.js";import"./ErrorBarContext-Cf8SIugI.js";import"./GraphicalItemClipPath-DEfFS43K.js";import"./SetGraphicalItem-afAcTt-s.js";import"./getRadiusAndStrokeWidthFromDot-CYfIvNV9.js";import"./ActiveShapeUtils-bsQr1W6P.js";import"./isPlainObject-B1Oby2ns.js";import"./isPlainObject-BSutPv-K.js";import"./Trapezoid-3IU8o-1x.js";import"./index-BnKoqAo2.js";import"./ChartSizeDimensions-DBXaHco-.js";import"./OffsetShower-Dg42jmMc.js";import"./PlotAreaShower-Dg2xDHUw.js";const Jt={component:A,argTypes:v,docs:{autodocs:!1}},k=c=>{const{tick:o,tickInterval:h=30,...l}=c,{points:p}=l,d=[];if(p)for(let i=1,S=p.length;i<S;++i){let R=0;const r=p[i-1],a=p[i];if(s(r.x)&&s(r.y)&&s(a.x)&&s(a.y)){let e=Math.abs(r.x-a.x);const g=(a.x-r.x)/e,u=(a.y-r.y)/e,b=Math.atan2(u,g)*180/Math.PI,w=Math.abs(Math.floor(e/h-1)),P=e/w;let m=h/2,{x:y,y:f}=r;for(;e-m>0;)e-=m,y+=g*m,f+=u*m,d.push(t.createElement("g",{key:`${i}-${++R}`,transform:`translate(${y} ${f}) rotate(${b})`},o)),m=P}}return t.createElement("g",{style:{color:l.stroke}},t.createElement(X,{...l}),d)},n={render:c=>t.createElement(D,{width:"100%",height:"100%"},t.createElement(A,{...c},t.createElement(K,{strokeDasharray:"3 3"}),t.createElement(T,{dataKey:"name"}),t.createElement(M,null),t.createElement($,null),t.createElement(O,{cursor:{stroke:"gold",strokeWidth:2},defaultIndex:3}),t.createElement(C,{type:"linear",dataKey:"pv",stroke:"#8884d8",activeDot:{r:8},shape:o=>t.createElement(k,{...o,tick:t.createElement("circle",{r:5,fill:"currentColor"})})}),t.createElement(C,{type:"linear",dataKey:"uv",stroke:"#82ca9d",shape:o=>t.createElement(k,{...o,tick:t.createElement("rect",{x:-5,y:-5,width:10,height:10,fill:"currentColor"})})}),t.createElement(W,null))),args:{...I(v),width:500,height:300,data:Y,margin:{top:5,right:30,left:20,bottom:5}}};var L,x,E;n.parameters={...n.parameters,docs:{...(L=n.parameters)==null?void 0:L.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height="100%">
+        <LineChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Tooltip cursor={{
+          stroke: 'gold',
+          strokeWidth: 2
+        }} defaultIndex={3} />
+          <Line type="linear" dataKey="pv" stroke="#8884d8" activeDot={{
+          r: 8
+        }} shape={(payload: CurveProps) => <CustomLineShapeProps {...payload} tick={<circle r={5} fill="currentColor" />} />} />
+          <Line type="linear" dataKey="uv" stroke="#82ca9d" shape={(payload: CurveProps) => <CustomLineShapeProps {...payload} tick={<rect x={-5} y={-5} width={10} height={10} fill="currentColor" />} />} />
+          <RechartsHookInspector />
+        </LineChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LineChartArgs),
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5
+    }
+  }
+}`,...(E=(x=n.parameters)==null?void 0:x.docs)==null?void 0:E.source}}};const Qt=["CustomLineShapeChart"];export{n as CustomLineShapeChart,Qt as __namedExportsOrder,Jt as default};
