@@ -826,7 +826,7 @@ export function computePieSectors({
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
-        paddingAngle: mathSign(deltaAngle) * paddingAngle,
+        paddingAngle: val !== 0 ? mathSign(deltaAngle) * paddingAngle : 0,
       };
       return prev;
     });
