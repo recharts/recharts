@@ -443,6 +443,14 @@ const tooltipSlice = createSlice({
       state.axisInteraction.click.dataKey = action.payload.activeDataKey;
       state.axisInteraction.click.coordinate = action.payload.activeCoordinate;
     },
+    mouseClickOutsidePlot(state) {
+      /*
+       * Deactivate the axis click interaction when the user clicks outside the cartesian plot area.
+       * This prevents tooltip from staying visible after the user clicks on an axis tick label or
+       * other elements outside the plot bounds.
+       */
+      state.axisInteraction.click.active = false;
+    },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
     },
@@ -465,6 +473,7 @@ export const {
   setActiveClickItemIndex,
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,
+  mouseClickOutsidePlot,
   setSyncInteraction,
   setKeyboardInteraction,
 } = tooltipSlice.actions;
