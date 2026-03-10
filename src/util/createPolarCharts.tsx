@@ -9,6 +9,8 @@ import { Props as PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { Props as RadarProps } from '../polar/Radar';
 import { Props as PieProps } from '../polar/Pie';
 import { PolarChartProps } from './types';
+import { TooltipProps } from '../component/Tooltip';
+import { NameType, ValueType } from '../component/DefaultTooltipContent';
 
 export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponents> = {
   RadarChart: React.ComponentType<Omit<PolarChartProps<TData>, 'layout'>>;
@@ -24,7 +26,9 @@ export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponent
             ? React.ComponentType<RadarProps<TData, TNumerical>>
             : K extends 'Pie'
               ? React.ComponentType<PieProps<TData, TNumerical>>
-              : TComponents[K];
+              : K extends 'Tooltip'
+                ? React.ComponentType<TooltipProps<Extract<TNumerical, ValueType>, Extract<keyof TData, NameType>>>
+                : TComponents[K];
   },
   'RadialBar' | 'RadialBarChart' | 'Pie' | 'PieChart'
 >;
@@ -44,7 +48,9 @@ export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents
             ? React.ComponentType<RadarProps<TData, TNumerical>>
             : K extends 'Pie'
               ? React.ComponentType<PieProps<TData, TNumerical>>
-              : TComponents[K];
+              : K extends 'Tooltip'
+                ? React.ComponentType<TooltipProps<Extract<TNumerical, ValueType>, Extract<keyof TData, NameType>>>
+                : TComponents[K];
   },
   'Radar' | 'RadarChart'
 >;
