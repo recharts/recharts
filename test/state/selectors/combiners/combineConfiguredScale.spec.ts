@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { combineConfiguredScaleInternal } from '../../../../src/state/selectors/combiners/combineConfiguredScale';
+import { describe, expect, it } from 'vitest';
+import { assertNotNull } from '../../../helper/assertNotNull';
 import { AxisRange } from '../../../../src/state/selectors/axisSelectors';
+import { combineConfiguredScaleInternal } from '../../../../src/state/selectors/combiners/combineConfiguredScale';
 
 const testDomain: ReadonlyArray<number> = [0, 100];
 const testRange: AxisRange = [0, 500];
@@ -13,23 +14,23 @@ describe('combineConfiguredScaleInternal', () => {
 
   it('returns a configured scale for a valid short scale name like "linear"', () => {
     const result = combineConfiguredScaleInternal('linear', testDomain, testRange);
-    expect(result).toBeDefined();
-    expect(result!.domain()).toEqual(testDomain);
-    expect(result!.range()).toEqual(testRange);
+    assertNotNull(result);
+    expect(result.domain()).toEqual(testDomain);
+    expect(result.range()).toEqual(testRange);
   });
 
   it('returns a configured scale for other valid short names', () => {
     const result = combineConfiguredScaleInternal('log', [1, 100], testRange);
-    expect(result).toBeDefined();
-    expect(result!.domain()).toEqual([1, 100]);
-    expect(result!.range()).toEqual(testRange);
+    assertNotNull(result);
+    expect(result.domain()).toEqual([1, 100]);
+    expect(result.range()).toEqual(testRange);
   });
 
   it('returns a configured scale for full d3 scale names like "scaleLinear"', () => {
     const result = combineConfiguredScaleInternal('scaleLinear', testDomain, testRange);
-    expect(result).toBeDefined();
-    expect(result!.domain()).toEqual(testDomain);
-    expect(result!.range()).toEqual(testRange);
+    assertNotNull(result);
+    expect(result.domain()).toEqual(testDomain);
+    expect(result.range()).toEqual(testRange);
   });
 
   it('returns undefined for a name that resolves to a non-function d3 export (scaleImplicit is a Symbol)', () => {
@@ -48,8 +49,8 @@ describe('combineConfiguredScaleInternal', () => {
   it('uses the function scale directly when scale is a function', () => {
     const fnScale = scaleLinear().copy().domain([0, 50]).range([0, 200]);
     const result = combineConfiguredScaleInternal(fnScale, testDomain, testRange);
-    expect(result).toBeDefined();
-    expect(result!.domain()).toEqual(testDomain);
-    expect(result!.range()).toEqual(testRange);
+    assertNotNull(result);
+    expect(result.domain()).toEqual(testDomain);
+    expect(result.range()).toEqual(testRange);
   });
 });
