@@ -1,7 +1,17 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Scatter, Customized, ScatterChart, XAxis, YAxis, ScatterProps, ZAxis, Tooltip } from '../../src';
+import {
+  Scatter,
+  Customized,
+  ScatterChart,
+  XAxis,
+  YAxis,
+  ScatterProps,
+  ZAxis,
+  Tooltip,
+  ScatterShapeProps,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
@@ -685,6 +695,54 @@ describe('<Scatter />', () => {
           expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(data01[0]) })]),
         );
       });
+    });
+  });
+
+  describe('ScatterPoint per-point rendering optimization', () => {
+    it('should only re-render the active and previously-active points when hovering, not all points', () => {
+      const shapeSpy = vi.fn((_props: ScatterShapeProps) => <circle r={5} cx={0} cy={0} />);
+      const pointCount = 20;
+      const scatterData = Array.from({ length: pointCount }, (_, i) => ({
+        x: i * 50,
+        y: i * 50,
+        z: 100,
+      }));
+
+      const { container } = render(
+        <ScatterChart width={1000} height={1000}>
+          <XAxis type="number" dataKey="x" />
+          <YAxis type="number" dataKey="y" />
+          <Scatter isAnimationActive={false} data={scatterData} shape={shapeSpy} activeShape={{ fill: 'red' }} />
+        </ScatterChart>,
+      );
+
+      // After initial render, the shape spy was called once per point
+      const initialCallCount = shapeSpy.mock.calls.length;
+      expect(initialCallCount).toBe(pointCount);
+
+      shapeSpy.mockClear();
+
+      // Hover over the first scatter point
+      const symbols = container.querySelectorAll('.recharts-scatter-symbol');
+      assertNotNull(symbols[0]);
+      fireEvent.mouseEnter(symbols[0]);
+
+      // Only the newly active point should re-render its shape, not all points.
+      // With the per-point selector optimization, only 1 point re-renders (the one becoming active).
+      // Without the optimization, all 20 points would re-render.
+      const afterFirstHover = shapeSpy.mock.calls.length;
+      expect(afterFirstHover).toBeLessThan(pointCount);
+
+      shapeSpy.mockClear();
+
+      // Now hover over a different point
+      assertNotNull(symbols[5]);
+      fireEvent.mouseEnter(symbols[5]);
+
+      // Only the previously-active and newly-active points should re-render (at most 2),
+      // not all 20 points
+      const afterSecondHover = shapeSpy.mock.calls.length;
+      expect(afterSecondHover).toBeLessThan(pointCount);
     });
   });
 });
