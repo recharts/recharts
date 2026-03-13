@@ -25,7 +25,7 @@ function createMockMousePointer(x: number, y: number, width = 500, height = 300)
  * Minimal XAxis settings for testing bounds check.
  * Chart: 400x400, margin={5,5,5,5}, XAxis at bottom with height=30.
  * Resulting offset: left=5, top=5, width=390, height=360.
- * Plot area Y range: [5, 365]. XAxis tick labels live below y=365.
+ * Plot area Y range: [5, 365]. XAxis tick labels live below y=365 but still inside SVG (y <= 400).
  */
 const testXAxis: XAxisSettings = {
   id: 0,
@@ -112,9 +112,10 @@ describe('mouseClickMiddleware – plot bounds guard', () => {
    * The mock bounding rect is 400x400 at (0,0), so relativeCoord = clientCoord.
    */
   const INSIDE_PLOT = createMockMousePointer(200, 200, 400, 400); // well inside
-  const OUTSIDE_PLOT_BELOW_XAXIS = createMockMousePointer(200, 375, 400, 400); // y=375 > 365
+  const OUTSIDE_PLOT_BELOW_XAXIS = createMockMousePointer(200, 375, 400, 400); // y=375 > 365 but still inside SVG
+  const OUTSIDE_SVG_BELOW_CHART = createMockMousePointer(200, 410, 400, 400); // y=410 > 400 (outside SVG)
 
-  it('should NOT activate the tooltip when clicking outside the plot area (below XAxis)', () => {
+  it('should NOT activate the tooltip when clicking below XAxis but still inside SVG', () => {
     const store = createStoreWithChartDimensions();
 
     store.dispatch(mouseClickAction(OUTSIDE_PLOT_BELOW_XAXIS));
@@ -123,7 +124,7 @@ describe('mouseClickMiddleware – plot bounds guard', () => {
     expect(tooltipState.axisInteraction.click.active).toBe(false);
   });
 
-  it('should deactivate an existing tooltip click state when clicking outside the plot area', () => {
+  it('should NOT deactivate an existing tooltip click state when clicking below XAxis but inside SVG', () => {
     const store = createStoreWithChartDimensions();
 
     // Pre-activate the tooltip by simulating a prior valid click inside the plot
@@ -136,8 +137,26 @@ describe('mouseClickMiddleware – plot bounds guard', () => {
     );
     expect(selectTooltipState(store.getState()).axisInteraction.click.active).toBe(true);
 
-    // Click outside the plot area (on the XAxis tick label region)
+    // Click on the XAxis tick label region: outside plot area but still inside SVG
     store.dispatch(mouseClickAction(OUTSIDE_PLOT_BELOW_XAXIS));
+
+    const tooltipState = selectTooltipState(store.getState());
+    expect(tooltipState.axisInteraction.click.active).toBe(true);
+  });
+
+  it('should deactivate an existing tooltip click state when clicking outside the SVG bounds', () => {
+    const store = createStoreWithChartDimensions();
+
+    store.dispatch(
+      setMouseClickAxisIndex({
+        activeIndex: '2',
+        activeDataKey: undefined,
+        activeCoordinate: { x: 200, y: 200 },
+      }),
+    );
+    expect(selectTooltipState(store.getState()).axisInteraction.click.active).toBe(true);
+
+    store.dispatch(mouseClickAction(OUTSIDE_SVG_BELOW_CHART));
 
     const tooltipState = selectTooltipState(store.getState());
     expect(tooltipState.axisInteraction.click.active).toBe(false);
