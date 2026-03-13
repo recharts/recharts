@@ -16,11 +16,11 @@ function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDo
 ): CustomScaleDefinition<Domain> | undefined {
   const scales = d3Scales as Record<string, unknown>;
   if (realScaleType in scales && typeof scales[realScaleType] === 'function') {
-    return (scales[realScaleType] as () => CustomScaleDefinition<Domain>)();
+    return scales[realScaleType]();
   }
   const name = `scale${upperFirst(realScaleType)}`;
   if (name in scales && typeof scales[name] === 'function') {
-    return (scales[name] as () => CustomScaleDefinition<Domain>)();
+    return scales[name]();
   }
   return undefined;
 }
