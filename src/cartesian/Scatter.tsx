@@ -510,6 +510,17 @@ function ScatterLabelListProvider({
  * Individual scatter point component that subscribes to its own isActive state.
  * This avoids re-rendering all points when the active index changes —
  * only the point becoming active and the point becoming inactive re-render.
+ *
+ * @param entry The scatter point data including coordinates, size, and tooltip payload
+ * @param index The index of this point in the points array
+ * @param shape The default shape to render for inactive points
+ * @param activeShape The shape to render when this point is active, or undefined if no active shape
+ * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
+ * @param id The graphical item ID of the parent Scatter component
+ * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
+ * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
+ * @param onMouseLeaveFromContext Curried mouse leave handler that dispatches tooltip deactivation
+ * @param onClickFromContext Curried click handler that dispatches tooltip click activation
  */
 function ScatterPoint({
   entry,
