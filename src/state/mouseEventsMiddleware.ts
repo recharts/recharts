@@ -1,9 +1,10 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
+import { mouseClickOutsidePlot, mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
-
+import { selectChartOffsetInternal } from './selectors/selectChartOffsetInternal';
+import { selectChartHeight, selectChartWidth } from './selectors/containerSelectors';
 import { getRelativeCoordinate } from '../util/getRelativeCoordinate';
 import { RelativePointer, HTMLMousePointer } from '../util/types';
 
@@ -11,12 +12,38 @@ export const mouseClickAction = createAction<HTMLMousePointer>('mouseClick');
 
 export const mouseClickMiddleware = createListenerMiddleware<RechartsRootState>();
 
-// TODO: there's a bug here when you click the chart the activeIndex resets to zero
 mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
   effect: (action: PayloadAction<HTMLMousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), getRelativeCoordinate(mousePointer));
+    const relativeCoord = getRelativeCoordinate(mousePointer);
+    const state = listenerApi.getState();
+    const offset = selectChartOffsetInternal(state);
+    const innerWidth = offset.width;
+    const innerHeight = offset.height;
+    const outerWidth = selectChartWidth(state);
+    const outerHeight = selectChartHeight(state);
+    const chartX = relativeCoord.relativeX - offset.left;
+    const chartY = relativeCoord.relativeY - offset.top;
+
+    console.log({ chartX, chartY, outerWidth, outerHeight, offset });
+
+    const isOutside =
+      chartX < -offset.left ||
+      chartX > innerWidth + offset.right ||
+      chartY < -offset.top ||
+      chartY > innerHeight + offset.bottom;
+
+    if (isOutside) {
+      /*
+       * The click originated outside the SVG bounds.
+       * Deactivate any existing axis click interaction so the tooltip is hidden.
+       */
+      listenerApi.dispatch(mouseClickOutsidePlot());
+      return;
+    }
+
+    const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), relativeCoord);
     if (activeProps?.activeIndex != null) {
       listenerApi.dispatch(
         setMouseClickAxisIndex({
