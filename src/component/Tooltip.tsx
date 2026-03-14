@@ -45,7 +45,7 @@ export type TooltipContentProps<TValue extends ValueType = ValueType, TName exte
   TName
 > & {
   label?: string | number;
-  payload: TooltipPayload;
+  payload: TooltipPayload<TValue, TName>;
   coordinate: Coordinate | undefined;
   active: boolean;
   accessibilityLayer: boolean;
