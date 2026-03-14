@@ -436,75 +436,100 @@ jobs:
         run: ./run-test.sh "${{ matrix.test_dir }}" "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
 
   vr_tests:
-    name: Visual Regression Tests
+    name: VR Tests (${{ matrix.browser }})
     permissions:
       contents: read
-      pages: write
-      id-token: write
-      pull-requests: write
     runs-on: ubuntu-latest
     needs: [build]
+    container:
+      # Run directly in the Playwright image — no Docker-in-Docker needed.
+      image: mcr.microsoft.com/playwright:v1.58.2-jammy
     env:
-      # GH_TOKEN is needed to use `gh` CLI to comment on the PR
-      GH_TOKEN: ${{ github.token }}
+      HOME: /root
+    strategy:
+      # Run all browsers even if one fails so we get a full picture.
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
-      - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
-        with:
-          repository: recharts/recharts # Checkout the main repo again but this time all directories and files
-
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Sanitize branch name
-        # The branch name is used in the URL for the report.
-        # It needs to be sanitized to remove characters that are not URL-friendly.
-        # This step creates a GITHUB_ENV variable so it can be reused in later steps.
-        run: |
-          BRANCH_NAME=${{ github.head_ref || github.ref_name }}
-          # Sanitize branch name for URL
-          SANITIZED_BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
-          echo "SANITIZED_BRANCH_NAME=$SANITIZED_BRANCH_NAME" >> $GITHUB_ENV
-
-      - name: Build Docker Image
-        # The VR tests run inside a Docker container. This step builds the image.
-        run: npm run test-vr:prepare
-
-      - name: Run Visual Regression Tests
+      - name: Run Visual Regression Tests (${{ matrix.browser }})
         id: vr_test_step
-        run: npm run test-vr
-        # Continue even if this step fails. This allows us to upload the report
-        # and post a comment on the PR. The workflow will be failed in a later step.
+        # VR tests resolve recharts via a Vite source alias, so no build step is needed.
+        run: npx playwright test --config=test-vr/playwright-ct.config.ts --project=${{ matrix.browser }}
+        # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
 
-      - name: Upload Visual Regression Report artifact
+      - name: Upload blob report artifact
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vr-blob-report-${{ matrix.browser }}
+          path: test-vr/blob-report
+          retention-days: 1
+
+      - name: Fail workflow if tests failed
+        # This step ensures that the job fails when tests fail.
+        # A failing job will block the PR from being merged.
+        if: steps.vr_test_step.outcome == 'failure'
+        run: exit 1
+
+  merge_vr_reports:
+    name: Merge VR Reports
+    runs-on: ubuntu-latest
+    needs: [vr_tests]
+    # Always run so we get a combined report even when some browsers have failures.
+    if: always() && needs.vr_tests.result != 'cancelled'
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: vr-blob-report-*
+          path: all-blob-reports
+
+      - name: Merge reports into a single HTML report
+        run: npx playwright merge-reports --reporter html --output test-vr/playwright-report all-blob-reports
+
+      - name: Upload merged VR report artifact
         uses: actions/upload-artifact@v4
         with:
           name: vr-report
           path: test-vr/playwright-report
           retention-days: 14
 
-      - name: Fail workflow if tests failed
-        # This step ensures that the entire job fails if the VR tests have failed.
-        # This is necessary because of `continue-on-error: true` in the test step.
-        # A failing job will block the PR from being merged.
-        if: steps.vr_test_step.outcome == 'failure'
-        run: exit 1
-
   deploy_staging:
     name: Deploy to Staging
-    needs: [website, vr_tests]
+    needs: [website, merge_vr_reports]
     # In GitHub Actions, when a job in the needs array fails, dependent jobs are skipped by default,
     # even if the if condition doesn't explicitly check that job's result.
-    # Since the vr_tests job will fail when tests fail (due to the "Fail workflow if tests failed" step on line 263),
-    # the deploy_staging job will be skipped. To achieve your intended behavior, you need to explicitly allow deploy_staging to run when vr_tests fails.
-    if: always() && needs.website.result == 'success' && (needs.vr_tests.result == 'success' || needs.vr_tests.result == 'failure')
+    # Since the merge_vr_reports job will fail when tests fail,
+    # the deploy_staging job will be skipped. To achieve your intended behavior, you need to explicitly allow deploy_staging to run when merge_vr_reports fails.
+    if: always() && needs.website.result == 'success' && (needs.merge_vr_reports.result == 'success' || needs.merge_vr_reports.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: write
