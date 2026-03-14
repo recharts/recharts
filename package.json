@@ -31,7 +31,7 @@
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack -o umd",
     "build-types": "rimraf types && npm run tsc",
-    "check-types": "check-types-lib && npm run check-types-test && npm run check-types-storybook && npm run check-types-website",
+    "check-types": "npm run check-types-lib && npm run check-types-test && npm run check-types-storybook && npm run check-types-website",
     "check-types-lib": "tsc --noEmit",
     "check-types-test": "tsc --project test/tsconfig.json",
     "check-types-storybook": "tsc --project storybook/tsconfig.json",
