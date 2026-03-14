@@ -122,6 +122,9 @@ jobs:
       - name: omnidoc - documentation test
         run: npm run test-omnidoc
 
+      - name: treeshaking test
+        run: npm run test-treeshaking
+
       - name: Storybook doctor
         run: npm run storybook-doctor
 

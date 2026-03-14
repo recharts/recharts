@@ -61,7 +61,15 @@ export default defineConfig({
       {
         test: {
           name: 'build-output',
-          include: ['scripts/**/*.test.ts'],
+          include: ['scripts/**/buildOutput.test.ts', 'scripts/**/verify-exports.test.ts'],
+          environment: 'node',
+          globals: false,
+        },
+      },
+      {
+        test: {
+          name: 'treeshaking',
+          include: ['scripts/treeshaking.test.ts'],
           environment: 'node',
           globals: false,
         },
