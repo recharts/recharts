@@ -183,7 +183,7 @@ describe('Chart Helpers', () => {
         <Typed.AreaChart data={data} width={400} height={400}>
           <Typed.XAxis dataKey="name" />
           <Typed.Area dataKey="value" isAnimationActive={false} />
-          <Typed.Tooltip formatter={(value: number | undefined, name: 'value' | 'name') => `${name}: ${value}`} />
+          <Typed.Tooltip formatter={(value: number, name: 'value' | 'name') => `${name}: ${value}`} />
         </Typed.AreaChart>
       );
       expect(validChart).toBeDefined();
