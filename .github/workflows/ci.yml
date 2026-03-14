@@ -514,6 +514,7 @@ jobs:
         with:
           pattern: vr-blob-report-*
           path: all-blob-reports
+          merge-multiple: true
 
       - name: Merge reports into a single HTML report
         run: npx playwright merge-reports --reporter html all-blob-reports
