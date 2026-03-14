@@ -188,6 +188,7 @@ jobs:
 
   checks:
     name: Eslint and Typecheck
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
@@ -202,6 +203,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
 
       - name: Typecheck
         run: npm run check-types-lib
