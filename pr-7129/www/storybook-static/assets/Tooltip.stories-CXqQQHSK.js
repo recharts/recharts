@@ -1,0 +1,395 @@
+import{r as v,e}from"./iframe-3667Tvz2.js";import{g as l}from"./utils-ePvtT4un.js";import{T as s}from"./TooltipArgs-BBATqmz9.js";import{T as i,D as Ne}from"./Tooltip-CDV62SER.js";import{R as m}from"./arrayEqualityCheck-D9OvKJwD.js";import{C as u}from"./ComposedChart-DwAm-CG0.js";import{X as f}from"./XAxis-BpxRjWnh.js";import{Y as T}from"./YAxis-DW4WG6ok.js";import{L as n}from"./Line-D4SOJls3.js";import{R as p}from"./RechartsHookInspector-CJCnB7_4.js";import{B as g}from"./Bar-B1C1yyJt.js";import{L as j}from"./LineChart-CgpJj2mZ.js";import{B as W}from"./BarChart-DROwWIYr.js";import{C as Pe}from"./CartesianGrid-C3IKB72D.js";import{L as ze}from"./Legend-Dvo2TWmH.js";import{A as Ge}from"./Area-C363lx5N.js";import{R as _e}from"./RadialBarChart-COSr8hlQ.js";import{R as P}from"./RadialBar-h_0iKs7d.js";import{p as h}from"./Page-Cj8EiXz7.js";import"./preload-helper-Dp1pzeXC.js";import"./immer-UKt74SqS.js";import"./clsx-B-dksMZM.js";import"./useAnimationId-QOY8B5bM.js";import"./resolveDefaultProps-BtuJUOf7.js";import"./useElementOffset-BBj3jhiQ.js";import"./uniqBy-D-QVLyY1.js";import"./iteratee-esNjAKiM.js";import"./RechartsWrapper-oIAnzkqM.js";import"./index-C4SUCtnx.js";import"./hooks-BZsQuy7Q.js";import"./axisSelectors-DQHNBIMP.js";import"./d3-scale-DGzXDIH7.js";import"./zIndexSlice-T5ACl1fd.js";import"./renderedTicksSlice-AmLe9sEW.js";import"./PolarUtils-CTnnDHZv.js";import"./types-B-N1LhIG.js";import"./Curve-BaNFvaPx.js";import"./step-DREQNBhH.js";import"./Cross-8LVQ3THK.js";import"./Rectangle-CBZ7nnGZ.js";import"./Sector-DqFdBDD-.js";import"./ZIndexLayer-DQkUzdJa.js";import"./CartesianChart-DujR4c01.js";import"./chartDataContext-DwqmBR6M.js";import"./CategoricalChart-BIICkzoQ.js";import"./CartesianAxis-C27eZMEL.js";import"./Layer-DkCxZ1Nm.js";import"./Text-BJUXCfBk.js";import"./DOMUtils-CXQ8jzVY.js";import"./Label-BZ-HO-n4.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./ReactUtils-BGYookdr.js";import"./ActivePoints-uWw7uTV8.js";import"./Dot-CliWMADJ.js";import"./RegisterGraphicalItemId-6KUqIGYl.js";import"./ErrorBarContext-f546Mx0J.js";import"./GraphicalItemClipPath-B2jRUZRX.js";import"./SetGraphicalItem-9InqSUgs.js";import"./getRadiusAndStrokeWidthFromDot-knWG_owO.js";import"./ActiveShapeUtils-BGTdwFBk.js";import"./isPlainObject-BNfNO1bM.js";import"./isPlainObject-BSutPv-K.js";import"./Trapezoid-BmNjJBFD.js";import"./Symbols-Dz33hGQT.js";import"./symbol-DLtpIQQd.js";import"./index-BoqoSvrt.js";import"./ChartSizeDimensions-rVAYYRrn.js";import"./OffsetShower-DYHCblSP.js";import"./PlotAreaShower-BlEzOlOg.js";import"./tooltipContext-C2Im_9CK.js";import"./tiny-invariant-CopsF_GD.js";import"./getZIndexFromUnknown-BpiGpBWq.js";import"./graphicalItemSelectors-DVTwV7Bz.js";import"./PolarChart-cPANDjKa.js";import"./polarScaleSelectors-B8WKObYf.js";import"./polarSelectors-cLUZrM2n.js";function*Je(t){let o=t;for(o>0&&o<1&&(o=Math.round(o*1e3));o<0;)o+=65537;for(;;)o=(75*o+74)%65537,yield Math.round(o)}function M(t,a,r){return t.next().value%(r-a)+a}function qe(t,a){const r=[],c=Je(a);for(let o=0;o<t;o++)r.push({label:`Iter: ${o}`,x:M(c,100,300),y:M(c,400,800),z:M(c,1e3,2e3)});return r}v.createContext(null);e.memo(function({onClick:a,onMouseMove:r,onMouseLeave:c,onMouseDown:o,onMouseUp:y,onMouseEnter:d,pointerEvents:Ye="none",fill:Ue="transparent",cursor:$e}){return e.createElement(e.Fragment,null,e.createElement("rect",{x:0,y:0,width:"100%",height:"100%",fill:Ue,style:{pointerEvents:Ye,cursor:$e},onClick:a,onMouseMove:r,onMouseLeave:c,onMouseDown:o,onMouseUp:y,onMouseEnter:d}))});const wa={argTypes:s,component:i},Z={render:t=>e.createElement(m,{width:"100%",height:400},e.createElement(u,{data:h},e.createElement(f,{dataKey:"name"}),e.createElement(T,null),e.createElement(i,{...t}),e.createElement(n,{dataKey:"uv"}),e.createElement(p,null)))},C={...Z,args:{...l(s),active:!0}},A={render:t=>e.createElement(j,{width:500,height:300,data:h,accessibilityLayer:!0,margin:{top:5,right:5,bottom:5,left:0}},e.createElement(Pe,{stroke:"#eee",strokeDasharray:"5 5"}),e.createElement(f,{dataKey:"name"}),e.createElement(T,null),e.createElement(i,{...t}),e.createElement(n,{type:"monotone",dataKey:"uv",stroke:"#8884d8"}),e.createElement(n,{type:"monotone",dataKey:"pv",stroke:"#82ca9d"}),e.createElement(p,null)),args:{...l(s),defaultIndex:2}},w={render:t=>{const[a,r]=e.useState(!1),[c,o]=e.useState({}),y=d=>(!a&&d.payload&&d.payload.length>0&&d.coordinate.x!==c.x&&o({payload:d.payload,x:d.coordinate.x,label:d.label}),e.createElement(Ne,{...d,payload:d.tooltipData.payload??d.payload,label:d.tooltipData.label??d.label}));return e.createElement(m,{width:"100%",height:500},e.createElement(u,{data:h,onClick:()=>{r(!a)}},e.createElement(i,{...t,position:{y:0,x:c.x},content:e.createElement(y,{tooltipData:c})}),e.createElement(n,{dataKey:"uv"}),e.createElement(g,{dataKey:"pv"}),e.createElement(p,null)))},description:"This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.",args:{...l(s)}},b={render:t=>{const[a,r]=v.useState(1.2),c=v.useCallback(()=>r(y=>y+.1),[]),o=v.useCallback(()=>r(y=>y-.1),[]);return e.createElement("div",{style:{width:"100%"}},e.createElement("h2",null,"No transform: scale"),e.createElement("div",{style:{display:"flex"}},e.createElement(m,{width:"100%",height:200},e.createElement(u,{data:h},e.createElement(f,{dataKey:"name"}),e.createElement(i,null),e.createElement(n,{dataKey:"uv"}),e.createElement(g,{dataKey:"pv"})))),e.createElement("h2",null,"Parent container",` <div style={{transform: scale(${a})}}> ...`),e.createElement("button",{type:"button",onClick:c},"Zoom In"),e.createElement("button",{type:"button",onClick:o},"Zoom Out"),e.createElement("div",{style:{transform:`scale(${a})`,transformOrigin:"50% 0"}},e.createElement(m,{width:"100%",height:200},e.createElement(u,{data:h},e.createElement(f,{dataKey:"name"}),e.createElement(n,{dataKey:"uv"}),e.createElement(g,{dataKey:"pv"}),e.createElement(i,{...t}),e.createElement(p,null)))))},description:"This example shows if Tooltip is shown correctly when parent component use transform:scale styling",args:{...l(s)}},Qe=[{category:"A",value:.2},{category:"B",value:.3},{category:"B",value:.5},{category:"C",value:.6},{category:"C",value:.7},{category:"D",value:.4}],Ve=[{category:"A",value:null},{category:"B",value:null},{category:"B",value:null},{category:"C",value:.2},{category:"C",value:.4},{category:"D",value:.6}],S={render:t=>e.createElement(m,{width:"100%",height:500},e.createElement(u,{data:Qe},e.createElement(f,{dataKey:"category",type:"category"}),e.createElement(T,{dataKey:"value"}),e.createElement(i,{...t}),e.createElement(Ge,{dataKey:"value"}),e.createElement(n,{dataKey:"value",data:Ve}),e.createElement(p,null))),args:{...l(s)}},R={...Z,args:{...l(s),trigger:"click"}},et=({active:t,payload:a})=>e.createElement("div",{style:{backgroundColor:"#5b63ffe7",padding:"10px",borderRadius:"10px",boxShadow:"1px 2px 10px -2px #7873ffb1",visibility:t?"visible":"hidden"}},a==null?void 0:a.map(r=>e.createElement("p",{key:r.name,style:{borderStyle:"solid 1px",fontSize:"13px",fontWeight:"600",fontFamily:"sans-serif",color:"#fff"}},`${r.name} : ${r.value}`))),x={...Z,args:{...l(s),content:e.createElement(et,null),trigger:"hover"}},k={render:t=>{const[a,r]=[600,300];return e.createElement(m,{width:"100%",height:r},e.createElement(u,{width:a,height:r,margin:{top:20,right:20,bottom:20,left:20},data:qe(1e3,334058656)},e.createElement(i,{...t}),e.createElement(n,{dataKey:"x"}),e.createElement(n,{dataKey:"y"}),e.createElement(n,{dataKey:"z"}),e.createElement(p,null)))},args:{...l(s)}},K={render:t=>{const[a,r]=[600,300];return e.createElement(m,{width:"100%",height:r},e.createElement(u,{width:a,height:r,margin:{top:20,right:20,bottom:20,left:20},data:h},e.createElement(i,{...t}),e.createElement(n,{dataKey:"uv"}),e.createElement(n,{dataKey:"pv",hide:!0}),e.createElement(p,null)))},args:{...l(s),includeHidden:!0}},L={render:t=>e.createElement(m,{width:"100%",height:400},e.createElement(W,{data:h},e.createElement(g,{dataKey:"uv",fill:"green"}),e.createElement(g,{dataKey:"pv",fill:"red"}),e.createElement(i,{...t}),e.createElement(p,null))),args:{...l(s),shared:!1,defaultIndex:2,active:!0}},I={render:t=>e.createElement(m,{width:"100%",height:400},e.createElement(_e,{data:h},e.createElement(P,{dataKey:"uv",fill:"green"}),e.createElement(P,{dataKey:"pv",fill:"red"}),e.createElement(i,{...t}),e.createElement(p,null))),args:{...l(s),shared:!1,defaultIndex:2,active:!0}},E={render:t=>e.createElement(j,{width:"100%",height:50,responsive:!0,data:h},e.createElement(i,{...t}),e.createElement(n,{dataKey:"uv",fill:"green"}),e.createElement(n,{dataKey:"pv",fill:"red"}),e.createElement(n,{dataKey:"amt",fill:"amt"}),e.createElement(p,null)),args:{...l(s),defaultIndex:2,active:!0}},B={render:t=>{const[a,r]=v.useState(null);return e.createElement(e.Fragment,null,e.createElement(m,{width:"100%",height:400},e.createElement(j,{data:h},a&&e.createElement(i,{...t,portal:a}),e.createElement(n,{dataKey:"uv",fill:"green"}),e.createElement(n,{dataKey:"pv",fill:"red"}),e.createElement(p,null))),e.createElement("div",{ref:c=>{a==null&&c!=null&&r(c)}},e.createElement("p",null,"Inspect the resulting HTML to see that the Tooltip element is rendered according to the portal ref."),e.createElement("p",null,"You now control the container the Tooltip renders in, as well as style attributes such as width, height, etc. Those can be managed via the Tooltip wrapperStyle prop.")))},args:{...l(s),wrapperStyle:{width:"25%",marginLeft:10},defaultIndex:3,active:!0}},Xe=[{Triggers:10,date:"Jan 1, 2025"},{Triggers:10,date:"Feb 28, 2025"}],D={render:t=>{const[,a]=v.useState(!0);return e.createElement("div",null,e.createElement("div",{style:{height:2e3,width:300}},e.createElement("p",null,"There is a chart here; scroll down")),e.createElement("div",{style:{height:250,width:300}},e.createElement("button",{type:"button",onClick:()=>a(r=>!r)},"set random unused state"),e.createElement(m,null,e.createElement(j,{data:Xe,style:{border:"1px solid black"}},e.createElement(i,{...t}),e.createElement(n,{dataKey:"Triggers"}),e.createElement(p,null)))))},args:{...l(s)}},H={render:t=>{const[,a]=v.useState(!0);return e.createElement("div",null,e.createElement("div",{style:{height:2e3,width:300}},e.createElement("p",null,"There is a chart here; scroll down")),e.createElement("div",{style:{height:250,width:300}},e.createElement("button",{type:"button",onClick:()=>a(r=>!r)},"set random unused state"),e.createElement(m,null,e.createElement(W,{data:Xe,style:{border:"1px solid black"}},e.createElement(g,{dataKey:"Triggers"}),e.createElement(i,{...t}),e.createElement(p,null)))))},args:{...l(s),shared:!1}},O={render:t=>e.createElement("div",{style:{display:"grid",gridTemplateColumns:"auto 1fr"}},e.createElement("div",{style:{width:"200px"}}),e.createElement("div",{style:{position:"relative"}},e.createElement(W,{width:730,height:250,data:h},e.createElement(Pe,{strokeDasharray:"3 3"}),e.createElement(f,{dataKey:"name"}),e.createElement(T,null),e.createElement(i,{...t}),e.createElement(ze,null),e.createElement(g,{dataKey:"pv",fill:"#8884d8"}),e.createElement(g,{dataKey:"uv",fill:"#82ca9d"}),e.createElement(p,null)))),args:{...l(s),cursor:!1}},F={render:t=>e.createElement(m,{width:"100%",height:400},e.createElement(u,{data:h},e.createElement(f,{dataKey:"name"}),e.createElement(T,null),e.createElement(n,{dataKey:"uv"}),e.createElement(i,{...t}),e.createElement(p,null))),args:{...l(s),offset:-50,wrapperStyle:{width:100}}};var X,Y,U;C.parameters={...C.parameters,docs:{...(X=C.parameters)==null?void 0:X.docs,source:{originalSource:`{
+  ...SimpleTooltipStory,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    active: true
+  }
+}`,...(U=(Y=C.parameters)==null?void 0:Y.docs)==null?void 0:U.source}}};var $,N,z;A.parameters={...A.parameters,docs:{...($=A.parameters)==null?void 0:$.docs,source:{originalSource:`{
+  render: (args: Args) => <LineChart width={500} height={300} data={pageData} accessibilityLayer margin={{
+    top: 5,
+    right: 5,
+    bottom: 5,
+    left: 0
+  }}>
+      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip {...args} />
+      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+      <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+      <RechartsHookInspector />
+    </LineChart>,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    defaultIndex: 2
+  }
+}`,...(z=(N=A.parameters)==null?void 0:N.docs)==null?void 0:z.source}}};var G,_,J;w.parameters={...w.parameters,docs:{...(G=w.parameters)==null?void 0:G.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [isLocked, setIsLocked] = React.useState(false);
+    // The TooltipData contains the payload, the label and the x position of the tooltip.
+    // Their update is interrupted by the click event, so we need to store them in a state.
+    const [tooltipData, setTooltipData] = React.useState<{
+      payload?: unknown[];
+      label?: string;
+      x?: number;
+    }>({});
+
+    // A custom Tooltip that updates the payload of the tooltip if the
+    // chart is locked, and either way always renders using the normal Tooltip.
+    const CustomTooltip = (props: any) => {
+      // If the chart is locked, and the payload is not empty, and the
+      // x position of the tooltip has changed, update the tooltipData.
+      if (!isLocked && props.payload && props.payload.length > 0 && props.coordinate.x !== tooltipData.x) {
+        setTooltipData({
+          payload: props.payload,
+          x: props.coordinate.x,
+          label: props.label
+        });
+      }
+      return <DefaultTooltipContent {...props} payload={props.tooltipData.payload ?? props.payload} label={props.tooltipData.label ?? props.label} />;
+    };
+    return <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={pageData}
+      // Clicking the chart locks the tooltip to the current position, and fixes its content.
+      onClick={() => {
+        setIsLocked(!isLocked);
+      }}>
+          <Tooltip {...args} position={{
+          y: 0,
+          x: tooltipData.x
+        }} // The y position fixes the Tooltip to the top of the chart.
+        content={<CustomTooltip tooltipData={tooltipData} />} />
+          <Line dataKey="uv" />
+          <Bar dataKey="pv" />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  description: 'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs)
+  }
+}`,...(J=(_=w.parameters)==null?void 0:_.docs)==null?void 0:J.source}}};var q,Q,V;b.parameters={...b.parameters,docs:{...(q=b.parameters)==null?void 0:q.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [scale, setScale] = useState(1.2);
+    const handleZoomIn = useCallback(() => setScale(s => s + 0.1), []);
+    const handleZoomOut = useCallback(() => setScale(s => s - 0.1), []);
+    return <div style={{
+      width: '100%'
+    }}>
+        <h2>No transform: scale</h2>
+        <div style={{
+        display: 'flex'
+      }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <ComposedChart data={pageData}>
+              <XAxis dataKey="name" />
+              <Tooltip />
+              <Line dataKey="uv" />
+              <Bar dataKey="pv" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        <h2>
+          Parent container
+          {\` <div style={{transform: scale(\${scale})}}> ...\`}
+        </h2>
+        <button type="button" onClick={handleZoomIn}>
+          Zoom In
+        </button>
+        <button type="button" onClick={handleZoomOut}>
+          Zoom Out
+        </button>
+        <div style={{
+        transform: \`scale(\${scale})\`,
+        transformOrigin: '50% 0'
+      }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <ComposedChart data={pageData}>
+              <XAxis dataKey="name" />
+              <Line dataKey="uv" />
+              <Bar dataKey="pv" />
+              <Tooltip {...args} />
+              <RechartsHookInspector />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </div>;
+  },
+  description: 'This example shows if Tooltip is shown correctly when parent component use transform:scale styling',
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs)
+  }
+}`,...(V=(Q=b.parameters)==null?void 0:Q.docs)==null?void 0:V.source}}};var ee,te,ae;S.parameters={...S.parameters,docs:{...(ee=S.parameters)==null?void 0:ee.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={areaData}>
+          <XAxis dataKey="category" type="category" />
+          <YAxis dataKey="value" />
+          <Tooltip {...args} />
+          <Area dataKey="value" />
+          <Line dataKey="value" data={lineData} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs)
+  }
+}`,...(ae=(te=S.parameters)==null?void 0:te.docs)==null?void 0:ae.source}}};var re,oe,ne;R.parameters={...R.parameters,docs:{...(re=R.parameters)==null?void 0:re.docs,source:{originalSource:`{
+  ...SimpleTooltipStory,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    trigger: 'click'
+  }
+}`,...(ne=(oe=R.parameters)==null?void 0:oe.docs)==null?void 0:ne.source}}};var se,ie,le;x.parameters={...x.parameters,docs:{...(se=x.parameters)==null?void 0:se.docs,source:{originalSource:`{
+  ...SimpleTooltipStory,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    content: <CustomContent />,
+    trigger: 'hover'
+  }
+}`,...(le=(ie=x.parameters)==null?void 0:ie.docs)==null?void 0:le.source}}};var ce,pe,de;k.parameters={...k.parameters,docs:{...(ce=k.parameters)==null?void 0:ce.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={generateMockData(1000, 334058656)}>
+          <Tooltip {...args} />
+          <Line dataKey="x" />
+          <Line dataKey="y" />
+          <Line dataKey="z" />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs)
+  }
+}`,...(de=(pe=k.parameters)==null?void 0:pe.docs)==null?void 0:de.source}}};var me,he,ue;K.parameters={...K.parameters,docs:{...(me=K.parameters)==null?void 0:me.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={pageData}>
+          <Tooltip {...args} />
+          <Line dataKey="uv" />
+          <Line dataKey="pv" hide />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    includeHidden: true
+  }
+}`,...(ue=(he=K.parameters)==null?void 0:he.docs)==null?void 0:ue.source}}};var ge,ye,ve;L.parameters={...L.parameters,docs:{...(ge=L.parameters)==null?void 0:ge.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={pageData}>
+          <Bar dataKey="uv" fill="green" />
+          <Bar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
+          <RechartsHookInspector />
+        </BarChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    shared: false,
+    defaultIndex: 2,
+    active: true
+  }
+}`,...(ve=(ye=L.parameters)==null?void 0:ye.docs)==null?void 0:ve.source}}};var fe,Ee,Te;I.parameters={...I.parameters,docs:{...(fe=I.parameters)==null?void 0:fe.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={400}>
+        <RadialBarChart data={pageData}>
+          <RadialBar dataKey="uv" fill="green" />
+          <RadialBar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
+          <RechartsHookInspector />
+        </RadialBarChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    shared: false,
+    defaultIndex: 2,
+    active: true
+  }
+}`,...(Te=(Ee=I.parameters)==null?void 0:Ee.docs)==null?void 0:Te.source}}};var Ce,Ae,we,be,Se;E.parameters={...E.parameters,docs:{...(Ce=E.parameters)==null?void 0:Ce.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <LineChart width="100%" height={50} responsive data={pageData}>
+        <Tooltip {...args} />
+        <Line dataKey="uv" fill="green" />
+        <Line dataKey="pv" fill="red" />
+        <Line dataKey="amt" fill="amt" />
+        <RechartsHookInspector />
+      </LineChart>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    defaultIndex: 2,
+    active: true
+  }
+}`,...(we=(Ae=E.parameters)==null?void 0:Ae.docs)==null?void 0:we.source},description:{story:`https://github.com/recharts/recharts/issues/2458
+
+Tooltip that's taller than the chart itself should not clip.
+It should instead overflow the chart.`,...(Se=(be=E.parameters)==null?void 0:be.docs)==null?void 0:Se.description}}};var Re,xe,ke;B.parameters={...B.parameters,docs:{...(Re=B.parameters)==null?void 0:Re.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+    return <>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={pageData}>
+            {portalRef && <Tooltip {...args} portal={portalRef} />}
+            <Line dataKey="uv" fill="green" />
+            <Line dataKey="pv" fill="red" />
+            <RechartsHookInspector />
+          </LineChart>
+        </ResponsiveContainer>
+        <div ref={node => {
+        if (portalRef == null && node != null) {
+          setPortalRef(node);
+        }
+      }}>
+          <p>Inspect the resulting HTML to see that the Tooltip element is rendered according to the portal ref.</p>
+          <p>
+            You now control the container the Tooltip renders in, as well as style attributes such as width, height,
+            etc. Those can be managed via the Tooltip wrapperStyle prop.
+          </p>
+          {/* The Tooltip will render here */}
+        </div>
+      </>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    wrapperStyle: {
+      width: '25%',
+      marginLeft: 10
+    },
+    defaultIndex: 3,
+    active: true
+  }
+}`,...(ke=(xe=B.parameters)==null?void 0:xe.docs)==null?void 0:ke.source}}};var Ke,Le,Ie;D.parameters={...D.parameters,docs:{...(Ke=D.parameters)==null?void 0:Ke.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [, setRandomUnusedState] = useState(true);
+    return <div>
+        <div style={{
+        height: 2000,
+        width: 300
+      }}>
+          <p>There is a chart here; scroll down</p>
+        </div>
+        <div style={{
+        height: 250,
+        width: 300
+      }}>
+          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+            set random unused state
+          </button>
+          <ResponsiveContainer>
+            <LineChart data={d1} style={{
+            border: '1px solid black'
+          }}>
+              <Tooltip {...args} />
+              <Line dataKey="Triggers" />
+              <RechartsHookInspector />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs)
+  }
+}`,...(Ie=(Le=D.parameters)==null?void 0:Le.docs)==null?void 0:Ie.source}}};var Be,De,He;H.parameters={...H.parameters,docs:{...(Be=H.parameters)==null?void 0:Be.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [, setRandomUnusedState] = useState(true);
+    return <div>
+        <div style={{
+        height: 2000,
+        width: 300
+      }}>
+          <p>There is a chart here; scroll down</p>
+        </div>
+        <div style={{
+        height: 250,
+        width: 300
+      }}>
+          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+            set random unused state
+          </button>
+          <ResponsiveContainer>
+            <BarChart data={d1} style={{
+            border: '1px solid black'
+          }}>
+              <Bar dataKey="Triggers" />
+              <Tooltip {...args} />
+              <RechartsHookInspector />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    shared: false
+  }
+}`,...(He=(De=H.parameters)==null?void 0:De.docs)==null?void 0:He.source}}};var Oe,Fe,je;O.parameters={...O.parameters,docs:{...(Oe=O.parameters)==null?void 0:Oe.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'auto 1fr'
+    }}>
+        <div style={{
+        width: '200px'
+      }} />
+        <div style={{
+        position: 'relative'
+      }}>
+          <BarChart width={730} height={250} data={pageData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip {...args} />
+            <Legend />
+            <Bar dataKey="pv" fill="#8884d8" />
+            <Bar dataKey="uv" fill="#82ca9d" />
+            <RechartsHookInspector />
+          </BarChart>
+        </div>
+      </div>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    cursor: false
+  }
+}`,...(je=(Fe=O.parameters)==null?void 0:Fe.docs)==null?void 0:je.source}}};var Me,We,Ze;F.parameters={...F.parameters,docs:{...(Me=F.parameters)==null?void 0:Me.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+          <Tooltip {...args} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    offset: -50,
+    wrapperStyle: {
+      width: 100
+    }
+  }
+}`,...(Ze=(We=F.parameters)==null?void 0:We.docs)==null?void 0:Ze.source}}};const ba=["ActiveTooltip","SettingTooltipIndex","LockedByClick","CssScaledParent","SeparateDataSetsForChart","TriggerTooltipByClick","CustomContentExample","LargeDataArray","IncludeHidden","SharedTooltipInBarChart","SharedTooltipInRadialBarChart","TallTooltipInNarrowChart","TooltipWithPortal","RechartsAlphaTooltipBug5516Repro","RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip","RechartsTooltipBug5542Repro","TooltipWithNegativeOffset"];export{C as ActiveTooltip,b as CssScaledParent,x as CustomContentExample,K as IncludeHidden,k as LargeDataArray,w as LockedByClick,D as RechartsAlphaTooltipBug5516Repro,H as RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip,O as RechartsTooltipBug5542Repro,S as SeparateDataSetsForChart,A as SettingTooltipIndex,L as SharedTooltipInBarChart,I as SharedTooltipInRadialBarChart,E as TallTooltipInNarrowChart,F as TooltipWithNegativeOffset,B as TooltipWithPortal,R as TriggerTooltipByClick,ba as __namedExportsOrder,wa as default};
