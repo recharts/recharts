@@ -135,6 +135,9 @@ jobs:
           # see https://www.chromatic.com/docs/github-actions/
           fetch-depth: 0
 
+      - name: Mark repository as safe
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
