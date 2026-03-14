@@ -701,54 +701,56 @@ describe('<Scatter />', () => {
   describe('ScatterPoint per-point rendering optimization', () => {
     it('should only re-render the active and previously-active points when hovering, not all points', () => {
       vi.useFakeTimers();
-      const shapeSpy = vi.fn((_props: ScatterShapeProps) => <circle r={5} cx={0} cy={0} />);
-      const pointCount = 20;
-      const scatterData = Array.from({ length: pointCount }, (_, i) => ({
-        x: i * 50,
-        y: i * 50,
-        z: 100,
-      }));
+      try {
+        const shapeSpy = vi.fn((_props: ScatterShapeProps) => <circle r={5} cx={0} cy={0} />);
+        const pointCount = 20;
+        const scatterData = Array.from({ length: pointCount }, (_, i) => ({
+          x: i * 50,
+          y: i * 50,
+          z: 100,
+        }));
 
-      const { container } = render(
-        <ScatterChart width={1000} height={1000}>
-          <XAxis type="number" dataKey="x" />
-          <YAxis type="number" dataKey="y" />
-          <Scatter isAnimationActive={false} data={scatterData} shape={shapeSpy} activeShape={{ fill: 'red' }} />
-        </ScatterChart>,
-      );
-      vi.runOnlyPendingTimers();
+        const { container } = render(
+          <ScatterChart width={1000} height={1000}>
+            <XAxis type="number" dataKey="x" />
+            <YAxis type="number" dataKey="y" />
+            <Scatter isAnimationActive={false} data={scatterData} shape={shapeSpy} activeShape={{ fill: 'red' }} />
+          </ScatterChart>,
+        );
+        vi.runOnlyPendingTimers();
 
-      // After initial render, the shape spy was called once per point
-      const initialCallCount = shapeSpy.mock.calls.length;
-      expect(initialCallCount).toBe(pointCount);
+        // After initial render, the shape spy was called once per point
+        const initialCallCount = shapeSpy.mock.calls.length;
+        expect(initialCallCount).toBe(pointCount);
 
-      shapeSpy.mockClear();
+        shapeSpy.mockClear();
 
-      // Hover over the first scatter point
-      const symbols = container.querySelectorAll('.recharts-scatter-symbol');
-      assertNotNull(symbols[0]);
-      fireEvent.mouseEnter(symbols[0]);
-      vi.runOnlyPendingTimers();
+        // Hover over the first scatter point
+        const symbols = container.querySelectorAll('.recharts-scatter-symbol');
+        assertNotNull(symbols[0]);
+        fireEvent.mouseEnter(symbols[0]);
+        vi.runOnlyPendingTimers();
 
-      // Only the newly active point should re-render its shape, not all points.
-      // With the per-point selector optimization, only 1 point re-renders (the one becoming active).
-      // Without the optimization, all 20 points would re-render.
-      const afterFirstHover = shapeSpy.mock.calls.length;
-      expect(afterFirstHover).toBeLessThanOrEqual(2);
+        // Only the newly active point should re-render its shape, not all points.
+        // With the per-point selector optimization, only 1 point re-renders (the one becoming active).
+        // Without the optimization, all 20 points would re-render.
+        const afterFirstHover = shapeSpy.mock.calls.length;
+        expect(afterFirstHover).toBeLessThanOrEqual(2);
 
-      shapeSpy.mockClear();
+        shapeSpy.mockClear();
 
-      // Now hover over a different point
-      assertNotNull(symbols[5]);
-      fireEvent.mouseEnter(symbols[5]);
-      vi.runOnlyPendingTimers();
+        // Now hover over a different point
+        assertNotNull(symbols[5]);
+        fireEvent.mouseEnter(symbols[5]);
+        vi.runOnlyPendingTimers();
 
-      // Only the previously-active and newly-active points should re-render (at most 2),
-      // not all 20 points
-      const afterSecondHover = shapeSpy.mock.calls.length;
-      expect(afterSecondHover).toBeLessThanOrEqual(2);
-
-      vi.useRealTimers();
+        // Only the previously-active and newly-active points should re-render (at most 2),
+        // not all 20 points
+        const afterSecondHover = shapeSpy.mock.calls.length;
+        expect(afterSecondHover).toBeLessThanOrEqual(2);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });
