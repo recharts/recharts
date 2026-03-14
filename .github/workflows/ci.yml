@@ -323,7 +323,7 @@ jobs:
 
       - name: Copy storybook to docs folder
         run: |
-          mkdir www/docs/storybook-static
+          mkdir -p www/docs/storybook-static
           cp -r storybook/public/* www/docs/storybook-static/
 
       - name: Upload website artifact
