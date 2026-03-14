@@ -40,7 +40,7 @@
     "test": "vitest run --config vitest.config.mts --project unit:*",
     "test-lib": "vitest run --config vitest.config.mts --project unit:lib",
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
-    "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit:lib",
+    "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit:*",
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
     "test-exports": "vitest run scripts/verify-exports.test.ts",
     "test-treeshaking": "vitest run scripts/treeshaking.test.ts",
