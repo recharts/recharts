@@ -104,6 +104,9 @@ jobs:
       - name: Unit Tests
         run: npm run test-coverage
 
+      - name: Typecheck
+        run: npm run check-types-test
+
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
@@ -147,6 +150,9 @@ jobs:
       - name: Storybook doctor
         run: npm run storybook-doctor
 
+      - name: Typecheck Storybook
+        run: npm run check-types-storybook
+
       - name: Storybook Test
         run: npm run test-storybook
         timeout-minutes: 10
@@ -175,7 +181,7 @@ jobs:
           skip: 'dependabot/**'
 
   checks:
-    name: Checks
+    name: Eslint and Typecheck
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
@@ -192,7 +198,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        run: npm run check-types
+        run: npm run check-types-lib
 
       - name: Lint
         run: npm run lint
@@ -277,6 +283,9 @@ jobs:
           else
             echo "BASE_URL=/recharts/canary/www/" >> $GITHUB_ENV
           fi
+
+      - name: Typecheck Website
+        run: npm run check-types-website
 
       - name: Build website
         working-directory: www
@@ -429,9 +438,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: build
-        run: npm run build
 
       - name: Sanitize branch name
         # The branch name is used in the URL for the report.
