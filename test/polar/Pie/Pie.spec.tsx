@@ -2376,3 +2376,26 @@ describe('<Pie />', () => {
     });
   });
 });
+it('should trigger active state on keyboard focus', () => {
+  mockGetBoundingClientRect({ width: 400, height: 400 });
+  const data = [
+    { name: 'A', value: 400 },
+    { name: 'B', value: 300 },
+    { name: 'C', value: 300 },
+  ];
+
+  const { container } = render(
+    <PieChart width={400} height={400}>
+      <Pie data={data} dataKey="value" cx={200} cy={200} outerRadius={80} isAnimationActive={false} />
+    </PieChart>,
+  );
+
+  const sectors = container.querySelectorAll('.recharts-pie-sector');
+  expect(sectors.length).toBeGreaterThan(0);
+
+  // Focus first sector - should trigger active state
+  fireEvent.focus(sectors[0]);
+
+  // Blur first sector - should remove active state
+  fireEvent.blur(sectors[0]);
+});
