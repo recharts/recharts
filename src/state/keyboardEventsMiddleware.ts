@@ -9,6 +9,7 @@ import {
 import { selectCoordinateForDefaultIndex } from './selectors/selectors';
 import { selectChartDirection, selectTooltipAxisDataKey } from './selectors/axisSelectors';
 import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTooltipIndex';
+import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
@@ -65,13 +66,15 @@ keyboardEventsMiddleware.startListening({
         const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
         const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0;
         const tooltipTicks = selectTooltipAxisTicks(currentState);
+        const displayedData = selectTooltipDisplayedData(currentState);
+        const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
         if (key === 'Enter') {
           if (isOutsideDomain) {
             return;
           }
           const coordinate = selectCoordinateForDefaultIndex(
             currentState,
-            'axis',
+            tooltipEventType,
             'hover',
             String(keyboardInteraction.index),
           );
@@ -90,7 +93,6 @@ keyboardEventsMiddleware.startListening({
         const movement = key === 'ArrowRight' ? 1 : -1;
         let nextIndex: number;
         if (isOutsideDomain) {
-          const displayedData = selectTooltipDisplayedData(currentState);
           const axisDataKey = selectTooltipAxisDataKey(currentState);
           const domain = selectTooltipAxisDomain(currentState);
           const effectiveMovement = movement * directionMultiplier;
@@ -126,12 +128,12 @@ keyboardEventsMiddleware.startListening({
           }
         } else {
           nextIndex = currentIndex + movement * directionMultiplier;
-          if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
+          const dataLength = tooltipTicks?.length ?? displayedData.length;
+          if (dataLength === 0 || nextIndex >= dataLength || nextIndex < 0) {
             return;
           }
         }
-        const coordinate = selectCoordinateForDefaultIndex(currentState, 'axis', 'hover', String(nextIndex));
-
+        const coordinate = selectCoordinateForDefaultIndex(currentState, tooltipEventType, 'hover', String(nextIndex));
         listenerApi.dispatch(
           setKeyboardInteraction({
             active: true,
@@ -184,7 +186,8 @@ keyboardEventsMiddleware.startListening({
     }
     if (keyboardInteraction.index == null) {
       const nextIndex = '0';
-      const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(nextIndex));
+      const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+      const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({
           active: true,
