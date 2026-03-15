@@ -8,6 +8,8 @@ import {
   Funnel,
   FunnelChart,
   Legend,
+  Line,
+  LineChart,
   Pie,
   PieChart,
   Tooltip,
@@ -443,6 +445,85 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page A');
+    });
+
+    describe('arrow keys snap back into visible domain after zoom (numeric XAxis)', () => {
+      const numericData = [
+        { name: 1, uv: 10 },
+        { name: 2, uv: 20 },
+        { name: 3, uv: 30 },
+        { name: 4, uv: 40 },
+        { name: 5, uv: 50 },
+        { name: 6, uv: 60 },
+        { name: 7, uv: 70 },
+        { name: 8, uv: 80 },
+      ];
+      const ZoomableChart = ({ domain }: { domain?: [number, number] }) => (
+        <LineChart width={500} height={300} data={numericData} accessibilityLayer={accessibilityLayer}>
+          <Line dataKey="uv" />
+          <Tooltip />
+          <XAxis dataKey="name" type="number" domain={domain ?? [1, 8]} allowDataOverflow />
+          <YAxis />
+        </LineChart>
+      );
+      test('ArrowLeft snaps from an outside-domain index to the last visible tick', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+        expect(getTooltip(container)).toHaveTextContent('70'); // uv of name=7
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowLeft(svg);
+        const tooltipText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => tooltipText.includes(v))).toBe(true);
+      });
+
+      test('ArrowRight snaps from an outside-domain index to the first visible tick', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+        expect(getTooltip(container)).toHaveTextContent('70');
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowRight(svg);
+        const tooltipText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => tooltipText.includes(v))).toBe(true);
+      });
+
+      test('After snapping into domain, subsequent arrow presses navigate normally', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowLeft(svg);
+        const afterSnapText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => afterSnapText.includes(v))).toBe(true);
+
+        arrowLeft(svg);
+        const textAfter = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => textAfter.includes(v))).toBe(true);
+        arrowRight(svg);
+        expect(['30', '40', '50', '60'].some(v => (getTooltip(container).textContent ?? '').includes(v))).toBe(true);
+      });
     });
 
     const BugExample = () => {

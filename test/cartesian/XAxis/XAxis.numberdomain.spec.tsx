@@ -1417,4 +1417,33 @@ describe('numerical domain', () => {
       ]);
     });
   });
+
+  describe('XAxis ticks should be evenly spaced with type=number and clustered data', () => {
+    const clusteredData = [
+      { x: 1, y: 10 },
+      { x: 2, y: 20 },
+      { x: 3, y: 30 },
+      { x: 100, y: 40 },
+    ];
+
+    it('should render evenly spaced ticks even when data is highly clustered', () => {
+      const spy = vi.fn();
+      const { container } = render(
+        <BarChart width={300} height={300} data={clusteredData}>
+          <XAxis dataKey="x" type="number" />
+          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+
+      // Ticks should be evenly spaced at nice values, not at data positions (1, 2, 3, 100)
+      expectXAxisTicks(container, [
+        { textContent: '0', x: '5', y: '273' },
+        { textContent: '25', x: '77.5', y: '273' },
+        { textContent: '50', x: '150', y: '273' },
+        { textContent: '75', x: '222.5', y: '273' },
+        { textContent: '100', x: '295', y: '273' },
+      ]);
+      expectLastCalledWith(spy, [0, 100]);
+    });
+  });
 });
