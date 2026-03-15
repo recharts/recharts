@@ -1732,6 +1732,39 @@ describe('<Pie />', () => {
       await user.keyboard('{Escape}');
       expect(document.activeElement).toBe(document.body);
     });
+    it('should trigger active state on keyboard focus', () => {
+      mockGetBoundingClientRect({ width: 400, height: 400 });
+      const activeClass = 'keyboard-active-sector';
+      const data = [
+        { name: 'A', value: 400 },
+        { name: 'B', value: 300 },
+        { name: 'C', value: 300 },
+      ];
+
+      const { container } = render(
+        <PieChart width={400} height={400}>
+          <Pie
+            data={data}
+            dataKey="value"
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            isAnimationActive={false}
+            activeShape={{ className: activeClass }}
+          />
+        </PieChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-pie-sector');
+      expect(sectors.length).toBeGreaterThan(0);
+      expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
+
+      fireEvent.focus(sectors[0]);
+      expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(1);
+
+      fireEvent.blur(sectors[0]);
+      expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
+    });
   });
 
   test('when data.length <= 1 set force paddingAngle to zero', async () => {
@@ -2375,39 +2408,4 @@ describe('<Pie />', () => {
       expect(sectorPaths[0]).not.toBe(sectorPaths[2]);
     });
   });
-});
-it('should trigger active state on keyboard focus', () => {
-  mockGetBoundingClientRect({ width: 400, height: 400 });
-  const activeClass = 'keyboard-active-sector';
-  const data = [
-    { name: 'A', value: 400 },
-    { name: 'B', value: 300 },
-    { name: 'C', value: 300 },
-  ];
-
-  const { container } = render(
-    <PieChart width={400} height={400}>
-      <Pie
-        data={data}
-        dataKey="value"
-        cx={200}
-        cy={200}
-        outerRadius={80}
-        isAnimationActive={false}
-        activeShape={{ className: activeClass }}
-      />
-    </PieChart>,
-  );
-
-  const sectors = container.querySelectorAll('.recharts-pie-sector');
-  expect(sectors.length).toBeGreaterThan(0);
-  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
-
-  // Focus first sector - should trigger active state
-  fireEvent.focus(sectors[0]);
-  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(1);
-
-  // Blur first sector - should remove active state
-  fireEvent.blur(sectors[0]);
-  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
 });
