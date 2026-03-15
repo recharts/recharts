@@ -5,6 +5,7 @@ import { Bar, BarChart, Customized, Line, LineChart, Scatter, useXAxisDomain, XA
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { selectTooltipAxisDomain } from '../../../src/state/selectors/tooltipSelectors';
 
 const data = [
   { x: 90, y: 90, z: 90 },
@@ -602,6 +603,11 @@ describe('categorical domain', () => {
 
     it('should combine data from both chart and graphical elements', () => {
       const { spy } = renderTestCase(useXAxisDomain);
+      expectLastCalledWith(spy, ['A', 'B', 'C', 'D', 'E']);
+    });
+
+    it('should match that same data in tooltip domain', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomain);
       expectLastCalledWith(spy, ['A', 'B', 'C', 'D', 'E']);
     });
   });
