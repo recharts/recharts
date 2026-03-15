@@ -10,6 +10,8 @@ import { hideTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelper
 import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { TickItem } from '../../src/util/types';
+import { findClosestTick } from '../../src/synchronisation/useChartSynchronisation';
 
 describe('useTooltipChartSynchronisation', () => {
   let eventSpy: Mock<(...args: any[]) => any>;
@@ -197,5 +199,61 @@ describe('useTooltipChartSynchronisation', () => {
       renderTestCase();
       expect(eventSpy).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('findClosestTick', () => {
+  function tick(value: string, index: number): TickItem {
+    return { value, coordinate: index * 100, index };
+  }
+
+  it('should return undefined for an empty ticks array', () => {
+    expect(findClosestTick([], 'anything')).toBeUndefined();
+  });
+
+  it('should return the only tick when array has one element', () => {
+    const ticks = [tick('B', 0)];
+    expect(findClosestTick(ticks, 'A')).toEqual(ticks[0]);
+    expect(findClosestTick(ticks, 'B')).toEqual(ticks[0]);
+    expect(findClosestTick(ticks, 'C')).toEqual(ticks[0]);
+  });
+
+  it('should return the first tick when label is before all ticks', () => {
+    const ticks = [tick('B', 0), tick('D', 1), tick('F', 2)];
+    expect(findClosestTick(ticks, 'A')).toEqual(ticks[0]);
+  });
+
+  it('should return the last tick when label is after all ticks', () => {
+    const ticks = [tick('B', 0), tick('D', 1), tick('F', 2)];
+    expect(findClosestTick(ticks, 'Z')).toEqual(ticks[2]);
+  });
+
+  it('should return the exact tick when label matches', () => {
+    const ticks = [tick('B', 0), tick('D', 1), tick('F', 2)];
+    expect(findClosestTick(ticks, 'D')).toEqual(ticks[1]);
+  });
+
+  it('should return the previous tick when label falls between two ticks', () => {
+    const ticks = [tick('B', 0), tick('D', 1), tick('F', 2)];
+    // 'C' is between 'B' and 'D' — should return 'B' (the previous tick)
+    expect(findClosestTick(ticks, 'C')).toEqual(ticks[0]);
+    // 'E' is between 'D' and 'F' — should return 'D' (the previous tick)
+    expect(findClosestTick(ticks, 'E')).toEqual(ticks[1]);
+  });
+
+  it('should use lexicographic string comparison, not numeric', () => {
+    // Lexicographically: "Day 1" < "Day 10" < "Day 2" < "Day 3"
+    const ticks = [tick('Day 1', 0), tick('Day 10', 1), tick('Day 2', 2), tick('Day 3', 3)];
+    // "Day 15" falls between "Day 10" and "Day 2" lexicographically
+    expect(findClosestTick(ticks, 'Day 15')).toEqual(ticks[1]); // "Day 10"
+  });
+
+  it('should handle date-like string labels', () => {
+    // ISO date strings sort correctly lexicographically
+    const ticks = [tick('2024-01-01', 0), tick('2024-01-03', 1), tick('2024-01-05', 2)];
+    // '2024-01-02' is between '2024-01-01' and '2024-01-03' — returns previous tick
+    expect(findClosestTick(ticks, '2024-01-02')).toEqual(ticks[0]);
+    // '2024-01-04' is between '2024-01-03' and '2024-01-05' — returns previous tick
+    expect(findClosestTick(ticks, '2024-01-04')).toEqual(ticks[1]);
   });
 });

@@ -26,6 +26,7 @@ export const defaultPolarChartProps = {
   margin: defaultMargin,
   reverseStackOrder: false,
   syncMethod: 'index',
+  syncValueFallback: 'none',
   layout: 'radial',
   responsive: false,
   cx: '50%',
@@ -101,6 +102,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
         barSize={polarChartProps.barSize}
         syncId={polarChartProps.syncId}
         syncMethod={polarChartProps.syncMethod}
+        syncValueFallback={polarChartProps.syncValueFallback}
         className={polarChartProps.className}
         reverseStackOrder={polarChartProps.reverseStackOrder}
       />
