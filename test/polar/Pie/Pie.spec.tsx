@@ -1993,7 +1993,7 @@ describe('<Pie />', () => {
         expect(lastClickCallArgs[1]).toEqual(1);
 
         // click also includes enter in it? ok
-        expect(onMouseEnter).toHaveBeenCalledTimes(2);
+        expect(onMouseEnter).toHaveBeenCalledTimes(3);
 
         expect(onMouseLeave).toHaveBeenCalledTimes(1);
       }, 1000);
@@ -2378,6 +2378,7 @@ describe('<Pie />', () => {
 });
 it('should trigger active state on keyboard focus', () => {
   mockGetBoundingClientRect({ width: 400, height: 400 });
+  const activeClass = 'keyboard-active-sector';
   const data = [
     { name: 'A', value: 400 },
     { name: 'B', value: 300 },
@@ -2386,16 +2387,27 @@ it('should trigger active state on keyboard focus', () => {
 
   const { container } = render(
     <PieChart width={400} height={400}>
-      <Pie data={data} dataKey="value" cx={200} cy={200} outerRadius={80} isAnimationActive={false} />
+      <Pie
+        data={data}
+        dataKey="value"
+        cx={200}
+        cy={200}
+        outerRadius={80}
+        isAnimationActive={false}
+        activeShape={{ className: activeClass }}
+      />
     </PieChart>,
   );
 
   const sectors = container.querySelectorAll('.recharts-pie-sector');
   expect(sectors.length).toBeGreaterThan(0);
+  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
 
   // Focus first sector - should trigger active state
   fireEvent.focus(sectors[0]);
+  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(1);
 
   // Blur first sector - should remove active state
   fireEvent.blur(sectors[0]);
+  expect(container.querySelectorAll(`.${activeClass}`)).toHaveLength(0);
 });
