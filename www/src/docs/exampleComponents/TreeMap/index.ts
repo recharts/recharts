@@ -1,9 +1,11 @@
 import SimpleTreemap from './SimpleTreemap';
 import CustomContentTreemap from './CustomContentTreemap';
 import NestedTreemap from './NestedTreemap';
+import TreemapWithPaddingAndGaps from './TreemapWithPaddingAndGaps';
 import simpleTreemapSource from './SimpleTreemap?raw';
 import customContentTreemapSource from './CustomContentTreemap?raw';
 import nestedTreemapSource from './NestedTreemap?raw';
+import treemapWithPaddingAndGapsSource from './TreemapWithPaddingAndGaps?raw';
 import { ChartExample } from '../types.ts';
 import TreeMapNavExample from './TreeMapNavExample';
 
@@ -24,5 +26,10 @@ export const treeMapExamples: Record<string, ChartExample> = {
     Component: NestedTreemap,
     sourceCode: nestedTreemapSource,
     name: 'Nested Treemap',
+  },
+  TreemapWithPaddingAndGaps: {
+    Component: TreemapWithPaddingAndGaps,
+    sourceCode: treemapWithPaddingAndGapsSource,
+    name: 'Treemap with Padding and Gaps',
   },
 };

@@ -3,8 +3,8 @@ import { Args } from '@storybook/react-vite';
 import { flatTreemapData, sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { TreemapArgs } from '../arg-types/TreemapArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   argTypes: TreemapArgs,
