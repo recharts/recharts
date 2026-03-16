@@ -717,6 +717,8 @@ function PieSectors(props: PieSectorsProps) {
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             onMouseEnter={onMouseEnterFromContext(entry, i)}
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
+            onFocus={event => onMouseEnterFromContext(entry, i)(event)}
+            onBlur={event => onMouseLeaveFromContext(entry, i)(event)}
             onClick={onClickFromContext(entry, i)}
           >
             <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
