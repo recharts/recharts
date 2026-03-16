@@ -1713,6 +1713,62 @@ describe('<ErrorBar />', () => {
       });
     });
 
+    describe('extending YAxis domain when Scatter has its own data (boxplot example)', () => {
+      type BoxPlotDatum = {
+        category: string;
+        min: number;
+        q1: number;
+        q3: number;
+        max: number;
+      };
+
+      const boxPlotData: ReadonlyArray<BoxPlotDatum> = [
+        { category: 'A', min: 16, q1: 20, q3: 29, max: 35 },
+        { category: 'B', min: 12, q1: 15, q3: 21, max: 27 },
+        { category: 'C', min: 22, q1: 26, q3: 34, max: 39 },
+        { category: 'D', min: 9, q1: 13, q3: 20, max: 26 },
+      ];
+
+      type OutlierDatum = {
+        category: string;
+        value: number;
+      };
+
+      // All outlier values are within the box plot + ErrorBar range (max=39),
+      // so the YAxis domain should remain [0, 39] driven by the Bar+ErrorBar.
+      // The bug: when Scatter has its own data, selectDisplayedData returns ONLY the
+      // Scatter outliers, ignoring Bar chart data entirely. The domain then becomes
+      // [0, 25] (max of outliers) instead of the correct [0, 39].
+      const outliers: ReadonlyArray<OutlierDatum> = [
+        { category: 'A', value: 10 },
+        { category: 'B', value: 5 },
+        { category: 'D', value: 25 },
+      ];
+
+      const boxDataKey = (entry: BoxPlotDatum): [number, number] => [entry.q1, entry.q3];
+      const whiskerDataKey = (entry: BoxPlotDatum): [number, number] => [entry.q3 - entry.min, entry.max - entry.q3];
+
+      const renderWithScatter = createSelectorTestCase(({ children }) => (
+        <BarChart data={boxPlotData} width={500} height={500}>
+          <YAxis />
+          <Bar isAnimationActive={false} dataKey={boxDataKey}>
+            <ErrorBar dataKey={whiskerDataKey} />
+          </Bar>
+          <Scatter data={outliers} dataKey="value" />
+          {children}
+        </BarChart>
+      ));
+
+      test('selectNumericalDomain should cover Bar+ErrorBar range even when Scatter has its own data', () => {
+        const { spy } = renderWithScatter(state => selectNumericalDomain(state, 'yAxis', 0, false));
+
+        // Bar q1/q3 range + ErrorBar extending to min/max: C.max=39 is the highest value.
+        // Scatter outliers are all within that range (max=25 < 39).
+        // Therefore the domain should be [0, 39], not [0, 25].
+        expectLastCalledWith(spy, [0, 39]);
+      });
+    });
+
     describe('extending XAxis domain', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <BarChart data={dataWithError} width={500} height={500} layout="vertical">
