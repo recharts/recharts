@@ -22,18 +22,14 @@ export type MouseEnterLeaveEvent<T, E extends SVGElement = SVGElement> = (
   index: number,
   event: React.MouseEvent<E>,
 ) => void;
-
-const isMouseEvent = <E extends SVGElement>(event: React.SyntheticEvent<E>): event is React.MouseEvent<E> => {
-  return 'clientX' in event && 'clientY' in event;
-};
 export const useMouseEnterItemDispatch = <T extends TooltipTriggerInfo, E extends SVGElement = SVGElement>(
   onMouseEnterFromProps: MouseEnterLeaveEvent<T, E> | undefined,
   dataKey: DataKey<any> | undefined,
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
-    if (isMouseEvent(event)) {
+  return (data: T, index: number) => (event?: React.MouseEvent<E>) => {
+    if (event) {
       onMouseEnterFromProps?.(data, index, event);
     }
     dispatch(
@@ -51,8 +47,8 @@ export const useMouseLeaveItemDispatch = <T extends TooltipTriggerInfo, E extend
   onMouseLeaveFromProps: undefined | MouseEnterLeaveEvent<T, E>,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
-    if (isMouseEvent(event)) {
+  return (data: T, index: number) => (event?: React.MouseEvent<E>) => {
+    if (event) {
       onMouseLeaveFromProps?.(data, index, event);
     }
     dispatch(mouseLeaveItem());
@@ -65,8 +61,8 @@ export const useMouseClickItemDispatch = <T extends TooltipTriggerInfo, E extend
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
-    if (isMouseEvent(event)) {
+  return (data: T, index: number) => (event?: React.MouseEvent<E>) => {
+    if (event) {
       onMouseClickFromProps?.(data, index, event);
     }
     dispatch(
