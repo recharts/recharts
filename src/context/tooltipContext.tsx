@@ -29,7 +29,7 @@ export const useMouseEnterItemDispatch = <T extends TooltipTriggerInfo, E extend
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
+  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
     onMouseEnterFromProps?.(data, index, event);
     dispatch(
       setActiveMouseOverItemIndex({
@@ -46,7 +46,7 @@ export const useMouseLeaveItemDispatch = <T extends TooltipTriggerInfo, E extend
   onMouseLeaveFromProps: undefined | MouseEnterLeaveEvent<T, E>,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
+  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
     onMouseLeaveFromProps?.(data, index, event);
     dispatch(mouseLeaveItem());
   };
@@ -58,7 +58,7 @@ export const useMouseClickItemDispatch = <T extends TooltipTriggerInfo, E extend
   graphicalItemId: string,
 ) => {
   const dispatch = useAppDispatch();
-  return (data: T, index: number) => (event: React.MouseEvent<E>) => {
+  return (data: T, index: number) => (event: React.SyntheticEvent<E>) => {
     onMouseClickFromProps?.(data, index, event);
     dispatch(
       setActiveClickItemIndex({
