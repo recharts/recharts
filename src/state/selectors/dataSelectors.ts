@@ -57,10 +57,6 @@ export const selectChartDataWithIndexesIfNotInPanoramaPosition3 = (
   return selectChartDataWithIndexes(state);
 };
 
-function chartDataSliceEqualityCheck(a: ChartData, b: ChartData): boolean {
-  return a === b || (a.length === b.length && a.every((v, i) => v === b[i]));
-}
-
 /**
  * Returns the chart-level data slice (respecting Brush indexes), memoized by content so that
  * spurious Immer reference changes (e.g. dispatching `setChartData(undefined)` when data is
@@ -78,11 +74,6 @@ export const selectChartDataSliceIfNotInPanorama: (
   [selectChartDataWithIndexesIfNotInPanoramaPosition4],
   ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState): ChartData =>
     chartData != null ? chartData.slice(dataStartIndex, dataEndIndex + 1) : [],
-  {
-    memoizeOptions: {
-      resultEqualityCheck: chartDataSliceEqualityCheck,
-    },
-  },
 );
 
 /**
@@ -93,11 +84,6 @@ export const selectChartDataSliceIgnoringIndexes: (state: RechartsRootState) => 
   [selectChartDataAndAlwaysIgnoreIndexes],
   ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState): ChartData =>
     chartData != null ? chartData.slice(dataStartIndex, dataEndIndex + 1) : [],
-  {
-    memoizeOptions: {
-      resultEqualityCheck: chartDataSliceEqualityCheck,
-    },
-  },
 );
 
 /**
@@ -108,9 +94,4 @@ export const selectChartDataSliceWithIndexes: (state: RechartsRootState) => Char
   [selectChartDataWithIndexes],
   ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState): ChartData =>
     chartData != null ? chartData.slice(dataStartIndex, dataEndIndex + 1) : [],
-  {
-    memoizeOptions: {
-      resultEqualityCheck: chartDataSliceEqualityCheck,
-    },
-  },
 );
