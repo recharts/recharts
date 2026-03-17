@@ -10,6 +10,7 @@ import {
   Line,
   LineChart,
   MouseHandlerDataParam,
+  TickItem,
   Tooltip,
   XAxis,
   YAxis,
@@ -25,7 +26,6 @@ import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../sr
 import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
-import { TickItem } from '../../src/util/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLines } from '../helper/expectLine';
