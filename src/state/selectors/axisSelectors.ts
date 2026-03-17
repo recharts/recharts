@@ -36,7 +36,11 @@ import {
   ZAxisSettings,
 } from '../cartesianAxisSlice';
 import { RechartsRootState } from '../store';
-import { selectChartDataWithIndexes, selectChartDataWithIndexesIfNotInPanoramaPosition4 } from './dataSelectors';
+import {
+  selectChartDataWithIndexes,
+  selectChartDataWithIndexesIfNotInPanoramaPosition4,
+  selectChartDataSliceIfNotInPanorama,
+} from './dataSelectors';
 import {
   isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
@@ -840,19 +844,28 @@ export const mergeDomains = (
 };
 
 export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
-  data: ChartData,
+  displayedData: ChartData,
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<GraphicalItemSettings>,
   errorBars: ErrorBarsState,
   axisType: AllAxisTypes,
+  chartDataSlice: ChartData = [],
 ): NumberDomain | undefined => {
   let lowerEnd: number | undefined, upperEnd: number | undefined;
   if (items.length > 0) {
-    data.forEach(entry => {
-      items.forEach(item => {
-        const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
-          isErrorBarRelevantForAxisType(axisType, errorBar),
-        );
+    /*
+     * Iterate item-first so each item can use its own `data` prop when present,
+     * falling back to the chart-level data slice for items that rely on it.
+     * This ensures that mixing items with and without own data (e.g. Bar reading
+     * chart-level data alongside a Scatter with its own outlier data) produces a
+     * domain that covers all values from all sources.
+     */
+    items.forEach(item => {
+      const itemData: ChartData = item.data != null ? [...item.data] : chartDataSlice;
+      const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
+        isErrorBarRelevantForAxisType(axisType, errorBar),
+      );
+      itemData.forEach(entry => {
         const valueByDataKey = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
         const errorDomain = getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars);
         if (errorDomain.length >= 2) {
@@ -873,8 +886,9 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
       });
     });
   }
-  if (axisSettings?.dataKey != null) {
-    data.forEach(item => {
+  if (axisSettings?.dataKey != null && items.length === 0) {
+    // When there are no items, fall back to the displayed data (chart-level or graphical item data).
+    displayedData.forEach(item => {
       const dataValueDomain: NumberDomain | undefined = makeDomain(getValueByDataKey(item, axisSettings.dataKey));
       if (dataValueDomain != null) {
         lowerEnd = lowerEnd == null ? dataValueDomain[0] : Math.min(lowerEnd, dataValueDomain[0]);
@@ -901,6 +915,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectCartesianItemsSettingsExceptStacked,
     selectAllErrorBarSettings,
     pickAxisType,
+    selectChartDataSliceIfNotInPanorama,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {

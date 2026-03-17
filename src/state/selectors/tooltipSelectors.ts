@@ -48,7 +48,7 @@ import {
   TooltipEventType,
 } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexes, selectChartDataSliceWithIndexes } from './dataSelectors';
 import {
   CartesianGraphicalItemSettings,
   GraphicalItemSettings,
@@ -214,6 +214,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectTooltipItemsSettingsExceptStacked,
     selectAllErrorBarSettings,
     selectTooltipAxisType,
+    selectChartDataSliceWithIndexes,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {
