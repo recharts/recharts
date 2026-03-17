@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from 'vitest';
 import { RadialBarChart, RadialBar, PolarAngleAxis } from '../../../src';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectRadialBarSectors } from '../../../src/state/selectors/radialBarSelectors';
@@ -92,6 +92,7 @@ describe('minAngle prop', () => {
     const { spy } = renderWithMinAngle(state => selectRadialBarSectors(state, 0, 0, settingsWithMinAngle, undefined));
     const sectors = spy.mock.lastCall?.[0];
     expect(sectors).toBeDefined();
+    assert(sectors != null);
     expect(sectors).toHaveLength(2);
 
     // The tiny bar (value=1) should have its angle extended to at least minAngle=10 degrees
@@ -113,6 +114,8 @@ describe('minAngle prop', () => {
 
     expect(sectorsWithMin).toBeDefined();
     expect(sectorsNoMin).toBeDefined();
+    assert(sectorsWithMin != null);
+    assert(sectorsNoMin != null);
 
     // The large bar should have the same endAngle regardless of minAngle
     expect(sectorsWithMin[1].endAngle).toBeCloseTo(sectorsNoMin[1].endAngle, 5);
