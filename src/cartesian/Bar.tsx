@@ -602,16 +602,19 @@ function BarRectangleWithActiveState(props: {
 
   const [stayInLayer, setStayInLayer] = useState(false);
   const [hasMountedActive, setHasMountedActive] = useState(false);
+  const rafFiredRef = useRef(false);
+
+  if (!isActive && stayInLayer && !hasMountedActive && !rafFiredRef.current) {
+    setStayInLayer(false);
+  }
 
   useEffect(() => {
     let rafId: number;
     if (isActive) {
-      // 1. Enter the layer immediately
       setStayInLayer(true);
-
-      // 2. Wait for the browser to paint the "inactive" state in the new layer,
-      // then switch to active to trigger the CSS transition (width grow).
+      rafFiredRef.current = false;
       rafId = requestAnimationFrame(() => {
+        rafFiredRef.current = true;
         setHasMountedActive(true);
       });
     } else {
@@ -665,7 +668,9 @@ function BarRectangleWithActiveState(props: {
   if (shouldRenderInLayer) {
     return (
       <ZIndexLayer zIndex={DefaultZIndexes.activeBar}>
-        <BarStackClipLayer index={entry.originalDataIndex}>{content}</BarStackClipLayer>
+        <BarStackClipLayer index={entry.originalDataIndex} className="recharts-active-bar-layer">
+          {content}
+        </BarStackClipLayer>
       </ZIndexLayer>
     );
   }
