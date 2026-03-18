@@ -185,7 +185,6 @@ describe('Bar CSS transitions', () => {
 
     it('should call the shape renderer with isActive=true for active bars', () => {
       const shapeSpy: Mock<(props: BarShapeProps) => ReactElement> = vi.fn((props: BarShapeProps) => {
-        console.log('shapeSpy called with isActive:', props.isActive);
         return <path d={props.d} />;
       });
       const renderTestCase = createSelectorTestCase(({ children }) => (
