@@ -20,10 +20,16 @@ import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarCh
 import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
 import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/TimelineExample';
 import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
+import BoxPlotExample from '../../../www/src/docs/exampleComponents/BarChart/BoxPlotExample';
 import AnimatedBarWidthExample from '../../../www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample';
 
 test('CandlestickExample', async ({ mount }) => {
   const component = await mount(<CandlestickExample defaultIndex="50" />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('BoxPlotExample', async ({ mount }) => {
+  const component = await mount(<BoxPlotExample defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
