@@ -436,13 +436,9 @@ type OffsetAccessor = (series: Array<Series<Record<string, unknown>, string>>, o
 
 const STACK_OFFSET_MAP: Record<StackOffsetType, OffsetAccessor> = {
   sign: offsetSign,
-  // @ts-expect-error definitelytyped types are incorrect
   expand: stackOffsetExpand,
-  // @ts-expect-error definitelytyped types are incorrect
   none: stackOffsetNone,
-  // @ts-expect-error definitelytyped types are incorrect
   silhouette: stackOffsetSilhouette,
-  // @ts-expect-error definitelytyped types are incorrect
   wiggle: stackOffsetWiggle,
   positive: offsetPositive,
 };
