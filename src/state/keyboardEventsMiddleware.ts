@@ -128,7 +128,7 @@ keyboardEventsMiddleware.startListening({
           }
         } else {
           nextIndex = currentIndex + movement * directionMultiplier;
-          const dataLength = tooltipTicks?.length ?? displayedData.length;
+          const dataLength = tooltipTicks?.length || displayedData.length;
           if (dataLength === 0 || nextIndex >= dataLength || nextIndex < 0) {
             return;
           }

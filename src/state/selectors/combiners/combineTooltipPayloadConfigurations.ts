@@ -36,7 +36,7 @@ export const combineTooltipPayloadConfigurations = (
      */
     return tooltipState.tooltipItemPayloads;
   }
-  if (filterByGraphicalItemId == null && defaultIndex != null) {
+  if (filterByGraphicalItemId == null && (defaultIndex != null || tooltipState.keyboardInteraction.active)) {
     /*
      * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
      * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
