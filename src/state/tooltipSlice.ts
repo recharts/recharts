@@ -397,6 +397,7 @@ const tooltipSlice = createSlice({
     },
     setActiveMouseOverItemIndex(state, action: PayloadAction<GraphicalItemTooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.syncInteraction.sourceViewBox = undefined;
       state.keyboardInteraction.active = false;
       state.itemInteraction.hover.active = true;
       state.itemInteraction.hover.index = action.payload.activeIndex;
@@ -420,6 +421,7 @@ const tooltipSlice = createSlice({
     },
     setActiveClickItemIndex(state, action: PayloadAction<GraphicalItemTooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.syncInteraction.sourceViewBox = undefined;
       state.itemInteraction.click.active = true;
       state.keyboardInteraction.active = false;
       state.itemInteraction.click.index = action.payload.activeIndex;
@@ -429,6 +431,7 @@ const tooltipSlice = createSlice({
     },
     setMouseOverAxisIndex(state, action: PayloadAction<AxisTooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.syncInteraction.sourceViewBox = undefined;
       state.axisInteraction.hover.active = true;
       state.keyboardInteraction.active = false;
       state.axisInteraction.hover.index = action.payload.activeIndex;
@@ -437,6 +440,7 @@ const tooltipSlice = createSlice({
     },
     setMouseClickAxisIndex(state, action: PayloadAction<AxisTooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.syncInteraction.sourceViewBox = undefined;
       state.keyboardInteraction.active = false;
       state.axisInteraction.click.active = true;
       state.axisInteraction.click.index = action.payload.activeIndex;

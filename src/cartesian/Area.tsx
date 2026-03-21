@@ -995,7 +995,7 @@ export const getBaseValue = (
 };
 
 export function computeArea({
-  areaSettings: { baseValue: itemBaseValue, dataKey },
+  areaSettings: { connectNulls, baseValue: itemBaseValue, dataKey },
   stackedData,
   layout,
   chartBaseValue,
@@ -1042,7 +1042,7 @@ export function computeArea({
 
     const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && getValueByDataKey(entry, dataKey) == null);
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
 
     if (isHorizontalLayout) {
       return {

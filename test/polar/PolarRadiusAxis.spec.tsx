@@ -1240,7 +1240,6 @@ describe('<PolarRadiusAxis />', () => {
             name="radius-name"
             dataKey="value"
             tick={false}
-            // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
             ticks={exampleTicks}
             tickCount={9}
             allowDecimals

@@ -1,20 +1,23 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { rollup, type OutputChunk, type OutputAsset } from 'rollup';
 import { minify } from 'terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { babel } from '@rollup/plugin-babel';
 
 const packageRoot = path.resolve(__dirname, '..');
+const srcEntry = path.join(packageRoot, 'src', 'index.ts');
 const es6Directory = path.join(packageRoot, 'es6');
-const es6Entry = path.join(packageRoot, 'es6', 'index.js');
 
 function getExternals(): Array<string | RegExp> {
   const packageJson = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8'));
   const deps: string[] = Object.keys(packageJson.dependencies ?? {});
   const peerDeps: string[] = Object.keys(packageJson.peerDependencies ?? {});
   const specialDeps = ['use-sync-external-store/shim/with-selector'];
-  return [...deps, ...peerDeps, ...specialDeps, /^victory-vendor.*/, /^es-toolkit.*/];
+  return [...deps, ...peerDeps, ...specialDeps, /^victory-vendor.*/, /^es-toolkit.*/, /^react.*/, /^react-dom.*/];
 }
 
 const resolveDirectoryIndexPlugin = {
@@ -23,9 +26,12 @@ const resolveDirectoryIndexPlugin = {
     if (importer != null && moduleId.startsWith('.')) {
       const resolved = path.resolve(path.dirname(importer), moduleId);
       if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
-        const indexFile = path.join(resolved, 'index.js');
-        if (fs.existsSync(indexFile)) {
-          return indexFile;
+        const indexFiles = ['index.js', 'index.ts', 'index.tsx', 'index.jsx'];
+        for (const file of indexFiles) {
+          const indexFile = path.join(resolved, file);
+          if (fs.existsSync(indexFile)) {
+            return indexFile;
+          }
         }
       }
     }
@@ -33,13 +39,25 @@ const resolveDirectoryIndexPlugin = {
   },
 };
 
-function createTmpEntry(components: string | string[]): { tmpFile: string; cleanup: () => void } {
-  const componentList = Array.isArray(components) ? components : [components];
-  const importList = componentList.join(', ');
-  const source = `import { ${importList} } from '${es6Entry}';\nexport const used = { ${importList} };\n`;
+function createTmpEntry(componentsOrFile: string | string[]): { tmpFile: string; cleanup: () => void } {
+  const firstArg = Array.isArray(componentsOrFile) ? componentsOrFile[0] : componentsOrFile;
+  const isFile =
+    typeof firstArg === 'string' &&
+    (firstArg.endsWith('.ts') || firstArg.endsWith('.tsx') || firstArg.endsWith('.js') || firstArg.endsWith('.jsx'));
+
+  let source = '';
+  if (isFile) {
+    const absolutePath = path.resolve(process.cwd(), firstArg);
+    source = `import * as Bundle from ${JSON.stringify(pathToFileURL(absolutePath).href)};\nexport const used = Bundle;\n`;
+  } else {
+    const componentList = Array.isArray(componentsOrFile) ? componentsOrFile : [componentsOrFile];
+    const importList = componentList.join(', ');
+    source = `import { ${importList} } from ${JSON.stringify(pathToFileURL(srcEntry).href)};\nexport const used = { ${importList} };\n`;
+  }
+
   const tmpFile = path.join(
     os.tmpdir(),
-    `recharts-treeshake-entry-${Date.now()}-${Math.random().toString(36).slice(2)}.mjs`,
+    `recharts-treeshake-entry-${Date.now()}-${Math.random().toString(36).slice(2)}.ts`,
   );
   fs.writeFileSync(tmpFile, source);
   return { tmpFile, cleanup: () => fs.unlinkSync(tmpFile) };
@@ -59,7 +77,34 @@ export async function treeshake(components: string | string[]): Promise<(OutputC
         moduleSideEffects: false,
       },
       logLevel: 'silent',
-      plugins: [resolveDirectoryIndexPlugin],
+      plugins: [
+        {
+          name: 'recharts-alias',
+          resolveId(source) {
+            if (source === 'recharts') {
+              return srcEntry;
+            }
+            if (source.startsWith('file://')) {
+              return fileURLToPath(source);
+            }
+            return null;
+          },
+        },
+        nodeResolve({
+          extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
+          moduleDirectories: ['node_modules'],
+        }),
+        babel({
+          babelHelpers: 'bundled',
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          presets: [
+            ['@babel/preset-env', { targets: { node: 'current' } }],
+            ['@babel/preset-react', { runtime: 'automatic' }],
+            '@babel/preset-typescript',
+          ],
+        }),
+        resolveDirectoryIndexPlugin,
+      ],
     });
     const output = await bundle.generate({ format: 'esm' });
     await bundle.close();
@@ -109,6 +154,31 @@ export async function getModuleGraph(components: string | string[]): Promise<Mod
       },
       logLevel: 'silent',
       plugins: [
+        {
+          name: 'recharts-alias',
+          resolveId(source) {
+            if (source === 'recharts') {
+              return srcEntry;
+            }
+            if (source.startsWith('file://')) {
+              return fileURLToPath(source);
+            }
+            return null;
+          },
+        },
+        nodeResolve({
+          extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
+          moduleDirectories: ['node_modules'],
+        }),
+        babel({
+          babelHelpers: 'bundled',
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          presets: [
+            ['@babel/preset-env', { targets: { node: 'current' } }],
+            ['@babel/preset-react', { runtime: 'automatic' }],
+            '@babel/preset-typescript',
+          ],
+        }),
         resolveDirectoryIndexPlugin,
         {
           name: 'capture-module-graph',
@@ -357,10 +427,12 @@ export const ALL_TRACKED_COMPONENT_NAMES: string[] = [
   ...POLAR_COMPONENT_NAMES,
 ];
 
-// when called as the first argument of node, we read the array of component names from the command line
+// when called as the first argument of node, we read the array of component names or file paths from the command line
 if (require.main === module) {
-  const components = process.argv.slice(2);
-  getBundleSizeReport(components)
+  const args = process.argv.slice(2);
+  // If the first argument is a file path, pass it directly. Otherwise, pass the array of components.
+  const input = args.length === 1 && /\.(tsx?|jsx?)$/.test(args[0]) ? args[0] : args;
+  getBundleSizeReport(input)
     .then(report => {
       console.table(report.stages);
     })

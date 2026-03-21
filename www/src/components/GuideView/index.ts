@@ -4,4 +4,6 @@ import { Customize } from './Customize';
 import { ZIndex } from './ZIndex';
 import { CoordinateSystems } from './CoordinateSystems';
 
-export { Installation, GettingStarted, Customize, ZIndex, CoordinateSystems };
+import { TypeScript } from './TypeScript';
+
+export { Installation, GettingStarted, Customize, ZIndex, CoordinateSystems, TypeScript };

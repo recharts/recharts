@@ -10,6 +10,7 @@ import {
   Line,
   LineChart,
   MouseHandlerDataParam,
+  TickItem,
   Tooltip,
   XAxis,
   YAxis,
@@ -25,7 +26,6 @@ import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../sr
 import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
-import { TickItem } from '../../src/util/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLines } from '../helper/expectLine';
@@ -1359,26 +1359,50 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
-    // this is bad - XAxis ignores ticks from the Chart root
     expectXAxisTicks(container, [
       {
-        textContent: 'Iter: 0',
+        textContent: 'Iter: 5',
         x: '5',
         y: '373',
       },
       {
+        textContent: 'Iter: 6',
+        x: '48.333333333333336',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 7',
+        x: '91.66666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 8',
+        x: '135',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 9',
+        x: '178.33333333333334',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 0',
+        x: '221.66666666666669',
+        y: '373',
+      },
+      {
         textContent: 'Iter: 1',
-        x: '102.5',
+        x: '265',
         y: '373',
       },
       {
         textContent: 'Iter: 2',
-        x: '200',
+        x: '308.33333333333337',
         y: '373',
       },
       {
         textContent: 'Iter: 3',
-        x: '297.5',
+        x: '351.6666666666667',
         y: '373',
       },
       {

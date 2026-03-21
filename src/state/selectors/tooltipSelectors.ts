@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import {
   AxisRange,
-  combineAppliedValues,
+  combineAllAppliedValues,
   combineAreasDomain,
   combineAxisDomain,
   combineAxisDomainWithNiceTicks,
@@ -48,7 +48,7 @@ import {
   TooltipEventType,
 } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexes, selectChartDataSliceWithIndexes } from './dataSelectors';
 import {
   CartesianGraphicalItemSettings,
   GraphicalItemSettings,
@@ -157,6 +157,11 @@ export const selectTooltipGraphicalItemsData = createSelector(
   },
 );
 
+const selectAnyTooltipItemUsesChartData: (state: RechartsRootState) => boolean = createSelector(
+  [selectAllGraphicalItemsSettings],
+  items => items.some(item => !item.data),
+);
+
 /**
  * Data for tooltip always use the data with indexes set by a Brush,
  * and never accept the isPanorama flag:
@@ -174,8 +179,15 @@ const selectTooltipStackedData: (state: RechartsRootState) => DisplayedStackedDa
 );
 
 const selectAllTooltipAppliedValues: (state: RechartsRootState) => AppliedChartData = createSelector(
-  [selectTooltipDisplayedData, selectTooltipAxis, selectAllGraphicalItemsSettings],
-  combineAppliedValues,
+  [
+    selectTooltipDisplayedData,
+    selectTooltipAxis,
+    selectAllGraphicalItemsSettings,
+    selectChartDataWithIndexes,
+    selectAnyTooltipItemUsesChartData,
+    selectTooltipGraphicalItemsData,
+  ],
+  combineAllAppliedValues,
 );
 
 const selectTooltipAxisDomainDefinition: (state: RechartsRootState) => AxisDomain | undefined = createSelector(
@@ -220,6 +232,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectTooltipItemsSettingsExceptStacked,
     selectAllErrorBarSettings,
     selectTooltipAxisType,
+    selectChartDataSliceWithIndexes,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {
