@@ -1168,7 +1168,7 @@ export const combineAxisDomain = (
     return computeDomainOfTypeCategory(allAppliedValues, axisSettings, isCategorical);
   }
 
-  if (stackOffsetType === 'expand') {
+  if (stackOffsetType === 'expand' && !isCategorical) {
     return expandDomain;
   }
   return numericalDomain;
