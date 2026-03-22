@@ -737,4 +737,38 @@ describe('<Sankey />', () => {
       expect(onTouchEnd).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('accessibility', () => {
+    it('renders an SVG with role=application and tabIndex=0 by default (accessibilityLayer=true)', () => {
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      expect(svg).toHaveAttribute('role', 'application');
+      expect(svg).toHaveAttribute('tabindex', '0');
+    });
+
+    it('renders an SVG without role or tabIndex when accessibilityLayer=false', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} accessibilityLayer={false} />,
+      );
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      expect(svg).not.toHaveAttribute('role');
+      expect(svg).not.toHaveAttribute('tabindex');
+    });
+
+    it('renders <title> element when title prop is provided', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} title="Energy flow diagram" />,
+      );
+      expect(container.querySelector('title')).toHaveTextContent('Energy flow diagram');
+    });
+
+    it('renders <desc> element when desc prop is provided', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} desc="Shows how energy flows between sectors" />,
+      );
+      expect(container.querySelector('desc')).toHaveTextContent('Shows how energy flows between sectors');
+    });
+  });
 });
