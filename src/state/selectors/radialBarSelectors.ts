@@ -406,7 +406,7 @@ export const selectRadialBarSectors: (
     ) {
       return [];
     }
-    const { dataKey, minPointSize } = radialBarSettings;
+    const { dataKey, minAngle, minPointSize } = radialBarSettings;
     const { cx, cy, startAngle, endAngle } = polarViewBox;
     const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
     const numericAxis = layout === 'centric' ? radiusAxis : angleAxis;
@@ -424,6 +424,7 @@ export const selectRadialBarSectors: (
       displayedData,
       endAngle,
       layout,
+      minAngle,
       minPointSize,
       pos,
       radiusAxis,
