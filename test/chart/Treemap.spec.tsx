@@ -10,6 +10,23 @@ import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
 
+const multiLevelInsetData = [
+  {
+    name: 'Root A',
+    children: [
+      {
+        name: 'A1',
+        children: [{ name: 'A1a', value: 100 }],
+      },
+    ],
+  },
+];
+
+const siblingGapData = [
+  { name: 'Left', value: 100 },
+  { name: 'Right', value: 100 },
+];
+
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
     const { container } = render(
@@ -40,6 +57,152 @@ describe('<Treemap />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
+  });
+
+  test('uses the same drawing height for nest layout and surface', () => {
+    const chartHeight = 250;
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={chartHeight}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    const depth0Rect = container.querySelector<SVGPathElement>('.recharts-treemap-depth-0 .recharts-rectangle');
+    assertNotNull(depth0Rect);
+    expect(depth0Rect.getAttribute('height')).toBe(String(chartHeight - 30));
+  });
+
+  test('renders nested children directly on top of parent when nodeInset is not set', () => {
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={multiLevelInsetData}
+        isAnimationActive={false}
+        dataKey="value"
+        nameKey="name"
+      />,
+    );
+
+    const depth1Rect = container.querySelector<SVGRectElement>('.recharts-treemap-depth-1 .recharts-rectangle');
+    const depth2Rect = container.querySelector<SVGRectElement>('.recharts-treemap-depth-2 .recharts-rectangle');
+    assertNotNull(depth1Rect);
+    assertNotNull(depth2Rect);
+
+    expect(depth2Rect.getAttribute('x')).toBe(depth1Rect.getAttribute('x'));
+    expect(depth2Rect.getAttribute('y')).toBe(depth1Rect.getAttribute('y'));
+    expect(depth2Rect.getAttribute('width')).toBe(depth1Rect.getAttribute('width'));
+    expect(depth2Rect.getAttribute('height')).toBe(depth1Rect.getAttribute('height'));
+  });
+
+  test('insets nested children when nodeInset is set', () => {
+    const nodeInset = 8;
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={multiLevelInsetData}
+        isAnimationActive={false}
+        dataKey="value"
+        nameKey="name"
+        nodeInset={nodeInset}
+      />,
+    );
+
+    const depth1Rect = container.querySelector<SVGRectElement>('.recharts-treemap-depth-1 .recharts-rectangle');
+    const depth2Rect = container.querySelector<SVGRectElement>('.recharts-treemap-depth-2 .recharts-rectangle');
+    assertNotNull(depth1Rect);
+    assertNotNull(depth2Rect);
+
+    const depth1X = Number(depth1Rect.getAttribute('x'));
+    const depth1Y = Number(depth1Rect.getAttribute('y'));
+    const depth1Width = Number(depth1Rect.getAttribute('width'));
+    const depth1Height = Number(depth1Rect.getAttribute('height'));
+    const depth2X = Number(depth2Rect.getAttribute('x'));
+    const depth2Y = Number(depth2Rect.getAttribute('y'));
+    const depth2Width = Number(depth2Rect.getAttribute('width'));
+    const depth2Height = Number(depth2Rect.getAttribute('height'));
+
+    expect(depth2X).toBe(depth1X + nodeInset);
+    expect(depth2Y).toBe(depth1Y + nodeInset);
+    expect(depth2Width).toBe(depth1Width - nodeInset * 2);
+    expect(depth2Height).toBe(depth1Height - nodeInset * 2);
+  });
+
+  test('renders sibling nodes without spacing when nodeGap is not set', () => {
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={siblingGapData}
+        isAnimationActive={false}
+        dataKey="value"
+        nameKey="name"
+      />,
+    );
+
+    const depth1Rects = container.querySelectorAll<SVGRectElement>('.recharts-treemap-depth-1 .recharts-rectangle');
+    expect(depth1Rects).toHaveLength(2);
+
+    const firstRect = depth1Rects[0];
+    const secondRect = depth1Rects[1];
+    assertNotNull(firstRect);
+    assertNotNull(secondRect);
+
+    const firstX = Number(firstRect.getAttribute('x'));
+    const firstY = Number(firstRect.getAttribute('y'));
+    const firstWidth = Number(firstRect.getAttribute('width'));
+    const firstHeight = Number(firstRect.getAttribute('height'));
+    const secondX = Number(secondRect.getAttribute('x'));
+    const secondY = Number(secondRect.getAttribute('y'));
+    const secondWidth = Number(secondRect.getAttribute('width'));
+    const secondHeight = Number(secondRect.getAttribute('height'));
+    const gapX = Math.max(secondX - (firstX + firstWidth), firstX - (secondX + secondWidth), 0);
+    const gapY = Math.max(secondY - (firstY + firstHeight), firstY - (secondY + secondHeight), 0);
+
+    expect(Math.max(gapX, gapY)).toBe(0);
+  });
+
+  test('adds spacing between sibling nodes when nodeGap is set', () => {
+    const nodeGap = 10;
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={siblingGapData}
+        isAnimationActive={false}
+        dataKey="value"
+        nameKey="name"
+        nodeGap={nodeGap}
+      />,
+    );
+
+    const depth1Rects = container.querySelectorAll<SVGRectElement>('.recharts-treemap-depth-1 .recharts-rectangle');
+    expect(depth1Rects).toHaveLength(2);
+
+    const firstRect = depth1Rects[0];
+    const secondRect = depth1Rects[1];
+    assertNotNull(firstRect);
+    assertNotNull(secondRect);
+
+    const firstX = Number(firstRect.getAttribute('x'));
+    const firstY = Number(firstRect.getAttribute('y'));
+    const firstWidth = Number(firstRect.getAttribute('width'));
+    const firstHeight = Number(firstRect.getAttribute('height'));
+    const secondX = Number(secondRect.getAttribute('x'));
+    const secondY = Number(secondRect.getAttribute('y'));
+    const secondWidth = Number(secondRect.getAttribute('width'));
+    const secondHeight = Number(secondRect.getAttribute('height'));
+    const gapX = Math.max(secondX - (firstX + firstWidth), firstX - (secondX + secondWidth), 0);
+    const gapY = Math.max(secondY - (firstY + firstHeight), firstY - (secondY + secondHeight), 0);
+
+    expect(Math.max(gapX, gapY)).toBe(nodeGap);
   });
 
   test('navigates through nested nodes correctly', () => {
@@ -103,6 +266,51 @@ describe('<Treemap />', () => {
 
     // Should be back at root level with original node count
     expect(container.querySelectorAll('.recharts-rectangle').length).toBe(initialNodeCount);
+  });
+
+  test('clicking current root cell in nest mode does not drill repeatedly', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    fireEvent.click(getByText('A'));
+
+    const breadcrumbCountBefore = container.querySelectorAll('.recharts-treemap-nest-index-box').length;
+    const currentRootCell = container.querySelector<SVGPathElement>('.recharts-treemap-depth-0 .recharts-rectangle');
+    assertNotNull(currentRootCell);
+
+    fireEvent.click(currentRootCell);
+
+    const breadcrumbCountAfter = container.querySelectorAll('.recharts-treemap-nest-index-box').length;
+    expect(breadcrumbCountAfter).toBe(breadcrumbCountBefore);
+  });
+
+  test('does not render drill-down arrow on current root cell in nest mode', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    fireEvent.click(getByText('A'));
+
+    const rootLayer = container.querySelector('.recharts-treemap-depth-0');
+    assertNotNull(rootLayer);
+    expect(rootLayer.querySelector('.recharts-polygon')).not.toBeInTheDocument();
   });
 
   test('renders custom nestIndexContent when provided as function', () => {

@@ -5,6 +5,7 @@ import TreemapExample from '../../../www/src/docs/apiExamples/Treemap/TreemapExa
 import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
 import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
 import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
+import TreemapWithPaddingAndGaps from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
 
 test('TreeMapNavExample', async ({ mount }) => {
   const component = await mount(<TreeMapNavExample />);
@@ -23,5 +24,10 @@ test('SimpleTreemap', async ({ mount }) => {
 
 test('TreemapExample', async ({ mount }) => {
   const component = await mount(<TreemapExample isAnimationActive={false} />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('TreemapWithPaddingAndGaps', async ({ mount }) => {
+  const component = await mount(<TreemapWithPaddingAndGaps />);
   await expect(component).toHaveScreenshot();
 });
