@@ -16,6 +16,8 @@ import { Props as LineProps } from '../cartesian/Line';
 import { Props as ScatterProps } from '../cartesian/Scatter';
 import { Props as FunnelProps } from '../cartesian/Funnel';
 import { CartesianChartProps } from './types';
+import { TooltipProps } from '../component/Tooltip';
+import { NameType, ValueType } from '../component/DefaultTooltipContent';
 
 export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TComponents> = {
   AreaChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
@@ -39,7 +41,9 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
                 ? React.ComponentType<LineProps<TData, TNumerical>>
                 : K extends 'Scatter'
                   ? React.ComponentType<ScatterProps<TData, TNumerical>>
-                  : TComponents[K];
+                  : K extends 'Tooltip'
+                    ? React.ComponentType<TooltipProps<Extract<TNumerical, ValueType>, Extract<keyof TData, NameType>>>
+                    : TComponents[K];
   },
   'Funnel' | 'FunnelChart'
 >;
@@ -68,7 +72,9 @@ export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponen
                 ? React.ComponentType<ScatterProps<TData, TNumerical>>
                 : K extends 'Funnel'
                   ? React.ComponentType<FunnelProps<TData, TNumerical>>
-                  : TComponents[K];
+                  : K extends 'Tooltip'
+                    ? React.ComponentType<TooltipProps<Extract<TNumerical, ValueType>, Extract<keyof TData, NameType>>>
+                    : TComponents[K];
 };
 
 const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
