@@ -1,6 +1,6 @@
 import { isValidElement } from 'react';
 
-const SVGElementPropKeys = [
+const COMMON_SVG_PROPS = [
   'aria-activedescendant',
   'aria-atomic',
   'aria-autocomplete',
@@ -49,24 +49,13 @@ const SVGElementPropKeys = [
   'aria-valuetext',
   'className',
   'color',
-  'height',
   'id',
   'lang',
-  'max',
   'media',
   'method',
-  'min',
   'name',
   'style',
-  /*
-   * removed 'type' SVGElementPropKey because we do not currently use any SVG elements
-   * that can use it, and it conflicts with the recharts prop 'type'
-   * https://github.com/recharts/recharts/pull/3327
-   * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/type
-   */
-  // 'type',
   'target',
-  'width',
   'role',
   'tabIndex',
   'accentHeight',
@@ -102,9 +91,6 @@ const SVGElementPropKeys = [
   'contentScriptType',
   'contentStyleType',
   'cursor',
-  'cx',
-  'cy',
-  'd',
   'decelerate',
   'descent',
   'diffuseConstant',
@@ -113,8 +99,6 @@ const SVGElementPropKeys = [
   'divisor',
   'dominantBaseline',
   'dur',
-  'dx',
-  'dy',
   'edgeMode',
   'elevation',
   'enableBackground',
@@ -139,16 +123,12 @@ const SVGElementPropKeys = [
   'fontWeight',
   'format',
   'from',
-  'fx',
-  'fy',
   'g1',
   'g2',
   'glyphName',
   'glyphOrientationHorizontal',
   'glyphOrientationVertical',
   'glyphRef',
-  'gradientTransform',
-  'gradientUnits',
   'hanging',
   'horizAdvX',
   'horizOriginX',
@@ -175,18 +155,15 @@ const SVGElementPropKeys = [
   'limitingConeAngle',
   'local',
   'markerEnd',
-  'markerHeight',
   'markerMid',
   'markerStart',
   'markerUnits',
-  'markerWidth',
   'mask',
   'maskContentUnits',
   'maskUnits',
   'mathematical',
   'mode',
   'numOctaves',
-  'offset',
   'opacity',
   'operator',
   'order',
@@ -209,10 +186,6 @@ const SVGElementPropKeys = [
   'preserveAlpha',
   'preserveAspectRatio',
   'primitiveUnits',
-  'r',
-  'radius',
-  'refX',
-  'refY',
   'renderingIntent',
   'repeatCount',
   'repeatDur',
@@ -221,8 +194,6 @@ const SVGElementPropKeys = [
   'restart',
   'result',
   'rotate',
-  'rx',
-  'ry',
   'seed',
   'shapeRendering',
   'slope',
@@ -236,8 +207,6 @@ const SVGElementPropKeys = [
   'stemh',
   'stemv',
   'stitchTiles',
-  'stopColor',
-  'stopOpacity',
   'strikethroughPosition',
   'strikethroughThickness',
   'string',
@@ -283,11 +252,6 @@ const SVGElementPropKeys = [
   'widths',
   'wordSpacing',
   'writingMode',
-  'x1',
-  'x2',
-  'x',
-  'xChannelSelector',
-  'xHeight',
   'xlinkActuate',
   'xlinkArcrole',
   'xlinkHref',
@@ -300,26 +264,108 @@ const SVGElementPropKeys = [
   'xmlns',
   'xmlnsXlink',
   'xmlSpace',
-  'y1',
-  'y2',
-  'y',
-  'yChannelSelector',
-  'z',
   'zoomAndPan',
   'ref',
   'key',
   'angle',
+];
+
+const RECT_PROPS = ['x', 'y', 'width', 'height', 'rx', 'ry'];
+const CIRCLE_PROPS = ['cx', 'cy', 'r'];
+const ELLIPSE_PROPS = ['cx', 'cy', 'rx', 'ry'];
+const LINE_PROPS = ['x1', 'y1', 'x2', 'y2'];
+const TEXT_PROPS = ['x', 'y', 'dx', 'dy', 'rotate', 'textLength', 'lengthAdjust'];
+const IMAGE_PROPS = ['x', 'y', 'width', 'height', 'preserveAspectRatio', 'href'];
+const SVG_PROPS = ['x', 'y', 'width', 'height', 'viewBox', 'preserveAspectRatio', 'xmlns'];
+const POLYGON_PROPS = ['points'];
+const POLYLINE_PROPS = ['points'];
+const PATH_PROPS = ['d'];
+const STOP_PROPS = ['offset', 'stopColor', 'stopOpacity'];
+const LINEAR_GRADIENT_PROPS = ['x1', 'y1', 'x2', 'y2', 'gradientUnits', 'gradientTransform', 'spreadMethod', 'href'];
+const RADIAL_GRADIENT_PROPS = [
+  'cx',
+  'cy',
+  'r',
+  'fx',
+  'fy',
+  'fr',
+  'gradientUnits',
+  'gradientTransform',
+  'spreadMethod',
+  'href',
+];
+const MASK_PROPS = ['x', 'y', 'width', 'height', 'maskUnits', 'maskContentUnits'];
+const CLIP_PATH_PROPS = ['clipPathUnits'];
+const FOREIGN_OBJECT_PROPS = ['x', 'y', 'width', 'height'];
+
+const ELEMENT_SPECIFIC_PROPS: Record<string, string[]> = {
+  rect: RECT_PROPS,
+  circle: CIRCLE_PROPS,
+  ellipse: ELLIPSE_PROPS,
+  line: LINE_PROPS,
+  text: TEXT_PROPS,
+  image: IMAGE_PROPS,
+  svg: SVG_PROPS,
+  g: [],
+  polygon: POLYGON_PROPS,
+  polyline: POLYLINE_PROPS,
+  path: PATH_PROPS,
+  stop: STOP_PROPS,
+  linearGradient: LINEAR_GRADIENT_PROPS,
+  radialGradient: RADIAL_GRADIENT_PROPS,
+  mask: MASK_PROPS,
+  clipPath: CLIP_PATH_PROPS,
+  foreignObject: FOREIGN_OBJECT_PROPS,
+};
+
+export const SVGElementPropKeys = [
+  ...COMMON_SVG_PROPS,
+  ...RECT_PROPS,
+  ...CIRCLE_PROPS,
+  ...ELLIPSE_PROPS,
+  ...LINE_PROPS,
+  ...TEXT_PROPS,
+  ...IMAGE_PROPS,
+  ...SVG_PROPS,
+  ...POLYGON_PROPS,
+  ...POLYLINE_PROPS,
+  ...PATH_PROPS,
+  ...STOP_PROPS,
+  ...LINEAR_GRADIENT_PROPS,
+  ...RADIAL_GRADIENT_PROPS,
+  ...MASK_PROPS,
+  ...CLIP_PATH_PROPS,
+  ...FOREIGN_OBJECT_PROPS,
+  // Props not yet categorized into element-specific arrays
+  'max',
+  'min',
+  'refX',
+  'refY',
+  'markerHeight',
+  'markerUnits',
+  'markerWidth',
 ] as const;
 
 export type SVGElementPropKeysType = (typeof SVGElementPropKeys)[number];
 
-const SVGElementPropKeySet = new Set<string>(SVGElementPropKeys);
+const ELEMENT_SPECIFIC_PROP_SET = new Set<string>();
+for (const props of Object.values(ELEMENT_SPECIFIC_PROPS)) {
+  for (const prop of props) {
+    ELEMENT_SPECIFIC_PROP_SET.add(prop);
+  }
+}
 
-export function isSvgElementPropKey(key: PropertyKey): boolean {
+const COMMON_SVG_PROP_SET = new Set<string>(COMMON_SVG_PROPS.filter(prop => !ELEMENT_SPECIFIC_PROP_SET.has(prop)));
+
+export function isSvgElementPropKey(key: PropertyKey, tagName?: string): boolean {
   if (typeof key !== 'string') {
     return false;
   }
-  return SVGElementPropKeySet.has(key);
+  if (tagName) {
+    const specificProps = ELEMENT_SPECIFIC_PROPS[tagName];
+    return COMMON_SVG_PROP_SET.has(key) || (specificProps != null && specificProps.includes(key));
+  }
+  return COMMON_SVG_PROP_SET.has(key);
 }
 
 export type DataAttributeKeyType = `data-${string}`;
@@ -338,17 +384,21 @@ export function isDataAttribute(key: PropertyKey): key is DataAttributeKeyType {
 /**
  * Filters an object to only include SVG properties. Removes all event handlers too.
  * @param obj - The object to filter
+ * @param tagName - Optional SVG element tag name to filter by specific attributes
  * @returns A new object containing only valid SVG properties, excluding event handlers.
  */
-export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(obj: T | boolean): SVGPropsNoEvents<T> {
+export function svgPropertiesNoEvents<T extends Record<PropertyKey, unknown>>(
+  obj: T | boolean,
+  tagName?: string,
+): SVGPropsNoEvents<T> {
   if (typeof obj !== 'object' || obj === null) {
     return {} as SVGPropsNoEvents<T>;
   }
-  const result: Record<PropertyKey, any> = {};
+  const result: Record<PropertyKey, unknown> = {};
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      if (isSvgElementPropKey(key) || isDataAttribute(key)) {
+      if (isSvgElementPropKey(key, tagName) || isDataAttribute(key)) {
         result[key] = obj[key];
       }
     }
@@ -369,10 +419,12 @@ export function svgPropertiesNoEvents<T extends Record<PropertyKey, any>>(obj: T
  * If you wish to have a type-safe version, use svgPropertiesNoEvents directly with a typed object.
  *
  * @param input - The input to filter, which can be a record, a React element, or other types.
+ * @param tagName - Optional SVG element tag name to filter by specific attributes
  * @returns A record of SVG properties if the input is a record or React element, otherwise null.
  */
 export function svgPropertiesNoEventsFromUnknown(
   input: unknown,
+  tagName?: string,
 ): Partial<Record<SVGElementPropKeysType, unknown>> | null {
   if (input == null) {
     return null;
@@ -380,11 +432,12 @@ export function svgPropertiesNoEventsFromUnknown(
 
   if (isValidElement(input) && typeof input.props === 'object' && input.props !== null) {
     const p: Partial<Record<PropertyKey, unknown>> = input.props;
-    return svgPropertiesNoEvents(p);
+    const resolvedTagName = tagName || (typeof input.type === 'string' ? input.type : undefined);
+    return svgPropertiesNoEvents(p, resolvedTagName);
   }
 
   if (typeof input === 'object' && !Array.isArray(input)) {
-    return svgPropertiesNoEvents(input);
+    return svgPropertiesNoEvents(input as Record<PropertyKey, unknown>, tagName);
   }
 
   return null;

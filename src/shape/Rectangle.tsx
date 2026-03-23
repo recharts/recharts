@@ -226,7 +226,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
 
   const layerClass = clsx('recharts-rectangle', className);
   if (!isUpdateAnimationActive) {
-    const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props);
+    const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props, 'path');
     return (
       <path
         {...otherPathProps}
@@ -284,7 +284,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
           animationStyle = { strokeDasharray: from };
         }
 
-        const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props);
+        const { radius: _, ...otherPathProps } = svgPropertiesAndEvents(props, 'path');
 
         return (
           <path
