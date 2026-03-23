@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { SeriesPoint } from 'victory-vendor/d3-shape';
-import { NullableCoordinate } from '../../util/types';
+import { DataKey, NullableCoordinate } from '../../util/types';
 import { computeArea } from '../../cartesian/Area';
 import {
   selectAxisWithScale,
@@ -20,6 +20,7 @@ import { AreaSettings } from '../types/AreaSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectChartBaseValue } from './rootPropsSelectors';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
+import { isNotNil } from '../../util/DataUtils';
 
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
@@ -130,6 +131,28 @@ export const selectGraphicalItemStackedData: (
   },
 );
 
+const selectStackDataKeys: (
+  state: RechartsRootState,
+  id: GraphicalItemId,
+  isPanorama: boolean,
+) => ReadonlyArray<DataKey<any>> | undefined = createSelector(
+  [selectSynchronisedAreaSettings, selectNumericalAxisStackGroups],
+  (areaSettings: AreaSettings | undefined, stackGroups: Record<StackId, StackGroup> | undefined) => {
+    if (areaSettings == null || stackGroups == null) {
+      return undefined;
+    }
+    const { stackId } = areaSettings;
+    if (stackId == null) {
+      return undefined;
+    }
+    const group: StackGroup | undefined = stackGroups[stackId];
+    if (group == null) {
+      return undefined;
+    }
+    return group.graphicalItems.map(item => item.dataKey).filter(isNotNil);
+  },
+);
+
 export const selectArea: (
   state: RechartsRootState,
   id: GraphicalItemId,
@@ -146,6 +169,7 @@ export const selectArea: (
     selectBandSize,
     selectSynchronisedAreaSettings,
     selectChartBaseValue,
+    selectStackDataKeys,
   ],
   (
     layout,
@@ -158,6 +182,7 @@ export const selectArea: (
     bandSize,
     areaSettings,
     chartBaseValue,
+    stackDataKeys,
   ) => {
     if (
       areaSettings == null ||
@@ -197,6 +222,7 @@ export const selectArea: (
       displayedData,
       chartBaseValue,
       bandSize,
+      stackDataKeys,
     });
   },
 );

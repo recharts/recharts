@@ -45,7 +45,31 @@ const data = [
     amt: 2100,
   },
 ];
-
+const data2 = [
+  {
+    name: 'Page A',
+    uv: 3,
+    amt: 1,
+  },
+  {
+    name: 'Page B',
+    // undefined for all areas
+  },
+  {
+    name: 'Page C',
+    uv: 4,
+    amt: 4,
+  },
+  {
+    name: 'Page D',
+    uv: 1,
+  },
+  {
+    name: 'Page D',
+    uv: 0,
+    amt: 2,
+  },
+];
 // #endregion
 const AreaChartConnectNulls = () => {
   return (
@@ -80,7 +104,6 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis width="auto" />
         <Tooltip />
@@ -106,7 +129,6 @@ const AreaChartConnectNulls = () => {
         <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
         <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
         <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-        <RechartsDevtools />
       </AreaChart>
 
       <AreaChart
@@ -127,7 +149,30 @@ const AreaChartConnectNulls = () => {
         <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
         <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
         <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-        <RechartsDevtools />
+      </AreaChart>
+
+      <AreaChart
+        style={{
+          width: '100%',
+          maxWidth: '700px',
+          maxHeight: '70vh',
+          aspectRatio: 1.618,
+        }}
+        responsive
+        data={data2}
+        margin={{
+          top: 20,
+          right: 0,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis width="auto" />
+        <Tooltip />
+        <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+        <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" connectNulls />
       </AreaChart>
     </>
   );
