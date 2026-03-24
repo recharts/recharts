@@ -3,7 +3,13 @@ import { describe, test, expect, it, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
 import { Tooltip, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
-import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
+import {
+  TreemapNode,
+  TreemapDataType,
+  addToTreemapNodeIndex,
+  computeNode,
+  treemapPayloadSearcher,
+} from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -89,8 +95,8 @@ describe('<Treemap />', () => {
         ]}
         isAnimationActive={false}
         nameKey="name"
-        dataKey={(node: any) => (node.baseValue || 0) * 2}
-        content={(props: any) => {
+        dataKey={(node: TreemapDataType) => ((node.baseValue as number) || 0) * 2}
+        content={(props: TreemapNode) => {
           // depth 1 nodes are the ones from our array. depth 0 is the auto-generated root node.
           if (props.depth === 1) {
             return (
