@@ -25,8 +25,5 @@ describe('GeoCoverage', () => {
     expect(container.querySelector('.recharts-wrapper')).toBeInTheDocument();
   });
 
-  it('CartographyChartWithContext should return null if width or height is missing', () => {
-    // This is hard to trigger via public API but we can try to render the internal component if exported,
-    // or just rely on the fact that CartographyChart always provides them via ReportChartSize.
-  });
+
 });
