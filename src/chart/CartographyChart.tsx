@@ -127,7 +127,7 @@ const CartographyChartImpl = ({
           [left, top],
           [width - right, height - bottom],
         ],
-        fitExtent as Parameters<GeoProjection['fitExtent']>[1],
+        fitExtent as unknown as Parameters<GeoProjection['fitExtent']>[1],
       );
     } else {
       const scale = Math.min(width, height) / Math.PI;

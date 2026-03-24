@@ -91,9 +91,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
-    "@types/d3-geo": "^3.1.0",
+    "@types/d3-geo": "^1.12.1",
     "clsx": "^2.1.1",
-    "d3-geo": "^3.1.1",
+    "d3-geo": "^1.12.1",
     "decimal.js-light": "^2.5.1",
     "es-toolkit": "^1.39.3",
     "eventemitter3": "^5.0.1",

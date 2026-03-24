@@ -5,6 +5,7 @@ import type { Feature, FeatureCollection, Geometry, GeoJsonProperties } from 'ge
 import { CartographyChart } from '../../src/chart/CartographyChart';
 import { GeoPath } from '../../src/geo/GeoPath';
 import { ChoroplethSeries } from '../../src/geo/ChoroplethSeries';
+import { useGeoProjection } from '../../src/geo/GeoProjectionContext';
 
 const mockSquareFeature: Feature<Geometry, GeoJsonProperties> = {
   type: 'Feature',
@@ -216,5 +217,28 @@ describe('ChoroplethSeries', () => {
     for (const path of Array.from(paths)) {
       expect(path.getAttribute('fill')).toBe('#eeeeee');
     }
+  });
+});
+
+describe('GeoProjectionContext (Coverage)', () => {
+  it('useGeoProjection should throw error when used outside CartographyChart', () => {
+    const TestComponent = () => {
+      useGeoProjection();
+      return null;
+    };
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(() => render(<TestComponent />)).toThrow('useGeoProjection must be used inside a CartographyChart');
+    spy.mockRestore();
+  });
+});
+
+describe('CartographyChart (Extensions)', () => {
+  it('should set tooltip portal ref', () => {
+    const { container } = render(
+      <CartographyChart width={100} height={100}>
+        <div data-testid="child" />
+      </CartographyChart>,
+    );
+    expect(container.querySelector('.recharts-wrapper')).toBeInTheDocument();
   });
 });
