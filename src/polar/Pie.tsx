@@ -682,6 +682,22 @@ function PieSectors(props: PieSectorsProps) {
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey, id);
 
+  const hasInteractiveProp =
+    onMouseEnterFromProps !== undefined ||
+    onItemClickFromProps !== undefined ||
+    onMouseLeaveFromProps !== undefined ||
+    Object.keys(restOfAllOtherProps).some(
+      key =>
+        key.startsWith('onMouse') ||
+        key.startsWith('onClick') ||
+        key.startsWith('onTouch') ||
+        key.startsWith('onKeyboard'),
+    );
+  const internalTabIndex = hasInteractiveProp ? 0 : -1;
+  const defaultTabIndex = Object.prototype.hasOwnProperty.call(allOtherPieProps, 'tabIndex')
+    ? (allOtherPieProps as any).tabIndex
+    : internalTabIndex;
+
   if (sectors == null || sectors.length === 0) {
     return null;
   }
@@ -704,7 +720,7 @@ function PieSectors(props: PieSectorsProps) {
         const sectorProps = {
           ...entry,
           stroke: entry.stroke,
-          tabIndex: -1,
+          tabIndex: defaultTabIndex,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
@@ -712,7 +728,7 @@ function PieSectors(props: PieSectorsProps) {
         return (
           <Layer
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
-            tabIndex={-1}
+            tabIndex={defaultTabIndex}
             className="recharts-pie-sector"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             onMouseEnter={onMouseEnterFromContext(entry, i)}
