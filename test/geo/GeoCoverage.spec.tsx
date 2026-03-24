@@ -1,7 +1,17 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useGeoProjection } from '../../src/geo/GeoProjectionContext';
 import { CartographyChart } from '../../src/chart/CartographyChart';
+
+beforeAll(() => {
+  vi.useFakeTimers();
+});
+
+afterAll(() => {
+  vi.useRealTimers();
+});
+
 
 describe('GeoCoverage', () => {
   it('useGeoProjection should throw error when used outside CartographyChart', () => {
