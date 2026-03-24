@@ -130,7 +130,7 @@ export const DefaultTooltipContent = (props: Props) => {
 
       const sortedPayload: TooltipPayload = lodashLikeSortBy(payload, itemSorter);
       const items = sortedPayload.map((entry: TooltipPayloadEntry, i: number) => {
-        if (entry.type === 'none') {
+        if (!entry || entry.type === 'none') {
           return null;
         }
 
