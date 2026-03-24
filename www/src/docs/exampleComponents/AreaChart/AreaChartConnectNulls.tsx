@@ -65,7 +65,7 @@ const data2 = [
     uv: 1,
   },
   {
-    name: 'Page D',
+    name: 'Page E',
     uv: 0,
     amt: 2,
   },
@@ -171,8 +171,8 @@ const AreaChartConnectNulls = () => {
         <XAxis dataKey="name" />
         <YAxis width="auto" />
         <Tooltip />
-        <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-        <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" connectNulls />
+        <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+        <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
       </AreaChart>
     </>
   );
