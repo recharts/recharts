@@ -110,7 +110,9 @@ const CartographyChartImpl = ({
   children,
   width,
   height,
-}: Pick<CartographyChartProps, 'projection' | 'customProjection' | 'fitExtent' | 'margin' | 'children'> & {
+}: Omit<CartographyChartProps, 'fitExtent'> & {
+  fitExtent?: Parameters<GeoProjection['fitExtent']>[1];
+} & {
   width: number;
   height: number;
 }) => {
@@ -127,7 +129,8 @@ const CartographyChartImpl = ({
           [left, top],
           [width - right, height - bottom],
         ],
-        fitExtent as unknown as Parameters<GeoProjection['fitExtent']>[1],
+        fitExtent,
+
       );
     } else {
       const scale = Math.min(width, height) / Math.PI;
