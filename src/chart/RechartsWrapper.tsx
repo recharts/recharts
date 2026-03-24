@@ -98,12 +98,22 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
 
   const innerRef = useCallback(
     (node: HTMLDivElement | null) => {
+      // 1. First, call the external ref if it was provided
       if (typeof ref === 'function') {
         ref(node);
       }
+
+      // 2. Disconnect any previously active ResizeObserver instance to prevent memory leaks
+      if (observerRef.current != null) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+
+      // 3. Initiate a new ResizeObserver on the valid DOM node
       if (node != null && typeof ResizeObserver !== 'undefined') {
         const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
         setContainerSize(containerWidth, containerHeight);
+
         const callback = (entries: ResizeObserverEntry[]) => {
           const entry = entries[0];
           if (entry == null) {
@@ -112,6 +122,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
           const { width, height } = entry.contentRect;
           setContainerSize(width, height);
         };
+
         const observer = new ResizeObserver(callback);
         observer.observe(node);
         observerRef.current = observer;
