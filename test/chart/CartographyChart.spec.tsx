@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render } from '@testing-library/react';
 import type { Feature, FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 import { CartographyChart } from '../../src/chart/CartographyChart';
@@ -50,6 +50,14 @@ const mockData = [
   { country: 'TestRegion', value: 100 },
   { country: 'Region2', value: 200 },
 ];
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('CartographyChart', () => {
   it('should render without crashing', () => {
@@ -123,8 +131,8 @@ describe('GeoPath', () => {
     );
     const path = container.querySelector('path');
     path?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    // onClick may or may not fire depending on rendering; just verify nothing throws
-    expect(container).toBeTruthy();
+    // expect(onClick).toHaveBeenCalled() verifies the handler was invoked
+    expect(onClick).toHaveBeenCalled();
   });
 
   it('should use default fill and stroke', () => {

@@ -55,7 +55,7 @@ export const GeoPath = ({
 }: GeoPathProps) => {
   const { projection } = useGeoProjection();
   const pathGenerator = geoPath(projection);
-  const d = pathGenerator(feature as any);
+  const d = pathGenerator(feature);
 
   if (!d) return null;
 

@@ -58,7 +58,6 @@ export interface CartographyChartProps {
   height?: number | Percent;
   /**
    * If true, the chart adapts to its container size.
-   * @default false
    */
   responsive?: boolean;
   /**
@@ -128,7 +127,7 @@ const CartographyChartImpl = ({
           [left, top],
           [width - right, height - bottom],
         ],
-        fitExtent as any,
+        fitExtent as Parameters<GeoProjection['fitExtent']>[1],
       );
     } else {
       const scale = Math.min(width, height) / Math.PI;

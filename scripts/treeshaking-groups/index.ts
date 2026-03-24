@@ -16,6 +16,8 @@ import { expectedInBundle as Bar } from './Bar';
 import { expectedInBundle as BarChart } from './BarChart';
 import { expectedInBundle as BarStack } from './BarStack';
 import { expectedInBundle as Brush } from './Brush';
+import { expectedInBundle as CartographyChart } from './CartographyChart';
+import { expectedInBundle as ChoroplethSeries } from './ChoroplethSeries';
 import { expectedInBundle as CartesianAxis } from './CartesianAxis';
 import { expectedInBundle as CartesianGrid } from './CartesianGrid';
 import { expectedInBundle as ComposedChart } from './ComposedChart';
@@ -54,6 +56,8 @@ export const treeshakingGroups: Record<string, ReadonlyArray<string>> = {
   BarChart,
   BarStack,
   Brush,
+  CartographyChart,
+  ChoroplethSeries,
   CartesianAxis,
   CartesianGrid,
   ComposedChart,

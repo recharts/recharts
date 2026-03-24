@@ -115,7 +115,7 @@ export const ChoroplethSeries = ({
 
   // Compute the domain for the colour scale
   const values = React.useMemo(() => {
-    return data.map(d => d[valueKey]).filter(v => typeof v === 'number') as number[];
+    return data.map(d => d[valueKey]).filter((v): v is number => typeof v === 'number');
   }, [data, valueKey]);
 
   const [minVal, maxVal] = React.useMemo(() => {
@@ -132,7 +132,8 @@ export const ChoroplethSeries = ({
       {geoData.features.map((feature, index) => {
         const featureName = feature.properties?.[featureKey];
         const datum = featureName != null ? dataMap.get(String(featureName)) : undefined;
-        const value = datum != null ? (datum[valueKey] as number | undefined) : undefined;
+        const rawValue = datum != null ? datum[valueKey] : undefined;
+        const value = typeof rawValue === 'number' ? rawValue : undefined;
         const fill = value != null ? colourFn(value) : noDataFill;
 
         return (
