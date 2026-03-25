@@ -1,0 +1,34 @@
+import{e}from"./iframe-E-WC41kJ.js";import{R as n}from"./arrayEqualityCheck-BqUzcRut.js";import{C as p}from"./ComposedChart-Cj1Yh8a_.js";import{C as s}from"./CartesianGrid-D9oeCwlR.js";import{X as c}from"./XAxis-BaFlydz6.js";import{Y as f}from"./YAxis-CDciY-WX.js";import{L as l}from"./Line-BoIXwJ9W.js";import{R as d}from"./ReferenceLine-CuoHHgik.js";import{R as h}from"./RechartsHookInspector-DKk-8ET5.js";import{p as w}from"./Page-Cj8EiXz7.js";import"./preload-helper-Dp1pzeXC.js";import"./clsx-B-dksMZM.js";import"./resolveDefaultProps-CZw5DbVo.js";import"./immer-B2AHHn8G.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-BIczAnOb.js";import"./index-DZtbJ9Ut.js";import"./hooks-DQ5ZrLCC.js";import"./axisSelectors-BVUql3J4.js";import"./d3-scale-CSKw2yvo.js";import"./zIndexSlice-DkBOVcrD.js";import"./renderedTicksSlice-BqXsAF6I.js";import"./CartesianChart-B56zTdxs.js";import"./chartDataContext-CK93mzcE.js";import"./CategoricalChart-aHZNXhsF.js";import"./CartesianAxis-BOHEbUwD.js";import"./Layer-DOBdv7Ak.js";import"./Text-DTbX-dn1.js";import"./DOMUtils-CpAJnaA6.js";import"./Label-C5w0zLuo.js";import"./ZIndexLayer-DVYJjRDY.js";import"./types-CSLfd7k_.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./ReactUtils-BHUem0rc.js";import"./ActivePoints-CdBmP24a.js";import"./Dot-hyCNPvjn.js";import"./RegisterGraphicalItemId-D0Yd-4hn.js";import"./ErrorBarContext-he9UG2nL.js";import"./GraphicalItemClipPath-CjeMVbHl.js";import"./SetGraphicalItem-FieAjGNP.js";import"./useAnimationId-Kk3oGpCX.js";import"./getRadiusAndStrokeWidthFromDot-CyXXFMBh.js";import"./ActiveShapeUtils-DBHiiMuo.js";import"./isPlainObject-CY-G0_BP.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-Bf3uqJQh.js";import"./Trapezoid-B6nQFknd.js";import"./Sector-BB0wVMAH.js";import"./Symbols-B0YB4VCR.js";import"./symbol-BSUu54iG.js";import"./step-DU5CJrCT.js";import"./Curve-DYFm9WRY.js";import"./CartesianScaleHelper-C9Oze4oB.js";import"./index-DcwfkASu.js";import"./ChartSizeDimensions-myNJ6iDJ.js";import"./OffsetShower-h4QuBQIC.js";import"./PlotAreaShower-ByNkN2fY.js";const{expect:v,within:y}=__STORYBOOK_MODULE_TEST__,Re={title:"Examples/cartesian/ReferenceLine/ReferenceLineIfOverflow"},t={render:()=>e.createElement(n,{width:"100%",height:500},e.createElement(p,{data:w,margin:{top:5,right:30,left:20,bottom:5}},e.createElement(s,{strokeDasharray:"3 3"}),e.createElement(c,{dataKey:"name"}),e.createElement(f,{type:"number"}),e.createElement(l,{dataKey:"uv"}),e.createElement(d,{ifOverflow:"extendDomain",y:1700}),e.createElement(h,null))),play:async({canvasElement:m})=>{const{findByText:a}=y(m);v(await a("1800")).toBeInTheDocument()}};var r,o,i;t.parameters={...t.parameters,docs:{...(r=t.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  render: () => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={pageData} margin={{
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5
+      }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis type="number" />
+          <Line dataKey="uv" />
+          <ReferenceLine ifOverflow="extendDomain" y={1700} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  play: async ({
+    canvasElement
+  }: {
+    canvasElement: HTMLElement;
+  }) => {
+    const {
+      findByText
+    } = within(canvasElement);
+    /**
+     * assert that when ifOverflow="extendDomain" 1800 becomes the new domain y-max.
+     * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
+     * that 'extendDomain' behavior remains the same.
+     */
+    expect(await findByText('1800')).toBeInTheDocument();
+  }
+}`,...(i=(o=t.parameters)==null?void 0:o.docs)==null?void 0:i.source}}};const Ce=["IfOverflow"];export{t as IfOverflow,Ce as __namedExportsOrder,Re as default};
