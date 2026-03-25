@@ -117,6 +117,16 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
+const NEST_INDEX_HEIGHT = 30;
+
+const getTreemapRenderHeight = (height: number, type: Props['type']) => {
+  if (type === 'nest') {
+    return height - NEST_INDEX_HEIGHT;
+  }
+
+  return height;
+};
+
 export const computeNode = <DataPointType extends TreemapDataType, DataValueType>({
   depth,
   node,
@@ -177,6 +187,52 @@ const filterRect = (node: TreemapNode): RectanglePosition => ({
   width: node.width,
   height: node.height,
 });
+
+const insetRect = (rect: RectanglePosition, nodeInset: number): RectanglePosition => {
+  if (!Number.isFinite(nodeInset) || nodeInset <= 0) {
+    return rect;
+  }
+
+  const clampedPadding = Math.min(nodeInset, rect.width / 2, rect.height / 2);
+
+  return {
+    x: rect.x + clampedPadding,
+    y: rect.y + clampedPadding,
+    width: Math.max(rect.width - clampedPadding * 2, 0),
+    height: Math.max(rect.height - clampedPadding * 2, 0),
+  };
+};
+
+const applyGapToChildren = (
+  children: ReadonlyArray<TreemapNodeWithArea>,
+  parentRect: RectanglePosition,
+  nodeGap: number,
+): ReadonlyArray<TreemapNodeWithArea> => {
+  if (!Number.isFinite(nodeGap) || nodeGap <= 0) {
+    return children;
+  }
+
+  const halfGap = nodeGap / 2;
+  const parentRight = parentRect.x + parentRect.width;
+  const parentBottom = parentRect.y + parentRect.height;
+
+  return children.map(child => {
+    const childRight = child.x + child.width;
+    const childBottom = child.y + child.height;
+    const leftInset = child.x > parentRect.x ? halfGap : 0;
+    const rightInset = childRight < parentRight ? halfGap : 0;
+    const topInset = child.y > parentRect.y ? halfGap : 0;
+    const bottomInset = childBottom < parentBottom ? halfGap : 0;
+
+    return {
+      ...child,
+      x: child.x + leftInset,
+      y: child.y + topInset,
+      width: Math.max(child.width - leftInset - rightInset, 0),
+      height: Math.max(child.height - topInset - bottomInset, 0),
+    };
+  });
+};
 
 type TreemapNodeWithArea = TreemapNode & { area: number };
 
@@ -303,11 +359,12 @@ const position = (
 type AreaArray<T> = Array<T> & { area: number };
 
 // Recursively arranges the specified node's children into squarified rows.
-const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
+const squarify = (node: TreemapNode, aspectRatio: number, nodeInset: number, nodeGap: number): TreemapNode => {
   const { children } = node;
 
   if (children && children.length) {
-    let rect: RectanglePosition = filterRect(node);
+    const layoutRect: RectanglePosition = insetRect(filterRect(node), nodeInset);
+    let rect: RectanglePosition = layoutRect;
     // @ts-expect-error we can't create an array with static property on a single line so typescript will complain.
     const row: AreaArray<TreemapNodeWithArea> = [];
     let best = Infinity; // the best row score so far
@@ -348,9 +405,11 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
       row.length = row.area = 0;
     }
 
+    const childrenWithGaps = applyGapToChildren(scaleChildren, layoutRect, nodeGap);
+
     return {
       ...node,
-      children: scaleChildren.map(c => squarify(c, aspectRatio)),
+      children: childrenWithGaps.map(c => squarify(c, aspectRatio, nodeInset, nodeGap)),
     };
   }
 
@@ -395,6 +454,26 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * @default 1.618033988749895
    */
   aspectRatio?: number;
+
+  /**
+   * The inset between a parent node and its child nodes.
+   *
+   * Insets a parent node's available area before laying out its children.
+   * This creates space between a parent boundary and its child nodes.
+   * @default 0
+   * @since 3.9
+   */
+  nodeInset?: number;
+
+  /**
+   * The gap between the nodes.
+   *
+   * Adds spacing between sibling nodes at the same depth level.
+   * This does not inset children from their parent boundary.
+   * @default 0
+   * @since 3.9
+   */
+  nodeGap?: number;
 
   /**
    * If set to a React element, the option is the customized React element of rendering the content.
@@ -505,10 +584,14 @@ interface State {
   prevHeight?: number;
   prevDataKey: DataKey<any>;
   prevAspectRatio: number;
+  prevNodeInset: number;
+  prevNodeGap: number;
 }
 
 export const defaultTreeMapProps = {
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
+  nodeInset: 0,
+  nodeGap: 0,
   dataKey: 'value',
   nameKey: 'name',
   type: 'flat',
@@ -526,6 +609,8 @@ const defaultState: State = {
   currentRoot: undefined,
   nestIndex: [],
   prevAspectRatio: defaultTreeMapProps.aspectRatio,
+  prevNodeInset: defaultTreeMapProps.nodeInset,
+  prevNodeGap: defaultTreeMapProps.nodeGap,
   prevDataKey: defaultTreeMapProps.dataKey,
 };
 
@@ -567,7 +652,7 @@ function ContentItem({
   // optimize default shape
   const { x, y, width, height, index } = nodeProps;
   let arrow = null;
-  if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
+  if (width > 10 && height > 10 && nodeProps.children && type === 'nest' && nodeProps.depth > 0) {
     arrow = (
       <Polygon
         points={[
@@ -726,7 +811,7 @@ function TreemapItem({
   };
 
   const onClick = () => {
-    if (type === 'nest') {
+    if (type === 'nest' && nodeProps.depth > 0) {
       onNestClick(nodeProps);
     }
     if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
@@ -809,17 +894,25 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nextProps.width !== prevState.prevWidth ||
       nextProps.height !== prevState.prevHeight ||
       nextProps.dataKey !== prevState.prevDataKey ||
-      nextProps.aspectRatio !== prevState.prevAspectRatio
+      nextProps.aspectRatio !== prevState.prevAspectRatio ||
+      nextProps.nodeInset !== prevState.prevNodeInset ||
+      nextProps.nodeGap !== prevState.prevNodeGap
     ) {
       const root: TreemapNode = computeNode({
         depth: 0,
-        // @ts-expect-error missing properties
-        node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height },
+        node: {
+          // @ts-expect-error missing properties
+          children: nextProps.data,
+          x: 0,
+          y: 0,
+          width: nextProps.width,
+          height: getTreemapRenderHeight(nextProps.height, nextProps.type),
+        },
         index: 0,
         dataKey: nextProps.dataKey,
         nameKey: nextProps.nameKey,
       });
-      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio);
+      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio, nextProps.nodeInset, nextProps.nodeGap);
 
       return {
         ...prevState,
@@ -832,6 +925,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         prevHeight: nextProps.height,
         prevDataKey: nextProps.dataKey,
         prevType: nextProps.type,
+        prevNodeInset: nextProps.nodeInset,
+        prevNodeGap: nextProps.nodeGap,
       };
     }
 
@@ -841,10 +936,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   handleClick = (node: TreemapNode) => {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
-      const { width, height, dataKey, nameKey, aspectRatio } = this.props;
+      const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap } = this.props;
       const root = computeNode({
         depth: 0,
-        node: { ...node, x: 0, y: 0, width, height },
+        node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
         index: 0,
         dataKey,
         nameKey,
@@ -852,7 +947,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         nestedActiveTooltipIndex: node.tooltipIndex,
       });
 
-      const formatRoot = squarify(root, aspectRatio);
+      const formatRoot = squarify(root, aspectRatio, nodeInset, nodeGap);
 
       const { nestIndex } = this.state;
       nestIndex.push(node);
@@ -870,10 +965,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
-    const { width, height, dataKey, nameKey, aspectRatio } = this.props;
+    const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap, type } = this.props;
     const root = computeNode({
       depth: 0,
-      node: { ...node, x: 0, y: 0, width, height },
+      node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
       index: 0,
       dataKey,
       nameKey,
@@ -881,7 +976,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nestedActiveTooltipIndex: node.tooltipIndex,
     });
 
-    const formatRoot = squarify(root, aspectRatio);
+    const formatRoot = squarify(root, aspectRatio, nodeInset, nodeGap);
 
     nestIndex = nestIndex.slice(0, i + 1);
     this.setState({
@@ -1030,7 +1125,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <Surface
           {...attrs}
           width={width}
-          height={type === 'nest' ? height - 30 : height}
+          height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
           {this.renderAllNodes()}
