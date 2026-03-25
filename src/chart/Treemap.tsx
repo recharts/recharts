@@ -461,6 +461,7 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * Insets a parent node's available area before laying out its children.
    * This creates space between a parent boundary and its child nodes.
    * @default 0
+   * @since 3.9
    */
   nodeInset?: number;
 
@@ -470,6 +471,7 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * Adds spacing between sibling nodes at the same depth level.
    * This does not inset children from their parent boundary.
    * @default 0
+   * @since 3.9
    */
   nodeGap?: number;
 
