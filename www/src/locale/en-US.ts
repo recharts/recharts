@@ -37,6 +37,7 @@ export const map = {
     guide: 'Guide',
     installation: 'Installation',
     'getting-started': 'Getting Started',
+    typescript: 'TypeScript',
     customize: 'Customize',
     activeIndex: 'Active Index',
     sizes: 'Chart size',
@@ -74,6 +75,7 @@ export const map = {
      tick render function. You can do similar things with other graphs as well, such as custom shapes for bar
      charts and much more!`,
   },
+
   customize: {
     customize: 'Customize',
     'step-1-title': '1. Labels of line, area, bar, axis can be customized',

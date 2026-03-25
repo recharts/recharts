@@ -1355,6 +1355,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       yAxisId: 'y',
       zAxisId: 0,
       barSize: '',
+      hasCustomShape: false,
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
@@ -1966,7 +1967,12 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        /*
+         * 4 renders: (1) chart size set, (2) addErrorBar fires, (3) chart data slice selector
+         * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
+         * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
+         */
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -1977,7 +1983,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -2055,7 +2061,12 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        /*
+         * 4 renders: (1) chart size set, (2) addErrorBar fires, (3) chart data slice selector
+         * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
+         * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
+         */
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -2074,7 +2085,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
   });
@@ -2102,6 +2113,7 @@ describe('selectErrorBarsSettings', () => {
       xAxisId: '',
       yAxisId: '',
       zAxisId: 0,
+      hasCustomShape: false,
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);

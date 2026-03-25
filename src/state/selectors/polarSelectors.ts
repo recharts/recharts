@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { AxisId, BaseCartesianAxis } from '../cartesianAxisSlice';
-import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataSliceIgnoringIndexes } from './dataSelectors';
 import {
   AppliedChartDataWithErrorDomain,
   combineAppliedValues,
@@ -117,7 +117,14 @@ const selectDomainOfAllPolarAppliedNumericalValues: (
   axisType: PolarAxisType,
   axisId: AxisId,
 ) => NumberDomain | undefined = createSelector(
-  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings, selectAllErrorBarSettings, pickAxisType],
+  [
+    selectPolarDisplayedData,
+    selectBaseAxis,
+    selectPolarItemsSettings,
+    selectAllErrorBarSettings,
+    pickAxisType,
+    selectChartDataSliceIgnoringIndexes,
+  ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
 );
 

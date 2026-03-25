@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router';
-import { routes as Routes } from '../routes';
-import { PageTracker } from '../components/analytics.ts';
-import { ScrollRestoration } from '../components/ScrollRestoration.tsx';
+import { RouterProvider, createBrowserRouter } from 'react-router';
+import { routes } from '../routes';
 import { ColorModeProvider, defineColorModeStore } from '../components/color-mode';
 
 export function Root() {
   const [colorModeStore] = useState(() => {
     return defineColorModeStore();
+  });
+  const [router] = useState(() => {
+    return createBrowserRouter(routes, { basename: import.meta.env.BASE_URL });
   });
 
   useEffect(() => {
@@ -18,11 +19,7 @@ export function Root() {
 
   return (
     <ColorModeProvider store={colorModeStore}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <PageTracker />
-        <Routes />
-        <ScrollRestoration />
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </ColorModeProvider>
   );
 }

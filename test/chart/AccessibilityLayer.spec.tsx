@@ -8,6 +8,8 @@ import {
   Funnel,
   FunnelChart,
   Legend,
+  Line,
+  LineChart,
   Pie,
   PieChart,
   Tooltip,
@@ -445,6 +447,85 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
     });
 
+    describe('arrow keys snap back into visible domain after zoom (numeric XAxis)', () => {
+      const numericData = [
+        { name: 1, uv: 10 },
+        { name: 2, uv: 20 },
+        { name: 3, uv: 30 },
+        { name: 4, uv: 40 },
+        { name: 5, uv: 50 },
+        { name: 6, uv: 60 },
+        { name: 7, uv: 70 },
+        { name: 8, uv: 80 },
+      ];
+      const ZoomableChart = ({ domain }: { domain?: [number, number] }) => (
+        <LineChart width={500} height={300} data={numericData} accessibilityLayer={accessibilityLayer}>
+          <Line dataKey="uv" />
+          <Tooltip />
+          <XAxis dataKey="name" type="number" domain={domain ?? [1, 8]} allowDataOverflow />
+          <YAxis />
+        </LineChart>
+      );
+      test('ArrowLeft snaps from an outside-domain index to the last visible tick', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+        expect(getTooltip(container)).toHaveTextContent('70'); // uv of name=7
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowLeft(svg);
+        const tooltipText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => tooltipText.includes(v))).toBe(true);
+      });
+
+      test('ArrowRight snaps from an outside-domain index to the first visible tick', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+        expect(getTooltip(container)).toHaveTextContent('70');
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowRight(svg);
+        const tooltipText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => tooltipText.includes(v))).toBe(true);
+      });
+
+      test('After snapping into domain, subsequent arrow presses navigate normally', () => {
+        const { container, rerender } = render(<ZoomableChart />);
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+
+        for (let i = 0; i < 6; i++) {
+          arrowRight(svg);
+        }
+
+        rerender(<ZoomableChart domain={[3, 6]} />);
+
+        arrowLeft(svg);
+        const afterSnapText = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => afterSnapText.includes(v))).toBe(true);
+
+        arrowLeft(svg);
+        const textAfter = getTooltip(container).textContent ?? '';
+        expect(['30', '40', '50', '60'].some(v => textAfter.includes(v))).toBe(true);
+        arrowRight(svg);
+        expect(['30', '40', '50', '60'].some(v => (getTooltip(container).textContent ?? '').includes(v))).toBe(true);
+      });
+    });
+
     const BugExample = () => {
       const [toggle, setToggle] = useState(true);
 
@@ -564,17 +645,93 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       assertChartA11yAttributes(svg);
     });
 
-    test('does not show tooltip using keyboard', async () => {
-      const mockMouseMovements = vi.fn();
-
+    test('When chart receives focus, show the tooltip for the first sector', () => {
       const { container } = render(
-        <PieChart width={100} height={50} accessibilityLayer={accessibilityLayer} onMouseMove={mockMouseMovements}>
-          <Pie dataKey="uv" data={PageData} />
+        <PieChart width={500} height={500} accessibilityLayer={accessibilityLayer}>
+          <Pie isAnimationActive={false} data={PageData} dataKey="uv" />
           <Tooltip />
         </PieChart>,
       );
 
-      assertNoKeyboardInteractions(container);
+      expectTooltipNotVisible(container);
+
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+
+      expectTooltipPayload(container, '', ['Page A : 400']);
+    });
+
+    test('Arrow keys navigate between sectors', () => {
+      const { container } = render(
+        <PieChart width={500} height={500} accessibilityLayer={accessibilityLayer}>
+          <Pie isAnimationActive={false} data={PageData} dataKey="uv" />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+      expectTooltipPayload(container, '', ['Page A : 400']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page B : 300']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page C : 300']);
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, '', ['Page B : 300']);
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, '', ['Page A : 400']);
+    });
+
+    test('Arrow keys stop at boundaries', () => {
+      const { container } = render(
+        <PieChart width={500} height={500} accessibilityLayer={accessibilityLayer}>
+          <Pie isAnimationActive={false} data={PageData} dataKey="uv" />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+      expectTooltipPayload(container, '', ['Page A : 400']);
+
+      // Cannot go left past the first item
+      arrowLeft(svg);
+      expectTooltipPayload(container, '', ['Page A : 400']);
+
+      // Navigate to the last item
+      for (let i = 0; i < PageData.length - 1; i++) {
+        arrowRight(svg);
+      }
+      expectTooltipPayload(container, '', ['Page F : 189']);
+
+      // Cannot go right past the last item
+      arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page F : 189']);
+    });
+
+    test('Tooltip closes when PieChart loses focus', () => {
+      const { container } = render(
+        <PieChart width={500} height={500} accessibilityLayer={accessibilityLayer}>
+          <Pie isAnimationActive={false} data={PageData} dataKey="uv" />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      const svg = getMainSurface(container);
+      expectTooltipNotVisible(container);
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, '', ['Page A : 400']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page B : 300']);
+
+      act(() => svg.blur());
+      expect(getTooltip(container).textContent).toBe('');
     });
   });
 
@@ -590,7 +747,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       assertChartA11yAttributes(svg);
     });
 
-    test('tooltip does not show when chart receives focus', () => {
+    test('When chart receives focus, show the tooltip for the first segment', () => {
       const { container } = render(
         <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -603,10 +760,10 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('');
 
       act(() => getMainSurface(container).focus());
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page A : 400']);
     });
 
-    test('Chart does not update when it receives left/right arrow keystrokes', () => {
+    test('Chart updates when it receives left/right arrow keystrokes', () => {
       const mockMouseMovements = vi.fn();
 
       const { container } = render(
@@ -632,44 +789,46 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       // Once the chart receives focus, the tooltip should display
       act(() => svg.focus());
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page A : 400']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page A : 400']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Respect right arrow when there's something to the right
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page B : 300']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Page C
       arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page C : 300']);
 
       // Page D
       arrowRight(svg);
+      expectTooltipPayload(container, '', ['Page D : 200']);
 
+      // Page E
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+      expectTooltipPayload(container, '', ['Page E : 278']);
 
       // Ignore right arrow when you're already at the right
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page F : 189']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Respect left arrow when there's something to the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page E : 278']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Chart ignores non-arrow keys
       fireEvent.keyDown(svg, {
         key: 'a',
       });
-      expect(tooltip).toHaveTextContent('');
+      expectTooltipPayload(container, '', ['Page E : 278']);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
     });
   });

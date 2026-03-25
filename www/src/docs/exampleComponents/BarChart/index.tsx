@@ -34,6 +34,8 @@ import TimelineExample from './TimelineExample';
 import timelineExampleSource from './TimelineExample?raw';
 import CandlestickExample from './CandlestickExample';
 import candlestickExampleSource from './CandlestickExample?raw';
+import BoxPlotExample from './BoxPlotExample';
+import boxPlotExampleSource from './BoxPlotExample?raw';
 import { RechartsLink } from '../../../components/Shared/RechartsLink';
 import AnimatedBarWidthExample from './AnimatedBarWidthExample';
 import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
@@ -159,6 +161,18 @@ export const barChartExamples: Record<string, ChartExample> = {
       <>
         Candlestick chart is used to represent stock price movements. This example uses <RechartsLink api="Bar" /> and{' '}
         <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
+      </>
+    ),
+  },
+  BoxPlot: {
+    Component: BoxPlotExample,
+    sourceCode: boxPlotExampleSource,
+    name: 'Box Plot',
+    description: (
+      <>
+        Box plot charts summarize data distribution with quartiles and whiskers. This example uses{' '}
+        <RechartsLink api="Bar" /> and <RechartsLink api="ErrorBar" /> with a custom bar <code>shape</code> for the
+        median line.
       </>
     ),
   },

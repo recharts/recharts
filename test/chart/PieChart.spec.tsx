@@ -72,6 +72,38 @@ describe('<PieChart />', () => {
     ]);
   });
 
+  test('minAngle does not shift segments when all are already above the threshold', () => {
+    // https://github.com/recharts/recharts/issues/6814
+    // data [300, 30, 20, 10], sum = 360 → natural angles = [300°, 30°, 20°, 10°]
+    // All natural angles are above minAngle=9, so no redistribution should happen
+    const { container } = rechartsTestRender(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          data={[
+            { name: 'A', value: 300 },
+            { name: 'B', value: 30 },
+            { name: 'C', value: 20 },
+            { name: 'D', value: 10 },
+          ]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          minAngle={9}
+        />
+      </PieChart>,
+    );
+
+    expectPieSectorAngles(container, [
+      { startAngle: 0, endAngle: 300 },
+      { startAngle: 300, endAngle: 330 },
+      { startAngle: 330, endAngle: 350 },
+      { startAngle: 350, endAngle: 0 },
+    ]);
+  });
+
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>

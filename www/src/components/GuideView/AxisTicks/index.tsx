@@ -34,6 +34,9 @@ export function AxisTicks() {
         </li>
       </ul>
       <p>
+        This prop is available since Recharts 3.8. Before that, the only available mode was <code>{`"auto"`}</code>.
+      </p>
+      <p>
         Use the controls below to compare strategies and see how <code>tickCount</code> and domain settings influence
         the final ticks.
       </p>

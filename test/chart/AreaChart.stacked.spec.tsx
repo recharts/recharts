@@ -4,7 +4,8 @@ import { Area, AreaChart, Tooltip, XAxis, YAxis } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
 import { selectArea, selectGraphicalItemStackedData } from '../../src/state/selectors/areaSelectors';
-import { selectDisplayedData, selectStackGroups } from '../../src/state/selectors/axisSelectors';
+import { selectAxisDomain, selectDisplayedData, selectStackGroups } from '../../src/state/selectors/axisSelectors';
+import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 import { StackId } from '../../src/util/ChartUtils';
 import { ExpectedStackedDataSeries, expectGraphicalItemSettings } from '../helper/expectStackGroups';
 import { ChartData } from '../../src/state/chartDataSlice';
@@ -1254,6 +1255,47 @@ describe('AreaChart stacked', () => {
   });
 
   describe.todo('when dataKey is defined on YAxis instead of individual Areas');
-  describe.todo('when XAxis is type number');
+  describe('when XAxis is type number', () => {
+    const numericData = [
+      { x: 1, value1: 5, value2: 10 },
+      { x: 2, value1: 15, value2: 20 },
+      { x: 3, value1: 25, value2: 10 },
+    ];
+
+    describe('with stackOffset="expand"', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <AreaChart width={400} height={400} data={numericData} stackOffset="expand">
+          <XAxis dataKey="x" type="number" />
+          <YAxis />
+          <Area dataKey="value1" stackId="1" />
+          <Area dataKey="value2" stackId="1" />
+          {children}
+        </AreaChart>
+      ));
+
+      it('should render area curves when XAxis type is number', () => {
+        const { container } = renderTestCase();
+        const areaCurves = container.querySelectorAll('.recharts-area-curve');
+        expect(areaCurves.length).toBe(2);
+        areaCurves.forEach(curve => {
+          const d = curve.getAttribute('d');
+          expect(d).toBeTruthy();
+          expect(d).not.toBe('');
+        });
+      });
+
+      it('should have Y axis domain [0, 1] for expand offset', () => {
+        const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', defaultAxisId, false));
+        expectLastCalledWith(spy, [0, 1]);
+      });
+
+      it('should not override X axis domain to [0, 1]', () => {
+        const { spy } = renderTestCase(state => selectAxisDomain(state, 'xAxis', defaultAxisId, false));
+        const result = spy.mock.lastCall?.[0];
+        expect(result).toBeDefined();
+        expect(result).not.toEqual([0, 1]);
+      });
+    });
+  });
   describe.todo('vertical charts');
 });

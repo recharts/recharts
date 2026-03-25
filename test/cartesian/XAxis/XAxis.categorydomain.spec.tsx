@@ -1,9 +1,11 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { BarChart, Customized, Line, LineChart, XAxis } from '../../../src';
+import { Bar, BarChart, Customized, Line, LineChart, Scatter, useXAxisDomain, XAxis } from '../../../src';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { selectTooltipAxisDomain } from '../../../src/state/selectors/tooltipSelectors';
 
 const data = [
   { x: 90, y: 90, z: 90 },
@@ -554,6 +556,60 @@ describe('categorical domain', () => {
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([400, 280, 500, 200]);
       },
     );
+  });
+
+  describe('when some data is defined on chart element and other on graphical element', () => {
+    type BoxPlotDatum = {
+      category: string;
+      min: number;
+      q1: number;
+      median: number;
+      q3: number;
+      max: number;
+    };
+
+    const boxPlotData: ReadonlyArray<BoxPlotDatum> = [
+      { category: 'A', min: 16, q1: 20, median: 24, q3: 29, max: 35 },
+      { category: 'B', min: 12, q1: 15, median: 18, q3: 21, max: 27 },
+      { category: 'C', min: 22, q1: 26, median: 30, q3: 34, max: 49 },
+      { category: 'D', min: 9, q1: 13, median: 17, q3: 20, max: 26 },
+      { category: 'E', min: 18, q1: 22, median: 25, q3: 28, max: 32 },
+    ];
+
+    type OutlierDatum = {
+      category: string;
+      value: number;
+    };
+
+    const outliers: ReadonlyArray<OutlierDatum> = [
+      { category: 'A', value: 10 },
+      { category: 'A', value: 11 },
+      { category: 'A', value: 12 },
+      { category: 'A', value: 5 },
+      { category: 'B', value: 0 },
+      { category: 'A', value: 40 },
+      { category: 'D', value: 8 },
+      { category: 'E', value: 33 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={300} height={300} data={boxPlotData}>
+        <Bar dataKey="q1" />
+        <Scatter data={outliers} dataKey="value" />
+        <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
+        {children}
+      </BarChart>
+    ));
+
+    it('should combine data from both chart and graphical elements', () => {
+      const { spy } = renderTestCase(useXAxisDomain);
+      expectLastCalledWith(spy, ['A', 'B', 'C', 'D', 'E']);
+    });
+
+    it('should match that same data in tooltip domain', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomain);
+      expectLastCalledWith(spy, ['A', 'B', 'C', 'D', 'E']);
+    });
   });
 
   describe('interval', () => {
