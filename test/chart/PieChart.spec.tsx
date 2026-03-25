@@ -292,6 +292,7 @@ describe('<PieChart />', () => {
       expectLastCalledWith(spy, [
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group A',
             value: 0,
@@ -301,6 +302,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group B',
             value: 0,
@@ -310,6 +312,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group C',
             value: 0,
@@ -319,6 +322,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group D',
             value: 0,
@@ -328,6 +332,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group E',
             value: 0,
@@ -337,6 +342,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#808080',
+          dataKey: 'value',
           payload: {
             name: 'Group F',
             value: 0,
@@ -408,6 +414,7 @@ describe('<PieChart />', () => {
       expectLastCalledWith(spy, [
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group A',
             v: 89,
@@ -418,6 +425,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group B',
             v: 100,
@@ -428,6 +436,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group C',
             v: 200,
@@ -438,6 +447,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group D',
             v: 20,
@@ -448,6 +458,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group E',
             v: 40,
@@ -458,6 +469,7 @@ describe('<PieChart />', () => {
         },
         {
           color: '#ff7300',
+          dataKey: 'value',
           payload: {
             name: 'Group F',
             v: 60,
@@ -467,6 +479,74 @@ describe('<PieChart />', () => {
           value: 'Group F',
         },
       ]);
+    });
+
+    describe('issue #7056 - dataKey in Legend payload for PieChart', () => {
+      const renderIssueTestCase = createSelectorTestCase(({ children }) => (
+        <PieChart width={400} height={400}>
+          <Pie
+            id="issue-pie"
+            dataKey="visits"
+            data={[
+              { browser: 'chrome', visits: 2764 },
+              { browser: 'safari', visits: 4048 },
+            ]}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+          />
+          <Legend />
+          {children}
+        </PieChart>
+      ));
+
+      test('Legend payload should contain dataKey', () => {
+        const { spy } = renderIssueTestCase(state => selectPieLegend(state, 'issue-pie', undefined));
+        expectLastCalledWith(spy, [
+          expect.objectContaining({ dataKey: 'visits' }),
+          expect.objectContaining({ dataKey: 'visits' }),
+        ]);
+      });
+
+      test('Legend payload dataKey matches the Pie dataKey prop', () => {
+        const { spy } = renderIssueTestCase(state => selectPieLegend(state, 'issue-pie', undefined));
+        const payload = spy.mock.lastCall?.[0];
+        expect(payload).toBeDefined();
+        payload?.forEach(entry => {
+          expect(entry.dataKey).toBe('visits');
+        });
+      });
+
+      test('Legend payload should contain dataKey even when dataKey is a function', () => {
+        const dataKeyFn = (d: { browser: string; visits: number }) => d.visits;
+        const renderFnTestCase = createSelectorTestCase(({ children }) => (
+          <PieChart width={400} height={400}>
+            <Pie
+              id="fn-pie"
+              dataKey={dataKeyFn}
+              data={[
+                { browser: 'chrome', visits: 2764 },
+                { browser: 'safari', visits: 4048 },
+              ]}
+              cx={200}
+              cy={200}
+              outerRadius={80}
+              fill="#ff7300"
+            />
+            <Legend />
+            {children}
+          </PieChart>
+        ));
+
+        const { spy } = renderFnTestCase(state => selectPieLegend(state, 'fn-pie', undefined));
+        const payload = spy.mock.lastCall?.[0];
+        expect(payload).toBeDefined();
+        payload?.forEach(entry => {
+          expect(entry.dataKey).toBe(dataKeyFn);
+          expect(typeof entry.dataKey).toBe('function');
+        });
+      });
     });
 
     test('Renders 6 legend items', () => {
