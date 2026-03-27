@@ -573,7 +573,7 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
   id?: string;
 
   /**
-   * The width of the stroke of the rectangles.
+   * The width of the stroke.
    * @default 1
    */
   strokeWidth?: number;
