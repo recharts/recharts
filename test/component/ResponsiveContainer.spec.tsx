@@ -394,6 +394,18 @@ describe('<ResponsiveContainer />', () => {
     expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
   });
 
+  it('should not warn on initial render before dimensions are measured', () => {
+    mockGetBoundingClientRect({ width: 400, height: 200 });
+
+    render(
+      <ResponsiveContainer width="100%" height="100%">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
+  });
+
   it('should warn when aspect is not greater than zero', () => {
     render(
       <ResponsiveContainer aspect={-1} width="100%" height={100}>
