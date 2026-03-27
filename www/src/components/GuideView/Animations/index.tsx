@@ -94,7 +94,10 @@ export function AnimationsGuide() {
             <td>
               <code>string</code>
             </td>
-            <td>Easing function. Can be one of the predefined ones, or a custom cubic-bezier function.</td>
+            <td>
+              Easing function. Can be one of the predefined ones, or a custom cubic-bezier function. More on easing
+              below.
+            </td>
           </tr>
           <tr>
             <td>
@@ -110,6 +113,35 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
+      <h2>Animation easing</h2>
+      <p>
+        Easing is a function that controls the pace of the animation. It can be one of the following predefined strings:
+      </p>
+      <ul>
+        <li>
+          <code>ease</code>
+        </li>
+        <li>
+          <code>ease-in</code>
+        </li>
+        <li>
+          <code>ease-out</code>
+        </li>
+        <li>
+          <code>ease-in-out</code>
+        </li>
+        <li>
+          <code>linear</code>
+        </li>
+      </ul>
+      <p>Alternatively, it can be a custom cubic-bezier function, defined as:</p>
+      <pre>cubic-bezier(x1, y1, x2, y2)</pre>
+      <p>
+        where <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code> are numbers between 0 and 1 that
+        define the shape of the easing curve. You can use{' '}
+        <a href="https://cubic-bezier.com/">https://cubic-bezier.com/</a> to visually create and understand cubic-bezier
+        functions.
+      </p>
       <h2>Accessibility</h2>
       <p>
         Recharts follows the{' '}
