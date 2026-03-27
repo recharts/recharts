@@ -61,7 +61,7 @@ import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { selectBarRectangles } from '../state/selectors/barSelectors';
-import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { BaseAxisWithScale, selectXAxisSettings } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
@@ -701,7 +701,8 @@ function BarRectangles({
   props: BarRectanglesProps;
 }) {
   const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
-  const { shape, dataKey, activeBar } = props;
+  const { shape, dataKey, activeBar, xAxisId } = props;
+  const xAxisSettings = useAppSelector(state => selectXAxisSettings(state, xAxisId));
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -721,12 +722,21 @@ function BarRectangles({
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
+        const categoryValue =
+          xAxisSettings?.dataKey != null
+            ? getValueByDataKey(entry.payload, xAxisSettings.dataKey)
+            : entry.originalDataIndex;
+        const barValue = Array.isArray(entry.value) ? entry.value[1] : entry.value;
+        const ariaLabel = `${categoryValue}: ${barValue}`;
+
         return (
           <BarStackClipLayer
             index={entry.originalDataIndex}
             // https://github.com/recharts/recharts/issues/5415
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
+            role="img"
+            aria-label={ariaLabel}
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             onMouseEnter={onMouseEnterFromContext(entry, i)}
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
