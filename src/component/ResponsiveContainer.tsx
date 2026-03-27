@@ -210,7 +210,10 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
     });
 
     warn(
-      (calculatedWidth != null && calculatedWidth > 0) || (calculatedHeight != null && calculatedHeight > 0),
+      containerWidth < 0 ||
+        containerHeight < 0 ||
+        (calculatedWidth != null && calculatedWidth > 0) ||
+        (calculatedHeight != null && calculatedHeight > 0),
       `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
