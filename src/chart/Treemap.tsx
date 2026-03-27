@@ -571,6 +571,12 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
   animationEasing?: AnimationTiming;
 
   id?: string;
+
+  /**
+   * The width of the stroke of the rectangles.
+   * @default 1
+   */
+  strokeWidth?: number;
 }
 
 interface State {
@@ -586,6 +592,7 @@ interface State {
   prevAspectRatio: number;
   prevNodeInset: number;
   prevNodeGap: number;
+  prevStrokeWidth: number;
 }
 
 export const defaultTreeMapProps = {
@@ -600,6 +607,7 @@ export const defaultTreeMapProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear',
+  strokeWidth: 1,
   ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
@@ -612,6 +620,7 @@ const defaultState: State = {
   prevNodeInset: defaultTreeMapProps.nodeInset,
   prevNodeGap: defaultTreeMapProps.nodeGap,
   prevDataKey: defaultTreeMapProps.dataKey,
+  prevStrokeWidth: defaultTreeMapProps.strokeWidth,
 };
 
 type ContentItemProps = {
@@ -896,17 +905,19 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nextProps.dataKey !== prevState.prevDataKey ||
       nextProps.aspectRatio !== prevState.prevAspectRatio ||
       nextProps.nodeInset !== prevState.prevNodeInset ||
-      nextProps.nodeGap !== prevState.prevNodeGap
+      nextProps.nodeGap !== prevState.prevNodeGap ||
+      nextProps.strokeWidth !== prevState.prevStrokeWidth
     ) {
+      const { strokeWidth } = nextProps;
       const root: TreemapNode = computeNode({
         depth: 0,
         node: {
           // @ts-expect-error missing properties
           children: nextProps.data,
-          x: 0,
-          y: 0,
-          width: nextProps.width,
-          height: getTreemapRenderHeight(nextProps.height, nextProps.type),
+          x: strokeWidth / 2,
+          y: strokeWidth / 2,
+          width: nextProps.width - strokeWidth,
+          height: getTreemapRenderHeight(nextProps.height, nextProps.type) - strokeWidth,
         },
         index: 0,
         dataKey: nextProps.dataKey,
@@ -927,6 +938,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         prevType: nextProps.type,
         prevNodeInset: nextProps.nodeInset,
         prevNodeGap: nextProps.nodeGap,
+        prevStrokeWidth: nextProps.strokeWidth,
       };
     }
 
@@ -936,10 +948,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   handleClick = (node: TreemapNode) => {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
-      const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap } = this.props;
+      const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap, strokeWidth } = this.props;
       const root = computeNode({
         depth: 0,
-        node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
+        node: {
+          ...node,
+          x: strokeWidth / 2,
+          y: strokeWidth / 2,
+          width: width - strokeWidth,
+          height: getTreemapRenderHeight(height, type) - strokeWidth,
+        },
         index: 0,
         dataKey,
         nameKey,
@@ -965,10 +983,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
-    const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap, type } = this.props;
+    const { width, height, dataKey, nameKey, aspectRatio, nodeInset, nodeGap, type, strokeWidth } = this.props;
     const root = computeNode({
       depth: 0,
-      node: { ...node, x: 0, y: 0, width, height: getTreemapRenderHeight(height, type) },
+      node: {
+        ...node,
+        x: strokeWidth / 2,
+        y: strokeWidth / 2,
+        width: width - strokeWidth,
+        height: getTreemapRenderHeight(height, type) - strokeWidth,
+      },
       index: 0,
       dataKey,
       nameKey,
@@ -1175,11 +1199,12 @@ export function Treemap(outsideProps: Props) {
         width={width}
         height={height}
         /*
-         * Treemap has a bug where it doesn't include strokeWidth in its dimension calculation
-         * which makes the actual chart exactly {strokeWidth} larger than asked for.
-         * It's not a huge deal usually, but it makes the responsive option cycle infinitely.
+         * Treemap used to have a bug where it didn't include strokeWidth in its dimension calculation
+         * which made the actual chart exactly {strokeWidth} larger than asked for.
+         * which in turn made the responsive option cycle infinitely.
+         * This is now fixed by subtracting strokeWidth from the dimensions.
          */
-        responsive={false}
+        responsive
         ref={(node: HTMLDivElement) => {
           if (tooltipPortal == null && node != null) {
             setTooltipPortal(node);

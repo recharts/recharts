@@ -1096,6 +1096,6 @@ function PieFn(outsideProps: Props) {
 export const Pie = PieFn as {
   <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
   (outsideProps: Props<any, any>): ReactElement;
+  displayName?: string;
 };
-// @ts-expect-error we need to set the displayName for debugging purposes
 Pie.displayName = 'Pie';

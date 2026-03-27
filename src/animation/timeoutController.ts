@@ -28,9 +28,7 @@ export class RequestAnimationFrameTimeoutController implements TimeoutController
     const executeCallback = (now: number): void => {
       if (now - startTime >= delay) {
         callback(now);
-        // tests fail without the extra if, even when five lines below it's not needed
-        // TODO finish transition to the mocked timeout controller and then remove this condition
-      } else if (typeof requestAnimationFrame === 'function') {
+      } else {
         requestId = requestAnimationFrame(executeCallback);
       }
     };
