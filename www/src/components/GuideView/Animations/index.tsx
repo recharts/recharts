@@ -1,4 +1,5 @@
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
+import styles from '../guideTable.module.css';
 
 export function AnimationsGuide() {
   return (
@@ -50,7 +51,7 @@ export function AnimationsGuide() {
       <p>
         All of the animated components support the same controls. Different components will have different defaults:
       </p>
-      <table>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Property</th>

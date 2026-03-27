@@ -1,4 +1,5 @@
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
+import styles from '../guideTable.module.css';
 import DataCoordinatesExample from './DataCoordinatesExample.tsx';
 import DataCoordinatesExampleSource from './DataCoordinatesExample.tsx?raw';
 import PixelCoordinatesExample from './PixelCoordinatesExample.tsx';
@@ -22,50 +23,50 @@ export function CoordinateSystems() {
       <p>Different Rechart components accept, or provide, coordinate from different systems.</p>
 
       <h2>Overview</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+      <table className={styles.table}>
         <thead>
-          <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Coordinate System</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Description</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Example components</th>
+          <tr>
+            <th>Coordinate System</th>
+            <th>Description</th>
+            <th>Example components</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               <strong>Domain Coordinates</strong>
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               Values in your data domain (e.g., <code>{`x="March"`}</code>, <code>y=5000</code>) can be provided
               directly to some components and are converted to pixel positions automatically.
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               <LinkToApi>ReferenceDot</LinkToApi>, <LinkToApi>ReferenceLine</LinkToApi>,{' '}
               <LinkToApi>ReferenceArea</LinkToApi>
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               <strong>Pixel/Chart-Range Coordinates</strong>
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               Pixel positions relative to the chart&apos;s viewBox (e.g., <code>x=100</code>, <code>y=50</code>). The
               top-left corner of the chart area is (0, 0).
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               <LinkToApi>Dot</LinkToApi>, <LinkToApi>Rectangle</LinkToApi>, <LinkToApi>Cross</LinkToApi>, custom SVG
               shapes
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               <strong>Browser events</strong>
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>
               Mouse and touch events have several of their own coordinate systems: viewport, page, client, screen.
               Recharts provides helper methods to convert to chart-based coordinates.
             </td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Mouse and touch handlers</td>
+            <td>Mouse and touch handlers</td>
           </tr>
         </tbody>
       </table>
@@ -254,49 +255,49 @@ export function CoordinateSystems() {
       />
 
       <h2>Choosing the Right Coordinate System</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+      <table className={styles.table}>
         <thead>
-          <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>I want to...</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Use</th>
+          <tr>
+            <th>I want to...</th>
+            <th>Use</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Mark a specific data value</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Mark a specific data value</td>
+            <td>
               Data coordinates (<LinkToApi>ReferenceArea</LinkToApi>,<LinkToApi>ReferenceLine</LinkToApi>,{' '}
               <LinkToApi>ReferenceDot</LinkToApi>)
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Show a target line that moves with zoom/brush</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Show a target line that moves with zoom/brush</td>
+            <td>
               Data coordinates (<LinkToApi>ReferenceLine</LinkToApi>)
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Add a watermark at a fixed position</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Add a watermark at a fixed position</td>
+            <td>
               Pixel coordinates (<LinkToApi>useOffset</LinkToApi> + custom SVG)
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Create a crosshair that follows the mouse</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Create a crosshair that follows the mouse</td>
+            <td>
               Mouse coordinates (<LinkToApi>getRelativeCoordinate</LinkToApi>)
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Click to add an annotation at a data point</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Click to add an annotation at a data point</td>
+            <td>
               Mouse → Data conversion (<LinkToApi>getRelativeCoordinate</LinkToApi> +{' '}
               <LinkToApi>useXAxisInverseScale</LinkToApi>)
             </td>
           </tr>
           <tr>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Draw custom shapes at data positions</td>
-            <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+            <td>Draw custom shapes at data positions</td>
+            <td>
               Data → Pixel conversion (<LinkToApi>useXAxisScale</LinkToApi> + <LinkToApi>useYAxisScale</LinkToApi>)
             </td>
           </tr>
