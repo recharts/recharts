@@ -49,8 +49,8 @@ describe('is functions', () => {
       { value: '0%', result: true },
       { value: '10%', result: true },
       { value: '0', result: false },
-      // the case with only '%' character looks like a bug - we should probably change that? Is this a breaking change?
-      { value: '%', result: true },
+      { value: '', result: false },
+      { value: '%', result: false },
       { value: '%%', result: false },
       { value: '0%%', result: false },
     ];
