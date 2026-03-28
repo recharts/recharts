@@ -29,7 +29,7 @@ import {
   ActiveDotType,
   ActiveShape,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
@@ -89,7 +89,7 @@ interface InternalLineProps extends ZIndexable {
   animateNewValues: boolean;
   animationBegin: number;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
 
   className?: string;
   connectNulls: boolean;
@@ -162,7 +162,7 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   className?: string;
   /**
    * Whether to connect the line across null points.

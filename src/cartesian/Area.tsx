@@ -30,7 +30,7 @@ import {
 import {
   ActiveDotType,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
@@ -91,7 +91,7 @@ interface InternalAreaProps extends ZIndexable {
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -167,7 +167,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue 'ease'
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * Baseline of the area:
    * - number: uses the corresponding axis value as a flat baseline;

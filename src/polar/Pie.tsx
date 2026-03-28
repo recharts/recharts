@@ -17,7 +17,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   ChartOffsetInternal,
   Coordinate,
   DataConsumer,
@@ -249,7 +249,7 @@ interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPoi
   shape?: PieShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   isAnimationActive?: boolean | 'auto';
   animationBegin?: number;
   animationDuration?: AnimationDuration;
@@ -283,7 +283,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   className?: string;
   /**
    * Hides the whole graphical element when true.

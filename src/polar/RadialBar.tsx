@@ -27,7 +27,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   DataConsumer,
   DataKey,
   LayoutType,
@@ -294,7 +294,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;

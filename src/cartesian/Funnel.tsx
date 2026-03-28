@@ -19,7 +19,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
@@ -95,7 +95,7 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   className?: string;
   /**
    * Hides the whole graphical element when true.

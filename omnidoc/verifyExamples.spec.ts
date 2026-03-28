@@ -189,6 +189,7 @@ describe('Documentation Examples Coverage', () => {
     'NoFunnel',
     'NoCentric',
     'NiceTicksAlgorithm',
+    'EasingInput',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

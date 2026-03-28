@@ -13,7 +13,7 @@ import { isNan, noop, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import {
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   Coordinate,
   DataConsumer,
   DataKey,
@@ -568,7 +568,7 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * The type of easing function.
    * @default 'linear'
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
 
   id?: string;
 }
@@ -838,7 +838,7 @@ function TreemapItem({
       to="translate(0, 0)"
       attributeName="transform"
       begin={animationBegin}
-      easing={animationEasing}
+      easing={typeof animationEasing === 'string' ? animationEasing : undefined}
       isActive={isAnimationActive}
       duration={animationDuration}
       onAnimationStart={handleAnimationStart}

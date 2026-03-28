@@ -1,5 +1,8 @@
+import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import styles from '../guideTable.module.css';
+import AnimationsExample, { AnimationsControls } from './AnimationsExample.tsx';
+import AnimationsExampleSource from './AnimationsExample.tsx?raw';
 
 export function AnimationsGuide() {
   return (
@@ -115,26 +118,9 @@ export function AnimationsGuide() {
       </table>
       <h2>Animation easing</h2>
       <p>
-        Easing is a function that controls the pace of the animation. It can be one of the following predefined strings:
+        Easing is a function that controls the pace of the animation. It can be one of the predefined strings, or it can
+        be a custom cubic-bezier function, defined as:
       </p>
-      <ul>
-        <li>
-          <code>ease</code>
-        </li>
-        <li>
-          <code>ease-in</code>
-        </li>
-        <li>
-          <code>ease-out</code>
-        </li>
-        <li>
-          <code>ease-in-out</code>
-        </li>
-        <li>
-          <code>linear</code>
-        </li>
-      </ul>
-      <p>Alternatively, it can be a custom cubic-bezier function, defined as:</p>
       <pre>cubic-bezier(x1, y1, x2, y2)</pre>
       <p>
         where <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code> are numbers between 0 and 1 that
@@ -142,6 +128,13 @@ export function AnimationsGuide() {
         <a href="https://cubic-bezier.com/">https://cubic-bezier.com/</a> to visually create and understand cubic-bezier
         functions.
       </p>
+      <CodeEditorWithPreview
+        Component={AnimationsExample}
+        Controls={AnimationsControls}
+        sourceCode={AnimationsExampleSource}
+        stackBlitzTitle="Recharts Animations Example"
+        defaultTool="controls"
+      />
       <h2>Accessibility</h2>
       <p>
         Recharts follows the{' '}

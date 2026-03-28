@@ -19,7 +19,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   Coordinate,
   DataConsumer,
   DataKey,
@@ -149,7 +149,7 @@ interface ScatterInternalProps extends ZIndexable {
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
 
   needClip: boolean;
 
@@ -313,7 +313,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue 'linear'
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
