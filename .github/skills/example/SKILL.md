@@ -10,7 +10,7 @@ Example is a JSX component that renders a chart. It is used in guides and API do
 # Structure of an example
 
 Recharts example is a single file. This file is meant to work as a standalone component, that demonstrates a specific feature of Recharts.
-It most not import any internal Recharts components or utilities, but only use the public API of Recharts. Meaning: only imports directly from `recharts` package are allowed.
+It must not import any internal Recharts components or utilities, but only use the public API of Recharts. Meaning: only imports directly from `recharts` package are allowed.
 
 We inject certain dependencies by default, these are also allowed:
 
@@ -21,7 +21,7 @@ We inject certain dependencies by default, these are also allowed:
 
 `@recharts/devtools` is a variety of utilities where two are especially useful for examples:
 
-- `generateRandomData` - a function that generates random data for charts, so you don't have to hardcode any data in your example. This is optional but recommended.
+- `generateMockData` - a function that generates random data for charts, so you don't have to hardcode any data in your example. This is optional but recommended.
 - `RechartsDevtools` - child component for debugging purposes. This is strongly recommended for every chart.
 
 The example file must export a single React component as default export.

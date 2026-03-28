@@ -17,7 +17,7 @@ const data = [
 type AnimationEasing = Extract<EasingInput, string>;
 
 type ControlsType = {
-  isAnimationActive: boolean;
+  isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: number;
   animationEasing: AnimationEasing;
@@ -25,7 +25,7 @@ type ControlsType = {
 };
 
 export default function AnimationsExample(props: Partial<ControlsType>) {
-  const isAnimationActive = props.isAnimationActive ?? true;
+  const isAnimationActive = props.isAnimationActive ?? 'auto';
   const animationBegin = props.animationBegin ?? 0;
   const animationDuration = props.animationDuration ?? 400;
   const animationEasing = props.animationEasing ?? 'ease';
@@ -67,7 +67,7 @@ const easingOptions: ReadonlyArray<AnimationEasing> = [
 ];
 
 const defaultState: ControlsType = {
-  isAnimationActive: true,
+  isAnimationActive: 'auto',
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',
@@ -102,14 +102,21 @@ export function AnimationsControls({ onChange }: { onChange: (values: ControlsTy
               <label htmlFor="animation-active">isAnimationActive</label>
             </td>
             <td style={{ padding: '0 1ex' }}>
-              <input
+              <select
                 id="animation-active"
-                type="checkbox"
-                checked={state.isAnimationActive}
-                onChange={e => handleChange({ isAnimationActive: e.target.checked })}
-              />
+                value={String(state.isAnimationActive)}
+                onChange={e => {
+                  const raw = e.target.value;
+                  const value: boolean | 'auto' = raw === 'auto' ? 'auto' : raw === 'true';
+                  handleChange({ isAnimationActive: value });
+                }}
+              >
+                <option value="auto">auto</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
             </td>
-            <td>{state.isAnimationActive ? 'true' : 'false'}</td>
+            <td>{String(state.isAnimationActive)}</td>
           </tr>
           <tr>
             <td>
