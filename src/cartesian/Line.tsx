@@ -1035,6 +1035,6 @@ function LineFn(outsideProps: Props) {
 export const Line = React.memo(LineFn, propsAreEqual) as {
   <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
   (props: Props<any, any>): ReactElement;
+  displayName?: string;
 };
-// @ts-expect-error we need to set the displayName for debugging purposes
 Line.displayName = 'Line';

@@ -919,7 +919,6 @@ function ScatterFn(outsideProps: Props) {
 export const Scatter = React.memo(ScatterFn, propsAreEqual) as {
   <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
   (props: Props<any, any>): ReactElement;
+  displayName?: string;
 };
-// @ts-expect-error we need to set the displayName for debugging purposes
-
 Scatter.displayName = 'Scatter';

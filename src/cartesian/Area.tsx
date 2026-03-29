@@ -1136,8 +1136,8 @@ function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType,
  * @provides LabelListContext
  * @consumes CartesianChartContext
  */
-export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
-  props: Props<DataPointType, ValueAxisType>,
-) => ReactElement;
-// @ts-expect-error we need to set the displayName for debugging purposes
+export const Area = React.memo(AreaFn, propsAreEqual) as {
+  <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
+  displayName?: string;
+};
 Area.displayName = 'Area';

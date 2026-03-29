@@ -3,36 +3,31 @@ import { useCallback, useState } from 'react';
 const EPS = 1;
 
 /**
- * TODO this documentation does not reflect what this hook is doing, update it.
- * Stores the `offsetHeight`, `offsetLeft`, `offsetTop`, and `offsetWidth` of a DOM element.
+ * Stores the dimensions and position of a DOM element relative to the viewport.
  */
 export type ElementOffset = {
   /**
-   * Height of an element, including vertical padding and borders, as an integer.
+   * Height of an element, including vertical padding and borders.
    *
-   * Typically, offsetHeight is a measurement in pixels of the element's CSS height, including any borders, padding, and horizontal scrollbars (if rendered). It does not include the height of pseudo-elements such as ::before or ::after
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight
+   * https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
    */
   height: number;
   /**
-   * Number of pixels that the upper left corner of the current element is offset to the left within the HTMLElement.offsetParent node
+   * The x-coordinate of the element's origin relative to the viewport.
    *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetLeft
+   * https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
    */
   left: number;
   /**
-   * Distance from the outer border of the current element (including its margin) to the top padding edge of the offsetParent, the closest positioned ancestor element.
+   * The y-coordinate of the element's origin relative to the viewport.
    *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+   * https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
    */
   top: number;
   /**
-   * Layout width of an element as an integer.
+   * Layout width of an element.
    *
-   * Typically, offsetWidth is a measurement in pixels of the element's CSS width, including any borders, padding, and vertical scrollbars (if rendered). It does not include the width of pseudo-elements such as ::before or ::after.
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetWidth
+   * https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
    */
   width: number;
 };

@@ -417,12 +417,8 @@ const YAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Pro
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
-export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as <
-  DataPointType = any,
-  DataValueType = any,
->(
-  props: Props<DataPointType, DataValueType>,
-) => ReactElement;
-// @ts-expect-error we need to set the displayName for debugging purposes
-
+export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as {
+  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): ReactElement;
+  displayName?: string;
+};
 YAxis.displayName = 'YAxis';

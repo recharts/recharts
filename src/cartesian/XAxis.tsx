@@ -357,12 +357,8 @@ const XAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Pro
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
  */
-export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as <
-  DataPointType = any,
-  DataValueType = any,
->(
-  props: Props<DataPointType, DataValueType>,
-) => ReactElement;
-// @ts-expect-error we need to set the displayName for debugging purposes
-
+export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as {
+  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): ReactElement;
+  displayName?: string;
+};
 XAxis.displayName = 'XAxis';

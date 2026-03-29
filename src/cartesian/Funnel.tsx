@@ -700,6 +700,6 @@ function FunnelFn(outsideProps: Props) {
 export const Funnel = FunnelFn as {
   <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
   (outsideProps: Props<any, any>): ReactElement;
+  displayName?: string;
 };
-// @ts-expect-error we need to set the displayName for debugging purposes
 Funnel.displayName = 'Funnel';
