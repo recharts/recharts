@@ -12,7 +12,7 @@ import {
 import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
-import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
+import { AllowInDimension, AnimationDuration, EasingInput, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useElementOffset } from '../util/useElementOffset';
@@ -92,7 +92,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * Tooltip always attaches itself to the "Tooltip" axis. Which axis is it? Depends on the layout:
    * - horizontal layout -> X axis

@@ -49,6 +49,7 @@ export const map = {
     barAlignment: 'Bar Alignment',
     cell: 'Migrate from Cell component to shape prop',
     coordinateSystems: 'Coordinate and dimension systems',
+    animations: 'Animation',
   },
   installation: {
     installation: 'Installation',

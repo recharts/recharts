@@ -150,6 +150,9 @@ export const configSpring = (config: SpringInput = {}): SpringEasingFunction => 
 
 export type EasingFunction = BezierEasingFunction | SpringEasingFunction;
 
+/**
+ * @inline
+ */
 export type EasingInput = NamedBezier | 'spring' | EasingFunction;
 
 export const configEasing = (easing: EasingInput): EasingFunction | null => {

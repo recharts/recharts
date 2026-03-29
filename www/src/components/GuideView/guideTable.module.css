@@ -1,0 +1,16 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.table thead tr {
+  background-color: var(--color-surface-sunken);
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border: 1px solid var(--color-border-4);
+  text-align: left;
+}

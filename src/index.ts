@@ -158,6 +158,7 @@ export type {
   TickItem,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
+export type { EasingInput } from './animation/easing';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';

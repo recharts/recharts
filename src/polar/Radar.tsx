@@ -18,7 +18,7 @@ import { Dots } from '../component/Dots';
 import {
   ActiveDotType,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   DataConsumer,
   DataKey,
   DotType,
@@ -82,7 +82,7 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;

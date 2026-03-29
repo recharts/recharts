@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { Layer } from '../container/Layer';
-import { AnimationTiming, DataKey, RectangleCoordinate } from '../util/types';
+import { EasingInput, DataKey, RectangleCoordinate } from '../util/types';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
@@ -84,7 +84,7 @@ interface ErrorBarProps<DataPointType = any, DataValueType = any> extends ZIndex
   /**
    * @defaultValue ease-in-out
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * The width of the stroke
    */
@@ -118,7 +118,7 @@ type ErrorBarInternalProps = SVGProps<SVGLineElement> & {
   isAnimationActive: boolean;
   animationBegin: number;
   animationDuration: number;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
 };
 
 function ErrorBarImpl(props: ErrorBarInternalProps) {
@@ -224,7 +224,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
               to={`${scaleDirection}(1)`}
               attributeName="transform"
               begin={animationBegin}
-              easing={animationEasing}
+              easing={typeof animationEasing === 'string' ? animationEasing : undefined}
               isActive={isAnimationActive}
               duration={animationDuration}
               key={`errorbar-${dataIndex}-${c.x1}-${c.y1}-${c.x2}-${c.y2}-${lineIndex}`}

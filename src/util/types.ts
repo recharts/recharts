@@ -39,6 +39,7 @@ import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
 import { TextProps } from '../index';
 import { TypedDataKey } from './typedDataKey';
+import type { EasingInput } from '../animation/easing';
 
 /**
  * Determines how values are stacked:
@@ -678,7 +679,9 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
  *
  * @inline
  */
-export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+export type { EasingInput };
+/** @deprecated Use EasingInput instead */
+export type AnimationTiming = EasingInput;
 /** Specifies the duration of animation, the unit of this option is ms. */
 export type AnimationDuration = number;
 
