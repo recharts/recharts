@@ -26,7 +26,7 @@ import type * as d3Scales from 'victory-vendor/d3-scale';
 import type { Props as DotProps } from '../shape/Dot';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
-import { SyncMethod } from '../synchronisation/types';
+import { SyncMethod, SyncValueFallback } from '../synchronisation/types';
 import { isEventKey } from './excludeEventProps';
 import { DotPoint } from '../component/Dots';
 import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
@@ -1502,6 +1502,18 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
    * @defaultValue index
    */
   syncMethod?: SyncMethod;
+  /**
+   * Controls what happens when syncMethod="value" cannot find an exact label match
+   * in the receiving chart's ticks.
+   *
+   * - 'none': the tooltip is hidden (default, preserves existing behavior)
+   * - 'closest': falls back to the nearest tick by string comparison
+   *
+   * Only has an effect when syncMethod="value".
+   *
+   * @defaultValue none
+   */
+  syncValueFallback?: SyncValueFallback;
   /**
    * If and where the chart should appear in the tab order
    */
