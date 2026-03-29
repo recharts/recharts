@@ -737,4 +737,32 @@ describe('<Sankey />', () => {
       expect(onTouchEnd).toHaveBeenCalledTimes(0);
     });
   });
+
+  it('should not produce NaN node positions or link widths when all link values are 0', () => {
+    const zeroData = {
+      nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+      links: [
+        { source: 0, target: 1, value: 0 },
+        { source: 1, target: 2, value: 0 },
+      ],
+    };
+
+    const { container } = render(<Sankey width={500} height={300} data={zeroData} />);
+
+    // Rectangle component drops 0-height rectangles, so no nodes render
+    const nodes = container.querySelectorAll('.recharts-sankey-node');
+    expect(nodes.length).toBe(0);
+
+    const links = container.querySelectorAll('.recharts-sankey-link');
+    expect(links.length).toBeGreaterThan(0);
+
+    links.forEach(link => {
+      const path = link.querySelector('path') || link; // Sometimes the element itself is the path
+      const d = path.getAttribute('d');
+      const strokeWidth = path.getAttribute('stroke-width');
+
+      expect(d).not.toContain('NaN');
+      expect(Number.isFinite(Number(strokeWidth))).toBe(true);
+    });
+  });
 });
