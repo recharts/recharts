@@ -1,6 +1,8 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
+import { chartTheme } from '../../../styles/chart';
+
 // #region Sample data
 const data = [
   {
@@ -61,36 +63,27 @@ export default function Example() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
-      <XAxis dataKey="name" stroke="var(--color-text-3)" />
-      <YAxis yAxisId="left" width="auto" stroke="var(--color-text-3)" />
-      <YAxis yAxisId="right" orientation="right" width="auto" stroke="var(--color-text-3)" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <CartesianGrid {...chartTheme.cartesianGrid()} />
+      <XAxis dataKey="name" {...chartTheme.axis()} />
+      <YAxis yAxisId="left" width="auto" {...chartTheme.axis()} />
+      <YAxis yAxisId="right" orientation="right" width="auto" {...chartTheme.axis()} />
+      <Tooltip cursor={chartTheme.tooltipCursor()} contentStyle={chartTheme.tooltipContent()} />
       <Legend />
       <Line
         yAxisId="left"
         type="monotone"
         dataKey="pv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{ r: 8, stroke: 'var(--color-surface-base)' }}
+        {...chartTheme.line({ tone: 'chart-indigo' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot({ r: 8 })}
       />
       <Line
         yAxisId="right"
         type="monotone"
         dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
+        {...chartTheme.line({ tone: 'chart-green' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
       />
       <RechartsDevtools />
     </LineChart>
