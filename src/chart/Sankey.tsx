@@ -3,12 +3,13 @@ import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, us
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
-import { Surface } from '../container/Surface';
+import { RootSurface } from '../container/RootSurface';
 import { Layer } from '../container/Layer';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Coordinate, DataKey, EventThrottlingProps, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { ReportChartProps } from '../state/ReportChartProps';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
@@ -749,6 +750,22 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  /**
+   * Accessible title for the SVG chart element.
+   * When provided, a title element is inserted as the first child of the SVG.
+   */
+  title?: string;
+  /**
+   * Accessible description for the SVG chart element.
+   * When provided, a desc element is inserted into the SVG.
+   */
+  desc?: string;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
@@ -1068,6 +1085,7 @@ function AllNodeElements({
 }
 
 export const sankeyDefaultProps = {
+  accessibilityLayer: true,
   align: 'justify',
   dataKey: 'value',
   iterations: 32,
@@ -1103,6 +1121,8 @@ function SankeyImpl(props: InternalSankeyProps) {
     margin,
     verticalAlign,
     align,
+    title,
+    desc,
   } = props;
 
   const attrs = svgPropertiesNoEvents(others);
@@ -1202,7 +1222,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   return (
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-      <Surface {...attrs} width={width} height={height}>
+      <RootSurface otherAttributes={attrs} title={title} desc={desc}>
         {children}
         <AllSankeyLinkElements
           graphicalItemId={id}
@@ -1231,7 +1251,7 @@ function SankeyImpl(props: InternalSankeyProps) {
           }
           onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
         />
-      </Surface>
+      </RootSurface>
     </>
   );
 }
@@ -1252,6 +1272,19 @@ export function Sankey(outsideProps: Props) {
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
       <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={props.margin} />
+      <ReportChartProps
+        accessibilityLayer={props.accessibilityLayer}
+        barCategoryGap="10%"
+        barGap={4}
+        barSize={undefined}
+        className={className}
+        maxBarSize={undefined}
+        stackOffset="none"
+        syncId={undefined}
+        syncMethod="index"
+        baseValue={undefined}
+        reverseStackOrder={false}
+      />
       <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
 
       <RechartsWrapper
