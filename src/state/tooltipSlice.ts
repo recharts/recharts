@@ -27,7 +27,9 @@ export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'
 /**
  * This is what Tooltip renders.
  */
-export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
+export type TooltipPayload<TValue extends ValueType = ValueType, TName extends NameType = NameType> = ReadonlyArray<
+  Payload<TValue, TName>
+>;
 
 /**
  * null means no active index
