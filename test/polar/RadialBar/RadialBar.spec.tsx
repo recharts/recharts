@@ -51,6 +51,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'radial-bar-uv',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -75,6 +76,7 @@ describe('<RadialBar />', () => {
         {
           id: expect.stringMatching('radialBar-'),
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
           angleAxisId: 0,
           barSize: undefined,
@@ -440,6 +442,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -474,6 +477,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -826,6 +830,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'rings',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -861,6 +866,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -1304,6 +1310,7 @@ describe('<RadialBar />', () => {
         dataKey: 'value',
         hide: false,
         radiusAxisId: 0,
+        minAngle: 0,
         minPointSize: 0,
         maxBarSize: undefined,
       };

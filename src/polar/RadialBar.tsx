@@ -355,6 +355,11 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   legendType?: LegendType;
   maxBarSize?: number;
   /**
+   * The minimum angle of each unzero bar.
+   * @defaultValue 0
+   */
+  minAngle?: number;
+  /**
    * @defaultValue 0
    */
   minPointSize?: number;
@@ -535,6 +540,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
       hide: false,
       id: props.id,
       dataKey: props.dataKey,
+      minAngle: props.minAngle,
       minPointSize: props.minPointSize,
       stackId: getNormalizedStackId(props.stackId),
       maxBarSize: props.maxBarSize,
@@ -546,6 +552,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     [
       props.id,
       props.dataKey,
+      props.minAngle,
       props.minPointSize,
       props.stackId,
       props.maxBarSize,
@@ -589,6 +596,7 @@ export const defaultRadialBarProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'rect',
+  minAngle: 0,
   minPointSize: 0,
   radiusAxisId: 0,
   zIndex: DefaultZIndexes.bar,
@@ -612,6 +620,7 @@ export function computeRadialBarDataItems({
   bandSize,
   pos,
   angleAxis,
+  minAngle,
   minPointSize,
   cx,
   cy,
@@ -632,6 +641,7 @@ export function computeRadialBarDataItems({
   bandSize: number;
   pos: BarPositionPosition;
   angleAxis: BaseAxisWithScale;
+  minAngle: number;
   minPointSize: number;
   cx: number;
   cy: number;
@@ -677,7 +687,10 @@ export function computeRadialBarDataItems({
         outerRadius = innerRadius + pos.size;
         const deltaAngle = endAngle - startAngle;
 
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+        if (Math.abs(minAngle) > 0 && Math.abs(deltaAngle) < Math.abs(minAngle)) {
+          const delta = mathSign(deltaAngle || minAngle) * (Math.abs(minAngle) - Math.abs(deltaAngle));
+          endAngle += delta;
+        } else if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
           const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
 
           endAngle += delta;
@@ -759,6 +772,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId}
             stackId={getNormalizedStackId(props.stackId)}
             barSize={props.barSize}
+            minAngle={props.minAngle}
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
           />

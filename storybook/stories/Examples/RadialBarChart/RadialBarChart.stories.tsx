@@ -79,6 +79,26 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
   },
 };
 
+export const RadialBarWithMinAngle: StoryObj = {
+  render: () => {
+    const mixedData = [
+      { name: 'tiny', pv: 1, fill: '#8884d8' },
+      { name: 'small', pv: 50, fill: '#83a6ed' },
+      { name: 'medium', pv: 500, fill: '#8dd1e1' },
+      { name: 'large', pv: 3000, fill: '#82ca9d' },
+    ];
+    return (
+      <RadialBarChart width={500} height={500} data={mixedData} innerRadius={60} outerRadius={200}>
+        <PolarAngleAxis type="number" domain={[0, 3000]} />
+        <PolarRadiusAxis type="category" dataKey="name" />
+        <RadialBar dataKey="pv" minAngle={15} label={{ position: 'insideStart', fill: '#fff' }} />
+        <Legend />
+        <RechartsHookInspector />
+      </RadialBarChart>
+    );
+  },
+};
+
 export const RadialBarChartWithChangingDataKey: StoryObj = {
   render: (args: Args) => {
     const [dataKey, setDataKey] = React.useState('amt');
