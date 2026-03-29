@@ -154,11 +154,9 @@ export function AnimationsGuide() {
       <p>You can also pass a custom cubic-bezier string in the form:</p>
       <pre>cubic-bezier(x1, y1, x2, y2)</pre>
       <p>
-        where <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code> are numbers between 0 and 1 that
-        define the shape of the easing curve. You can use{' '}
-        <a href="https://cubic-bezier.com/">https://cubic-bezier.com/</a> to visually create and understand cubic-bezier
-        functions. Numbers lower than 0 and higher than 1 make the curve &#34;overshoot&#34; out of the linear animation
-        path.
+        where <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code> are numbers that define the shape of
+        the easing curve. You can use <a href="https://cubic-bezier.com/">https://cubic-bezier.com/</a> to visually
+        create and understand cubic-bezier functions.
       </p>
       <p>
         For full control, you can also pass a custom easing function directly. The function receives a progress value
