@@ -714,6 +714,22 @@ function BarRectangles({
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey, id);
 
+  const hasInteractiveProp =
+    onMouseEnterFromProps !== undefined ||
+    onItemClickFromProps !== undefined ||
+    onMouseLeaveFromProps !== undefined ||
+    Object.keys(restOfAllOtherProps).some(
+      key =>
+        key.startsWith('onMouse') ||
+        key.startsWith('onClick') ||
+        key.startsWith('onTouch') ||
+        key.startsWith('onKeyboard'),
+    );
+  const internalTabIndex = hasInteractiveProp ? 0 : undefined;
+  const defaultTabIndex = Object.prototype.hasOwnProperty.call(props, 'tabIndex')
+    ? (props as any).tabIndex
+    : internalTabIndex;
+
   if (!data) {
     return null;
   }
@@ -731,6 +747,7 @@ function BarRectangles({
             onMouseEnter={onMouseEnterFromContext(entry, i)}
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
+            tabIndex={defaultTabIndex}
           >
             {activeBar ? (
               <BarRectangleWithActiveState

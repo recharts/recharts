@@ -549,6 +549,32 @@ describe('<Pie />', () => {
       expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
     });
   });
+
+  describe('Accessibility', () => {
+    it('should add tabIndex={0} to the pie sectors when onClick is passed', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            data={PageData}
+            dataKey="uv"
+            onClick={vi.fn()}
+          />
+        </PieChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-pie-sector');
+      expect(sectors.length).toBeGreaterThan(0);
+      sectors.forEach(sector => {
+        expect(sector).toHaveAttribute('tabindex', '0');
+      });
+    });
+  });
+
   describe('label', () => {
     test('Render customized label when label is set to be a react element', () => {
       const MyCustomLabel = (props: LabelProps) => {
