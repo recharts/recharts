@@ -49,6 +49,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
+import { RechartsRootState } from '../state/store';
 import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
@@ -505,12 +506,94 @@ function ScatterLabelListProvider({
   );
 }
 
+/**
+ * Individual scatter point component that subscribes to its own isActive state.
+ * This avoids re-rendering all points when the active index changes —
+ * only the point becoming active and the point becoming inactive re-render.
+ *
+ * @param entry The scatter point data including coordinates, size, and tooltip payload
+ * @param index The index of this point in the points array
+ * @param shape The default shape to render for inactive points
+ * @param activeShape The shape to render when this point is active, or undefined if no active shape
+ * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
+ * @param id The graphical item ID of the parent Scatter component
+ * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
+ * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
+ * @param onMouseLeaveFromContext Curried mouse leave handler that dispatches tooltip deactivation
+ * @param onClickFromContext Curried click handler that dispatches tooltip click activation
+ */
+function ScatterPoint({
+  entry,
+  index,
+  shape,
+  activeShape,
+  baseProps,
+  id,
+  restOfAllOtherProps,
+  onMouseEnterFromContext,
+  onMouseLeaveFromContext,
+  onClickFromContext,
+}: {
+  entry: ScatterPointItem;
+  index: number;
+  shape: ScatterCustomizedShape;
+  activeShape: ScatterCustomizedShape | undefined;
+  baseProps: ReturnType<typeof svgPropertiesNoEvents>;
+  id: GraphicalItemId;
+  restOfAllOtherProps: InternalProps;
+  onMouseEnterFromContext: (
+    data: ScatterPointItem,
+    index: number,
+  ) => (event: React.MouseEvent<SVGGraphicsElement>) => void;
+  onMouseLeaveFromContext: (
+    data: ScatterPointItem,
+    index: number,
+  ) => (event: React.MouseEvent<SVGGraphicsElement>) => void;
+  onClickFromContext: (data: ScatterPointItem, index: number) => (event: React.MouseEvent<SVGGraphicsElement>) => void;
+}): React.ReactElement {
+  const hasActiveShape = activeShape != null && activeShape !== false;
+  const selectIsActive = useMemo(() => {
+    const strIndex = String(index);
+    return (state: RechartsRootState): boolean => hasActiveShape && selectActiveTooltipIndex(state) === strIndex;
+  }, [hasActiveShape, index]);
+  const isActive: boolean = useAppSelector(selectIsActive) ?? false;
+
+  // isActive is only true when hasActiveShape is true, so activeShape is defined here
+  const option = isActive && activeShape != null && activeShape !== false ? activeShape : shape;
+  const symbolProps: ScatterShapeProps = {
+    ...baseProps,
+    ...entry,
+    index,
+    [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
+  };
+
+  return (
+    <ZIndexLayer
+      /*
+       * inactive Scatters use the parent zIndex, which is represented by undefined here.
+       * ZIndexLayer will render undefined zIndex as-is, as regular children, without portals.
+       * Active Scatters use the activeDot zIndex so they render above other elements.
+       */
+      zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
+    >
+      <Layer
+        className="recharts-scatter-symbol"
+        {...adaptEventsOfChild(restOfAllOtherProps, entry, index)}
+        onMouseEnter={onMouseEnterFromContext(entry, index)}
+        onMouseLeave={onMouseLeaveFromContext(entry, index)}
+        onClick={onClickFromContext(entry, index)}
+      >
+        <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+      </Layer>
+    </ZIndexLayer>
+  );
+}
+
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
-  const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -530,39 +613,21 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   return (
     <>
       <ScatterLine points={points} props={allOtherPropsWithoutId} />
-      {points.map((entry: ScatterPointItem, i: number) => {
-        const hasActiveShape = activeShape != null && activeShape !== false;
-        const isActive: boolean = hasActiveShape && activeIndex === String(i);
-        const option = hasActiveShape && isActive ? activeShape : shape;
-        const symbolProps: ScatterShapeProps = {
-          ...baseProps,
-          ...entry,
-          index: i,
-          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
-        };
-
-        return (
-          <ZIndexLayer
-            key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
-            /*
-             * inactive Scatters use the parent zIndex, which is represented by undefined here.
-             * ZIndexLayer will render undefined zIndex as-is, as regular children, without portals.
-             * Active Scatters use the activeDot zIndex so they render above other elements.
-             */
-            zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
-          >
-            <Layer
-              className="recharts-scatter-symbol"
-              {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-              onMouseEnter={onMouseEnterFromContext(entry, i)}
-              onMouseLeave={onMouseLeaveFromContext(entry, i)}
-              onClick={onClickFromContext(entry, i)}
-            >
-              <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
-            </Layer>
-          </ZIndexLayer>
-        );
-      })}
+      {points.map((entry: ScatterPointItem, i: number) => (
+        <ScatterPoint
+          key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
+          entry={entry}
+          index={i}
+          shape={shape}
+          activeShape={activeShape}
+          baseProps={baseProps}
+          id={id}
+          restOfAllOtherProps={restOfAllOtherProps}
+          onMouseEnterFromContext={onMouseEnterFromContext}
+          onMouseLeaveFromContext={onMouseLeaveFromContext}
+          onClickFromContext={onClickFromContext}
+        />
+      ))}
     </>
   );
 }
