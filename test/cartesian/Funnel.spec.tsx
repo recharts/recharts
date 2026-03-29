@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { computeFunnelTrapezoids } from '../../src/cartesian/Funnel';
 
 const data = [
   { value: 100, name: '展现' },
@@ -153,5 +154,49 @@ describe('<Funnel />', () => {
     const firstTrapezoidReversed = container.getElementsByClassName('recharts-trapezoid')[0];
     expect(firstTrapezoidReversed.getAttribute('x')).toEqual('54');
     expect(firstTrapezoidReversed.getAttribute('y')).toEqual('237');
+  });
+});
+
+describe('computeFunnelTrapezoids', () => {
+  it('handles all-zero values without NaN', () => {
+    const offset = {
+      top: 5,
+      left: 10,
+      right: 0,
+      bottom: 0,
+      width: 400,
+      height: 400,
+      brushBottom: 0,
+    };
+
+    const result = computeFunnelTrapezoids({
+      dataKey: 'value',
+      nameKey: 'name' as any,
+      displayedData: [
+        { name: 'A', value: 0 },
+        { name: 'B', value: 0 },
+      ],
+      tooltipType: undefined,
+      lastShapeType: 'triangle',
+      reversed: false,
+      offset,
+      customWidth: undefined,
+      graphicalItemId: 'funnel-1' as any,
+    });
+
+    expect(result).toHaveLength(2);
+
+    result.forEach(trapezoid => {
+      expect(trapezoid.x).toBe(offset.left);
+      expect(trapezoid.upperWidth).toBe(0);
+      expect(trapezoid.lowerWidth).toBe(0);
+
+      expect(Number.isNaN(trapezoid.x)).toBe(false);
+      expect(Number.isNaN(trapezoid.y)).toBe(false);
+      expect(Number.isNaN(trapezoid.upperWidth)).toBe(false);
+      expect(Number.isNaN(trapezoid.lowerWidth)).toBe(false);
+      expect(Number.isNaN(trapezoid.tooltipPosition.x)).toBe(false);
+      expect(Number.isNaN(trapezoid.tooltipPosition.y)).toBe(false);
+    });
   });
 });
