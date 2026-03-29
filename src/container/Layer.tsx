@@ -23,7 +23,7 @@ export const Layer = React.forwardRef<SVGGElement, Props>((props: Props, ref) =>
   const layerClass = clsx('recharts-layer', className);
 
   return (
-    <g className={layerClass} {...svgPropertiesAndEvents(others)} ref={ref}>
+    <g className={layerClass} {...svgPropertiesAndEvents(others, 'g')} ref={ref}>
       {children}
     </g>
   );
