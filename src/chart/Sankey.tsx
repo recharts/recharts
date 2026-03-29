@@ -205,7 +205,10 @@ const updateYOfTree = (
   verticalAlign: SankeyVerticalAlign,
 ): Array<LinkDataItemDy> => {
   const yRatio: number = Math.min(
-    ...depthTree.map(nodes => (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)),
+    ...depthTree.map(nodes => {
+      const sum = sumBy(nodes, getValue);
+      return sum === 0 ? 0 : (height - (nodes.length - 1) * nodePadding) / sum;
+    }),
   );
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
@@ -308,10 +311,12 @@ const relaxLeftToRight = (
 
       if (node.sourceLinks.length) {
         const sourceSum = getSumOfIds(links, node.sourceLinks);
-        const weightedSum = getSumWithWeightedSource(tree, links, node.sourceLinks);
-        const y = weightedSum / sourceSum;
+        if (sourceSum !== 0) {
+          const weightedSum = getSumWithWeightedSource(tree, links, node.sourceLinks);
+          const y = weightedSum / sourceSum;
 
-        node.y += (y - centerY(node)) * alpha;
+          node.y += (y - centerY(node)) * alpha;
+        }
       }
     }
   }
@@ -340,10 +345,12 @@ const relaxRightToLeft = (
 
       if (node.targetLinks.length) {
         const targetSum = getSumOfIds(links, node.targetLinks);
-        const weightedSum = getSumWithWeightedTarget(tree, links, node.targetLinks);
-        const y = weightedSum / targetSum;
+        if (targetSum !== 0) {
+          const weightedSum = getSumWithWeightedTarget(tree, links, node.targetLinks);
+          const y = weightedSum / targetSum;
 
-        node.y += (y - centerY(node)) * alpha;
+          node.y += (y - centerY(node)) * alpha;
+        }
       }
     }
   }
