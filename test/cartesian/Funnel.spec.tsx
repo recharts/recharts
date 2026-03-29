@@ -171,7 +171,7 @@ describe('computeFunnelTrapezoids', () => {
 
     const result = computeFunnelTrapezoids({
       dataKey: 'value',
-      nameKey: 'name' as any,
+      nameKey: 'name',
       displayedData: [
         { name: 'A', value: 0 },
         { name: 'B', value: 0 },
@@ -181,7 +181,7 @@ describe('computeFunnelTrapezoids', () => {
       reversed: false,
       offset,
       customWidth: undefined,
-      graphicalItemId: 'funnel-1' as any,
+      graphicalItemId: 'funnel-1',
     });
 
     expect(result).toHaveLength(2);
