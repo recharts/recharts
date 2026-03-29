@@ -580,6 +580,9 @@ export function computeFunnelTrapezoids({
   });
   const maxValue = Math.max.apply(null, values);
   const len = displayedData.length;
+  if (len === 0) {
+    return [];
+  }
   const rowHeight = realHeight / len;
   const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
