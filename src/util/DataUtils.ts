@@ -18,8 +18,15 @@ export const isNan = (value: unknown): value is number => {
   return typeof value == 'number' && value != +value;
 };
 
+/**
+ * Checks if the value is a percent string.
+ * A valid percent string must end with '%' and have at least one character before the '%'.
+ *
+ * @param {string | number | undefined} value The value to check
+ * @returns {boolean} true if the value is a percent string
+ */
 export const isPercent = (value: string | number | undefined): value is Percent =>
-  typeof value === 'string' && value.indexOf('%') === value.length - 1;
+  typeof value === 'string' && value.length > 1 && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number =>
   (typeof value === 'number' || value instanceof Number) && !isNan(value);
