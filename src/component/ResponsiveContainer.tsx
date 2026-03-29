@@ -25,7 +25,7 @@ import {
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
-export interface Props {
+export interface Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'id' | 'className' | 'style' | 'onResize'> {
   /**
    * width / height. If specified, the height will be calculated by width / aspect.
    */
@@ -79,7 +79,7 @@ export interface Props {
   /** The HTML element's class name */
   className?: string | number;
   /** The style of the container. */
-  style?: Omit<CSSProperties, keyof Props>;
+  style?: CSSProperties;
   /**
    * If specified provides a callback providing the updated chart width and height values.
    */
@@ -135,6 +135,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
       className,
       onResize,
       style = {},
+      ...others
     }: Props,
     ref,
   ) => {
@@ -233,6 +234,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
         className={clsx('recharts-responsive-container', className)}
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
+        {...others}
       >
         <div style={getInnerDivStyle({ width, height })}>
           <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
