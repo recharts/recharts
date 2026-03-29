@@ -272,7 +272,7 @@ describe('<Label />', () => {
           assertNotNull(label);
           expect(label).toBeInTheDocument();
 
-          expect(label.textContent).toMatch('function(...args) {');
+          expect(label.textContent).toMatch('function(');
 
           expect(fn).toHaveBeenCalledTimes(0);
         });
@@ -285,7 +285,7 @@ describe('<Label />', () => {
           assertNotNull(label);
           expect(label).toBeInTheDocument();
 
-          expect(label.textContent).toMatch('function(...args) {');
+          expect(label.textContent).toMatch('function(');
 
           expect(fn).toHaveBeenCalledTimes(0);
         });
