@@ -204,12 +204,15 @@ const updateYOfTree = (
   links: ReadonlyArray<LinkDataItem>,
   verticalAlign: SankeyVerticalAlign,
 ): Array<LinkDataItemDy> => {
-  const yRatio: number = Math.min(
+  let yRatio: number = Math.min(
     ...depthTree.map(nodes => {
       const sum = sumBy(nodes, getValue);
-      return sum === 0 ? 0 : (height - (nodes.length - 1) * nodePadding) / sum;
+      return sum === 0 ? Infinity : (height - (nodes.length - 1) * nodePadding) / sum;
     }),
   );
+  if (yRatio === Infinity) {
+    yRatio = 0;
+  }
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
     const nodes = depthTree[d];
