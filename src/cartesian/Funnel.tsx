@@ -619,12 +619,12 @@ export function computeFunnelTrapezoids({
       }
 
       // @ts-expect-error this is a problem if we have ranged values because `val` can be an array
-      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
+      const x = maxValue === 0 ? offsetX : ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
       const y = rowHeight * i + offsetY;
       // @ts-expect-error getValueByDataKey does not validate the output type
-      const upperWidth = (val / maxValue) * realWidth;
+      const upperWidth = maxValue === 0 ? 0 : (val / maxValue) * realWidth;
       // @ts-expect-error nextVal could be an array
-      const lowerWidth = (nextVal / maxValue) * realWidth;
+      const lowerWidth = maxValue === 0 ? 0 : (nextVal / maxValue) * realWidth;
 
       const tooltipPayload: TooltipPayload = [
         { name, value: val, payload: entry, dataKey, type: tooltipType, graphicalItemId },
