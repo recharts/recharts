@@ -1006,6 +1006,7 @@ export function computeArea({
   xAxisTicks,
   yAxisTicks,
   bandSize,
+  stackDataKeys,
 }: {
   areaSettings: AreaSettings;
   stackedData: ReadonlyArray<StackDataPoint> | undefined;
@@ -1018,6 +1019,7 @@ export function computeArea({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   bandSize: number;
+  stackDataKeys?: ReadonlyArray<DataKey<any>> | undefined;
 }): ComputedArea {
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis);
@@ -1042,7 +1044,14 @@ export function computeArea({
 
     const value1 = valueAsArray?.[1] ?? null;
 
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+    const rawValue = getValueByDataKey(entry, dataKey);
+    const allStackedSeriesNull =
+      connectNulls &&
+      hasStack &&
+      rawValue == null &&
+      stackDataKeys != null &&
+      stackDataKeys.every(key => getValueByDataKey(entry, key) == null);
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && rawValue == null) || allStackedSeriesNull;
 
     if (isHorizontalLayout) {
       return {
