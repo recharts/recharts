@@ -799,6 +799,9 @@ export type YAxisTickContentProps = BaseTickContentProps & {
   padding: YAxisPadding | undefined;
 };
 
+/**
+ * @inline
+ */
 export type TickProp<T> = TextProps | ReactElement | ((props: T) => ReactNode) | boolean;
 
 export interface BaseAxisProps<DataPointType, DataValueType> extends DataConsumer<DataPointType, DataValueType> {
