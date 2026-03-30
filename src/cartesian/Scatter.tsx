@@ -219,7 +219,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue joint
    * @example <Scatter line lineType="fitting" />
-   * @see {@link http://recharts.github.io/en-US/examples/JointLineScatterChart/ Scatter chart with joint line}
+   * @see {@link https://recharts.github.io/en-US/examples/JointLineScatterChart/ Scatter chart with joint line}
    */
   lineType?: 'fitting' | 'joint';
   /**
@@ -229,7 +229,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * Has no effect if `line` prop is not set or is false or if `lineType` is 'fitting'.
    *
    * @defaultValue linear
-   * @see {@link http://recharts.github.io/en-US/examples/JointLineScatterChart/ Scatter chart with joint line}
+   * @see {@link https://recharts.github.io/en-US/examples/JointLineScatterChart/ Scatter chart with joint line}
    */
   lineJointType?: CurveType;
   /**
@@ -253,7 +253,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
    *
-   * @see {@link http://recharts.github.io/en-US/examples/SimpleScatterChart/ Scatter chart with custom active shape}
+   * @see {@link https://recharts.github.io/en-US/examples/SimpleScatterChart/ Scatter chart with custom active shape}
    * @example <Scatter activeShape={{ fill: 'red' }} />
    */
   activeShape?: ScatterCustomizedShape;
