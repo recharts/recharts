@@ -311,4 +311,33 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     props: ['fill', 'stroke'],
     reason: 'Cell is a generic component used to override attributes of children, so its description is more abstract.',
   },
+  {
+    components: ['GeoPath', 'ChoroplethSeries'],
+    props: [
+      'fill',
+      'stroke',
+      'strokeWidth',
+      'strokeDasharray',
+      'fillOpacity',
+      'onClick',
+      'onMouseEnter',
+      'onMouseLeave',
+      'onMouseUp',
+      'onMouseDown',
+      'onMouseMove',
+      'onMouseOver',
+      'onMouseOut',
+    ],
+    reason: 'Geo components have specific context for styling and event handlers separate from Cartesian components.',
+  },
+  {
+    components: ['ChoroplethSeries'],
+    props: ['dataKey', 'data'],
+    reason: 'ChoroplethSeries data and dataKey have specific meanings for geographic regional matching.',
+  },
+  {
+    components: ['CartographyChart'],
+    props: ['margin', 'responsive'],
+    reason: 'Margin in CartographyChart has a different description due to projection auto-fitting.',
+  },
 ];

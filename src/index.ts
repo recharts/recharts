@@ -135,6 +135,13 @@ export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
 export type { SunburstData, SunburstChartProps } from './chart/SunburstChart';
 
+export { CartographyChart } from './chart/CartographyChart';
+export type { CartographyChartProps, GeoProjectionType } from './chart/CartographyChart';
+export { GeoPath } from './geo/GeoPath';
+export type { GeoPathProps } from './geo/GeoPath';
+export { ChoroplethSeries } from './geo/ChoroplethSeries';
+export type { ChoroplethSeriesProps } from './geo/ChoroplethSeries';
+
 export { Funnel } from './cartesian/Funnel';
 export type { Props as FunnelProps, FunnelTrapezoidItem } from './cartesian/Funnel';
 export { FunnelChart } from './chart/FunnelChart';

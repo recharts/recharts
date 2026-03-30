@@ -91,7 +91,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
+    "@types/d3-geo": "^1.12.1",
     "clsx": "^2.1.1",
+    "d3-geo": "^1.12.1",
     "decimal.js-light": "^2.5.1",
     "es-toolkit": "^1.39.3",
     "eventemitter3": "^5.0.1",
@@ -134,6 +136,7 @@
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/d3-interpolate": "^3.0.4",
+    "@types/d3-scale-chromatic": "^3.1.0",
     "@types/d3-shape": "^3.1.6",
     "@types/d3-time-format": "^4.0.3",
     "@types/node": "24.x.x",

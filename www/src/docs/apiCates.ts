@@ -14,6 +14,7 @@ export const apiCates = [
       'Treemap',
       'Sankey',
       'SunburstChart',
+      'CartographyChart',
     ],
   },
   {
@@ -45,6 +46,8 @@ export const apiCates = [
       'getNiceTickValues',
       'Global',
       'getRelativeCoordinate',
+      'ChoroplethSeries',
+      'GeoPath',
     ],
   },
   {
