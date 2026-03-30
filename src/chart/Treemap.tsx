@@ -577,6 +577,12 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    * @default 1
    */
   strokeWidth?: number;
+
+  /**
+   * If set true, the chart will listen for resize events on its parent container and resize itself.
+   * @default false
+   */
+  responsive?: boolean;
 }
 
 interface State {
@@ -608,6 +614,7 @@ export const defaultTreeMapProps = {
   animationDuration: 1500,
   animationEasing: 'linear',
   strokeWidth: 1,
+  responsive: false,
   ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
@@ -1184,7 +1191,7 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
  */
 export function Treemap(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
-  const { className, style, width, height, throttleDelay, throttledEvents } = props;
+  const { className, style, width, height, throttleDelay, throttledEvents, responsive } = props;
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
@@ -1204,7 +1211,7 @@ export function Treemap(outsideProps: Props) {
          * which in turn made the responsive option cycle infinitely.
          * This is now fixed by subtracting strokeWidth from the dimensions.
          */
-        responsive
+        responsive={responsive}
         ref={(node: HTMLDivElement) => {
           if (tooltipPortal == null && node != null) {
             setTooltipPortal(node);
