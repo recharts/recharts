@@ -579,8 +579,15 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
   strokeWidth?: number;
 
   /**
-   * If set true, the chart will listen for resize events on its parent container and resize itself.
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * If false, then it renders the chart at the specified width and height and will stay that way
+   * even if the container size changes.
+   *
+   * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
+   * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
    * @default false
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   responsive?: boolean;
 }
