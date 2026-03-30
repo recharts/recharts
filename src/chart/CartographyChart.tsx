@@ -74,7 +74,7 @@ export interface CartographyChartProps {
    * GeoJSON object to automatically fit the projection bounds to.
    * When provided, the projection is automatically scaled and centred.
    */
-  fitExtent?: FeatureCollection<Geometry, GeoJsonProperties> | ExtendedFeature;
+  fitExtent?: Parameters<GeoProjection['fitExtent']>[1];
   /**
    * Margin (in pixels) around the chart area. Used when auto-fitting the projection.
    * @default { top: 0, right: 0, bottom: 0, left: 0 }
