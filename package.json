@@ -198,5 +198,8 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "axios": "0.30.3"
+  }
 }
