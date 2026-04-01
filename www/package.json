@@ -32,7 +32,7 @@
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.5.2",
-    "@codemirror/view": "^6.38.6",
+    "@codemirror/view": "^6.41.0",
     "@lezer/highlight": "^1.2.3",
     "@stackblitz/sdk": "^1.11.0",
     "d3-scale": "^4.0.2",
@@ -44,7 +44,7 @@
     "react-router": "^7.9.5",
     "react-router-dom": "^7.9.5",
     "react-runner": "^1.0.5",
-    "recharts": "latest"
+    "recharts": "*"
   },
   "license": "MIT"
 }
