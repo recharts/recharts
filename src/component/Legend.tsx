@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, useEffect } from 'react';
+import { CSSProperties, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import {
@@ -158,7 +158,7 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
 
 function LegendSettingsDispatcher(props: LegendSettings): null {
   const dispatch = useAppDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(setLegendSettings(props));
   }, [dispatch, props]);
   return null;
@@ -166,7 +166,7 @@ function LegendSettingsDispatcher(props: LegendSettings): null {
 
 function LegendSizeDispatcher(props: Size): null {
   const dispatch = useAppDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(setLegendSize(props));
     return () => {
       dispatch(setLegendSize({ width: 0, height: 0 }));

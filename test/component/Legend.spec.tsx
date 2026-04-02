@@ -1029,7 +1029,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(2);
 
       expectBars(container, [
         {
@@ -1092,7 +1092,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
 
       expectBars(container, [
         {
@@ -1630,7 +1630,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1659,7 +1659,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
