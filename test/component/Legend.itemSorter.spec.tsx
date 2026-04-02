@@ -64,6 +64,7 @@ describe('Legend.itemSorter', () => {
           iconSize: 14,
           inactiveColor: '#ccc',
           itemSorter: 'value',
+          labelStyle: {},
           layout: 'horizontal',
           margin: {
             bottom: 5,
@@ -158,6 +159,7 @@ describe('Legend.itemSorter', () => {
           iconSize: 14,
           inactiveColor: '#ccc',
           itemSorter: 'dataKey',
+          labelStyle: {},
           layout: 'horizontal',
           margin: {
             bottom: 5,
