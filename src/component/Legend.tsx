@@ -200,6 +200,7 @@ export const legendDefaultProps = {
   iconSize: 14,
   inactiveColor: '#ccc',
   itemSorter: 'value',
+  labelStyle: {},
   layout: 'horizontal',
   verticalAlign: 'bottom',
 } as const satisfies Partial<Props>;

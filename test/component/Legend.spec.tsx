@@ -438,6 +438,7 @@ describe('<Legend />', () => {
         iconSize: 14,
         inactiveColor: '#ccc',
         itemSorter: 'value',
+        labelStyle: {},
         layout: 'horizontal',
         margin: {
           bottom: 5,
@@ -797,6 +798,7 @@ describe('<Legend />', () => {
         iconSize: 14,
         inactiveColor: '#ccc',
         itemSorter: 'value',
+        labelStyle: {},
         layout: 'horizontal',
         margin: {
           bottom: 5,
