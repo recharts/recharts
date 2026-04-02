@@ -1,0 +1,24 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/AreaChartApiExamples.spec-vr.tsx >> AreaChartConnectNulls
+- Location: test-vr/tests/www/AreaChartApiExamples.spec-vr.tsx:46:5
+
+# Error details
+
+```
+Error: browserType.launch: Executable doesn't exist at /ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just updated to 1.59.1.      ║
+║ Please update docker image as well.                    ║
+║ -  current: mcr.microsoft.com/playwright:v1.58.2-jammy ║
+║ - required: mcr.microsoft.com/playwright:v1.59.1-jammy ║
+║                                                        ║
+║ <3 Playwright Team                                     ║
+╚════════════════════════════════════════════════════════╝
+```
