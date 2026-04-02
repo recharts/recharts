@@ -156,22 +156,25 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
   verticalAlign?: VerticalAlignmentType;
 };
 
-function LegendSettingsDispatcher(props: LegendSettings): null {
+function LegendSettingsDispatcher({ align, layout, verticalAlign, itemSorter }: LegendSettings): null {
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(setLegendSettings(props));
-  }, [dispatch, props]);
+    dispatch(setLegendSettings({ align, layout, verticalAlign, itemSorter }));
+  }, [dispatch, align, layout, verticalAlign, itemSorter]);
   return null;
 }
 
-function LegendSizeDispatcher(props: Size): null {
+function LegendSizeDispatcher({ width, height }: Size): null {
   const dispatch = useAppDispatch();
   useLayoutEffect(() => {
-    dispatch(setLegendSize(props));
+    dispatch(setLegendSize({ width, height }));
+  }, [dispatch, width, height]);
+
+  useLayoutEffect(() => {
     return () => {
       dispatch(setLegendSize({ width: 0, height: 0 }));
     };
-  }, [dispatch, props]);
+  }, [dispatch]);
   return null;
 }
 
