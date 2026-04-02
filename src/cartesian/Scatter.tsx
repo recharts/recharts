@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -54,14 +54,13 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
-import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useViewBox } from '../context/chartLayoutContext';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -150,6 +149,7 @@ interface ScatterInternalProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
+  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
 
   needClip: boolean;
 
@@ -314,6 +314,16 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'linear'
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param t A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time t
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
@@ -567,6 +577,22 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
+const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem> = (prevItems, nextItems, t) => {
+  if (t === 1) return nextItems;
+  return nextItems.map((entry, index) => {
+    const prev = prevItems && prevItems[index];
+    if (prev) {
+      return {
+        ...entry,
+        cx: entry.cx == null ? undefined : interpolate(prev.cx, entry.cx, t),
+        cy: entry.cy == null ? undefined : interpolate(prev.cy, entry.cy, t),
+        size: interpolate(prev.size, entry.size, t),
+      };
+    }
+    return { ...entry, size: interpolate(0, entry.size, t) };
+  });
+};
+
 function SymbolsWithAnimation({
   previousPointsRef,
   props,
@@ -575,72 +601,32 @@ function SymbolsWithAnimation({
   props: InternalProps;
 }) {
   const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
-  const prevPoints = previousPointsRef.current;
-  const animationId = useAnimationId(props, 'recharts-scatter-');
+  const animationInterpolateFn = props.animationInterpolateFn ?? defaultScatterAnimateItems;
 
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const handleAnimationEnd = useCallback(() => {
-    // Scatter doesn't have onAnimationEnd prop, and if we want to add it we do it here
-    // if (typeof onAnimationEnd === 'function') {
-    //   onAnimationEnd();
-    // }
-    setIsAnimating(false);
-  }, []);
-
-  const handleAnimationStart = useCallback(() => {
-    // Scatter doesn't have onAnimationStart prop, and if we want to add it we do it here
-    // if (typeof onAnimationStart === 'function') {
-    //   onAnimationStart();
-    // }
-    setIsAnimating(true);
-  }, []);
-
-  const showLabels = !isAnimating;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks();
 
   return (
-    <ScatterLabelListProvider showLabels={showLabels} points={points}>
-      {props.children}
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        onAnimationEnd={handleAnimationEnd}
+    <ScatterLabelListProvider showLabels={!isAnimating} points={points}>
+      <AnimatedItems
+        animationInput={props}
+        animationIdPrefix="recharts-scatter-"
+        items={points}
+        previousItemsRef={previousPointsRef}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
         onAnimationStart={handleAnimationStart}
-        key={animationId}
+        onAnimationEnd={handleAnimationEnd}
+        animationInterpolateFn={animationInterpolateFn}
       >
-        {(t: number) => {
-          const stepData: ReadonlyArray<ScatterPointItem> =
-            t === 1
-              ? points
-              : points?.map((entry: ScatterPointItem, index: number): ScatterPointItem => {
-                  const prev = prevPoints && prevPoints[index];
-
-                  if (prev) {
-                    return {
-                      ...entry,
-                      cx: entry.cx == null ? undefined : interpolate(prev.cx, entry.cx, t),
-                      cy: entry.cy == null ? undefined : interpolate(prev.cy, entry.cy, t),
-                      size: interpolate(prev.size, entry.size, t),
-                    };
-                  }
-
-                  return { ...entry, size: interpolate(0, entry.size, t) };
-                });
-
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = stepData;
-          }
-          return (
-            <Layer>
-              <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={showLabels} />
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
+        {stepData => (
+          <Layer>
+            <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={!isAnimating} />
+          </Layer>
+        )}
+      </AnimatedItems>
+      {props.children}
       <LabelListFromLabelProp label={props.label} />
     </ScatterLabelListProvider>
   );

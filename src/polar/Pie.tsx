@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
@@ -44,7 +44,7 @@ import {
 } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -54,7 +54,6 @@ import {
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
 } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import {
   LabelListFromLabelProp,
   PolarLabelListContextProvider,
@@ -259,6 +258,16 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param t A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time t
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.
@@ -850,6 +859,30 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
+const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem> = (prevItems, nextItems, t) => {
+  const stepData: PieSectorDataItem[] = [];
+  const first = nextItems[0];
+  let curAngle: number = first?.startAngle ?? 0;
+
+  nextItems.forEach((entry, index) => {
+    const prev = prevItems && prevItems[index];
+    const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
+
+    if (prev) {
+      const angle = interpolate(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle, t);
+      const latest = { ...entry, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
+      stepData.push(latest);
+      curAngle = latest.endAngle;
+    } else {
+      const deltaAngle = interpolate(0, entry.endAngle - entry.startAngle, t);
+      const latest = { ...entry, startAngle: curAngle + paddingAngle, endAngle: curAngle + deltaAngle + paddingAngle };
+      stepData.push(latest);
+      curAngle = latest.endAngle;
+    }
+  });
+  return stepData;
+};
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -859,97 +892,42 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
 }) {
-  const {
-    sectors,
-    isAnimationActive,
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    activeShape,
-    inactiveShape,
-    onAnimationStart,
-    onAnimationEnd,
-  } = props;
-  const animationId = useAnimationId(props, 'recharts-pie-');
+  const { sectors, activeShape, inactiveShape } = props;
+  const animationInterpolateFn = props.animationInterpolateFn ?? defaultPieAnimateItems;
 
-  const prevSectors = previousSectorsRef.current;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    props.onAnimationStart,
+    props.onAnimationEnd,
+  );
 
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
-
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
   return (
     <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
+      <AnimatedItems
+        animationInput={props}
+        animationIdPrefix="recharts-pie-"
+        items={sectors}
+        previousItemsRef={previousSectorsRef}
+        isAnimationActive={props.isAnimationActive ?? 'auto'}
+        animationBegin={props.animationBegin ?? defaultPieProps.animationBegin}
+        animationDuration={props.animationDuration ?? defaultPieProps.animationDuration}
+        animationEasing={props.animationEasing ?? defaultPieProps.animationEasing}
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
-        key={animationId}
+        animationInterpolateFn={animationInterpolateFn}
       >
-        {(t: number) => {
-          const stepData: PieSectorDataItem[] = [];
-          const first: PieSectorDataItem | undefined = sectors && sectors[0];
-          let curAngle: number = first?.startAngle ?? 0;
-
-          sectors?.forEach((entry, index) => {
-            const prev = prevSectors && prevSectors[index];
-            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
-
-            if (prev) {
-              const angle = interpolate(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle, t);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + angle + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            } else {
-              const { endAngle, startAngle } = entry;
-              const deltaAngle = interpolate(0, endAngle - startAngle, t);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + deltaAngle + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            }
-          });
-
-          // eslint-disable-next-line no-param-reassign
-          previousSectorsRef.current = stepData;
-          return (
-            <Layer>
-              <PieSectors
-                sectors={stepData}
-                activeShape={activeShape}
-                inactiveShape={inactiveShape}
-                allOtherPieProps={props}
-                shape={props.shape}
-                id={id}
-              />
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
+        {stepData => (
+          <Layer>
+            <PieSectors
+              sectors={stepData}
+              activeShape={activeShape}
+              inactiveShape={inactiveShape}
+              allOtherPieProps={props}
+              shape={props.shape}
+              id={id}
+            />
+          </Layer>
+        )}
+      </AnimatedItems>
       <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
       {props.children}
     </PieLabelListProvider>

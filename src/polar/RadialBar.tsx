@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useRef } from 'react';
 import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
@@ -51,13 +51,12 @@ import { selectRadialBarLegendPayload, selectRadialBarSectors } from '../state/s
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -185,6 +184,21 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   );
 }
 
+const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem> = (prevItems, nextItems, t) => {
+  if (t === 1) return nextItems;
+  return nextItems.map((entry, index) => {
+    const prev = prevItems && prevItems[index];
+    if (prev) {
+      return {
+        ...entry,
+        startAngle: interpolate(prev.startAngle, entry.startAngle, t),
+        endAngle: interpolate(prev.endAngle, entry.endAngle, t),
+      };
+    }
+    return { ...entry, endAngle: interpolate(entry.startAngle, entry.endAngle, t) };
+  });
+};
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -198,72 +212,29 @@ function SectorsWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    onAnimationEnd,
     onAnimationStart,
+    onAnimationEnd,
   } = props;
-  const animationId = useAnimationId(props, 'recharts-radialbar-');
+  const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadialBarAnimateItems;
 
-  const prevData = previousSectorsRef.current;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(onAnimationStart, onAnimationEnd);
 
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
-
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
+    <AnimatedItems
+      animationInput={props}
+      animationIdPrefix="recharts-radialbar-"
+      items={sectors}
+      previousItemsRef={previousSectorsRef}
+      isAnimationActive={isAnimationActive}
+      animationBegin={animationBegin}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
-      key={animationId}
+      animationInterpolateFn={animationInterpolateFn}
     >
-      {(t: number) => {
-        const stepData: ReadonlyArray<RadialBarDataItem> | undefined =
-          t === 1
-            ? sectors
-            : (sectors ?? STABLE_EMPTY_ARRAY).map((entry: RadialBarDataItem, index: number): RadialBarDataItem => {
-                const prev = prevData && prevData[index];
-
-                if (prev) {
-                  return {
-                    ...entry,
-                    startAngle: interpolate(prev.startAngle, entry.startAngle, t),
-                    endAngle: interpolate(prev.endAngle, entry.endAngle, t),
-                  };
-                }
-                const { endAngle, startAngle } = entry;
-
-                return { ...entry, endAngle: interpolate(startAngle, endAngle, t) };
-              });
-
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousSectorsRef.current = stepData ?? null;
-        }
-
-        return (
-          <RadialBarSectors
-            sectors={stepData ?? STABLE_EMPTY_ARRAY}
-            allOtherRadialBarProps={props}
-            showLabels={!isAnimating}
-          />
-        );
-      }}
-    </JavascriptAnimate>
+      {stepData => <RadialBarSectors sectors={stepData} allOtherRadialBarProps={props} showLabels={!isAnimating} />}
+    </AnimatedItems>
   );
 }
 
@@ -295,6 +266,16 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param t A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time t
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem>;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;
