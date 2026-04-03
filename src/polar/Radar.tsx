@@ -38,6 +38,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -92,6 +93,19 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    */
   animationInterpolateFn?: AnimationInterpolateFn<RadarPoint>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @see matchByIndex
+   * @see matchByDataKey
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<RadarPoint>;
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;
@@ -491,7 +505,10 @@ function PolygonWithAnimation({
 
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems(prevPointsDiffFactor);
 
-  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(onAnimationStart, onAnimationEnd);
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    onAnimationStart,
+    onAnimationEnd,
+  );
 
   return (
     <RadarLabelListProvider showLabels={!isAnimating} points={points}>
@@ -507,6 +524,7 @@ function PolygonWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
       >
         {(stepData, t) => {
           const stepBaseLinePoints =

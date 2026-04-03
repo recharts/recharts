@@ -52,6 +52,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
@@ -217,7 +218,10 @@ function SectorsWithAnimation({
   } = props;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadialBarAnimateItems;
 
-  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(onAnimationStart, onAnimationEnd);
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    onAnimationStart,
+    onAnimationEnd,
+  );
 
   return (
     <AnimatedItems
@@ -232,6 +236,7 @@ function SectorsWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
+      animationMatchBy={props.animationMatchBy}
     >
       {stepData => <RadialBarSectors sectors={stepData} allOtherRadialBarProps={props} showLabels={!isAnimating} />}
     </AnimatedItems>
@@ -276,6 +281,19 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    */
   animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @see matchByIndex
+   * @see matchByDataKey
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<RadialBarDataItem>;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;

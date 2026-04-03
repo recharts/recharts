@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  Component,
-  MutableRefObject,
-  ReactElement,
-  ReactNode,
-  Ref,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react';
+import { Component, MutableRefObject, ReactElement, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
@@ -53,6 +44,7 @@ import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -89,6 +81,7 @@ interface InternalLineProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<LinePointItem>;
 
   className?: string;
   connectNulls: boolean;
@@ -172,6 +165,19 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    */
   animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @see matchByIndex
+   * @see matchByDataKey
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<LinePointItem>;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -703,6 +709,7 @@ function CurveWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
       >
         {(stepData, t) => {

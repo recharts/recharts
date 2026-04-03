@@ -45,6 +45,7 @@ import {
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -268,6 +269,19 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    */
   animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @see matchByIndex
+   * @see matchByDataKey
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<PieSectorDataItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.
@@ -907,13 +921,14 @@ function SectorsWithAnimation({
         animationIdPrefix="recharts-pie-"
         items={sectors}
         previousItemsRef={previousSectorsRef}
-        isAnimationActive={props.isAnimationActive ?? 'auto'}
-        animationBegin={props.animationBegin ?? defaultPieProps.animationBegin}
-        animationDuration={props.animationDuration ?? defaultPieProps.animationDuration}
-        animationEasing={props.animationEasing ?? defaultPieProps.animationEasing}
+        isAnimationActive={props.isAnimationActive}
+        animationBegin={props.animationBegin}
+        animationDuration={props.animationDuration}
+        animationEasing={props.animationEasing}
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
       >
         {stepData => (
           <Layer>

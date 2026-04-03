@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  ReactNode,
-  useMemo,
-  useRef,
-} from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -55,6 +48,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
@@ -90,6 +84,7 @@ interface InternalAreaProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -176,6 +171,19 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    */
   animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @see matchByIndex
+   * @see matchByDataKey
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<AreaPointItem>;
   /**
    * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
    *
@@ -704,6 +712,7 @@ function AreaWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
+      animationMatchBy={props.animationMatchBy}
     >
       {(stepPoints, t) => {
         const isFirstRender = prevBaseLine === undefined;

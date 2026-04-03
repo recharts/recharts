@@ -163,6 +163,8 @@ export type {
 export type { IfOverflow } from './util/IfOverflow';
 export type { EasingInput } from './animation/easing';
 export type { AnimationInterpolateFn } from './animation/AnimatedItems';
+export type { AnimationMatchBy } from './animation/matchBy';
+export { matchByIndex, matchByDataKey } from './animation/matchBy';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';

@@ -3,6 +3,7 @@ import { MutableRefObject, ReactNode, useCallback, useState } from 'react';
 import { JavascriptAnimate } from './JavascriptAnimate';
 import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
+import { alignPreviousItems, AnimationMatchBy, matchByIndex } from './matchBy';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -72,6 +73,16 @@ export type AnimatedItemsProps<T> = {
   /** The interpolation function — either the default or user-provided */
   animationInterpolateFn: AnimationInterpolateFn<T>;
   /**
+   * Strategy for matching previous items to next items during animation.
+   *
+   * - `'index'` (default): match by array index with proportional stretching
+   * - A function `(item, index) => key`: match by the returned key value
+   *
+   * Use `matchByDataKey('someKey')` for time-series or streaming charts
+   * where items should be matched by their data identity rather than position.
+   */
+  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<T>;
+  /**
    * Optional guard for updating previousItemsRef. Default: `(t) => t > 0`.
    * Line uses `(t) => t > 0 && totalLength > 0` to avoid updating before SVG path is measured.
    */
@@ -107,13 +118,21 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
     onAnimationStart,
     onAnimationEnd,
     animationInterpolateFn,
+    animationMatchBy,
     shouldUpdatePreviousRef,
     children,
   } = props;
 
   const animationId = useAnimationId(animationInput, animationIdPrefix);
 
-  const prevItems = previousItemsRef.current ?? null;
+  const rawPrevItems = previousItemsRef.current ?? null;
+  // When a key-based matching strategy is provided, re-order previous items
+  // so that prevItems[i] corresponds to items[i] by key. Existing interpolation
+  // functions already check `if (prev)` so undefined holes are handled correctly.
+  const prevItems =
+    animationMatchBy && animationMatchBy !== matchByIndex && rawPrevItems && items
+      ? alignPreviousItems(rawPrevItems, items, animationMatchBy)
+      : rawPrevItems;
 
   return (
     <JavascriptAnimate

@@ -105,6 +105,6 @@ export const apiCates = [
   },
   {
     name: 'animation',
-    items: ['interpolate'],
+    items: ['matchByIndex', 'matchByDataKey', 'interpolate'],
   },
 ];
