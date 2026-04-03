@@ -429,12 +429,20 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
-    const { labelRef: _, textBreakAll: __, ...propsWithoutLabelRef } = propsWithViewBox;
+    // Always strip labelRef (internal ref). Only strip textBreakAll when
+    // cloning into a native DOM element (string type), because it is not a
+    // valid HTML/SVG attribute. For custom components the prop is preserved so
+    // they can handle it themselves.
+    if (typeof content.type === 'string') {
+      const { labelRef: _, textBreakAll: __, ...propsWithoutLabelRef } = propsWithViewBox;
+      return cloneElement(content, propsWithoutLabelRef);
+    }
+    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }
 
   if (typeof content === 'function') {
-    const { content: _, textBreakAll: __, ...propsForContent } = propsWithViewBox;
+    const { content: _, ...propsForContent } = propsWithViewBox;
     // @ts-expect-error we're not checking if the content component returns something that Text is able to render
     label = createElement(content, propsForContent);
 
