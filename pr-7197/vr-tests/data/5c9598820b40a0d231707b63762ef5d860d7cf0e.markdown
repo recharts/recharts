@@ -1,0 +1,197 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/AreaChartApiExamples.spec-vr.tsx >> CrosshairExample
+- Location: test-vr/tests/www/AreaChartApiExamples.spec-vr.tsx:71:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  14 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 40115 pixels (ratio 0.41 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 8172 pixels (ratio 0.09 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 18949 pixels (ratio 0.19 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 11898 pixels (ratio 0.12 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 925 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 14 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "x legend icon" [ref=e7]
+        - text: x
+    - application [ref=e9]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: "x: 100"
+        - generic [ref=e25]: "y: 100"
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e29]: "Iter: 0"
+          - generic [ref=e31]: "Iter: 4"
+          - generic [ref=e33]: "Iter: 8"
+          - generic [ref=e35]: "Iter: 12"
+          - generic [ref=e37]: "Iter: 16"
+          - generic [ref=e39]: "Iter: 20"
+          - generic [ref=e41]: "Iter: 24"
+          - generic [ref=e43]: "Iter: 29"
+        - generic [ref=e44]:
+          - generic [ref=e46]: "0"
+          - generic [ref=e48]: "75"
+          - generic [ref=e50]: "150"
+          - generic [ref=e52]: "225"
+          - generic [ref=e54]: "300"
+  - generic [ref=e55]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import SimpleAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SimpleAreaChart';
+  4  | import StackedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/StackedAreaChart';
+  5  | import AreaChartConnectNulls from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls';
+  6  | import CardinalAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/CardinalAreaChart';
+  7  | import PercentAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/PercentAreaChart';
+  8  | import SynchronizedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart';
+  9  | import TinyAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
+  10 | import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
+  11 | import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
+  12 | import AreaChartExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartExample';
+  13 | import AreaChartRangeExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartRangeExample';
+  14 | import CrosshairExample from '../../../www/src/docs/apiExamples/getRelativeCoordinate/CrosshairExample';
+  15 | 
+  16 | test('AreaChartNavExample', async ({ mount }) => {
+  17 |   const component = await mount(<AreaChartNavExample />);
+  18 |   await expect(component).toHaveScreenshot();
+  19 | });
+  20 | 
+  21 | test('AreaChartFillByValue', async ({ mount }) => {
+  22 |   const component = await mount(<AreaChartFillByValue />);
+  23 |   await expect(component).toHaveScreenshot();
+  24 | });
+  25 | 
+  26 | test('TinyAreaChart', async ({ mount }) => {
+  27 |   const component = await mount(<TinyAreaChart />);
+  28 |   await expect(component).toHaveScreenshot();
+  29 | });
+  30 | 
+  31 | test('SynchronizedAreaChart', async ({ mount }) => {
+  32 |   const component = await mount(<SynchronizedAreaChart />);
+  33 |   await expect(component).toHaveScreenshot();
+  34 | });
+  35 | 
+  36 | test('PercentAreaChart', async ({ mount }) => {
+  37 |   const component = await mount(<PercentAreaChart />);
+  38 |   await expect(component).toHaveScreenshot();
+  39 | });
+  40 | 
+  41 | test('CardinalAreaChart', async ({ mount }) => {
+  42 |   const component = await mount(<CardinalAreaChart />);
+  43 |   await expect(component).toHaveScreenshot();
+  44 | });
+  45 | 
+  46 | test('AreaChartConnectNulls', async ({ mount }) => {
+  47 |   const component = await mount(<AreaChartConnectNulls />);
+  48 |   await expect(component).toHaveScreenshot();
+  49 | });
+  50 | 
+  51 | test('StackedAreaChart', async ({ mount }) => {
+  52 |   const component = await mount(<StackedAreaChart />);
+  53 |   await expect(component).toHaveScreenshot();
+  54 | });
+  55 | 
+  56 | test('SimpleAreaChart', async ({ mount }) => {
+  57 |   const component = await mount(<SimpleAreaChart />);
+  58 |   await expect(component).toHaveScreenshot();
+  59 | });
+  60 | 
+  61 | test('AreaChartExample', async ({ mount }) => {
+  62 |   const component = await mount(<AreaChartExample isAnimationActive={false} />);
+  63 |   await expect(component).toHaveScreenshot();
+  64 | });
+  65 | 
+  66 | test('AreaChartRangeExample', async ({ mount }) => {
+  67 |   const component = await mount(<AreaChartRangeExample isAnimationActive={false} />);
+  68 |   await expect(component).toHaveScreenshot();
+  69 | });
+  70 | 
+  71 | test('CrosshairExample', async ({ mount }) => {
+  72 |   const component = await mount(<CrosshairExample initialPointers={[{ relativeX: 100, relativeY: 100 }]} />);
+> 73 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  74 | });
+  75 | 
+```
