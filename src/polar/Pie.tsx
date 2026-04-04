@@ -66,6 +66,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { WithIdRequired } from '../util/useUniqueId';
 
 interface PieDef {
   /**
@@ -227,35 +228,9 @@ interface PieEvents {
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
+interface InternalPieProps extends PropsWithResolvedDefaults {
   id: GraphicalItemId;
-  className?: string;
-  // We actually spread the whole PieSectorDataItem into the keys.
-  dataKey: DataKey<DataPointType, unknown>;
-  // We actually spread the whole PieSectorDataItem into the keys.
-  nameKey?: DataKey<DataPointType, string>;
-  /** The minimum angle for no-zero element */
-  minAngle?: number;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  /** the max radius of pie */
-  maxRadius?: number;
-  hide?: boolean;
   sectors: ReadonlyArray<PieSectorDataItem>;
-  /** @deprecated */
-  activeShape?: ActiveShape<PieSectorDataItem>;
-  /** @deprecated */
-  inactiveShape?: ActiveShape<PieSectorDataItem>;
-  shape?: PieShape;
-  labelLine?: PieLabelLine;
-  label?: PieLabel;
-  animationEasing?: EasingInput;
-  isAnimationActive?: boolean | 'auto';
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
-  rootTabIndex?: number;
 }
 
 interface PieProps<DataPointType = any, DataValueType = any>
@@ -1006,7 +981,7 @@ export const defaultPieProps = {
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-function PieImpl(props: Omit<InternalProps, 'sectors'>) {
+function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
   const { id, ...propsWithoutId } = props;
   const { hide, className, rootTabIndex } = props;
 
