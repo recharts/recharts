@@ -1,0 +1,104 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/SunburstChartExamples.spec-vr.tsx >> SunburstChartExample
+- Location: test-vr/tests/www/SunburstChartExamples.spec-vr.tsx:5:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  48 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div class="recharts-responsive-container">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 48 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div class="recharts-responsive-container">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 48 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- img [ref=e5]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - generic: "30"
+    - generic [ref=e9]:
+      - generic: "10"
+    - generic [ref=e11]:
+      - generic: "5"
+    - generic [ref=e13]:
+      - generic: "15"
+    - generic [ref=e15]:
+      - generic: "5"
+    - generic [ref=e17]:
+      - generic: "5"
+    - generic [ref=e19]:
+      - generic: "5"
+    - generic [ref=e21]:
+      - generic: "2"
+    - generic [ref=e23]:
+      - generic: "20"
+    - generic [ref=e25]:
+      - generic: "10"
+    - generic [ref=e27]:
+      - generic: "10"
+    - generic [ref=e29]:
+      - generic: "5"
+    - generic [ref=e31]:
+      - generic: "3"
+    - generic [ref=e33]:
+      - generic: "2"
+    - generic [ref=e35]:
+      - generic: "20"
+    - generic [ref=e37]:
+      - generic: "10"
+    - generic [ref=e39]:
+      - generic: "5"
+    - generic [ref=e41]:
+      - generic: "5"
+    - generic [ref=e43]:
+      - generic: "20"
+```
+
+# Test source
+
+```ts
+  1 | import * as React from 'react';
+  2 | import { test, expect } from '@playwright/experimental-ct-react';
+  3 | import SunburstChartExample from '../../../www/src/docs/apiExamples/SunburstChart/SunburstChartExample';
+  4 | 
+  5 | test('SunburstChartExample', async ({ mount }) => {
+  6 |   const component = await mount(<SunburstChartExample />);
+> 7 |   await expect(component).toHaveScreenshot();
+    |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  8 | });
+  9 | 
+```

@@ -1,0 +1,230 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/LineChartApiExamples.spec-vr.tsx >> CustomizedDotLineChart
+- Location: test-vr/tests/www/LineChartApiExamples.spec-vr.tsx:52:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  4 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 476 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 145 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 227 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 92 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 4 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "pv legend icon" [ref=e7]
+        - text: pv
+      - listitem [ref=e9]:
+        - img "uv legend icon" [ref=e10]
+        - text: uv
+    - application [ref=e12]:
+      - generic [ref=e33]:
+        - img [ref=e34]
+        - img [ref=e36]
+        - img [ref=e38]
+        - img [ref=e40]
+        - img [ref=e42]
+        - img [ref=e44]
+        - img [ref=e46]
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e59]: Page A
+          - generic [ref=e61]: Page B
+          - generic [ref=e63]: Page C
+          - generic [ref=e65]: Page D
+          - generic [ref=e67]: Page E
+          - generic [ref=e69]: Page F
+          - generic [ref=e71]: Page G
+        - generic [ref=e72]:
+          - generic [ref=e74]: "0"
+          - generic [ref=e76]: "2500"
+          - generic [ref=e78]: "5000"
+          - generic [ref=e80]: "7500"
+          - generic [ref=e82]: "10000"
+  - generic [ref=e83]: "0"
+```
+
+# Test source
+
+```ts
+  1   | import * as React from 'react';
+  2   | import { test, expect } from './fixtures';
+  3   | import LineChartExample from '../../../www/src/docs/apiExamples/LineChart/LineChartExample';
+  4   | import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart';
+  5   | import TinyLineChart from '../../../www/src/docs/exampleComponents/LineChart/TinyLineChart';
+  6   | import DashedLineChart from '../../../www/src/docs/exampleComponents/LineChart/DashedLineChart';
+  7   | import VerticalLineChart from '../../../www/src/docs/exampleComponents/LineChart/VerticalLineChart';
+  8   | import BiaxialLineChart from '../../../www/src/docs/exampleComponents/LineChart/BiaxialLineChart';
+  9   | import VerticalLineChartWithSpecifiedDomain from '../../../www/src/docs/exampleComponents/LineChart/VerticalLineChartWithSpecifiedDomain';
+  10  | import LineChartConnectNulls from '../../../www/src/docs/exampleComponents/LineChart/LineChartConnectNulls';
+  11  | import LineChartWithXAxisPadding from '../../../www/src/docs/exampleComponents/LineChart/LineChartWithXAxisPadding';
+  12  | import LineChartWithReferenceLines from '../../../www/src/docs/exampleComponents/LineChart/LineChartWithReferenceLines';
+  13  | import CustomizedDotLineChart from '../../../www/src/docs/exampleComponents/LineChart/CustomizedDotLineChart';
+  14  | import CustomizedLabelLineChart from '../../../www/src/docs/exampleComponents/LineChart/CustomizedLabelLineChart';
+  15  | import SynchronizedLineChart from '../../../www/src/docs/exampleComponents/LineChart/SynchronizedLineChart';
+  16  | import HighlightAndZoomLineChart from '../../../www/src/docs/exampleComponents/LineChart/HighlightAndZoomLineChart';
+  17  | import LineChartHasMultiSeries from '../../../www/src/docs/exampleComponents/LineChart/LineChartHasMultiSeries';
+  18  | import LineChartAxisInterval from '../../../www/src/docs/exampleComponents/LineChart/LineChartAxisInterval';
+  19  | import LineChartNegativeValuesWithReferenceLines from '../../../www/src/docs/exampleComponents/LineChart/LineChartNegativeValuesWithReferenceLines';
+  20  | import LineChartNavExample from '../../../www/src/docs/exampleComponents/LineChart/LineChartNavExample';
+  21  | 
+  22  | test('LineChartNegativeValuesWithReferenceLines', async ({ mount }) => {
+  23  |   const component = await mount(<LineChartNegativeValuesWithReferenceLines />);
+  24  |   await expect(component).toHaveScreenshot();
+  25  | });
+  26  | 
+  27  | test('LineChartAxisInterval', async ({ mount }) => {
+  28  |   const component = await mount(<LineChartAxisInterval />);
+  29  |   await expect(component).toHaveScreenshot();
+  30  | });
+  31  | 
+  32  | test('LineChartHasMultiSeries', async ({ mount }) => {
+  33  |   const component = await mount(<LineChartHasMultiSeries />);
+  34  |   await expect(component).toHaveScreenshot();
+  35  | });
+  36  | 
+  37  | test('HighlightAndZoomLineChart', async ({ mount }) => {
+  38  |   const component = await mount(<HighlightAndZoomLineChart />);
+  39  |   await expect(component).toHaveScreenshot();
+  40  | });
+  41  | 
+  42  | test('SynchronizedLineChart', async ({ mount }) => {
+  43  |   const component = await mount(<SynchronizedLineChart />);
+  44  |   await expect(component).toHaveScreenshot();
+  45  | });
+  46  | 
+  47  | test('CustomizedLabelLineChart', async ({ mount }) => {
+  48  |   const component = await mount(<CustomizedLabelLineChart />);
+  49  |   await expect(component).toHaveScreenshot();
+  50  | });
+  51  | 
+  52  | test('CustomizedDotLineChart', async ({ mount }) => {
+  53  |   const component = await mount(<CustomizedDotLineChart />);
+> 54  |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  55  | });
+  56  | 
+  57  | test('LineChartWithReferenceLines', async ({ mount }) => {
+  58  |   const component = await mount(<LineChartWithReferenceLines />);
+  59  |   await expect(component).toHaveScreenshot();
+  60  | });
+  61  | 
+  62  | test('LineChartWithXAxisPadding', async ({ mount }) => {
+  63  |   const component = await mount(<LineChartWithXAxisPadding />);
+  64  |   await expect(component).toHaveScreenshot();
+  65  | });
+  66  | 
+  67  | test('LineChartConnectNulls', async ({ mount }) => {
+  68  |   const component = await mount(<LineChartConnectNulls />);
+  69  |   await expect(component).toHaveScreenshot();
+  70  | });
+  71  | 
+  72  | test('VerticalLineChartWithSpecifiedDomain', async ({ mount }) => {
+  73  |   const component = await mount(<VerticalLineChartWithSpecifiedDomain isAnimationActive={false} />);
+  74  |   await expect(component).toHaveScreenshot();
+  75  | });
+  76  | 
+  77  | test('BiaxialLineChart', async ({ mount }) => {
+  78  |   const component = await mount(<BiaxialLineChart />);
+  79  |   await expect(component).toHaveScreenshot();
+  80  | });
+  81  | 
+  82  | test('VerticalLineChart', async ({ mount }) => {
+  83  |   const component = await mount(<VerticalLineChart isAnimationActive={false} />);
+  84  |   await expect(component).toHaveScreenshot();
+  85  | });
+  86  | 
+  87  | test('DashedLineChart', async ({ mount }) => {
+  88  |   const component = await mount(<DashedLineChart />);
+  89  |   await expect(component).toHaveScreenshot();
+  90  | });
+  91  | 
+  92  | test('TinyLineChart', async ({ mount }) => {
+  93  |   const component = await mount(<TinyLineChart />);
+  94  |   await expect(component).toHaveScreenshot();
+  95  | });
+  96  | 
+  97  | test('LineChartExample', async ({ mount }) => {
+  98  |   const component = await mount(<LineChartExample isAnimationActive={false} />);
+  99  |   await expect(component).toHaveScreenshot();
+  100 | });
+  101 | 
+  102 | test('SimpleLineChart', async ({ mount }) => {
+  103 |   const component = await mount(<SimpleLineChart />);
+  104 |   await expect(component).toHaveScreenshot();
+  105 | });
+  106 | 
+  107 | test('LineChartNavExample', async ({ mount }) => {
+  108 |   const component = await mount(<LineChartNavExample />);
+  109 |   await expect(component).toHaveScreenshot();
+  110 | });
+  111 | 
+```
