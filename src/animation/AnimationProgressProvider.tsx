@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AnimationManagerContext, AnimationManagerFactory } from './useAnimationManager';
-import { ProgressAnimationManager } from './ProgressAnimationManager';
+import { AnimationStatus, ProgressAnimationManager } from './ProgressAnimationManager';
 import { AnimationManager } from './AnimationManager';
 
 export type { AnimationStatus } from './ProgressAnimationManager';
@@ -12,8 +12,8 @@ export type { AnimationStatus } from './ProgressAnimationManager';
  */
 export type AnimationHandle = {
   readonly animationId: string;
-  readonly status: 'idle' | 'pending' | 'active' | 'complete';
-  readonly progress: number;
+  getStatus(): AnimationStatus;
+  getProgress(): number;
   setProgress(percent: number): void;
   complete(): void;
   isAnimating(): boolean;

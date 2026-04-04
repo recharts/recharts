@@ -17,6 +17,8 @@ export type AnimationStatus = 'idle' | 'pending' | 'active' | 'complete';
  * @internal Used by AnimationProgressProvider
  */
 export class ProgressAnimationManager implements AnimationManager {
+  readonly isManualControl = true;
+
   private queue: Array<ReactSmoothQueue[number]> | null = null;
 
   private listener: HandleChangeFn | null = null;

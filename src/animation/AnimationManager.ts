@@ -23,6 +23,12 @@ export type AnimationManager = {
   start: (style: ReactSmoothQueue) => void;
   subscribe: (handleChange: (style: ReactSmoothStyle) => void) => () => void;
   getTimeoutController(): TimeoutController;
+  /**
+   * When true, this manager controls animation progress manually (e.g. via a scrubber).
+   * CSS-transition-based animations should fall back to JS interpolation in this mode,
+   * because browsers don't allow scrubbing CSS transitions to an arbitrary progress point.
+   */
+  isManualControl?: boolean;
 };
 
 export function createAnimateManager(timeoutController: TimeoutController): AnimationManager {
