@@ -127,7 +127,7 @@ jobs:
       # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
       # Make sure to grab the latest version of the Playwright image
       # https://playwright.dev/docs/docker#pull-the-image
-      image: mcr.microsoft.com/playwright:v1.58.2-jammy
+      image: mcr.microsoft.com/playwright:v1.59.1-jammy
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
       # /root home is required to allow Firefox to run in the container
@@ -446,7 +446,7 @@ jobs:
     needs: [build]
     container:
       # Run directly in the Playwright image — no Docker-in-Docker needed.
-      image: mcr.microsoft.com/playwright:v1.58.2-jammy
+      image: mcr.microsoft.com/playwright:v1.59.1-jammy
     env:
       HOME: /root
     strategy:
