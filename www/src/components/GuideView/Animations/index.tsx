@@ -5,6 +5,8 @@ import AnimationsExample, { AnimationsControls } from './AnimationsExample.tsx';
 import AnimationsExampleSource from './AnimationsExample.tsx?raw';
 import MatchingExample, { MatchingControls } from './MatchingExample.tsx';
 import MatchingExampleSource from './MatchingExample.tsx?raw';
+import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
+import CustomAnimationExampleSource from './CustomAnimationExample.tsx?raw';
 
 export function AnimationsGuide() {
   return (
@@ -278,6 +280,40 @@ export function AnimationsGuide() {
         Items in the old and new arrays that return the same key will animate between their positions. Items that have
         no match animate in as new elements.
       </p>
+      <h2>Custom animation functions</h2>
+      <p>
+        The <code>animationInterpolateFn</code> prop lets you completely replace how items are interpolated during an
+        animation. Instead of the default position-based transitions, you can create any visual effect: opacity fades,
+        scale transforms, staggered entrances, or anything else.
+      </p>
+      <p>The function receives three arguments:</p>
+      <ul>
+        <li>
+          <code>prevItems</code> — the items from the previous frame (or <code>null</code> on initial render)
+        </li>
+        <li>
+          <code>nextItems</code> — the target items to animate towards
+        </li>
+        <li>
+          <code>t</code> — a normalized time from 0 (start) to 1 (end), already eased
+        </li>
+      </ul>
+      <p>
+        Return an array of items with any properties modified. The powerful trick: since you receive <em>both</em>{' '}
+        previous and next items, you can return a combined array containing both sets — previous points fading out and
+        new points fading in simultaneously.
+      </p>
+      <p>
+        Try swapping the dataset below. Each animation style crossfades between two datasets using only a small custom
+        function — open the source code to see how they work:
+      </p>
+      <CodeEditorWithPreview
+        Component={CustomAnimationExample}
+        Controls={CustomAnimationControls}
+        sourceCode={CustomAnimationExampleSource}
+        stackBlitzTitle="Recharts Custom Animation Example"
+        defaultTool="controls"
+      />
     </article>
   );
 }
