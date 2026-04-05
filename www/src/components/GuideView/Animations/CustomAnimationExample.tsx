@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import type { AnimationInterpolateFn, ScatterPointItem } from 'recharts';
@@ -123,6 +123,9 @@ export function CustomAnimationControls({ onChange }: { onChange: (values: Contr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const animationStyleId = useId();
+  const animationDurationId = useId();
+
   return (
     <form>
       <button type="button" onClick={() => handleChange({ useDataA: !state.useDataA })}>
@@ -132,11 +135,11 @@ export function CustomAnimationControls({ onChange }: { onChange: (values: Contr
         <tbody>
           <tr>
             <td>
-              <label htmlFor="animation-style">Animation style</label>
+              <label htmlFor={animationStyleId}>Animation style</label>
             </td>
             <td style={{ padding: '0 1ex' }}>
               <select
-                id="animation-style"
+                id={animationStyleId}
                 value={state.animationStyle}
                 onChange={e => handleChange({ animationStyle: e.target.value as AnimationStyle })}
               >
@@ -150,11 +153,12 @@ export function CustomAnimationControls({ onChange }: { onChange: (values: Contr
           </tr>
           <tr>
             <td>
-              <label htmlFor="animation-duration">Duration (ms)</label>
+              <label htmlFor={animationDurationId}>Duration (ms)</label>
             </td>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <td style={{ padding: '0 1ex' }}>
               <input
-                id="animation-duration"
+                id={animationDurationId}
                 type="range"
                 min="300"
                 max="3000"

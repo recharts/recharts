@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useId } from 'react';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, matchByIndex } from 'recharts';
 import type { AnimationMatchBy } from 'recharts';
 
@@ -81,17 +81,20 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
 
   const maxStart = allData.length - WINDOW;
 
+  const matchStrategyId = useId();
+  const windowStartId = useId();
+
   return (
     <form>
       <table>
         <tbody>
           <tr>
             <td>
-              <label htmlFor="match-strategy">animationMatchBy</label>
+              <label htmlFor={matchStrategyId}>animationMatchBy</label>
             </td>
             <td style={{ padding: '0 1ex' }}>
               <select
-                id="match-strategy"
+                id={matchStrategyId}
                 value={state.matchStrategy}
                 onChange={e => handleChange({ matchStrategy: e.target.value as MatchStrategy })}
               >
@@ -102,11 +105,12 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
           </tr>
           <tr>
             <td>
-              <label htmlFor="window-start">Window start</label>
+              <label htmlFor={windowStartId}>Window start</label>
             </td>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <td style={{ padding: '0 1ex' }}>
               <input
-                id="window-start"
+                id={windowStartId}
                 type="range"
                 min="0"
                 max={maxStart}
