@@ -24,7 +24,7 @@
     "@types/sax": "^1.2.7",
     "sax": "^1.4.3",
     "tsx": "^4.20.6",
-    "vite": "^6.4.1",
+    "vite": "^6.4.2",
     "vite-plugin-sitemap": "^0.8.2"
   },
   "dependencies": {
