@@ -111,7 +111,7 @@ interface HeatMapInternalProps extends ZIndexable {
   children?: ReactNode;
 }
 
-interface HeatMapProps<DataPointType = any, DataValueType = any>
+interface HeatMapProps<DataPointType = unknown, DataValueType = unknown>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * Unique identifier of this component.
@@ -253,7 +253,7 @@ type BaseHeatMapSvgProps = Omit<
 
 type InternalProps = BaseHeatMapSvgProps & HeatMapInternalProps;
 
-export type Props<DataPointType = any, DataValueType = any> = BaseHeatMapSvgProps &
+export type Props<DataPointType = unknown, DataValueType = unknown> = BaseHeatMapSvgProps &
   HeatMapProps<DataPointType, DataValueType>;
 
 const computeLegendPayloadFromHeatMapProps = (props: Props): ReadonlyArray<LegendPayload> => {
@@ -823,8 +823,8 @@ function HeatMapFn(outsideProps: Props) {
  * @consumes CartesianChartContext
  */
 type HeatMapComponent = {
-  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): React.ReactNode;
-  (props: Props<any, any>): React.ReactNode;
+  <DataPointType = unknown, DataValueType = unknown>(props: Props<DataPointType, DataValueType>): React.ReactNode;
+  (props: Props<unknown, unknown>): React.ReactNode;
 };
 
 export const HeatMap: HeatMapComponent = React.memo(HeatMapFn, propsAreEqual);
