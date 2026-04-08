@@ -39,6 +39,7 @@ import { useAxisInverseDataSnapScaleApiExamples } from './useAxisInverseDataSnap
 import { useAxisInverseTickSnapScaleApiExamples } from './useAxisInverseTickSnapScale';
 import { useXAxisTicksApiExamples } from './useXAxisTicks';
 import { useYAxisTicksApiExamples } from './useYAxisTicks';
+import { wordCloudApiExamples } from './WordCloud';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -62,6 +63,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   LabelList: labelListApiExamples,
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,
+  WordCloud: wordCloudApiExamples,
   Sankey: sankeyApiExamples,
   SunburstChart: sunburstChartApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
