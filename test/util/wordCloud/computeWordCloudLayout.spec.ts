@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as DOMUtils from '../../../src/util/DOMUtils';
-import { computeWordCloudLayout } from '../../../src/util/wordCloud/computeWordCloudLayout';
+import { computeWordCloudLayout, WordCloudCandidate } from '../../../src/util/wordCloud/computeWordCloudLayout';
 
 describe('computeWordCloudLayout', () => {
-  const data = [
+  const data: ReadonlyArray<WordCloudCandidate<{ name: string }>> = [
     {
       payload: { name: 'Accessibility' },
       text: 'Accessibility',
@@ -56,17 +56,23 @@ describe('computeWordCloudLayout', () => {
       fontWeight: 700,
       tooltipIndex: '3',
     },
-  ] as const;
+  ];
 
-  it('uses measured word bounds to avoid overlaps', () => {
+  const mockWordMeasurement = () => {
     vi.spyOn(DOMUtils, 'getStringSize').mockImplementation((text, style) => {
-      const fontSize = typeof style.fontSize === 'string' ? Number.parseFloat(style.fontSize) : Number(style.fontSize);
+      const fontSizeValue = style?.fontSize;
+      const fontSize =
+        typeof fontSizeValue === 'string' ? Number.parseFloat(fontSizeValue) : Number(fontSizeValue ?? 0);
 
       return {
         width: text.toString().length * fontSize * 0.6,
         height: fontSize,
       };
     });
+  };
+
+  it('uses measured word bounds to avoid overlaps', () => {
+    mockWordMeasurement();
 
     const words = computeWordCloudLayout(data, {
       width: 700,
@@ -88,14 +94,7 @@ describe('computeWordCloudLayout', () => {
   });
 
   it('supports rectangular placement', () => {
-    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation((text, style) => {
-      const fontSize = typeof style.fontSize === 'string' ? Number.parseFloat(style.fontSize) : Number(style.fontSize);
-
-      return {
-        width: text.toString().length * fontSize * 0.6,
-        height: fontSize,
-      };
-    });
+    mockWordMeasurement();
 
     const words = computeWordCloudLayout(data, {
       width: 700,
@@ -109,14 +108,7 @@ describe('computeWordCloudLayout', () => {
   });
 
   it('uses seed to vary the layout deterministically', () => {
-    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation((text, style) => {
-      const fontSize = typeof style.fontSize === 'string' ? Number.parseFloat(style.fontSize) : Number(style.fontSize);
-
-      return {
-        width: text.toString().length * fontSize * 0.6,
-        height: fontSize,
-      };
-    });
+    mockWordMeasurement();
 
     const wordsWithSeedA = computeWordCloudLayout(data, {
       width: 700,
