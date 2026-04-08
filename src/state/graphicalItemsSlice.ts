@@ -5,6 +5,7 @@ import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
 import { LineSettings } from './types/LineSettings';
 import { ScatterSettings } from './types/ScatterSettings';
+import { HeatMapSettings } from './types/HeatMapSettings';
 import { AreaSettings } from './types/AreaSettings';
 import { BarSettings } from './types/BarSettings';
 import { RadialBarSettings } from './types/RadialBarSettings';
@@ -56,7 +57,12 @@ export interface BaseCartesianGraphicalItemSettings extends GraphicalItemSetting
   isPanorama: boolean;
 }
 
-export type CartesianGraphicalItemSettings = AreaSettings | BarSettings | LineSettings | ScatterSettings;
+export type CartesianGraphicalItemSettings =
+  | AreaSettings
+  | BarSettings
+  | HeatMapSettings
+  | LineSettings
+  | ScatterSettings;
 
 export interface BasePolarGraphicalItemSettings extends GraphicalItemSettings {
   angleAxisId: AxisId;
