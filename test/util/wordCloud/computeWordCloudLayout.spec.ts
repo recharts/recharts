@@ -3,7 +3,7 @@ import * as DOMUtils from '../../../src/util/DOMUtils';
 import { computeWordCloudLayout, WordCloudCandidate } from '../../../src/util/wordCloud/computeWordCloudLayout';
 
 describe('computeWordCloudLayout', () => {
-  const data: ReadonlyArray<WordCloudCandidate<{ name: string }>> = [
+  const baseData: ReadonlyArray<WordCloudCandidate<{ name: string }>> = [
     {
       payload: { name: 'Accessibility' },
       text: 'Accessibility',
@@ -58,6 +58,10 @@ describe('computeWordCloudLayout', () => {
     },
   ];
 
+  const rotatedData: ReadonlyArray<WordCloudCandidate<{ name: string }>> = baseData.map(candidate =>
+    candidate.tooltipIndex === '1' ? { ...candidate, rotate: 45 } : candidate,
+  );
+
   const mockWordMeasurement = () => {
     vi.spyOn(DOMUtils, 'getStringSize').mockImplementation((text, style) => {
       const fontSizeValue = style?.fontSize;
@@ -74,7 +78,7 @@ describe('computeWordCloudLayout', () => {
   it('uses measured word bounds to avoid overlaps', () => {
     mockWordMeasurement();
 
-    const words = computeWordCloudLayout(data, {
+    const words = computeWordCloudLayout(baseData, {
       width: 700,
       height: 400,
       spiral: 'archimedean',
@@ -96,7 +100,7 @@ describe('computeWordCloudLayout', () => {
   it('supports rectangular placement', () => {
     mockWordMeasurement();
 
-    const words = computeWordCloudLayout(data, {
+    const words = computeWordCloudLayout(baseData, {
       width: 700,
       height: 400,
       spiral: 'rectangular',
@@ -107,16 +111,30 @@ describe('computeWordCloudLayout', () => {
     expect(words.some(word => word.x !== 350 || word.y !== 200)).toBe(true);
   });
 
+  it('handles rotated words without dropping overlapping candidates', () => {
+    mockWordMeasurement();
+
+    const words = computeWordCloudLayout(rotatedData, {
+      width: 700,
+      height: 400,
+      spiral: 'archimedean',
+      seed: 24,
+    });
+
+    expect(words).toHaveLength(4);
+    expect(words.some(word => word.rotate !== 0)).toBe(true);
+  });
+
   it('uses seed to vary the layout deterministically', () => {
     mockWordMeasurement();
 
-    const wordsWithSeedA = computeWordCloudLayout(data, {
+    const wordsWithSeedA = computeWordCloudLayout(baseData, {
       width: 700,
       height: 400,
       spiral: 'archimedean',
       seed: 0,
     });
-    const wordsWithSeedB = computeWordCloudLayout(data, {
+    const wordsWithSeedB = computeWordCloudLayout(baseData, {
       width: 700,
       height: 400,
       spiral: 'archimedean',

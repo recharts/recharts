@@ -175,6 +175,31 @@ function getWordCloudStyleValue<DataPointType, TValue>(
   return defaultValue;
 }
 
+type NormalizedWordCloudFields = {
+  value: number;
+  text: string;
+};
+
+function normalizeWordCloudFields<DataPointType>(
+  entry: DataPointType,
+  dataKey: WordCloudDataAccessor<DataPointType>,
+  nameKey: WordCloudDataAccessor<DataPointType>,
+): NormalizedWordCloudFields | undefined {
+  const rawValue = getWordCloudValue(entry, dataKey, 0);
+  const rawText = getWordCloudValue(entry, nameKey, '');
+  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+  const text = typeof rawText === 'string' || typeof rawText === 'number' ? `${rawText}` : '';
+
+  if (!Number.isFinite(value) || value <= 0 || text.length === 0) {
+    return undefined;
+  }
+
+  return {
+    value,
+    text,
+  };
+}
+
 function toWordCloudCandidate<DataPointType extends WordCloudDataPoint>(
   entry: DataPointType,
   index: number,
@@ -192,14 +217,13 @@ function toWordCloudCandidate<DataPointType extends WordCloudDataPoint>(
   minValue: number,
   maxValue: number,
 ): WordCloudCandidate<DataPointType> | undefined {
-  const rawValue = getWordCloudValue(entry, dataKey, 0);
-  const rawText = getWordCloudValue(entry, nameKey, '');
-  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-  const text = typeof rawText === 'string' || typeof rawText === 'number' ? `${rawText}` : '';
+  const normalizedFields = normalizeWordCloudFields(entry, dataKey, nameKey);
 
-  if (!Number.isFinite(value) || value <= 0 || text.length === 0) {
+  if (normalizedFields == null) {
     return undefined;
   }
+
+  const { value, text } = normalizedFields;
 
   const resolvedFontSize = getWordCloudStyleValue(
     entry,
@@ -266,16 +290,13 @@ function WordCloudImpl<DataPointType extends WordCloudDataPoint>(props: Internal
   const normalizedFontSizeRange = normalizeFontSizeRange(fontSizeRange[0], fontSizeRange[1]);
   const valueEntries = data
     .map((entry, index) => {
-      const rawValue = getWordCloudValue(entry, dataKey, 0);
-      const rawText = getWordCloudValue(entry, nameKey, '');
-      const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-      const text = typeof rawText === 'string' || typeof rawText === 'number' ? `${rawText}` : '';
+      const normalizedFields = normalizeWordCloudFields(entry, dataKey, nameKey);
 
-      if (!Number.isFinite(value) || value <= 0 || text.length === 0) {
+      if (normalizedFields == null) {
         return undefined;
       }
 
-      return { entry, index, value };
+      return { entry, index, value: normalizedFields.value };
     })
     .filter(
       (

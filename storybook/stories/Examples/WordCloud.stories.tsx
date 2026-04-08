@@ -72,7 +72,7 @@ const greetingsCloudData: ReadonlyArray<Omit<WordCloudDatum, 'fill'>> = [
   { term: 'नमस्ते', score: 28 },
   { term: 'สวัสดี', score: 24 },
   { term: 'გამარჯობა', score: 23 },
-  { term: 'გამარჯობა', score: 19 },
+  { term: 'gamarjoba', score: 19 },
   { term: 'добрый день', score: 21 },
   { term: 'saluton', score: 18 },
   { term: 'hyvää päivää', score: 20 },
