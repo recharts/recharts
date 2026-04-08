@@ -77,9 +77,8 @@ const selectSynchronisedHeatMapSettings: (
   id: GraphicalItemId,
 ) => HeatMapSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickHeatMapId],
-  (graphicalItems, id) => {
-    return graphicalItems.filter(item => item.type === 'heatMap').find(item => item.id === id);
-  },
+  (graphicalItems, id) =>
+    graphicalItems.find((item): item is HeatMapSettings => item.type === 'heatMap' && item.id === id),
 );
 
 export const selectHeatMapCells: (

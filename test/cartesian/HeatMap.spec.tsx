@@ -1,10 +1,12 @@
 import React from 'react';
-import { fireEvent, render, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { Cell, Customized, HeatMap, HeatMapChart, Tooltip, XAxis, YAxis } from '../../src';
-import { useAppSelector } from '../../src/state/hooks';
+import { render, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { Cell, HeatMap, HeatMapChart, Tooltip, XAxis, YAxis } from '../../src';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { HeatMapSettings } from '../../src/state/types/HeatMapSettings';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 const data = [
   { hour: '00:00', day: 'Mon', value: 4 },
@@ -14,6 +16,10 @@ const data = [
 ];
 
 describe('<HeatMap />', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   it('renders one rectangle per data point', () => {
     const { container } = render(
       <HeatMapChart width={400} height={240} data={data}>
@@ -74,20 +80,15 @@ describe('<HeatMap />', () => {
   });
 
   it('publishes its configuration to redux state', () => {
-    const settingsSpy = vi.fn();
-    const Comp = (): null => {
-      settingsSpy(useAppSelector(selectUnfilteredCartesianItems));
-      return null;
-    };
-
-    const { rerender } = render(
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <HeatMapChart width={400} height={240} data={data}>
         <XAxis type="category" dataKey="hour" />
         <YAxis type="category" dataKey="day" />
         <HeatMap dataKey="value" xAxisId="xaxis id" yAxisId="yaxis id" name="Traffic" />
-        <Customized component={<Comp />} />
-      </HeatMapChart>,
-    );
+        {children}
+      </HeatMapChart>
+    ));
+    const { spy, rerender } = renderTestCase(selectUnfilteredCartesianItems);
 
     const expected: HeatMapSettings = {
       id: expect.stringMatching('recharts-heat-map'),
@@ -106,23 +107,46 @@ describe('<HeatMap />', () => {
       cellSize: undefined,
     };
 
-    expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenLastCalledWith([expected]);
+    const initialCallCount = spy.mock.calls.length;
 
-    rerender(
+    rerender(({ children }) => (
       <HeatMapChart width={400} height={240} data={data}>
         <XAxis type="category" dataKey="hour" />
         <YAxis type="category" dataKey="day" />
         <HeatMap dataKey="value" xAxisId="xaxis id" yAxisId="yaxis id" name="Heat" />
-        <Customized component={<Comp />} />
-      </HeatMapChart>,
-    );
+        {children}
+      </HeatMapChart>
+    ));
 
-    expect(settingsSpy).toHaveBeenLastCalledWith([
+    expect(spy.mock.calls.length).toBeGreaterThan(initialCallCount);
+    expect(spy).toHaveBeenLastCalledWith([
       {
         ...expected,
         name: 'Heat',
       },
     ]);
+  });
+
+  it('ignores nullish data entries when computing cells', () => {
+    const sparseData = [
+      { hour: '00:00', day: 'Mon', value: 4 },
+      null,
+      undefined,
+      { hour: '06:00', day: 'Tue', value: 16 },
+    ];
+
+    const { container } = render(
+      <HeatMapChart width={400} height={240} data={sparseData}>
+        <XAxis type="category" dataKey="hour" />
+        <YAxis type="category" dataKey="day" />
+        <HeatMap dataKey="value" isAnimationActive={false} />
+      </HeatMapChart>,
+    );
+
+    const rectangles = container.querySelectorAll('.recharts-heatmap-rectangle .recharts-rectangle');
+    expect(rectangles).toHaveLength(2);
   });
 
   it('shows x, y, and value entries in the tooltip', async () => {
@@ -135,9 +159,7 @@ describe('<HeatMap />', () => {
       </HeatMapChart>,
     );
 
-    const firstCell = container.querySelector('.recharts-heatmap-rectangle');
-    expect(firstCell).toBeInTheDocument();
-    fireEvent.mouseEnter(firstCell!);
+    showTooltip(container, '.recharts-heatmap-rectangle');
 
     expect(await findByText('Hour')).toBeInTheDocument();
     expect(await findByText('Day')).toBeInTheDocument();

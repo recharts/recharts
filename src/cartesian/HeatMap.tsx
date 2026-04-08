@@ -10,7 +10,7 @@ import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
 } from '../component/LabelList';
-import { TooltipType } from '../component/DefaultTooltipContent';
+import type { NameType, TooltipType, ValueType } from '../component/DefaultTooltipContent';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { Layer } from '../container/Layer';
 import {
@@ -61,19 +61,19 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 export interface HeatMapCellNode {
-  x?: number | string;
-  y?: number | string;
-  value?: number | string;
+  x?: NameType;
+  y?: NameType;
+  value?: ValueType;
 }
 
-export interface HeatMapCellItem extends RectangleProps {
+export interface HeatMapCellItem<TPayload = unknown> extends RectangleProps {
   x: number | undefined;
   y: number | undefined;
   width: number;
   height: number;
   value: unknown;
   node: HeatMapCellNode;
-  payload?: any;
+  payload?: TPayload;
   tooltipPayload?: TooltipPayload;
   tooltipPosition: Coordinate;
   originalDataIndex: number;
@@ -381,6 +381,23 @@ function resolveCellDimension({
   return Math.max(bandSize - getGapValue(cellGap, gapAxis), 0);
 }
 
+function toTooltipEntryValue(value: unknown): TooltipPayloadEntry['value'] {
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value;
+  }
+  if (Array.isArray(value) && value.every(item => typeof item === 'number' || typeof item === 'string')) {
+    return value;
+  }
+  return undefined;
+}
+
+function toNodeCoordinate(value: unknown): NameType | undefined {
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value;
+  }
+  return undefined;
+}
+
 function HeatMapRectangle({
   option,
   isActive,
@@ -475,7 +492,7 @@ function HeatMapCells({ cells, props }: { cells: ReadonlyArray<HeatMapCellItem>;
 
         return (
           <ZIndexLayer
-            key={`cell-${entry?.x}-${entry?.y}-${entry?.width}-${entry?.height}-${i}`}
+            key={`cell-${entry.originalDataIndex}`}
             zIndex={isActive ? DefaultZIndexes.activeBar : undefined}
           >
             <Layer
@@ -645,18 +662,24 @@ export function computeHeatMapCells({
     dimension: 'height',
   });
 
-  return displayedData.map((entry: unknown, index): HeatMapCellItem => {
-    const xValue = getValueByDataKey(entry, xAxisDataKey, xAxis.scale.domain()[index]);
-    const yValue = getValueByDataKey(entry, yAxisDataKey, yAxis.scale.domain()[index]);
-    const value = getValueByDataKey(entry, heatMapSettings.dataKey);
+  return displayedData.reduce<Array<HeatMapCellItem>>((result, entry: unknown, index) => {
+    if (typeof entry !== 'object' || entry == null) {
+      return result;
+    }
+
+    const xValue = getValueByDataKey<unknown, unknown>(entry, xAxisDataKey, xAxis.scale.domain()[index]);
+    const yValue = getValueByDataKey<unknown, unknown>(entry, yAxisDataKey, yAxis.scale.domain()[index]);
+    const value = getValueByDataKey<unknown, unknown>(entry, heatMapSettings.dataKey);
     const cx = getHeatMapCoordinate({ axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, value: xValue });
     const cy = getHeatMapCoordinate({ axis: yAxis, ticks: yAxisTicks, bandSize: yBandSize, value: yValue });
-
+    const tooltipXValue = toTooltipEntryValue(xValue);
+    const tooltipYValue = toTooltipEntryValue(yValue);
+    const tooltipValue = toTooltipEntryValue(value);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
         name: xAxis.name || (xAxis.dataKey == null ? undefined : String(xAxis.dataKey)),
         unit: xAxis.unit || '',
-        value: xValue as any,
+        value: tooltipXValue,
         payload: entry,
         dataKey: xAxisDataKey,
         type: heatMapSettings.tooltipType,
@@ -665,7 +688,7 @@ export function computeHeatMapCells({
       {
         name: yAxis.name || (yAxis.dataKey == null ? undefined : String(yAxis.dataKey)),
         unit: yAxis.unit || '',
-        value: yValue as any,
+        value: tooltipYValue,
         payload: entry,
         dataKey: yAxisDataKey,
         type: heatMapSettings.tooltipType,
@@ -677,7 +700,7 @@ export function computeHeatMapCells({
       tooltipPayload.push({
         name: getTooltipNameProp(heatMapSettings.name, heatMapSettings.dataKey),
         unit: heatMapSettings.unit == null ? '' : String(heatMapSettings.unit),
-        value: value as any,
+        value: tooltipValue,
         payload: entry,
         dataKey: heatMapSettings.dataKey,
         type: heatMapSettings.tooltipType,
@@ -685,22 +708,23 @@ export function computeHeatMapCells({
       });
     }
 
-    return {
-      // @ts-expect-error can't spread unknown
+    result.push({
       ...entry,
       x: cx == null ? undefined : cx - width / 2,
       y: cy == null ? undefined : cy - height / 2,
       width,
       height,
       value,
-      node: { x: xValue as any, y: yValue as any, value: value as any },
+      node: { x: toNodeCoordinate(xValue), y: toNodeCoordinate(yValue), value: tooltipValue },
       tooltipPayload,
       tooltipPosition: { x: cx ?? 0, y: cy ?? 0 },
       payload: entry,
       originalDataIndex: index,
       ...(cells && cells[index] && cells[index].props),
-    };
-  });
+    });
+
+    return result;
+  }, []);
 }
 
 function HeatMapImpl(props: WithIdRequired<Props>) {
@@ -798,10 +822,12 @@ function HeatMapFn(outsideProps: Props) {
  * @provides CellReader
  * @consumes CartesianChartContext
  */
-export const HeatMap = React.memo(HeatMapFn, propsAreEqual) as {
-  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): ReactElement;
-  (props: Props<any, any>): ReactElement;
+type HeatMapComponent = {
+  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): React.ReactNode;
+  (props: Props<any, any>): React.ReactNode;
 };
+
+export const HeatMap: HeatMapComponent = React.memo(HeatMapFn, propsAreEqual);
 
 // @ts-expect-error we need to set the displayName for debugging purposes
 HeatMap.displayName = 'HeatMap';
