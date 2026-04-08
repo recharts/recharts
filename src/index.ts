@@ -135,7 +135,7 @@ export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
 export type { SunburstData, SunburstChartProps } from './chart/SunburstChart';
 export { WordCloud } from './chart/WordCloud';
-export type { WordCloudProps, WordCloudWord, WordCloudDataPoint } from './chart/WordCloud';
+export type { WordCloudProps, WordCloudWord, WordCloudDataPoint, WordCloudPropAccessor } from './chart/WordCloud';
 export type { WordCloudSpiralType } from './util/wordCloud/computeWordCloudLayout';
 
 export { Funnel } from './cartesian/Funnel';

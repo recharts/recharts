@@ -37,7 +37,7 @@ export interface WordCloudDataPoint {
 }
 
 type WordCloudDataAccessor<DataPointType> = string | number | ((entry: DataPointType) => unknown);
-type WordCloudPropAccessor<DataPointType, TValue> = TValue | ((entry: DataPointType, index: number) => TValue);
+export type WordCloudPropAccessor<DataPointType, TValue> = TValue | ((entry: DataPointType, index: number) => TValue);
 
 export interface WordCloudWord<DataPointType extends WordCloudDataPoint = WordCloudDataPoint> {
   payload: DataPointType;
