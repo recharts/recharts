@@ -131,12 +131,12 @@ function getFill<DataPointType extends WordCloudDataPoint>(
     return fillFromProps(entry, index) ?? COLOR_PANEL[index % COLOR_PANEL.length] ?? '#000';
   }
 
-  if (hasFill(entry) && typeof entry.fill === 'string') {
-    return entry.fill;
-  }
-
   if (fillFromProps != null) {
     return fillFromProps;
+  }
+
+  if (hasFill(entry) && typeof entry.fill === 'string') {
+    return entry.fill;
   }
 
   return COLOR_PANEL[index % COLOR_PANEL.length] ?? '#000';

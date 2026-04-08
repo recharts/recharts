@@ -174,6 +174,24 @@ describe('<WordCloud />', () => {
     expect(positionsWithSeed90).not.toEqual(positionsWithSeed0);
   });
 
+  it('lets a component-level fill override per-entry payload colors', () => {
+    mockGetBoundingClientRect({ width: 12, height: 8 });
+
+    const data = [
+      { label: 'Alpha', amount: 40, fill: '#ff0000' },
+      { label: 'Beta', amount: 30, fill: '#0000ff' },
+    ];
+
+    const { container } = rechartsTestRender(
+      <WordCloud width={500} height={300} data={data} dataKey="amount" nameKey="label" fill="#2b2d42" />,
+    );
+
+    const words = container.querySelectorAll('.recharts-word-cloud-text');
+    expect(words).toHaveLength(2);
+    expect(words[0]).toHaveAttribute('fill', '#2b2d42');
+    expect(words[1]).toHaveAttribute('fill', '#2b2d42');
+  });
+
   it('provides chart dimensions and a viewBox to descendants', () => {
     mockGetBoundingClientRect({ width: 12, height: 8 });
 

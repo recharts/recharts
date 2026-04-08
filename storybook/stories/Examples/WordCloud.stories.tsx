@@ -1,6 +1,7 @@
 import React from 'react';
-import { Args } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ResponsiveContainer, Tooltip, WordCloud } from '../../../src';
+import type { WordCloudProps } from '../../../src';
 import { RechartsHookInspector } from '../../storybook-addon-recharts';
 
 type WordCloudDatum = {
@@ -247,12 +248,26 @@ function getGreetingsWeight(score: number): number {
   return 400;
 }
 
-export default {
-  component: WordCloud,
-  docs: {
-    autodocs: false,
-  },
+type WordCloudStoryProps = WordCloudProps<WordCloudDatum>;
+type Story = StoryObj<WordCloudStoryProps>;
+
+function renderWordCloud(args: WordCloudStoryProps, height: number) {
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <WordCloud {...args}>
+        <Tooltip />
+        <RechartsHookInspector />
+      </WordCloud>
+    </ResponsiveContainer>
+  );
+}
+
+const meta = {
+  component: WordCloud as React.ComponentType<WordCloudStoryProps>,
   parameters: {
+    docs: {
+      autodocs: false,
+    },
     controls: {
       include: [
         'dataKey',
@@ -271,19 +286,12 @@ export default {
       ],
     },
   },
-};
+} satisfies Meta<WordCloudStoryProps>;
 
-export const EngineeringTopics = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height={500}>
-        <WordCloud {...(args as React.ComponentProps<typeof WordCloud>)}>
-          <Tooltip />
-          <RechartsHookInspector />
-        </WordCloud>
-      </ResponsiveContainer>
-    );
-  },
+export default meta;
+
+export const EngineeringTopics: Story = {
+  render: args => renderWordCloud(args, 500),
   args: {
     data: engineeringTopics,
     dataKey: 'score',
@@ -295,19 +303,10 @@ export const EngineeringTopics = {
   },
 };
 
-export const SingleColor = {
-  render: (args: Args) => {
-    return (
-      <ResponsiveContainer width="100%" height={420}>
-        <WordCloud {...(args as React.ComponentProps<typeof WordCloud>)}>
-          <Tooltip />
-          <RechartsHookInspector />
-        </WordCloud>
-      </ResponsiveContainer>
-    );
-  },
+export const SingleColor: Story = {
+  render: args => renderWordCloud(args, 420),
   args: {
-    data: engineeringTopicsMonochrome,
+    data: engineeringTopics,
     dataKey: 'score',
     nameKey: 'term',
     fill: '#2b2d42',
@@ -320,7 +319,7 @@ export const SingleColor = {
   },
 };
 
-export const AccessorStyles = {
+export const AccessorStyles: Story = {
   render: () => {
     return (
       <ResponsiveContainer width="100%" height={500}>
@@ -346,7 +345,7 @@ export const AccessorStyles = {
   },
 };
 
-export const GreetingsCloud = {
+export const GreetingsCloud: Story = {
   render: () => {
     return (
       <ResponsiveContainer width="100%" height={560}>
@@ -371,7 +370,7 @@ export const GreetingsCloud = {
   },
 };
 
-export const SpiralComparison = {
+export const SpiralComparison: Story = {
   render: () => {
     const comparisonArgs = {
       data: engineeringTopicsMonochrome,
@@ -384,7 +383,7 @@ export const SpiralComparison = {
       rotationAngles: [0],
       padding: 4,
       seed: 18,
-    };
+    } satisfies WordCloudStoryProps;
 
     return (
       <div
