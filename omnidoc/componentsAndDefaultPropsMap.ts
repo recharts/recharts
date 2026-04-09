@@ -50,6 +50,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   BarChart: { defaultProps: defaultCartesianChartProps },
   BarStack: { defaultProps: defaultBarStackProps },
   Brush: { defaultProps: defaultBrushProps },
+  CalendarChart: { defaultProps: defaultCartesianChartProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   Curve: { defaultProps: defaultCurveProps },

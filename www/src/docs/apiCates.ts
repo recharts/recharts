@@ -4,6 +4,7 @@ export const apiCates = [
     items: [
       'AreaChart',
       'BarChart',
+      'CalendarChart',
       'LineChart',
       'ComposedChart',
       'PieChart',

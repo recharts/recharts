@@ -484,13 +484,13 @@ function prepareCalendarData<DataPointType>({
   const rangeStart =
     parseDateValue(startDate) ??
     (firstSourceDate != null
-      ? new Date(firstSourceDate.getFullYear(), 0, 1)
-      : new Date(new Date().getFullYear(), 0, 1));
+      ? new Date(Date.UTC(firstSourceDate.getUTCFullYear(), 0, 1))
+      : new Date(Date.UTC(new Date().getUTCFullYear(), 0, 1)));
   const rangeEnd =
     parseDateValue(endDate) ??
     (lastSourceDate != null
-      ? new Date(lastSourceDate.getFullYear(), 11, 31)
-      : new Date(rangeStart.getFullYear(), 11, 31));
+      ? new Date(Date.UTC(lastSourceDate.getUTCFullYear(), 11, 31))
+      : new Date(Date.UTC(rangeStart.getUTCFullYear(), 11, 31)));
 
   const canonicalStart = startOfWeekMonday(rangeStart);
   const canonicalEnd = endOfWeekMonday(rangeEnd);
@@ -539,7 +539,7 @@ function prepareCalendarData<DataPointType>({
     const entry = dataByDate.get(key);
     const isEmpty = entry == null;
     const weekIndex = getWeekIndex(day);
-    const weekKey = String(weekIndex);
+    const weekKey = `${day.getUTCFullYear()}-${String(weekIndex).padStart(2, '0')}`;
     const monthKey = `${day.getUTCFullYear()}-${String(day.getUTCMonth() + 1).padStart(2, '0')}`;
 
     if (weekKeys[weekKeys.length - 1] !== weekKey) {

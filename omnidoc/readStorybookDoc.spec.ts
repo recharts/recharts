@@ -14,6 +14,7 @@ describe('readStorybookDoc', () => {
         "Bar",
         "BarChart",
         "Brush",
+        "CalendarChart",
         "CartesianAxis",
         "CartesianGrid",
         "Cell",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CalendarChart, ResponsiveContainer } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -29,6 +29,7 @@ describe('<CalendarChart />', () => {
         />
       </ResponsiveContainer>,
     );
+    vi.runOnlyPendingTimers();
 
     expect(container.querySelectorAll('.recharts-heatmap-rectangle .recharts-rectangle')).toHaveLength(7);
     expect(container.querySelectorAll('.recharts-calendar-month-label')).not.toHaveLength(0);
@@ -77,6 +78,7 @@ describe('<CalendarChart />', () => {
         />
       </ResponsiveContainer>,
     );
+    vi.runOnlyPendingTimers();
 
     expect(container.querySelectorAll('.recharts-heatmap-rectangle .recharts-rectangle')).toHaveLength(5);
     expect(container).toHaveTextContent('M');
@@ -100,6 +102,7 @@ describe('<CalendarChart />', () => {
         />
       </ResponsiveContainer>,
     );
+    vi.runOnlyPendingTimers();
 
     expect(container).toHaveTextContent('Jan');
     expect(container).not.toHaveTextContent('Dec');
