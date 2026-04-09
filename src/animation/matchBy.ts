@@ -13,16 +13,39 @@ import { getValueByDataKey } from '../util/ChartUtils';
 export type AnimationMatchBy<T> = (item: T, index: number) => string | number | null;
 
 /**
+ * The union of all accepted `animationMatchBy` prop values:
+ * a built-in sentinel string, or a custom matching function.
+ */
+export type AnimationMatchByProp<T> = typeof matchByIndex | typeof matchAppend | AnimationMatchBy<T>;
+
+/**
  * Match animation items by their array index (the default behavior).
  *
  * Previous items are paired with next items based on their position
  * in the array, with proportional stretching when array lengths differ.
+ * When going from 5 to 15 items, each old point "covers" approximately 3 new points;
+ * when shrinking, some old points are skipped.
  *
  * @example
  * import { matchByIndex } from 'recharts';
  * <Line animationMatchBy={matchByIndex} />
  */
 export const matchByIndex = 'index' as const;
+
+/**
+ * Match animation items sequentially: previous item 0 pairs with next item 0,
+ * previous item 1 pairs with next item 1, and so on. When the new array is longer,
+ * the extra items have no match and animate in from their default position.
+ * When the new array is shorter, the extra old items are simply dropped.
+ *
+ * This is useful when new data is appended at the end of the array and you want
+ * existing points to stay in place while new points animate in.
+ *
+ * @example
+ * import { matchAppend } from 'recharts';
+ * <Line animationMatchBy={matchAppend} />
+ */
+export const matchAppend = 'append' as const;
 
 /**
  * Create a matching function that pairs items by a data key from their payload.
@@ -51,17 +74,45 @@ export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): Anima
 }
 
 /**
+ * Align previous items to next items using the given matching strategy.
+ *
+ * Returns an array of the same length as `nextItems`, where `result[i]` is the
+ * previous item that corresponds to `nextItems[i]`, or `undefined` if there is
+ * no match. After alignment, interpolation functions can simply pair items by index.
+ *
+ * Strategies:
+ * - `matchByIndex` (default): proportional stretch — `prev[floor(i × prevLen/nextLen)]`
+ * - `matchAppend`: sequential 1:1 — `prev[i]` (undefined when `i ≥ prevLen`)
+ * - custom function: key-based lookup
+ *
+ * @internal
+ */
+export function alignItems<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchByProp<T>,
+): ReadonlyArray<T> {
+  if (matchBy === matchByIndex) {
+    const factor = prevItems.length / nextItems.length;
+    // Max index is floor((nextLen-1) * prevLen/nextLen) which is always < prevLen,
+    // but TypeScript doesn't know that, so we cast.
+    return nextItems.map((_, i) => prevItems[Math.floor(i * factor)] as T);
+  }
+  if (matchBy === matchAppend) {
+    return nextItems.map((_, i) => prevItems[i] as T);
+  }
+  return alignByKey(prevItems, nextItems, matchBy);
+}
+
+/**
  * Align previous items to match next items by key.
  *
  * Returns an array of the same length as nextItems, where result[i] is
  * the previous item whose key matches nextItems[i], or undefined if no match.
  *
- * This allows index-based interpolation functions to work correctly with
- * key-based matching: after alignment, prevItems[i] always corresponds to nextItems[i].
- *
  * @internal
  */
-export function alignPreviousItems<T>(
+function alignByKey<T>(
   prevItems: ReadonlyArray<T>,
   nextItems: ReadonlyArray<T>,
   matchBy: AnimationMatchBy<T>,

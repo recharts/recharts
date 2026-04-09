@@ -48,7 +48,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { alignItems, AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
@@ -84,7 +84,7 @@ interface InternalAreaProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<AreaPointItem>;
+  animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -182,8 +182,9 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<AreaPointItem>;
+  animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
   /**
    * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
    *
@@ -629,7 +630,7 @@ function ClipRect({
   return <HorizontalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
 }
 
-function defaultAreaAnimateItems(prevPointsDiffFactor: number): AnimationInterpolateFn<AreaPointItem> {
+function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
   return (prevItems, nextItems, t) => {
     if (t === 1) return nextItems;
     if (prevItems == null) {
@@ -637,9 +638,8 @@ function defaultAreaAnimateItems(prevPointsDiffFactor: number): AnimationInterpo
       return nextItems;
     }
     return nextItems.map((entry, index) => {
-      const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-      if (prevItems[prevPointIndex]) {
-        const prev = prevItems[prevPointIndex];
+      const prev = prevItems[index];
+      if (prev) {
         return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
       }
       return entry;
@@ -650,7 +650,6 @@ function defaultAreaAnimateItems(prevPointsDiffFactor: number): AnimationInterpo
 function interpolateBaseLine(
   baseLine: BaseLineType | undefined,
   prevBaseLine: BaseLineType | undefined,
-  prevPointsDiffFactor: number,
   t: number,
 ): BaseLineType {
   if (isNumber(baseLine)) {
@@ -660,9 +659,8 @@ function interpolateBaseLine(
     return interpolate(prevBaseLine, 0, t);
   }
   return baseLine.map((entry, index) => {
-    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-    if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
-      const prev = prevBaseLine[prevPointIndex];
+    if (Array.isArray(prevBaseLine) && prevBaseLine[index]) {
+      const prev = prevBaseLine[index];
       return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
     }
     return entry;
@@ -696,8 +694,14 @@ function AreaWithAnimation({
   }
 
   const prevBaseLine = previousBaselineRef.current;
-  const prevPointsDiffFactor: number = previousPointsRef.current ? previousPointsRef.current.length / points.length : 1;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems(prevPointsDiffFactor);
+  const matchStrategy = props.animationMatchBy ?? matchByIndex;
+  const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
+
+  // Align baseline using the same matching strategy as points
+  const alignedPrevBaseLine =
+    prevBaseLine && Array.isArray(baseLine) && Array.isArray(prevBaseLine)
+      ? alignItems(prevBaseLine, baseLine, matchStrategy)
+      : prevBaseLine;
 
   return (
     <AnimatedItems
@@ -712,15 +716,14 @@ function AreaWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
-      animationMatchBy={props.animationMatchBy}
+      animationMatchBy={matchStrategy}
     >
       {(stepPoints, t) => {
         const isFirstRender = prevBaseLine === undefined;
 
         if (!isFirstRender) {
           // Data update: interpolate baseline
-          const stepBaseLine =
-            t === 1 ? baseLine : interpolateBaseLine(baseLine, prevBaseLine, prevPointsDiffFactor, t);
+          const stepBaseLine = t === 1 ? baseLine : interpolateBaseLine(baseLine, alignedPrevBaseLine, t);
           if (t > 0) {
             // eslint-disable-next-line no-param-reassign
             previousBaselineRef.current = stepBaseLine;

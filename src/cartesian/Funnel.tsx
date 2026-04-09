@@ -46,7 +46,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -117,8 +117,9 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<FunnelTrapezoidItem>;
+  animationMatchBy?: AnimationMatchByProp<FunnelTrapezoidItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.

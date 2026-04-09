@@ -5,6 +5,8 @@ import AnimationsExample, { AnimationsControls } from './AnimationsExample.tsx';
 import AnimationsExampleSource from './AnimationsExample.tsx?raw';
 import MatchingExample, { MatchingControls } from './MatchingExample.tsx';
 import MatchingExampleSource from './MatchingExample.tsx?raw';
+import MatchingStrategiesExample, { MatchingStrategiesControls } from './MatchingStrategiesExample.tsx';
+import MatchingStrategiesExampleSource from './MatchingStrategiesExample.tsx?raw';
 import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
 import CustomAnimationExampleSource from './CustomAnimationExample.tsx?raw';
 
@@ -219,7 +221,21 @@ export function AnimationsGuide() {
               <code>{`import { matchByIndex } from 'recharts'`}</code>
             </td>
             <td>
-              Match items by their array index. This is the default behavior — you don&apos;t need to set it explicitly.
+              Match items by their array index with proportional stretching. When the old and new arrays have different
+              lengths, old items are spread across all new positions. This is the default behavior.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>matchAppend</code>
+            </td>
+            <td>
+              <code>{`import { matchAppend } from 'recharts'`}</code>
+            </td>
+            <td>
+              Match items sequentially: old item 0 pairs with new item 0, old item 1 with new item 1, and so on. Extra
+              new items have no match and animate in from their default position. Useful when data is appended at the
+              end.
             </td>
           </tr>
           <tr>
@@ -237,7 +253,7 @@ export function AnimationsGuide() {
           </tr>
           <tr>
             <td>Custom function</td>
-            <td>—</td>
+            <td>-</td>
             <td>
               A function <code>(item, index) =&gt; key</code> that extracts a unique key from each item. Return a string
               or number to pair items, or <code>null</code> for items that should not be matched.
@@ -265,6 +281,29 @@ export function AnimationsGuide() {
         Controls={MatchingControls}
         sourceCode={MatchingExampleSource}
         stackBlitzTitle="Recharts Animation Matching Example"
+        defaultTool="controls"
+      />
+      <h3>Matching strategies: stretch vs. append</h3>
+      <p>
+        When the old and new data arrays have <strong>different lengths</strong>, the matching strategy decides how old
+        points map to new positions:
+      </p>
+      <ul>
+        <li>
+          <strong>matchByIndex</strong> (stretch) — proportionally maps old points across all new positions. Going from
+          5 to 15 items, each old point &quot;covers&quot; roughly 3 new points, creating a stretching effect.
+        </li>
+        <li>
+          <strong>matchAppend</strong> (sequential) — pairs old and new items 1:1 by index. Going from 5 to 15 items,
+          the first 5 match directly and the remaining 10 animate in as new elements.
+        </li>
+      </ul>
+      <p>Swap between the 5-item and 15-item datasets below to see the difference:</p>
+      <CodeEditorWithPreview
+        Component={MatchingStrategiesExample}
+        Controls={MatchingStrategiesControls}
+        sourceCode={MatchingStrategiesExampleSource}
+        stackBlitzTitle="Recharts Matching Strategies Example"
         defaultTool="controls"
       />
       <h3>Custom matching functions</h3>

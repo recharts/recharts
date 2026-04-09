@@ -61,7 +61,7 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { useViewBox } from '../context/chartLayoutContext';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -151,7 +151,7 @@ interface ScatterInternalProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<ScatterPointItem>;
+  animationMatchBy?: AnimationMatchByProp<ScatterPointItem>;
 
   needClip: boolean;
 
@@ -337,8 +337,9 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<ScatterPointItem>;
+  animationMatchBy?: AnimationMatchByProp<ScatterPointItem>;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.

@@ -52,7 +52,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
@@ -292,8 +292,9 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<RadialBarDataItem>;
+  animationMatchBy?: AnimationMatchByProp<RadialBarDataItem>;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;

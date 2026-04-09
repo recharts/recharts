@@ -38,7 +38,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { alignItems, AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -104,8 +104,9 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<RadarPoint>;
+  animationMatchBy?: AnimationMatchByProp<RadarPoint>;
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;
@@ -452,9 +453,9 @@ function StaticPolygon({
 }
 
 const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint> | undefined, prevPointsDiffFactor: number, t: number) =>
+  (prevPoints: ReadonlyArray<RadarPoint> | undefined, t: number) =>
   (entry: RadarPoint, index: number) => {
-    const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
+    const prev = prevPoints && prevPoints[index];
 
     if (prev) {
       return {
@@ -471,10 +472,10 @@ const interpolatePolarPoint =
     };
   };
 
-function defaultRadarAnimateItems(prevPointsDiffFactor: number): AnimationInterpolateFn<RadarPoint> {
+function defaultRadarAnimateItems(): AnimationInterpolateFn<RadarPoint> {
   return (prevItems, nextItems, t) => {
     if (t === 1) return nextItems;
-    return nextItems.map(interpolatePolarPoint(prevItems ?? undefined, prevPointsDiffFactor, t));
+    return nextItems.map(interpolatePolarPoint(prevItems ?? undefined, t));
   };
 }
 
@@ -498,12 +499,15 @@ function PolygonWithAnimation({
     onAnimationEnd,
   } = props;
   const prevBaseLinePoints = previousBaseLinePointsRef.current;
-  const prevPointsDiffFactor: number = previousPointsRef.current ? previousPointsRef.current.length / points.length : 1;
-  const prevBaseLinePointsDiffFactor: number = prevBaseLinePoints
-    ? prevBaseLinePoints.length / baseLinePoints.length
-    : 1;
+  const matchStrategy = props.animationMatchBy ?? matchByIndex;
 
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems(prevPointsDiffFactor);
+  // Align baseline using the same matching strategy as points
+  const alignedPrevBaseLinePoints =
+    prevBaseLinePoints && baseLinePoints
+      ? alignItems(prevBaseLinePoints, baseLinePoints, matchStrategy)
+      : prevBaseLinePoints;
+
+  const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems();
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     onAnimationStart,
@@ -524,13 +528,11 @@ function PolygonWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={matchStrategy}
       >
         {(stepData, t) => {
           const stepBaseLinePoints =
-            t === 1
-              ? baseLinePoints
-              : baseLinePoints?.map(interpolatePolarPoint(prevBaseLinePoints, prevBaseLinePointsDiffFactor, t));
+            t === 1 ? baseLinePoints : baseLinePoints?.map(interpolatePolarPoint(alignedPrevBaseLinePoints, t));
           if (t > 0) {
             // eslint-disable-next-line no-param-reassign
             previousBaseLinePointsRef.current = stepBaseLinePoints;

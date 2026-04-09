@@ -44,7 +44,7 @@ import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -81,7 +81,7 @@ interface InternalLineProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<LinePointItem>;
+  animationMatchBy?: AnimationMatchByProp<LinePointItem>;
 
   className?: string;
   connectNulls: boolean;
@@ -176,8 +176,9 @@ interface LineProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<LinePointItem>;
+  animationMatchBy?: AnimationMatchByProp<LinePointItem>;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -586,7 +587,6 @@ function defaultLineAnimateItems(
   animateNewValues: boolean,
   width: number,
   height: number,
-  prevPointsDiffFactor: number,
 ): AnimationInterpolateFn<LinePointItem> {
   return (prevItems, nextItems, t) => {
     if (t === 1) return nextItems;
@@ -595,9 +595,8 @@ function defaultLineAnimateItems(
       return nextItems;
     }
     return nextItems.map((entry, index) => {
-      const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-      if (prevItems[prevPointIndex]) {
-        const prev = prevItems[prevPointIndex];
+      const prev = prevItems[index];
+      if (prev) {
         return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
       }
       if (animateNewValues) {
@@ -649,10 +648,8 @@ function CurveWithAnimation({
   } = props;
 
   const totalLength = getTotalLength(pathRef.current);
-  const prevPointsDiffFactor: number = previousPointsRef.current ? previousPointsRef.current.length / points.length : 1;
   const animationInterpolateFn =
-    props.animationInterpolateFn ??
-    defaultLineAnimateItems(props.animateNewValues, width, height, prevPointsDiffFactor);
+    props.animationInterpolateFn ?? defaultLineAnimateItems(props.animateNewValues, width, height);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,

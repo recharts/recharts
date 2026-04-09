@@ -45,7 +45,7 @@ import {
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchBy, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -280,8 +280,9 @@ interface PieProps<DataPointType = any, DataValueType = any>
    *
    * @see matchByIndex
    * @see matchByDataKey
+   * @see matchAppend
    */
-  animationMatchBy?: typeof matchByIndex | AnimationMatchBy<PieSectorDataItem>;
+  animationMatchBy?: AnimationMatchByProp<PieSectorDataItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.
