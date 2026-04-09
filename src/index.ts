@@ -134,7 +134,7 @@ export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
 export type { SunburstData, SunburstChartProps } from './chart/SunburstChart';
-export { Venn, VennChart } from './chart/Venn';
+export { Venn } from './chart/Venn';
 export type { VennDataItem, VennProps } from './chart/Venn';
 
 export { Funnel } from './cartesian/Funnel';

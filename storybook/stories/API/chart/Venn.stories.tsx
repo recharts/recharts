@@ -2,6 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ResponsiveContainer, Tooltip, Venn } from '../../../../src';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { VennArgs } from '../arg-types/VennArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const threeSetData = [
   { sets: ['Search'], size: 18, label: 'Search' },
@@ -47,6 +49,7 @@ const fourSetData = [
 ];
 
 export default {
+  argTypes: VennArgs,
   component: Venn,
 };
 
@@ -63,28 +66,46 @@ export const API = {
   name: 'Three Sets',
   render: renderChart,
   args: {
+    ...getStoryArgsFromArgsTypesObject(VennArgs),
     data: threeSetData,
+    margin: { top: 8, right: 8, bottom: 8, left: 8 },
+    className: 'venn-api-three-sets',
+    style: { backgroundColor: '#f8fafc' },
   },
 };
 
 export const TwoSets = {
   render: renderChart,
   args: {
+    ...getStoryArgsFromArgsTypesObject(VennArgs),
     data: twoSetData,
+    fillOpacity: 0.4,
+    intersectionFillOpacity: 0.65,
+    className: 'venn-api-two-sets',
   },
 };
 
 export const DisjointAndSubsetEuler = {
   render: renderChart,
   args: {
+    ...getStoryArgsFromArgsTypesObject(VennArgs),
     data: disjointAndSubsetData,
+    stroke: '#f8fafc',
+    dataKey: 'size',
+    nameKey: 'label',
+    className: 'venn-api-euler',
   },
 };
 
 export const FourSetsApproximate = {
   render: renderChart,
   args: {
+    ...getStoryArgsFromArgsTypesObject(VennArgs),
     data: fourSetData,
+    responsive: true,
+    fillOpacity: 0.38,
+    intersectionFillOpacity: 0.6,
+    className: 'venn-api-four-sets',
   },
   parameters: {
     docs: {

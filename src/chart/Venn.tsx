@@ -66,8 +66,10 @@ type InternalVennProps = WithIdRequired<RequiresDefaultProps<VennProps, typeof d
 
 export interface VennProps extends EventThrottlingProps {
   /**
-   * Input data in venn.js format:
-   * each item identifies one set or intersection with `sets` and `size`.
+   * The source data. Each element should be an object.
+   * The properties of each object represent the values of different data dimensions.
+   *
+   * Use the `dataKey` prop to specify which properties to use.
    */
   data: ReadonlyArray<VennDataItem>;
   /**
@@ -91,7 +93,6 @@ export interface VennProps extends EventThrottlingProps {
    *
    * This is similar to ResponsiveContainer but without the need for an extra wrapper component.
    * The `responsive` prop also uses standard CSS sizing rules, instead of custom resolution logic (like ResponsiveContainer does).
-   * @default false
    */
   responsive?: boolean;
   className?: string;
@@ -100,17 +101,31 @@ export interface VennProps extends EventThrottlingProps {
   children?: ReactNode;
   margin?: Margin;
   /**
-   * Key used to read set sizes from each item.
+   * The data that you provide via the `data` prop is an array of objects.
+   * Each object can have multiple properties, each representing a different data dimension.
+   * Use the `dataKey` prop to specify which property (or dimension) to use for this component.
+   *
+   * Typically, you will want to have one dataKey on the X axis, and different dataKey on the Y axis,
+   * where they extract different values from the same data objects.
+   *
+   * Decides how to extract the value from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value.
    * @default size
    */
   dataKey?: DataKey<VennDataItem, number>;
   /**
-   * Key used to read labels from each item.
-   * If not provided, single-set entries default to the set identifier.
+   * Name represents each sector in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
    */
   nameKey?: DataKey<VennDataItem, string>;
   /**
-   * Fill color used when neither area item nor source set defines one.
+   * The background color used to fill the space between grid lines
    */
   fill?: string;
   stroke?: string;
@@ -1256,5 +1271,3 @@ export const Venn = (outsideProps: VennProps) => {
     </RechartsStoreProvider>
   );
 };
-
-export const VennChart = Venn;
