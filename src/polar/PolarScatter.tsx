@@ -316,6 +316,15 @@ function PolarScatterLabelListProvider({
   const chartViewBox = useViewBox();
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points.map((point): CartesianLabelListEntry => {
+      const payloadValue = getValueByDataKey(point.payload, 'value');
+      const labelValue =
+        point.node.radius != null && point.node.radius !== ''
+          ? point.node.radius
+          : payloadValue != null && payloadValue !== ''
+            ? (payloadValue as string | number)
+            : point.node.angle != null && point.node.angle !== ''
+              ? point.node.angle
+              : undefined;
       const viewBox: TrapezoidViewBox = {
         x: point.x ?? 0,
         y: point.y ?? 0,
@@ -326,7 +335,7 @@ function PolarScatterLabelListProvider({
       };
       return {
         ...viewBox,
-        value: undefined,
+        value: labelValue,
         payload: point.payload,
         viewBox,
         parentViewBox: chartViewBox,
@@ -385,7 +394,7 @@ function PolarScatterSymbols({
 
         return (
           <ZIndexLayer
-            key={`symbol-${entry.cx}-${entry.cy}-${entry.size}-${index}`}
+            key={`symbol-${id}-${index}`}
             zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
           >
             <Layer

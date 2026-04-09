@@ -153,7 +153,7 @@ export const selectPolarScatterPoints: (
     }
 
     let displayedData: ChartData | undefined;
-    if (polarScatterSettings.data != null && polarScatterSettings.data.length > 0) {
+    if (polarScatterSettings.data != null) {
       displayedData = polarScatterSettings.data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);
