@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { Customized, Tooltip, Venn } from '../../src';
 import { exampleVennData } from '../_data';
 import { useAppSelector } from '../../src/state/hooks';
-import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 import { assertNotNull } from '../helper/assertNotNull';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
@@ -46,8 +45,7 @@ describe('<Venn />', () => {
   });
 
   it('should expose tooltip payload on hover', () => {
-    const tooltipStateSpy =
-      vi.fn<[(state: { click: TooltipInteractionState; hover: TooltipInteractionState } | undefined) => void]>();
+    const tooltipStateSpy = vi.fn();
 
     const Comp = (): null => {
       tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
@@ -65,7 +63,7 @@ describe('<Venn />', () => {
     assertNotNull(firstArea);
 
     fireEvent.mouseEnter(firstArea);
-    expectLastCalledWith(tooltipStateSpy, {
+    expect(tooltipStateSpy).toHaveBeenLastCalledWith({
       click: {
         active: false,
         index: null,
