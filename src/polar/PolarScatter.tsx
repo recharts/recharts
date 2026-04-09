@@ -165,11 +165,22 @@ interface PolarScatterProps<DataPointType = any, DataValueType = any>
   legendType?: LegendType;
   /**
    * Hides the whole graphical element when true.
+   *
+   * Hiding an element is different from removing it from the chart:
+   * Hidden graphical elements are still visible in Legend,
+   * and can be included in axis domain calculations,
+   * depending on `includeHidden` props of your PolarAngleAxis/PolarRadiusAxis.
    * @defaultValue false
    */
   hide?: boolean;
   /**
-   * Renders one label for each data point.
+   * Renders one label for each data point. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom label element;
+   * - `function`: a render function of custom label.
+   *
    * @defaultValue false
    */
   label?: ImplicitLabelListType;
@@ -195,7 +206,10 @@ interface PolarScatterProps<DataPointType = any, DataValueType = any>
    */
   animationEasing?: EasingInput;
   /**
-   * Z-Index of this component and its children.
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
    *
    * @since 3.9
    * @defaultValue 600
