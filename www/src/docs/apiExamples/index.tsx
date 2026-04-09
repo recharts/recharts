@@ -48,6 +48,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   LineChart: lineChartApiExamples,
   ComposedChart: composedChartApiExamples,
   PieChart: pieChartApiExamples,
+  PolarScatter: polarScatterChartApiExamples,
   PolarScatterChart: polarScatterChartApiExamples,
   RadarChart: radarChartApiExamples,
   ScatterChart: scatterChartApiExamples,
