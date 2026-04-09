@@ -38,3 +38,5 @@ export const UseOffset = {
     margin: { top: 30, right: 170, bottom: 30, left: 120 },
   },
 };
+
+export const API = UseOffset;
