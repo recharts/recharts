@@ -32,6 +32,8 @@ import { defaultRadialBarChartProps } from '../src/chart/RadialBarChart';
 import { sankeyDefaultProps } from '../src/chart/Sankey';
 import { defaultBarStackProps } from '../src/cartesian/BarStack';
 import { defaultPolarGridProps } from '../src/polar/PolarGrid';
+import { defaultPolarScatterProps } from '../src/polar/PolarScatter';
+import { defaultPolarScatterChartProps } from '../src/chart/PolarScatterChart';
 import { defaultResponsiveContainerProps } from '../src/component/responsiveContainerUtils';
 import { defaultCurveProps } from '../src/shape/Curve';
 import { defaultSunburstChartProps } from '../src/chart/SunburstChart';
@@ -67,6 +69,8 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
   PolarGrid: { defaultProps: defaultPolarGridProps },
   PolarRadiusAxis: { defaultProps: defaultPolarRadiusAxisProps },
+  PolarScatter: { defaultProps: defaultPolarScatterProps },
+  PolarScatterChart: { defaultProps: defaultPolarScatterChartProps },
   Radar: { defaultProps: defaultRadarProps },
   RadarChart: { defaultProps: defaultRadarChartProps },
   RadialBar: { defaultProps: defaultRadialBarProps },
