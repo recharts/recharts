@@ -132,6 +132,8 @@ export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
 export { ScatterChart } from './chart/ScatterChart';
 export { HeatMapChart } from './chart/HeatMapChart';
+export { CalendarChart } from './chart/CalendarChart';
+export type { CalendarChartProps, CalendarChartDataPoint, CalendarChartCell } from './chart/CalendarChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';

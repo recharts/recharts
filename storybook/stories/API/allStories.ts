@@ -19,6 +19,7 @@ export { default as BarChartStory } from './chart/BarChart.stories';
 export { default as ComposedChartStory } from './chart/ComposedChart.stories';
 export { default as FunnelChartStory } from './chart/FunnelChart.stories';
 export { default as HeatMapChartStory } from './chart/HeatMapChart.stories';
+export { default as CalendarChartStory } from './chart/CalendarChart.stories';
 export { default as LineChartStory } from './chart/LineChart.stories';
 export { default as PieChartStory } from './chart/PieChart.stories';
 export { default as RadarChartStory } from './chart/RadarChart.stories';
