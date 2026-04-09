@@ -198,6 +198,12 @@ export const exampleSunburstData: SunburstData = {
   ],
 };
 
+export const exampleVennData = [
+  { sets: ['A'], size: 12, label: 'A' },
+  { sets: ['B'], size: 12, label: 'B' },
+  { sets: ['A', 'B'], size: 2, label: 'A∩B' },
+];
+
 export const exampleRadarData = [
   { name: 'iPhone 3GS', value: 420, half: 210 },
   { name: 'iPhone 4', value: 460, half: 230 },
