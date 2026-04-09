@@ -139,6 +139,7 @@ export type {
   CirclePackingChartProps,
   CirclePackingContentType,
   CirclePackingDataType,
+  CirclePackingLayoutType,
   CirclePackingNode,
 } from './chart/CirclePackingChart';
 

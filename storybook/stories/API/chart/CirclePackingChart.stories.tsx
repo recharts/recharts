@@ -153,17 +153,23 @@ export default {
 
 const TooltipCirclePackingChart = (props: Record<string, unknown>) => {
   const [activeNode, setActiveNode] = useState<CirclePackingNode | null>(null);
+  const { onMouseEnter, onMouseLeave, ...restProps } = props as {
+    onMouseEnter?: (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => void;
+    onMouseLeave?: (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => void;
+  };
 
   return (
     <div style={{ position: 'relative', width: WIDTH, height: HEIGHT }}>
       <CirclePackingChart
-        {...props}
+        {...restProps}
         width={WIDTH}
         height={HEIGHT}
-        onMouseEnter={node => {
+        onMouseEnter={(node, e) => {
+          onMouseEnter?.(node, e);
           setActiveNode(node);
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(node, e) => {
+          onMouseLeave?.(node, e);
           setActiveNode(null);
         }}
       />

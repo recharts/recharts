@@ -1,15 +1,48 @@
 import * as React from 'react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
 
 import { Layer } from '../container/Layer';
 import { Surface } from '../container/Surface';
+import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
+import { RechartsWrapper } from './RechartsWrapper';
+import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
+import {
+  TooltipIndex,
+  TooltipPayloadConfiguration,
+  setActiveClickItemIndex,
+  setActiveMouseOverItemIndex,
+  mouseLeaveItem,
+} from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { ChartOptions, arrayTooltipSearcher } from '../state/optionsSlice';
+import { useAppDispatch } from '../state/hooks';
+import { ReportEventSettings } from '../state/ReportEventSettings';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { DataConsumer, DataKey, EventThrottlingProps, Percent } from '../util/types';
+import { Coordinate, DataConsumer, DataKey, EventThrottlingProps, Margin, Percent } from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { WithIdRequired } from '../util/useUniqueId';
+import { initialEventSettingsState } from '../state/eventSettingsSlice';
 
 const EPSILON = 1e-6;
+
+const defaultCirclePackingMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
+const options: ChartOptions = {
+  chartName: 'CirclePackingChart',
+  defaultTooltipEventType: 'item',
+  validateTooltipEventTypes: ['item'],
+  tooltipPayloadSearcher: arrayTooltipSearcher,
+  eventEmitter: undefined,
+};
 
 export interface CirclePackingDataType {
   children?: ReadonlyArray<CirclePackingDataType>;
@@ -28,6 +61,7 @@ export interface CirclePackingNode {
   y: number;
   isLeaf: boolean;
   isEnclosingCircle?: boolean;
+  tooltipIndex: TooltipIndex;
 }
 
 export type CirclePackingContentType = ReactNode | ((props: CirclePackingNode) => React.ReactElement);
@@ -35,8 +69,28 @@ export type CirclePackingContentType = ReactNode | ((props: CirclePackingNode) =
 export type CirclePackingLayoutType = 'hierarchy' | 'siblings';
 
 export interface CirclePackingChartProps extends DataConsumer<CirclePackingDataType, unknown>, EventThrottlingProps {
+  /**
+   * The width of chart container.
+   * Can be a number or a percent string like "100%".
+   */
   width?: number | Percent;
+
+  /**
+   * The height of chart container.
+   * Can be a number or a percent string like "100%".
+   */
   height?: number | Percent;
+
+  /**
+   * If true, then it will listen to container size changes and adapt the SVG chart accordingly.
+   * @default false
+   */
+  responsive?: boolean;
+
+  /**
+   * The source data. Each element should be an object.
+   * Use nested `children` arrays to render hierarchical layout.
+   */
   data?: ReadonlyArray<CirclePackingDataType>;
   className?: string;
   style?: React.CSSProperties;
@@ -45,14 +99,58 @@ export interface CirclePackingChartProps extends DataConsumer<CirclePackingDataT
   colorPanel?: ReadonlyArray<string>;
   padding?: number;
   content?: CirclePackingContentType;
+
+  /**
+   * Decides how to extract value from each datum.
+   * @default 'value'
+   */
   dataKey?: DataKey<CirclePackingDataType, unknown>;
+
+  /**
+   * Decides how to extract label text for each datum.
+   * @default 'name'
+   */
   nameKey?: DataKey<CirclePackingDataType, unknown>;
+
+  /**
+   * Optional custom radius key for leaf nodes.
+   * If omitted, leaf radius is derived from `dataKey` value.
+   */
   radiusKey?: DataKey<CirclePackingDataType, unknown>;
+
+  /**
+   * If true, nodes are sorted descending by value before layout.
+   * @default true
+   */
   sort?: boolean;
+
+  /**
+   * Layout mode.
+   * - 'hierarchy': keeps the nested hierarchy from `children`.
+   * - 'siblings': treats input data as one sibling set.
+   * @default 'hierarchy'
+   */
   layout?: CirclePackingLayoutType;
+
+  /**
+   * If true in siblings layout, renders an additional enclosing circle.
+   * @default false
+   */
   includeEnclosingCircle?: boolean;
+
+  /**
+   * If true, the packed root node is rendered.
+   * @default true
+   */
   showRoot?: boolean;
+
   children?: React.ReactNode;
+
+  /**
+   * The unique id of this graphical item.
+   */
+  id?: string;
+
   onMouseEnter?: (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => void;
   onMouseLeave?: (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => void;
   onClick?: (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => void;
@@ -404,7 +502,13 @@ const buildHierarchy = ({
   };
 };
 
-const toPublicNode = (node: InternalNode, x: number, y: number, r: number): CirclePackingNode => {
+const toPublicNode = (
+  node: InternalNode,
+  x: number,
+  y: number,
+  r: number,
+  tooltipIndex: TooltipIndex,
+): CirclePackingNode => {
   return {
     payload: node.payload,
     children: null,
@@ -416,6 +520,7 @@ const toPublicNode = (node: InternalNode, x: number, y: number, r: number): Circ
     x,
     y,
     isLeaf: node.isLeaf,
+    tooltipIndex,
   };
 };
 
@@ -458,9 +563,48 @@ export const defaultCirclePackingChartProps = {
   fill: '#8884d8',
   stroke: '#fff',
   colorPanel: COLOR_PANEL,
+  responsive: false,
+  ...initialEventSettingsState,
 } as const satisfies Partial<CirclePackingChartProps>;
 
-type InternalProps = RequiresDefaultProps<CirclePackingChartProps, typeof defaultCirclePackingChartProps>;
+type InternalProps = WithIdRequired<
+  RequiresDefaultProps<CirclePackingChartProps, typeof defaultCirclePackingChartProps>
+>;
+
+const SetCirclePackingTooltipEntrySettings = React.memo(
+  ({
+    dataKey,
+    nameKey,
+    fill,
+    stroke,
+    data,
+    positions,
+    id,
+  }: Pick<InternalProps, 'dataKey' | 'nameKey' | 'fill' | 'stroke' | 'id'> & {
+    data: ReadonlyArray<unknown>;
+    positions: Map<string, Coordinate>;
+  }) => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = {
+      dataDefinedOnItem: data,
+      getPosition: index => positions.get(index),
+      settings: {
+        stroke,
+        strokeWidth: undefined,
+        fill,
+        dataKey,
+        name: nameKey == null && typeof dataKey !== 'function' ? dataKey : undefined,
+        nameKey,
+        hide: false,
+        type: undefined,
+        color: fill,
+        unit: '',
+        graphicalItemId: id,
+      },
+    };
+
+    return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
+  },
+);
 
 const renderNodeShape = ({
   node,
@@ -499,6 +643,8 @@ const renderNodeShape = ({
     computedFill = colorPanel[node.depth % colorPanel.length] ?? fill;
   }
 
+  const ariaLabel = node.name ? `${node.name}: ${node.value}` : `${node.value}`;
+
   return (
     <circle
       className="recharts-circle-packing-node"
@@ -507,6 +653,7 @@ const renderNodeShape = ({
       r={node.r}
       fill={computedFill}
       stroke={stroke}
+      aria-label={ariaLabel}
       onClick={e => onClick?.(node, e)}
       onMouseEnter={e => onMouseEnter?.(node, e)}
       onMouseLeave={e => onMouseLeave?.(node, e)}
@@ -514,94 +661,174 @@ const renderNodeShape = ({
   );
 };
 
-/**
- * Circle packing chart for hierarchical and sibling circle layouts.
- */
-export const CirclePackingChart = (outsideProps: CirclePackingChartProps) => {
-  const props = resolveDefaultProps(outsideProps, defaultCirclePackingChartProps);
-  const {
-    width,
-    height,
-    className,
-    style,
-    data,
-    dataKey,
-    nameKey,
-    radiusKey,
-    sort,
-    layout,
-    padding,
-    showRoot,
-    includeEnclosingCircle,
-    content,
-    fill,
-    stroke,
-    colorPanel,
-    children,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-  } = props as InternalProps;
+const CirclePackingChartImpl = ({
+  className,
+  style,
+  data,
+  dataKey,
+  nameKey,
+  radiusKey,
+  sort,
+  layout,
+  padding,
+  showRoot,
+  includeEnclosingCircle,
+  content,
+  fill,
+  stroke,
+  colorPanel,
+  children,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  id,
+}: InternalProps) => {
+  const dispatch = useAppDispatch();
+  const width = useChartWidth();
+  const height = useChartHeight();
+  const numericWidth = typeof width === 'number' ? width : 0;
+  const numericHeight = typeof height === 'number' ? height : 0;
 
-  if (typeof width !== 'number' || typeof height !== 'number' || width <= 0 || height <= 0) {
+  const root = useMemo(
+    () =>
+      buildHierarchy({
+        data,
+        dataKey,
+        nameKey,
+        radiusKey,
+        sort,
+        nodeGap: Math.max(padding, 0),
+        layout,
+      }),
+    [data, dataKey, nameKey, radiusKey, sort, padding, layout],
+  );
+
+  const cx = numericWidth / 2;
+  const cy = numericHeight / 2;
+
+  const positionedNodes = useMemo(() => {
+    if (!root.children || root.children.length === 0 || root.r <= 0 || numericWidth <= 0 || numericHeight <= 0) {
+      return [];
+    }
+
+    const scale = Math.min(numericWidth, numericHeight) / (2 * root.r);
+
+    const flattenedInternalNodes: Array<InternalNode> = [];
+    flattenNodes(root, 0, 0, showRoot, flattenedInternalNodes);
+
+    return flattenedInternalNodes.map((node, index) => {
+      return toPublicNode(node, node.x * scale + cx, node.y * scale + cy, node.r * scale, `${index}`);
+    });
+  }, [root, showRoot, numericWidth, numericHeight, cx, cy]);
+
+  const finalNodes: ReadonlyArray<CirclePackingNode> = useMemo(() => {
+    if (!includeEnclosingCircle || root.r <= 0) {
+      return positionedNodes;
+    }
+
+    return [
+      {
+        payload: {},
+        children: null,
+        depth: 0,
+        index: -1,
+        name: 'enclosing-circle',
+        value: root.value,
+        isLeaf: false,
+        isEnclosingCircle: true,
+        x: cx,
+        y: cy,
+        r: Math.min(numericWidth, numericHeight) / 2,
+        tooltipIndex: `${positionedNodes.length}`,
+      },
+      ...positionedNodes,
+    ];
+  }, [includeEnclosingCircle, root.r, root.value, positionedNodes, cx, cy, numericWidth, numericHeight]);
+
+  const tooltipNodes = useMemo(
+    () => finalNodes.filter(node => !node.isEnclosingCircle && node.depth > 0),
+    [finalNodes],
+  );
+
+  const tooltipData = useMemo(() => {
+    const dataByTooltipIndex: Array<Record<string, unknown>> = [];
+    tooltipNodes.forEach(node => {
+      const numericTooltipIndex = Number.parseInt(String(node.tooltipIndex), 10);
+      if (!Number.isFinite(numericTooltipIndex) || numericTooltipIndex < 0) {
+        return;
+      }
+      dataByTooltipIndex[numericTooltipIndex] = {
+        ...node.payload,
+        name: node.name,
+        value: node.value,
+        r: node.r,
+        x: node.x,
+        y: node.y,
+        depth: node.depth,
+      };
+    });
+    return dataByTooltipIndex;
+  }, [tooltipNodes]);
+
+  const positions = useMemo(() => {
+    return new Map<string, Coordinate>(tooltipNodes.map(node => [String(node.tooltipIndex), { x: node.x, y: node.y }]));
+  }, [tooltipNodes]);
+
+  const handleMouseEnter = (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => {
+    onMouseEnter?.(node, e);
+
+    if (node.isEnclosingCircle || node.depth === 0 || node.tooltipIndex == null) {
+      return;
+    }
+
+    dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: node.tooltipIndex,
+        activeDataKey: dataKey,
+        activeCoordinate: positions.get(node.tooltipIndex) ?? { x: node.x, y: node.y },
+        activeGraphicalItemId: id,
+      }),
+    );
+  };
+
+  const handleMouseLeave = (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => {
+    onMouseLeave?.(node, e);
+    dispatch(mouseLeaveItem());
+  };
+
+  const handleClick = (node: CirclePackingNode, e: React.MouseEvent<SVGCircleElement>) => {
+    onClick?.(node, e);
+
+    if (node.isEnclosingCircle || node.depth === 0 || node.tooltipIndex == null) {
+      return;
+    }
+
+    dispatch(
+      setActiveClickItemIndex({
+        activeIndex: node.tooltipIndex,
+        activeDataKey: dataKey,
+        activeCoordinate: positions.get(node.tooltipIndex) ?? { x: node.x, y: node.y },
+        activeGraphicalItemId: id,
+      }),
+    );
+  };
+
+  if (numericWidth <= 0 || numericHeight <= 0) {
     return null;
   }
 
-  const root = buildHierarchy({
-    data,
-    dataKey,
-    nameKey,
-    radiusKey,
-    sort,
-    nodeGap: Math.max(padding, 0),
-    layout,
-  });
-
-  if (!root.children || root.children.length === 0 || root.r <= 0) {
-    return (
-      <Surface width={width} height={height} className={clsx('recharts-circle-packing-chart', className)} style={style}>
-        {children}
-      </Surface>
-    );
-  }
-
-  const cx = width / 2;
-  const cy = height / 2;
-  const scale = Math.min(width, height) / (2 * root.r);
-
-  const flattenedInternalNodes: Array<InternalNode> = [];
-  flattenNodes(root, 0, 0, showRoot, flattenedInternalNodes);
-
-  const positionedNodes = flattenedInternalNodes.map(node => {
-    return toPublicNode(node, node.x * scale + cx, node.y * scale + cy, node.r * scale);
-  });
-
-  const finalNodes: Array<CirclePackingNode> = includeEnclosingCircle
-    ? [
-        {
-          payload: {},
-          children: null,
-          depth: 0,
-          index: -1,
-          name: 'enclosing-circle',
-          value: root.value,
-          isLeaf: false,
-          isEnclosingCircle: true,
-          x: cx,
-          y: cy,
-          r: root.r * scale,
-        },
-        ...positionedNodes,
-      ]
-    : positionedNodes;
-
   return (
-    <Surface width={width} height={height} className={clsx('recharts-circle-packing-chart', className)} style={style}>
+    <Surface
+      width={numericWidth}
+      height={numericHeight}
+      className={clsx('recharts-circle-packing-chart', className)}
+      style={style}
+    >
       <Layer className="recharts-circle-packing-layer">
         {finalNodes.map(node => (
           <Layer
             className={`recharts-circle-packing-depth-${node.depth}`}
-            key={`recharts-circle-packing-${node.depth}-${node.index}-${node.name}-${node.x}-${node.y}`}
+            key={`recharts-circle-packing-${node.depth}-${node.index}-${node.name}-${node.tooltipIndex}`}
           >
             {renderNodeShape({
               node,
@@ -609,14 +836,73 @@ export const CirclePackingChart = (outsideProps: CirclePackingChartProps) => {
               fill,
               stroke,
               colorPanel,
-              onClick,
-              onMouseEnter,
-              onMouseLeave,
+              onClick: handleClick,
+              onMouseEnter: handleMouseEnter,
+              onMouseLeave: handleMouseLeave,
             })}
           </Layer>
         ))}
       </Layer>
+      <SetCirclePackingTooltipEntrySettings
+        dataKey={dataKey}
+        nameKey={nameKey}
+        fill={fill}
+        stroke={stroke}
+        data={tooltipData}
+        positions={positions}
+        id={id}
+      />
       {children}
     </Surface>
+  );
+};
+
+/**
+ * Circle packing chart for hierarchical and sibling circle layouts.
+ *
+ * @consumes ResponsiveContainerContext
+ * @provides TooltipEntrySettings
+ */
+export const CirclePackingChart = (outsideProps: CirclePackingChartProps) => {
+  const props: RequiresDefaultProps<CirclePackingChartProps, typeof defaultCirclePackingChartProps> =
+    resolveDefaultProps(outsideProps, defaultCirclePackingChartProps);
+  const { className, width, height, responsive, style, id: externalId, throttleDelay, throttledEvents } = props;
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
+
+  return (
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'CirclePackingChart'}>
+      <ReportChartSize width={width} height={height} />
+      <ReportChartMargin margin={defaultCirclePackingMargin} />
+      <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
+      <TooltipPortalContext.Provider value={tooltipPortal}>
+        <RechartsWrapper
+          className={className}
+          width={width}
+          height={height}
+          responsive={responsive}
+          style={style}
+          ref={(node: HTMLDivElement) => {
+            if (tooltipPortal == null && node != null) {
+              setTooltipPortal(node);
+            }
+          }}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onClick={undefined}
+          onMouseMove={undefined}
+          onMouseDown={undefined}
+          onMouseUp={undefined}
+          onContextMenu={undefined}
+          onDoubleClick={undefined}
+          onTouchStart={undefined}
+          onTouchMove={undefined}
+          onTouchEnd={undefined}
+        >
+          <RegisterGraphicalItemId id={externalId} type="circle-packing-chart">
+            {id => <CirclePackingChartImpl {...props} id={id} />}
+          </RegisterGraphicalItemId>
+        </RechartsWrapper>
+      </TooltipPortalContext.Provider>
+    </RechartsStoreProvider>
   );
 };
