@@ -10,6 +10,7 @@ import { labelListApiExamples } from './LabelList';
 import { legendApiExamples } from './Legend';
 import { lineChartApiExamples } from './LineChart';
 import { pieChartApiExamples } from './PieChart';
+import { polarScatterChartApiExamples } from './PolarScatterChart';
 import { radarChartApiExamples } from './RadarChart';
 import { radialBarApiExamples } from './RadialBarChart';
 import { referenceAreaApiExamples } from './ReferenceArea';
@@ -47,6 +48,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   LineChart: lineChartApiExamples,
   ComposedChart: composedChartApiExamples,
   PieChart: pieChartApiExamples,
+  PolarScatterChart: polarScatterChartApiExamples,
   RadarChart: radarChartApiExamples,
   ScatterChart: scatterChartApiExamples,
   RadialBarChart: radialBarApiExamples,
