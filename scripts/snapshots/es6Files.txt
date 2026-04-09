@@ -47,6 +47,7 @@
   "es6/chart/ScatterChart.js",
   "es6/chart/SunburstChart.js",
   "es6/chart/Treemap.js",
+  "es6/chart/Venn.js",
   "es6/chart/types.js",
   "es6/component",
   "es6/component/ActivePoints.js",
