@@ -43,7 +43,7 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { useAppSelector } from '../state/hooks';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipGraphicalItemId, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
@@ -66,7 +66,7 @@ export interface PolarScatterPointNode {
   radius?: number | string;
 }
 
-export interface PolarScatterPointItem {
+export interface PolarScatterPointItem<DataPointType = unknown> {
   cx: number | undefined;
   cy: number | undefined;
   x: number | undefined;
@@ -77,32 +77,32 @@ export interface PolarScatterPointItem {
   angle: number | undefined;
   radius: number | undefined;
   node: PolarScatterPointNode;
-  payload?: any;
+  payload?: DataPointType;
   tooltipPayload?: TooltipPayload;
-  tooltipPosition: Coordinate;
+  tooltipPosition?: Coordinate;
 }
 
-export type PolarScatterShapeProps = PolarScatterPointItem & {
+export type PolarScatterShapeProps<DataPointType = unknown> = PolarScatterPointItem<DataPointType> & {
   index: number;
   [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
 };
 
-export type PolarScatterCustomizedShape =
-  | ActiveShape<PolarScatterShapeProps, SVGPathElement & InnerSymbolsProp>
+export type PolarScatterCustomizedShape<DataPointType = unknown> =
+  | ActiveShape<PolarScatterShapeProps<DataPointType>, SVGPathElement & InnerSymbolsProp>
   | SymbolType;
 
-interface PolarScatterInternalProps extends ZIndexable {
+interface PolarScatterInternalProps<DataPointType = unknown> extends ZIndexable {
   angleAxisId: string | number;
   radiusAxisId: string | number;
-  data?: ReadonlyArray<any>;
-  dataKey?: DataKey<any>;
+  data?: ReadonlyArray<DataPointType>;
+  dataKey?: DataKey<DataPointType>;
   tooltipType?: TooltipType;
   className?: string;
   name?: string | number;
-  activeShape?: PolarScatterCustomizedShape;
-  shape: PolarScatterCustomizedShape;
+  activeShape?: PolarScatterCustomizedShape<DataPointType>;
+  shape: PolarScatterCustomizedShape<DataPointType>;
   size: number;
-  points: ReadonlyArray<PolarScatterPointItem>;
+  points: ReadonlyArray<PolarScatterPointItem<DataPointType>>;
   hide: boolean;
   label?: ImplicitLabelListType;
   legendType: LegendType;
@@ -114,7 +114,7 @@ interface PolarScatterInternalProps extends ZIndexable {
   children?: ReactNode;
 }
 
-interface PolarScatterProps<DataPointType = any, DataValueType = any>
+interface PolarScatterProps<DataPointType = unknown, DataValueType = unknown>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   id?: string;
   /**
@@ -141,7 +141,7 @@ interface PolarScatterProps<DataPointType = any, DataValueType = any>
    *
    * @example <PolarScatter activeShape={{ fill: 'red' }} />
    */
-  activeShape?: PolarScatterCustomizedShape;
+  activeShape?: PolarScatterCustomizedShape<DataPointType>;
   /**
    * Determines the shape of individual data points.
    * - Can be one of the predefined shapes as a string.
@@ -150,7 +150,7 @@ interface PolarScatterProps<DataPointType = any, DataValueType = any>
    *
    * @defaultValue circle
    */
-  shape?: PolarScatterCustomizedShape;
+  shape?: PolarScatterCustomizedShape<DataPointType>;
   /**
    * Point area used by the default symbol renderer.
    * @defaultValue 64
@@ -223,16 +223,16 @@ type BasePolarScatterSvgProps = Omit<
   'points' | 'ref' | 'children' | 'dangerouslySetInnerHTML'
 >;
 
-type InternalProps = BasePolarScatterSvgProps & PolarScatterInternalProps;
+type InternalProps = BasePolarScatterSvgProps & PolarScatterInternalProps<unknown>;
 
-export type Props<DataPointType = any, DataValueType = any> = BasePolarScatterSvgProps &
+export type Props<DataPointType = unknown, DataValueType = unknown> = BasePolarScatterSvgProps &
   PolarScatterProps<DataPointType, DataValueType>;
 
 type AxisWithScale = BaseAxisWithScale & {
   allowDuplicatedCategory?: boolean;
 };
 
-const computeLegendPayloadFromPolarScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromPolarScatterProps = (props: Props<unknown, unknown>): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
@@ -258,8 +258,8 @@ const SetPolarScatterTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: {
-    dataKey?: DataKey<any>;
-    points?: ReadonlyArray<PolarScatterPointItem>;
+    dataKey?: DataKey<unknown>;
+    points?: ReadonlyArray<PolarScatterPointItem<unknown>>;
     stroke?: string;
     strokeWidth?: number | string;
     fill?: string;
@@ -294,9 +294,9 @@ function PolarScatterSymbol({
   isActive,
   ...props
 }: {
-  option: PolarScatterCustomizedShape;
+  option: PolarScatterCustomizedShape<unknown>;
   isActive: boolean;
-} & PolarScatterShapeProps) {
+} & PolarScatterShapeProps<unknown>) {
   if (typeof option === 'string') {
     return <Shape option={<Symbols type={option} {...props} />} isActive={isActive} shapeType="symbols" {...props} />;
   }
@@ -310,38 +310,43 @@ function PolarScatterLabelListProvider({
   children,
 }: {
   showLabels: boolean;
-  points: ReadonlyArray<PolarScatterPointItem>;
+  points: ReadonlyArray<PolarScatterPointItem<unknown>>;
   children: ReactNode;
 }) {
   const chartViewBox = useViewBox();
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
-    return points.map((point): CartesianLabelListEntry => {
-      const payloadValue = getValueByDataKey(point.payload, 'value');
-      const labelValue =
-        point.node.radius != null && point.node.radius !== ''
-          ? point.node.radius
-          : payloadValue != null && payloadValue !== ''
-            ? (payloadValue as string | number)
-            : point.node.angle != null && point.node.angle !== ''
-              ? point.node.angle
-              : undefined;
-      const viewBox: TrapezoidViewBox = {
-        x: point.x ?? 0,
-        y: point.y ?? 0,
-        width: point.width,
-        height: point.height,
-        lowerWidth: point.width,
-        upperWidth: point.width,
-      };
-      return {
-        ...viewBox,
-        value: labelValue,
-        payload: point.payload,
-        viewBox,
-        parentViewBox: chartViewBox,
-        fill: undefined,
-      };
-    });
+    return points
+      .filter(
+        point =>
+          point.x != null && point.y != null && point.width != null && point.height != null && point.payload != null,
+      )
+      .map((point): CartesianLabelListEntry => {
+        const payloadValue = getValueByDataKey(point.payload, 'value');
+        const labelValue =
+          point.node.radius != null && point.node.radius !== ''
+            ? point.node.radius
+            : payloadValue != null && payloadValue !== ''
+              ? (payloadValue as string | number)
+              : point.node.angle != null && point.node.angle !== ''
+                ? point.node.angle
+                : undefined;
+        const viewBox: TrapezoidViewBox = {
+          x: point.x,
+          y: point.y,
+          width: point.width,
+          height: point.height,
+          lowerWidth: point.width,
+          upperWidth: point.width,
+        };
+        return {
+          ...viewBox,
+          value: labelValue,
+          payload: point.payload,
+          viewBox,
+          parentViewBox: chartViewBox,
+          fill: undefined,
+        };
+      });
   }, [chartViewBox, points]);
 
   return (
@@ -355,13 +360,14 @@ function PolarScatterSymbols({
   points,
   allOtherPolarScatterProps,
 }: {
-  points: ReadonlyArray<PolarScatterPointItem>;
+  points: ReadonlyArray<PolarScatterPointItem<unknown>>;
   allOtherPolarScatterProps: InternalProps;
 }) {
   const { shape, activeShape, dataKey } = allOtherPolarScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherPolarScatterProps;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const activeGraphicalItemId = useAppSelector(selectActiveTooltipGraphicalItemId);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -381,11 +387,11 @@ function PolarScatterSymbols({
 
   return (
     <>
-      {points.map((entry: PolarScatterPointItem, index: number) => {
+      {points.map((entry: PolarScatterPointItem<unknown>, index: number) => {
         const hasActiveShape = activeShape != null && activeShape !== false;
-        const isActive = hasActiveShape && activeIndex === String(index);
+        const isActive = hasActiveShape && activeIndex === String(index) && activeGraphicalItemId === String(id);
         const option = hasActiveShape && isActive ? activeShape : shape;
-        const symbolProps: PolarScatterShapeProps = {
+        const symbolProps: PolarScatterShapeProps<unknown> = {
           ...baseProps,
           ...entry,
           index,
@@ -393,10 +399,7 @@ function PolarScatterSymbols({
         };
 
         return (
-          <ZIndexLayer
-            key={`symbol-${id}-${index}`}
-            zIndex={isActive ? DefaultZIndexes.activeDot : undefined}
-          >
+          <ZIndexLayer key={`symbol-${id}-${index}`} zIndex={isActive ? DefaultZIndexes.activeDot : undefined}>
             <Layer
               className="recharts-polar-scatter-symbol"
               {...adaptEventsOfChild(restOfAllOtherProps, entry, index)}
@@ -417,7 +420,7 @@ function SymbolsWithAnimation({
   previousPointsRef,
   props,
 }: {
-  previousPointsRef: MutableRefObject<ReadonlyArray<PolarScatterPointItem> | null>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<PolarScatterPointItem<unknown>> | null>;
   props: InternalProps;
 }) {
   const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
@@ -450,10 +453,10 @@ function SymbolsWithAnimation({
         key={animationId}
       >
         {(t: number) => {
-          const stepData: ReadonlyArray<PolarScatterPointItem> =
+          const stepData: ReadonlyArray<PolarScatterPointItem<unknown>> =
             t === 1
               ? points
-              : points.map((entry: PolarScatterPointItem, index: number): PolarScatterPointItem => {
+              : points.map((entry: PolarScatterPointItem<unknown>, index: number): PolarScatterPointItem<unknown> => {
                   const prev = prevPoints?.[index];
 
                   if (prev != null) {
@@ -496,14 +499,6 @@ function SymbolsWithAnimation({
   );
 }
 
-function getCategoryValue(entry: object, dataKey: DataKey<any>): unknown {
-  if (typeof dataKey === 'function') {
-    return dataKey(entry);
-  }
-
-  return Reflect.get(entry, dataKey);
-}
-
 function getPolarCoordinate({
   axis,
   ticks,
@@ -517,11 +512,11 @@ function getPolarCoordinate({
   bandSize: number;
   entry: unknown;
   index: number;
-  dataKey: DataKey<any> | undefined;
+  dataKey: DataKey<unknown> | undefined;
 }): number | null {
   if (axis.type === 'category') {
     if (!axis.allowDuplicatedCategory && axis.dataKey != null && typeof entry === 'object' && entry != null) {
-      const matchedTick = findEntryInArray(ticks, 'value', getCategoryValue(entry, axis.dataKey));
+      const matchedTick = findEntryInArray(ticks, 'value', getValueByDataKey(entry, axis.dataKey));
       if (matchedTick != null) {
         return matchedTick.coordinate + bandSize / 2;
       }
@@ -608,11 +603,15 @@ export function computePolarScatterPoints({
   polarViewBox: PolarViewBoxRequired;
   polarScatterSettings: PolarScatterSettings;
   cells: ReadonlyArray<ReactElement> | undefined;
-}): ReadonlyArray<PolarScatterPointItem> {
-  const angleAxisDataKey = isNullish(angleAxis.dataKey) ? polarScatterSettings.dataKey : angleAxis.dataKey;
-  const radiusAxisDataKey = isNullish(radiusAxis.dataKey) ? polarScatterSettings.dataKey : radiusAxis.dataKey;
+}): ReadonlyArray<PolarScatterPointItem<unknown>> {
+  const angleAxisDataKey: DataKey<unknown> | undefined = isNullish(angleAxis.dataKey)
+    ? polarScatterSettings.dataKey
+    : angleAxis.dataKey;
+  const radiusAxisDataKey: DataKey<unknown> | undefined = isNullish(radiusAxis.dataKey)
+    ? polarScatterSettings.dataKey
+    : radiusAxis.dataKey;
 
-  return displayedData.map((entry: unknown, index: number): PolarScatterPointItem => {
+  return displayedData.map((entry: unknown, index: number): PolarScatterPointItem<unknown> => {
     const angleValue: unknown = getValueByDataKey(entry, angleAxisDataKey);
     const radiusValue: unknown = getValueByDataKey(entry, radiusAxisDataKey);
     const angleCoordinate = getPolarCoordinate({
@@ -672,7 +671,7 @@ export function computePolarScatterPoints({
         radius: toNodeValue(radiusValue),
       },
       tooltipPayload,
-      tooltipPosition: point ?? { x: polarViewBox.cx, y: polarViewBox.cy },
+      tooltipPosition: point,
       payload: entry,
       ...(cells?.[index]?.props ?? {}),
     };
@@ -680,7 +679,7 @@ export function computePolarScatterPoints({
 }
 
 function PolarScatterWithId(props: InternalProps) {
-  const previousPointsRef = useRef<ReadonlyArray<PolarScatterPointItem> | null>(null);
+  const previousPointsRef = useRef<ReadonlyArray<PolarScatterPointItem<unknown>> | null>(null);
 
   if (props.hide) {
     return null;
@@ -712,7 +711,7 @@ export const defaultPolarScatterProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-function PolarScatterImpl(props: Props & { id: GraphicalItemId }) {
+function PolarScatterImpl(props: Props<unknown, unknown> & { id: GraphicalItemId }) {
   const {
     animationBegin,
     animationDuration,
@@ -766,7 +765,7 @@ function PolarScatterImpl(props: Props & { id: GraphicalItemId }) {
   );
 }
 
-function PolarScatterFn(outsideProps: Props) {
+function PolarScatterFn(outsideProps: Props<unknown, unknown>) {
   const props = resolveDefaultProps(outsideProps, defaultPolarScatterProps);
 
   return (
@@ -799,8 +798,8 @@ function PolarScatterFn(outsideProps: Props) {
  * @consumes PolarChartContext
  */
 export const PolarScatter = React.memo(PolarScatterFn, propsAreEqual) as {
-  <DataPointType = any, DataValueType = any>(props: Props<DataPointType, DataValueType>): ReactElement;
-  (props: Props<any, any>): ReactElement;
+  <DataPointType = unknown, DataValueType = unknown>(props: Props<DataPointType, DataValueType>): ReactElement;
+  (props: Props<unknown, unknown>): ReactElement;
 };
 
 // @ts-expect-error we need to set the displayName for debugging purposes
