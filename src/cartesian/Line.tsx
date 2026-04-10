@@ -13,6 +13,7 @@ import {
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { useAnimatedLineLength } from './useAnimatedLineLength';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -44,7 +45,7 @@ import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp } from '../animation/matchBy';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -607,6 +608,13 @@ function defaultLineAnimateItems(
   };
 }
 
+function toStringIfDefined(val: unknown | null | undefined): string | undefined {
+  if (val == null) {
+    return undefined;
+  }
+  return String(val);
+}
+
 function computeStrokeDasharray(
   isAnimationActive: boolean | 'auto',
   strokeDasharray: string | number | undefined,
@@ -620,7 +628,7 @@ function computeStrokeDasharray(
     }
     return generateSimpleStrokeDasharray(totalLength, curLength);
   }
-  return strokeDasharray == null ? undefined : String(strokeDasharray);
+  return toStringIfDefined(strokeDasharray);
 }
 
 function CurveWithAnimation({
@@ -628,12 +636,10 @@ function CurveWithAnimation({
   props,
   pathRef,
   previousPointsRef,
-  longestAnimatedLengthRef,
 }: {
   clipPathId: string;
   props: InternalProps;
   pathRef: MutableRefObject<SVGPathElement | null>;
-  longestAnimatedLengthRef: MutableRefObject<number>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
 }) {
   const {
@@ -646,7 +652,6 @@ function CurveWithAnimation({
     width,
     height,
   } = props;
-
   const totalLength = getTotalLength(pathRef.current);
   const animationInterpolateFn =
     props.animationInterpolateFn ?? defaultLineAnimateItems(props.animateNewValues, width, height);
@@ -659,37 +664,7 @@ function CurveWithAnimation({
 
   // Guard for totalLength: don't update previousPointsRef before SVG path is measured
   const shouldUpdatePreviousRef = useCallback((t: number) => t > 0 && totalLength > 0, [totalLength]);
-
-  /*
-   * Here we want to detect if the length animation has been interrupted.
-   * For that we keep a reference to the furthest length that has been animated.
-   *
-   * And then, to keep things smooth, we add to it the current length that is being animated right now.
-   *
-   * If we did Math.max then it makes the length animation "pause" but we want to keep it smooth
-   * so in case we have some "leftover" length from the previous animation we add it to the current length.
-   *
-   * This is not perfect because the animation changes speed due to easing. The default easing is 'ease' which is not linear
-   * and makes it stand out. But it's good enough I suppose.
-   * If we want to fix it then we need to keep track of multiple animations and their easing and timings.
-   *
-   * If you want to see this in action, try to change the dataKey of the line chart while the initial animation is running.
-   * The Line begins with zero length and slowly grows to the full length. While this growth is in progress,
-   * change the dataKey and the Line will continue growing from where it has grown so far.
-   *
-   * This is for the case when new animation triggers. When that happens we get new points, everything re-renders,
-   * and we get fresh new state in this component and use the ref stored above.
-   *
-   * In case when we get render without new animation - for example when opacity changes, or color changes,
-   * then the animationId remains the same, and we do not update the starting point.
-   * See https://github.com/recharts/recharts/issues/6044
-   */
-  const startingPointRef = useRef(0);
-  const prevPointsRefForAnimation = useRef(points);
-  if (prevPointsRefForAnimation.current !== points) {
-    startingPointRef.current = longestAnimatedLengthRef.current;
-    prevPointsRefForAnimation.current = points;
-  }
+  const getVisibleLength = useAnimatedLineLength(points);
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -710,19 +685,17 @@ function CurveWithAnimation({
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
       >
         {(stepData, t) => {
-          const startingPoint = startingPointRef.current;
-          const lengthInterpolated = interpolate(startingPoint, totalLength + startingPoint, t);
-          const curLength = Math.min(lengthInterpolated, totalLength);
-          const currentStrokeDasharray = computeStrokeDasharray(
-            isAnimationActive,
-            strokeDasharray,
-            totalLength,
-            curLength,
-          );
-
-          if (t > 0 && totalLength > 0) {
-            // eslint-disable-next-line no-param-reassign
-            longestAnimatedLengthRef.current = Math.max(longestAnimatedLengthRef.current, curLength);
+          const visibleLength = getVisibleLength(t, totalLength);
+          let currentStrokeDasharray: undefined | string;
+          if (visibleLength === null) {
+            currentStrokeDasharray = toStringIfDefined(strokeDasharray);
+          } else {
+            currentStrokeDasharray = computeStrokeDasharray(
+              isAnimationActive,
+              strokeDasharray,
+              totalLength,
+              visibleLength,
+            );
           }
           return (
             <StaticCurve
@@ -742,17 +715,10 @@ function CurveWithAnimation({
 
 function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
   const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
-  const longestAnimatedLengthRef = useRef<number>(0);
   const pathRef = useRef<SVGPathElement | null>(null);
 
   return (
-    <CurveWithAnimation
-      props={props}
-      clipPathId={clipPathId}
-      previousPointsRef={previousPointsRef}
-      longestAnimatedLengthRef={longestAnimatedLengthRef}
-      pathRef={pathRef}
-    />
+    <CurveWithAnimation props={props} clipPathId={clipPathId} previousPointsRef={previousPointsRef} pathRef={pathRef} />
   );
 }
 

@@ -35,6 +35,7 @@
   "es6/cartesian/getCartesianPosition.js",
   "es6/cartesian/getEquidistantTicks.js",
   "es6/cartesian/getTicks.js",
+  "es6/cartesian/useAnimatedLineLength.js",
   "es6/chart",
   "es6/chart/AreaChart.js",
   "es6/chart/BarChart.js",

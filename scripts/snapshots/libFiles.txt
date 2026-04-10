@@ -35,6 +35,7 @@
   "lib/cartesian/getCartesianPosition.js",
   "lib/cartesian/getEquidistantTicks.js",
   "lib/cartesian/getTicks.js",
+  "lib/cartesian/useAnimatedLineLength.js",
   "lib/chart",
   "lib/chart/AreaChart.js",
   "lib/chart/BarChart.js",

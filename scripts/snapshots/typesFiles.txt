@@ -35,6 +35,7 @@
   "types/cartesian/getCartesianPosition.d.ts",
   "types/cartesian/getEquidistantTicks.d.ts",
   "types/cartesian/getTicks.d.ts",
+  "types/cartesian/useAnimatedLineLength.d.ts",
   "types/chart",
   "types/chart/AreaChart.d.ts",
   "types/chart/BarChart.d.ts",
