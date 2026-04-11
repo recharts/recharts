@@ -22,6 +22,8 @@ import AreaChartExample from './AreaChartExample';
 import areaChartExampleSource from './AreaChartExample?raw';
 import AreaChartRangeExample from './AreaChartRangeExample';
 import areaChartRangeExampleSource from './AreaChartRangeExample?raw';
+import AreaChartCustomAnimationExample from './AreaChartCustomAnimationExample.tsx';
+import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample.tsx?raw';
 
 export { AreaChartNavExample };
 
@@ -30,7 +32,7 @@ export const areaChartExamples = {
     Component: AreaChartExample,
     sourceCode: areaChartExampleSource,
     name: 'Simple Area Chart',
-  },
+   },
   StackedAreaChart: {
     Component: StackedAreaChart,
     sourceCode: stackedAreaChartSource,
@@ -71,6 +73,11 @@ export const areaChartExamples = {
     sourceCode: areaChartFillByValueSource,
     name: 'Area Chart Fill By Value',
   },
+  AreaChartCustomAnimation: {
+    Component: AreaChartCustomAnimationExample,
+    sourceCode: AreaChartCustomAnimationExampleSource,
+    name: 'Custom Animation Example',
+  },
   AreaChartWithCustomEvents: {
     Component: AreaChartWithCustomEvents,
     sourceCode: areaChartWithCustomEventsSource,
@@ -82,5 +89,6 @@ export const areaChartExamples = {
     Component: SimpleAreaChart,
     sourceCode: simpleAreaChartSource,
     name: 'Prevent right click menu',
+    description: 'This chart also demonstrates preventing the context menu on right mouse click.',
   },
 } satisfies Record<string, ChartExample>;

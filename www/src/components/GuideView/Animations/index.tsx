@@ -9,6 +9,10 @@ import MatchingStrategiesExample, { MatchingStrategiesControls } from './Matchin
 import MatchingStrategiesExampleSource from './MatchingStrategiesExample.tsx?raw';
 import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
 import CustomAnimationExampleSource from './CustomAnimationExample.tsx?raw';
+import AreaChartCustomAnimationExample from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx';
+import AreaChartCustomAnimationExampleSource from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx?raw';
+import LineChartCustomShapeExample from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample.tsx';
+import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample.tsx?raw';
 
 export function AnimationsGuide() {
   return (
@@ -201,8 +205,8 @@ export function AnimationsGuide() {
         disappear.
       </p>
       <p>
-        The <code>animationMatchBy</code> prop lets you control this behavior. It is available on all animated
-        components:
+        The <code>animationMatchBy</code> prop lets you control this behavior. This prop is available since version 3.9.
+        It is available on all animated components:
       </p>
       <table className={styles.table}>
         <thead>
@@ -353,6 +357,162 @@ export function AnimationsGuide() {
         stackBlitzTitle="Recharts Custom Animation Example"
         defaultTool="controls"
       />
+
+      <h2>Custom shape animations</h2>
+      <p>
+        While <code>animationInterpolateFn</code> controls how <em>data points</em> move during animation, some
+        components have a built-in <strong>entrance animation</strong> that operates at the SVG level:
+      </p>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Default entrance animation</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <LinkToApi>Area</LinkToApi>
+            </td>
+            <td>
+              <code>AreaRevealShape</code> (clip-path reveal)
+            </td>
+            <td>
+              A <code>clipPath</code> rectangle expands from left-to-right (or top-to-bottom in vertical layout),
+              progressively revealing the area.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <LinkToApi>Line</LinkToApi>
+            </td>
+            <td>
+              <code>LineDrawShape</code> (stroke-dasharray drawing)
+            </td>
+            <td>
+              The line is drawn progressively using <code>strokeDasharray</code>, creating a &quot;pen drawing&quot;
+              effect.
+            </td>
+          </tr>
+          <tr>
+            <td>All others</td>
+            <td>Data interpolation only</td>
+            <td>
+              Bar, Scatter, Pie, Radar, RadialBar, and Funnel rely entirely on <code>animationInterpolateFn</code> for
+              their entrance animation.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        To customize these entrance animations, use the <code>shape</code> prop. When you provide a custom shape, the
+        built-in entrance animation (clipPath or strokeDasharray) is skipped, and your shape function receives animation
+        state props:
+      </p>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Prop</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>t</code>
+            </td>
+            <td>
+              <code>number</code>
+            </td>
+            <td>Normalized animation progress, from 0 (start) to 1 (complete), already eased.</td>
+          </tr>
+          <tr>
+            <td>
+              <code>isAnimating</code>
+            </td>
+            <td>
+              <code>boolean</code>
+            </td>
+            <td>Whether an animation is currently in progress.</td>
+          </tr>
+          <tr>
+            <td>
+              <code>isEntrance</code>
+            </td>
+            <td>
+              <code>boolean</code>
+            </td>
+            <td>Whether the current animation is the first render (entrance) vs. a data update.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Built-in shapes</h3>
+      <p>Recharts exports the default shapes so you can reuse or extend them in your custom animations:</p>
+      <pre>{`import { AreaRevealShape, LineDrawShape } from 'recharts';
+
+// Use the default Area shape explicitly
+<Area dataKey="value" shape={AreaRevealShape} />
+
+// Use the default Line shape explicitly
+<Line dataKey="value" shape={LineDrawShape} />`}</pre>
+      <h3>Custom entrance: grow from bottom</h3>
+      <p>
+        This example combines <code>animationInterpolateFn</code> (to move points from the chart bottom) with a custom{' '}
+        <code>shape</code> (to skip the default clip-path reveal). The shape wraps <code>AreaRevealShape</code> but
+        overrides <code>isEntrance</code> to prevent the clip-path animation:
+      </p>
+      <CodeEditorWithPreview
+        Component={AreaChartCustomAnimationExample}
+        sourceCode={AreaChartCustomAnimationExampleSource}
+        stackBlitzTitle="Recharts Area Custom Animation Example"
+      />
+      <h3>Custom entrance: opacity fade</h3>
+      <p>
+        This Line example uses a custom <code>shape</code> to fade in during the entrance animation, replacing the
+        default stroke-dasharray &quot;drawing&quot; effect:
+      </p>
+      <CodeEditorWithPreview
+        Component={LineChartCustomShapeExample}
+        sourceCode={LineChartCustomShapeExampleSource}
+        stackBlitzTitle="Recharts Line Custom Shape Example"
+      />
+      <h3>Three orthogonal props</h3>
+      <p>Together, Recharts provides three orthogonal props for animation customization. Each handles one concern:</p>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Prop</th>
+            <th>Controls</th>
+            <th>Available on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>animationInterpolateFn</code>
+            </td>
+            <td>How data points transition between positions (data level)</td>
+            <td>All animated components</td>
+          </tr>
+          <tr>
+            <td>
+              <code>animationMatchBy</code>
+            </td>
+            <td>How old data points pair with new data points</td>
+            <td>All animated components</td>
+          </tr>
+          <tr>
+            <td>
+              <code>shape</code>
+            </td>
+            <td>How the SVG element is rendered, with access to animation state</td>
+            <td>Area, Line (and Bar, Scatter via existing shape support)</td>
+          </tr>
+        </tbody>
+      </table>
     </article>
   );
 }

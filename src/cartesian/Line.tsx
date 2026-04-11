@@ -4,6 +4,8 @@ import { Component, MutableRefObject, ReactElement, ReactNode, Ref, useCallback,
 import { clsx } from 'clsx';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
+import { LineDrawShape } from './LineDrawShape';
+import { useAnimatedLineLength } from './useAnimatedLineLength';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
@@ -13,7 +15,6 @@ import {
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
-import { useAnimatedLineLength } from './useAnimatedLineLength';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -393,82 +394,6 @@ const SetLineTooltipEntrySettings = React.memo(
   },
 );
 
-/**
- * Generates a simple stroke-dasharray string for animating a line draw effect.
- *
- * Uses `totalLength` as the gap (instead of `totalLength - length`) to prevent a floating-point
- * precision artifact: when fractional dash and gap values are serialized to a string attribute
- * and re-parsed by the SVG renderer, their sum can differ from the actual path length by a ULP,
- * causing the dasharray pattern to repeat and render a phantom dot at the path endpoint
- * with round or square strokeLinecap.
- *
- * @param totalLength The total length of the SVG path
- * @param length The currently visible portion of the path
- * @returns A stroke-dasharray string like "50px 200px"
- */
-const generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
-  return `${length}px ${totalLength}px`;
-};
-
-/**
- * Repeats a dash pattern array a given number of times.
- *
- * If the input array has an odd length, a trailing `0` is appended to make it even
- * before repeating, because SVG stroke-dasharray patterns must have an even number
- * of values to cycle correctly between dash and gap segments.
- *
- * @param lines Array of dash/gap lengths to repeat
- * @param count Number of times to repeat the pattern
- * @returns A new array with the pattern repeated `count` times
- */
-function repeat(lines: number[], count: number): number[] {
-  const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
-  const result: number[] = [];
-  for (let i = 0; i < count; ++i) {
-    result.push(...linesUnit);
-  }
-  return result;
-}
-
-/**
- * Computes a stroke-dasharray string for animating a custom-dashed line draw effect.
- *
- * Given a user-specified dash pattern (e.g. `"7,3"`), this function builds a dasharray
- * that reveals exactly `length` pixels of that pattern, followed by a gap of `totalLength`
- * to hide the remainder of the path.
- *
- * Like {@link generateSimpleStrokeDasharray}, the trailing gap uses `totalLength` rather than
- * `totalLength - length` to avoid floating-point precision artifacts with round/square strokeLinecap.
- *
- * @param length The currently visible portion of the path
- * @param totalLength The total length of the SVG path
- * @param lines The user-specified dash pattern as an array of numbers (e.g. [7, 3])
- * @returns A stroke-dasharray string incorporating the custom dash pattern
- */
-const getStrokeDasharray = (length: number, totalLength: number, lines: number[]): string => {
-  const lineLength = lines.reduce((pre, next) => pre + next, 0);
-
-  // if lineLength is 0 return the default when no strokeDasharray is provided
-  if (!lineLength) {
-    return generateSimpleStrokeDasharray(totalLength, length);
-  }
-
-  const count = Math.floor(length / lineLength);
-  const remainLength = length % lineLength;
-  let remainLines: number[] = [];
-  for (let i = 0, sum = 0; i < lines.length; sum += lines[i] ?? 0, ++i) {
-    const lineValue = lines[i];
-    if (lineValue != null && sum + lineValue > remainLength) {
-      remainLines = [...lines.slice(0, i), remainLength - sum];
-      break;
-    }
-  }
-
-  const emptyLines = remainLines.length % 2 === 0 ? [0, totalLength] : [totalLength];
-
-  return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
-};
-
 function LineDotsWrapper({
   clipPathId,
   points,
@@ -546,17 +471,28 @@ function StaticCurve({
   clipPathId,
   pathRef,
   points,
-  strokeDasharray,
   props,
+  t,
+  isAnimating,
+  isEntrance,
+  visibleLength,
 }: {
   clipPathId: string;
   pathRef: Ref<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
-  strokeDasharray?: string;
+  t?: number;
+  isAnimating?: boolean;
+  isEntrance?: boolean;
+  visibleLength?: number | null;
 }) {
-  const { type, layout, connectNulls, needClip, shape, ...others } = props;
-  const curveProps: CurveProps = {
+  const { type, layout, connectNulls, needClip, shape, strokeDasharray, ...others } = props;
+  const curveProps: CurveProps & {
+    t?: number;
+    isAnimating?: boolean;
+    isEntrance?: boolean;
+    visibleLength?: number | null;
+  } = {
     ...svgPropertiesAndEvents(others),
     fill: 'none',
     className: 'recharts-line-curve',
@@ -565,7 +501,11 @@ function StaticCurve({
     type,
     layout,
     connectNulls,
-    strokeDasharray: strokeDasharray ?? props.strokeDasharray,
+    strokeDasharray,
+    t,
+    isAnimating,
+    isEntrance,
+    visibleLength,
   };
 
   return (
@@ -608,29 +548,6 @@ function defaultLineAnimateItems(
   };
 }
 
-function toStringIfDefined(val: unknown | null | undefined): string | undefined {
-  if (val == null) {
-    return undefined;
-  }
-  return String(val);
-}
-
-function computeStrokeDasharray(
-  isAnimationActive: boolean | 'auto',
-  strokeDasharray: string | number | undefined,
-  totalLength: number,
-  curLength: number,
-): string | undefined {
-  if (isAnimationActive) {
-    if (strokeDasharray) {
-      const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-      return getStrokeDasharray(curLength, totalLength, lines);
-    }
-    return generateSimpleStrokeDasharray(totalLength, curLength);
-  }
-  return toStringIfDefined(strokeDasharray);
-}
-
 function CurveWithAnimation({
   clipPathId,
   props,
@@ -642,16 +559,7 @@ function CurveWithAnimation({
   pathRef: MutableRefObject<SVGPathElement | null>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
 }) {
-  const {
-    points,
-    strokeDasharray,
-    isAnimationActive,
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    width,
-    height,
-  } = props;
+  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, width, height } = props;
   const totalLength = getTotalLength(pathRef.current);
   const animationInterpolateFn =
     props.animationInterpolateFn ?? defaultLineAnimateItems(props.animateNewValues, width, height);
@@ -661,10 +569,10 @@ function CurveWithAnimation({
     props.onAnimationEnd,
   );
   const showLabels = !isAnimating;
+  const getVisibleLength = useAnimatedLineLength(points);
 
   // Guard for totalLength: don't update previousPointsRef before SVG path is measured
   const shouldUpdatePreviousRef = useCallback((t: number) => t > 0 && totalLength > 0, [totalLength]);
-  const getVisibleLength = useAnimatedLineLength(points);
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -684,26 +592,19 @@ function CurveWithAnimation({
         animationMatchBy={props.animationMatchBy}
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
       >
-        {(stepData, t) => {
-          const visibleLength = getVisibleLength(t, totalLength);
-          let currentStrokeDasharray: undefined | string;
-          if (visibleLength === null) {
-            currentStrokeDasharray = toStringIfDefined(strokeDasharray);
-          } else {
-            currentStrokeDasharray = computeStrokeDasharray(
-              isAnimationActive,
-              strokeDasharray,
-              totalLength,
-              visibleLength,
-            );
-          }
+        {(stepData, t, isEntrance) => {
+          const animationActive = isAnimating || t < 1;
+          const visibleLength = animationActive ? getVisibleLength(t, totalLength) : null;
           return (
             <StaticCurve
               props={props}
               points={stepData}
               clipPathId={clipPathId}
               pathRef={pathRef}
-              strokeDasharray={currentStrokeDasharray}
+              t={t}
+              isAnimating={animationActive}
+              isEntrance={isEntrance}
+              visibleLength={visibleLength}
             />
           );
         }}
@@ -805,6 +706,7 @@ export const defaultLineProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
+  shape: LineDrawShape,
   stroke: '#3182bd',
   strokeWidth: 1,
   xAxisId: 0,

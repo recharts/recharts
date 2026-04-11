@@ -93,9 +93,10 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'x and y in Rectangle are required, unlike Brush where they are calculated internally.',
   },
   {
-    components: ['Curve'],
+    components: ['Curve', 'AreaRevealShape', 'LineDrawShape'],
     props: ['layout'],
-    reason: 'Curve layout means something else than the chart layout.',
+    reason:
+      'Curve layout means something else than the chart layout. AreaRevealShape and LineDrawShape extend CurveProps.',
   },
   {
     components: ['DefaultLegendContent', 'Legend'],
@@ -165,6 +166,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'In these components, cx/cy are optional and calculated from the chart context',
   },
   {
+    components: ['Area'],
+    props: ['shape'],
+    reason:
+      'Area shape JSDoc includes animation-specific details (t, isAnimating, isEntrance props and clipPath skipping) that other components do not have yet',
+  },
+  {
     components: ['Pie'],
     props: ['shape'],
     reason: 'Pie shape receives activeIndex prop but other components do not',
@@ -217,7 +224,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: '"type" in axes means categorical/numerical, unlike curves where it means line shape',
   },
   {
-    components: ['Curve', 'Area', 'Line'],
+    components: ['Curve', 'Area', 'Line', 'AreaRevealShape', 'LineDrawShape'],
     props: ['type'],
     reason: '"type" in curves means shape of the line, unlike axes where it means categorical/numerical',
   },

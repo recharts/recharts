@@ -167,6 +167,10 @@ export type { AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy
 export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
 export { AnimationProgressProvider, useAnimationProgress } from './animation/AnimationProgressProvider';
 export type { AnimationHandle, AnimationStatus } from './animation/AnimationProgressProvider';
+export { AreaRevealShape } from './cartesian/AreaRevealShape';
+export type { AreaShapeAnimationProps } from './cartesian/AreaRevealShape';
+export { LineDrawShape } from './cartesian/LineDrawShape';
+export type { LineShapeAnimationProps } from './cartesian/LineDrawShape';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';

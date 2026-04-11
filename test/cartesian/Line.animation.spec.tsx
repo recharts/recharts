@@ -1960,4 +1960,66 @@ describe('Line animation', () => {
       expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
     });
   });
+
+  describe('shape prop', () => {
+    function CustomLineShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+      return (
+        <path
+          className="custom-line-shape"
+          data-t={props.t}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <LineChart width={100} height={100} data={PageData}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Line dataKey="uv" animationEasing="linear" shape={CustomLineShape} />
+        {children}
+      </LineChart>
+    ));
+
+    it('should render custom shape instead of default Curve', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+      await animationManager.completeAnimation();
+
+      const customShapes = container.querySelectorAll('.custom-line-shape');
+      expect(customShapes.length).toBeGreaterThan(0);
+    });
+
+    it('should pass t, isAnimating, isEntrance props to custom shape during animation', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shape = container.querySelector('.custom-line-shape');
+      assertNotNull(shape);
+      expect(shape.getAttribute('data-t')).toBe('0.5');
+      expect(shape.getAttribute('data-is-animating')).toBe('true');
+      expect(shape.getAttribute('data-is-entrance')).toBe('true');
+    });
+
+    it('should skip strokeDasharray entrance animation when custom shape is provided', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shape = container.querySelector('.custom-line-shape');
+      assertNotNull(shape);
+      // When custom shape is provided, strokeDasharray should not be set
+      expect(shape.getAttribute('stroke-dasharray')).toBeNull();
+    });
+
+    it('should have isAnimating=true on the very first render to prevent flash of wrong content', () => {
+      const { container } = renderShapeTestCase();
+
+      // On the first synchronous render, before any useEffect fires,
+      // the shape should already know animation is pending.
+      const shape = container.querySelector('.custom-line-shape');
+      assertNotNull(shape);
+      expect(shape.getAttribute('data-is-animating')).toBe('true');
+      expect(shape.getAttribute('data-is-entrance')).toBe('true');
+      expect(shape.getAttribute('data-t')).toBe('0');
+    });
+  });
 });

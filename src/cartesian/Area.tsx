@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
-import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
+import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -20,6 +20,7 @@ import {
 } from '../util/ChartUtils';
 import {
   ActiveDotType,
+  ActiveShape,
   AnimationDuration,
   EasingInput,
   CartesianLayout,
@@ -50,7 +51,6 @@ import { useAppSelector } from '../state/hooks';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { alignItems, AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -59,11 +59,13 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { Shape } from '../util/ActiveShapeUtils';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
+import { AreaRevealShape } from './AreaRevealShape';
 
 /**
  * @inline
@@ -113,6 +115,7 @@ interface InternalAreaProps extends ZIndexable {
   onAnimationStart?: () => void;
 
   points: ReadonlyArray<AreaPointItem>;
+  shape?: ActiveShape<CurveProps, SVGPathElement>;
   stackId?: StackId;
 
   tooltipType?: TooltipType;
@@ -280,6 +283,21 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * The customized event handler of animation start
    */
   onAnimationStart?: () => void;
+
+  /**
+   * If set a ReactElement, the shape of area can be customized.
+   * If set a function, the function will be called to render customized shape.
+   * By default, renders a filled curve path with a clipPath entrance animation.
+   *
+   * During animations the shape receives additional props: `t`, `isAnimating`, and `isEntrance`.
+   * When a custom shape is provided, the built-in clipPath entrance animation is skipped.
+   *
+   * @see AreaRevealShape — the default entrance animation, available for import from recharts
+   * @example <Area dataKey="value" shape={CustomizedShapeComponent} />
+   * @example <Area dataKey="value" shape={renderShapeFunction} />
+   */
+  shape?: ActiveShape<CurveProps, SVGPathElement>;
+
   /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
@@ -475,159 +493,49 @@ function StaticArea({
   needClip,
   clipPathId,
   props,
+  t,
+  isAnimating,
+  isEntrance,
 }: {
   points: ReadonlyArray<AreaPointItem>;
   baseLine: BaseLineType | undefined;
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
+  t?: number;
+  isAnimating?: boolean;
+  isEntrance?: boolean;
 }) {
-  const { layout, type, stroke, connectNulls, isRange } = props;
+  const { layout, type, stroke, connectNulls, isRange, shape } = props;
 
   const { id, ...propsWithoutId } = props;
-  const allOtherProps = svgPropertiesNoEvents(propsWithoutId);
   const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
+
+  const curveProps = {
+    ...propsWithEvents,
+    id,
+    points,
+    connectNulls,
+    type,
+    baseLine,
+    layout,
+    stroke,
+    isRange,
+    t,
+    isAnimating,
+    isEntrance,
+  };
 
   return (
     <>
       {points?.length > 1 && (
         <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
-          <Curve
-            {...propsWithEvents}
-            id={id}
-            points={points}
-            connectNulls={connectNulls}
-            type={type}
-            baseLine={baseLine}
-            layout={layout}
-            stroke="none"
-            className="recharts-area-area"
-          />
-          {stroke !== 'none' && (
-            <Curve
-              {...allOtherProps}
-              className="recharts-area-curve"
-              layout={layout}
-              type={type}
-              connectNulls={connectNulls}
-              fill="none"
-              points={points}
-            />
-          )}
-          {stroke !== 'none' && isRange && Array.isArray(baseLine) && (
-            <Curve
-              {...allOtherProps}
-              className="recharts-area-curve"
-              layout={layout}
-              type={type}
-              connectNulls={connectNulls}
-              fill="none"
-              points={baseLine}
-            />
-          )}
+          <Shape shapeType="curve" option={shape} {...curveProps} />
         </Layer>
       )}
       <AreaDotsWrapper points={points} props={propsWithoutId} clipPathId={clipPathId} />
     </>
   );
-}
-
-function VerticalRect({
-  alpha,
-  baseLine,
-  points,
-  strokeWidth,
-}: {
-  alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  const startY = points[0]?.y;
-  const endY = points[points.length - 1]?.y;
-  if (!isWellBehavedNumber(startY) || !isWellBehavedNumber(endY)) {
-    return null;
-  }
-  const height = alpha * Math.abs(startY - endY);
-  let maxX = Math.max(...points.map(entry => entry.x || 0));
-
-  if (isNumber(baseLine)) {
-    maxX = Math.max(baseLine, maxX);
-  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxX = Math.max(...baseLine.map(entry => entry.x || 0), maxX);
-  }
-
-  if (isNumber(maxX)) {
-    return (
-      <rect
-        x={0}
-        y={startY < endY ? startY : startY - height}
-        width={maxX + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1)}
-        height={Math.floor(height)}
-      />
-    );
-  }
-
-  return null;
-}
-
-function HorizontalRect({
-  alpha,
-  baseLine,
-  points,
-  strokeWidth,
-}: {
-  alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  const startX = points[0]?.x;
-  const endX = points[points.length - 1]?.x;
-  if (!isWellBehavedNumber(startX) || !isWellBehavedNumber(endX)) {
-    return null;
-  }
-  const width = alpha * Math.abs(startX - endX);
-  let maxY = Math.max(...points.map(entry => entry.y || 0));
-
-  if (isNumber(baseLine)) {
-    maxY = Math.max(baseLine, maxY);
-  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxY = Math.max(...baseLine.map(entry => entry.y || 0), maxY);
-  }
-
-  if (isNumber(maxY)) {
-    return (
-      <rect
-        x={startX < endX ? startX : startX - width}
-        y={0}
-        width={width}
-        height={Math.floor(maxY + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1))}
-      />
-    );
-  }
-
-  return null;
-}
-
-function ClipRect({
-  alpha,
-  layout,
-  points,
-  baseLine,
-  strokeWidth,
-}: {
-  alpha: number;
-  layout: CartesianLayout;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  if (layout === 'vertical') {
-    return <VerticalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
-  }
-
-  return <HorizontalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
 }
 
 function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
@@ -718,63 +626,25 @@ function AreaWithAnimation({
       animationInterpolateFn={animationInterpolateFn}
       animationMatchBy={matchStrategy}
     >
-      {(stepPoints, t) => {
-        const isFirstRender = prevBaseLine === undefined;
-
-        if (!isFirstRender) {
-          // Data update: interpolate baseline
-          const stepBaseLine = t === 1 ? baseLine : interpolateBaseLine(baseLine, alignedPrevBaseLine, t);
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousBaselineRef.current = stepBaseLine;
-          }
-          return (
-            <AreaLabelListProvider showLabels={!isAnimating} points={points}>
-              {props.children}
-              <StaticArea
-                points={stepPoints}
-                baseLine={stepBaseLine}
-                needClip={needClip}
-                clipPathId={clipPathId}
-                props={props}
-              />
-              <LabelListFromLabelProp label={props.label} />
-            </AreaLabelListProvider>
-          );
-        }
-
-        // First render: clip-path reveal animation
+      {(stepPoints, t, isEntrance) => {
+        const stepBaseLine = isEntrance || t === 1 ? baseLine : interpolateBaseLine(baseLine, alignedPrevBaseLine, t);
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
-          previousBaselineRef.current = baseLine;
+          previousBaselineRef.current = stepBaseLine;
         }
         return (
           <AreaLabelListProvider showLabels={!isAnimating} points={points}>
             {props.children}
-            <Layer>
-              {isAnimationActive && (
-                <defs>
-                  <clipPath id={`animationClipPath-${clipPathId}`}>
-                    <ClipRect
-                      alpha={t}
-                      points={points}
-                      baseLine={baseLine}
-                      layout={layout}
-                      strokeWidth={props.strokeWidth}
-                    />
-                  </clipPath>
-                </defs>
-              )}
-              <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
-                <StaticArea
-                  points={points}
-                  baseLine={baseLine}
-                  needClip={needClip}
-                  clipPathId={clipPathId}
-                  props={props}
-                />
-              </Layer>
-            </Layer>
+            <StaticArea
+              points={isEntrance ? points : stepPoints}
+              baseLine={stepBaseLine}
+              needClip={needClip}
+              clipPathId={clipPathId}
+              props={props}
+              t={t}
+              isAnimating={isAnimating || t < 1}
+              isEntrance={isEntrance}
+            />
             <LabelListFromLabelProp label={props.label} />
           </AreaLabelListProvider>
         );
@@ -883,6 +753,7 @@ export const defaultAreaProps = {
   strokeWidth: 1,
   type: 'linear',
   label: false,
+  shape: AreaRevealShape,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.area,

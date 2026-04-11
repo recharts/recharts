@@ -35,6 +35,9 @@ import CompareTwoLines from './CompareTwoLines.tsx';
 import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
 import DynamicZIndexLineChart from './DynamicZIndexLineChart.tsx';
 import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
+import LineChartCustomShapeExample, { LineChartCustomShapeControls } from './LineChartCustomShapeExample.tsx';
+import LineChartCustomShapeExampleSource from './LineChartCustomShapeExample.tsx?raw';
+import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
 
 export const lineChartExamples = {
   SimpleLineChart: {
@@ -91,6 +94,19 @@ export const lineChartExamples = {
     Component: SynchronizedLineChart,
     sourceCode: synchronizedLineChartSource,
     name: 'Synchronized Line Chart',
+  },
+  LineChartCustomShapeExample: {
+    Component: LineChartCustomShapeExample,
+    sourceCode: LineChartCustomShapeExampleSource,
+    Controls: LineChartCustomShapeControls,
+    name: 'Line that animates opacity',
+    defaultTool: 'controls',
+    description: (
+      <p>
+        This example shows how you can override <LinkToApi>Line</LinkToApi> <code>shape</code> prop and provide custom
+        entrance animation. Compare it to the update animation which remains the same as the default one.
+      </p>
+    ),
   },
   HighlightAndZoomLineChart: {
     Component: HighlightAndZoomLineChart,

@@ -93,7 +93,10 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
     // @ts-expect-error we can't know the type of cloned element props
     shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
   } else if (typeof option === 'function') {
-    shape = option(props, props.index);
+    // Render as a React component so that shape functions can use hooks
+    // (e.g. useRef for SVG path measurement in LineDrawShape).
+    const ShapeComponent = option as React.FC<typeof props>;
+    shape = <ShapeComponent {...props} />;
   } else if (isPlainObject(option) && typeof option !== 'boolean') {
     const nextProps: ShapePropsType = defaultPropTransformer(option, props);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;

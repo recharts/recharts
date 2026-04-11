@@ -111,6 +111,8 @@ export const apiCates = [
       'matchAppend',
       'AnimationProgressProvider',
       'useAnimationProgress',
+      'AreaRevealShape',
+      'LineDrawShape',
       'interpolate',
     ],
   },

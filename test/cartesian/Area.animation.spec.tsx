@@ -578,4 +578,73 @@ describe('Area animation', () => {
       return expectAreaCurveDoesNotChange(container, animationManager);
     });
   });
+
+  describe('shape prop', () => {
+    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean; points?: unknown[] }) {
+      return (
+        <path
+          className="custom-area-shape"
+          data-t={props.t}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <AreaChart width={100} height={100} data={PageData}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Area dataKey="uv" animationEasing="linear" shape={CustomShape} />
+        {children}
+      </AreaChart>
+    ));
+
+    it('should render custom shape instead of default Curve', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+      await animationManager.completeAnimation();
+
+      const customShapes = container.querySelectorAll('.custom-area-shape');
+      expect(customShapes.length).toBeGreaterThan(0);
+    });
+
+    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      // During entrance animation
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-area-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      // After animation completes, isEntrance becomes false because previous items are now stored
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-area-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
+    });
+
+    it('should skip clipPath entrance animation when custom shape is provided', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      assertClipPathNotPresent(container);
+
+      await animationManager.completeAnimation();
+      assertClipPathNotPresent(container);
+    });
+
+    it('should have isAnimating=true on the very first render to prevent flash of wrong content', () => {
+      const { container } = renderShapeTestCase();
+
+      const shape = container.querySelector('.custom-area-shape');
+      assertNotNull(shape);
+      expect(shape.getAttribute('data-is-animating')).toBe('true');
+      expect(shape.getAttribute('data-is-entrance')).toBe('true');
+      expect(shape.getAttribute('data-t')).toBe('0');
+    });
+  });
 });

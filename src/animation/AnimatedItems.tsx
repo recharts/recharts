@@ -12,6 +12,12 @@ import { alignItems, AnimationMatchByProp, matchByIndex } from './matchBy';
  * Used by all animated chart components (Bar, Scatter, Funnel, Pie,
  * Radar, RadialBar, Area, Line) to control label visibility during animation.
  */
+/**
+ * Hook that tracks animation state and provides callbacks for animation start/end.
+ *
+ * @param onAnimationStart optional callback to call when animation starts
+ * @param onAnimationEnd optional callback to call when animation ends
+ */
 export function useAnimationCallbacks(onAnimationStart?: () => void, onAnimationEnd?: () => void) {
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -93,8 +99,11 @@ export type AnimatedItemsProps<T> = {
    *
    * @param items The interpolated items at the current animation frame
    * @param t The normalized time (0-1), useful for additional animation effects
+   * @param isEntrance Whether this is the first render (entrance animation) or a data update animation.
+   *   `true` when `prevItems` was `null` — meaning the component just appeared for the first time.
+   *   `false` when animating between two datasets.
    */
-  children: (items: ReadonlyArray<T>, t: number) => ReactNode;
+  children: (items: ReadonlyArray<T>, t: number, isEntrance: boolean) => ReactNode;
 };
 
 /**
@@ -144,6 +153,7 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
       key={animationId}
     >
       {(t: number) => {
+        const isEntrance = rawPrevItems == null;
         const stepData = items == null ? items : animationInterpolateFn(prevItems, items, t);
         const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : t > 0;
         if (canUpdate) {
@@ -152,7 +162,7 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
         if (stepData == null) {
           return null;
         }
-        return children(stepData, t);
+        return children(stepData, t, isEntrance);
       }}
     </JavascriptAnimate>
   );
