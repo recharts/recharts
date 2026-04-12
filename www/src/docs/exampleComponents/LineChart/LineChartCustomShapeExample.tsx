@@ -22,8 +22,12 @@ const initialState: ControlsType = {
  * and renders normally otherwise.
  */
 function OpacityFadeShape(props: Parameters<typeof LineDrawShape>[0]) {
-  const { t = 1, isAnimating = false, isEntrance = false } = props;
-  const opacity = isEntrance && isAnimating ? t : 1;
+  const { t = 1, isEntrance = false } = props;
+  const opacity = isEntrance ? t : 1;
+  /*
+   * If we did strokeOpacity={t} directly, then the opacity animates even when updating the dataset.
+   * This may be the effect that you want! In this particular example we however demonstrate how to differentiate.
+   */
   return <Curve {...props} strokeOpacity={opacity} />;
 }
 
