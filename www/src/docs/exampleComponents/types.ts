@@ -1,12 +1,17 @@
 import { ComponentType, ReactNode } from 'react';
+import { ToolType } from '../../components/Playground/ToolFrame.tsx';
 
-export type ChartExample = {
+export type ChartExample<ControlsType = any> = {
   /**
    * The React component that represents the example.
    * It should be a functional or class component that renders a chart.
-   * It does not accept any props.
+   * It may accept props coming from its associated controls
    */
-  Component: ComponentType;
+  Component: ComponentType<ControlsType>;
+  /**
+   * This component renders knobs, controls, and various other activities that change the chart
+   */
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
   /**
    * The source code of the example.
    */
@@ -20,7 +25,7 @@ export type ChartExample = {
    * Extra information about the example.
    */
   description?: ReactNode;
-  defaultTool?: 'source' | 'devtools' | 'controls';
+  defaultTool?: ToolType;
   defaultToolTab?: string;
 };
 

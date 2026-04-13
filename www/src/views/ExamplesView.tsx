@@ -1,38 +1,17 @@
-import React from 'react';
 import Helmet from 'react-helmet';
 import { allExamples } from '../docs/exampleComponents';
 import './ExampleView.css';
 import { RouteComponentProps, withRouter } from '../routes/withRouter';
-import { ComponentExamples } from '../docs/exampleComponents/types.ts';
+import { ChartExample } from '../docs/exampleComponents/types.ts';
 import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview';
+import { NotFoundView } from './NotFoundView.tsx';
 
-type ExampleComponent = {
-  cateName: string;
-  exampleName: string;
-  ExampleComponent: React.ComponentType;
-  sourceCode: string;
-  description?: React.ReactNode;
-};
+const allExamplesFlattened: ReadonlyArray<[string, ChartExample]> = Object.values(allExamples)
+  .map(e => e.examples)
+  .flatMap(Object.entries);
 
-const parseExampleComponent = (compName: string): ExampleComponent | null => {
-  const typeList = Object.keys(allExamples);
-  const res = typeList.filter(key => {
-    const entry: ComponentExamples = allExamples[key];
-
-    return !!entry.examples[compName];
-  });
-
-  if (res && res.length) {
-    const example = allExamples[res[0]].examples[compName];
-    return {
-      cateName: res[0],
-      exampleName: example.name,
-      ExampleComponent: example.Component,
-      sourceCode: example.sourceCode,
-      description: example.description,
-    };
-  }
-  return null;
+const parseExampleComponent = (exampleName: string): ChartExample | undefined => {
+  return allExamplesFlattened.find(examples => examples[0] === exampleName)?.[1];
 };
 
 type ExamplesViewImplProps = RouteComponentProps;
@@ -41,7 +20,11 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
   const page = params?.name;
   const exampleResult = parseExampleComponent(page);
 
-  const title = exampleResult?.exampleName ?? page;
+  if (!exampleResult) {
+    return <NotFoundView />;
+  }
+
+  const title = exampleResult?.name ?? page;
 
   return (
     <div className="page page-examples">
@@ -54,9 +37,11 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
             <div className="example-inner-wrapper">
               <CodeEditorWithPreview
                 key={page}
-                Component={exampleResult.ExampleComponent}
+                Component={exampleResult.Component}
                 sourceCode={exampleResult.sourceCode}
-                stackBlitzTitle={`Recharts example: ${exampleResult.cateName} - ${exampleResult.exampleName}`}
+                Controls={exampleResult.Controls}
+                defaultTool={exampleResult.defaultTool}
+                stackBlitzTitle={`Recharts example: ${exampleResult.name}`}
                 analyticsLabel={page}
               />
             </div>
