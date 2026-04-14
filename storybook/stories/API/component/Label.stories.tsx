@@ -167,7 +167,7 @@ export const WithFormatter = {
         <XAxis dataKey="name" />
         <YAxis />
         <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-        <Label value={1234567} position="top" formatter={(v: number) => `${(v / 1000).toFixed(1)}k`} {...args} />
+        <Label value={1234567} position="top" formatter={v => `${(Number(v) / 1000).toFixed(1)}k`} {...args} />
         <RechartsHookInspector />
       </LineChart>
     </ResponsiveContainer>
