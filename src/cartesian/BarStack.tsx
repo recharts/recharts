@@ -114,10 +114,10 @@ const BarStackClipPath = ({ stackId, radius }: { stackId: NormalizedStackId; rad
             <Rectangle
               isAnimationActive={false}
               isUpdateAnimationActive={false}
-              x={pos.x}
-              y={pos.y}
-              width={pos.width}
-              height={pos.height}
+              x={pos.x - 1}
+              y={pos.y - 1}
+              width={pos.width + 2}
+              height={pos.height + 2}
               radius={radius}
             />
           </clipPath>
