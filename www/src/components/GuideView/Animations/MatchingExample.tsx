@@ -1,22 +1,9 @@
-import React, { useState, useCallback, useId } from 'react';
+import { useState, useCallback, useId, useEffect, useRef } from 'react';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, matchByIndex } from 'recharts';
 import type { AnimationMatchBy } from 'recharts';
+import { generateMockData } from '@recharts/devtools';
 
-// Simulates a sliding window of time-series data
-const allData = [
-  { time: '10:00', value: 42 },
-  { time: '10:01', value: 58 },
-  { time: '10:02', value: 72 },
-  { time: '10:03', value: 61 },
-  { time: '10:04', value: 89 },
-  { time: '10:05', value: 74 },
-  { time: '10:06', value: 92 },
-  { time: '10:07', value: 86 },
-  { time: '10:08', value: 95 },
-  { time: '10:09', value: 78 },
-  { time: '10:10', value: 83 },
-  { time: '10:11', value: 67 },
-];
+const allData = generateMockData(30, 90);
 
 const WINDOW = 6;
 
@@ -34,7 +21,7 @@ export default function MatchingExample(props: Partial<ControlsType>) {
   const data = allData.slice(windowStart, windowStart + WINDOW);
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
-    matchStrategy === 'dataKey' ? matchByDataKey('time') : matchByIndex;
+    matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
 
   return (
     <LineChart
@@ -44,12 +31,12 @@ export default function MatchingExample(props: Partial<ControlsType>) {
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="time" />
-      <YAxis domain={[30, 100]} />
+      <XAxis dataKey="label" domain={['dataMin', 'dataMax']} />
+      <YAxis />
       <Tooltip />
       <Line
         type="monotone"
-        dataKey="value"
+        dataKey="y"
         stroke="#8884d8"
         strokeWidth={2}
         animationDuration={600}
@@ -65,24 +52,43 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
     windowStart: 0,
   });
 
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
+  const [isStreaming, setIsStreaming] = useState(false);
 
-  React.useEffect(() => {
-    onChange(state);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const handleChange = useCallback((next: Partial<ControlsType>) => {
+    setState(prev => {
+      const newState = { ...prev, ...next };
+      onChangeRef.current(newState);
+      return newState;
+    });
+  }, []);
+
+  useEffect(() => {
+    onChangeRef.current(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const maxStart = allData.length - WINDOW;
+  useEffect(() => {
+    if (!isStreaming) {
+      return undefined;
+    }
+
+    const maxStart = allData.length - WINDOW;
+    const interval = setInterval(() => {
+      setState(prev => {
+        const next = { ...prev, windowStart: (prev.windowStart + 1) % maxStart };
+        onChangeRef.current(next);
+        return next;
+      });
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, [isStreaming]);
 
   const matchStrategyId = useId();
-  const windowStartId = useId();
+  const streamingToggleId = useId();
 
   return (
     <form>
@@ -105,23 +111,9 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
           </tr>
           <tr>
             <td>
-              <label htmlFor={windowStartId}>Window start</label>
-            </td>
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={windowStartId}
-                type="range"
-                min="0"
-                max={maxStart}
-                step="1"
-                value={state.windowStart}
-                onChange={e => handleChange({ windowStart: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>
-              {allData[state.windowStart]?.time} –{' '}
-              {allData[Math.min(state.windowStart + WINDOW - 1, allData.length - 1)]?.time}
+              <button id={streamingToggleId} type="button" onClick={() => setIsStreaming(s => !s)}>
+                {isStreaming ? 'Stop streaming' : 'Start streaming'}
+              </button>
             </td>
           </tr>
         </tbody>
