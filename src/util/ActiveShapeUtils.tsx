@@ -93,10 +93,18 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
     // @ts-expect-error we can't know the type of cloned element props
     shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
   } else if (typeof option === 'function') {
-    // Render as a React component so that shape functions can use hooks
-    // (e.g. useRef for SVG path measurement in LineDrawShape).
-    const ShapeComponent = option as React.FC<typeof props>;
-    shape = <ShapeComponent {...props} />;
+    /*
+     * So AI insist that we should render this as a React component so that shape functions can use hooks
+     * (e.g. useRef for SVG path measurement in LineDrawShape).
+     * const ShapeComponent = option as React.FC<typeof props>;
+     * shape = <ShapeComponent {...props} />;
+     *
+     * However! When I test it, hooks work perfectly fine even when we call this as a function. Who's correct here?
+     *
+     * We can't change this easily because of the second argument (the index) - React components can't receive second argument (it's always just props)
+     * and so that would be a breaking change. Which we can do for 4.0 but if it works ... then why change it?
+     */
+    shape = option(props, props.index);
   } else if (isPlainObject(option) && typeof option !== 'boolean') {
     const nextProps: ShapePropsType = defaultPropTransformer(option, props);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
