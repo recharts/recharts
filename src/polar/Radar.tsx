@@ -453,8 +453,7 @@ function StaticPolygon({
 }
 
 const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint> | undefined, t: number) =>
-  (entry: RadarPoint, index: number) => {
+  (prevPoints: ReadonlyArray<RadarPoint> | undefined, t: number) => (entry: RadarPoint, index: number) => {
     const prev = prevPoints && prevPoints[index];
 
     if (prev) {
